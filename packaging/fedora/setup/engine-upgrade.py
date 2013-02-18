@@ -22,7 +22,6 @@ from miniyum import MiniYum
 # running things in a loop
 MAINTENANCE_TASKS_WAIT_PERIOD = 180
 MAINTENANCE_TASKS_WAIT_PERIOD_MINUTES = MAINTENANCE_TASKS_WAIT_PERIOD / 60
-MAINTENANCE_TASKS_CYCLES = 20
 
 RPM_BACKEND = "ovirt-engine-backend"
 RPM_DBSCRIPTS = "ovirt-engine-dbscripts"
@@ -90,7 +89,7 @@ MSG_ERROR_ENGINE_PID = "Error: ovirt-engine service is dead, but pid file exists
 MSG_ERROR_PGPASS = "Error: DB password file was not found on this system. Verify \
 that this system was previously installed and that there's a password file at %s or %s" % \
 (basedefs.DB_PASS_FILE, basedefs.ORIG_PASS_FILE)
-MSG_ERROR_FAILED_CONVERT_ENGINE_KEY = "Error: Can't convert engine key to PKCS#12 fomat"
+MSG_ERROR_FAILED_CONVERT_ENGINE_KEY = "Error: Can't convert engine key to PKCS#12 format"
 MSG_ERROR_SSH_KEY_SYMLINK = "Error: SSH key should not be symlink"
 MSG_ERROR_UUID_VALIDATION_FAILED = (
     "Pre-upgade host UUID validation failed\n"
@@ -873,7 +872,16 @@ def getCompensations(dbName=basedefs.DB_NAME):
     else:
         return compensations
 
+
 def checkRunningTasks(dbName=basedefs.DB_NAME, service=basedefs.ENGINE_SERVICE_NAME):
+    """
+    Sample the current situation of asynchronous
+    tasks and compensations and continue the upgrade as soon as tasks are
+    cleared.
+
+    Every MAINTENANCE_TASKS_WAIT_PERIOD seconds if there are asynchronous
+    tasks still around, allows the user to retry or abort.
+    """
     # Find running tasks first
     logging.debug(MSG_RUNNING_TASKS)
     deployDbAsyncTasks(dbName)
@@ -898,7 +906,6 @@ def checkRunningTasks(dbName=basedefs.DB_NAME, service=basedefs.ENGINE_SERVICE_N
         if not answerYes:
             raise Exception(output_messages.INFO_STOP_WITH_RUNNING_TASKS)
 
-
         timestamp = "\n[ " + utils.getCurrentDateTimeHuman() + " ] "
         print timestamp + output_messages.INFO_STOPPING_TASKS % MAINTENANCE_TASKS_WAIT_PERIOD_MINUTES
 
@@ -908,9 +915,7 @@ def checkRunningTasks(dbName=basedefs.DB_NAME, service=basedefs.ENGINE_SERVICE_N
                                                   engineConfigBin=engineConfigBinary,
                                                   engineConfigExtended=engineConfigExtended)
 
-
         try:
-
             # Enter maintenance mode
             utils.configureEngineForMaintenance()
 
@@ -922,15 +927,23 @@ def checkRunningTasks(dbName=basedefs.DB_NAME, service=basedefs.ENGINE_SERVICE_N
 
             # Pull tasks in a loop for some time
             # MAINTENANCE_TASKS_WAIT_PERIOD  = 180 (seconds, between trials)
-            # MAINTENANCE_TASKS_CYCLES = 20 (how many times to try)
+            seconds_waited = 0
             while runningTasks or compensations:
-                time.sleep(MAINTENANCE_TASKS_WAIT_PERIOD)
+                time.sleep(1)
+                seconds_waited += 1
                 runningTasks = getRunningTasks(dbName)
                 compensations = getCompensations(dbName)
                 logging.debug(MSG_WAITING_RUNNING_TASKS)
 
-                # Show the list of tasks to the user, ask what to do
                 if runningTasks or compensations:
+                    if seconds_waited < MAINTENANCE_TASKS_WAIT_PERIOD:
+                        continue
+
+                    running_tasks_msg = MSG_TASKS_COMPENSATIONS % (
+                        runningTasks, compensations
+                    )
+
+                    # Show the list of tasks to the user, ask what to do
                     timestamp = "\n[ " + utils.getCurrentDateTimeHuman() + " ] "
                     stopTasksQuestion = MSG_STOP_RUNNING_TASKS % (
                                          MSG_TASKS_COMPENSATIONS % (runningTasks, compensations),
@@ -943,13 +956,12 @@ def checkRunningTasks(dbName=basedefs.DB_NAME, service=basedefs.ENGINE_SERVICE_N
                     if not answerYes:
                         # There are still tasks running, so exit and tell to resolve
                         # before user continues.
-                        RUNNING_TASKS_MSG = MSG_TASKS_COMPENSATIONS % (runningTasks, compensations)
-                        raise Exception(MSG_TASKS_STILL_RUNNING % RUNNING_TASKS_MSG)
+                        raise Exception(MSG_TASKS_STILL_RUNNING % running_tasks_msg)
 
                     logging.debug(output_messages.INFO_RETRYING + output_messages.INFO_STOPPING_TASKS, MAINTENANCE_TASKS_WAIT_PERIOD_MINUTES)
                     timestamp = "\n[ " + utils.getCurrentDateTimeHuman() + " ] "
                     print timestamp + output_messages.INFO_RETRYING + output_messages.INFO_STOPPING_TASKS % MAINTENANCE_TASKS_WAIT_PERIOD_MINUTES
-
+                    seconds_waited = 0
         except:
             logging.error(traceback.format_exc())
             raise
@@ -966,7 +978,6 @@ def checkRunningTasks(dbName=basedefs.DB_NAME, service=basedefs.ENGINE_SERVICE_N
             utils.configureTasksTimeout(timeout=origTimeout,
                                         engineConfigBin=engineConfigBinary,
                                         engineConfigExtended=engineConfigExtended)
-
 
 
 def main(options):
