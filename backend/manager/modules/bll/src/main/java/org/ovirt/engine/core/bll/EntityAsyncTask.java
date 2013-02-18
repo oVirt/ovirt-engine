@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -115,14 +116,19 @@ public class EntityAsyncTask extends SPMAsyncTask {
         ExecutionContext context = null;
 
         AsyncTasks dbAsyncTask = getParameters().getDbAsyncTask();
+        ArrayList<VdcActionParametersBase> imagesParameters = new ArrayList<VdcActionParametersBase>();
         for (EndedTaskInfo taskInfo : entityInfo.getEndedTasksInfo().getTasksInfo()) {
             VdcActionParametersBase childTaskParameters =
                     taskInfo.getTaskParameters().getDbAsyncTask().getTaskParameters();
-            dbAsyncTask.getActionParameters().getImagesParameters()
-                    .add(childTaskParameters);
+            boolean childTaskGroupSuccess =
+                    childTaskParameters.getTaskGroupSuccess() && taskInfo.getTaskStatus().getTaskEndedSuccessfully();
             childTaskParameters
-                    .setTaskGroupSuccess(taskInfo.getTaskStatus().getTaskEndedSuccessfully());
+                    .setTaskGroupSuccess(childTaskGroupSuccess);
+            if (!childTaskParameters.equals(dbAsyncTask.getActionParameters())) {
+                imagesParameters.add(childTaskParameters);
+            }
         }
+        dbAsyncTask.getActionParameters().setImagesParameters(imagesParameters);
 
         try {
             log.infoFormat("EntityAsyncTask::EndCommandAction [within thread] context: Attempting to EndAction '{0}', executionIndex: '{1}'",

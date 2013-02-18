@@ -157,9 +157,6 @@ public class VdcActionParametersBase implements java.io.Serializable {
     }
 
     public ArrayList<VdcActionParametersBase> getImagesParameters() {
-        if (imagesParameters == null) {
-            imagesParameters = new ArrayList<VdcActionParametersBase>();
-        }
         return imagesParameters;
     }
 
@@ -169,11 +166,13 @@ public class VdcActionParametersBase implements java.io.Serializable {
 
     public boolean getTaskGroupSuccess() {
         boolean childrenTasksSuccess = taskGroupSuccess;
-        for (VdcActionParametersBase childParameters : getImagesParameters()) {
-            childrenTasksSuccess &= childParameters.getTaskGroupSuccess();
+        if (imagesParameters != null) {
+            for (VdcActionParametersBase childParameters : imagesParameters) {
+                childrenTasksSuccess &= childParameters.getTaskGroupSuccess();
 
-            if (!childrenTasksSuccess) {
-                break;
+                if (!childrenTasksSuccess) {
+                    break;
+                }
             }
         }
 

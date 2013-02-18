@@ -283,7 +283,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
             if (!vdsRetValue2.getSucceeded()) {
                 if (startPollingTasks) {
-                    updateTasksWithActionParameters();
                     AsyncTaskManager.getInstance().StartPollingTask(guid1);
                 }
                 return false;
@@ -293,19 +292,12 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             getTaskIdList().add(guid2);
 
             if (startPollingTasks) {
-                updateTasksWithActionParameters();
                 AsyncTaskManager.getInstance().StartPollingTask(guid1);
                 AsyncTaskManager.getInstance().StartPollingTask(guid2);
             }
         }
 
         return true;
-    }
-
-    private void updateTasksWithActionParameters() {
-        for (Guid taskID : getReturnValue().getTaskIdList()) {
-            getAsyncTaskManager().UpdateTaskWithActionParameters(taskID, getParameters());
-        }
     }
 
     @Override

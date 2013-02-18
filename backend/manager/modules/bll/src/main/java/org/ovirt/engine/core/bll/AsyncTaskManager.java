@@ -13,7 +13,6 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.AsyncTaskUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
@@ -24,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -455,17 +453,9 @@ public final class AsyncTaskManager {
         return AsyncTaskFactory.Construct(taskType, taskParameters);
     }
 
-    public synchronized void UpdateTaskWithActionParameters(Guid taskID, VdcActionParametersBase actionParameters) {
-        if (_tasks.containsKey(taskID)) {
-            AsyncTasks currentDbAsyncTask = _tasks.get(taskID).getParameters().getDbAsyncTask();
-            currentDbAsyncTask.setActionParameters(actionParameters);
-            AsyncTaskUtils.updateAsyncTaskInDB(_tasks.get(taskID));
-        }
-    }
-
     public synchronized void StartPollingTask(Guid taskID) {
         if (_tasks.containsKey(taskID)) {
-                _tasks.get(taskID).StartPollingTask();
+            _tasks.get(taskID).StartPollingTask();
         }
     }
 
