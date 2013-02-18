@@ -3,8 +3,8 @@
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
 
  <!-- Log levels:DEBUG,INFO,WARN,ERROR,FATAL -->
-   <appender name="FILE" class="org.jboss.logging.appender.RollingFileAppender">
-     <errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/>
+   <appender name="FILE" class="org.apache.log4j.RollingFileAppender">
+     <errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler"/>
      <param name="File" value="target/server.log"/>
      <param name="Append" value="true"/>
      <param name="MaxFileSize" value="10000KB"/>
@@ -20,7 +20,7 @@
    <!-- ============================== -->
 
    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
-      <errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/>
+      <errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler"/>
       <param name="Target" value="System.out"/>
       <param name="Threshold" value="INFO"/>
 
@@ -34,8 +34,8 @@
    <!-- oVirt Appender                  -->
    <!-- ============================== -->
 
-   <appender name="ENGINE_LOG" class="org.jboss.logging.appender.RollingFileAppender">
-      <errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/>
+   <appender name="ENGINE_LOG" class="org.apache.log4j.RollingFileAppender">
+      <errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler"/>
       <param name="File" value="target/engine.log"/>
       <param name="Append" value="true"/>
       <param name="MaxFileSize" value="10000KB"/>
@@ -50,8 +50,8 @@
    <!-- PublicAPI Appender                  -->
    <!-- ============================== -->
 
-   <appender name="PUBLICAPI_LOG" class="org.jboss.logging.appender.RollingFileAppender">
-      <errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/>
+   <appender name="PUBLICAPI_LOG" class="org.apache.log4j.RollingFileAppender">
+      <errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler"/>
       <param name="File" value="target/soap-api.log"/>
       <param name="Append" value="true"/>
       <param name="MaxFileSize" value="10000KB"/>
@@ -75,16 +75,6 @@
    <!-- Limit the jacorb category to WARN as its INFO is verbose -->
    <category name="jacorb">
       <priority value="WARN"/>
-   </category>
-
-   <!-- Set the logging level of the JSF implementation that uses
-      | java.util.logging. The jdk logging levels can be controlled
-      | through the org.jboss.logging.log4j.JDKLevel class that
-      | in addition to the standard log4j levels it adds support for
-      | SEVERE, WARNING, CONFIG, FINE, FINER, FINEST
-   -->
-   <category name="javax.enterprise.resource.webcontainer.jsf">
-     <priority value="INFO" class="org.jboss.logging.log4j.JDKLevel"/>
    </category>
 
    <!-- Limit the org.jgroups category to WARN as its INFO is verbose -->
@@ -240,8 +230,8 @@
    <!-- Uncomment the following to redirect the org.jgroups and
       org.jboss.ha categories to a cluster.log file.
 
-   <appender name="CLUSTER" class="org.jboss.logging.appender.RollingFileAppender">
-     <errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/>
+   <appender name="CLUSTER" class="org.apache.log4j.RollingFileAppender">
+     <errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler"/>
      <param name="File" value="${jboss.server.log.dir}/cluster.log"/>
      <param name="Append" value="false"/>
      <param name="MaxFileSize" value="500KB"/>
