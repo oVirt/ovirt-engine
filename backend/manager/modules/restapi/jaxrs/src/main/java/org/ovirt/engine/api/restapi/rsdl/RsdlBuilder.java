@@ -99,8 +99,9 @@ public class RsdlBuilder {
                  for (Action action : ((MetaData)result).getActions()) {
                      parametersMetaData.put(action.getName(), action);
                  }
-             }
-             LOG.error("Parameters metatdata file not found.");
+            } else {
+                LOG.error("Parameters metatdata file not found.");
+            }
         } catch (Exception e) {
              LOG.error("Loading parameters metatdata failed.", e);
         }
