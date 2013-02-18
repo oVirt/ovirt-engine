@@ -21,8 +21,7 @@
 #!/bin/bash
 #include db general functions
 pushd $(dirname ${0})>/dev/null
-source ./dbfunctions.sh
-source ./dbcustomfunctions.sh
+source ./common.sh
 
 #setting defaults
 set_defaults
@@ -48,6 +47,15 @@ DEBUG () {
     if $VERBOSE; then
         printf "DEBUG: $*"
     fi
+}
+
+# Validates DB FKs
+# if fix_it is false , constriant violations are reported only
+# if fix_it is true , constriant violations cause is removed from DB
+validate_db_fks() {
+   local fix_it=${1}
+   CMD="select * from fn_db_validate_fks(${fix_it});"
+   psql --pset=tuples_only=on --set ON_ERROR_STOP=1 -U ${USERNAME} -c "${CMD}" -h "${SERVERNAME}" -p "${PORT}" "${DATABASE}"
 }
 
 FIXIT=false

@@ -18,15 +18,11 @@
 ###############################################################################################################
 
 pushd $(dirname ${0})>/dev/null
+source ./common.sh
+
 
 #setting defaults
-ME=$(basename $0)
-SERVERNAME="localhost"
-PORT="5432"
-DATABASE="engine"
-USERNAME=""
-VERBOSE=false
-LOGFILE="$ME.log"
+set_defaults
 
 usage() {
     printf "Usage: ${ME} [-h] [-s server] [-p PORT]] [-d DATABASE] [-u USERNAME] [-l LOGFILE]  [-t taskId] [-c commandId] [-z] [-R] [-C] [-J] [-q] [-v]\n"

@@ -477,11 +477,3 @@ query_locked_entities() {
    fi
 }
 
-# Validates DB FKs
-# if fix_it is false , constriant violations are reported only
-# if fix_it is true , constriant violations cause is removed from DB
-validate_db_fks() {
-   local fix_it=${1}
-   CMD="select * from fn_db_validate_fks(${fix_it});"
-   execute_command "${CMD}" "${DATABASE}" "${SERVERNAME}" "${PORT}"
-}
