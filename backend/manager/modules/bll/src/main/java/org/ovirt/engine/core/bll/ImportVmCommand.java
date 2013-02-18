@@ -915,12 +915,12 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         VmInterfaceManager vmInterfaceManager = new VmInterfaceManager();
         List<String> invalidNetworkNames = new ArrayList<String>();
         List<String> invalidIfaceNames = new ArrayList<String>();
-        Map<String, Network> networksInVdsByName =
+        Map<String, Network> networksInClusterByName =
                 Entities.entitiesByName(getNetworkDAO().getAllForCluster(getVm().getVdsGroupId()));
 
         for (VmNetworkInterface iface : getVm().getInterfaces()) {
             initInterface(iface);
-            if (!vmInterfaceManager.isValidVmNetwork(iface, networksInVdsByName)) {
+            if (!vmInterfaceManager.isValidVmNetwork(iface, networksInClusterByName)) {
                 invalidNetworkNames.add(iface.getNetworkName());
                 invalidIfaceNames.add(iface.getName());
                 iface.setNetworkName(null);
