@@ -38,6 +38,9 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
     @Override
     public void Initialize(SystemTreeItemModel systemTreeSelectedItem)
     {
+        // The custom properties tab should be hidden on the User Portal
+        getModel().setIsCustomPropertiesTabAvailable(false);
+
         // Get datacenters with permitted create action
         AsyncDataProvider.GetDataCentersWithPermittedActionOnClusters(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {

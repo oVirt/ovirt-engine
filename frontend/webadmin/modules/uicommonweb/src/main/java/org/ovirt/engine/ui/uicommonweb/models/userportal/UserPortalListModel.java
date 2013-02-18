@@ -718,6 +718,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         model.setHwAcceleration(true);
         // disable Host tab
         model.setIsHostTabVisible(false);
+        // disable Custom properties sheet
+        model.setIsCustomPropertiesSheetVisible(false);
 
         fillIsoList(vm);
         fillFloppyImages(vm);

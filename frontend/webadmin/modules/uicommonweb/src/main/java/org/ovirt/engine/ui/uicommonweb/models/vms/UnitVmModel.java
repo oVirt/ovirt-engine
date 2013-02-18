@@ -943,6 +943,22 @@ public class UnitVmModel extends Model {
         }
     }
 
+    private boolean isCustomPropertiesTabAvailable;
+
+    public boolean getIsCustomPropertiesTabAvailable()
+    {
+        return isCustomPropertiesTabAvailable;
+    }
+
+    public void setIsCustomPropertiesTabAvailable(boolean value)
+    {
+        if (isCustomPropertiesTabAvailable != value)
+        {
+            isCustomPropertiesTabAvailable = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("IsCustomPropertiesTabAvailable")); //$NON-NLS-1$
+        }
+    }
+
     private Boolean isDatacenterAvailable;
 
     public Boolean getIsDatacenterAvailable()
@@ -1130,6 +1146,7 @@ public class UnitVmModel extends Model {
         getIsTemplatePublic().getEntityChangedEvent().addListener(this);
 
         setIsHostTabValid(true);
+        setIsCustomPropertiesTabAvailable(true);
         setIsCustomPropertiesTabValid(getIsHostTabValid());
         setIsBootSequenceTabValid(getIsCustomPropertiesTabValid());
         setIsAllocationTabValid(getIsBootSequenceTabValid());

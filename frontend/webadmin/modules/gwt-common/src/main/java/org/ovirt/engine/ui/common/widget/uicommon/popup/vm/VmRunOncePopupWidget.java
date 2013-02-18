@@ -393,6 +393,8 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
                 if ("IsHostTabVisible".equals(propName)) { //$NON-NLS-1$
                     hostPanel.setVisible(object.getIsHostTabVisible());
+                } else if ("IsCustomPropertiesSheetVisible".equals(propName)) { //$NON-NLS-1$
+                    customPropertiesPanel.setVisible(object.getIsCustomPropertiesSheetVisible());
                 }
             }
         });

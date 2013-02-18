@@ -348,6 +348,19 @@ public class RunOnceModel extends Model
         }
     }
 
+    private boolean isCustomPropertiesSheetVisible = false;
+
+    public boolean getIsCustomPropertiesSheetVisible() {
+        return isCustomPropertiesSheetVisible;
+    }
+
+    public void setIsCustomPropertiesSheetVisible(boolean value) {
+        if (isCustomPropertiesSheetVisible != value) {
+            isCustomPropertiesSheetVisible = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("IsCustomPropertiesSheetVisible")); //$NON-NLS-1$
+        }
+    }
+
     // host tab
     private ListModel defaultHost;
 
@@ -465,6 +478,8 @@ public class RunOnceModel extends Model
         getIsAutoAssign().getEntityChangedEvent().addListener(this);
 
         setIsHostTabVisible(true);
+
+        setIsCustomPropertiesSheetVisible(true);
     }
 
     @Override

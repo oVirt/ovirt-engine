@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 
 public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
 {
@@ -28,6 +29,14 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
     public UserPortalExistingVmModelBehavior(VM vm)
     {
         super(vm);
+    }
+
+    @Override
+    public void Initialize(SystemTreeItemModel systemTreeSelectedItem) {
+        super.Initialize(systemTreeSelectedItem);
+
+        // The custom properties tab should be hidden on the User Portal
+        getModel().setIsCustomPropertiesTabAvailable(false);
     }
 
     @Override

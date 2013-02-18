@@ -788,6 +788,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         hostTab.setVisible(model.getIsHostAvailable());
     }
 
+    protected void setupCustomPropertiesAvailability(UnitVmModel model) {
+        customPropertiesTab.setVisible(model.getIsCustomPropertiesTabAvailable());
+    }
+
     private void initListeners(final UnitVmModel object) {
         // TODO should be handled by the core framework
         object.getPropertyChangedEvent().addListener(new IEventListener() {
@@ -802,6 +806,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
                     } else {
                         hostTab.markAsInvalid(null);
                     }
+                } else if ("IsCustomPropertiesTabAvailable".equals(propName)) { //$NON-NLS-1$
+                    setupCustomPropertiesAvailability(object);
                 }
             }
         });
