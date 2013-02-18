@@ -593,9 +593,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("You are about to change the Cluster Compatibility Version. Are you sure you want to continue?")
     String youAreAboutChangeClusterCompatibilityVersionMsg();
 
-    @DefaultStringValue("You are about to enable the Data Center Quota Enforcement. Since No Quota allocations are defined for this Data Center, engine users will not be able run VMs or create new disks." +
-            "\nCurrently running VMs will keep running.\n\nUse Audit mode in order to get the alerts without actually blocking the users. Once ready, you can move Quota from Audit to Enforcing mode to actually block Quota violations.\n\n" +
-            "In order to define quota allocations, go to quota main tab, or in Data Center tab choose quota sub-tab. Use the add button in order to define a new quota allocation. Note that this can be done regardless of Quota state being enabled or disabled.\n\n" +
+    @DefaultStringValue("Moving Quota to Enforce Mode\n" +
+            "All the templates, virtual machines, and disks must be assigned into specific quota allocations otherwise will be unusable.\nUsers should be added as quota consumers.\n\n" +
+            "Please consider using Audit mode until you define Quotas for the users.\n\n" +
             "Are you sure you want to continue?")
     String youAreAboutChangeDCQuotaEnforcementMsg();
 
