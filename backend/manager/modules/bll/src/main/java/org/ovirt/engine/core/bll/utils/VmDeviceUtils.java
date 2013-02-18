@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmHandler;
+import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.smartcard.SmartcardSpecParams;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
@@ -587,6 +588,22 @@ public class VmDeviceUtils {
     }
 
     /**
+     * If another plugged network interface has the same MAC address, return false, otherwise returns true
+     *
+     * @param iface
+     *            the network interface to check if can be plugged
+     */
+    private static boolean canPlugInterface(VmNetworkInterface iface) {
+        VmInterfaceManager vmIfaceManager = new VmInterfaceManager();
+        if (vmIfaceManager.existsPluggedInterfaceWithSameMac(iface)) {
+            vmIfaceManager.auditLogMacInUseUnplug(iface);
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
      * Adds imported interfaces to VM devices
      * @param entity
      */
@@ -602,6 +619,14 @@ public class VmDeviceUtils {
                             true,
                             false,
                             getAddress(entity, id));
+
+            VmDevice exportedDevice = entity.getManagedDeviceMap().get(deviceId);
+            if (exportedDevice == null) {
+                entity.getManagedDeviceMap().put(deviceId, vmDevice);
+                exportedDevice = vmDevice;
+            }
+
+            exportedDevice.setIsPlugged(exportedDevice.getIsPlugged() && canPlugInterface(iface));
             updateVmDevice(entity, vmDevice, deviceId, vmDeviceToUpdate);
         }
     }

@@ -926,7 +926,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 iface.setNetworkName(null);
             }
 
-            vmInterfaceManager.add(iface, getCompensationContext(), getParameters().isImportAsNewEntity());
+            vmInterfaceManager.add(iface, getCompensationContext(), getParameters().isImportAsNewEntity(),
+                    getVdsGroup().getcompatibility_version());
             macsAdded.add(iface.getMacAddress());
         }
 

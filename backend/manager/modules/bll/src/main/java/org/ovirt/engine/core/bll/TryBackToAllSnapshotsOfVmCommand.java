@@ -107,7 +107,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         snapshotsManager.attempToRestoreVmConfigurationFromSnapshot(getVm(),
                 getSnapshotDao().get(getParameters().getDstSnapshotId()),
                 getSnapshotDao().getId(getVm().getId(), SnapshotType.ACTIVE),
-                getCompensationContext());
+                getCompensationContext(), getVm().getVdsGroupCompatibilityVersion());
     }
 
     @Override

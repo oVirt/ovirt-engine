@@ -683,6 +683,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.NETWORK_COMMINT_NETWORK_CHANGES_FAILED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.MAC_POOL_EMPTY, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.MAC_ADDRESS_IS_IN_USE, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.MAC_ADDRESS_IS_IN_USE_UNPLUG, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.MAC_ADDRESSES_POOL_NOT_INITIALIZED, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.BRIDGED_NETWORK_OVER_MULTIPLE_INTERFACES, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.VDS_NETWORKS_OUT_OF_SYNC, AuditLogSeverity.WARNING);

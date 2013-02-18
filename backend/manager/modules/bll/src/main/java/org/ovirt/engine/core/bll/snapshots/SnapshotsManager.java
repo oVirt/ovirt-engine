@@ -15,15 +15,16 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskDao;
@@ -224,11 +225,13 @@ public class SnapshotsManager {
      *
      * @param snapshot
      *            The snapshot containing the configuration.
+     * @param version
+     *            The compatibility version of the VM's cluster
      */
     public void attempToRestoreVmConfigurationFromSnapshot(VM vm,
             Snapshot snapshot,
             Guid activeSnapshotId,
-            CompensationContext compensationContext) {
+            CompensationContext compensationContext, Version version) {
         boolean vmUpdatedFromConfiguration = false;
         if (snapshot.getVmConfiguration() != null) {
             vmUpdatedFromConfiguration = updateVmFromConfiguration(vm, snapshot.getVmConfiguration());
@@ -244,7 +247,7 @@ public class SnapshotsManager {
 
         if (vmUpdatedFromConfiguration) {
             getVmStaticDao().update(vm.getStaticData());
-            synchronizeNics(vm.getId(), vm.getInterfaces(), compensationContext);
+            synchronizeNics(vm.getId(), vm.getInterfaces(), compensationContext, version);
 
             for (VmDevice vmDevice : getVmDeviceDao().getVmDeviceByVmId(vm.getId())) {
                 if (deviceCanBeRemoved(vmDevice)) {
@@ -328,8 +331,10 @@ public class SnapshotsManager {
      *
      * @param nics
      *            The nics from snapshot.
+     * @param version
+     *            The compatibility version of the VM's cluster
      */
-    protected void synchronizeNics(Guid vmId, List<VmNetworkInterface> nics, CompensationContext compensationContext) {
+    protected void synchronizeNics(Guid vmId, List<VmNetworkInterface> nics, CompensationContext compensationContext, Version version) {
         VmInterfaceManager vmInterfaceManager = new VmInterfaceManager();
 
         vmInterfaceManager.removeAll(vmId);
@@ -340,7 +345,7 @@ public class SnapshotsManager {
             }
             vmInterface.setVmId(vmId);
 
-            vmInterfaceManager.add(vmInterface, compensationContext, false);
+            vmInterfaceManager.add(vmInterface, compensationContext, false, version);
         }
     }
 

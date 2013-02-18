@@ -6,12 +6,14 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -29,22 +31,30 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class VmInterfaceManager {
 
     protected Log log = LogFactory.getLog(getClass());
+
     /**
-     * Add a {@link VmNetworkInterface} to the VM, trying to acquire a MAC from the {@link MacPoolManager}.<br>
-     * If the MAC is already in use, a warning will be sent to the user.
+     * Add a {@link VmNetworkInterface} to the VM. Allocates a MAC from the {@link MacPoolManager} if necessary,
+     * otherwise, if {@link ConfigValues#HotPlugEnabled} is true, forces adding the MAC address to the
+     * {@link MacPoolManager}. If HotPlug is not enabled tries to add the {@link VmNetworkInterface}'s MAC address to
+     * the {@link MacPoolManager}, and throws a {@link VdcBllException} if it fails.
      *
      * @param iface
      *            The interface to save.
      * @param compensationContext
      *            Used to snapshot the saved entities.
+     * @param clusterCompatibilityVersion
+     *            the compatibility version of the cluster
      * @return <code>true</code> if the MAC wasn't used, <code>false</code> if it was.
      */
-    public void add(final VmNetworkInterface iface, CompensationContext compensationContext, boolean allocateMac) {
+    public void add(final VmNetworkInterface iface, CompensationContext compensationContext, boolean allocateMac,
+            Version clusterCompatibilityVersion) {
+
         if (allocateMac) {
             iface.setMacAddress(getMacPoolManager().allocateNewMac());
+        } else if (FeatureSupported.hotPlug(clusterCompatibilityVersion)) {
+            getMacPoolManager().forceAddMac(iface.getMacAddress());
         } else if (!getMacPoolManager().addMac(iface.getMacAddress())) {
             auditLogMacInUse(iface);
-            log.errorFormat("VmInterfaceManager::Mac {0} is in use.", iface.getMacAddress());
             throw new VdcBLLException(VdcBllErrors.MAC_ADDRESS_IS_IN_USE);
         }
 
@@ -54,15 +64,29 @@ public class VmInterfaceManager {
         compensationContext.snapshotNewEntity(iface.getStatistics());
     }
 
-    // This method is protected for test purposes
-    protected void auditLogMacInUse(final VmNetworkInterface iface) {
+    public void auditLogMacInUse(final VmNetworkInterface iface) {
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
-                AuditLogableBase logable = new AuditLogableBase();
-                logable.addCustomValue("MACAddr", iface.getMacAddress());
-                logable.addCustomValue("VmName", iface.getVmName());
+                AuditLogableBase logable = createAuditLog(iface);
                 log(logable, AuditLogType.MAC_ADDRESS_IS_IN_USE);
+                log.warnFormat("Network Interface {0} has MAC address {1} which is in use, " +
+                        "therefore the action for VM {2} failed.", iface.getName(), iface.getMacAddress(),
+                        iface.getVmId());
+                return null;
+            }
+        });
+    }
+
+    public void auditLogMacInUseUnplug(final VmNetworkInterface iface) {
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+            @Override
+            public Void runInTransaction() {
+                AuditLogableBase logable = createAuditLog(iface);
+                log(logable, AuditLogType.MAC_ADDRESS_IS_IN_USE_UNPLUG);
+                log.warnFormat("Network Interface {0} has MAC address {1} which is in use, " +
+                        "therefore it is being unplugged from VM {2}.", iface.getName(), iface.getMacAddress(),
+                        iface.getVmId());
                 return null;
             }
         });
@@ -163,5 +187,13 @@ public class VmInterfaceManager {
 
     protected VmDAO getVmDAO() {
         return DbFacade.getInstance().getVmDao();
+    }
+
+    private AuditLogableBase createAuditLog(final VmNetworkInterface iface) {
+        AuditLogableBase logable = new AuditLogableBase();
+        logable.setVmId(iface.getVmId().getValue());
+        logable.addCustomValue("MACAddr", iface.getMacAddress());
+        logable.addCustomValue("IfaceName", iface.getName());
+        return logable;
     }
 }

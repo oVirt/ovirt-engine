@@ -3,19 +3,20 @@ package org.ovirt.engine.core.bll.network;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -26,19 +27,25 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
+import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 public class VmInterfaceManagerTest {
 
     private final String NETWORK_NAME = "networkName";
     private final String VM_NAME = "vmName";
+    private final static Version VERSION_3_2 = new Version(3, 2);
+
+    @ClassRule
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.HotPlugEnabled, VERSION_3_2.getValue(), true));
 
     @Mock
     private MacPoolManager macPoolManager;
@@ -63,39 +70,28 @@ public class VmInterfaceManagerTest {
         doReturn(vmNetworkStatisticsDAO).when(vmInterfaceManager).getVmNetworkStatisticsDao();
         doReturn(vmNetworkInterfaceDAO).when(vmInterfaceManager).getVmNetworkInterfaceDao();
         doReturn(vmDAO).when(vmInterfaceManager).getVmDAO();
-        doNothing().when(vmInterfaceManager).auditLogMacInUse(any(VmNetworkInterface.class));
+        doNothing().when(vmInterfaceManager).auditLogMacInUseUnplug(any(VmNetworkInterface.class));
 
         doNothing().when(vmInterfaceManager).log(any(AuditLogableBase.class), any(AuditLogType.class));
     }
 
     @Test
     public void add() {
-        runAddAndVerify(createNewInterface(), true, times(1));
+        runAddAndVerify(createNewInterface(), true, times(1), VERSION_3_2);
     }
 
     @Test
-    public void addWithExistingMacAddress() {
+    public void addWithExistingMacAddressSucceed() {
         VmNetworkInterface iface = createNewInterface();
-
-        try {
-            runAddAndVerify(iface, false, times(1));
-            fail(String.format("Expected to catch %s, but didn't.", VdcBLLException.class.getSimpleName()));
-        } catch (VdcBLLException e) {
-            assertEquals(VdcBllErrors.MAC_ADDRESS_IS_IN_USE, e.getErrorCode());
-        } catch (Exception e) {
-            fail(String.format("Expected to catch %s, but caught %s instead.",
-                    VdcBLLException.class.getSimpleName(),
-                    e.getClass().getSimpleName()));
-        }
-        verify(vmInterfaceManager).auditLogMacInUse(iface);
+        runAddAndVerify(iface, true, times(1), VERSION_3_2);
     }
 
     protected void runAddAndVerify(VmNetworkInterface iface,
             boolean addMacResult,
-            VerificationMode addMacVerification) {
-        when(macPoolManager.addMac(iface.getMacAddress())).thenReturn(addMacResult);
-
-        vmInterfaceManager.add(iface, NoOpCompensationContext.getInstance(), false);
+            VerificationMode addMacVerification,
+            Version version) {
+        vmInterfaceManager.add(iface, NoOpCompensationContext.getInstance(), false, version);
+        verify(macPoolManager, times(1)).forceAddMac((iface.getMacAddress()));
         verifyAddDelegatedCorrectly(iface, addMacVerification);
     }
 
@@ -104,7 +100,7 @@ public class VmInterfaceManagerTest {
         VmNetworkInterface iface = createNewInterface();
         String newMac = RandomUtils.instance().nextString(10);
         when(macPoolManager.allocateNewMac()).thenReturn(newMac);
-        vmInterfaceManager.add(iface, NoOpCompensationContext.getInstance(), true);
+        vmInterfaceManager.add(iface, NoOpCompensationContext.getInstance(), true, VERSION_3_2);
         assertEquals(newMac, iface.getMacAddress());
     }
 
@@ -185,7 +181,7 @@ public class VmInterfaceManagerTest {
      *            Mode to check (times(1), never(), etc) for {@link MacPoolManager#addMac(String)}.
      */
     protected void verifyAddDelegatedCorrectly(VmNetworkInterface iface, VerificationMode addMacVerification) {
-        verify(macPoolManager, addMacVerification).addMac(iface.getMacAddress());
+        verify(macPoolManager, addMacVerification).forceAddMac(iface.getMacAddress());
         verify(vmNetworkInterfaceDAO).save(iface);
         verify(vmNetworkStatisticsDAO).save(iface.getStatistics());
     }
