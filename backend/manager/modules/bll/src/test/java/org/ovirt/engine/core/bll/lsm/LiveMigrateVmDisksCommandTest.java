@@ -186,7 +186,7 @@ public class LiveMigrateVmDisksCommandTest {
         DiskImage diskImage = new DiskImage();
         diskImage.setId(diskImageId);
         diskImage.setStoragePoolId(storagePoolId);
-        diskImage.setStorageIds(new ArrayList<Guid>());
+        diskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(srcStorageId)));
 
         when(diskImageDao.getAncestor(diskImageId)).thenReturn(diskImage);
         when(diskImageDao.get(diskImageId)).thenReturn(diskImage);
