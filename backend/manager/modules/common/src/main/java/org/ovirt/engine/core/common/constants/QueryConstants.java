@@ -15,5 +15,4 @@ public class QueryConstants {
     public static final String SYSTEM_STATS_ACTIVE_USERS_FIELD = "active_users";
     public static final String SYSTEM_STATS_TOTAL_STORAGE_DOMAINS_FIELD = "total_storage_domains";
     public static final String SYSTEM_STATS_ACTIVE_STORAGE_DOMAINS_FIELD = "active_storage_domains";
-
 }

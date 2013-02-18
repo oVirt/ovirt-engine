@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.Image;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -33,7 +34,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -285,6 +285,10 @@ public class DbFacade {
         });
         return master != null
                 && (master.getStatus() == StorageDomainStatus.Active || master.getStatus() == StorageDomainStatus.Unknown);
+    }
+
+    public Integer getSystemStatisticsValue(String entity) {
+        return getSystemStatisticsValue(entity, "");
     }
 
     public Integer getSystemStatisticsValue(String entity, String status) {

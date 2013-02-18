@@ -1,65 +1,64 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.constants.QueryConstants;
 import org.ovirt.engine.core.common.queries.GetSystemStatisticsQueryParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetSystemStatisticsQuery<P extends GetSystemStatisticsQueryParameters> extends QueriesCommandBase<P> {
     public GetSystemStatisticsQuery(P parameters) {
         super(parameters);
     }
 
-    public java.util.HashMap<String, Integer> getSystemStatistics() {
-        //
-        // int max = (Parameters as GetSystemStatisticsQueryParameters).Max;
-        // Dictionary<String, Int32> res = new Dictionary<String, Int32>();
-        // QueriesCommandBase query;
-        // List<IVdcQueryable> tmp;
-        // query = CommandsFactory.CreateQueryCommand(
-        // VdcQueryType.Search, new SearchParameters("vms:",
-        // SearchType.VM){MaxCount = max});
-        // query.Execute();
-        // tmp = (List<IVdcQueryable>)query.QueryReturnValue.ReturnValue;
-        // int total_vms = tmp.Count;
-        // query = CommandsFactory.CreateQueryCommand(
-        // VdcQueryType.Search, new SearchParameters("vms: status != down",
-        // SearchType.VM) { MaxCount = max });
-        // query.Execute();
-        // tmp = (List<IVdcQueryable>)query.QueryReturnValue.ReturnValue;
-        // int active_vms = tmp.Count;
-        // List<DbUser> users = DbFacade.Instance.GetAllFromUsers();
-        // int total_users = users.Count, active_users = 0;
-        // foreach (DbUser user in users)
-        // {
-        // if (user.IsLogedin)
-        // {
-        // active_users++;
-        // }
-        // }
-        // query = CommandsFactory.CreateQueryCommand(
-        // VdcQueryType.Search, new SearchParameters("Hosts", SearchType.VDS) {
-        // MaxCount = max });
-        // query.Execute();
-        // tmp = (List<IVdcQueryable>)query.QueryReturnValue.ReturnValue;
-        // int total_vds = tmp.Count, active_vds = 0;
-        // foreach (VDS vds in tmp)
-        // {
-        // if ((vds.status == VDSStatus.Up) || (vds.status ==
-        // VDSStatus.PreparingForMaintenance))
-        // {
-        // active_vds++;
-        // }
-        // }
-        //
+    private static final char COMMA_DELIMITER = ',';
+    public static final String VM_ENTITY_NAME = "VM";
+    public static final String HOST_ENTITY_NAME = "HOST";
+    public static final String USER_ENTITY_NAME = "USER";
+    public static final String ACTIVE_STORAGE_DOMAIN_ENTITY_NAME = "ASD";
+    public static final String TOTAL_STORAGE_DOMAIN_ENTITY_NAME = "TSD";
+    public static final String USER_ACTIVE_STATUS = "1";
 
-        java.util.HashMap<String, Integer> res = new java.util.HashMap<String, Integer>();
+
+    private Map<String, Integer> getSystemStatistics() {
+        Map<String, Integer> res = new HashMap<String, Integer>();
 
         // VMs:
-        int total_vms = DbFacade.getInstance().getSystemStatisticsValue("VM", "");
+        int totalVMs = getTotalVMsStat();
+        int activeVMs = getActiveVMsStat();
+        int downVMs = (totalVMs - activeVMs) < 0 ? 0 : (totalVMs - activeVMs);
+
+        // Hosts:
+        int totalHosts = getTotalHostsStat();
+        int activeHosts = getActiveHostsStat();
+        int maintenanceHosts = getMaintenanceHostsStat();
+        int downHosts =
+                (totalHosts - activeHosts - maintenanceHosts) < 0 ? 0 : (totalHosts - activeHosts - maintenanceHosts);
+
+        res.put(QueryConstants.SYSTEM_STATS_TOTAL_VMS_FIELD, totalVMs);
+        res.put(QueryConstants.SYSTEM_STATS_ACTIVE_VMS_FIELD, activeVMs);
+        res.put(QueryConstants.SYSTEM_STATS_DOWN_VMS_FIELD, downVMs);
+        res.put(QueryConstants.SYSTEM_STATS_TOTAL_HOSTS_FIELD, totalHosts);
+        res.put(QueryConstants.SYSTEM_STATS_ACTIVE_HOSTS_FIELD, activeHosts);
+        res.put(QueryConstants.SYSTEM_STATS_MAINTENANCE_HOSTS_FIELD, maintenanceHosts);
+        res.put(QueryConstants.SYSTEM_STATS_DOWN_HOSTS_FIELD, downHosts);
+        res.put(QueryConstants.SYSTEM_STATS_TOTAL_USERS_FIELD, getTotalUsersStat());
+        res.put(QueryConstants.SYSTEM_STATS_ACTIVE_USERS_FIELD, getActiveUsersStat());
+        res.put(QueryConstants.SYSTEM_STATS_TOTAL_STORAGE_DOMAINS_FIELD, getTotalStorageDomainsStat());
+        res.put(QueryConstants.SYSTEM_STATS_ACTIVE_STORAGE_DOMAINS_FIELD, getActiveStorageDomainsStat());
+
+        return res;
+    }
+
+    private int getTotalVMsStat() {
+        return getDbFacade().getSystemStatisticsValue(VM_ENTITY_NAME);
+    }
+
+    private int getActiveVMsStat() {
         String[] activeVmStatuses = { (String.valueOf(VMStatus.Up.getValue())),
                 (String.valueOf(VMStatus.PoweringUp.getValue())),
                 (String.valueOf(VMStatus.PoweredDown.getValue())),
@@ -69,44 +68,42 @@ public class GetSystemStatisticsQuery<P extends GetSystemStatisticsQueryParamete
                 (String.valueOf(VMStatus.PoweringDown.getValue())),
                 (String.valueOf(VMStatus.Paused.getValue())),
                 (String.valueOf(VMStatus.Unknown.getValue())) };
-        int active_vms = DbFacade.getInstance()
-                .getSystemStatisticsValue("VM", StringUtils.join(activeVmStatuses, ','));
+        return getDbFacade().getSystemStatisticsValue(VM_ENTITY_NAME,
+                StringUtils.join(activeVmStatuses, COMMA_DELIMITER));
+    }
 
-        int down_vms = (total_vms - active_vms) < 0 ? 0 : (total_vms - active_vms);
+    private int getTotalHostsStat() {
+        return getDbFacade().getSystemStatisticsValue(HOST_ENTITY_NAME);
+    }
 
-        // Hosts:
-        int total_vds = DbFacade.getInstance().getSystemStatisticsValue("HOST", "");
+    private int getActiveHostsStat() {
+        String[] activeVdsStatuses =
+                { (String.valueOf(VDSStatus.Up.getValue())),
+                        (String.valueOf(VDSStatus.PreparingForMaintenance.getValue())) };
+        return getDbFacade().getSystemStatisticsValue(HOST_ENTITY_NAME,
+                StringUtils.join(activeVdsStatuses, COMMA_DELIMITER));
+    }
 
-        String[] activeVdsStatuses = { (String.valueOf(VDSStatus.Up.getValue())),
-                (String.valueOf(VDSStatus.PreparingForMaintenance.getValue()))};
-        int active_vds = DbFacade.getInstance().getSystemStatisticsValue("HOST",
-                StringUtils.join(activeVdsStatuses, ','));
-        int maintenance_vds = DbFacade.getInstance().getSystemStatisticsValue("HOST",
+    private int getMaintenanceHostsStat() {
+        return getDbFacade().getSystemStatisticsValue(HOST_ENTITY_NAME,
                 (String.valueOf(VDSStatus.Maintenance.getValue())));
-        int down_vds = (total_vds - active_vds - maintenance_vds) < 0 ? 0 : (total_vds - active_vds - maintenance_vds);
+    }
 
-        // Users:
-        int total_users = DbFacade.getInstance().getSystemStatisticsValue("USER", "");
-        int active_users = DbFacade.getInstance().getSystemStatisticsValue("USER", "1");
+    private int getTotalUsersStat() {
+        return getDbFacade().getSystemStatisticsValue(USER_ENTITY_NAME);
+    }
 
-        // Storage Domains:
-        int total_storage_domains = DbFacade.getInstance().getSystemStatisticsValue("TSD", "");
-        int active_storage_domains = DbFacade.getInstance().getSystemStatisticsValue("ASD",
-                (Integer.toString(StorageDomainStatus.Active.getValue())));
+    private int getActiveUsersStat() {
+        return getDbFacade().getSystemStatisticsValue(USER_ENTITY_NAME, USER_ACTIVE_STATUS);
+    }
 
-        res.put(QueryConstants.SYSTEM_STATS_TOTAL_VMS_FIELD, total_vms);
-        res.put(QueryConstants.SYSTEM_STATS_ACTIVE_VMS_FIELD, active_vms);
-        res.put(QueryConstants.SYSTEM_STATS_DOWN_VMS_FIELD, down_vms);
-        res.put(QueryConstants.SYSTEM_STATS_TOTAL_HOSTS_FIELD, total_vds);
-        res.put(QueryConstants.SYSTEM_STATS_ACTIVE_HOSTS_FIELD, active_vds);
-        res.put(QueryConstants.SYSTEM_STATS_MAINTENANCE_HOSTS_FIELD, maintenance_vds);
-        res.put(QueryConstants.SYSTEM_STATS_DOWN_HOSTS_FIELD, down_vds);
-        res.put(QueryConstants.SYSTEM_STATS_TOTAL_USERS_FIELD, total_users);
-        res.put(QueryConstants.SYSTEM_STATS_ACTIVE_USERS_FIELD, active_users);
-        res.put(QueryConstants.SYSTEM_STATS_TOTAL_STORAGE_DOMAINS_FIELD, total_storage_domains);
-        res.put(QueryConstants.SYSTEM_STATS_ACTIVE_STORAGE_DOMAINS_FIELD, active_storage_domains);
+    private int getTotalStorageDomainsStat() {
+        return getDbFacade().getSystemStatisticsValue(TOTAL_STORAGE_DOMAIN_ENTITY_NAME);
+    }
 
-        return res;
+    private int getActiveStorageDomainsStat() {
+        return getDbFacade().getSystemStatisticsValue(ACTIVE_STORAGE_DOMAIN_ENTITY_NAME,
+                (String.valueOf(StorageDomainStatus.Active.getValue())));
     }
 
     @Override
