@@ -9,10 +9,8 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.AsyncTaskUtils;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
@@ -20,9 +18,6 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
-import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
-import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -32,7 +27,6 @@ import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -107,7 +101,7 @@ public final class AsyncTaskManager {
 
     @OnTimerMethodAnnotation("_cacheTimer_Elapsed")
     public void _cacheTimer_Elapsed() {
-        removeOldAndCleanedTasks();
+        removeClearedAndOldTasks();
     }
 
     /**
@@ -330,7 +324,7 @@ public final class AsyncTaskManager {
      *
      * @return
      */
-    synchronized private Set<Guid> removeClearedAndOldTasks() {
+    synchronized private void removeClearedAndOldTasks() {
         Set<Guid> poolsOfActiveTasks = new HashSet<Guid>();
         Set<Guid> poolsOfClearedAndOldTasks = new HashSet<Guid>();
         Map<Guid, SPMAsyncTask> activeTaskMap = new HashMap<Guid, SPMAsyncTask>();
@@ -348,33 +342,9 @@ public final class AsyncTaskManager {
             setNewMap(activeTaskMap);
             poolsOfClearedAndOldTasks.removeAll(poolsOfActiveTasks);
         }
-
-        return poolsOfClearedAndOldTasks;
-    }
-
-    private void removeOldAndCleanedTasks() {
-
-        Set<Guid> poolsOfClearedAndOldTasks = removeClearedAndOldTasks();
-
         for (Guid storagePoolID : poolsOfClearedAndOldTasks) {
             log.infoFormat("Cleared all tasks of pool {0}.",
                     storagePoolID);
-            storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao().get(storagePoolID);
-            if (storagePool != null && storagePool.getspm_vds_id() != null) {
-                VDS vds = DbFacade.getInstance().getVdsDao().get(storagePool.getspm_vds_id());
-                if (vds != null && vds.getStatus() == VDSStatus.NonOperational) {
-                    log.infoFormat(
-                            "Vds {0} is spm and non-operational, calling SetNonOperationalVds",
-                            vds.getName());
-                    SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(vds.getId(),
-                            NonOperationalReason.GENERAL);
-                    tempVar.setSaveToDb(true);
-                    tempVar.setShouldBeLogged(false);
-                    Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar,  ExecutionHandler.createInternalJobContext());
-                } else {
-                    log.info("Could not find vds that is spm and non-operational.");
-                }
-            }
         }
     }
 
