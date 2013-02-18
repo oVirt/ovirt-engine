@@ -5,9 +5,10 @@ package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
  * Commented out test class in order to cancel dependency on PowerMock
  * This should be revisited.
  */
+import static org.mockito.Mockito.RETURNS_DEFAULTS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-//import static org.mockito.Mockito.when;
-//
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -123,9 +124,10 @@ public class AuditLogDirectorTest {
                         vdsName,
                         AuditLogDirector.UNKNOWN_VARIABLE_VALUE);
 
-        AuditLogableBase logable = new AuditLogableBase();
-        logable.setVmName(vmName);
-        logable.setVdsName(vdsName);
+        AuditLogableBase logable = mock(AuditLogableBase.class, RETURNS_DEFAULTS);
+        when(logable.getVdsName()).thenReturn("TestVDS");
+        when(logable.getVmName()).thenReturn("TestVM");
+
         String resolvedMessage = AuditLogDirector.resolveMessage(message, logable);
         Assert.assertEquals(expectedResolved, resolvedMessage);
     }
