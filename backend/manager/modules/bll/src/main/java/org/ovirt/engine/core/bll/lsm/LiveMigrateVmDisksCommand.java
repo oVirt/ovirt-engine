@@ -163,11 +163,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
 
         for (LiveMigrateDiskParameters parameters : getParameters().getParametersList()) {
-            // If source and destination are in the same quota - return empty list
             DiskImage diskImage = getDiskImageById(parameters.getImageId());
-            if (diskImage.getQuotaId() != null && diskImage.getQuotaId().equals(parameters.getQuotaId())) {
-                return list;
-            }
 
             list.add(new QuotaStorageConsumptionParameter(
                     parameters.getQuotaId(),

@@ -385,10 +385,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
         List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
-        // If source and destination are in the same quota - return empty list
-        if (getImage().getQuotaId() != null && getImage().getQuotaId().equals(getDestinationQuotaId())) {
-            return list;
-        }
 
         list.add(new QuotaStorageConsumptionParameter(
                 getDestinationQuotaId(),
