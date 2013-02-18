@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresent
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceToGuestWithNonRespAgentModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
@@ -21,12 +20,12 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmMakeTemp
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmServerNewPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VncInfoPopupPresenterWidget;
-import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDataBoundModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.AbstractUserPortalListProvider;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class UserPortalListProvider extends UserPortalDataBoundModelProvider<UserPortalItemModel, UserPortalListModel> {
+public class UserPortalListProvider extends AbstractUserPortalListProvider<UserPortalListModel> {
 
     private final Provider<VmDesktopNewPopupPresenterWidget> newDesktopVmPopupProvider;
     private final Provider<VmServerNewPopupPresenterWidget> newServerVmPopupProvider;
