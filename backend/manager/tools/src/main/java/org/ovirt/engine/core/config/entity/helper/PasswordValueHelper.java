@@ -131,8 +131,7 @@ public class PasswordValueHelper implements ValueHelper {
         if (StringUtils.isNotBlank(parser.getAdminPassFile()) && new File(parser.getAdminPassFile()).exists()) {
             return new ValidationResult(true);
         }
-        return new ValidationResult(false);
-
+        return new ValidationResult(false, getHelpNote());
     }
 
     @Override
@@ -140,4 +139,16 @@ public class PasswordValueHelper implements ValueHelper {
         this.parser = parser;
     }
 
+    public String getHelpNote() {
+        return String.format("%n%n%n" +
+                             "### Notes:%n" +
+                             "### 1. Passwords: password can be set in interactive mode ie:%n" +
+                             "###        engine-config -s PasswordEntry=interactive%n" +
+                             "###    or via file with one of the following options:%n" +
+                             "###        engine-config -s PasswordEntry --admin-pass-file=/tmp/mypass%n" +
+                             "###        engine-config -s PasswordEntry=/tmp/mypass%n" +
+                             "### 2. In order for your change(s) to take effect,%n" +
+                             "###    restart the oVirt engine service (using: 'service ovirt-engine restart').%n" +
+                             "################################################################################%n%n");
+    }
 }

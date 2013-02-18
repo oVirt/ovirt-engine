@@ -30,7 +30,7 @@ usage () {
         printf "\t\tdisplay this help and exit.\n"
         printf "\n"
         printf "### Notes: \n"
-        printf "### 1. Passwords: password can be set in interacetive mode ie:\n"
+        printf "### 1. Passwords: password can be set in interactive mode ie:\n"
         printf "###        engine-config -s PasswordEntry=interactive\n"
         printf "###    or via file with one of the following options:\n"
         printf "###        engine-config -s PasswordEntry --admin-pass-file=/tmp/mypass\n"
