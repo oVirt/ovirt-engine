@@ -611,7 +611,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 p.setVolumeFormat(diskImageBase.getVolumeFormat());
             }
             p.setParentParameters(getParameters());
-            p.setAddImageDomainMapping(getParameters().isImportAsNewEntity());
             VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
                     VdcActionType.MoveOrCopyImageGroup,
                     p,
