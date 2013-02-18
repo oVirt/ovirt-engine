@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
@@ -326,8 +327,11 @@ public class VmGuideModel extends GuideModel
                 disk = diskImage;
             }
             else {
+                LUNs luns = (LUNs) model.getSanStorageModel().getAddedLuns().get(0).getEntity();
+                luns.setLunType((StorageType) model.getStorageType().getSelectedItem());
+
                 LunDisk lunDisk = new LunDisk();
-                lunDisk.setLun((LUNs) model.getSanStorageModel().getAddedLuns().get(0).getEntity());
+                lunDisk.setLun(luns);
 
                 disk = lunDisk;
             }
