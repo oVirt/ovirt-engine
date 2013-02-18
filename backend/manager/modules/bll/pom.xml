@@ -15,7 +15,6 @@
   <properties>
     <engine.ejb3.connector.port>3873</engine.ejb3.connector.port>
     <engine.bisocket.connector.port>4457</engine.bisocket.connector.port>
-    <engine.db>postgres</engine.db>
     <engine.schema>engine</engine.schema>
   </properties>
 
@@ -64,18 +63,6 @@
       <version>${engine.version}</version>
     </dependency>
 
-    <!--
-    <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>licensecominstaller</artifactId>
-      <version>${engine.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>licensemanager</artifactId>
-      <version>${engine.version}</version>
-    </dependency>
-    -->
     <dependency>
       <groupId>${engine.groupId}</groupId>
       <artifactId>scheduler</artifactId>
@@ -114,44 +101,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.jboss.embedded</groupId>
-      <artifactId>jboss-embedded-all</artifactId>
-      <version>beta3.SP9</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging-log4j</artifactId>
       <version>2.1.0.GA</version> 
-      <scope>test</scope>
-    </dependency>
-
-
-    <dependency>
-      <groupId>org.jboss.embedded</groupId>
-      <artifactId>jboss-embedded</artifactId>
-      <version>beta3.SP9</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.embedded</groupId>
-      <artifactId>hibernate-all</artifactId>
-      <version>beta3.SP9</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.embedded</groupId>
-      <artifactId>thirdparty-all</artifactId>
-      <version>beta3.SP9</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>postgresql</groupId>
-      <artifactId>postgresql</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -161,13 +113,6 @@
       <version>1.6</version>
       <scope>test</scope>
     </dependency>
-
-     <dependency>
-       <groupId>org.jboss.spec.javax.ejb</groupId>
-       <artifactId>jboss-ejb-api_3.1_spec</artifactId>
-       <version>${javax.ejb.api.version}</version>
-     </dependency>
-
   </dependencies>
 
   <build>
