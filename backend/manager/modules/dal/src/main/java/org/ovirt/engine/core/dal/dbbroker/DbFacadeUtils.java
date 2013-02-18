@@ -12,17 +12,14 @@ import org.ovirt.engine.core.utils.crypt.EncryptionUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
-/**
- * Created by IntelliJ IDEA. User: gmostizk Date: Jul 22, 2009 Time: 4:04:26 PM To change this template use File |
- * Settings | File Templates.
- */
 public class DbFacadeUtils {
     private static final Log log = LogFactory.getLog(DbFacadeUtils.class);
 
     public static Date fromDate(Timestamp timestamp) {
-        if (timestamp == null)
+        if (timestamp == null) {
             return null;
-        return new java.util.Date(timestamp.getTime());
+        }
+        return new Date(timestamp.getTime());
     }
 
     public static Object asSingleResult(List<?> list) {
