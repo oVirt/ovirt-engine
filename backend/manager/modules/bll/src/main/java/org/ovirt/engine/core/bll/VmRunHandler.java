@@ -170,20 +170,20 @@ public class VmRunHandler {
                             if (retValue && isStatelessVm && !hasSpaceForSnapshots(vm, message)) {
                                 return false;
                             }
-
-                            retValue = retValue == false ? retValue : vdsSelector.canFindVdsToRunOn(message, false);
-
-                            /**
-                             * only if can do action ok then check with actions matrix that status is valid for this
-                             * action
-                             */
-                            if (retValue
-                                    && !VdcActionUtils.CanExecute(Arrays.asList(vm), VM.class,
-                                            VdcActionType.RunVm)) {
-                                retValue = false;
-                                message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL.toString());
-                            }
                         }
+                    }
+
+                    retValue = retValue == false ? retValue : vdsSelector.canFindVdsToRunOn(message, false);
+
+                    /**
+                     * only if can do action ok then check with actions matrix that status is valid for this
+                     * action
+                     */
+                    if (retValue
+                            && !VdcActionUtils.CanExecute(Arrays.asList(vm), VM.class,
+                                    VdcActionType.RunVm)) {
+                        retValue = false;
+                        message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL.toString());
                     }
                 }
             }
