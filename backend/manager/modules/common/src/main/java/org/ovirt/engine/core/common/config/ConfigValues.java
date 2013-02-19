@@ -28,9 +28,38 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("EXAMPLE.COM")
     DomainName(10),
+
+    /**
+     * Timeout in seconds for the completion of calls to VDSM. It should
+     * be quite large as some host operations can take more than 3
+     * minutes to complete.
+     */
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("180")
     vdsTimeout(11),
+
+    /**
+     * The number of times to retry host operations when there are IO errors.
+     * The default value is 3 to match the default value of the XML RPC library
+     * that we use, so there is no change in behaviour.
+     */
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("3")
+    vdsRetries(393),
+
+    /**
+     * Timeout for establishment of connections with hosts. This should be quite
+     * small, a few secones at most, as it the TCP handshake with hosts should
+     * be very quick in most networks.
+     *
+     * At the moment we are using 3 minutes in order to preserve the behaviour
+     * before this modification, but this will probably be changed to a much
+     * smaller value (2 seconds, for example) in the future.
+     */
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("180")
+    vdsConnectionTimeout(394),
+
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("2")
     VdsRefreshRate(12),

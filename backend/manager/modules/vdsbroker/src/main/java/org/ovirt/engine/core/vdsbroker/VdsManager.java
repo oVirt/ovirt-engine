@@ -180,11 +180,18 @@ public class VdsManager {
 
     private void InitVdsBroker() {
         log.infoFormat("Initialize vdsBroker ({0},{1})", _vds.getHostName(), _vds.getPort());
+
+        // Get the values of the timeouts:
         int clientTimeOut = Config.<Integer> GetValue(ConfigValues.vdsTimeout) * 1000;
+        int connectionTimeOut = Config.<Integer>GetValue(ConfigValues.vdsConnectionTimeout) * 1000;
+        int clientRetries = Config.<Integer>GetValue(ConfigValues.vdsRetries);
+
         Pair<VdsServerConnector, HttpClient> returnValue =
                 XmlRpcUtils.getConnection(_vds.getHostName(),
                         _vds.getPort(),
                         clientTimeOut,
+                        connectionTimeOut,
+                        clientRetries,
                         VdsServerConnector.class,
                         Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers));
         _vdsProxy = new VdsServerWrapper(returnValue.getFirst(), returnValue.getSecond());

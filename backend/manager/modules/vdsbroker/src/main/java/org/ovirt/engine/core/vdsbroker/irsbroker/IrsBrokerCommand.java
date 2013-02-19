@@ -517,11 +517,17 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                     });
 
                     if (host != null) {
+                        // Get the values of the timeouts:
                         int clientTimeOut = Config.<Integer> GetValue(ConfigValues.vdsTimeout) * 1000;
+                        int connectionTimeOut = Config.<Integer>GetValue(ConfigValues.vdsConnectionTimeout) * 1000;
+                        int clientRetries = Config.<Integer> GetValue(ConfigValues.vdsRetries);
+
                         Pair<IrsServerConnector, HttpClient> returnValue =
                                 XmlRpcUtils.getConnection(host,
                                         getmIrsPort(),
                                         clientTimeOut,
+                                        connectionTimeOut,
+                                        clientRetries,
                                         IrsServerConnector.class,
                                         Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers));
                         privatemIrsProxy = new IrsServerWrapper(returnValue.getFirst(), returnValue.getSecond());

@@ -463,6 +463,7 @@ select fn_db_add_config_value('VcpuConsumptionPercentage','10','general');
 select fn_db_add_config_value('VdcVersion','3.0.0.0','general');
 select fn_db_add_config_value('VDSAttemptsToResetCount','2','general');
 select fn_db_add_config_value('VdsCertificateValidityInYears','5','general');
+select fn_db_add_config_value('vdsConnectionTimeout','180','general');
 select fn_db_add_config_value('VdsFenceOptionMapping','alom:secure=secure,port=ipport;apc:secure=secure,port=ipport,slot=port;bladecenter:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port;drac5:secure=secure,slot=port;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;ilo2:secure=ssl,port=ipport;ipmilan:;ilo3:;ilo4:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port','general');
 select fn_db_add_config_value('VdsFenceOptions','','general');
 select fn_db_add_config_value('VdsFenceOptionTypes','secure=bool,port=int,slot=int','general');
@@ -474,6 +475,7 @@ select fn_db_add_config_value('VdsLocalDisksCriticallyLowFreeSpace','100','gener
 select fn_db_add_config_value('VdsLocalDisksLowFreeSpace','500','general');
 select fn_db_add_config_value('VdsRecoveryTimeoutInMintues','3','general');
 select fn_db_add_config_value('VdsRefreshRate','2','general');
+select fn_db_add_config_value('vdsRetries','3','general');
 --Handling Host Selection Algorithm default for cluster
 select fn_db_add_config_value('VdsSelectionAlgorithm','None','general');
 select fn_db_add_config_value('vdsTimeout','180','general');

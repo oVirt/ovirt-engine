@@ -11,8 +11,12 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethodRetryHandler;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.params.HttpClientParams;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 import org.apache.commons.lang.StringUtils;
@@ -78,7 +82,7 @@ public class XmlRpcUtils {
      * @return an instance of the given type.
      */
     public static <T> Pair<T, HttpClient> getConnection(String hostName, int port, int clientTimeOut,
-            Class<T> type, boolean isSecure) {
+            int connectionTimeOut, int clientRetries, Class<T> type, boolean isSecure) {
         URL serverUrl;
         String prefix;
         if (isSecure) {
@@ -92,7 +96,7 @@ public class XmlRpcUtils {
             log.error("failed to forme the xml-rpc url", mfue);
             return null;
         }
-        return getHttpConnection(serverUrl, clientTimeOut, type);
+        return getHttpConnection(serverUrl, clientTimeOut, connectionTimeOut, clientRetries, type);
     }
 
     public static void shutDownConnection(HttpClient httpClient) {
@@ -103,16 +107,16 @@ public class XmlRpcUtils {
 
     @SuppressWarnings("unchecked")
     private static <T> Pair<T, HttpClient> getHttpConnection(URL serverUrl, int clientTimeOut,
-            Class<T> type) {
+            int connectionTimeOut, int clientRetries, Class<T> type) {
         XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
         config.setServerURL(serverUrl);
-        config.setConnectionTimeout(clientTimeOut);
+        config.setConnectionTimeout(connectionTimeOut);
         config.setReplyTimeout(clientTimeOut);
         XmlRpcClient xmlRpcClient = new XmlRpcClient();
         xmlRpcClient.setConfig(config);
 
         XmlRpcCommonsTransportFactory transportFactory = new CustomXmlRpcCommonsTransportFactory(xmlRpcClient);
-        HttpClient httpclient = new HttpClient(new MultiThreadedHttpConnectionManager());
+        HttpClient httpclient = createHttpClient(clientRetries);
         transportFactory.setHttpClient(httpclient);
         xmlRpcClient.setTransportFactory(transportFactory);
 
@@ -124,6 +128,21 @@ public class XmlRpcUtils {
                 new Pair<T, HttpClient>(asyncConnector, httpclient);
 
         return returnValue;
+    }
+
+    private static HttpClient createHttpClient(int clientRetries) {
+        // Create the client:
+        HttpClient client = new HttpClient(new MultiThreadedHttpConnectionManager());
+
+        // Configure the HTTP client so it will retry the execution of
+        // methods when there are IO errors:
+        int retries = Config.<Integer> GetValue(ConfigValues.vdsRetries);
+        HttpMethodRetryHandler handler = new DefaultHttpMethodRetryHandler(retries, false);
+        HttpClientParams parameters = client.getParams();
+        parameters.setParameter(HttpMethodParams.RETRY_HANDLER, handler);
+
+        // Done:
+        return client;
     }
 
     private static class AsyncProxy implements InvocationHandler {
