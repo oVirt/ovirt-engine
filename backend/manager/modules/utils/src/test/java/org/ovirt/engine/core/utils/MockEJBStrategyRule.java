@@ -35,6 +35,7 @@ public class MockEJBStrategyRule extends TestWatcher {
     private EJBUtilsStrategy origStrategy;
     private EJBUtilsStrategy mockStrategy;
     private Map<BeanType, Object> mockBeanMap;
+    private Map<ContainerManagedResourceType, Object> mockContainerManagedResourceMap;
 
     /** Create the rule with no mocking */
     public MockEJBStrategyRule() {
@@ -46,9 +47,21 @@ public class MockEJBStrategyRule extends TestWatcher {
         this(new EnumMap<BeanType, Object>(Collections.singletonMap(type, bean)));
     }
 
+    /** Creates the rule with a mock of a single resource */
+    public MockEJBStrategyRule(ContainerManagedResourceType type, Object resource) {
+        this(new EnumMap<BeanType, Object>(BeanType.class), new EnumMap<ContainerManagedResourceType,Object>(Collections.singletonMap(type, resource)));
+
+    }
+
     /** Create the rule with with a mock of a several beans */
     public MockEJBStrategyRule(Map<BeanType, Object> beans) {
+        this(beans, new EnumMap<ContainerManagedResourceType,Object>(ContainerManagedResourceType.class));
+    }
+
+    /** Create the rule with with a mock of a several beans and several resources */
+    public MockEJBStrategyRule(Map<BeanType, Object> beans, Map<ContainerManagedResourceType,Object> resources) {
         mockBeanMap = beans;
+        mockContainerManagedResourceMap = resources;
         origStrategy = EjbUtils.getStrategy();
         mockStrategy = mock(EJBUtilsStrategy.class);
         EjbUtils.setStrategy(mockStrategy);
@@ -58,12 +71,17 @@ public class MockEJBStrategyRule extends TestWatcher {
         Transaction trans = mock(Transaction.class);
         TransactionManager tm = mock(TransactionManager.class);
         doReturn(trans).when(tm).getTransaction();
-        doReturn(tm).when(mockStrategy)
-                .<TransactionManager> findResource(ContainerManagedResourceType.TRANSACTION_MANAGER);
+        mockResource(ContainerManagedResourceType.TRANSACTION_MANAGER, tm);
     }
 
     public void mockBean(BeanType type, Object bean) {
         mockBeanMap.put(type, bean);
+        when(mockStrategy.findBean(eq(type), any(BeanProxyType.class))).thenReturn(bean);
+    }
+
+    public void mockResource(ContainerManagedResourceType type, Object resource) {
+        mockContainerManagedResourceMap.put(type, resource);
+        when(mockStrategy.findResource(eq(type))).thenReturn(resource);
     }
 
     @Override
@@ -72,6 +90,10 @@ public class MockEJBStrategyRule extends TestWatcher {
             mockTransactionManagement();
             for (Map.Entry<BeanType, Object> mockBeanEntry : mockBeanMap.entrySet()) {
                 when(mockStrategy.findBean(eq(mockBeanEntry.getKey()), any(BeanProxyType.class))).thenReturn(mockBeanEntry.getValue());
+            }
+
+            for (Map.Entry<ContainerManagedResourceType, Object> mockResourceEntry : mockContainerManagedResourceMap.entrySet()) {
+                when(mockStrategy.findResource(eq(mockResourceEntry.getKey()))).thenReturn(mockResourceEntry.getValue());
             }
         } catch (SystemException e) {
             Assert.fail("Unable to mock tranaction management");
