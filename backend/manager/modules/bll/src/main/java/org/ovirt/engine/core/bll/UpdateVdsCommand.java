@@ -43,7 +43,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
     @Override
     protected boolean canDoAction() {
         boolean returnValue = false;
-        _oldVds = DbFacade.getInstance().getVdsDao().get(getVdsId());
+        _oldVds = getVdsDAO().get(getVdsId());
 
         if (_oldVds != null && getParameters().getVdsStaticData() != null) {
             String compatibilityVersion = _oldVds.getVdsGroupCompatibilityVersion().toString();
@@ -69,13 +69,13 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                     returnValue = false;
                 }
                 // check if a name is updated to an existing vds name
-                else if (!StringUtils.equals(_oldVds.getName().toLowerCase(), getParameters().getVdsStaticData()
-                        .getName().toLowerCase())
-                        && VdsHandler.isVdsWithSameNameExistStatic(getParameters().getVdsStaticData().getName())) {
+                else if (!StringUtils.equalsIgnoreCase(_oldVds.getName(), getParameters().getVdsStaticData()
+                        .getName())
+                        && getVdsDAO().getAllWithName(vdsName).size() != 0) {
                     addCanDoActionMessage(VdcBllMessages.VDS_TRY_CREATE_WITH_EXISTING_PARAMS);
-                } else if (!StringUtils.equals(_oldVds.getHostName().toLowerCase(), getParameters().getVdsStaticData()
-                        .getHostName().toLowerCase())
-                        && VdsHandler.isVdsWithSameHostExistStatic(getParameters().getVdsStaticData().getHostName())) {
+                } else if (!StringUtils.equalsIgnoreCase(_oldVds.getHostName(), getParameters().getVdsStaticData()
+                        .getHostName())
+                        && getVdsDAO().getAllForHostname(hostName).size() != 0) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST);
                 } else if (getParameters().getInstallVds() && _oldVds.getStatus() != VDSStatus.Maintenance
                         && _oldVds.getStatus() != VDSStatus.NonOperational

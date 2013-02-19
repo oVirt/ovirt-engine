@@ -303,6 +303,12 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             } else if (!ValidationUtils.validHostname(hostName)) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_VDS_HOSTNAME);
                 returnValue = false;
+            } else if (getVdsDAO().getAllWithName(vdsName).size() != 0) {
+                addCanDoActionMessage(VdcBllMessages.VDS_TRY_CREATE_WITH_EXISTING_PARAMS);
+                returnValue = false;
+            } else if (getVdsDAO().getAllForHostname(hostName).size() != 0) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST);
+                returnValue = false;
             } else {
                 returnValue = returnValue && validateSingleHostAttachedToLocalStorage();
 
