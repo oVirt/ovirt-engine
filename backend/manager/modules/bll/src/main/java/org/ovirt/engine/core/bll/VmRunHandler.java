@@ -254,8 +254,8 @@ public class VmRunHandler {
         return ImagesHandler.PerformImagesChecks(message,
                 vm.getStoragePoolId(), Guid.Empty, !vm.isAutoStartup(),
                 true, false, false,
-                !vm.isAutoStartup() || !runParams.getIsInternal() && vm.isAutoStartup(),
-                !vm.isAutoStartup() || !runParams.getIsInternal() && vm.isAutoStartup(),
+                !vm.isAutoStartup() || !runParams.getIsInternal(),
+                !vm.isAutoStartup() || !runParams.getIsInternal(),
                 vmDisks);
     }
 
