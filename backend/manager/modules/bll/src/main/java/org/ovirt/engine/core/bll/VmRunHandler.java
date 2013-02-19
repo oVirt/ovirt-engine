@@ -121,7 +121,8 @@ public class VmRunHandler {
                         }
                     }
 
-                    if (retValue && vmDisks.size() > 0) {
+                    List<DiskImage> vmImages = ImagesHandler.filterImageDisks(vmDisks, true, false);
+                    if (retValue && !vmImages.isEmpty()) {
                         storage_pool sp = getStoragePoolDAO().get(vm.getStoragePoolId());
                         ValidationResult spUpResult = new StoragePoolValidator(sp).isUp();
                         if (!spUpResult.isValid()) {
@@ -130,7 +131,7 @@ public class VmRunHandler {
                         }
 
                         if (retValue) {
-                            retValue = performImageChecksForRunningVm(vm, message, runParams, vmDisks);
+                            retValue = performImageChecksForRunningVm(vm, message, runParams, vmImages);
                         }
 
                         // Check if iso and floppy path exists
@@ -249,7 +250,7 @@ public class VmRunHandler {
      * Check isValid, storageDomain and diskSpace only if VM is not HA VM
      */
     protected boolean performImageChecksForRunningVm
-            (VM vm, List<String> message, RunVmParams runParams, List<Disk> vmDisks) {
+            (VM vm, List<String> message, RunVmParams runParams, List<DiskImage> vmDisks) {
         return ImagesHandler.PerformImagesChecks(message,
                 vm.getStoragePoolId(), Guid.Empty, !vm.isAutoStartup(),
                 true, false, false,
