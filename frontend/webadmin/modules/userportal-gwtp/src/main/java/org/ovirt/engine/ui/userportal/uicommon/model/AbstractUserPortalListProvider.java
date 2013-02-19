@@ -32,10 +32,20 @@ public abstract class AbstractUserPortalListProvider<M extends IUserPortalListMo
             super.updateDataProvider(items);
         }
 
-        // Subsequent data update
+        // Subsequent data update, with item change
         else if (itemsChanged(items, currentItems)) {
+            for(UserPortalItemModel itemModel: currentItems) {
+                itemModel.clearReferences();
+            }
             super.updateDataProvider(items);
         }
+
+        // Subsequent data update, without item change
+        else {
+            retainSelectedItems();
+        }
+
+        currentItems = items;
     }
 
     /**

@@ -76,14 +76,19 @@ public abstract class UserPortalDataBoundModelProvider<T, M extends SearchableLi
     @Override
     protected void updateDataProvider(List<T> items) {
         super.updateDataProvider(items);
-
-        // Retain item selection within the model
-        if (selectedItems != null) {
-            super.setSelectedItems(selectedItems);
-        }
+        retainSelectedItems();
 
         if (dataChangeListener != null) {
             dataChangeListener.onDataChange(items);
+        }
+    }
+
+    /**
+     * Retains the item selection of the model.
+     */
+    protected void retainSelectedItems() {
+        if (selectedItems != null) {
+            super.setSelectedItems(selectedItems);
         }
     }
 
