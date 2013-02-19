@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
 import org.ovirt.engine.core.common.validation.annotation.ValidVdsGroup;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -283,100 +284,25 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
             return false;
         }
         VDSGroup other = (VDSGroup) obj;
-        if (compatVersion == null) {
-            if (other.compatVersion != null) {
-                return false;
-            }
-        } else if (!compatVersion.equals(other.compatVersion)) {
-            return false;
-        }
-        if (compatibility_version == null) {
-            if (other.compatibility_version != null) {
-                return false;
-            }
-        } else if (!compatibility_version.equals(other.compatibility_version)) {
-            return false;
-        }
-        if (cpu_name == null) {
-            if (other.cpu_name != null) {
-                return false;
-            }
-        } else if (!cpu_name.equals(other.cpu_name)) {
-            return false;
-        }
-        if (cpu_over_commit_duration_minutes != other.cpu_over_commit_duration_minutes) {
-            return false;
-        }
-        if (description == null) {
-            if (other.description != null) {
-                return false;
-            }
-        } else if (!description.equals(other.description)) {
-            return false;
-        }
-        if (high_utilization != other.high_utilization) {
-            return false;
-        }
-        if (id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!id.equals(other.id)) {
-            return false;
-        }
-        if (low_utilization != other.low_utilization) {
-            return false;
-        }
-        if (max_vds_memory_over_commit != other.max_vds_memory_over_commit) {
-            return false;
-        }
-        if (countThreadsAsCores != other.countThreadsAsCores) {
-            return false;
-        }
-        if (migrateOnError != other.migrateOnError) {
-            return false;
-        }
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        if (selection_algorithm == null) {
-            if (other.selection_algorithm != null) {
-                return false;
-            }
-        } else if (!selection_algorithm.equals(other.selection_algorithm)) {
-            return false;
-        }
-        if (storagePoolId == null) {
-            if (other.storagePoolId != null) {
-                return false;
-            }
-        } else if (!storagePoolId.equals(other.storagePoolId)) {
-            return false;
-        }
-        if (storagePoolName == null) {
-            if (other.storagePoolName != null) {
-                return false;
-            }
-        } else if (!storagePoolName.equals(other.storagePoolName)) {
-            return false;
-        }
-        if (transparentHugepages != other.transparentHugepages) {
-            return false;
-        }
-        if (virtService != other.virtService) {
-            return false;
-        }
-        if (glusterService != other.glusterService) {
-            return false;
-        }
-        if (tunnelMigration != other.tunnelMigration) {
-            return false;
-        }
-        return true;
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && ObjectUtils.objectsEqual(compatVersion, other.compatVersion)
+                && ObjectUtils.objectsEqual(compatibility_version, other.compatibility_version)
+                && ObjectUtils.objectsEqual(cpu_name, other.cpu_name)
+                && cpu_over_commit_duration_minutes == other.cpu_over_commit_duration_minutes
+                && ObjectUtils.objectsEqual(description, other.description)
+                && high_utilization == other.high_utilization
+                && low_utilization == other.low_utilization
+                && max_vds_memory_over_commit == other.max_vds_memory_over_commit
+                && countThreadsAsCores == other.countThreadsAsCores
+                && migrateOnError == other.migrateOnError
+                && ObjectUtils.objectsEqual(name, other.name)
+                && ObjectUtils.objectsEqual(selection_algorithm, other.selection_algorithm)
+                && ObjectUtils.objectsEqual(storagePoolId, other.storagePoolId)
+                && ObjectUtils.objectsEqual(storagePoolName, other.storagePoolName)
+                && transparentHugepages == other.transparentHugepages
+                && virtService == other.virtService
+                && glusterService == other.glusterService
+                && tunnelMigration == other.tunnelMigration);
     }
 
 }
