@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -27,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -102,31 +102,35 @@ public class VmRunHandler {
                             && DbFacade.getInstance().getVmNetworkInterfaceDao().getAllForVm(vm.getId()).size() == 0) {
                         message.add(VdcBllMessages.VM_CANNOT_RUN_FROM_NETWORK_WITHOUT_NETWORK.toString());
                         retValue = false;
-                    } else if (vmDisks.size() > 0) {
+                    }
+
+                    if (retValue) {
+                        ValidationResult vmNotLockedResult = new VmValidator(vm).vmNotLocked();
+                        if (!vmNotLockedResult.isValid()) {
+                            message.add(vmNotLockedResult.getMessage().name());
+                            retValue = false;
+                        }
+                    }
+
+                    if (retValue) {
                         ValidationResult vmDuringSnapshotResult =
                                 snapshotsValidator.vmNotDuringSnapshot(vm.getId());
                         if (!vmDuringSnapshotResult.isValid()) {
                             message.add(vmDuringSnapshotResult.getMessage().name());
                             retValue = false;
                         }
+                    }
+
+                    if (retValue && vmDisks.size() > 0) {
+                        storage_pool sp = getStoragePoolDAO().get(vm.getStoragePoolId());
+                        ValidationResult spUpResult = new StoragePoolValidator(sp).isUp();
+                        if (!spUpResult.isValid()) {
+                            message.add(spUpResult.getMessage().name());
+                            retValue = false;
+                        }
 
                         if (retValue) {
-                            storage_pool sp = getStoragePoolDAO().get(vm.getStoragePoolId());
-                            ValidationResult spUpResult = new StoragePoolValidator(sp).isUp();
-                            if (!spUpResult.isValid()) {
-                                message.add(spUpResult.getMessage().name());
-                                retValue = false;
-                            }
-                        }
-
-                        if (retValue && !performImageChecksForRunningVm(vm, message, runParams, vmDisks)) {
-                            retValue = false;
-                        }
-
-                        ValidationResult vmNotLockedResult = new VmValidator(vm).vmNotLocked();
-                        if (!vmNotLockedResult.isValid()) {
-                            message.add(vmNotLockedResult.getMessage().name());
-                            retValue = false;
+                            retValue = performImageChecksForRunningVm(vm, message, runParams, vmDisks);
                         }
 
                         // Check if iso and floppy path exists
