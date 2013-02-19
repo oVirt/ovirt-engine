@@ -574,8 +574,24 @@ def runPost():
     logging.debug("Post script completed successfully")
 
 def runFunc(funcList, dispString):
-    sys.stdout.write("%s..." % dispString)
+    # Add '...' into the display string itself. It is needed for correct alignment
+    # calculation.
+    dispString = dispString + "..."
+    sys.stdout.write("%s" % dispString)
     sys.stdout.flush()
+    if len(dispString) > 69:
+        # Split by lines (\n), and work with last part (may be empty string):
+        dispString = dispString.split('\n')[-1]
+
+        # If last chunk is still long add termination at the END
+        # and aling text on the next line:
+        if len(dispString) > 69:
+            sys.stdout.write("\n")
+            sys.stdout.flush()
+
+            # dispString is now simply next line, so it is empty.
+            dispString = ''
+
     spaceLen = basedefs.SPACE_LEN - len(dispString)
     try:
         for func in funcList:
