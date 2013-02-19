@@ -1836,6 +1836,7 @@ def _startNfsServices():
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_FAILED_TO_START_NFS_SERVICE)
 
+
 def _loadFilesToIsoDomain():
     """
     Load files (iso,vfd) from existing rpms
@@ -1848,13 +1849,17 @@ def _loadFilesToIsoDomain():
     targetPath = os.path.join(controller.CONF["NFS_MP"], controller.CONF["sd_uuid"], "images", "11111111-1111-1111-1111-111111111111")
 
     try:
-        # Iterate the list and copy all the files
+        # Iterate the list and copy all the files if they exists.
         for filename in fileList:
-            utils.copyFile(filename, targetPath, basedefs.CONST_VDSM_UID, basedefs.CONST_KVM_GID)
-    except:
+            if os.path.exists(filename):
+                utils.copyFile(filename, targetPath, basedefs.CONST_VDSM_UID,
+                    basedefs.CONST_KVM_GID
+                )
+    except Exception:
         # We don't want to fail the setup, just log the error
         logging.error(traceback.format_exc())
         logging.error(output_messages.ERR_FAILED_TO_COPY_FILE_TO_ISO_DOMAIN)
+
 
 def _printAdditionalMessages():
     print "\n",output_messages.INFO_ADDTIONAL_MSG
