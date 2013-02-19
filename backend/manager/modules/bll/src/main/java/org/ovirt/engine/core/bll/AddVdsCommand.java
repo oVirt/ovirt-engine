@@ -190,7 +190,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         }
     }
 
-    private boolean isGlusterSupportEnabled() {
+    protected boolean isGlusterSupportEnabled() {
         return getVdsGroup().supportsGlusterService() && getParameters().isGlusterPeerProbeNeeded();
     }
 
@@ -278,16 +278,20 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         getCompensationContext().snapshotNewEntity(vdsStatistics);
     }
 
+    protected boolean validateVdsGroup() {
+        if (getVdsGroup() == null) {
+            return failCanDoAction(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
+        }
+        return true;
+    }
+
     @Override
     protected boolean canDoAction() {
-        boolean returnValue = true;
         setVdsGroupId(getParameters().getVdsStaticData().getVdsGroupId());
         getParameters().setVdsForUniqueId(null);
         // Check if this is a valid cluster
-        if (getVdsGroup() == null) {
-            addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
-            returnValue = false;
-        } else {
+        boolean returnValue = validateVdsGroup();
+        if (returnValue) {
             VDS vds = getParameters().getvds();
             String vdsName = vds.getName();
             String hostName = vds.getHostName();
@@ -323,8 +327,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                     // Note that this may override local host SSH policy. See BZ#688718.
                     addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_INSTALL_EMPTY_PASSWORD);
                     returnValue = false;
-                } else if (!IsPowerManagementLegal(getParameters().getVdsStaticData(), getVdsGroup()
-                        .getcompatibility_version().toString())) {
+                } else if (!isPowerManagementLegal()) {
                     returnValue = false;
                 } else {
                     returnValue = returnValue && canConnect(vds);
@@ -343,6 +346,11 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         return returnValue;
     }
 
+    protected boolean isPowerManagementLegal() {
+        return IsPowerManagementLegal(getParameters().getVdsStaticData(), getVdsGroup()
+                .getcompatibility_version().toString());
+    }
+
     private boolean clusterHasServers() {
         return ClusterUtils.getInstance().hasServers(getVdsGroupId());
     }
@@ -351,7 +359,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         return new SSHClient();
     }
 
-    private boolean canConnect(VDS vds) {
+    protected boolean canConnect(VDS vds) {
         boolean returnValue = true;
 
         // execute the connectivity and id uniqueness validation for VDS type hosts
@@ -397,7 +405,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         return returnValue;
     }
 
-    private boolean validateSingleHostAttachedToLocalStorage() {
+    protected boolean validateSingleHostAttachedToLocalStorage() {
         boolean retrunValue = true;
         storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao().getForVdsGroup(
                 getParameters().getVdsStaticData().getVdsGroupId());
