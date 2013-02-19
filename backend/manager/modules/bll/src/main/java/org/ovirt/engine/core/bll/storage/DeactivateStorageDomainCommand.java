@@ -288,10 +288,10 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                         return null;
                     }
                 });
+                updateStoragePoolMasterDomainVersionInDiffTransaction();
             } else {
                 _isLastMaster = true;
             }
-            updateStoragePoolMasterDomainVersionInDiffTransaction();
         }
     }
 
