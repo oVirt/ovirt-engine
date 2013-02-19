@@ -937,7 +937,7 @@ def getFirewalls():
     if fwd.available():
         firewalls.append("Firewalld")
     if iptables.available():
-        firewalls.append("IPTables")
+        firewalls.append("iptables")
 
     return firewalls
 
