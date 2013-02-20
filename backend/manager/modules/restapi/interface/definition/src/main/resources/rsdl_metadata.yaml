@@ -117,6 +117,41 @@ actions:
           vm.tunnel_migration: xs:boolean
           vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.file.name: 'xs:string', payload.file.content: 'xs:string'}
           vm.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
+      # the following signature is for clone VM from a Snapshot - requires the Snapshot ID
+      - mandatoryArguments: {vm.name: 'xs:string', vm.template.id|name: 'xs:string', vm.cluster.id|name: 'xs:string',
+          vm.snapshots.snapshot--COLLECTION: {snapshot.id: 'xs:string'}}
+        optionalArguments:
+          vm.quota.id: xs:string
+          vm.timezone: xs:string
+          vm.os.boot--COLLECTION: {boot.dev: 'xs:string'}
+          vm.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}
+          vm.os.type: xs:string
+          vm.usb.enabled: xs:boolean
+          vm.usb.type: xs:string
+          vm.type: xs:string
+          vm.os.initRd: xs:string
+          vm.display.monitors: xs:int
+          vm.display.type: xs:string
+          vm.display.allow_override: xs:boolean
+          vm.display.smartcard_enabled: xs:boolean
+          vm.display.keyboard_layout: xs:string
+          vm.os.cmdline: xs:string
+          vm.cpu.topology.cores: xs:int
+          vm.memory: xs:long
+          vm.high_availability.priority: xs:int
+          vm.high_availability.enabled: xs:boolean
+          vm.domain.name: xs:string
+          vm.description: xs:string
+          vm.stateless: xs:boolean
+          vm.delete_protected: xs:boolean
+          vm.cpu.topology.sockets: xs:int
+          vm.placement_policy.affinity: xs:string
+          vm.placement_policy.host.id|name: xs:string
+          vm.origin: xs:string
+          vm.os.kernel: xs:string
+          vm.tunnel_migration: xs:boolean
+          vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.file.name: 'xs:string', payload.file.content: 'xs:string'}
+          vm.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
