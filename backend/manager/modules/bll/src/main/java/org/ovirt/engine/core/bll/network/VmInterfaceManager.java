@@ -121,6 +121,24 @@ public class VmInterfaceManager {
         return vmNames;
     }
 
+    /***
+     * Returns whether or not there is a plugged network interface with the same MAC address as the given interface
+     *
+     * @param interfaceToPlug
+     *            the network interface that needs to be plugged
+     * @return <code>true</code> if the MAC is used by another plugged network interface, <code>false</code> otherwise.
+     */
+    public boolean existsPluggedInterfaceWithSameMac(VmNetworkInterface interfaceToPlug) {
+        List<VmNetworkInterface> vmNetworkIntrefaces =
+                getVmNetworkInterfaceDao().getPluggedForMac(interfaceToPlug.getMacAddress());
+        for (VmNetworkInterface vmNetworkInterface : vmNetworkIntrefaces) {
+            if (!interfaceToPlug.getId().equals(vmNetworkInterface.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Log the given loggable & message to the {@link AuditLogDirector}.
      *

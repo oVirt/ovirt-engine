@@ -78,4 +78,13 @@ public interface VmNetworkInterfaceDao extends GenericDao<VmNetworkInterface, Gu
      * @return the list of MAC addresses
      */
     List<String> getAllMacsByDataCenter(Guid dataCenterId);
+
+    /***
+     * Retrieves the plugged VmNetworkInterfaces that have the given MAC address
+     *
+     * @param macAddress
+     *            the MAC address
+     * @return the list of plugged VmNetworkInterfaces
+     */
+    List<VmNetworkInterface> getPluggedForMac(String macAddress);
 }

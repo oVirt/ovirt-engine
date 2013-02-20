@@ -3,7 +3,9 @@ package org.ovirt.engine.core.bll.network.vm;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
+import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
@@ -13,6 +15,8 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -58,6 +62,10 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         vmDevice = getVmDeviceDao().get(new VmDeviceId(getParameters().getNic().getId(), getParameters().getVmId()));
         if (vmDevice == null) {
             addCanDoActionMessage(VdcBllMessages.VM_INTERFACE_NOT_EXIST);
+            return false;
+        }
+
+        if (getParameters().getAction() == PlugAction.PLUG && !validate(macAvailable())) {
             return false;
         }
 
@@ -144,5 +152,15 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     private boolean hotPlugVmNicRequired(VMStatus vmStatus) {
         return vmStatus == VMStatus.Up;
+    }
+
+    protected ValidationResult macAvailable() {
+        Boolean allowDupMacs = Config.<Boolean> GetValue(ConfigValues.AllowDuplicateMacAddresses);
+        VmInterfaceManager vmInterfaceManager = new VmInterfaceManager();
+        if (allowDupMacs || !vmInterfaceManager.existsPluggedInterfaceWithSameMac(getParameters().getNic())) {
+            return ValidationResult.VALID;
+        } else {
+            return new ValidationResult(VdcBllMessages.NETWORK_MAC_ADDRESS_IN_USE);
+        }
     }
 }

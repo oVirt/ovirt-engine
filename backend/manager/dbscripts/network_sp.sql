@@ -517,7 +517,16 @@ LANGUAGE plpgsql;
 
 
 
-
+Create or replace FUNCTION GetPluggedVmInterfacesByMac(v_mac_address VARCHAR(20))
+RETURNS SETOF vm_interface_view
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM vm_interface_view
+   WHERE mac_addr = v_mac_address
+   AND is_plugged = true;
+END; $procedure$
+LANGUAGE plpgsql;
 
 
 ----------------------------------------------------------------

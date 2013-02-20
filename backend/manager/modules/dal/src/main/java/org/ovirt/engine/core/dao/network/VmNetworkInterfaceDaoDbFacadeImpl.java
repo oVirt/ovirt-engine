@@ -152,4 +152,10 @@ public class VmNetworkInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implement
         return getCallsHandler().executeReadList("GetMacsByDataCenterId",
                 macMapper, getCustomMapSqlParameterSource().addValue("data_center_id", dataCenterId));
     }
+
+    @Override
+    public List<VmNetworkInterface> getPluggedForMac(String macAddress) {
+        return getCallsHandler().executeReadList("GetPluggedVmInterfacesByMac",
+                mapper, getCustomMapSqlParameterSource().addValue("mac_address", macAddress));
+    }
 }

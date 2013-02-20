@@ -277,6 +277,14 @@ public class VmNetworkInterfaceDaoTest extends BaseDAOTestCase {
         assertEquals(FixturesTool.MAC_ADDRESS, result.get(0));
     }
 
+    @Test
+    public void testGetPluggedForMac() throws Exception {
+        List<VmNetworkInterface> result = dao.getPluggedForMac(FixturesTool.MAC_ADDRESS);
+        for (VmNetworkInterface vmNetworkInterface : result) {
+            assertEquals(FixturesTool.MAC_ADDRESS, vmNetworkInterface.getMacAddress());
+        }
+    }
+
     private void assertCorrectResultForTemplate(List<VmNetworkInterface> result) {
         assertNotNull(result);
         assertFalse(result.isEmpty());
