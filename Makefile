@@ -132,10 +132,6 @@ $(BUILD_FILE):
 	$(MVN) \
 		$(BUILD_FLAGS) \
 		$(EXTRA_BUILD_FLAGS) \
-		dependency:resolve-plugins
-	$(MVN) \
-		$(BUILD_FLAGS) \
-		$(EXTRA_BUILD_FLAGS) \
 		-D skipTests \
 		-D altDeploymentRepository=install::default::file://$(MAVEN_OUTPUT_DIR) \
 		deploy
