@@ -104,6 +104,14 @@ then
     LOCAL_DB_SET=0
 fi
 
+logmsg()
+{
+	MESSAGE="$1"
+	DATE=`date --iso-8601`
+	TIME=`date +"%X"`
+	echo "${DATE} ${TIME} [${SCRIPT_NAME}] ${MESSAGE}" >> ${LOGFILE}
+}
+
 verifyArgs()
 {
 	#if we dont have mandatory args, exit with 1
@@ -153,14 +161,14 @@ initLogFile()
 
         LOGFILE="$LOG_PATH/$LOGFILE"
     fi
-    echo "#engine db installer log file on $HOST" >> $LOGFILE
+    logmsg "#engine db installer log file on $HOST"
 }
 
 
 #TODO: check if postgresql patch is installed
 verifyPostgresPkgAreInstalled()
 {
-    echo "[$SCRIPT_NAME] verifying required rpms are installed." >> $LOGFILE
+    logmsg "verifying required rpms are installed."
 	for rpm in "${REQUIRED_RPMS[@]}"; do
 		verifyPkgIsInstalled ${rpm}
 	done
@@ -175,7 +183,7 @@ verifyPkgIsInstalled()
 
 verifyPostgresService()
 {
-   echo "[$SCRIPT_NAME] verifying postgres service exists." >> $LOGFILE
+   logmsg "verifying postgres service exists."
    rc=0
    if [ $SYSTEMD_SUPPORT -eq 1 ]
    then
@@ -205,11 +213,11 @@ verifyPostgresService()
 
 initPgsqlDB()
 {
-    echo "[$SCRIPT_NAME] init postgres db." >> $LOGFILE
+    logmsg "init postgres db."
     #verify is service postgres initdb has run already
     if [ -e "$PGDATA/PG_VERSION" ]
     then
-        echo "[$SCRIPT_NAME] psgql db already been initialized." >> $LOGFILE
+        logmsg "psgql db already been initialized."
     else
 		if [ $SYSTEMD_SUPPORT -eq 1 ]
 		then
@@ -227,7 +235,7 @@ startPgsqlService()
 {
 	USER=$1
 	DB=$2
-	echo "[$SCRIPT_NAME] stop postgres service." >> $LOGFILE
+	logmsg "stop postgres service."
 	if [ $SYSTEMD_SUPPORT -eq 1 ]
 	then
 		$SYSTEMCTL stop $SYSTEMD_PGSQL_SERVICE >> $LOGFILE 2>&1
@@ -235,7 +243,7 @@ startPgsqlService()
 		$PGSQL_SERVICE stop >> $LOGFILE 2>&1
 	fi
 
-    echo "[$SCRIPT_NAME] starting postgres service." >> $LOGFILE
+    logmsg "starting postgres service."
 	if [ $SYSTEMD_SUPPORT -eq 1 ]
 	then
 		$SYSTEMCTL start $SYSTEMD_PGSQL_SERVICE >> $LOGFILE 2>&1
@@ -250,7 +258,7 @@ startPgsqlService()
     SERVICE_UP=0
     for i in {1..20}
     do
-       echo "[$SCRIPT_NAME] validating that postgres service is running...retry $i" >> $LOGFILE
+       logmsg "validating that postgres service is running...retry $i"
        PGPASSFILE="${ENGINE_PGPASS}" $PSQL -U $USER -d $DB -c "select 1">> $LOGFILE 2>&1
        if [[ $? == 0 ]]
        then
@@ -262,7 +270,7 @@ startPgsqlService()
 
     if [[ $SERVICE_UP != 1 ]]
     then
-        echo "[$SCRIPT_NAME] failed loading postgres service - timeout expired." >> $LOGFILE
+        logmsg "failed loading postgres service - timeout expired."
         exit 1
     fi
 }
@@ -274,7 +282,7 @@ changePgAuthScheme()
 	OLD=$1
 	NEW=$2
 	OLD_OPTIONAL=$3
-    echo "[$SCRIPT_NAME] changing authentication scheme from $OLD to $NEW." >> $LOGFILE
+    logmsg "changing authentication scheme from $OLD to $NEW."
     #backup original hba file
     BACKUP_HBA_FILE=$PG_HBA_FILE.orig
     if [ -r $PG_HBA_FILE ]
@@ -282,7 +290,7 @@ changePgAuthScheme()
         $COPY $PG_HBA_FILE $BACKUP_HBA_FILE
         _verifyRC $? "error, failed backing up auth file $PG_HBA_FILE"
     else
-       echo "[$SCRIPT_NAME] can't find pgsql auto file $PG_HBA_FILE." >> $LOGFILE
+       logmsg "can't find pgsql auto file $PG_HBA_FILE."
        exit 1
     fi
 
@@ -301,7 +309,7 @@ changePgAuthScheme()
 #TODO: handle history DB Installation
 createDB()
 {
-    echo "[$SCRIPT_NAME] creating $DB_NAME db on postgres." >> $LOGFILE
+    logmsg "creating $DB_NAME db on postgres."
     if [[ -d "$ENGINE_DB_SCRIPTS_DIR" && -e "$ENGINE_DB_SCRIPTS_DIR/$ENGINE_DB_CREATE_SCRIPT" ]]
     then
         pushd $ENGINE_DB_SCRIPTS_DIR >> $LOGFILE
@@ -318,39 +326,39 @@ createDB()
 
 checkIfDBExists()
 {
-    echo "[$SCRIPT_NAME] checking if $DB_NAME db exists already.." >> $LOGFILE
+    logmsg "checking if $DB_NAME db exists already.."
     PGPASSFILE="${ENGINE_PGPASS}" $PSQL -U $DB_ADMIN -d $DB_NAME -c "select 1">> $LOGFILE 2>&1
     if [[ $? -eq 0 ]]
     then
-        echo "[$SCRIPT_NAME] $DB_NAME db already exists on $DB_HOST." >> $LOGFILE
-        echo " [$SCRIPT_NAME] verifying $TABLE_NAME table exists..." >> $LOGFILE
+        logmsg "$DB_NAME db already exists on $DB_HOST."
+        logmsg "verifying $TABLE_NAME table exists..."
         RES=`echo "SELECT count(*) FROM pg_tables WHERE tablename='$TABLE_NAME'" | PGPASSFILE="${ENGINE_PGPASS}" $PSQL -U $DB_ADMIN -d $DB_NAME -t`
         if [[ $RES -eq 1 ]]
         then
-            echo "[$SCRIPT_NAME] $TABLE_NAME table exists in $DB_NAME" >> $LOGFILE
+            logmsg "$TABLE_NAME table exists in $DB_NAME"
             #rc 1 means - no actions is needed
             return 1
         else
-            echo "[$SCRIPT_NAME] $TABLE_NAME table doesn't exists in $DB_NAME" >> $LOGFILE
+            logmsg "$TABLE_NAME table doesn't exists in $DB_NAME"
             #rc 2 means - something is wrong, db exists but table doesnt!
             return 2
         fi
     else
-        echo "[$SCRIPT_NAME] $DB_NAME not installed." >> $LOGFILE
+        logmsg "$DB_NAME not installed."
         return 0
     fi
 }
 
 escapeDBPassword()
 {
-	echo "[$SCRIPT_NAME] escaping db password that contains '(quote)" >> $LOGFILE
+	logmsg "escaping db password that contains '(quote)"
 	# Need to escape ' in db values
 	DB_PASS=$(echo $DB_PASS|sed "s/'/''/g")
 }
 
 updateDBUsers()
 {
-	echo "[$SCRIPT_NAME] updating db admin credentials" >> $LOGFILE
+	logmsg "updating db admin credentials"
 
 	# update admin user password
 	PGPASSFILE="${ENGINE_PGPASS}" $PSQL -U $DB_ADMIN -d $TEMPLATE -c "ALTER ROLE $DB_ADMIN WITH ENCRYPTED PASSWORD '$DB_PASS'" >> /dev/null  2>&1
@@ -420,9 +428,9 @@ then
 	fi
 elif [[ $DB_EXISTS -eq 2 ]]
 then
-   echo "[$SCRIPT_NAME] error, $TABLE_NAME doesnt exists on DB $DB_NAME" >> $LOGFILE
+   logmsg "error, $TABLE_NAME doesnt exists on DB $DB_NAME"
    exit 1
 fi
 
-echo "[$SCRIPT_NAME] finished installing postgres db on $DB_HOST." >> $LOGFILE
+logmsg "finished installing postgres db on $DB_HOST."
 exit 0
