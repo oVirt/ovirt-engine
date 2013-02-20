@@ -157,7 +157,9 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
         if (result) {
             allForVdsGroup = getVdsDAO().getAllForVdsGroup(oldGroup.getId());
         }
-        if (result && (oldGroup.getcpu_name() != null || getVdsGroup().getcpu_name() != null)) {
+        // Validate the cpu only if the cluster supports Virt
+        if (result && getVdsGroup().supportsVirtService()
+                && (oldGroup.getcpu_name() != null || getVdsGroup().getcpu_name() != null)) {
             // Check that cpu exist
             if (!checkIfCpusExist()) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CPU_NOT_FOUND);
@@ -193,7 +195,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                     result = false;
                     addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_LOWER_HOSTS);
                     break;
-                } else if (missingServerCpuFlags(vds) != null) {
+                } else if (getVdsGroup().supportsVirtService() && missingServerCpuFlags(vds) != null) {
                     addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_CPU_WITH_LOWER_HOSTS);
                     result = false;
                     break;
