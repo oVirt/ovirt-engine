@@ -125,7 +125,7 @@ public class NlsCheck extends Check {
         return -1;
     }
 
-    class QuotedString {
+    private static class QuotedString {
         String text;
         int startIndex;
         int endIndex;
@@ -135,7 +135,7 @@ public class NlsCheck extends Check {
             this.startIndex = startIndex;
             this.endIndex = endIndex;
         }
-    };
+    }
 
     public void setRun(boolean run) {
         this.run = run;
