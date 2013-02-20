@@ -47,8 +47,6 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
     public VmTemplateCommand() {
     }
 
-    protected String mVmTemplateDescription = "";
-
     @Override
     protected void executeCommand() {
         throw new NotImplementedException();

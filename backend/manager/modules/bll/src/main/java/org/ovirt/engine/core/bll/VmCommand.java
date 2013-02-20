@@ -166,14 +166,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         }
     }
 
-    protected void removeVmDynamic() {
-        getVmDynamicDao().remove(getVmId());
-    }
-
-    protected void removeVmStatistics() {
-        getVmStatisticsDAO().remove(getVmId());
-    }
-
     protected void removeVmUsers() {
         List<TagsVmMap> all = getTagDao().getTagVmMapByVmIdAndDefaultTag(getVmId());
         for (TagsVmMap tagVm : all) {

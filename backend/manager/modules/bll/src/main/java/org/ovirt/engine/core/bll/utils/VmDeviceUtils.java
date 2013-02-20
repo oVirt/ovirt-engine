@@ -32,14 +32,12 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VmInfoBuilderBase;
 
 public class VmDeviceUtils {
     private static VmDeviceDAO dao = DbFacade.getInstance().getVmDeviceDao();
-    private static VmDAO vmDao = DbFacade.getInstance().getVmDao();
     private final static String VRAM = "vram";
     private final static String EHCI_MODEL = "ich9-ehci";
     private final static String UHCI_MODEL = "ich9-uhci";

@@ -55,8 +55,6 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         super(commandId);
     }
 
-    public static final String DesktopsInStoragePoolQuery = "VMS: DATACENTER = {0}";
-
     public static List<VDS> GetAllRunningVdssInPool(storage_pool pool) {
         return DbFacade.getInstance().getVdsDao().getAllForStoragePoolAndStatus(pool.getId(), VDSStatus.Up);
     }
