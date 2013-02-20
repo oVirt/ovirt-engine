@@ -1148,7 +1148,7 @@ def _upgradeDB():
     utils.backupDB(
         db=basedefs.DB_NAME,
         backup_file=dbBackupFile,
-        env=utils.getPgPassEnv(),
+        env=utils.getPgEnv(),
         user=getDbUser(),
         host=getDbHostName(),
         port=getDbPort(),

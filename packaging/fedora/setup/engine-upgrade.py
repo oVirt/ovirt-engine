@@ -356,7 +356,7 @@ class DB():
         utils.backupDB(
             db=basedefs.DB_NAME,
             backup_file=self.sqlfile,
-            env=utils.getPgPassEnv(),
+            env=utils.getPgEnv(),
             user=SERVER_ADMIN,
             host=SERVER_NAME,
             port=SERVER_PORT,
@@ -377,7 +377,7 @@ class DB():
                 "-p", SERVER_PORT,
                 self.name,
             ]
-            output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_DROP_DB, envDict=utils.getPgPassEnv())
+            output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_DROP_DB, envDict=utils.getPgEnv())
 
             # Restore
             cmd = [
@@ -388,7 +388,7 @@ class DB():
                 "-d", basedefs.DB_TEMPLATE,
                 "-f", self.sqlfile,
             ]
-            output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_RESTORE_DB, envDict=utils.getPgPassEnv())
+            output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_RESTORE_DB, envDict=utils.getPgEnv())
             logging.debug("DB Restore completed successfully")
         else:
             logging.debug("No DB Restore needed")
@@ -780,7 +780,7 @@ def zombieTasksFound():
     tasks, rc = utils.execCmd(cmdList=cmd,
                               failOnError=False,
                               msg="Can't get zombie async tasks",
-                              envDict=utils.getPgPassEnv(),
+                              envDict=utils.getPgEnv(),
                              )
 
     if rc > 1:
@@ -808,7 +808,7 @@ def clearZombieTasks():
     out, rc = utils.execCmd(cmdList=cmd,
                   failOnError=False,
                   msg="Can't clear zombie tasks",
-                  envDict=utils.getPgPassEnv(),
+                  envDict=utils.getPgEnv(),
                  )
 
     if rc > 1:
@@ -824,7 +824,7 @@ def deployDbAsyncTasks(dbName=basedefs.DB_NAME):
         "-d", dbName,
     ]
 
-    out, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg="Error updating DB for getting async_tasks", envDict=utils.getPgPassEnv())
+    out, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg="Error updating DB for getting async_tasks", envDict=utils.getPgEnv())
 
 def getRunningTasks(dbName=basedefs.DB_NAME):
     # Get async tasks:

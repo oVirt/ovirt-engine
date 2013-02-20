@@ -427,12 +427,15 @@ def isTcpPortOpen(port):
             logging.debug("TCP port %s is open by process %s, PID %s" % (port, process, pid))
     return (answer, process, pid)
 
-def getPgPassEnv():
-    # .pgpass definition
+def getPgEnv():
+    """
+    Provides the execution environment for basedefs.EXEC_PSQL
+    """
     if os.path.exists(basedefs.DB_PASS_FILE):
         return {
             "PGPASSFILE" : basedefs.DB_PASS_FILE,
             "ENGINE_PGPASS" : basedefs.DB_PASS_FILE,
+            "LC_ALL": "C"
         }
     else:
         raise Exception(output_messages.ERR_PGPASS)
@@ -504,7 +507,7 @@ def execRemoteSqlCommand(userName, dbHost, dbPort, dbName, sqlQuery, failOnError
         "-d", dbName,
         "-c", sqlQuery,
     ]
-    return execCmd(cmdList=cmd, failOnError=failOnError, msg=errMsg, envDict=getPgPassEnv())
+    return execCmd(cmdList=cmd, failOnError=failOnError, msg=errMsg, envDict=getPgEnv())
 
 def parseRemoteSqlCommand(userName, dbHost, dbPort, dbName, sqlQuery, failOnError=False, errMsg=output_messages.ERR_SQL_CODE):
     ret = []
@@ -880,7 +883,7 @@ def restoreDB(user, host, port, backupFile):
         "-f", backupFile,
     ]
 
-    output, rc = execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_RESTORE, envDict=getPgPassEnv())
+    output, rc = execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_RESTORE, envDict=getPgEnv())
     logging.debug("DB Restore completed successfully")
 
 def renameDB(oldname, newname):
@@ -1064,7 +1067,7 @@ def clearDbConnections(dbName):
         "-U", getDbAdminUser(),
         "-c", query,
     ]
-    execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_CONNECTIONS_BLOCK, envDict=getPgPassEnv())
+    execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_CONNECTIONS_BLOCK, envDict=getPgEnv())
 
     # Disconnect active connections
     # First, check postgresql version, as this would work differently for 9.2
@@ -1081,7 +1084,7 @@ def clearDbConnections(dbName):
             "-d", basedefs.DB_TEMPLATE,
             "-c", version_query,
         ]
-    out, rc = execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_POSTGRESQL, envDict=getPgPassEnv())
+    out, rc = execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_POSTGRESQL, envDict=getPgEnv())
     version = out.split()[1]
     if getVersionNumber(version) >= getVersionNumber("9.2"):
         logging.info("Detected PostgreSQL version >= 9.2")
@@ -1094,7 +1097,7 @@ def clearDbConnections(dbName):
         "-U", getDbAdminUser(),
         "-c", query,
     ]
-    execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_CONNECTIONS_CLEAR, envDict=getPgPassEnv())
+    execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_CONNECTIONS_CLEAR, envDict=getPgEnv())
 
 def listTempDbs():
     """ Create a list of temp DB's on the server with regex 'engine_*' """
@@ -1107,7 +1110,7 @@ def listTempDbs():
         "-p", getDbPort(),
         "--list",
     ]
-    output, rc = execCmd(cmdList=cmd, msg=output_messages.ERR_DB_TEMP_LIST, envDict=getPgPassEnv())
+    output, rc = execCmd(cmdList=cmd, msg=output_messages.ERR_DB_TEMP_LIST, envDict=getPgEnv())
     if rc:
         logging.error(output_messages.ERR_DB_TEMP_LIST)
         raise Exception ("\n" + output_messages.ERR_DB_TEMP_LIST + "\n")

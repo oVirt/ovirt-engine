@@ -309,7 +309,7 @@ class DB():
     def __init__(self):
         self.sqlfile = tempfile.mkstemp(suffix=".sql", dir=basedefs.DIR_DB_BACKUPS)[1]
         self.dropped = False
-        self.env = utils.getPgPassEnv()
+        self.env = utils.getPgEnv()
 
     def __del__(self):
         if self.dropped:
