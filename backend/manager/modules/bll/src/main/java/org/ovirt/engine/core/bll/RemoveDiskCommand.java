@@ -327,6 +327,8 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         for (VM vm : listVms) {
             getVmStaticDAO().incrementDbGeneration(vm.getId());
         }
+        // Get the disk before it is being deleted to use the disk alias in the audit log.
+        getDisk();
         Backend.getInstance().EndAction(VdcActionType.RemoveImage, getParameters().getImagesParameters().get(0));
         setSucceeded(true);
     }
