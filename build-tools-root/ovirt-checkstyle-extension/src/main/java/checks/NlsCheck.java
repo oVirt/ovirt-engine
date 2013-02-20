@@ -119,9 +119,8 @@ public class NlsCheck extends Check {
 
             if (isValidEnd) {
                 return startIndex;
-            } else {
-                startIndex = lineText.indexOf(")", startIndex + 1);
             }
+            startIndex = lineText.indexOf(")", startIndex + 1);
         }
         return -1;
     }
