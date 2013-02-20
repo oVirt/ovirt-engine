@@ -255,7 +255,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             return;
         }
 
-        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        ArrayList<String> list = new ArrayList<String>();
         for (GlusterVolumeEntity item : Linq.<GlusterVolumeEntity> Cast(getSelectedItems()))
         {
             list.add(item.getName());
@@ -289,7 +289,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             return;
         }
 
-        java.util.ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
 
         for (Object item : getSelectedItems())
         {
@@ -400,7 +400,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
             GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
@@ -436,8 +436,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                                 String optionOwnerUserVirt = (String) resultInner;
                                 String optionOwnerGroupVirt = (String) resultInner1;
 
-                                ArrayList<VdcActionParametersBase> list =
-                                        new java.util.ArrayList<VdcActionParametersBase>();
+                                ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
                                 for (Object item : getSelectedItems())
                                 {
                                     GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
@@ -495,7 +494,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             return;
         }
 
-        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        ArrayList<String> list = new ArrayList<String>();
         for (GlusterVolumeEntity item : Linq.<GlusterVolumeEntity> Cast(getSelectedItems()))
         {
             list.add(item.getName());
@@ -529,7 +528,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
             GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
@@ -556,7 +555,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new java.util.ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
             GlusterVolumeEntity volume = (GlusterVolumeEntity) item;

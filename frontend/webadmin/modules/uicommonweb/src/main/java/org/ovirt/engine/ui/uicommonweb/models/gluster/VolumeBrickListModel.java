@@ -450,7 +450,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         }
         model.setNote(ConstantsManager.getInstance().getConstants().removeBricksWarning());
 
-        java.util.ArrayList<String> list = new java.util.ArrayList<String>();
+        ArrayList<String> list = new ArrayList<String>();
         for (GlusterBrickEntity item : Linq.<GlusterBrickEntity> Cast(getSelectedItems()))
         {
             list.add(item.getQualifiedName());
