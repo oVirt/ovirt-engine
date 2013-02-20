@@ -845,7 +845,10 @@ def getRunningTasks(dbName=basedefs.DB_NAME):
         return ""
 
 def getCompensations(dbName=basedefs.DB_NAME):
-    # Get compensations
+    """
+    Get compensations.
+    Returns an empty string if there are no compensations.
+    """
     compensations, rc = utils.execRemoteSqlCommand(
                                        userName=SERVER_ADMIN,
                                        dbHost=SERVER_NAME,
@@ -858,7 +861,8 @@ def getCompensations(dbName=basedefs.DB_NAME):
 
     # We only want to return anything if there are really compensations records
     if not compensations or \
-       (compensations and "0 rows" in compensations):
+       (compensations and len(compensations.split("\n")) <= 5):
+        # An empty set has 5 rows: column names, -+- , "0 rows", 2 empty lines
         return ""
     else:
         return compensations
