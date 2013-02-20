@@ -1144,7 +1144,14 @@ def _upgradeDB():
     logging.debug("backing up %s db to file %s"%(basedefs.DB_NAME, dbBackupFile))
 
     # Run db backup
-    utils.backupDB(basedefs.DB_NAME, getDbUser(), dbBackupFile, getDbHostName(), getDbPort())
+    utils.backupDB(
+        db=basedefs.DB_NAME,
+        backup_file=dbBackupFile,
+        env=utils.getPgPassEnv(),
+        user=getDbUser(),
+        host=getDbHostName(),
+        port=getDbPort(),
+    )
 
     # Rename DB first. If it fails - stop with "active connections" error.
     # if upgrade passes fine, rename the DB back.
