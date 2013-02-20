@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -18,6 +20,7 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
+import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -27,6 +30,7 @@ import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -46,7 +50,7 @@ public final class AsyncTaskManager {
     private static final Log log = LogFactory.getLog(AsyncTaskManager.class);
 
     /** Map which consist all tasks that currently are monitored **/
-    private Map<Guid, SPMAsyncTask> _tasks;
+    private ConcurrentMap<Guid, SPMAsyncTask> _tasks;
 
     /** Indication if _tasks has changed for logging process. **/
     private boolean logChangedMap = true;
@@ -54,14 +58,20 @@ public final class AsyncTaskManager {
     /** The period of time (in minutes) to hold the asynchronous tasks' statuses in the asynchronous tasks cache **/
     private final int _cacheTimeInMinutes;
 
+    /**Map of tasks in DB per storage pool that exist after restart **/
+    private ConcurrentMap<Guid, List<AsyncTasks>> tasksInDbAfterRestart = null;
+
+
+
     private static final AsyncTaskManager _taskManager = new AsyncTaskManager();
 
     public static AsyncTaskManager getInstance() {
         return _taskManager;
     }
 
+
     private AsyncTaskManager() {
-        _tasks = new HashMap<Guid, SPMAsyncTask>();
+        _tasks = new ConcurrentHashMap<Guid, SPMAsyncTask>();
 
         SchedulerUtil scheduler = SchedulerUtilQuartzImpl.getInstance();
         scheduler.scheduleAFixedDelayJob(this, "_timer_Elapsed", new Class[] {},
@@ -72,6 +82,13 @@ public final class AsyncTaskManager {
                 new Object[] {}, Config.<Integer> GetValue(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds),
                 Config.<Integer> GetValue(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds), TimeUnit.SECONDS);
         _cacheTimeInMinutes = Config.<Integer> GetValue(ConfigValues.AsyncTaskStatusCachingTimeInMinutes);
+        tasksInDbAfterRestart = new ConcurrentHashMap<Guid, List<AsyncTasks>>();
+        for (AsyncTasks task: DbFacade.getInstance().getAsyncTaskDao().getAll()) {
+            tasksInDbAfterRestart.putIfAbsent(task.getStoragePoolId(), new ArrayList<AsyncTasks>());
+            List<AsyncTasks> tasksPerStoragePool = tasksInDbAfterRestart.get(task.getStoragePoolId());
+            tasksInDbAfterRestart.put(task.getStoragePoolId(), tasksPerStoragePool);
+            tasksPerStoragePool.add(task);
+        }
     }
 
     public void InitAsyncTaskManager() {
@@ -327,7 +344,7 @@ public final class AsyncTaskManager {
     synchronized private void removeClearedAndOldTasks() {
         Set<Guid> poolsOfActiveTasks = new HashSet<Guid>();
         Set<Guid> poolsOfClearedAndOldTasks = new HashSet<Guid>();
-        Map<Guid, SPMAsyncTask> activeTaskMap = new HashMap<Guid, SPMAsyncTask>();
+        ConcurrentMap<Guid, SPMAsyncTask> activeTaskMap = new ConcurrentHashMap<Guid, SPMAsyncTask>();
         for (SPMAsyncTask task : _tasks.values()) {
             if (!CachingOver(task)) {
                 activeTaskMap.put(task.getTaskID(), task);
@@ -408,7 +425,7 @@ public final class AsyncTaskManager {
      * @param asyncTaskMap
      *            - Map to copy to _tasks map.
      */
-    private void setNewMap(Map<Guid, SPMAsyncTask> asyncTaskMap) {
+    private void setNewMap(ConcurrentMap<Guid, SPMAsyncTask> asyncTaskMap) {
         // If not the same set _tasks to be as asyncTaskMap.
         _tasks = asyncTaskMap;
 
@@ -526,6 +543,20 @@ public final class AsyncTaskManager {
             log.infoFormat("Discovered no tasks on Storage Pool {0}",
                     sp.getname());
         }
+
+
+        List<AsyncTasks> tasksInDForStoragePool = tasksInDbAfterRestart.get(sp.getId());
+        if (tasksInDForStoragePool != null) {
+            for (AsyncTasks task : tasksInDForStoragePool) {
+                if (!_tasks.containsKey(task.gettask_id())) {
+                    DbFacade.getInstance().getAsyncTaskDao().remove(task.gettask_id());
+                }
+            }
+        }
+        //Either the tasks were only in DB - so they were removed from db, or they are polled -
+        //in any case no need to hold them in the map that represents the tasksInDbAfterRestart
+        tasksInDbAfterRestart.remove(sp.getId());
+
     }
 
     /**
