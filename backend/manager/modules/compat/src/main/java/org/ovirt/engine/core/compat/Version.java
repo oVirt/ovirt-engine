@@ -150,10 +150,10 @@ public class Version implements Comparable<Version>, Serializable {
     }
 
     public static boolean OpEquality(Version v1, Version v2) {
-        if (v1 == null)
-            return (v2 == null) ? true : false;
-        else
-            return v1.equals(v2);
+        if (v1 == null) {
+            return (v2 == null);
+        }
+        return v1.equals(v2);
     }
 
     public static boolean OpInequality(Version v1, Version v2) {
