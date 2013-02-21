@@ -561,7 +561,8 @@ BEGIN
         LEFT JOIN vds_groups ON vds_groups.vds_group_id = vm_static.vds_group_id
     WHERE quota_limitation.virtual_cpu IS NOT NULL
         AND quota_limitation.mem_size_mb IS NOT NULL
-    GROUP BY vm_static.quota_id, vds_groups.vds_group_id, vm_static.vds_group_id, quota_limitation.id;
+    GROUP BY quota_limitation.quota_id, quota_limitation.vds_group_id, vds_group_name, quota_limitation.virtual_cpu, quota_limitation.mem_size_mb,
+        vm_static.quota_id, vds_groups.vds_group_id, vm_static.vds_group_id, quota_limitation.id;
 END; $function$
 LANGUAGE plpgsql;
 
