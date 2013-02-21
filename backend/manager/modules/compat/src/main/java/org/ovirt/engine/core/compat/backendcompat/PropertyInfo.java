@@ -19,7 +19,7 @@ public class PropertyInfo {
         return pd.getName();
     }
 
-    public Object GetValue(Object obj, Object defaultValue) {
+    public Object getValue(Object obj, Object defaultValue) {
         Object returnValue = null;
         try {
             returnValue = pd.getReadMethod().invoke(obj);

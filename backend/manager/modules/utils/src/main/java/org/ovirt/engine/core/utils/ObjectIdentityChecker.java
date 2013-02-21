@@ -182,8 +182,8 @@ public class ObjectIdentityChecker {
             Class<?> objectType = source.getClass();
             List<PropertyInfo> properties = TypeCompat.GetProperties(objectType);
             for (PropertyInfo property : properties) {
-                Object sourceValue = property.GetValue(source, null);
-                Object destinationValue = property.GetValue(destination, null);
+                Object sourceValue = property.getValue(source, null);
+                Object destinationValue = property.getValue(destination, null);
 
                 if (!(property.isPropertyInstanceOf(ValueObjectMap.class)) && property.getCanWrite()
                         && sourceValue != null && !sourceValue.equals(destinationValue)

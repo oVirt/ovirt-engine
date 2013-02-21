@@ -976,7 +976,7 @@ public final class AuditLogDirector {
         Map<String, String> returnValue = new HashMap<String, String>(logable.getCustomValues());
         Class<?> type = AuditLogableBase.class;
         for (PropertyInfo propertyInfo : TypeCompat.GetProperties(type)) {
-            Object value = propertyInfo.GetValue(logable, null);
+            Object value = propertyInfo.getValue(logable, null);
             String stringValue = value != null ? value.toString() : null;
             if (!returnValue.containsKey(propertyInfo.getName().toLowerCase())) {
                 returnValue.put(propertyInfo.getName().toLowerCase(), stringValue);

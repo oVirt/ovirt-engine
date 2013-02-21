@@ -19,10 +19,10 @@ public class PropertyInfoTest {
     @Test
     public void testIt() {
         PropertyInfo propInfo = TypeCompat.GetProperty(this.getClass(), "someValue");
-        String result = (String) propInfo.GetValue(this, "JarJar");
+        String result = (String) propInfo.getValue(this, "JarJar");
         assertEquals("Standard", "Anakin", result);
         this.someValue = null;
-        result = (String) propInfo.GetValue(this, "JarJar");
+        result = (String) propInfo.getValue(this, "JarJar");
         assertEquals("Null Value", "JarJar", result);
     }
 
