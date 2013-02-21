@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -44,6 +45,45 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
+    }
+
+    @Test
+    public void testGet() {
+        Disk result = dao.get(getExistingEntityId());
+
+        assertNotNull(result);
+        assertEquals(getExistingEntityId().toString(), result.getId().toString());
+    }
+
+    @Test
+    public void testGetFilteredWithPermissions() {
+        Disk result = dao.get(getExistingEntityId(), PRIVILEGED_USER_ID, true);
+
+        assertNotNull(result);
+        assertEquals(getExistingEntityId().toString(), result.getId().toString());
+    }
+
+    @Test
+    public void testGetFilteredWithoutPermissions() {
+        Disk result = dao.get(getExistingEntityId(), UNPRIVILEGED_USER_ID, true);
+
+        assertNull(result);
+    }
+
+    @Test
+    public void testGetFilteredWithoutPermissionsNoFilter() {
+        Disk result = dao.get(getExistingEntityId(), UNPRIVILEGED_USER_ID, false);
+
+        assertNotNull(result);
+        assertEquals(getExistingEntityId().toString(), result.getId().toString());
+    }
+
+    @Test
+    public void testGetFilteredWithPermissionsNoFilter() {
+        Disk result = dao.get(getExistingEntityId(), PRIVILEGED_USER_ID, false);
+
+        assertNotNull(result);
+        assertEquals(getExistingEntityId().toString(), result.getId().toString());
     }
 
     @Test

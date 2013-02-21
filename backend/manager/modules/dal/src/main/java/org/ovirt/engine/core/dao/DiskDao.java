@@ -53,4 +53,17 @@ public interface DiskDao extends ReadDao<Disk, Guid>, SearchDAO<Disk> {
      * @return
      */
     List<Disk> getAllAttachableDisksByPoolId(Guid poolId, Guid vmId ,Guid userId, boolean isFiltered);
+
+    /**
+     * Returns the Disk with the specified id, with optional filtering.
+     *
+     * @param id
+     *            the Disk id
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     * @return the Disk
+     */
+    Disk get(Guid id, Guid userID, boolean isFiltered);
 }

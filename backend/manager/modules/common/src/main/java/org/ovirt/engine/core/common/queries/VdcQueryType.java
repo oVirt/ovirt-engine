@@ -97,7 +97,7 @@ public enum VdcQueryType implements Serializable {
     GetAllDisksByStorageDomainId,
     GetAllDisks(VdcQueryAuthType.User),
     GetImageByImageId,
-    GetDiskByDiskId,
+    GetDiskByDiskId(VdcQueryAuthType.User),
 
     // Users queries
     GetUserVmsByUserIdAndGroups(VdcQueryAuthType.User),

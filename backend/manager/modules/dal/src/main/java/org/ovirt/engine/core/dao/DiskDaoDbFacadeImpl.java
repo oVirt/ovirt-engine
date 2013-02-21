@@ -13,10 +13,17 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
-public class DiskDaoDbFacadeImpl extends DefaultReadDaoDbFacade<Disk, Guid> implements DiskDao {
+public class DiskDaoDbFacadeImpl extends BaseDAODbFacade implements DiskDao {
 
-    public DiskDaoDbFacadeImpl() {
-        super("Disk");
+    @Override
+    public Disk get(Guid id) {
+        return get(id, null, false);
+    }
+
+    @Override
+    public Disk get(Guid id, Guid userID, boolean isFiltered) {
+        return getCallsHandler().executeRead("GetDiskByDiskId", DiskRowMapper.instance, getCustomMapSqlParameterSource()
+                .addValue("disk_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered));
     }
 
     @Override
@@ -60,16 +67,6 @@ public class DiskDaoDbFacadeImpl extends DefaultReadDaoDbFacade<Disk, Guid> impl
     @Override
     public List<Disk> getAllWithQuery(String query) {
         return new SimpleJdbcTemplate(jdbcTemplate).query(query, DiskRowMapper.instance);
-    }
-
-    @Override
-    protected MapSqlParameterSource createIdParameterMapper(Guid id) {
-        return getCustomMapSqlParameterSource().addValue("disk_id", id);
-    }
-
-    @Override
-    protected ParameterizedRowMapper<Disk> createEntityRowMapper() {
-        return DiskRowMapper.instance;
     }
 
     private static class DiskRowMapper implements ParameterizedRowMapper<Disk> {

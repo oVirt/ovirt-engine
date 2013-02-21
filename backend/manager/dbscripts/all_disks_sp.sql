@@ -16,23 +16,23 @@ BEGIN
     SELECT *
     FROM   all_disks
     WHERE (NOT v_is_filtered OR EXISTS (SELECT 1
-                                          FROM user_disk_permissions_view
-                                          WHERE user_id = v_user_id AND entity_id = disk_id));
+                                        FROM user_disk_permissions_view
+                                        WHERE user_id = v_user_id AND entity_id = disk_id));
 END; $procedure$
 LANGUAGE plpgsql;
 
 
-
-
-
-Create or replace FUNCTION GetDiskByDiskId(v_disk_id UUID)
+Create or replace FUNCTION GetDiskByDiskId(v_disk_id UUID, v_user_id UUID, v_is_filtered boolean)
 RETURNS SETOF all_disks
 AS $procedure$
 BEGIN
     RETURN QUERY
     SELECT *
     FROM   all_disks
-    WHERE  image_group_id = v_disk_id;
+    WHERE  image_group_id = v_disk_id
+    AND    (NOT v_is_filtered OR EXISTS (SELECT 1
+                                         FROM user_disk_permissions_view
+                                         WHERE user_id = v_user_id AND entity_id = v_disk_id));
 END; $procedure$
 LANGUAGE plpgsql;
 

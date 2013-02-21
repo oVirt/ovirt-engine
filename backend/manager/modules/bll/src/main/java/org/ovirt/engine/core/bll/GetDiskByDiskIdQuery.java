@@ -10,6 +10,6 @@ public class GetDiskByDiskIdQuery <P extends GetDiskByDiskIdParameters> extends 
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getDbFacade().getDiskDao().get(getParameters().getDiskId()));
+        getQueryReturnValue().setReturnValue(getDbFacade().getDiskDao().get(getParameters().getDiskId(), getUserID(), getParameters().isFiltered() ));
     }
 }
