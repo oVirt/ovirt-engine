@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class Bookmark extends IVdcQueryable implements Serializable {
@@ -62,16 +63,19 @@ public class Bookmark extends IVdcQueryable implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null)
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
             return false;
-        if (obj.getClass() != this.getClass())
+        }
+        if (obj.getClass() != this.getClass()) {
             return false;
-        Bookmark that = (Bookmark) obj;
-        boolean result = this.id.equals(that.id);
-        result &= this.name.equals(that.name);
-        result &= this.value.equals(that.value);
-
-        return result;
+        }
+        Bookmark other = (Bookmark) obj;
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && ObjectUtils.objectsEqual(name, other.name)
+                && ObjectUtils.objectsEqual(value, other.value));
     }
 
 

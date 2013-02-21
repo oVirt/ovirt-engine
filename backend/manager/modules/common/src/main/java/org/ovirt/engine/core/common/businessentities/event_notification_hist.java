@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class event_notification_hist implements Serializable {
@@ -107,42 +108,22 @@ public class event_notification_hist implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         event_notification_hist other = (event_notification_hist) obj;
-        if (auditLogId != other.auditLogId)
-            return false;
-        if (eventName == null) {
-            if (other.eventName != null)
-                return false;
-        } else if (!eventName.equals(other.eventName))
-            return false;
-        if (methodType == null) {
-            if (other.methodType != null)
-                return false;
-        } else if (!methodType.equals(other.methodType))
-            return false;
-        if (reason == null) {
-            if (other.reason != null)
-                return false;
-        } else if (!reason.equals(other.reason))
-            return false;
-        if (sentAt == null) {
-            if (other.sentAt != null)
-                return false;
-        } else if (!sentAt.equals(other.sentAt))
-            return false;
-        if (status != other.status)
-            return false;
-        if (subscriberId == null) {
-            if (other.subscriberId != null)
-                return false;
-        } else if (!subscriberId.equals(other.subscriberId))
-            return false;
-        return true;
+        return (auditLogId == other.auditLogId
+                && ObjectUtils.objectsEqual(subscriberId, other.subscriberId)
+                && ObjectUtils.objectsEqual(eventName, other.eventName)
+                && ObjectUtils.objectsEqual(methodType, other.methodType)
+                && ObjectUtils.objectsEqual(reason, other.reason)
+                && ObjectUtils.objectsEqual(sentAt, other.sentAt)
+                && status == other.status);
     }
 }

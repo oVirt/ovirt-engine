@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -188,38 +189,23 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         BaseDisk other = (BaseDisk) obj;
-        if (diskAlias == null) {
-            if (other.diskAlias != null)
-                return false;
-        } else if (!diskAlias.equals(other.diskAlias))
-            return false;
-        if (diskDescription == null) {
-            if (other.diskDescription != null)
-                return false;
-        } else if (!diskDescription.equals(other.diskDescription))
-            return false;
-        if (diskInterface != other.diskInterface)
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (propagateErrors != other.propagateErrors)
-            return false;
-        if (shareable != other.shareable)
-            return false;
-        if (isWipeAfterDelete() != other.isWipeAfterDelete())
-            return false;
-        if (boot != other.boot)
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && ObjectUtils.objectsEqual(diskAlias, other.diskAlias)
+                && ObjectUtils.objectsEqual(diskDescription, other.diskDescription)
+                && diskInterface == other.diskInterface
+                && propagateErrors == other.propagateErrors
+                && shareable == other.shareable
+                && isWipeAfterDelete() == other.isWipeAfterDelete()
+                && boot == other.boot);
     }
 }

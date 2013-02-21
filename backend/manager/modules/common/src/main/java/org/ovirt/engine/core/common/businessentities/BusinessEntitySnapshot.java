@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -134,24 +135,18 @@ public class BusinessEntitySnapshot {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         BusinessEntitySnapshot other = (BusinessEntitySnapshot) obj;
-        if (commandId == null) {
-            if (other.commandId != null)
-                return false;
-        } else if (!commandId.equals(other.commandId))
-            return false;
-        if (entityId == null) {
-            if (other.entityId != null)
-                return false;
-        } else if (!entityId.equals(other.entityId))
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(commandId, other.commandId)
+                && ObjectUtils.objectsEqual(entityId, other.entityId));
     }
 
     /**

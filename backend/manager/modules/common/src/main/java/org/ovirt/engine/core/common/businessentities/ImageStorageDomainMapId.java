@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ImageStorageDomainMapId implements Serializable {
@@ -16,24 +17,18 @@ public class ImageStorageDomainMapId implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         ImageStorageDomainMapId other = (ImageStorageDomainMapId) obj;
-        if (imageId == null) {
-            if (other.imageId != null)
-                return false;
-        } else if (!imageId.equals(other.imageId))
-            return false;
-        if (storageDomainId == null) {
-            if (other.storageDomainId != null)
-                return false;
-        } else if (!storageDomainId.equals(other.storageDomainId))
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(imageId, other.imageId)
+                && ObjectUtils.objectsEqual(storageDomainId, other.storageDomainId));
     }
 
     private static final long serialVersionUID = -5870880575903017188L;

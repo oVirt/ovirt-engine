@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DiskLunMap implements BusinessEntity<DiskLunMapId> {
@@ -59,13 +60,6 @@ public class DiskLunMap implements BusinessEntity<DiskLunMapId> {
             return false;
         }
         DiskLunMap other = (DiskLunMap) obj;
-        if (id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!id.equals(other.id)) {
-            return false;
-        }
-        return true;
+        return (ObjectUtils.objectsEqual(id, other.id));
     }
 }

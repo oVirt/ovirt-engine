@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -93,28 +94,20 @@ public abstract class Disk extends BaseDisk {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (!super.equals(obj))
+        }
+        if (!super.equals(obj)) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         Disk other = (Disk) obj;
-        if (plugged == null) {
-            if (other.plugged != null)
-                return false;
-        } else if (!plugged.equals(other.plugged))
-            return false;
-        if (vmNames == null) {
-            if (other.vmNames != null)
-                return false;
-        } else if (!vmNames.equals(other.vmNames))
-            return false;
-        if (vmEntityType != other.vmEntityType)
-            return false;
-        if (numberOfVms != other.numberOfVms)
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(plugged, other.plugged)
+                && ObjectUtils.objectsEqual(vmNames, other.vmNames)
+                && vmEntityType == other.vmEntityType
+                && numberOfVms == other.numberOfVms);
     }
 
     public int getNumberOfVms() {

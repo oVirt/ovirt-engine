@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class image_vm_map_id implements Serializable {
@@ -67,21 +68,8 @@ public class image_vm_map_id implements Serializable {
             return false;
         }
         image_vm_map_id other = (image_vm_map_id) obj;
-        if (imageId == null) {
-            if (other.imageId != null) {
-                return false;
-            }
-        } else if (!imageId.equals(other.imageId)) {
-            return false;
-        }
-        if (vmId == null) {
-            if (other.vmId != null) {
-                return false;
-            }
-        } else if (!vmId.equals(other.vmId)) {
-            return false;
-        }
-        return true;
+        return (ObjectUtils.objectsEqual(imageId, other.imageId)
+                && ObjectUtils.objectsEqual(vmId, other.vmId));
     }
 
 }

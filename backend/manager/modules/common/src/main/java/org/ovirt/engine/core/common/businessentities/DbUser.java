@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 
@@ -118,78 +119,30 @@ public class DbUser extends IVdcQueryable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         DbUser other = (DbUser) obj;
-        if (department == null) {
-            if (other.department != null)
-                return false;
-        } else if (!department.equals(other.department))
-            return false;
-        if (desktopDevice == null) {
-            if (other.desktopDevice != null)
-                return false;
-        } else if (!desktopDevice.equals(other.desktopDevice))
-            return false;
-        if (domain == null) {
-            if (other.domain != null)
-                return false;
-        } else if (!domain.equals(other.domain))
-            return false;
-        if (email == null) {
-            if (other.email != null)
-                return false;
-        } else if (!email.equals(other.email))
-            return false;
-        if (groups == null) {
-            if (other.groups != null)
-                return false;
-        } else if (!groups.equals(other.groups))
-            return false;
-        if (lastAdminCheckStatus != other.lastAdminCheckStatus)
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        if (note == null) {
-            if (other.note != null)
-                return false;
-        } else if (!note.equals(other.note))
-            return false;
-        if (role == null) {
-            if (other.role != null)
-                return false;
-        } else if (!role.equals(other.role))
-            return false;
-        if (status != other.status)
-            return false;
-        if (surname == null) {
-            if (other.surname != null)
-                return false;
-        } else if (!surname.equals(other.surname))
-            return false;
-        if (userIconPath == null) {
-            if (other.userIconPath != null)
-                return false;
-        } else if (!userIconPath.equals(other.userIconPath))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (username == null) {
-            if (other.username != null)
-                return false;
-        } else if (!username.equals(other.username))
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && ObjectUtils.objectsEqual(department, other.department)
+                && ObjectUtils.objectsEqual(desktopDevice, other.desktopDevice)
+                && ObjectUtils.objectsEqual(domain, other.domain)
+                && ObjectUtils.objectsEqual(email, other.email)
+                && ObjectUtils.objectsEqual(groups, other.groups)
+                && lastAdminCheckStatus == other.lastAdminCheckStatus
+                && ObjectUtils.objectsEqual(name, other.name)
+                && ObjectUtils.objectsEqual(note, other.note)
+                && ObjectUtils.objectsEqual(role, other.role)
+                && status == other.status
+                && ObjectUtils.objectsEqual(surname, other.surname)
+                && ObjectUtils.objectsEqual(userIconPath, other.userIconPath)
+                && ObjectUtils.objectsEqual(username, other.username));
     }
 
     public String getdepartment() {

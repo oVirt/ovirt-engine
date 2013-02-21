@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DiskImageDynamic implements BusinessEntity<Guid>, Comparable<DiskImageDynamic> {
@@ -86,46 +87,23 @@ public class DiskImageDynamic implements BusinessEntity<Guid>, Comparable<DiskIm
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         DiskImageDynamic other = (DiskImageDynamic) obj;
-        if (actualSize != other.actualSize)
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (readRate == null) {
-            if (other.readRate != null)
-                return false;
-        } else if (!readRate.equals(other.readRate))
-            return false;
-        if (writeRate == null) {
-            if (other.writeRate != null)
-                return false;
-        } else if (!writeRate.equals(other.writeRate))
-            return false;
-        if (readLatency == null) {
-            if (other.readLatency != null)
-                return false;
-        } else if (!readLatency.equals(other.readLatency))
-            return false;
-        if (writeLatency == null) {
-            if (other.writeLatency != null)
-                return false;
-        } else if (!writeLatency.equals(other.writeLatency))
-            return false;
-        if (flushLatency == null) {
-            if (other.flushLatency != null)
-                return false;
-        } else if (!flushLatency.equals(other.flushLatency))
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && actualSize == other.actualSize
+                && ObjectUtils.objectsEqual(readRate, other.readRate)
+                && ObjectUtils.objectsEqual(writeRate, other.writeRate)
+                && ObjectUtils.objectsEqual(readLatency, other.readLatency)
+                && ObjectUtils.objectsEqual(writeLatency, other.writeLatency)
+                && ObjectUtils.objectsEqual(flushLatency, other.flushLatency));
     }
 
     @Override

@@ -6,6 +6,7 @@ import java.util.Date;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
@@ -164,65 +165,25 @@ public class AsyncTasks implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         AsyncTasks other = (AsyncTasks) obj;
-        if (actionParameters == null) {
-            if (other.actionParameters != null)
-                return false;
-        } else if (!actionParameters.equals(other.actionParameters))
-            return false;
-        if (actionType != other.actionType)
-            return false;
-        if (result != other.result)
-            return false;
-        if (status != other.status)
-            return false;
-        if (taskId == null) {
-            if (other.taskId != null)
-                return false;
-        } else if (!taskId.equals(other.taskId))
-            return false;
-        if (stepId == null) {
-            if (other.stepId != null) {
-                return false;
-            }
-        } else if (!stepId.equals(other.stepId)) {
-            return false;
-        }
-        if (commandId == null) {
-            if (other.commandId != null) {
-                return false;
-            }
-        } else if (!commandId.equals(other.commandId)) {
-            return false;
-        }
-        if (startTime == null) {
-            if (other.startTime != null) {
-                return false;
-            }
-        } else if (!startTime.equals(other.startTime)) {
-            return false;
-        }
-        if (storagePoolId == null) {
-            if (other.storagePoolId != null) {
-                return false;
-            }
-        } else if (!storagePoolId.equals(other.storagePoolId)) {
-            return false;
-        }
-        if (taskType == null) {
-            if (other.taskType != null) {
-                return false;
-            }
-        } else if (!taskType.equals(other.taskType)) {
-            return false;
-        }
-
-        return true;
+        return (ObjectUtils.objectsEqual(taskId, other.taskId)
+                && ObjectUtils.objectsEqual(stepId, other.stepId)
+                && ObjectUtils.objectsEqual(commandId, other.commandId)
+                && ObjectUtils.objectsEqual(actionParameters, other.actionParameters)
+                && actionType == other.actionType
+                && result == other.result
+                && status == other.status
+                && ObjectUtils.objectsEqual(startTime, other.startTime)
+                && ObjectUtils.objectsEqual(storagePoolId, other.storagePoolId)
+                && ObjectUtils.objectsEqual(taskType, other.taskType));
     }
 }

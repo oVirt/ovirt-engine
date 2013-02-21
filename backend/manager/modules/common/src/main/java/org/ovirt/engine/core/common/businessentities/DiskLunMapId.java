@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DiskLunMapId implements Serializable {
@@ -57,21 +58,8 @@ public class DiskLunMapId implements Serializable {
             return false;
         }
         DiskLunMapId other = (DiskLunMapId) obj;
-        if (diskId == null) {
-            if (other.diskId != null) {
-                return false;
-            }
-        } else if (!diskId.equals(other.diskId)) {
-            return false;
-        }
-        if (lunId == null) {
-            if (other.lunId != null) {
-                return false;
-            }
-        } else if (!lunId.equals(other.lunId)) {
-            return false;
-        }
-        return true;
+        return (ObjectUtils.objectsEqual(diskId, other.diskId)
+                && ObjectUtils.objectsEqual(lunId, other.lunId));
     }
 
 }

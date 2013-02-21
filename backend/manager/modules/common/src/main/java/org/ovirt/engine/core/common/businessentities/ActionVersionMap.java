@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.io.Serializable;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Version;
 
 public class ActionVersionMap implements Serializable {
@@ -83,25 +84,18 @@ public class ActionVersionMap implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         ActionVersionMap other = (ActionVersionMap) obj;
-        if (actionType != other.actionType)
-            return false;
-        if (clusterMinimalVersion == null) {
-            if (other.clusterMinimalVersion != null)
-                return false;
-        } else if (!clusterMinimalVersion.equals(other.clusterMinimalVersion))
-            return false;
-        if (storagePoolMinimalVersion == null) {
-            if (other.storagePoolMinimalVersion != null)
-                return false;
-        } else if (!storagePoolMinimalVersion.equals(other.storagePoolMinimalVersion))
-            return false;
-        return true;
+        return (actionType == other.actionType
+                && ObjectUtils.objectsEqual(clusterMinimalVersion, other.clusterMinimalVersion)
+                && ObjectUtils.objectsEqual(storagePoolMinimalVersion, other.storagePoolMinimalVersion));
     }
 }

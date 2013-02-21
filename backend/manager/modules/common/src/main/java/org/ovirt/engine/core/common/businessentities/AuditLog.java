@@ -5,6 +5,7 @@ import java.util.Date;
 
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.NGuid;
 
 public class AuditLog extends IVdcQueryable implements Serializable {
@@ -406,94 +407,36 @@ public class AuditLog extends IVdcQueryable implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         AuditLog other = (AuditLog) obj;
-        if (auditLogId != other.auditLogId)
-            return false;
-        if (logTime == null) {
-            if (other.logTime != null)
-                return false;
-        } else if (!logTime.equals(other.logTime))
-            return false;
-        if (logType != other.logType)
-            return false;
-        if (message == null) {
-            if (other.message != null)
-                return false;
-        } else if (!message.equals(other.message))
-            return false;
-        if (storageDomainId == null) {
-            if (other.storageDomainId != null)
-                return false;
-        } else if (!storageDomainId.equals(other.storageDomainId))
-            return false;
-        if (storagePoolId == null) {
-            if (other.storagePoolId != null)
-                return false;
-        } else if (!storagePoolId.equals(other.storagePoolId))
-            return false;
-        if (severity != other.severity)
-            return false;
-        if (userId == null) {
-            if (other.userId != null)
-                return false;
-        } else if (!userId.equals(other.userId))
-            return false;
-        if (vdsId == null) {
-            if (other.vdsId != null)
-                return false;
-        } else if (!vdsId.equals(other.vdsId))
-            return false;
-        if (quotaId == null) {
-            if (other.quotaId != null)
-                return false;
-        } else if (!quotaId.equals(other.quotaId))
-            return false;
-        if (vmId == null) {
-            if (other.vmId != null)
-                return false;
-        } else if (!vmId.equals(other.vmId))
-            return false;
-        if (vmTemplateId == null) {
-            if (other.vmTemplateId != null)
-                return false;
-        } else if (!vmTemplateId.equals(other.vmTemplateId))
-            return false;
-        if(processed != other.processed)
-            return false;
-        if (correlationId == null) {
-            if (other.correlationId != null)
-                return false;
-        } else if (!correlationId.equals(other.correlationId))
-            return false;
-        if (jobId == null) {
-            if (other.jobId != null)
-                return false;
-        } else if (!jobId.equals(other.jobId))
-            return false;
-        if (origin == null) {
-            if (other.origin != null)
-                return false;
-        } else if (!origin.equals(other.origin))
-            return false;
-        if (customEventId != other.customEventId)
-            return false;
-        if (eventFloodInSec != other.eventFloodInSec)
-            return false;
-        if (customData == null) {
-            if (other.customData != null)
-                return false;
-        } else if (!customData.equals(other.customData))
-            return false;
-        if (external != other.external)
-            return false;
-        if (deleted != other.deleted)
-            return false;
-        return true;
+        return (auditLogId == other.auditLogId
+                && ObjectUtils.objectsEqual(logTime, other.logTime)
+                && logType == other.logType
+                && ObjectUtils.objectsEqual(message, other.message)
+                && ObjectUtils.objectsEqual(storageDomainId, other.storageDomainId)
+                && ObjectUtils.objectsEqual(storagePoolId, other.storagePoolId)
+                && severity == other.severity
+                && ObjectUtils.objectsEqual(userId, other.userId)
+                && ObjectUtils.objectsEqual(vdsId, other.vdsId)
+                && ObjectUtils.objectsEqual(quotaId, other.quotaId)
+                && ObjectUtils.objectsEqual(vmId, other.vmId)
+                && ObjectUtils.objectsEqual(vmTemplateId, other.vmTemplateId)
+                && processed == other.processed
+                && ObjectUtils.objectsEqual(correlationId, other.correlationId)
+                && ObjectUtils.objectsEqual(jobId, other.jobId)
+                && ObjectUtils.objectsEqual(origin, other.origin)
+                && customEventId == other.customEventId
+                && eventFloodInSec == other.eventFloodInSec
+                && ObjectUtils.objectsEqual(customData, other.customData)
+                && external == other.external
+                && deleted == other.deleted);
     }
 }

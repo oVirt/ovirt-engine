@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class image_storage_domain_map implements BusinessEntity<ImageStorageDomainMapId> {
@@ -52,14 +53,7 @@ public class image_storage_domain_map implements BusinessEntity<ImageStorageDoma
             return false;
         }
         image_storage_domain_map other = (image_storage_domain_map) obj;
-        if (id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!id.equals(other.id)) {
-            return false;
-        }
-        return true;
+        return (ObjectUtils.objectsEqual(id, other.id));
     }
 
     @Override

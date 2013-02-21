@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -207,47 +208,12 @@ public class Image implements BusinessEntity<Guid> {
             return false;
         }
         Image other = (Image) obj;
-        if (active != other.active) {
-            return false;
-        }
-        if (id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!id.equals(other.id)) {
-            return false;
-        }
-        if (lastModified == null) {
-            if (other.lastModified != null) {
-                return false;
-            }
-        } else if (!lastModified.equals(other.lastModified)) {
-            return false;
-        }
-        if (parentId == null) {
-            if (other.parentId != null) {
-                return false;
-            }
-        } else if (!parentId.equals(other.parentId)) {
-            return false;
-        }
-        if (snapshotId == null) {
-            if (other.snapshotId != null) {
-                return false;
-            }
-        } else if (!snapshotId.equals(other.snapshotId)) {
-            return false;
-        }
-        if (status != other.status) {
-            return false;
-        }
-        if (templateImageId == null) {
-            if (other.templateImageId != null) {
-                return false;
-            }
-        } else if (!templateImageId.equals(other.templateImageId)) {
-            return false;
-        }
-        return true;
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && active == other.active
+                && ObjectUtils.objectsEqual(lastModified, other.lastModified)
+                && ObjectUtils.objectsEqual(parentId, other.parentId)
+                && ObjectUtils.objectsEqual(snapshotId, other.snapshotId)
+                && status == other.status
+                && ObjectUtils.objectsEqual(templateImageId, other.templateImageId));
     }
 }

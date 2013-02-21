@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
@@ -433,79 +434,32 @@ public class DiskImage extends DiskImageBase implements IImage {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (!super.equals(obj))
+        }
+        if (!super.equals(obj)) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         DiskImage other = (DiskImage) obj;
-        if (getImage() == null) {
-            if (other.getImage() != null)
-                return false;
-        } else if (!getImage().equals(other.getImage()))
-            return false;
-        if (snapshots == null) {
-            if (other.snapshots != null)
-                return false;
-        } else if (!snapshots.equals(other.snapshots))
-            return false;
-        if (actualSizeFromDiskImageDynamic != other.actualSizeFromDiskImageDynamic)
-            return false;
-        if (appList == null) {
-            if (other.appList != null)
-                return false;
-        } else if (!appList.equals(other.appList))
-            return false;
-        if (description == null) {
-            if (other.description != null)
-                return false;
-        } else if (!description.equals(other.description))
-            return false;
-        if (readRateKbPerSec != other.readRateKbPerSec)
-            return false;
-        if (writeRateKbPerSec != other.writeRateKbPerSec)
-            return false;
-        if (storagePath == null) {
-            if (other.storagePath != null)
-                return false;
-        } else if (!storagePath.equals(other.storagePath))
-            return false;
-        if (readRateFromDiskImageDynamic != other.readRateFromDiskImageDynamic)
-            return false;
-        if (storageIds == null) {
-            if (other.storageIds != null)
-                return false;
-        } else if (!storageIds.equals(other.storageIds))
-            return false;
-        if (storagePoolId == null) {
-            if (other.storagePoolId != null)
-                return false;
-        } else if (!storagePoolId.equals(other.storagePoolId))
-            return false;
-        if (storagesNames == null) {
-            if (other.storagesNames != null)
-                return false;
-        } else if (!storagesNames.equals(other.storagesNames))
-            return false;
-        if (writeRateFromDiskImageDynamic != other.writeRateFromDiskImageDynamic)
-            return false;
-        if (readLatency == null) {
-            if (other.readLatency != null)
-                return false;
-        } else if (!readLatency.equals(other.readLatency))
-            return false;
-        if (writeLatency == null) {
-            if (other.writeLatency != null)
-                return false;
-        } else if (!writeLatency.equals(other.writeLatency))
-            return false;
-        if (flushLatency == null) {
-            if (other.flushLatency != null)
-                return false;
-        } else if (!flushLatency.equals(other.flushLatency))
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(getImage(), other.getImage())
+                && ObjectUtils.objectsEqual(snapshots, other.snapshots)
+                && actualSizeFromDiskImageDynamic == other.actualSizeFromDiskImageDynamic
+                && ObjectUtils.objectsEqual(appList, other.appList)
+                && ObjectUtils.objectsEqual(description, other.description)
+                && readRateKbPerSec == other.readRateKbPerSec
+                && writeRateKbPerSec == other.writeRateKbPerSec
+                && ObjectUtils.objectsEqual(storagePath, other.storagePath)
+                && readRateFromDiskImageDynamic == other.readRateFromDiskImageDynamic
+                && ObjectUtils.objectsEqual(storageIds, other.storageIds)
+                && ObjectUtils.objectsEqual(storagePoolId, other.storagePoolId)
+                && ObjectUtils.objectsEqual(storagesNames, other.storagesNames)
+                && writeRateFromDiskImageDynamic == other.writeRateFromDiskImageDynamic
+                && ObjectUtils.objectsEqual(readLatency, other.readLatency)
+                && ObjectUtils.objectsEqual(writeLatency, other.writeLatency)
+                && ObjectUtils.objectsEqual(flushLatency, other.flushLatency));
     }
 
 }

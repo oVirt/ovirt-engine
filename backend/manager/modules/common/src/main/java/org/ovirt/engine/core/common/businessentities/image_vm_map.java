@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class image_vm_map implements BusinessEntity<image_vm_map_id> {
@@ -62,21 +63,8 @@ public class image_vm_map implements BusinessEntity<image_vm_map_id> {
             return false;
         }
         image_vm_map other = (image_vm_map) obj;
-        if (active == null) {
-            if (other.active != null) {
-                return false;
-            }
-        } else if (!active.equals(other.active)) {
-            return false;
-        }
-        if (id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!id.equals(other.id)) {
-            return false;
-        }
-        return true;
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && ObjectUtils.objectsEqual(active, other.active));
     }
 
     /**

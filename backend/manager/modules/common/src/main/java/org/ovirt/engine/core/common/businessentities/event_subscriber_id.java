@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class event_subscriber_id implements Serializable {
@@ -36,30 +37,19 @@ public class event_subscriber_id implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         event_subscriber_id other = (event_subscriber_id) obj;
-        if (eventUpName == null) {
-            if (other.eventUpName != null)
-                return false;
-        } else if (!eventUpName.equals(other.eventUpName))
-            return false;
-        if (methodId != other.methodId)
-            return false;
-        if (subscriberId == null) {
-            if (other.subscriberId != null)
-                return false;
-        } else if (!subscriberId.equals(other.subscriberId))
-            return false;
-        if (tagName == null) {
-            if (other.tagName != null)
-                return false;
-        } else if (!tagName.equals(other.tagName))
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(subscriberId, other.subscriberId)
+                && ObjectUtils.objectsEqual(eventUpName, other.eventUpName)
+                && methodId == other.methodId
+                && ObjectUtils.objectsEqual(tagName, other.tagName));
     }
 }

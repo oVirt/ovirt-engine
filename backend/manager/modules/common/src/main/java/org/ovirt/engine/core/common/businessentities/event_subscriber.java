@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.io.Serializable;
 
 import org.hibernate.validator.constraints.Email;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringFormat;
 
@@ -38,36 +39,21 @@ public class event_subscriber extends IVdcQueryable implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         event_subscriber other = (event_subscriber) obj;
-        if (id.eventUpName == null) {
-            if (other.id.eventUpName != null)
-                return false;
-        } else if (!id.eventUpName.equals(other.id.eventUpName))
-            return false;
-        if (methodAddress == null) {
-            if (other.methodAddress != null)
-                return false;
-        } else if (!methodAddress.equals(other.methodAddress))
-            return false;
-        if (id.methodId != other.id.methodId)
-            return false;
-        if (id.subscriberId == null) {
-            if (other.id.subscriberId != null)
-                return false;
-        } else if (!id.subscriberId.equals(other.id.subscriberId))
-            return false;
-        if (id.tagName == null) {
-            if (other.id.tagName != null)
-                return false;
-        } else if (!id.tagName.equals(other.id.tagName))
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(id.eventUpName, other.id.eventUpName)
+                && ObjectUtils.objectsEqual(methodAddress, other.methodAddress)
+                && id.methodId == other.id.methodId
+                && ObjectUtils.objectsEqual(id.subscriberId, other.id.subscriberId)
+                && ObjectUtils.objectsEqual(id.tagName, other.id.tagName));
     }
 
     public event_subscriber(String event_up_name, int method_id, Guid subscriber_id, String tagName) {
