@@ -1,9 +1,7 @@
 #!/bin/bash
 #
 # This script is designed to run the manage domains utility.
-# The script assumes all RPM dependencies were installed, so jar
-# files can be found under /usr/share/java. The tool's configuration
-# should be under the /etc directory.
+# The tool's configuration should be under the /etc directory.
 #
 
 # Load the prolog:
@@ -91,34 +89,6 @@ if [ "$1" == "--help" -o "$1" == "-h" ]; then
         exit 0
 fi
 
-CP=\
-$CONF_DIR:`\
-build-classpath \
-apache-commons-codec \
-apache-commons-collections \
-apache-commons-configuration \
-apache-commons-jxpath \
-apache-commons-lang \
-apache-commons-logging \
-log4j \
-ovirt-engine/common \
-ovirt-engine/compat \
-ovirt-engine/tools \
-ovirt-engine/utils \
-postgresql-jdbc \
-springframework/spring-beans \
-springframework/spring-core \
-springframework/spring-tx \
-spring-ldap/spring-ldap-core \
-`
-
-for f in $(echo $CP|sed 's/:/ /g')
-do
-        if [ ! -s $f ]; then
-                die "Error: can't run without missing JAR file: $f\n"
-        fi
-done
-
 PROPERTIES_FILE=`mktemp`
 
 if [ ! -e $PROPERTIES_FILE ]; then
@@ -136,7 +106,23 @@ LDAPProviderTypes=
 LDAPServerPort=
 EOF
 
-"${JAVA_HOME}/bin/java" -cp .:$CP -Dlog4j.configuration="file:${ENGINE_ETC}/engine-manage-domains/log4j.xml" org.ovirt.engine.core.domains.ManageDomains "$@" -propertiesFile=$PROPERTIES_FILE
+#
+# Add this option to the java command line to enable remote debugging in
+# all IP addresses and port 8787:
+#
+# -Xrunjdwp:transport=dt_socket,address=0.0.0.0:8787,server=y,suspend=y
+#
+# Note that the "suspend=y" options is needed to suspend the execution
+# of the JVM till you connect with the debugger, otherwise it is
+# not possible to debug the execution of the main method.
+#
+
+"${JAVA_HOME}/bin/java" \
+  -Dlog4j.configuration="file:${ENGINE_ETC}/engine-manage-domains/log4j.xml" \
+  -jar "${JBOSS_HOME}/jboss-modules.jar" \
+  -dependencies org.ovirt.engine.core.tools \
+  -class org.ovirt.engine.core.domains.ManageDomains \
+  "$@" -propertiesFile=$PROPERTIES_FILE
 
 RET_VAL=$?
 

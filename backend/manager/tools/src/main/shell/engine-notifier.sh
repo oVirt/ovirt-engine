@@ -80,8 +80,6 @@ for line in `cat $CONF_FILE`:
 done
 IFS=$old_IFS
 
-
-
 # Do basic checking of properties in configuration file to ensure
 # a) properties are defined
 # b) when properties are defined and reference a file system resource, that the resource exists.
@@ -203,43 +201,28 @@ if [ "${IS_NONREPEATED_NOTIFICATION+x}" ]; then
     fi
 fi
 
-# Configure classpath for engine-notifier
-JAVA_LIB_HOME=/usr/share/java
-#JAVA_OPTS="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=127.0.0.1:8787"
-
-# Add the configuration directory to the classpath so that configuration
-# files can be loaded as resources:
-CP="${ENGINE_ETC}/notifier"
-
-# Add the required jar files from the system wide jars directory:
-jar_names='
-    commons-codec
-    commons-collections
-    commons-lang
-    commons-logging
-    javamail
-    log4j
-    ovirt-engine/common
-    ovirt-engine/compat
-    ovirt-engine/tools
-    ovirt-engine/utils
-    postgresql-jdbc
-'
-for jar_name in ${jar_names}
-do
-    jar_file=${JAVA_LIB_HOME}/${jar_name}.jar
-    if [ ! -s "${jar_file}" ]
-    then
-        die "Error: can't run without missing JAR file: ${jar_file}\n" 5
-    fi
-    CP=${CP}:${jar_file}
-done
-
 if [ -z "$NOTIFIER_PID" ]
 then
     NOTIFIER_PID=/dev/null
 fi
 
-"${JAVA_HOME}/bin/java" -cp $CP $JAVA_OPTS org.ovirt.engine.core.notifier.Notifier $CONF_FILE 2>/dev/null &
+#
+# Add this option to the java command line to enable remote debugging in
+# all IP addresses and port 8787:
+#
+# -Xrunjdwp:transport=dt_socket,address=0.0.0.0:8787,server=y,suspend=y
+#
+# Note that the "suspend=y" options is needed to suspend the execution
+# of the JVM till you connect with the debugger, otherwise it is
+# not possible to debug the execution of the main method.
+#
+
+"${JAVA_HOME}/bin/java" \
+  -Dlog4j.configuration="file:${ENGINE_ETC}/notifier/log4j.xml" \
+  -jar "${JBOSS_HOME}/jboss-modules.jar" \
+  -dependencies org.ovirt.engine.core.tools \
+  -class org.ovirt.engine.core.notifier.Notifier \
+  "${CONF_FILE}" \
+  2>/dev/null &
 
 echo $! >$NOTIFIER_PID
