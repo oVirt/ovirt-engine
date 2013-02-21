@@ -9,12 +9,12 @@ import javax.transaction.Transaction;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
@@ -74,6 +74,9 @@ public class AuditLogableBase extends TimeoutBase {
     private int eventFloodInSec = 30;
     private String customData = "";
     private boolean external = false;
+    private String storagePoolType;
+    private String compatibilityVersion;
+    private String quotaEnforcementType;
 
     public AuditLogableBase() {
     }
@@ -634,6 +637,31 @@ public class AuditLogableBase extends TimeoutBase {
     public void setExternal(boolean external) {
         this.external = external;
     }
+
+    public String getStoragePoolType() {
+        return storagePoolType;
+    }
+
+    public void setStoragePoolType(String storagePoolType) {
+        this.storagePoolType = storagePoolType;
+    }
+
+    public String getCompatibilityVersion() {
+        return compatibilityVersion;
+    }
+
+    public void setCompatibilityVersion(String compatibilityVersion) {
+        this.compatibilityVersion = compatibilityVersion;
+    }
+
+    public String getQuotaEnforcementType() {
+        return quotaEnforcementType;
+    }
+
+    public void setQuotaEnforcementType(String quotaEnforcementType) {
+        this.quotaEnforcementType = quotaEnforcementType;
+    }
+
     private static final Log log = LogFactory.getLog(AuditLogableBase.class);
 
 }
