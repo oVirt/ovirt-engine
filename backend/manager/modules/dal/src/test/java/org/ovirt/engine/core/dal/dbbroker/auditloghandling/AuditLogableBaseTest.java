@@ -12,12 +12,12 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.users.VdcUser;
@@ -29,6 +29,7 @@ import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 
 public class AuditLogableBaseTest {
 
@@ -1112,6 +1113,11 @@ public class AuditLogableBaseTest {
             g.setvds_group_id(GUID);
             when(v.get(GUID)).thenReturn(g);
             return v;
+        }
+
+        @Override
+        protected VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
+            return mock(VmNetworkInterfaceDao.class);
         }
 
         private List<StorageDomain> getStorageDomainList() {
