@@ -670,8 +670,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         } else {
             Guid snapshotId = null;
             for (DiskImage disk : getVm().getImages()) {
-                diskGuidList.add(disk.getId());
-                imageGuidList.add(disk.getImageId());
                 disk.setActive(false);
                 setDiskStorageDomainInfo(disk);
 
@@ -684,6 +682,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             int aliasCounter = 0;
             for (List<DiskImage> diskList : images.values()) {
                 DiskImage disk = diskList.get(diskList.size() - 1);
+                diskGuidList.add(disk.getId());
+                imageGuidList.add(disk.getImageId());
                 snapshotId = disk.getVmSnapshotId().getValue();
                 disk.setActive(true);
                 ImagesHandler.setDiskAlias(disk, getVm(), ++aliasCounter);
