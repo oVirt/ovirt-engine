@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -32,6 +33,11 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
         }
 
         return deletedProvider;
+    }
+
+    public String getProviderName() {
+        Provider provider = getDeletedProvider();
+        return provider == null ? null : provider.getName();
     }
 
     @Override
@@ -63,6 +69,11 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
     protected List<Class<?>> getValidationGroups() {
         addValidationGroup(RemoveEntity.class);
         return super.getValidationGroups();
+    }
+
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        return getSucceeded() ? AuditLogType.PROVIDER_REMOVED : AuditLogType.PROVIDER_REMOVAL_FAILED;
     }
 
     private ProviderDao getProviderDao() {

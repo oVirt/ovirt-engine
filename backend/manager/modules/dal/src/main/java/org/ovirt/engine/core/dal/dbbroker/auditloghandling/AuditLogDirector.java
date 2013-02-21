@@ -38,6 +38,7 @@ public final class AuditLogDirector {
 
     private static void initSeverities() {
         initDefaultSeverities();
+        initProviderSeverities();
         initNetworkSeverities();
         initImportExportSeverities();
         initEngineSeverities();
@@ -56,6 +57,15 @@ public final class AuditLogDirector {
         initConfigSeverities();
         initUserAccountSeverities();
         initCommonSeverities();
+    }
+
+    private static void initProviderSeverities() {
+        severities.put(AuditLogType.PROVIDER_ADDED, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.PROVIDER_ADDITION_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.PROVIDER_UPDATED, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.PROVIDER_UPDATE_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.PROVIDER_REMOVED, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.PROVIDER_REMOVAL_FAILED, AuditLogSeverity.ERROR);
     }
 
     private static void initGlusterSeverities() {

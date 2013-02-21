@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -25,6 +26,10 @@ public class AddProviderCommand<P extends ProviderParameters> extends CommandBas
 
     private Provider getProvider() {
         return getParameters().getProvider();
+    }
+
+    public String getProviderName() {
+        return getProvider().getName();
     }
 
     @Override
@@ -58,5 +63,10 @@ public class AddProviderCommand<P extends ProviderParameters> extends CommandBas
     protected List<Class<?>> getValidationGroups() {
         addValidationGroup(CreateEntity.class);
         return super.getValidationGroups();
+    }
+
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        return getSucceeded() ? AuditLogType.PROVIDER_ADDED : AuditLogType.PROVIDER_ADDITION_FAILED;
     }
 }

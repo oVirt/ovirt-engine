@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -38,16 +39,20 @@ public class UpdateProviderCommand<P extends ProviderParameters> extends Command
         return oldProvider;
     }
 
+    public String getProviderName() {
+        return getOldProvider().getName();
+    }
+
     @Override
     protected boolean canDoAction() {
         ProviderValidator validatorOld = new ProviderValidator(getOldProvider());
         ProviderValidator validatorNew = new ProviderValidator(getProvider());
         return validate(validatorOld.providerIsSet())
-                && nameKept(getOldProvider()) || validate(validatorNew.nameAvailable());
+                && (nameKept() || validate(validatorNew.nameAvailable()));
     }
 
-    private boolean nameKept(Provider oldProvider) {
-        return oldProvider.getName().equals(getProvider().getName());
+    private boolean nameKept() {
+        return getOldProvider().getName().equals(getProvider().getName());
     }
 
     @Override
@@ -73,6 +78,11 @@ public class UpdateProviderCommand<P extends ProviderParameters> extends Command
     protected List<Class<?>> getValidationGroups() {
         addValidationGroup(UpdateEntity.class);
         return super.getValidationGroups();
+    }
+
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        return getSucceeded() ? AuditLogType.PROVIDER_UPDATED : AuditLogType.PROVIDER_UPDATE_FAILED;
     }
 
     private ProviderDao getProviderDao() {
