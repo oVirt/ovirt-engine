@@ -610,9 +610,7 @@ BEGIN
     SELECT COALESCE(sum(size) / (1024 * 1024 * 1024),0) INTO v_virtual_size
 	FROM disk_image_dynamic, images_storage_domain_view
 	WHERE image_guid = disk_image_dynamic.image_id
-    AND image_guid in (SELECT image_guid
-                       FROM   images i JOIN vm_device vd ON i.image_group_id = vd.device_id
-                       WHERE  active = TRUE)
+    AND image_guid in (SELECT image_guid FROM  images WHERE  active = TRUE)
 	AND quota_id = v_quota_id
     AND (v_storage_id = images_storage_domain_view.storage_id or v_storage_id IS NULL);
 
