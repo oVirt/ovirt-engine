@@ -38,6 +38,11 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
             retValue = false;
         } else if (isOvirtReInstallOrUpgrade()) {
             String isoFile = getParameters().getoVirtIsoFile();
+            // Block re-install on non-operational Host
+            if  (getVds().getStatus() == VDSStatus.NonOperational) {
+                addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_INSTALL_STATUS_ILLEGAL);
+                retValue = false;
+            }
             if (!isIsoFileValid(isoFile)) {
                 addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_INSTALL_MISSING_IMAGE_FILE);
                 retValue = false;
