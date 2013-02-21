@@ -57,21 +57,13 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
         };
         getTable().addColumn(nameColumn, constants.domainNameStorage(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<StorageDomain> descriptionColumn = new TextColumnWithTooltip<StorageDomain>() {
-            @Override
-            public String getValue(StorageDomain object) {
-                return object.getDescription();
-            }
-        };
-        getTable().addColumn(descriptionColumn, constants.domainDescriptionStorage(), "200px"); //$NON-NLS-1$
-
         TextColumnWithTooltip<StorageDomain> domainTypeColumn = new EnumColumn<StorageDomain, StorageDomainType>() {
             @Override
             protected StorageDomainType getRawValue(StorageDomain object) {
                 return object.getStorageDomainType();
             }
         };
-        getTable().addColumn(domainTypeColumn, constants.domainTypeStorage(), "130px"); //$NON-NLS-1$
+        getTable().addColumn(domainTypeColumn, constants.domainTypeStorage(), "140px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<StorageDomain> storageTypeColumn = new EnumColumn<StorageDomain, StorageType>() {
             @Override
@@ -79,7 +71,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
                 return object.getStorageType();
             }
         };
-        getTable().addColumn(storageTypeColumn, constants.storageTypeStorage(), "150px"); //$NON-NLS-1$
+        getTable().addColumn(storageTypeColumn, constants.storageTypeStorage(), "140px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<StorageDomain> formatColumn = new EnumColumn<StorageDomain, StorageFormatType>() {
             @Override
@@ -87,7 +79,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
                 return object.getStorageFormat();
             }
         };
-        getTable().addColumn(formatColumn, constants.formatStorage(), "100px"); //$NON-NLS-1$
+        getTable().addColumn(formatColumn, constants.formatStorage(), "140px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<StorageDomain> crossDataCenterStatusColumn =
                 new TextColumnWithTooltip<StorageDomain>() {
@@ -100,7 +92,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
                         }
                     }
                 };
-        getTable().addColumn(crossDataCenterStatusColumn, constants.crossDcStatusStorage(), "180px"); //$NON-NLS-1$
+        getTable().addColumn(crossDataCenterStatusColumn, constants.crossDcStatusStorage(), "160px"); //$NON-NLS-1$
 
         DiskSizeColumn<StorageDomain> freeSpaceColumn = new DiskSizeColumn<StorageDomain>(DiskSizeUnit.GIGABYTE) {
             @Override
@@ -109,7 +101,15 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
                 return (long) availableDiskSize;
             }
         };
-        getTable().addColumn(freeSpaceColumn, constants.freeSpaceStorage(), "150px"); //$NON-NLS-1$
+        getTable().addColumn(freeSpaceColumn, constants.freeSpaceStorage(), "140px"); //$NON-NLS-1$
+
+        TextColumnWithTooltip<StorageDomain> descriptionColumn = new TextColumnWithTooltip<StorageDomain>() {
+            @Override
+            public String getValue(StorageDomain object) {
+                return object.getDescription();
+            }
+        };
+        getTable().addColumn(descriptionColumn, constants.domainDescriptionStorage(), "200px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.newDomainStorage()) {
             @Override

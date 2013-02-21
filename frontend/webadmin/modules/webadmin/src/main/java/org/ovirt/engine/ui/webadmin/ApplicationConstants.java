@@ -1168,7 +1168,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Domain Name")
     String domainNameStorage();
 
-    @DefaultStringValue("Domain Description")
+    @DefaultStringValue("Description")
     String domainDescriptionStorage();
 
     @DefaultStringValue("Domain Type")
