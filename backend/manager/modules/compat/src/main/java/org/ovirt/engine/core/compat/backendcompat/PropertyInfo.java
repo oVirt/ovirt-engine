@@ -7,7 +7,7 @@ import org.apache.commons.logging.LogFactory;
 
 //This will be a wrapper for import java.beans.PropertyDescriptor;
 public class PropertyInfo {
-    private static Log log = LogFactory.getLog(PropertyInfo.class);
+    private static final Log log = LogFactory.getLog(PropertyInfo.class);
 
     private PropertyDescriptor pd;
 
