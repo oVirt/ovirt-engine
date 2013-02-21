@@ -225,7 +225,7 @@ rpm-quick:
 		rpm \
 		RPMBUILD_EXTRA_ARGS='--define="__jar_repack 0" \
 			--define="BUILD_FLAGS -D dummy" \
-			--define="EXTRA_BUILD_FLAGS -D maven.test.skip=true -D gwt.userAgent=gecko1_8"'
+			--define="EXTRA_BUILD_FLAGS -D skipTests=true -D gwt.userAgent=gecko1_8"'
 	@echo
 	@echo WARNING:
 	@echo rpms produces from quick are partial!
