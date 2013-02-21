@@ -43,7 +43,11 @@ public class FormBuilder {
     }
 
     public void showForm(EntityModel model) {
+        if (this.model != null) {
+            this.model.getPropertyChangedEvent().removeListener(propertyChangedEventListener);
+        }
         this.model = model;
+        model.getPropertyChangedEvent().addListener(propertyChangedEventListener);
 
         // Clear the form panel
         formPanel.clear();
@@ -54,9 +58,6 @@ public class FormBuilder {
                 formPanel.addFormItem(item);
             }
         }
-
-        model.getPropertyChangedEvent().removeListener(propertyChangedEventListener);
-        model.getPropertyChangedEvent().addListener(propertyChangedEventListener);
     }
 
     public void clear() {

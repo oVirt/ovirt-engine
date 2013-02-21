@@ -14,8 +14,7 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.editor.client.impl.BaseEditorDriver;
 
 /**
- * A base implementation class for generated SimpleBeanEditorDriver implementations based on EntityModel and ListModel
- * instances.
+ * Base class for generated SimpleBeanEditorDriver implementations for editing EntityModel and ListModel instances.
  *
  * @param <T>
  *            the type being edited
@@ -25,6 +24,8 @@ import com.google.gwt.editor.client.impl.BaseEditorDriver;
 public abstract class AbstractUiCommonModelEditorDriver<T extends Model, E extends Editor<T>>
         extends BaseEditorDriver<T, E> implements SimpleBeanEditorDriver<T, E> {
 
+    private IEventListener propertyChangeListener = null;
+
     /**
      * {@inheritDoc} <BR>
      * Register listeners for EntityModel changes, according to the Event Map created by the Driver
@@ -33,17 +34,22 @@ public abstract class AbstractUiCommonModelEditorDriver<T extends Model, E exten
     public void edit(T object) {
         doEdit(object);
 
+        if (propertyChangeListener != null) {
+            object.getPropertyChangedEvent().removeListener(propertyChangeListener);
+        }
+
         final UiCommonListenerMap listenerMap = getListenerMap();
 
-        // Register a "PropertyChangedEvent" to get Model changes
-        object.getPropertyChangedEvent().addListener(new IEventListener() {
-
+        propertyChangeListener = new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
                 listenerMap.callListener(propName, "PropertyChanged"); //$NON-NLS-1$
             }
-        });
+        };
+
+        // Register a "PropertyChangedEvent" to get Model changes
+        object.getPropertyChangedEvent().addListener(propertyChangeListener);
 
         // Visit editors
         accept(new UiCommonEditorVisitor<T>(getEventMap(), getOwnerModels()));
