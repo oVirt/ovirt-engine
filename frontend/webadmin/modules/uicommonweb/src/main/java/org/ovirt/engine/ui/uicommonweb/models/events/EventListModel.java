@@ -283,14 +283,4 @@ public class EventListModel extends SearchableListModel
         return "EventListModel"; //$NON-NLS-1$
     }
 
-    /**
-     * This method is called only when the list is initialized.
-     * @param value
-     */
-    @Override
-    public void setItems(Iterable value) {
-        List<AuditLog> list = (List<AuditLog>) value;
-        Collections.sort(list, Collections.reverseOrder(new Linq.AuditLogComparer()));
-        super.setItems(list);
-    }
 }
