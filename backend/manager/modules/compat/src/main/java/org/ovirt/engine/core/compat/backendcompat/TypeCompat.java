@@ -33,12 +33,12 @@ public class TypeCompat {
         return returnValue;
     }
 
-    public static PropertyCompat GetProperty(Class<?> type, String idField) {
+    public static PropertyInfo GetProperty(Class<?> type, String idField) {
         try {
             PropertyDescriptor[] pds = Introspector.getBeanInfo(type).getPropertyDescriptors();
             for (PropertyDescriptor pd : pds) {
                 if (pd.getName().equalsIgnoreCase(idField)) {
-                    return new PropertyCompat(pd);
+                    return new PropertyInfo(pd);
                 }
             }
         } catch (Exception e) {

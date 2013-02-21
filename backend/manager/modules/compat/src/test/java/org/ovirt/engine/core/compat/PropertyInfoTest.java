@@ -10,19 +10,19 @@ import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
-import org.ovirt.engine.core.compat.backendcompat.PropertyCompat;
+import org.ovirt.engine.core.compat.backendcompat.PropertyInfo;
 import org.ovirt.engine.core.compat.backendcompat.TypeCompat;
 
-public class PropertyCompatTest {
+public class PropertyInfoTest {
     private String someValue = "Anakin";
 
     @Test
     public void testIt() {
-        PropertyCompat pc = TypeCompat.GetProperty(this.getClass(), "someValue");
-        String result = (String) pc.GetValue(this, "JarJar");
+        PropertyInfo propInfo = TypeCompat.GetProperty(this.getClass(), "someValue");
+        String result = (String) propInfo.GetValue(this, "JarJar");
         assertEquals("Standard", "Anakin", result);
         this.someValue = null;
-        result = (String) pc.GetValue(this, "JarJar");
+        result = (String) propInfo.GetValue(this, "JarJar");
         assertEquals("Null Value", "JarJar", result);
     }
 
