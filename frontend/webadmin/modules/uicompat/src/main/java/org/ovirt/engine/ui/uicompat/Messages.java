@@ -105,14 +105,32 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("VM(s): {0} already exist on the target Export Domain. If you want to override them, please check the ''Force Override'' check-box.")
     String vmsAlreadyExistOnTargetExportDomain(String existingVMs);
 
-    @DefaultMessage("Shared disk(s): {0} will not be part of the exported virtual machine.")
-    String disksWillNotBePartOfTheExportedVM(String diskList);
+    @DefaultMessage("Shared disk(s) will not be a part of the VM export: {0}.")
+    String sharedDisksWillNotBePartOfTheExport(String diskList);
 
-    @DefaultMessage("Shared disk(s): {0} will not be part of the exported template.")
-    String disksWillNotBePartOfTheExportedVMTemplate(String diskList);
+    @DefaultMessage("Direct LUN disk(s) will not be a part of the VM export: {0}.")
+    String directLUNDisksWillNotBePartOfTheExport(String diskList);
 
-    @DefaultMessage("Shared disk(s): {0} will not be part of the exported snapshot.")
-    String disksWillNotBePartOfTheExportedVMSnapshot(String diskList);
+    @DefaultMessage("There are disks not allowing an export, only the configuration will be a part of the VM export.")
+    String noExportableDisksFoundForTheExport();
+
+    @DefaultMessage("Shared disk(s) will not be a part of the VM snapshot: {0}.")
+    String sharedDisksWillNotBePartOfTheSnapshot(String diskList);
+
+    @DefaultMessage("Direct LUN disk(s) will not be a part of the VM snapshot: {0}.")
+    String directLUNDisksWillNotBePartOfTheSnapshot(String diskList);
+
+    @DefaultMessage("There are disks not allowing a snapshot, only the configuration will be a part of the VM snapshot.")
+    String noExportableDisksFoundForTheSnapshot();
+
+    @DefaultMessage("Shared disk(s) will not be a part of the VM template: {0}.")
+    String sharedDisksWillNotBePartOfTheTemplate(String diskList);
+
+    @DefaultMessage("Direct LUN disk(s) will not be a part of the VM template: {0}.")
+    String directLUNDisksWillNotBePartOfTheTemplate(String diskList);
+
+    @DefaultMessage("There are disks not allowing an export, only the configuration will be a part of the VM template.")
+    String noExportableDisksFoundForTheTemplate();
 
     @DefaultMessage("Error connecting to Virtual Machine using Spice:\n{0}")
     String errConnectingVmUsingSpiceMsg(Object errCode);

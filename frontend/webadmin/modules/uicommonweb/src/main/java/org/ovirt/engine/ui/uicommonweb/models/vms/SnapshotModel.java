@@ -30,7 +30,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class SnapshotModel extends EntityModel
 {
@@ -138,6 +137,7 @@ public class SnapshotModel extends EntityModel
         this.cancelCommand = cancelCommand;
     }
 
+    @Override
     public UICommand getCancelCommand() {
         return cancelCommand;
     }
@@ -206,7 +206,7 @@ public class SnapshotModel extends EntityModel
                 SnapshotModel snapshotModel = (SnapshotModel) target;
                 ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
 
-                snapshotModel.showWarningForNonExportableDisks(disks);
+                VmModelHelper.sendWarningForNonExportableDisks(snapshotModel, disks, VmModelHelper.WarningType.VM_SNAPSHOT);
                 snapshotModel.getCommands().add(getOnSaveCommand());
                 snapshotModel.getCommands().add(getCancelCommand());
                 snapshotModel.StopProgress();
@@ -245,26 +245,6 @@ public class SnapshotModel extends EntityModel
                 new LengthValidation(BusinessEntitiesDefinitions.GENERAL_MAX_SIZE) });
 
         return getDescription().getIsValid();
-    }
-
-    // send warning message, if a disk which doesn't allow snapshot is detected (e.g. LUN)
-    private boolean showWarningForNonExportableDisks(ArrayList<Disk> disks) {
-        // filter non-exportable disks
-        final List<String> list = new ArrayList<String>();
-        for (Disk disk : disks) {
-            if (!disk.isAllowSnapshot()) {
-                list.add(disk.getDiskAlias());
-            }
-        }
-
-        if(!list.isEmpty()) {
-            final String s = StringUtils.join(list, ", "); //$NON-NLS-1$
-            // append warning message
-            setMessage(ConstantsManager.getInstance().getMessages().disksWillNotBePartOfTheExportedVMSnapshot(s));
-            return true;
-        }
-
-        return false;
     }
 
     private boolean showWarningForByVmSnapshotsValidation(ArrayList<Snapshot> snapshots) {

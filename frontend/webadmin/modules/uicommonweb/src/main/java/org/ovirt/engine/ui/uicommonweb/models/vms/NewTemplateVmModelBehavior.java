@@ -3,8 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -12,13 +10,13 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -31,7 +29,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 {
@@ -108,25 +105,19 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                     public void OnSuccess(Object target, Object returnValue) {
 
                         NewTemplateVmModelBehavior behavior = (NewTemplateVmModelBehavior) target;
-                        ArrayList<Disk> disks = new ArrayList<Disk>();
-                        List<Disk> nonExportableDisks = new ArrayList<Disk>();
-                        Iterable disksEnumerable = (Iterable) returnValue;
-                        Iterator disksIterator = disksEnumerable.iterator();
+                        ArrayList<Disk> imageDisks = new ArrayList<Disk>();
+                        ArrayList<Disk> vmDisks = (ArrayList<Disk>) returnValue;
 
-                        while (disksIterator.hasNext())
-                        {
-                            Disk disk = (Disk) disksIterator.next();
-
+                        for (Disk disk : vmDisks) {
                             if (disk.getDiskStorageType() == DiskStorageType.IMAGE && !disk.isShareable()) {
-                                disks.add(disk);
-                            } else if (!disk.isAllowSnapshot()) {
-                                nonExportableDisks.add(disk);
+                                imageDisks.add(disk);
                             }
                         }
 
                         behavior.InitStorageDomains();
-                        InitDisks(disks);
-                        sendWarningForNonExportableDisks(nonExportableDisks);
+                        InitDisks(imageDisks);
+
+                        VmModelHelper.sendWarningForNonExportableDisks(getModel(), vmDisks, VmModelHelper.WarningType.VM_TEMPLATE);
                     }
                 }, getModel().getHash()),
                 vm.getId(),
@@ -136,20 +127,6 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
             getModel().getQuota().setIsAvailable(true);
         } else {
             getModel().getQuota().setIsAvailable(false);
-        }
-    }
-
-    private void sendWarningForNonExportableDisks(List<Disk> nonExportableDisks) {
-        if (!nonExportableDisks.isEmpty()) {
-            final List<String> list = new ArrayList<String>();
-            for (Disk disk : nonExportableDisks) {
-                list.add(disk.getDiskAlias());
-            }
-
-            final String s = StringUtils.join(list, ", "); //$NON-NLS-1$
-
-            // append warning message
-            getModel().setMessage(ConstantsManager.getInstance().getMessages().disksWillNotBePartOfTheExportedVMTemplate(s));
         }
     }
 

@@ -90,7 +90,6 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTreeContext
 {
@@ -1360,20 +1359,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     public void OnSuccess(Object target, Object returnValue) {
                         final ExportVmModel model = (ExportVmModel) target;
                         @SuppressWarnings("unchecked")
-                        final ArrayList<Disk> diskList = (ArrayList<Disk>) returnValue;
-                        // filter non-exportable disks
-                        final List<String> list = new ArrayList<String>();
-                        for(Disk disk : diskList) {
-                            if (!disk.isAllowSnapshot()) {
-                                list.add(disk.getDiskAlias());
-                            }
-                        }
-
-                        if (!list.isEmpty()) {
-                            final String s = StringUtils.join(list, ", "); //$NON-NLS-1$
-                            // append warning message
-                            model.setMessage(ConstantsManager.getInstance().getMessages().disksWillNotBePartOfTheExportedVM(s));
-                        }
+                        final ArrayList<Disk> vmDisks = (ArrayList<Disk>) returnValue;
+                        VmModelHelper.sendWarningForNonExportableDisks(model, vmDisks, VmModelHelper.WarningType.VM_EXPORT);
                     }
                 }), entity.getId());
     }
