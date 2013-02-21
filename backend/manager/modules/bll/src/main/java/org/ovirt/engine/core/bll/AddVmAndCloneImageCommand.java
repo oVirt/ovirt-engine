@@ -107,6 +107,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
         params.setUseCopyCollapse(true);
         params.setSourceDomainId(srcStorageDomainId);
         params.setWipeAfterDelete(diskImage.isWipeAfterDelete());
+        params.setEntityId(getVmId());
         params.setParentParameters(getParameters());
         params.setParentCommand(parentCommandType);
         return params;
