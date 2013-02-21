@@ -289,7 +289,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                     tempVar.setSourceDomainId(getParameters().getSourceDomainId());
                     tempVar.setForceOverride(getParameters().getForceOverride());
                     tempVar.setImportEntity(true);
-                    tempVar.setEntityId(disk.getImageId());
+                    tempVar.setEntityId(containerID);
                     for (DiskImage diskImage : getParameters().getVmTemplate().getDiskList()) {
                         if (diskGuidList.get(i).equals(diskImage.getId())) {
                             tempVar.setQuotaId(diskImage.getQuotaId());
