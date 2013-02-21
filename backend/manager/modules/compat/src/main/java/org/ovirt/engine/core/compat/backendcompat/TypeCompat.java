@@ -15,7 +15,7 @@ import org.ovirt.engine.core.compat.CompatException;
 public class TypeCompat {
 
     private static final String CLASS = "class";
-    private static Log log = LogFactory.getLog(TypeCompat.class);
+    private static final Log log = LogFactory.getLog(TypeCompat.class);
 
     public static List<PropertyInfo> GetProperties(Class<?> type) {
         List<PropertyInfo> returnValue = new ArrayList<PropertyInfo>();
