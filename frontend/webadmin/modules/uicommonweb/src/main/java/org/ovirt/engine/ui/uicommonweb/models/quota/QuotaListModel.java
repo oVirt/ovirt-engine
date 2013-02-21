@@ -9,9 +9,9 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -144,7 +144,11 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         getCloneQuotaCommand().setIsExecutionAllowed(items.size() == 1);
     }
 
-    private void createQuota() {
+    protected void createQuota(){
+        createQuota(true);
+    }
+
+    protected void createQuota(boolean populateDataCenter) {
         final QuotaModel qModel = new QuotaModel();
         qModel.setTitle(ConstantsManager.getInstance().getConstants().newQuotaTitle());
         qModel.setHashName("new_quota"); //$NON-NLS-1$
@@ -153,37 +157,42 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         setWindow(qModel);
         qModel.StartProgress(null);
 
-        AsyncDataProvider.GetDataCenterList(new AsyncQuery(this, new INewAsyncCallback() {
+        if(populateDataCenter){
+            AsyncDataProvider.GetDataCenterList(new AsyncQuery(this, new INewAsyncCallback() {
 
-            @Override
-            public void OnSuccess(Object model, Object returnValue) {
-                ArrayList<storage_pool> dataCenterList = (ArrayList<storage_pool>) returnValue;
-                if (dataCenterList == null || dataCenterList.size() == 0) {
-                    return;
+                @Override
+                public void OnSuccess(Object model, Object returnValue) {
+                    ArrayList<storage_pool> dataCenterList = (ArrayList<storage_pool>) returnValue;
+                    if (dataCenterList == null || dataCenterList.size() == 0) {
+                        return;
+                    }
+                    QuotaListModel quotaListModel = (QuotaListModel) model;
+                    QuotaModel quotaModel = (QuotaModel) quotaListModel.getWindow();
+                    quotaModel.getDataCenter().setItems(dataCenterList);
+                    quotaModel.getDataCenter().setSelectedItem(dataCenterList.get(0));
+
+                    if (quotaListModel.getSystemTreeSelectedItem() != null
+                            && quotaListModel.getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter)
+                    {
+                        storage_pool selectDataCenter =
+                                (storage_pool) quotaListModel.getSystemTreeSelectedItem().getEntity();
+
+                        quotaModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenterList,
+                                new Linq.DataCenterPredicate(selectDataCenter.getId())));
+                        quotaModel.getDataCenter().setIsChangable(false);
+                    }
                 }
-                QuotaListModel quotaListModel = (QuotaListModel) model;
-                QuotaModel quotaModel = (QuotaModel) quotaListModel.getWindow();
-                quotaModel.getDataCenter().setItems(dataCenterList);
-                quotaModel.getDataCenter().setSelectedItem(dataCenterList.get(0));
-
-                if (quotaListModel.getSystemTreeSelectedItem() != null
-                        && quotaListModel.getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter)
-                {
-                    storage_pool selectDataCenter =
-                            (storage_pool) quotaListModel.getSystemTreeSelectedItem().getEntity();
-
-                    quotaModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenterList,
-                            new Linq.DataCenterPredicate(selectDataCenter.getId())));
-                    quotaModel.getDataCenter().setIsChangable(false);
-                }
-            }
-        }));
+            }));
+        }
 
         qModel.getDataCenter().getSelectedItemChangedEvent().addListener(new IEventListener() {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 storage_pool selectedDataCenter = (storage_pool) qModel.getDataCenter().getSelectedItem();
+                if(selectedDataCenter == null){
+                    return;
+                }
                 AsyncDataProvider.GetClusterList(new AsyncQuery(this, new INewAsyncCallback() {
                     @Override
                     public void OnSuccess(Object model, Object returnValue) {

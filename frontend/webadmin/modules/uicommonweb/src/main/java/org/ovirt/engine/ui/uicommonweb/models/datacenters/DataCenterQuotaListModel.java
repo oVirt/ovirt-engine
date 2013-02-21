@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -11,6 +12,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
+import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -79,5 +81,17 @@ public class DataCenterQuotaListModel extends QuotaListModel
     @Override
     protected String getListName() {
         return "DataCenterQuotaListModel"; //$NON-NLS-1$
+    }
+
+    @Override
+    protected void createQuota() {
+        super.createQuota(false);
+
+        QuotaModel quotaModel = (QuotaModel) getWindow();
+
+
+        quotaModel.getDataCenter().setItems(Arrays.asList(getEntity()));
+        quotaModel.getDataCenter().setSelectedItem(getEntity());
+        quotaModel.getDataCenter().setIsChangable(false);
     }
 }
