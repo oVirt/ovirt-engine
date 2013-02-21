@@ -22,9 +22,21 @@
   <dependencies>
 
     <dependency>
+      <groupId>commons-configuration</groupId>
+      <artifactId>commons-configuration</artifactId>
+      <version>${commons-configuration.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>commons-httpclient</groupId>
       <artifactId>commons-httpclient</artifactId>
       <version>${httpclient.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-jxpath</groupId>
+      <artifactId>commons-jxpath</artifactId>
+      <version>${commons-jxpath.version}</version>
     </dependency>
 
     <dependency>
@@ -166,9 +178,21 @@
             <modules>
 
               <module>
+                <groupId>commons-configuration</groupId>
+                <artifactId>commons-configuration</artifactId>
+                <moduleName>org.apache.commons.configuration</moduleName>
+              </module>
+
+              <module>
                 <groupId>commons-httpclient</groupId>
                 <artifactId>commons-httpclient</artifactId>
                 <moduleName>org.ovirt.engine.core.dependencies</moduleName>
+              </module>
+
+              <module>
+                <groupId>commons-jxpath</groupId>
+                <artifactId>commons-jxpath</artifactId>
+                <moduleName>org.apache.commons.jxpath</moduleName>
               </module>
 
               <module>

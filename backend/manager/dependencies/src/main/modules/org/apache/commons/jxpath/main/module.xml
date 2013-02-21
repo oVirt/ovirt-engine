@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- We need this module because the engine-config tool uses
+     commons-configuration in a way that requires it to parse
+     configuration files, but it is not included in JBoss AS
+     because the application server doesn't use
+     commons-configuration in this way: -->
+
+<module xmlns="urn:jboss:module:1.1" name="org.apache.commons.jxpath">
+
+  <resources>
+    <resource-root path="commons-jxpath.jar"/>
+  </resources>
+
+  <dependencies>
+    <module name="javax.api"/>
+    <module name="org.apache.commons.logging"/>
+  </dependencies>
+
+</module>
