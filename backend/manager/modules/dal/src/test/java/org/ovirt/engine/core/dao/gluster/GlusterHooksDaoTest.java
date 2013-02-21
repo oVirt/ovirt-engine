@@ -25,6 +25,7 @@ public class GlusterHooksDaoTest extends BaseDAOTestCase {
     private static final String HOOK_NAME = "georep";
     private static final Guid SERVER_ID = new Guid("2001751e-549b-4e7a-aff6-32d36856c125");
     private static final String CHECKSUM = "0127f712fc008f857e77a2f3f179c710";
+    private static final String CONTENT = "Sample text for hook content ";
     private GlusterHooksDao dao;
 
     private GlusterHookEntity getGlusterHook() {
@@ -178,6 +179,13 @@ public class GlusterHooksDaoTest extends BaseDAOTestCase {
         GlusterHookEntity hook = dao.getById(FixturesTool.HOOK_ID);
         assertNotNull(hook);
         assertEquals(existingHook, hook);
+    }
+
+    @Test
+    public void getGlusterHookContent() {
+        String content = dao.getGlusterHookContent(FixturesTool.HOOK_ID);
+        assertNotNull(content);
+        assertEquals(content, CONTENT);
     }
 
 }

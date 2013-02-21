@@ -42,6 +42,8 @@ public interface GlusterHooksDao extends DAO, SearchDAO<GlusterHookEntity>, Mass
 
     public List<GlusterHookEntity> getByClusterId(Guid clusterId);
 
+    public String getGlusterHookContent(Guid glusterHookId);
+
     @Override
     public List<GlusterHookEntity> getAllWithQuery(String query);
 

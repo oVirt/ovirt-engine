@@ -7,12 +7,13 @@ import java.util.concurrent.FutureTask;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterHookContentInfoReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterHooksListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterServersListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterServicesReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeOptionsInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeProfileInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeStatusReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.GlusterHooksListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.GlusterServicesReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IsoListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
@@ -1171,7 +1172,6 @@ public class VdsServerWrapper implements IVdsServer {
     @Override
     public StatusOnlyReturnForXmlRpc glusterHookDisable(String glusterCommand, String stage, String hookName) {
         try {
-
             Map<String, Object> xmlRpcReturnValue = vdsServer.glusterHookDisable(glusterCommand, stage, hookName);
             StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
@@ -1196,6 +1196,18 @@ public class VdsServerWrapper implements IVdsServer {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.glusterHostUUIDGet();
             OneUuidReturnForXmlRpc wrapper = new OneUuidReturnForXmlRpc(xmlRpcReturnValue);
+             return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public GlusterHookContentInfoReturnForXmlRpc glusterHookRead(String glusterCommand, String stage, String hookName) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterHookRead(glusterCommand, stage, hookName);
+            GlusterHookContentInfoReturnForXmlRpc wrapper =
+                    new GlusterHookContentInfoReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);

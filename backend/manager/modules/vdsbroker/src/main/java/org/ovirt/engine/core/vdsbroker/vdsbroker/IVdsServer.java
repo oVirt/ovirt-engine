@@ -5,12 +5,13 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterHookContentInfoReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterHooksListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterServersListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterServicesReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeOptionsInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeProfileInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeStatusReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.GlusterHooksListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.GlusterServicesReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IsoListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
@@ -248,4 +249,6 @@ public interface IVdsServer {
     OneUuidReturnForXmlRpc glusterHostUUIDGet();
 
     GlusterServicesReturnForXmlRpc glusterServicesList(Guid serverId, String[] serviceNames);
+
+    GlusterHookContentInfoReturnForXmlRpc glusterHookRead(String glusterCommand, String stage, String hookName);
 }

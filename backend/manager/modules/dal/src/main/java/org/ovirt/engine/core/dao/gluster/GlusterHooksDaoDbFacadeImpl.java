@@ -15,6 +15,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
  * Implementation of the DB Facade for Gluster Hooks.
@@ -26,6 +27,8 @@ public class GlusterHooksDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
 
     private static final RowMapper<GlusterServerHook> glusterServerHookRowMapper =
             new GlusterServerHookRowMapper();
+
+    private static final ParameterizedRowMapper<String>  GlusterHookContentRowMapper = new GlusterHookContentRowMapper();
 
     public GlusterHooksDaoDbFacadeImpl() {
         super("GlusterHook");
@@ -96,6 +99,15 @@ public class GlusterHooksDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
     }
 
     @Override
+    public String getGlusterHookContent(Guid hookId) {
+        String content = getCallsHandler().executeRead("GetGlusterHookById", GlusterHookContentRowMapper,
+                createIdParameterMapper(hookId)
+                .addValue("includeContent", true));
+        return content;
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
     public List<GlusterHookEntity> getAllWithQuery(String query) {
         List<GlusterHookEntity> glusterHooks = jdbcTemplate.query(query, glusterHookRowMapper);
         return glusterHooks;
@@ -236,6 +248,15 @@ public class GlusterHooksDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
             entity.setContentType(rs.getString("content_type"));
             entity.setChecksum(rs.getString("checksum"));
             return entity;
+        }
+    }
+
+    private static final class GlusterHookContentRowMapper implements ParameterizedRowMapper<String> {
+        @Override
+        public String mapRow(ResultSet rs, int rowNum)
+                throws SQLException {
+            String content = rs.getString("content");
+            return content;
         }
     }
 
