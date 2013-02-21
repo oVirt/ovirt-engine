@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.easymock.EasyMock.expect;
-import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -268,6 +267,7 @@ public class BackendHostNicsResourceTest
         collection.setupNetworks(action);
     }
 
+    @Override
     @Test
     public void testList() throws Exception {
         UriInfo uriInfo = setUpActionsUriExpectations();
@@ -390,6 +390,7 @@ public class BackendHostNicsResourceTest
         entity.setId(MASTER_GUID);
         entity.setName(MASTER_NAME);
         entity.setNetworkName(NETWORK_NAME);
+        entity.setSpeed(NIC_SPEED);
         entity.setBonded(true);
         entity.setBootProtocol(BOOT_PROTOCOL);
         return setUpStatistics(entity, MASTER_GUID);
@@ -400,6 +401,7 @@ public class BackendHostNicsResourceTest
         entity.setId(SLAVE_GUID);
         entity.setName(SLAVE_NAME);
         entity.setNetworkName(NETWORK_NAME);
+        entity.setSpeed(NIC_SPEED);
         entity.setBondName(MASTER_NAME);
         entity.setBootProtocol(BOOT_PROTOCOL);
         return setUpStatistics(entity, SLAVE_GUID);

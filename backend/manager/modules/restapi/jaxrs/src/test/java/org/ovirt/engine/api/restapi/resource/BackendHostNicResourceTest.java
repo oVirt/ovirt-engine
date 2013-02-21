@@ -1,12 +1,12 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
 import static org.ovirt.engine.api.restapi.resource.BackendHostNicsResourceTest.NETWORK_GUID;
 import static org.ovirt.engine.api.restapi.resource.BackendHostNicsResourceTest.NETWORK_NAME;
 import static org.ovirt.engine.api.restapi.resource.BackendHostNicsResourceTest.PARENT_GUID;
 import static org.ovirt.engine.api.restapi.resource.BackendHostNicsResourceTest.getEntitySpecific;
 import static org.ovirt.engine.api.restapi.resource.BackendHostNicsResourceTest.getNetwork;
 import static org.ovirt.engine.api.restapi.resource.BackendHostNicsResourceTest.setUpInterfaces;
-import static org.easymock.EasyMock.expect;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -17,21 +17,21 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.HostNIC;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Statistic;
+import org.ovirt.engine.api.restapi.util.RxTxCalculator;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsParameters;
 import org.ovirt.engine.core.common.action.UpdateNetworkToVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
-import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -45,7 +45,13 @@ public class BackendHostNicResourceTest
     private static final String[] GATEWAYS = new String[]{"10.35.1.254", "10.35.1.126", "10.35.1.254", "10.35.1.126"};
     private static final String[] MASKS = new String[]{"255.255.255.0", "255.255.255.128", "255.255.0.0", "255.0.0.0"};
 
-    private BackendHostNicsResourceTest hostNicsResource;
+    private static final int SPEED = 50;
+    private static final double RECEIVE_RATE = 10;
+    private static final double TRANSMIT_RATE = 20;
+    private static final double RECEIVE_DROP_RATE = 30;
+    private static final double TRANSMIT_DROP_RATE = 40;
+
+    private final BackendHostNicsResourceTest hostNicsResource;
 
     public BackendHostNicResourceTest() {
         super(new BackendHostNicResource(NIC_ID.toString(),
@@ -427,12 +433,13 @@ public class BackendHostNicResourceTest
     protected VdsNetworkInterface setUpStatisticalExpectations() throws Exception {
         VdsNetworkStatistics stats = control.createMock(VdsNetworkStatistics.class);
         VdsNetworkInterface entity = control.createMock(VdsNetworkInterface.class);
+        expect(entity.getSpeed()).andReturn(SPEED).anyTimes();
         expect(entity.getStatistics()).andReturn(stats);
         expect(entity.getId()).andReturn(NIC_ID).anyTimes();
-        expect(stats.getReceiveRate()).andReturn(10D);
-        expect(stats.getTransmitRate()).andReturn(20D);
-        expect(stats.getReceiveDropRate()).andReturn(30D);
-        expect(stats.getTransmitDropRate()).andReturn(40D);
+        expect(stats.getReceiveRate()).andReturn(RECEIVE_RATE);
+        expect(stats.getTransmitRate()).andReturn(TRANSMIT_RATE);
+        expect(stats.getReceiveDropRate()).andReturn(RECEIVE_DROP_RATE);
+        expect(stats.getTransmitDropRate()).andReturn(TRANSMIT_DROP_RATE);
         List<VdsNetworkInterface> ifaces = new ArrayList<VdsNetworkInterface>();
         ifaces.add(entity);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsInterfacesByVdsId,
@@ -449,8 +456,10 @@ public class BackendHostNicResourceTest
         assertSame(entity, query.resolve(NIC_ID));
         List<Statistic> statistics = query.getStatistics(entity);
         verifyStatistics(statistics,
-                         new String[] {"data.current.rx", "data.current.tx", "errors.total.rx", "errors.total.tx"},
-                         new BigDecimal[] {asDec(10), asDec(20), asDec(30), asDec(40)});
+                new String[] { "data.current.rx", "data.current.tx", "errors.total.rx", "errors.total.tx" },
+                new BigDecimal[] { asDec(RxTxCalculator.percent2bytes(SPEED, RECEIVE_RATE)),
+                        asDec(RxTxCalculator.percent2bytes(SPEED, TRANSMIT_RATE)),
+                        asDec(RECEIVE_DROP_RATE), asDec(TRANSMIT_DROP_RATE) });
         Statistic adopted = query.adopt(new Statistic());
         assertTrue(adopted.isSetHostNic());
         assertEquals(NIC_ID.toString(), adopted.getHostNic().getId());

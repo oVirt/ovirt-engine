@@ -26,6 +26,7 @@ import org.ovirt.engine.api.model.PortMirroring;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.resource.NicResource;
 import org.ovirt.engine.api.restapi.resource.BaseBackendResource.WebFaultException;
+import org.ovirt.engine.api.restapi.util.RxTxCalculator;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -291,6 +292,7 @@ public class BackendVmNicResourceTest
         VmNetworkStatistics stats = control.createMock(VmNetworkStatistics.class);
         VmNetworkInterface entity = control.createMock(VmNetworkInterface.class);
         expect(entity.getStatistics()).andReturn(stats);
+        expect(entity.getSpeed()).andReturn(50).anyTimes();
         expect(entity.getId()).andReturn(NIC_ID).anyTimes();
         expect(stats.getReceiveRate()).andReturn(10D);
         expect(stats.getTransmitRate()).andReturn(20D);
@@ -312,8 +314,9 @@ public class BackendVmNicResourceTest
         assertSame(entity, query.resolve(NIC_ID));
         List<Statistic> statistics = query.getStatistics(entity);
         verifyStatistics(statistics,
-                         new String[] {"data.current.rx", "data.current.tx", "errors.total.rx", "errors.total.tx"},
-                         new BigDecimal[] {asDec(10), asDec(20), asDec(30), asDec(40)});
+                new String[] { "data.current.rx", "data.current.tx", "errors.total.rx", "errors.total.tx" },
+                new BigDecimal[] { asDec(RxTxCalculator.percent2bytes(50, 10D)), asDec(RxTxCalculator.percent2bytes(50, 20D)),
+                        asDec(30), asDec(40) });
         Statistic adopted = query.adopt(new Statistic());
         assertTrue(adopted.isSetNic());
         assertEquals(NIC_ID.toString(), adopted.getNic().getId());

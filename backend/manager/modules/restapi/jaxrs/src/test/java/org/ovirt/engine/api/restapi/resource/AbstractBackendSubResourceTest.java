@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.List;
 
 import javax.ws.rs.Path;
@@ -11,11 +12,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.BaseResource;
-import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.CreationStatus;
+import org.ovirt.engine.api.model.Statistic;
 
 public abstract class AbstractBackendSubResourceTest<R extends BaseResource, Q /* extends IVdcQueryable */, S extends AbstractBackendSubResource<R, Q>>
         extends AbstractBackendResourceTest<R, Q> {
@@ -136,6 +136,6 @@ public abstract class AbstractBackendSubResourceTest<R extends BaseResource, Q /
     }
 
     protected BigDecimal asDec(double d) {
-        return new BigDecimal(d);
+        return new BigDecimal(d, new MathContext(2));
     }
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostNIC;
 import org.ovirt.engine.api.model.Statistic;
+import org.ovirt.engine.api.restapi.util.RxTxCalculator;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
@@ -28,10 +29,11 @@ public class HostNicStatisticalQuery extends AbstractStatisticalQuery<HostNIC, V
     @Override
     public List<Statistic> getStatistics(VdsNetworkInterface iface) {
         NetworkStatistics s = iface.getStatistics();
-        return asList(setDatum(clone(DATA_RX), s.getReceiveRate()),
-                      setDatum(clone(DATA_TX), s.getTransmitRate()),
-                      setDatum(clone(ERRS_RX), s.getReceiveDropRate()),
-                      setDatum(clone(ERRS_TX), s.getTransmitDropRate()));
+
+        return asList(setDatum(clone(DATA_RX), RxTxCalculator.percent2bytes(iface.getSpeed(), s.getReceiveRate())),
+                setDatum(clone(DATA_TX), RxTxCalculator.percent2bytes(iface.getSpeed(), s.getTransmitRate())),
+                setDatum(clone(ERRS_RX), s.getReceiveDropRate()),
+                setDatum(clone(ERRS_TX), s.getTransmitDropRate()));
     }
 
     @Override

@@ -106,6 +106,7 @@ public class AbstractBackendNicsResourceTest<T extends AbstractBackendReadOnlyDe
         expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
         expect(entity.getMacAddress()).andReturn(ADDRESSES[2]).anyTimes();
         expect(entity.getType()).andReturn(0).anyTimes();
+        expect(entity.getSpeed()).andReturn(50).anyTimes();
         return setUpStatisticalEntityExpectations(entity, statistics);
     }
 

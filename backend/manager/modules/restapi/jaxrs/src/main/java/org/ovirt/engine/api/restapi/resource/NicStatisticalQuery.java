@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.restapi.util.RxTxCalculator;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
@@ -28,10 +29,10 @@ public class NicStatisticalQuery extends AbstractStatisticalQuery<NIC, VmNetwork
     @Override
     public List<Statistic> getStatistics(VmNetworkInterface iface) {
         NetworkStatistics s = iface.getStatistics();
-        return asList(setDatum(clone(DATA_RX), s.getReceiveRate()),
-                      setDatum(clone(DATA_TX), s.getTransmitRate()),
-                      setDatum(clone(ERRS_RX), s.getReceiveDropRate()),
-                      setDatum(clone(ERRS_TX), s.getTransmitDropRate()));
+        return asList(setDatum(clone(DATA_RX), RxTxCalculator.percent2bytes(iface.getSpeed(), s.getReceiveRate())),
+                setDatum(clone(DATA_TX), RxTxCalculator.percent2bytes(iface.getSpeed(), s.getTransmitRate())),
+                setDatum(clone(ERRS_RX), s.getReceiveDropRate()),
+                setDatum(clone(ERRS_TX), s.getTransmitDropRate()));
     }
 
     @Override
