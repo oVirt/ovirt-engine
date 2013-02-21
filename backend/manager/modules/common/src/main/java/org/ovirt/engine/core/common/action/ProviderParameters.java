@@ -1,11 +1,14 @@
 package org.ovirt.engine.core.common.action;
 
+import javax.validation.Valid;
+
 import org.ovirt.engine.core.common.businessentities.Provider;
 
 public class ProviderParameters extends VdcActionParametersBase {
 
     private static final long serialVersionUID = 308877238353433739L;
 
+    @Valid
     private Provider provider;
 
     public ProviderParameters() {

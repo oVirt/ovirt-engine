@@ -556,6 +556,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Network")
     String VAR__TYPE__NETWORK();
 
+    @DefaultStringValue("$type provider")
+    String VAR__TYPE__PROVIDER();
+
     @DefaultStringValue("$type VM")
     String VAR__TYPE__VM();
 
@@ -943,6 +946,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The ${type} name is already in use, please choose a unique name and try again.")
     String ACTION_TYPE_FAILED_NAME_ALREADY_USED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The URL is not valid, please enter a valid URL and try again.")
+    String ACTION_TYPE_FAILED_URL_INVALID();
+
     @DefaultStringValue("Cannot ${action} ${type}. Storage connection doesn't exist.")
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST();
 
@@ -1230,6 +1236,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Migration network is not supported for this cluster version.")
     String ACTION_TYPE_FAILED_MIGRATION_NETWORK_IS_NOT_SUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The provider doesn't exist in the system.")
+    String ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST();
 
     @DefaultStringValue("Cannot ${action} ${type}. The management network '${NetworkName}' must be required, please change the network to be required and try again.")
     String ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_REQUIRED();
@@ -1647,6 +1656,21 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Data Center name must be formed of \"a-z0-9A-Z\" or \"-_\"")
     String VALIDATION_DATA_CENTER_NAME_INVALID();
+
+    @DefaultStringValue("ID is required.")
+    String VALIDATION_ID_NULL();
+
+    @DefaultStringValue("Name is required.")
+    String VALIDATION_NAME_NULL();
+
+    @DefaultStringValue("Name must be formed of alphanumeric characters, numbers or \"-_\".")
+    String VALIDATION_NAME_INVALID();
+
+    @DefaultStringValue("URL is required.")
+    String VALIDATION_URL_NULL();
+
+    @DefaultStringValue("Provider type is required.")
+    String VALIDATION_PROVIDER_TYPE_NULL();
 
     @DefaultStringValue("Quota name must be formed of \"a-z0-9A-Z\" and \"-_\"")
     String VALIDATION_QUOTA_NAME_INVALID();

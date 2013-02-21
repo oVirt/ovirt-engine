@@ -1,5 +1,11 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import javax.validation.constraints.NotNull;
+
+import org.ovirt.engine.core.common.validation.annotation.ValidName;
+import org.ovirt.engine.core.common.validation.group.CreateEntity;
+import org.ovirt.engine.core.common.validation.group.RemoveEntity;
+import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -11,14 +17,19 @@ public class Provider extends IVdcQueryable implements BusinessEntity<Guid>, Nam
 
     private static final long serialVersionUID = 8279455368568715758L;
 
+    @NotNull(message = "VALIDATION_ID_NULL", groups = { UpdateEntity.class, RemoveEntity.class })
     private Guid id;
 
+    @NotNull(message = "VALIDATION_NAME_NULL", groups = { CreateEntity.class, UpdateEntity.class })
+    @ValidName(message = "VALIDATION_NAME_INVALID", groups = { CreateEntity.class, UpdateEntity.class })
     private String name;
 
     private String description;
 
+    @NotNull(message = "VALIDATION_URL_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     private String url;
 
+    @NotNull(message = "VALIDATION_PROVIDER_TYPE_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     private ProviderType type;
 
     private boolean requiringAuthentication;

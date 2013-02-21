@@ -8,7 +8,10 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class AddProviderCommand<P extends ProviderParameters> extends CommandBase<P> {
 
@@ -20,11 +23,21 @@ public class AddProviderCommand<P extends ProviderParameters> extends CommandBas
         super(parameters);
     }
 
+    private Provider getProvider() {
+        return getParameters().getProvider();
+    }
+
+    @Override
+    protected boolean canDoAction() {
+        ProviderValidator validator = new ProviderValidator(getProvider());
+        return validate(validator.nameAvailable());
+    }
+
     @Override
     protected void executeCommand() {
-        getParameters().getProvider().setId(Guid.NewGuid());
-        getDbFacade().getProviderDao().save(getParameters().getProvider());
-        getReturnValue().setActionReturnValue(getParameters().getProvider().getId());
+        getProvider().setId(Guid.NewGuid());
+        getDbFacade().getProviderDao().save(getProvider());
+        getReturnValue().setActionReturnValue(getProvider().getId());
         setSucceeded(true);
     }
 
@@ -35,4 +48,15 @@ public class AddProviderCommand<P extends ProviderParameters> extends CommandBas
                 ActionGroup.CREATE_STORAGE_POOL));
     }
 
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__PROVIDER);
+    }
+
+    @Override
+    protected List<Class<?>> getValidationGroups() {
+        addValidationGroup(CreateEntity.class);
+        return super.getValidationGroups();
+    }
 }
