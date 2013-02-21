@@ -37,7 +37,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
     private BackendLocal backend;
 
     @EJB(beanInterface = BackendLocal.class,
-            mappedName = "java:global/engine/engine-bll/Backend!org.ovirt.engine.core.common.interfaces.BackendLocal")
+            mappedName = "java:global/engine/bll/Backend!org.ovirt.engine.core.common.interfaces.BackendLocal")
     public void setBackend(BackendLocal backend) {
         this.backend = backend;
     }

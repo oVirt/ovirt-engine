@@ -488,12 +488,18 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-ear-plugin</artifactId>
           <version>2.8</version>
+          <configuration>
+            <fileNameMapping>no-version</fileNameMapping>
+          </configuration>
         </plugin>
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-war-plugin</artifactId>
           <version>2.2</version>
+          <configuration>
+            <outputFileNameMapping>@{artifactId}@.@{extension}@</outputFileNameMapping>
+          </configuration>
         </plugin>
 
         <!-- Make sure that the goal that generates JBoss modules is

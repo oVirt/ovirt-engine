@@ -38,10 +38,10 @@
                already included as references in the manifest (note that the
                web.xml file is included regardless of this configuration): -->
           <packagingIncludes>
-            WEB-INF/lib/interface-common-jaxrs-*.jar,
-            WEB-INF/lib/restapi-definition-*.jar,
-            WEB-INF/lib/restapi-jaxrs-*.jar,
-            WEB-INF/lib/restapi-types-*.jar,
+            WEB-INF/lib/interface-common-jaxrs.jar,
+            WEB-INF/lib/restapi-definition.jar,
+            WEB-INF/lib/restapi-jaxrs.jar,
+            WEB-INF/lib/restapi-types.jar,
           </packagingIncludes>
 
         </configuration>

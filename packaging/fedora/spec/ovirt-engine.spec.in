@@ -76,7 +76,6 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	PYTHON_DIR=%{python_sitelib} \\\
 	JAVA_DIR=%{_javadir} \\\
 	MAVENPOM_DIR=%{_mavenpomdir} \\\
-	PKG_JAVA_DIR=%{engine_java} \\\
 	PKG_SYSCONF_DIR=%{engine_etc} \\\
 	PKG_EAR_DIR=%{engine_ear} \\\
 	PKG_PKI_DIR=%{engine_pki} \\\
@@ -284,6 +283,29 @@ for war in restapi userportal webadmin; do
         "%{buildroot}%{engine_ear}/${war}.war/WEB-INF/web.xml"
 done
 
+# Move the jar files to the right directory and replace them with links:
+install -dm 755 %{buildroot}%{engine_java}
+while read lib_path
+do
+  java_path=%{engine_java}/`basename ${lib_path}`
+  mv %{buildroot}/${lib_path} %{buildroot}/${java_path}
+  ln -s ${java_path} %{buildroot}${lib_path}
+done <<'.'
+%{engine_ear}/bll.jar
+%{engine_ear}/lib/vdsbroker.jar
+%{engine_ear}/scheduler.jar
+%{engine_jboss_modules}/org/ovirt/engine/core/common/main/common.jar
+%{engine_jboss_modules}/org/ovirt/engine/core/compat/main/compat.jar
+%{engine_jboss_modules}/org/ovirt/engine/core/dal/main/dal.jar
+%{engine_jboss_modules}/org/ovirt/engine/core/searchbackend/main/searchbackend.jar
+%{engine_jboss_modules}/org/ovirt/engine/core/tools/main/tools.jar
+%{engine_jboss_modules}/org/ovirt/engine/core/utils/main/utils.jar
+%{restapi_war}/WEB-INF/lib/interface-common-jaxrs.jar
+%{restapi_war}/WEB-INF/lib/restapi-definition.jar
+%{restapi_war}/WEB-INF/lib/restapi-jaxrs.jar
+%{restapi_war}/WEB-INF/lib/restapi-types.jar
+.
+
 # Register poms
 %if !%{install_poms}
 rm -fr "%{buildroot}%{_mavenpomdir}"
@@ -303,34 +325,6 @@ do
   fi
 done
 %endif
-
-# Replace jar files in the ear with links to their actual locations:
-while read ear_path jar_name
-do
-  rm -rf %{buildroot}%{engine_ear}/${ear_path}*.jar
-  ln -s %{engine_java}/${jar_name}.jar %{buildroot}%{engine_ear}/${ear_path}.jar
-done <<'.'
-engine-bll bll
-engine-scheduler scheduler
-lib/common common
-lib/dal dal
-lib/utils utils
-lib/vdsbroker vdsbroker
-lib/searchbackend searchbackend
-.
-
-# Replace jar files in the RESTAPI web application with links to their
-# actual locations:
-while read jar_name
-do
-  rm -rf %{buildroot}%{restapi_war}/WEB-INF/lib/${jar_name}*.jar
-  ln -s %{engine_java}/${jar_name}.jar %{buildroot}%{restapi_war}/WEB-INF/lib/${jar_name}.jar
-done <<'.'
-interface-common-jaxrs
-restapi-definition
-restapi-jaxrs
-restapi-types
-.
 
 # Install the systemd files:
 install -dm 755 %{buildroot}%{_unitdir}
@@ -482,8 +476,8 @@ fi
 %dir %{engine_ear}
 %{engine_ear}/META-INF
 %{engine_ear}/lib
-%{engine_ear}/engine-bll.jar
-%{engine_ear}/engine-scheduler.jar
+%{engine_ear}/bll.jar
+%{engine_ear}/scheduler.jar
 %{engine_ear}/ovirtengineweb.war
 
 # Root web application:

@@ -30,35 +30,7 @@
     <!-- ** JARs -->
     <dependency>
       <groupId>org.ovirt.engine.core</groupId>
-      <artifactId>compat</artifactId>
-      <version>${engine.version}</version>
-      <type>jar</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.ovirt.engine.core</groupId>
-      <artifactId>common</artifactId>
-      <version>${engine.version}</version>
-      <type>jar</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.ovirt.engine.core</groupId>
-      <artifactId>dal</artifactId>
-      <version>${engine.version}</version>
-      <type>jar</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.ovirt.engine.core</groupId>
       <artifactId>vdsbroker</artifactId>
-      <version>${engine.version}</version>
-      <type>jar</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.ovirt.engine.core</groupId>
-      <artifactId>searchbackend</artifactId>
       <version>${engine.version}</version>
       <type>jar</type>
     </dependency>
@@ -192,14 +164,13 @@
           <!-- params common to ear:ear and ear:generate-application-xml -->
           <defaultLibBundleDir>lib</defaultLibBundleDir>
           <workDirectory>${earDirectory}</workDirectory>
-          <fileNameMapping>no-version</fileNameMapping>
 
           <!-- J2EE version -->
           <version>1.4</version>
 
           <!-- params for ear:ear -->
           <resourcesDir>${basedir}/target/classes</resourcesDir>
-          <unpackTypes>war,ejb,sar</unpackTypes>
+          <unpackTypes>war</unpackTypes>
 
           <!-- params for ear:generate-application-xml -->
           <displayName>ENGINE</displayName>
@@ -245,15 +216,13 @@
             <ejbModule>
               <groupId>org.ovirt.engine.core</groupId>
               <artifactId>scheduler</artifactId>
-              <bundleFileName>engine-scheduler.jar</bundleFileName>
-              <unpack>true</unpack>
+              <bundleFileName>scheduler.jar</bundleFileName>
             </ejbModule>
 
             <ejbModule>
               <groupId>org.ovirt.engine.core</groupId>
               <artifactId>bll</artifactId>
-              <bundleFileName>engine-bll.jar</bundleFileName>
-              <unpack>true</unpack>
+              <bundleFileName>bll.jar</bundleFileName>
             </ejbModule>
 
           </modules>
@@ -274,11 +243,6 @@
             *.jar/**,
             *.war/**,
             META-INF/**,
-            lib/common.jar/**,
-            lib/compat.jar/**,
-            lib/dal.jar/**,
-            lib/searchbackend.jar/**,
-            lib/utils.jar/**,
             lib/vdsbroker.jar/**,
           </packagingIncludes>
 
@@ -302,11 +266,83 @@
 
       <build>
         <plugins>
+
+          <!-- Deploy the modules: -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>deploy-modules</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>unpack</goal>
+                </goals>
+                <configuration>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${jbossHome}/modules</outputDirectory>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>org.ovirt.engine.core</groupId>
+                      <artifactId>dependencies</artifactId>
+                      <version>${engine.version}</version>
+                      <classifier>modules</classifier>
+                      <type>zip</type>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>org.ovirt.engine.core</groupId>
+                      <artifactId>common</artifactId>
+                      <version>${engine.version}</version>
+                      <classifier>modules</classifier>
+                      <type>zip</type>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>org.ovirt.engine.core</groupId>
+                      <artifactId>compat</artifactId>
+                      <version>${engine.version}</version>
+                      <classifier>modules</classifier>
+                      <type>zip</type>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>org.ovirt.engine.core</groupId>
+                      <artifactId>dal</artifactId>
+                      <version>${engine.version}</version>
+                      <classifier>modules</classifier>
+                      <type>zip</type>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>org.ovirt.engine.core</groupId>
+                      <artifactId>searchbackend</artifactId>
+                      <version>${engine.version}</version>
+                      <classifier>modules</classifier>
+                      <type>zip</type>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>org.ovirt.engine.core</groupId>
+                      <artifactId>tools</artifactId>
+                      <version>${engine.version}</version>
+                      <classifier>modules</classifier>
+                      <type>zip</type>
+                    </artifactItem>
+                    <artifactItem>
+                      <groupId>org.ovirt.engine.core</groupId>
+                      <artifactId>utils</artifactId>
+                      <version>${engine.version}</version>
+                      <classifier>modules</classifier>
+                      <type>zip</type>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <!-- Deploy the contents of the ear: -->
           <plugin>
             <artifactId>maven-antrun-plugin</artifactId>
             <executions>
               <execution>
-                <id>deploy</id>
+                <id>deploy-ear</id>
                 <phase>package</phase>
 
                 <configuration>
@@ -328,7 +364,7 @@
               </execution>
 
               <execution>
-                <id>undeploy</id>
+                <id>undeploy-ear</id>
                 <phase>clean</phase>
 
                 <configuration>
@@ -370,31 +406,6 @@
                 <goals>
                   <goal>run</goal>
                 </goals>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>copy-dependencies</id>
-                <phase>install</phase>
-                <goals>
-                  <goal>unpack</goal>
-                </goals>
-                <configuration>
-                  <artifactItems>
-                    <artifactItem>
-                      <groupId>org.ovirt.engine.core</groupId>
-                      <artifactId>dependencies</artifactId>
-                      <version>${engine.version}</version>
-                      <classifier>modules</classifier>
-                      <type>zip</type>
-                      <overWrite>true</overWrite>
-                      <outputDirectory>${jbossHome}/modules</outputDirectory>
-                    </artifactItem>
-                  </artifactItems>
-                </configuration>
               </execution>
             </executions>
           </plugin>
