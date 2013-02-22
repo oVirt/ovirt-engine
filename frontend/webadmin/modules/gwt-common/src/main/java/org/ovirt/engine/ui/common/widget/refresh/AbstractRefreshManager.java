@@ -163,8 +163,12 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
         try {
             return new Integer(refreshRate).intValue();
         } catch (NumberFormatException e) {
-            return DEFAULT_REFRESH_RATE;
+            return getDefaultRefreshRate();
         }
+    }
+
+    protected int getDefaultRefreshRate() {
+        return DEFAULT_REFRESH_RATE;
     }
 
 }

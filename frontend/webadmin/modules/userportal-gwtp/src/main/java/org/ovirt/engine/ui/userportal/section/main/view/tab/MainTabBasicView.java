@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabBasicPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.basic.UserPortalBasicListProvider;
 import org.ovirt.engine.ui.userportal.widget.basic.BasicViewSplitLayoutPanel;
+import org.ovirt.engine.ui.userportal.widget.refresh.UserPortalRefreshManager;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -44,8 +45,7 @@ public class MainTabBasicView extends AbstractView implements MainTabBasicPresen
             EventBus eventBus,
             ClientStorage clientStorage,
             ApplicationResources applicationResources) {
-
-        this.refreshManager = new SimpleRefreshManager(modelProvider, eventBus, clientStorage);
+        this.refreshManager = new UserPortalRefreshManager(modelProvider, eventBus, clientStorage);
         this.refreshPanel = refreshManager.getRefreshPanel();
 
         splitLayoutPanel = new BasicViewSplitLayoutPanel(

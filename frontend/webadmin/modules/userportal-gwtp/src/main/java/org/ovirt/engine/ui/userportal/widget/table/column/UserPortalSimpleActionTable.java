@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.userportal.widget.table.column;
 
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
+import org.ovirt.engine.ui.common.widget.refresh.AbstractRefreshManager;
+import org.ovirt.engine.ui.common.widget.refresh.RefreshPanel;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.userportal.SideTabWithDetailsViewStyle;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
@@ -24,12 +26,6 @@ public class UserPortalSimpleActionTable<T> extends SimpleActionTable<T> {
     }
 
     public UserPortalSimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
-            EventBus eventBus,
-            ClientStorage clientStorage) {
-        super(dataProvider, eventBus, clientStorage);
-    }
-
-    public UserPortalSimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
             Resources resources,
             EventBus eventBus,
             ClientStorage clientStorage) {
@@ -38,10 +34,9 @@ public class UserPortalSimpleActionTable<T> extends SimpleActionTable<T> {
 
     public UserPortalSimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
             Resources resources,
-            Resources headerResources,
             EventBus eventBus,
-            ClientStorage clientStorage) {
-        super(dataProvider, resources, headerResources, eventBus, clientStorage);
+            AbstractRefreshManager<RefreshPanel> refreshManager) {
+        super(dataProvider, resources, eventBus, refreshManager);
     }
 
     @Override

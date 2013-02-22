@@ -34,6 +34,7 @@ import org.ovirt.engine.ui.userportal.widget.extended.vm.ImageMaskCell.ShowMask;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.TooltipCell;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.TooltipCell.TooltipProvider;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.UserPortalItemSimpleColumn;
+import org.ovirt.engine.ui.userportal.widget.refresh.UserPortalRefreshManager;
 import org.ovirt.engine.ui.userportal.widget.table.column.UserPortalSimpleActionTable;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmImageColumn;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmImageColumn.OsTypeExtractor;
@@ -47,6 +48,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.RowStyles;
 import com.google.inject.Inject;
@@ -91,9 +93,16 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
     @Override
     protected SimpleActionTable<UserPortalItemModel> createActionTable() {
         return new UserPortalSimpleActionTable<UserPortalItemModel>(modelProvider,
-                vmTableResources,
+                getTableResources(),
                 ClientGinjectorProvider.instance().getEventBus(),
-                ClientGinjectorProvider.instance().getClientStorage());
+                new UserPortalRefreshManager(modelProvider,
+                        ClientGinjectorProvider.instance().getEventBus(),
+                        ClientGinjectorProvider.instance().getClientStorage()));
+    }
+
+    @Override
+    protected Resources getTableResources() {
+        return vmTableResources;
     }
 
     @Override

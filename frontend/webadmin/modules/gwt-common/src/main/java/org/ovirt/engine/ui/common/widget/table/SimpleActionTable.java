@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButton;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.SimpleActionButton;
+import org.ovirt.engine.ui.common.widget.refresh.AbstractRefreshManager;
 import org.ovirt.engine.ui.common.widget.refresh.RefreshPanel;
 import org.ovirt.engine.ui.common.widget.refresh.SimpleRefreshManager;
 
@@ -41,11 +42,14 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     @WithElementId("itemsCount")
     public Label itemsCountLabel;
 
-    private final SimpleRefreshManager refreshManager;
-
     public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
             EventBus eventBus, ClientStorage clientStorage) {
         this(dataProvider, null, null, eventBus, clientStorage);
+    }
+
+    public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
+            EventBus eventBus, AbstractRefreshManager<RefreshPanel> refreshManager) {
+        this(dataProvider, null, null, eventBus, refreshManager);
     }
 
     public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
@@ -54,10 +58,22 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     }
 
     public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
+            Resources resources, EventBus eventBus,
+            AbstractRefreshManager<RefreshPanel> refreshManager) {
+        this(dataProvider, resources, null, eventBus, refreshManager);
+    }
+
+    public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
             Resources resources, Resources headerResources,
             EventBus eventBus, ClientStorage clientStorage) {
+        this(dataProvider, resources, headerResources, eventBus,
+                new SimpleRefreshManager(dataProvider, eventBus, clientStorage));
+    }
+
+    public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
+            Resources resources, Resources headerResources,
+            EventBus eventBus, AbstractRefreshManager<RefreshPanel> refreshManager) {
         super(dataProvider, resources, headerResources, eventBus);
-        this.refreshManager = new SimpleRefreshManager(dataProvider, eventBus, clientStorage);
         this.refreshPanel = refreshManager.getRefreshPanel();
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         initStyles();

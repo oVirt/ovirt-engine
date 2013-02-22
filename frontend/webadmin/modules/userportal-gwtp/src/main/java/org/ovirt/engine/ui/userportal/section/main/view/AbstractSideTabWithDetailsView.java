@@ -9,7 +9,9 @@ import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.AbstractSideTabWithDetailsPresenter;
 import org.ovirt.engine.ui.userportal.widget.extended.ExtendedViewSplitLayoutPanel;
+import org.ovirt.engine.ui.userportal.widget.table.column.UserPortalSimpleActionTable;
 
+import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -43,9 +45,14 @@ public abstract class AbstractSideTabWithDetailsView<T, M extends SearchableList
     }
 
     protected SimpleActionTable<T> createActionTable() {
-        return new SimpleActionTable<T>(modelProvider,
+        return new UserPortalSimpleActionTable<T>(modelProvider,
+                getTableResources(),
                 ClientGinjectorProvider.instance().getEventBus(),
                 ClientGinjectorProvider.instance().getClientStorage());
+    }
+
+    protected Resources getTableResources() {
+        return null;
     }
 
     void initSplitPanel() {

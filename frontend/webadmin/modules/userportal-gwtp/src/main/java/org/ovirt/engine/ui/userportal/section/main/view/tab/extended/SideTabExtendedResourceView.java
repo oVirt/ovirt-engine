@@ -1,14 +1,7 @@
 package org.ovirt.engine.ui.userportal.section.main.view.tab.extended;
 
-import com.google.gwt.event.logical.shared.ResizeEvent;
-import com.google.gwt.event.logical.shared.ResizeHandler;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.QuotaUsagePerUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.SubTableResources;
@@ -33,12 +26,19 @@ import org.ovirt.engine.ui.userportal.widget.resources.VmTable;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
-
-import java.util.List;
 
 public class SideTabExtendedResourceView extends AbstractView implements SideTabExtendedResourcePresenter.ViewDef {
 
@@ -152,8 +152,8 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
     @Inject
     public SideTabExtendedResourceView(ResourcesModelProvider modelProvider,
             EventBus eventBus, ClientStorage clientStorage,
-            SubTableResources headerResources, ApplicationResources resources, ApplicationConstants constants) {
-
+            SubTableResources headerResources, ApplicationResources resources,
+            ApplicationConstants constants) {
         vmTable = new VmTable(modelProvider, headerResources, resources, constants);
 
         SimpleRefreshManager refreshManager = new SimpleRefreshManager(modelProvider, eventBus, clientStorage);
