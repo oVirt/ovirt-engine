@@ -15,14 +15,13 @@ import javax.security.auth.kerberos.KerberosTicket;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 
-import org.springframework.ldap.core.support.DirContextAuthenticationStrategy;
-
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 import org.ovirt.engine.core.utils.kerberos.KerberosReturnCodeParser;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
+import org.springframework.ldap.core.support.DirContextAuthenticationStrategy;
 
 /**
  *
@@ -142,7 +141,7 @@ public class GSSAPIDirContextAuthenticationStrategy implements DirContextAuthent
             if (result.getAuditLogType() != null) {
                 LdapBrokerUtils.logEventForUser(userName, result.getAuditLogType());
             }
-            if (result == AuthenticationResult.OTHER || result == null) {
+            if (result == AuthenticationResult.OTHER) {
                 // An error our error parser does not recognize
                 log.error("Error from Kerberos: " + ex.getMessage());
             } else {
