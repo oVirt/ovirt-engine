@@ -333,7 +333,7 @@ public class VdsUpdateRunTimeInfo {
         Integer maxUsedPercentageThreshold =
                 Config.GetValue(ConfigValues.LogMaxPhysicalMemoryUsedThresholdInPercentage);
 
-        if (stat.getswap_total() == null || stat.getswap_free() == null) {
+        if (stat.getswap_total() == null || stat.getswap_free() == null || stat.getswap_total() == 0) {
             return;
         }
 
