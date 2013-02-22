@@ -59,11 +59,12 @@ public class StandaloneDataSource implements DataSource {
             throw new SQLException("Can't load engine configuration file \"" + configFile.getAbsolutePath() + "\".", exception);
         }
         finally {
-            try {
-                configReader.close();
-            }
-            catch (IOException exception) {
-                log.warn("Strange, failed to close file \"" + configFile.getAbsolutePath() + "\".", exception);
+            if (configReader != null) {
+                try {
+                    configReader.close();
+                } catch (IOException exception) {
+                    log.warn("Strange, failed to close file \"" + configFile.getAbsolutePath() + "\".", exception);
+                }
             }
         }
 
