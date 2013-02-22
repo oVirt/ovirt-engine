@@ -36,6 +36,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -45,7 +46,6 @@ import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -2643,8 +2643,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                                     VmListModel vmListModel1 = (VmListModel) result1.getState();
                                                     vmListModel1.getWindow().StopProgress();
                                                     VdcReturnValueBase retVal = result1.getReturnValue();
-                                                    boolean isSucceeded = retVal.getSucceeded();
-                                                    if (retVal != null && isSucceeded)
+                                                    if (retVal != null && retVal.getSucceeded())
                                                     {
                                                         vmListModel1.Cancel();
                                                     }
