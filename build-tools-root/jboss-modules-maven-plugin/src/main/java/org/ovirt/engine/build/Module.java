@@ -7,7 +7,6 @@ public class Module {
     private String groupId;
     private String moduleName;
     private String moduleSlot;
-    private String resourcePath;
 
     public Module() {
         // Nothing.
@@ -52,9 +51,6 @@ public class Module {
     }
 
     public String getResourcePath() {
-        if (resourcePath != null) {
-            return resourcePath;
-        }
         return artifactId + ".jar";
     }
 
