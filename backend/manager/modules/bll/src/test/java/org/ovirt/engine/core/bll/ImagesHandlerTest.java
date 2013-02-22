@@ -51,6 +51,7 @@ public class ImagesHandlerTest {
                 ImagesHandler.getSuggestedDiskAlias(disk1, prefix, 1));
     }
 
+    @Test
     public void testGetAllStorageIdsForImageIds() {
         Guid sdIdShared = Guid.NewGuid();
         Guid sdId1 = Guid.NewGuid();
