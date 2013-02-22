@@ -32,10 +32,9 @@ public class PoolGeneralModelForm extends AbstractModelBoundFormWidget<PoolGener
     private final Driver driver = GWT.create(Driver.class);
 
     public PoolGeneralModelForm(ModelProvider<PoolGeneralModel> modelProvider, CommonApplicationConstants constants) {
-        super(modelProvider, 3, 7);
+        super(modelProvider, 3, 5);
         driver.initialize(this);
 
-        formBuilder.setColumnsWidth("120px", "240px", "160px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         formBuilder.addFormItem(new FormItem(constants.namePoolGeneral(), name, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.descriptionPoolGeneral(), description, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.templatePoolGeneral(), template, 2, 0));

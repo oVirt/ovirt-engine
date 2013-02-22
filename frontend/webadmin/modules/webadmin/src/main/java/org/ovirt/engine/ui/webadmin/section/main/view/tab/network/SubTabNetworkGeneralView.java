@@ -63,21 +63,19 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 2, 3);
 
-        formBuilder.setColumnsWidth("300px", "300px"); //$NON-NLS-1$ //$NON-NLS-2$
         formBuilder.addFormItem(new FormItem(constants.nameNetwork(), name, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.idNetwork(), id, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.descriptionNetwork(), description, 2, 0));
+
         formBuilder.addFormItem(new FormItem(constants.roleNetwork(), role, 0, 1));
         formBuilder.addFormItem(new FormItem(constants.vlanNetwork(), vlan, 1, 1));
         formBuilder.addFormItem(new FormItem(constants.mtuNetwork(), mtu, 2, 1));
-
     }
 
     @Override
     public void setMainTabSelectedItem(NetworkView selectedItem) {
         driver.edit(getDetailModel());
-        formBuilder.showForm(getDetailModel());
+        formBuilder.update(getDetailModel());
     }
 
 }
-

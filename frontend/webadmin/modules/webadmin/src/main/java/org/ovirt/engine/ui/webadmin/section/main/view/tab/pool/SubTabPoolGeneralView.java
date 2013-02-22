@@ -72,7 +72,7 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 3, 6);
-        formBuilder.setColumnsWidth("115px", "245px", "160px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
         formBuilder.addFormItem(new FormItem(constants.namePoolGeneral(), name, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.descriptionPoolGeneral(), description, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.templatePoolGeneral(), template, 2, 0));
@@ -86,7 +86,7 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
         formBuilder.addFormItem(new FormItem(constants.usbPolicyPoolGeneral(), usbPolicy, 4, 1));
         formBuilder.addFormItem(new FormItem(constants.residesOnSDPoolGeneral(), storageDomain, 5, 1, "HasStorageDomain") { //$NON-NLS-1$
             @Override
-            public boolean isVisible() {
+            public boolean getIsAvailable() {
                 return getDetailModel().getHasStorageDomain();
             }
         });
@@ -96,13 +96,13 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
         formBuilder.addFormItem(new FormItem(constants.runOnPoolGeneral(), defaultHost, 2, 2));
         formBuilder.addFormItem(new FormItem(constants.domainPoolGeneral(), domain, 3, 2, "HasDomain") { //$NON-NLS-1$
             @Override
-            public boolean isVisible() {
+            public boolean getIsAvailable() {
                 return getDetailModel().getHasDomain();
             }
         });
         formBuilder.addFormItem(new FormItem(constants.tzPoolGeneral(), timeZone, 4, 2, "HasTimeZone") { //$NON-NLS-1$
             @Override
-            public boolean isVisible() {
+            public boolean getIsAvailable() {
                 return getDetailModel().getHasTimeZone();
             }
         });
@@ -116,7 +116,7 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
         monitorCount.setText(String.valueOf(getDetailModel().getMonitorCount()));
         isStateless.setText(Boolean.toString(getDetailModel().getIsStateless()));
 
-        formBuilder.showForm(getDetailModel());
+        formBuilder.update(getDetailModel());
     }
 
 }

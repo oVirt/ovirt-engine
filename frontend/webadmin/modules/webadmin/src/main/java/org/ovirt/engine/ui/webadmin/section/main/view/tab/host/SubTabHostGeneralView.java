@@ -130,7 +130,6 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 3, 7);
-        formBuilder.setColumnsWidth("230px", "120px", "270px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
         ArrayList<FormItem> formItems = new ArrayList<FormItem>();
 
@@ -176,7 +175,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         while (iterator.hasNext())
         {
             FormItem formItem = iterator.next();
-            Widget widget = formItem.getValue();
+            Widget widget = formItem.getValueWidget();
             if (widget == kvmVersion || widget == spiceVersion || widget == iScsiInitiatorName || widget == activeVms
                     || widget == libvirtVersion || widget == maxSchedulingMemory || widget == spmPriority)
             {
@@ -215,7 +214,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
 
         maxSchedulingMemory.setValue(selectedItem.getMaxSchedulingMemory());
 
-        formBuilder.showForm(getDetailModel());
+        formBuilder.update(getDetailModel());
     }
 
     @Override

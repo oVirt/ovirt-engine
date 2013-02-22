@@ -3,8 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.template;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
-import org.ovirt.engine.ui.common.widget.form.FormItemWithDefaultValue;
-import org.ovirt.engine.ui.common.widget.form.FormItemWithDefaultValue.Condition;
+import org.ovirt.engine.ui.common.widget.form.FormItem.DefaultValueCondition;
 import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
@@ -41,13 +40,13 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
 
     private final Driver driver = GWT.create(Driver.class);
 
-    public TemplateGeneralModelForm(ModelProvider<TemplateGeneralModel> modelProvider, CommonApplicationConstants constants) {
+    public TemplateGeneralModelForm(ModelProvider<TemplateGeneralModel> modelProvider,
+            CommonApplicationConstants constants) {
         super(modelProvider, 3, 6);
         driver.initialize(this);
         isHighlyAvailable = new BooleanLabel(constants.yes(), constants.no());
 
         // Build a form using the FormBuilder
-        formBuilder.setColumnsWidth("120px", "240px", "160px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         formBuilder.addFormItem(new FormItem(constants.nameTemplateGeneral(), name, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.descriptionTemplateGeneral(), description, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.hostClusterTemplateGeneral(), hostCluster, 2, 0));
@@ -57,16 +56,16 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
         formBuilder.addFormItem(new FormItem(constants.definedMemTemplateGeneral(), definedMemory, 0, 1));
         formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresTemplateGeneral(), cpuInfo, 1, 1));
         formBuilder.addFormItem(new FormItem(constants.numOfMonitorsTemplateGeneral(), monitorCount, 2, 1));
-        formBuilder.addFormItem(new FormItem(constants.highlyAvailTemplateGeneral(), isHighlyAvailable, 3, 1){
+        formBuilder.addFormItem(new FormItem(constants.highlyAvailTemplateGeneral(), isHighlyAvailable, 3, 1) {
             @Override
-            public boolean isVisible() {
+            public boolean getIsAvailable() {
                 return getModel().getHasHighlyAvailable();
             }
         });
         formBuilder.addFormItem(new FormItem(constants.priorityTemplateGeneral(), priority, 4, 1));
         formBuilder.addFormItem(new FormItem(constants.usbPolicyTemplateGeneral(), usbPolicy, 5, 1) {
             @Override
-            public boolean isVisible() {
+            public boolean getIsAvailable() {
                 return getModel().getHasUsbPolicy();
             }
         });
@@ -75,33 +74,26 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
         formBuilder.addFormItem(new FormItem(constants.isStatelessTemplateGeneral(), isStateless, 1, 2));
         formBuilder.addFormItem(new FormItem(constants.domainTemplateGeneral(), domain, 2, 2) {
             @Override
-            public boolean isVisible() {
+            public boolean getIsAvailable() {
                 return getModel().getHasDomain();
             }
         });
         formBuilder.addFormItem(new FormItem(constants.tzTemplateGeneral(), timeZone, 3, 2) {
             @Override
-            public boolean isVisible() {
+            public boolean getIsAvailable() {
                 return getModel().getHasTimeZone();
             }
         });
-
-        formBuilder.addFormItem(new FormItemWithDefaultValue(constants.quotaTemplateGeneral(),
-                quotaName,
-                4,
-                2,
-                constants.notConfigured(),
-                new Condition() {
-
-                    @Override
-                    public boolean isTrue() {
-                        String quotaName = getModel().getQuotaName();
-                        return quotaName != null && !"".equals(quotaName);
-                    }
-                }) {
+        formBuilder.addFormItem(new FormItem(constants.quotaTemplateGeneral(), quotaName, 4, 2) {
             @Override
-            public boolean isVisible() {
+            public boolean getIsAvailable() {
                 return getModel().isQuotaAvailable();
+            }
+        }).withDefaultValue(constants.notConfigured(), new DefaultValueCondition() {
+            @Override
+            public boolean showDefaultValue() {
+                String quotaName = getModel().getQuotaName();
+                return quotaName == null || "".equals(quotaName);
             }
         });
     }
@@ -114,5 +106,5 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
         monitorCount.setText(Integer.toString(getModel().getMonitorCount()));
         isStateless.setText(Boolean.toString(getModel().getIsStateless()));
     }
-}
 
+}

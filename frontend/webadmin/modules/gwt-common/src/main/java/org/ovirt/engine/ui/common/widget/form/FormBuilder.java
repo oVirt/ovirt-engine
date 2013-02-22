@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.form;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -12,81 +13,79 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class FormBuilder {
 
-    // A panel in which the builder assemble FormItems
-    AbstractFormPanel formPanel;
+    private final AbstractFormPanel formPanel;
+    private final List<FormItem> items = new ArrayList<FormItem>();
 
-    // A list of available FormItems
-    List<FormItem> formItems = new ArrayList<FormItem>();
+    // Maps model property names to corresponding items, used to update
+    // form items whenever the given model property changes its value
+    private final Map<String, List<FormItem>> propertyNameMap = new HashMap<String, List<FormItem>>();
 
-    // A map between property name and a FormItem
-    HashMap<String, FormItem> propertyNamesMap = new HashMap<String, FormItem>();
-
-    EntityModel model;
+    private EntityModel model;
 
     public FormBuilder(AbstractFormPanel formPanel, int numOfColumns, int numOfRows) {
         this.formPanel = formPanel;
 
-        // Add columns of form items formatted bt the specified dimensions
-        for (int column = 0; column < numOfColumns; column++) {
+        // Add columns to the form panel
+        for (int i = 0; i < numOfColumns; i++) {
             formPanel.addFormDetailView(numOfRows);
         }
     }
 
-    public void addFormItem(FormItem item) {
-        // Add the specified item to the list
-        formItems.add(item);
+    /**
+     * Adds new item to the form panel.
+     */
+    public FormItem addFormItem(FormItem item) {
+        formPanel.addFormItem(item);
+        items.add(item);
 
-        // Add the item to the map if needed
-        if (item.getIsVisiblePropertyName() != null) {
-            propertyNamesMap.put(item.getIsVisiblePropertyName(), item);
+        // Update property name mapping, if necessary
+        String isAvailablePropertyName = item.getIsAvailablePropertyName();
+        if (isAvailablePropertyName != null) {
+            getItemsForPropertyName(isAvailablePropertyName).add(item);
         }
+
+        return item;
     }
 
-    public void showForm(EntityModel model) {
+    List<FormItem> getItemsForPropertyName(String propertyName) {
+        if (!propertyNameMap.containsKey(propertyName)) {
+            propertyNameMap.put(propertyName, new ArrayList<FormItem>());
+        }
+        return propertyNameMap.get(propertyName);
+    }
+
+    /**
+     * Updates all items within the form panel.
+     */
+    public void update(EntityModel model) {
+        // Detach property change listener from old model
         if (this.model != null) {
             this.model.getPropertyChangedEvent().removeListener(propertyChangedEventListener);
         }
+
+        // Adopt new model
         this.model = model;
-        model.getPropertyChangedEvent().addListener(propertyChangedEventListener);
 
-        // Clear the form panel
-        formPanel.clear();
+        // Attach property change listener to new model
+        this.model.getPropertyChangedEvent().addListener(propertyChangedEventListener);
 
-        // Add each FormItem to the form panel if the item should be visible
-        for (FormItem item : formItems) {
-            if (item.getIsAvailable() && item.isVisible()) {
-                formPanel.addFormItem(item);
-            }
+        // Update all form items
+        for (FormItem item : items) {
+            item.update();
         }
-    }
-
-    public void clear() {
-        formPanel.clear();
-        formItems.clear();
-    }
-
-    public boolean isEmpty() {
-        return formItems.isEmpty();
     }
 
     private final IEventListener propertyChangedEventListener = new IEventListener() {
         @Override
         public void eventRaised(Event ev, Object sender, EventArgs args) {
             String propertyName = ((PropertyChangedEventArgs) args).PropertyName;
-            if (propertyNamesMap.containsKey(propertyName)) {
-                FormItem item = propertyNamesMap.get(propertyName);
-
-                // Update the item that is correlated to the property name:
-                // remove the old item and add the new one if it should be visible
-                formPanel.removeFormItem(item);
-                if (item.getIsAvailable() && item.isVisible()) {
-                    formPanel.addFormItem(item);
+            List<FormItem> formItems = propertyNameMap.get(propertyName);
+            if (formItems != null) {
+                for (FormItem item : formItems) {
+                    item.update();
                 }
             }
         }
     };
 
-    public void setColumnsWidth(String... columnsWidth) {
-        formPanel.setColumnsWidth(columnsWidth);
-    }
 }

@@ -27,9 +27,6 @@ public class SubTabHostHardwareView extends AbstractSubTabFormView<VDS, HostList
     interface Driver extends SimpleBeanEditorDriver<HostHardwareGeneralModel, SubTabHostHardwareView> {
     }
 
-    // We need this in order to find the icon for alert messages:
-    private final ApplicationResources resources;
-
     TextBoxLabel hardwareManufacturer = new TextBoxLabel();
     TextBoxLabel hardwareProductName = new TextBoxLabel();
     TextBoxLabel hardwareSerialNumber = new TextBoxLabel();
@@ -53,9 +50,6 @@ public class SubTabHostHardwareView extends AbstractSubTabFormView<VDS, HostList
             ApplicationResources resources, ApplicationConstants constants) {
         super(modelProvider);
 
-        // Inject a reference to the resources:
-        this.resources = resources;
-
         // Init form panel:
         formPanel = new GeneralFormPanel();
 
@@ -63,8 +57,8 @@ public class SubTabHostHardwareView extends AbstractSubTabFormView<VDS, HostList
         driver.initialize(this);
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 3, 6);
-        formBuilder.setColumnsWidth("230px", "120px", "270px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        formBuilder = new FormBuilder(formPanel, 1, 6);
+
         formBuilder.addFormItem(new FormItem(constants.hardwareManufacturerGeneral(), hardwareManufacturer, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.hardwareProductNameGeneral(), hardwareProductName, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.hardwareUUIDGeneral(), hardwareUUID, 2, 0));
@@ -76,8 +70,7 @@ public class SubTabHostHardwareView extends AbstractSubTabFormView<VDS, HostList
     @Override
     public void setMainTabSelectedItem(VDS selectedItem) {
         driver.edit(getDetailModel());
-
-        formBuilder.showForm(getDetailModel());
+        formBuilder.update(getDetailModel());
     }
 
 }

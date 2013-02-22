@@ -19,8 +19,6 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.Translator;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeGeneralPresenter;
 
 import com.google.gwt.core.client.GWT;
@@ -32,9 +30,6 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
 
     interface Driver extends SimpleBeanEditorDriver<VolumeGeneralModel, SubTabVolumeGeneralView> {
     }
-
-    // We need this in order to find the icon for alert messages:
-    private final ApplicationResources resources;
 
     @UiField(provided = true)
     GeneralFormPanel formPanel;
@@ -57,9 +52,6 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
     public SubTabVolumeGeneralView(DetailModelProvider<VolumeListModel, VolumeGeneralModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
 
-        // Inject a reference to the resources:
-        resources = ClientGinjectorProvider.instance().getApplicationResources();
-
         // Init form panel:
         formPanel = new GeneralFormPanel();
 
@@ -67,7 +59,8 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
         driver.initialize(this);
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 1, 5);
+        formBuilder = new FormBuilder(formPanel, 1, 6);
+
         formBuilder.addFormItem(new FormItem(constants.NameVolume(), name, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.volumeIdVolume(), volumeId, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.volumeTypeVolume(), volumeType, 2, 0));
@@ -75,13 +68,12 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
         replicaFormItem = new FormItem(constants.replicaCountVolume(), replicaCount, 3, 0);
         formBuilder.addFormItem(replicaFormItem);
 
-        stripeFormItem = new FormItem(constants.stripeCountVolume(), stripeCount, 3, 0);
+        stripeFormItem = new FormItem(constants.stripeCountVolume(), stripeCount, 4, 0);
         formBuilder.addFormItem(stripeFormItem);
 
-        formBuilder.addFormItem(new FormItem(constants.numberOfBricksVolume(), numOfBricks, 4, 0));
+        formBuilder.addFormItem(new FormItem(constants.numberOfBricksVolume(), numOfBricks, 5, 0));
 
         getDetailModel().getPropertyChangedEvent().addListener(new IEventListener() {
-
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 VolumeGeneralModel model = (VolumeGeneralModel) sender;
@@ -114,7 +106,7 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
             stripeFormItem.setIsAvailable(false);
         }
 
-        formBuilder.showForm(getDetailModel());
+        formBuilder.update(getDetailModel());
     }
 
     private void translateVolumeType(GlusterVolumeEntity volumeEntity) {

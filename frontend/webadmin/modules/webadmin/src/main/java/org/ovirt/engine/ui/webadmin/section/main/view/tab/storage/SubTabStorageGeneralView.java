@@ -20,10 +20,8 @@ import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
-
 
 public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDomain, StorageListModel, StorageGeneralModel> implements SubTabStorageGeneralPresenter.ViewDef, Editor<StorageGeneralModel> {
 
@@ -76,7 +74,8 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
-    public SubTabStorageGeneralView(DetailModelProvider<StorageListModel, StorageGeneralModel> modelProvider, ApplicationConstants constants) {
+    public SubTabStorageGeneralView(DetailModelProvider<StorageListModel, StorageGeneralModel> modelProvider,
+            ApplicationConstants constants) {
         super(modelProvider);
 
         // Init formPanel
@@ -86,61 +85,56 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
         driver.initialize(this);
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 1, 9);
-        formBuilder.setColumnsWidth("100%"); //$NON-NLS-1$
+        formBuilder = new FormBuilder(formPanel, 1, 11);
+
         formBuilder.addFormItem(new FormItem(constants.sizeStorageGeneral(), totalSize, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.availableStorageGeneral(), availableSize, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.usedStorageGeneral(), usedSize, 2, 0));
         formBuilder.addFormItem(new FormItem(constants.overAllocRatioStorageGeneral(), overAllocationRatio, 3, 0) {
             @Override
-            public boolean isVisible() {
-                StorageDomainType storageDomainType =
-                        ((StorageDomain) getDetailModel().getEntity()).getStorageDomainType();
-                return !storageDomainType.equals(StorageDomainType.ISO)
-                        && !storageDomainType.equals(StorageDomainType.ImportExport);
+            public boolean getIsAvailable() {
+                StorageDomain entity = (StorageDomain) getDetailModel().getEntity();
+                StorageDomainType storageDomainType = entity != null ? entity.getStorageDomainType() : null;
+                return !StorageDomainType.ISO.equals(storageDomainType)
+                        && !StorageDomainType.ImportExport.equals(storageDomainType);
             }
         });
-        formBuilder.addFormItem(new FormItem("", new InlineLabel(""), 4, 0)); // empty cell //$NON-NLS-1$ $NON-NLS-2$
+        formBuilder.addFormItem(new FormItem(4, 0)); // empty cell
         formBuilder.addFormItem(new FormItem(constants.pathStorageGeneral(), path, 5, 0) {
             @Override
-            public boolean isVisible() {
+            public boolean getIsAvailable() {
                 return getDetailModel().getPath() != null;
             }
         });
-
         formBuilder.addFormItem(new FormItem(constants.vfsTypeStorageGeneral(), vfsType, 6, 0) {
             @Override
-            public boolean isVisible() {
+            public boolean getIsAvailable() {
                 return getDetailModel().getIsPosix() && getDetailModel().getVfsType() != null
                         && !getDetailModel().getVfsType().isEmpty();
             }
         });
-
         formBuilder.addFormItem(new FormItem(constants.mountOptionsGeneral(), mountOptions, 7, 0) {
             @Override
-            public boolean isVisible() {
+            public boolean getIsAvailable() {
                 return getDetailModel().getIsPosix() && getDetailModel().getMountOptions() != null
                         && !getDetailModel().getMountOptions().isEmpty();
             }
         });
-
-        formBuilder.addFormItem(new FormItem(constants.nfsVersionGeneral(), nfsVersion, 6, 0) {
+        formBuilder.addFormItem(new FormItem(constants.nfsVersionGeneral(), nfsVersion, 8, 0) {
             @Override
-            public boolean isVisible() {
+            public boolean getIsAvailable() {
                 return getDetailModel().getIsNfs() && getDetailModel().getNfsVersion() != null;
             }
         });
-
-        formBuilder.addFormItem(new FormItem(constants.nfsRetransmissionsGeneral(), retransmissions, 7, 0) {
+        formBuilder.addFormItem(new FormItem(constants.nfsRetransmissionsGeneral(), retransmissions, 9, 0) {
             @Override
-            public boolean isVisible() {
+            public boolean getIsAvailable() {
                 return getDetailModel().getIsNfs() && getDetailModel().getRetransmissions() != null;
             }
         });
-
-        formBuilder.addFormItem(new FormItem(constants.nfsTimeoutGeneral(), timeout, 8, 0) {
+        formBuilder.addFormItem(new FormItem(constants.nfsTimeoutGeneral(), timeout, 10, 0) {
             @Override
-            public boolean isVisible() {
+            public boolean getIsAvailable() {
                 return getDetailModel().getIsNfs() && getDetailModel().getTimeout() != null;
             }
         });
@@ -150,19 +144,15 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
     public void setMainTabSelectedItem(StorageDomain selectedItem) {
         driver.edit(getDetailModel());
 
-        // TODO required because of editor driver errors
-        // Possible reasons: lowercase getters, StorageGeneralModel.getEntity() returns Object
         StorageDomain entity = (StorageDomain) getDetailModel().getEntity();
+        if (entity != null) {
+            totalSize.setValue(entity.getTotalDiskSize());
+            availableSize.setValue(entity.getAvailableDiskSize());
+            usedSize.setValue(entity.getUsedDiskSize());
+            overAllocationRatio.setValue(entity.getStorageDomainOverCommitPercent());
+        }
 
-        if (entity == null)
-            return;
-
-        totalSize.setValue(entity.getTotalDiskSize());
-        availableSize.setValue(entity.getAvailableDiskSize());
-        usedSize.setValue(entity.getUsedDiskSize());
-        overAllocationRatio.setValue(entity.getStorageDomainOverCommitPercent());
-
-        formBuilder.showForm(getDetailModel());
+        formBuilder.update(getDetailModel());
     }
 
 }

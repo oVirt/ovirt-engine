@@ -21,11 +21,9 @@ public class VmSessionsModelForm extends AbstractModelBoundFormWidget<VmSessions
     TextBoxLabel consoleUserName = new TextBoxLabel();
 
     public VmSessionsModelForm(ModelProvider<VmSessionsModel> modelProvider, CommonApplicationConstants constants) {
-        super(modelProvider, 2, 2);
-
+        super(modelProvider, 2, 1);
         driver.initialize(this);
 
-        formBuilder.setColumnsWidth("120px", "240px", "160px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         formBuilder.addFormItem(new FormItem(constants.loggedInUserVm(), guestUserName, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.consoleConnectedUserVm(), consoleUserName, 0, 1));
     }

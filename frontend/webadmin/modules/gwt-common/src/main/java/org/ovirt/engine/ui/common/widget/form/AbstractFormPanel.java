@@ -1,92 +1,77 @@
 package org.ovirt.engine.ui.common.widget.form;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ValueLabel;
 import com.google.gwt.user.client.ui.Widget;
 
+/**
+ * Represents a form panel that renders name/value items organized in columns.
+ */
 public abstract class AbstractFormPanel extends Composite {
 
     @UiField
     public HorizontalPanel contentPanel;
 
-    // A list of detail viewers - every viewer represents a column of form items
-    public List<Grid> detailViewers = new ArrayList<Grid>();
+    // List of detail views, each one representing a column of form items
+    private final List<Grid> detailViews = new ArrayList<Grid>();
 
-    private final Map<String, TextBoxLabel> valueLabelToItsTextBox = new HashMap<String, TextBoxLabel>();
-
+    /**
+     * Adds new detail view (column) to the form panel.
+     */
     public void addFormDetailView(int numOfRows) {
-        // Create a new column of form items
-        Grid viewer = new Grid(numOfRows, 2);
-        viewer.setStyleName("formPanel_viewer"); //$NON-NLS-1$
-        viewer.getColumnFormatter().setStyleName(0, "formPanel_viewerNamesColumn"); //$NON-NLS-1$
-        viewer.getColumnFormatter().setStyleName(1, "formPanel_viewerValuesColumn"); //$NON-NLS-1$
+        Grid view = new Grid(numOfRows, 2);
+        view.setStyleName("formPanel_detailView"); //$NON-NLS-1$
+        view.getColumnFormatter().setStyleName(0, "formPanel_detailViewNameColumn"); //$NON-NLS-1$
+        view.getColumnFormatter().setStyleName(1, "formPanel_detailViewValueColumn"); //$NON-NLS-1$
 
-        // Add the column to the list and view
-        detailViewers.add(viewer);
-        contentPanel.add(viewer);
+        detailViews.add(view);
+        contentPanel.add(view);
     }
 
+    /**
+     * Adds new item to the form panel.
+     */
     public void addFormItem(FormItem item) {
-        // Create FormItem name label
-        Label name = new Label(item.getName());
-        name.setStyleName("formPanel_itemName"); //$NON-NLS-1$
-        if (!name.getText().isEmpty()) {
-            name.setText(name.getText() + ":"); //$NON-NLS-1$
-        }
+        // Adopt item
+        item.setFormPanel(this);
 
-        // Create FormItem value label
-        Widget widget = item.getValue();
-        TextBoxLabel value = new TextBoxLabel();
-        value.setStyleName("formPanel_itemValue"); //$NON-NLS-1$
+        // Create item label
+        Label itemLabel = new Label(item.getName());
+        itemLabel.setStyleName("formPanel_detailViewItemName"); //$NON-NLS-1$
 
-        if (widget instanceof TextBoxLabel) {
-            value = (TextBoxLabel) widget;
-        } else if (widget instanceof ValueLabel<?>) {
-            // this ensures, that the same item will use the same instance of it's TextBoxLabel
-            String itemName = item.getName();
-            if (valueLabelToItsTextBox.containsKey(itemName)) {
-                value = valueLabelToItsTextBox.get(itemName);
-            } else {
-                valueLabelToItsTextBox.put(itemName, value);
-            }
+        // Add item label
+        Grid view = getDetailView(item.getColumn());
+        view.setWidget(item.getRow(), 0, itemLabel);
 
-            value.setText(((ValueLabel<?>) widget).getElement().getInnerHTML());
-        }
-
-        // Add FormItem at the appropriate position (by the row/column specified in FormItem)
-        detailViewers.get(item.getColumn()).setWidget(item.getRow(), 0, name);
-        detailViewers.get(item.getColumn()).setWidget(item.getRow(), 1, value);
+        // Update the item
+        updateFormItem(item);
     }
 
-    public void removeFormItem(FormItem item) {
-        Grid grid = detailViewers.get(item.getColumn());
-        if (grid != null) {
-            grid.setWidget(item.getRow(), 0, new Label());
-            grid.setWidget(item.getRow(), 1, new Label());
-        }
+    /**
+     * Updates the value and visibility of the given item.
+     */
+    public void updateFormItem(FormItem item) {
+        Widget valueWidget = item.resolveValueWidget();
+        boolean visible = item.getIsAvailable();
+
+        // Update item value
+        valueWidget.setStyleName("formPanel_detailViewItemValue"); //$NON-NLS-1$
+        Grid view = getDetailView(item.getColumn());
+        view.setWidget(item.getRow(), 1, valueWidget);
+
+        // Update item visibility
+        view.getWidget(item.getRow(), 0).setVisible(visible);
+        view.getWidget(item.getRow(), 1).setVisible(visible);
     }
 
-    public void clear() {
-        for (Grid detailViewer : detailViewers) {
-            detailViewer.clear(true);
-        }
-    }
-
-    public void setColumnsWidth(String... columnsWidth) {
-        for (int i = 0; i < detailViewers.size(); i++) {
-            detailViewers.get(i).getColumnFormatter().setWidth(1, columnsWidth[i]);
-        }
+    Grid getDetailView(int column) {
+        return detailViews.get(column);
     }
 
 }

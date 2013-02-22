@@ -39,7 +39,7 @@ public abstract class AbstractModelBoundFormWidget<T extends EntityModel> extend
         T model = getModel();
 
         doEdit(model);
-        formBuilder.showForm(model);
+        formBuilder.update(model);
     }
 
     /**

@@ -3,8 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
-import org.ovirt.engine.ui.common.widget.form.FormItemWithDefaultValue;
-import org.ovirt.engine.ui.common.widget.form.FormItemWithDefaultValue.Condition;
+import org.ovirt.engine.ui.common.widget.form.FormItem.DefaultValueCondition;
 import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
 import org.ovirt.engine.ui.common.widget.label.ClusterTypeLabel;
 import org.ovirt.engine.ui.common.widget.label.MemorySizeLabel;
@@ -41,31 +40,31 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
     public ClusterGeneralModelForm(ModelProvider<ClusterGeneralModel> modelProvider,
             final ApplicationConstants constants) {
         super(modelProvider, 3, 5);
-
-        driver.initialize(this);
-
-        Condition supportsVirtService = new Condition() {
-            @Override
-            public boolean isTrue() {
-                return getModel().getEntity() != null && getModel().getEntity().supportsVirtService();
-            }
-        };
-
-        Condition supportsGlusterService = new Condition() {
-            @Override
-            public boolean isTrue() {
-                return getModel().getEntity() != null && getModel().getEntity().supportsGlusterService();
-            }
-        };
-
-        String notAvailable = constants.notAvailableLabel();
-
         cpuThreads = new BooleanLabel(constants.yes(), constants.no());
         memoryOverCommit = new MemorySizeLabel<Integer>(constants);
         resiliencePolicy = new ResiliencePolicyLabel(constants);
         clusterType = new ClusterTypeLabel(constants);
 
-        formBuilder.setColumnsWidth("180px", "180px", "180px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        driver.initialize(this);
+
+        DefaultValueCondition virtServiceNotSupported = new DefaultValueCondition() {
+            @Override
+            public boolean showDefaultValue() {
+                boolean supportsVirtService = getModel().getEntity() != null
+                        && getModel().getEntity().supportsVirtService();
+                return !supportsVirtService;
+            }
+        };
+
+        DefaultValueCondition glusterServiceNotSupported = new DefaultValueCondition() {
+            @Override
+            public boolean showDefaultValue() {
+                boolean supportsGlusterService = getModel().getEntity() != null
+                        && getModel().getEntity().supportsGlusterService();
+                return !supportsGlusterService;
+            }
+        };
+
         formBuilder.addFormItem(new FormItem(constants.nameCluster(), name, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.descriptionCluster(), description, 1, 0));
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
@@ -81,24 +80,24 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
 
         // properties for virt support
         if (ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly)) {
-            formBuilder.addFormItem(new FormItemWithDefaultValue(constants.cpuNameCluster(),
-                    cpuName, 0, 1, notAvailable, supportsVirtService));
-            formBuilder.addFormItem(new FormItemWithDefaultValue(constants.cpuThreadsCluster(),
-                    cpuThreads, 1, 1, notAvailable, supportsVirtService));
-            formBuilder.addFormItem(new FormItemWithDefaultValue(constants.memoryOptimizationCluster(),
-                    memoryOverCommit, 2, 1, notAvailable, supportsVirtService));
-            formBuilder.addFormItem(new FormItemWithDefaultValue(constants.resiliencePolicyCluster(),
-                    resiliencePolicy, 3, 1, notAvailable, supportsVirtService));
+            formBuilder.addFormItem(new FormItem(constants.cpuNameCluster(), cpuName, 0, 1)
+                    .withDefaultValue(constants.notAvailableLabel(), virtServiceNotSupported));
+            formBuilder.addFormItem(new FormItem(constants.cpuThreadsCluster(), cpuThreads, 1, 1)
+                    .withDefaultValue(constants.notAvailableLabel(), virtServiceNotSupported));
+            formBuilder.addFormItem(new FormItem(constants.memoryOptimizationCluster(), memoryOverCommit, 2, 1)
+                    .withDefaultValue(constants.notAvailableLabel(), virtServiceNotSupported));
+            formBuilder.addFormItem(new FormItem(constants.resiliencePolicyCluster(), resiliencePolicy, 3, 1)
+                    .withDefaultValue(constants.notAvailableLabel(), virtServiceNotSupported));
         }
 
         // properties for gluster support
         if (ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly)) {
-            formBuilder.addFormItem(new FormItemWithDefaultValue(constants.clusterVolumesTotalLabel(),
-                    noOfVolumesTotal, 0, 2, notAvailable, supportsGlusterService));
-            formBuilder.addFormItem(new FormItemWithDefaultValue(constants.clusterVolumesUpLabel(),
-                    noOfVolumesUp, 1, 2, notAvailable, supportsGlusterService));
-            formBuilder.addFormItem(new FormItemWithDefaultValue(constants.clusterVolumesDownLabel(),
-                    noOfVolumesDown, 2, 2, notAvailable, supportsGlusterService));
+            formBuilder.addFormItem(new FormItem(constants.clusterVolumesTotalLabel(), noOfVolumesTotal, 0, 2)
+                    .withDefaultValue(constants.notAvailableLabel(), glusterServiceNotSupported));
+            formBuilder.addFormItem(new FormItem(constants.clusterVolumesUpLabel(), noOfVolumesUp, 1, 2)
+                    .withDefaultValue(constants.notAvailableLabel(), glusterServiceNotSupported));
+            formBuilder.addFormItem(new FormItem(constants.clusterVolumesDownLabel(), noOfVolumesDown, 2, 2)
+                    .withDefaultValue(constants.notAvailableLabel(), glusterServiceNotSupported));
         }
     }
 

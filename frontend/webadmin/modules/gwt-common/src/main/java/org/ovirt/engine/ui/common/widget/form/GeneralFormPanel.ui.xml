@@ -7,49 +7,43 @@
 			width: 100%;
 		}
 
-		@external formPanel_viewerSeparator;
-		.formPanel_viewerSeparator {
-			float: left;
-			width: 20px;
-			height: 100%;
-		}
-
-		@external formPanel_viewer;
-		.formPanel_viewer {
-			float: left;
-			padding-right: 16px;
+		@external formPanel_detailView;
+		.formPanel_detailView {
+			display: block;
 			padding-left: 16px;
+			padding-right: 16px;
 			line-height: 18px;
 		}
 
-		@external formPanel_itemName;
-		.formPanel_itemName {
-			white-space: nowrap;
-			font-family: Arial,sans-serif;
-			color: black;
+		@external formPanel_detailViewNameColumn;
+		.formPanel_detailViewNameColumn {
+			min-width: 100px;
 		}
 
-		@external formPanel_itemValue;
-		.formPanel_itemValue {
+		@external formPanel_detailViewValueColumn;
+		.formPanel_detailViewValueColumn {
+			min-width: 100px;
+			width: 100%;
+		}
+
+		@external formPanel_detailViewItemName;
+		.formPanel_detailViewItemName {
 			white-space: nowrap;
-			font-family: Arial,sans-serif;
+			color: black;
+			font-family: Arial, sans-serif;
+		}
+
+		@external formPanel_detailViewItemValue;
+		.formPanel_detailViewItemValue {
+			white-space: nowrap;
 			color: #777777;
+			font-family: Arial, sans-serif;
 			padding-left: 4px;
 			padding-top: 4px;
 			padding-bottom: 4px;
 		}
-
-		@external formPanel_viewerNamesColumn;
-		.formPanel_viewerNamesColumn {
-		}
-
-		@external formPanel_viewerValuesColumn;
-		.formPanel_viewerValuesColumn {
-			min-width: 100px;
-			width: 100%;
-		}
 	</ui:style>
 
-	<g:HorizontalPanel ui:field="contentPanel" addStyleNames="{style.contentPanel}"/>
+	<g:HorizontalPanel ui:field="contentPanel" addStyleNames="{style.contentPanel}" />
 
 </ui:UiBinder>

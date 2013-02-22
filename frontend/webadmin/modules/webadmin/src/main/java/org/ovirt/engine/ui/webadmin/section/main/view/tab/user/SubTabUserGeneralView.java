@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.user;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.businessentities.LdapRefStatus;
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.businessentities.LdapRefStatus;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
@@ -57,11 +57,12 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 1, 3);
+
         formBuilder.addFormItem(new FormItem(constants.domainUserGeneral(), domain, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.statusUserGeneral(), status, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.emailUserGeneral(), email, 2, 0) {
             @Override
-            public boolean isVisible() {
+            public boolean getIsAvailable() {
                 if (getDetailModel().getEntity() == null) {
                     return false;
                 }
@@ -73,8 +74,7 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
     @Override
     public void setMainTabSelectedItem(DbUser selectedItem) {
         driver.edit(getDetailModel());
-
-        formBuilder.showForm(getDetailModel());
+        formBuilder.update(getDetailModel());
     }
 
 }
