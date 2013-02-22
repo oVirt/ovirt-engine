@@ -2088,20 +2088,6 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
-    public static void IsHotPlugAvailable(AsyncQuery aQuery, String version) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                return source != null ? ((Boolean) source).booleanValue() : true;
-            }
-        };
-        GetConfigurationValueParameters tempVar =
-                new GetConfigurationValueParameters(ConfigurationValues.HotPlugEnabled);
-        tempVar.setVersion(version);
-        GetConfigFromCache(tempVar, aQuery);
-    }
-
     public static void GetAllAttachableDisks(AsyncQuery aQuery, Guid storagePoolId, Guid vmId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override

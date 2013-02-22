@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -698,14 +699,8 @@ public class VmDiskListModel extends VmDiskListModelBase
         if (clusterCompatibilityVersion == null) {
             setIsDiskHotPlugSupported(false);
         } else {
-            AsyncDataProvider.IsHotPlugAvailable(new AsyncQuery(this,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void OnSuccess(Object target, Object returnValue) {
-                            VmDiskListModel model = (VmDiskListModel) target;
-                            model.setIsDiskHotPlugSupported((Boolean) returnValue);
-                        }
-                    }), clusterCompatibilityVersion.toString());
+            setIsDiskHotPlugSupported((Boolean) AsyncDataProvider.GetConfigValuePreConverted(
+                    ConfigurationValues.HotPlugEnabled, clusterCompatibilityVersion.toString()));
         }
     }
 
