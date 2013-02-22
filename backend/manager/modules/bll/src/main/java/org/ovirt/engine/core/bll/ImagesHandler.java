@@ -633,19 +633,23 @@ public final class ImagesHandler {
 
     /**
      * Filter image disks by attributes.
-     * @param listOfDisks - The list of disks to be filtered.
-     * @param filterNotShareableDisks - Indication whether to filter disks which are not shareable.
-     * @param filterAllowSnapshotDisks - Indication whether to filter disks which are allowed to be snapshot.
+     *
+     * @param listOfDisks
+     *            - The list of disks to be filtered.
+     * @param allowOnlyNotShareableDisks
+     *            - Indication whether to allow only disks that are not shareable
+     * @param allowOnlySnapableDisks
+     *            - Indication whether to allow only disks which are allowed to be snapshoted.
      * @return - List filtered of disk images.
      */
     public static List<DiskImage> filterImageDisks(Collection<? extends Disk> listOfDisks,
-            boolean filterNotShareableDisks,
-            boolean filterAllowSnapshotDisks) {
+            boolean allowOnlyNotShareableDisks,
+            boolean allowOnlySnapableDisks) {
         List<DiskImage> diskImages = new ArrayList<DiskImage>();
         for (Disk disk : listOfDisks) {
-            if ((!filterNotShareableDisks || !disk.isShareable())
-                    && disk.getDiskStorageType() == DiskStorageType.IMAGE &&
-                    (!filterAllowSnapshotDisks || disk.isAllowSnapshot())) {
+            if (disk.getDiskStorageType() == DiskStorageType.IMAGE &&
+                    (!allowOnlyNotShareableDisks || !disk.isShareable()) &&
+                    (!allowOnlySnapableDisks || disk.isAllowSnapshot())) {
                 diskImages.add((DiskImage) disk);
             }
         }
