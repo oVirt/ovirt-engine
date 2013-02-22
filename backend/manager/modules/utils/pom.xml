@@ -13,11 +13,6 @@
   <name>Common utilities</name>
 
   <dependencies>
-   <dependency>
-      <groupId>org.jboss.spec.javax.interceptor</groupId>
-      <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
-      <version>1.0.0.Final</version>
-   </dependency>
     <dependency>
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils</artifactId>
