@@ -82,6 +82,7 @@ public class DisksViewColumns {
     public static final ImageResourceColumn<Disk> lunDiskColumn = new ImageResourceColumn<Disk>() {
         @Override
         public ImageResource getValue(Disk object) {
+            setTitle(object.getDiskStorageType() == DiskStorageType.LUN ? getDefaultTitle() : null);
             return object.getDiskStorageType() == DiskStorageType.LUN ?
                     resources.externalDiskIcon() : null;
         }
