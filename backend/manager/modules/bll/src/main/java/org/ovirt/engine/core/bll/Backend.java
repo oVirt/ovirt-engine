@@ -57,7 +57,7 @@ import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.searchbackend.BaseConditionFieldAutoCompleter;
 import org.ovirt.engine.core.utils.ErrorTranslatorImpl;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
-import org.ovirt.engine.core.utils.ThreadLocalSessionCleanerInterceptor;
+import org.ovirt.engine.core.bll.interceptors.ThreadLocalSessionCleanerInterceptor;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
