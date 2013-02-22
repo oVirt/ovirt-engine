@@ -112,7 +112,7 @@ public abstract class EJBUtilsStrategy {
         } catch (Exception e) {
             StringBuilder errorMsgSb = new StringBuilder();
             errorMsgSb.append("Failed to lookup resource type: ").append(beanType).append(". JNDI name: ")
-                    .append(jndiNameSB.toString());
+                    .append(jndiNameSB);
             log.error(errorMsgSb.toString(), e);
             return null;
         }
