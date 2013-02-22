@@ -52,6 +52,7 @@ public class DnsSRVLocator {
         private String address;
         private boolean used;
 
+        @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append("valid: ").append(valid).append(" sum: ").append(sum).append("priority: ").append(priority)
@@ -223,8 +224,12 @@ public class DnsSRVLocator {
     }
 
     public DnsSRVResult getSRVResult(String domainName, String[] recordsList) {
+        if (recordsList == null) {
+            return null;
+        }
+
         int numOfRecords = recordsList.length;
-        if (recordsList == null || numOfRecords == 0) {
+        if (numOfRecords == 0) {
             return null;
         }
         // Read records as retrieved from DNS
