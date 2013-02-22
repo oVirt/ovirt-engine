@@ -40,7 +40,7 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
             if (listModel.getSelectedItem() != null) {
                 key = (String) listModel.getSelectedItem();
             }
-            boolean keySelected = listModel != null &&
+            boolean keySelected =
                     key != null &&
                     !key.equals(KeyValueModel.SELECT_KEY) &&
                     !key.equals(KeyValueModel.NO_KEYS);
