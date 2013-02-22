@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.Map;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -225,46 +226,16 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
             return false;
         }
         VmDevice other = (VmDevice) obj;
-        if (id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!id.equals(other.id)) {
-            return false;
-        }
-        if (!device.equals(other.device)) {
-            return false;
-        }
-        if (!type.equals(other.type)) {
-            return false;
-        }
-        if (!address.equals(other.address)) {
-            return false;
-        }
-        if (bootOrder != other.bootOrder) {
-            return false;
-        }
-        if (specParams == null) {
-            if (other.specParams != null) {
-                return false;
-            }
-        } else if (!specParams.equals(other.specParams)) {
-            return false;
-        }
-        if (isManaged != other.isManaged) {
-            return false;
-        }
-        if (isPlugged != other.isPlugged) {
-            return false;
-        }
-        if (isReadOnly != other.isReadOnly) {
-            return false;
-        }
-        if (!alias.equals(other.alias)) {
-            return false;
-        }
-
-        return true;
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && device.equals(other.device)
+                && type.equals(other.type)
+                && address.equals(other.address)
+                && bootOrder == other.bootOrder
+                && ObjectUtils.objectsEqual(specParams, other.specParams)
+                && isManaged == other.isManaged
+                && isPlugged == other.isPlugged
+                && isReadOnly == other.isReadOnly
+                && alias.equals(other.alias));
     }
 
     @Override

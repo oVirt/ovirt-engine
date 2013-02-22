@@ -6,6 +6,7 @@ import java.util.HashSet;
 
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringFormat;
@@ -625,230 +626,62 @@ public class VdsDynamic implements BusinessEntity<Guid> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         VdsDynamic other = (VdsDynamic) obj;
-        if (_supportedClusterVersionsSet == null) {
-            if (other._supportedClusterVersionsSet != null)
-                return false;
-        } else if (!_supportedClusterVersionsSet.equals(other._supportedClusterVersionsSet))
-            return false;
-        if (_supportedENGINESVersionsSet == null) {
-            if (other._supportedENGINESVersionsSet != null)
-                return false;
-        } else if (!_supportedENGINESVersionsSet.equals(other._supportedENGINESVersionsSet))
-            return false;
-        if (anonymousHugePages != other.anonymousHugePages)
-            return false;
-        if (buildName == null) {
-            if (other.buildName != null)
-                return false;
-        } else if (!buildName.equals(other.buildName))
-            return false;
-        if (cpu_cores == null) {
-            if (other.cpu_cores != null)
-                return false;
-        } else if (!cpu_cores.equals(other.cpu_cores))
-            return false;
-        if (cpuThreads == null) {
-            if (other.cpuThreads != null)
-                return false;
-        } else if (!cpuThreads.equals(other.cpuThreads))
-            return false;
-        if (cpu_flags == null) {
-            if (other.cpu_flags != null)
-                return false;
-        } else if (!cpu_flags.equals(other.cpu_flags))
-            return false;
-        if (cpu_model == null) {
-            if (other.cpu_model != null)
-                return false;
-        } else if (!cpu_model.equals(other.cpu_model))
-            return false;
-        if (cpu_over_commit_time_stamp == null) {
-            if (other.cpu_over_commit_time_stamp != null)
-                return false;
-        } else if (!cpu_over_commit_time_stamp.equals(other.cpu_over_commit_time_stamp))
-            return false;
-        if (cpu_sockets == null) {
-            if (other.cpu_sockets != null)
-                return false;
-        } else if (!cpu_sockets.equals(other.cpu_sockets))
-            return false;
-        if (cpu_speed_mh == null) {
-            if (other.cpu_speed_mh != null)
-                return false;
-        } else if (!cpu_speed_mh.equals(other.cpu_speed_mh))
-            return false;
-        if (guest_overhead == null) {
-            if (other.guest_overhead != null)
-                return false;
-        } else if (!guest_overhead.equals(other.guest_overhead))
-            return false;
-        if (hooksStr == null) {
-            if (other.hooksStr != null)
-                return false;
-        } else if (!hooksStr.equals(other.hooksStr))
-            return false;
-        if (host_os == null) {
-            if (other.host_os != null)
-                return false;
-        } else if (!host_os.equals(other.host_os))
-            return false;
-        if (iScsiInitiatorName == null) {
-            if (other.iScsiInitiatorName != null)
-                return false;
-        } else if (!iScsiInitiatorName.equals(other.iScsiInitiatorName))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (if_total_speed == null) {
-            if (other.if_total_speed != null)
-                return false;
-        } else if (!if_total_speed.equals(other.if_total_speed))
-            return false;
-        if (kernel_version == null) {
-            if (other.kernel_version != null)
-                return false;
-        } else if (!kernel_version.equals(other.kernel_version))
-            return false;
-        if (kvm_enabled == null) {
-            if (other.kvm_enabled != null)
-                return false;
-        } else if (!kvm_enabled.equals(other.kvm_enabled))
-            return false;
-        if (kvm_version == null) {
-            if (other.kvm_version != null)
-                return false;
-        } else if (!kvm_version.equals(other.kvm_version))
-            return false;
-        if (libvirt_version == null) {
-            if (other.libvirt_version != null)
-                return false;
-        } else if (!libvirt_version.equals(other.libvirt_version))
-            return false;
-        if (rpmVersion == null) {
-            if (other.rpmVersion != null)
-                return false;
-        } else if (!rpmVersion.equals(other.rpmVersion))
-            return false;
-        if (mem_commited == null) {
-            if (other.mem_commited != null)
-                return false;
-        } else if (!mem_commited.equals(other.mem_commited))
-            return false;
-        if (net_config_dirty == null) {
-            if (other.net_config_dirty != null)
-                return false;
-        } else if (!net_config_dirty.equals(other.net_config_dirty))
-            return false;
-        if (nonOperationalReason != other.nonOperationalReason)
-            return false;
-        if (pending_vcpus_count == null) {
-            if (other.pending_vcpus_count != null)
-                return false;
-        } else if (!pending_vcpus_count.equals(other.pending_vcpus_count))
-            return false;
-        if (pending_vmem_size == null) {
-            if (other.pending_vmem_size != null)
-                return false;
-        } else if (!pending_vmem_size.equals(other.pending_vmem_size))
-            return false;
-        if (physical_mem_mb == null) {
-            if (other.physical_mem_mb != null)
-                return false;
-        } else if (!physical_mem_mb.equals(other.physical_mem_mb))
-            return false;
-        if (previous_status != other.previous_status)
-            return false;
-        if (reserved_mem == null) {
-            if (other.reserved_mem != null)
-                return false;
-        } else if (!reserved_mem.equals(other.reserved_mem))
-            return false;
-        if (getsoftware_version() == null) {
-            if (other.getsoftware_version() != null)
-                return false;
-        } else if (!getsoftware_version().equals(other.getsoftware_version()))
-            return false;
-        if (spice_version == null) {
-            if (other.spice_version != null)
-                return false;
-        } else if (!spice_version.equals(other.spice_version))
-            return false;
-        if (status != other.status)
-            return false;
-        if (supported_cluster_levels == null) {
-            if (other.supported_cluster_levels != null)
-                return false;
-        } else if (!supported_cluster_levels.equals(other.supported_cluster_levels))
-            return false;
-        if (supported_engines == null) {
-            if (other.supported_engines != null)
-                return false;
-        } else if (!supported_engines.equals(other.supported_engines))
-            return false;
-        if (transparentHugePagesState != other.transparentHugePagesState)
-            return false;
-        if (versionName == null) {
-            if (other.versionName != null)
-                return false;
-        } else if (!versionName.equals(other.versionName))
-            return false;
-        if (vm_active == null) {
-            if (other.vm_active != null)
-                return false;
-        } else if (!vm_active.equals(other.vm_active))
-            return false;
-        if (vm_count != other.vm_count)
-            return false;
-        if (vm_migrating == null) {
-            if (other.vm_migrating != null)
-                return false;
-        } else if (!vm_migrating.equals(other.vm_migrating))
-            return false;
-        if (vms_cores_count == null) {
-            if (other.vms_cores_count != null)
-                return false;
-        } else if (!vms_cores_count.equals(other.vms_cores_count))
-            return false;
-        if (hwManufacturer == null) {
-            if (other.hwManufacturer != null)
-                return false;
-        } else if (!hwManufacturer.equals(other.hwManufacturer))
-            return false;
-        if (hwProductName == null) {
-            if (other.hwProductName != null)
-                return false;
-        } else if (!hwProductName.equals(other.hwProductName))
-            return false;
-        if (hwVersion == null) {
-            if (other.hwVersion != null)
-                return false;
-        } else if (!hwVersion.equals(other.hwVersion))
-            return false;
-        if (hwSerialNumber == null) {
-            if (other.hwSerialNumber != null)
-                return false;
-        } else if (!hwSerialNumber.equals(other.hwSerialNumber))
-            return false;
-        if (hwUUID == null) {
-            if (other.hwUUID != null)
-                return false;
-        } else if (!hwUUID.equals(other.hwUUID))
-            return false;
-        if (hwFamily == null) {
-            if (other.hwFamily != null)
-                return false;
-        } else if (!hwFamily.equals(other.hwFamily))
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && ObjectUtils.objectsEqual(_supportedClusterVersionsSet, other._supportedClusterVersionsSet)
+                && ObjectUtils.objectsEqual(_supportedENGINESVersionsSet, other._supportedENGINESVersionsSet)
+                && anonymousHugePages == other.anonymousHugePages
+                && ObjectUtils.objectsEqual(buildName, other.buildName)
+                && ObjectUtils.objectsEqual(cpu_cores, other.cpu_cores)
+                && ObjectUtils.objectsEqual(cpuThreads, other.cpuThreads)
+                && ObjectUtils.objectsEqual(cpu_flags, other.cpu_flags)
+                && ObjectUtils.objectsEqual(cpu_model, other.cpu_model)
+                && ObjectUtils.objectsEqual(cpu_over_commit_time_stamp, other.cpu_over_commit_time_stamp)
+                && ObjectUtils.objectsEqual(cpu_sockets, other.cpu_sockets)
+                && ObjectUtils.objectsEqual(cpu_speed_mh, other.cpu_speed_mh)
+                && ObjectUtils.objectsEqual(guest_overhead, other.guest_overhead)
+                && ObjectUtils.objectsEqual(hooksStr, other.hooksStr)
+                && ObjectUtils.objectsEqual(host_os, other.host_os)
+                && ObjectUtils.objectsEqual(iScsiInitiatorName, other.iScsiInitiatorName)
+                && ObjectUtils.objectsEqual(if_total_speed, other.if_total_speed)
+                && ObjectUtils.objectsEqual(kernel_version, other.kernel_version)
+                && ObjectUtils.objectsEqual(kvm_enabled, other.kvm_enabled)
+                && ObjectUtils.objectsEqual(kvm_version, other.kvm_version)
+                && ObjectUtils.objectsEqual(libvirt_version, other.libvirt_version)
+                && ObjectUtils.objectsEqual(rpmVersion, other.rpmVersion)
+                && ObjectUtils.objectsEqual(mem_commited, other.mem_commited)
+                && ObjectUtils.objectsEqual(net_config_dirty, other.net_config_dirty)
+                && nonOperationalReason == other.nonOperationalReason
+                && ObjectUtils.objectsEqual(pending_vcpus_count, other.pending_vcpus_count)
+                && ObjectUtils.objectsEqual(pending_vmem_size, other.pending_vmem_size)
+                && ObjectUtils.objectsEqual(physical_mem_mb, other.physical_mem_mb)
+                && previous_status == other.previous_status
+                && ObjectUtils.objectsEqual(reserved_mem, other.reserved_mem)
+                && ObjectUtils.objectsEqual(getsoftware_version(), other.getsoftware_version())
+                && ObjectUtils.objectsEqual(spice_version, other.spice_version)
+                && status == other.status
+                && ObjectUtils.objectsEqual(supported_cluster_levels, other.supported_cluster_levels)
+                && ObjectUtils.objectsEqual(supported_engines, other.supported_engines)
+                && transparentHugePagesState == other.transparentHugePagesState
+                && ObjectUtils.objectsEqual(versionName, other.versionName)
+                && ObjectUtils.objectsEqual(vm_active, other.vm_active)
+                && vm_count == other.vm_count
+                && ObjectUtils.objectsEqual(vm_migrating, other.vm_migrating)
+                && ObjectUtils.objectsEqual(vms_cores_count, other.vms_cores_count)
+                && ObjectUtils.objectsEqual(hwManufacturer, other.hwManufacturer)
+                && ObjectUtils.objectsEqual(hwProductName, other.hwProductName)
+                && ObjectUtils.objectsEqual(hwVersion, other.hwVersion)
+                && ObjectUtils.objectsEqual(hwSerialNumber, other.hwSerialNumber)
+                && ObjectUtils.objectsEqual(hwUUID, other.hwUUID)
+                && ObjectUtils.objectsEqual(hwFamily, other.hwFamily));
     }
 }

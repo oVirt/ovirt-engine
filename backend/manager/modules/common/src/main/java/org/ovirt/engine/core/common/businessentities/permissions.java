@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class permissions extends IVdcQueryable implements BusinessEntity<Guid> {
@@ -159,41 +160,22 @@ public class permissions extends IVdcQueryable implements BusinessEntity<Guid> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         permissions other = (permissions) obj;
-        if (adElementId == null) {
-            if (other.adElementId != null)
-                return false;
-        } else if (!adElementId.equals(other.adElementId))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (objectId == null) {
-            if (other.objectId != null)
-                return false;
-        } else if (!objectId.equals(other.objectId))
-            return false;
-        if (objectType != other.objectType)
-            return false;
-        if (tags == null) {
-            if (other.tags != null)
-                return false;
-        } else if (!tags.equals(other.tags))
-            return false;
-        if (roleId == null) {
-            if (other.roleId != null)
-                return false;
-        } else if (!roleId.equals(other.roleId))
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && ObjectUtils.objectsEqual(adElementId, other.adElementId)
+                && ObjectUtils.objectsEqual(objectId, other.objectId)
+                && objectType == other.objectType
+                && ObjectUtils.objectsEqual(tags, other.tags)
+                && ObjectUtils.objectsEqual(roleId, other.roleId));
     }
 
 }

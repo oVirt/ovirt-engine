@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.Date;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -188,48 +189,24 @@ public class Snapshot extends IVdcQueryable implements BusinessEntity<Guid> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         Snapshot other = (Snapshot) obj;
-        if (appList == null) {
-            if (other.appList != null)
-                return false;
-        } else if (!appList.equals(other.appList))
-            return false;
-        if (creationDate == null) {
-            if (other.creationDate != null)
-                return false;
-        } else if (!creationDate.equals(other.creationDate))
-            return false;
-        if (description == null) {
-            if (other.description != null)
-                return false;
-        } else if (!description.equals(other.description))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (status != other.status)
-            return false;
-        if (type != other.type)
-            return false;
-        if (vmConfiguration == null) {
-            if (other.vmConfiguration != null)
-                return false;
-        } else if (!vmConfiguration.equals(other.vmConfiguration))
-            return false;
-        if (vmId == null) {
-            if (other.vmId != null)
-                return false;
-        } else if (!vmId.equals(other.vmId))
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && ObjectUtils.objectsEqual(appList, other.appList)
+                && ObjectUtils.objectsEqual(creationDate, other.creationDate)
+                && ObjectUtils.objectsEqual(description, other.description)
+                && status == other.status
+                && type == other.type
+                && ObjectUtils.objectsEqual(vmConfiguration, other.vmConfiguration)
+                && ObjectUtils.objectsEqual(vmId, other.vmId));
     }
 
     public enum SnapshotStatus {

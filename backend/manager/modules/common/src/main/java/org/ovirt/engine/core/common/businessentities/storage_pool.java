@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -185,60 +186,28 @@ public class storage_pool extends IVdcQueryable implements BusinessEntity<Guid> 
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        storage_pool other = (storage_pool) obj;
-        if (LVER == null) {
-            if (other.LVER != null)
-                return false;
-        } else if (!LVER.equals(other.LVER))
-            return false;
-        if (description == null) {
-            if (other.description != null)
-                return false;
-        } else if (!description.equals(other.description))
-            return false;
-        if (getcompatibility_version() == null) {
-            if (other.getcompatibility_version() != null)
-                return false;
-        } else if (!getcompatibility_version().equals(other.getcompatibility_version()))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (masterDomainVersion != other.masterDomainVersion)
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        if (recovery_mode != other.recovery_mode)
-            return false;
-        if (spmVdsId == null) {
-            if (other.spmVdsId != null)
-                return false;
-        } else if (!spmVdsId.equals(other.spmVdsId))
-            return false;
-        if (status != other.status)
-            return false;
-        if (storagePoolType != other.storagePoolType)
-            return false;
-        if (storagePoolFormatType == null) {
-            if (other.storagePoolFormatType != null)
-                return false;
-        } else if (storagePoolFormatType != other.storagePoolFormatType)
-            return false;
-        if (quotaEnforcementType != other.quotaEnforcementType) {
+        }
+        if (obj == null) {
             return false;
         }
-        return true;
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        storage_pool other = (storage_pool) obj;
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && ObjectUtils.objectsEqual(LVER, other.LVER)
+                && ObjectUtils.objectsEqual(description, other.description)
+                && ObjectUtils.objectsEqual(getcompatibility_version(), other.getcompatibility_version())
+                && masterDomainVersion == other.masterDomainVersion
+                && ObjectUtils.objectsEqual(name, other.name)
+                && recovery_mode == other.recovery_mode
+                && ObjectUtils.objectsEqual(spmVdsId, other.spmVdsId)
+                && status == other.status
+                && storagePoolType == other.storagePoolType
+                && ObjectUtils.objectsEqual(storagePoolFormatType, other.storagePoolFormatType)
+                && quotaEnforcementType == other.quotaEnforcementType);
     }
 
     public QuotaEnforcementTypeEnum getQuotaEnforcementType() {

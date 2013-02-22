@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.math.BigDecimal;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VdsStatistics implements BusinessEntity<Guid> {
@@ -68,99 +69,30 @@ public class VdsStatistics implements BusinessEntity<Guid> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         VdsStatistics other = (VdsStatistics) obj;
-
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-
-        if (cpu_idle == null) {
-            if (other.cpu_idle != null)
-                return false;
-        } else if (!(cpu_idle.doubleValue() == other.cpu_idle.doubleValue()))
-            return false;
-
-        if (cpu_load == null) {
-            if (other.cpu_load != null)
-                return false;
-        } else if (!(cpu_load.doubleValue() == other.cpu_load.doubleValue()))
-            return false;
-
-        if (cpu_sys == null) {
-            if (other.cpu_sys != null)
-                return false;
-        } else if (!(cpu_sys.doubleValue() == other.cpu_sys.doubleValue()))
-            return false;
-
-        if (cpu_user == null) {
-            if (other.cpu_user != null)
-                return false;
-        } else if (!(cpu_user.doubleValue() == other.cpu_user.doubleValue()))
-            return false;
-
-        if (mem_available == null) {
-            if (other.mem_available != null)
-                return false;
-        } else if (!mem_available.equals(other.mem_available))
-            return false;
-
-        if (mem_shared == null) {
-            if (other.mem_shared != null)
-                return false;
-        } else if (!mem_shared.equals(other.mem_shared))
-            return false;
-
-        if (usage_cpu_percent == null) {
-            if (other.usage_cpu_percent != null)
-                return false;
-        } else if (!usage_cpu_percent.equals(other.usage_cpu_percent))
-            return false;
-
-        if (usage_network_percent == null) {
-            if (other.usage_network_percent != null)
-                return false;
-        } else if (!usage_network_percent.equals(other.usage_network_percent))
-            return false;
-
-        if (ksm_state == null) {
-            if (other.ksm_state != null)
-                return false;
-        } else if (!ksm_state.equals(other.ksm_state))
-            return false;
-
-        if (ksm_pages == null) {
-            if (other.ksm_pages != null)
-                return false;
-        } else if (!ksm_pages.equals(other.ksm_pages))
-            return false;
-
-        if (ksm_cpu_percent == null) {
-            if (other.ksm_cpu_percent != null)
-                return false;
-        } else if (!ksm_cpu_percent.equals(other.ksm_cpu_percent))
-            return false;
-
-        if (swap_total == null) {
-            if (other.swap_total != null)
-                return false;
-        } else if (!swap_total.equals(other.swap_total))
-            return false;
-
-        if (swap_free == null) {
-            if (other.swap_free != null)
-                return false;
-        } else if (!swap_free.equals(other.swap_free))
-            return false;
-
-        return true;
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && ObjectUtils.bigDecimalEqual(cpu_idle, other.cpu_idle)
+                && ObjectUtils.bigDecimalEqual(cpu_load, other.cpu_load)
+                && ObjectUtils.bigDecimalEqual(cpu_sys, other.cpu_sys)
+                && ObjectUtils.bigDecimalEqual(cpu_user, other.cpu_user)
+                && ObjectUtils.objectsEqual(mem_available, other.mem_available)
+                && ObjectUtils.objectsEqual(mem_shared, other.mem_shared)
+                && ObjectUtils.objectsEqual(usage_cpu_percent, other.usage_cpu_percent)
+                && ObjectUtils.objectsEqual(usage_network_percent, other.usage_network_percent)
+                && ObjectUtils.objectsEqual(ksm_state, other.ksm_state)
+                && ObjectUtils.objectsEqual(ksm_pages, other.ksm_pages)
+                && ObjectUtils.objectsEqual(ksm_cpu_percent, other.ksm_cpu_percent)
+                && ObjectUtils.objectsEqual(swap_total, other.swap_total)
+                && ObjectUtils.objectsEqual(swap_free, other.swap_free));
     }
 
     public Double getcpu_idle() {

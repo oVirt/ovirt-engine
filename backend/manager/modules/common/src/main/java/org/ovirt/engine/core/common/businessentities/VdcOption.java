@@ -2,6 +2,8 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
+
 public class VdcOption implements Serializable {
     private static final long serialVersionUID = 5489148306184781421L;
 
@@ -24,26 +26,18 @@ public class VdcOption implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
-        VdcOption other = ( VdcOption) obj;
-        String otherName = other.getoption_name();
-        String otherValue = other.getoption_value();
-        if (name == null) {
-            if (otherName != null)
-                return false;
-        } else if (!name.equals(otherName))
-            return false;
-        if (value == null) {
-            if (otherValue != null)
-                return false;
-        } else if (!value.equals(otherValue))
-            return false;
-        return true;
+        }
+        VdcOption other = (VdcOption) obj;
+        return (ObjectUtils.objectsEqual(name, other.name)
+                && ObjectUtils.objectsEqual(value, other.value));
     }
 
     public VdcOption(String option_name, String option_value, int option_id) {

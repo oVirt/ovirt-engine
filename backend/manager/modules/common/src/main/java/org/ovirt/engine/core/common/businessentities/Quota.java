@@ -7,6 +7,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -356,62 +357,28 @@ public class Quota extends IVdcQueryable implements BusinessEntity<Guid> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         Quota other = (Quota) obj;
-        if (description == null) {
-            if (other.description != null)
-                return false;
-        } else if (!description.equals(other.description))
-            return false;
-        if (globalQuotaStorage == null) {
-            if (other.globalQuotaStorage != null)
-                return false;
-        } else if (!globalQuotaStorage.equals(other.globalQuotaStorage))
-            return false;
-        if (globalQuotaVdsGroup == null) {
-            if (other.globalQuotaVdsGroup != null)
-                return false;
-        } else if (!globalQuotaVdsGroup.equals(other.globalQuotaVdsGroup))
-            return false;
-        if (graceStoragePercentage != other.graceStoragePercentage)
-            return false;
-        if (graceVdsGroupPercentage != other.graceVdsGroupPercentage)
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (quotaName == null) {
-            if (other.quotaName != null)
-                return false;
-        } else if (!quotaName.equals(other.quotaName))
-            return false;
-        if (quotaStorageList == null) {
-            if (other.quotaStorageList != null)
-                return false;
-        } else if (!quotaStorageList.equals(other.quotaStorageList))
-            return false;
-        if (quotaVdsGroupList == null) {
-            if (other.quotaVdsGroupList != null)
-                return false;
-        } else if (!quotaVdsGroupList.equals(other.quotaVdsGroupList))
-            return false;
-        if (storagePoolId == null) {
-            if (other.storagePoolId != null)
-                return false;
-        } else if (!storagePoolId.equals(other.storagePoolId))
-            return false;
-        if (thresholdStoragePercentage != other.thresholdStoragePercentage)
-            return false;
-        if (thresholdVdsGroupPercentage != other.thresholdVdsGroupPercentage)
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && ObjectUtils.objectsEqual(description, other.description)
+                && ObjectUtils.objectsEqual(globalQuotaStorage, other.globalQuotaStorage)
+                && ObjectUtils.objectsEqual(globalQuotaVdsGroup, other.globalQuotaVdsGroup)
+                && graceStoragePercentage == other.graceStoragePercentage
+                && graceVdsGroupPercentage == other.graceVdsGroupPercentage
+                && ObjectUtils.objectsEqual(quotaName, other.quotaName)
+                && ObjectUtils.objectsEqual(quotaStorageList, other.quotaStorageList)
+                && ObjectUtils.objectsEqual(quotaVdsGroupList, other.quotaVdsGroupList)
+                && ObjectUtils.objectsEqual(storagePoolId, other.storagePoolId)
+                && thresholdStoragePercentage == other.thresholdStoragePercentage
+                && thresholdVdsGroupPercentage == other.thresholdVdsGroupPercentage);
     }
 
     public QuotaVdsGroup getGlobalQuotaVdsGroup() {

@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.validation.constraints.Min;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -197,39 +198,21 @@ public class QuotaVdsGroup extends IVdcQueryable implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         QuotaVdsGroup other = (QuotaVdsGroup) obj;
-        if (quotaId == null) {
-            if (other.quotaId != null)
-                return false;
-        } else if (!quotaId.equals(other.quotaId))
-            return false;
-        if (quotaVdsGroupId == null) {
-            if (other.quotaVdsGroupId != null)
-                return false;
-        } else if (!quotaVdsGroupId.equals(other.quotaVdsGroupId))
-            return false;
-        if (vdsGroupId == null) {
-            if (other.vdsGroupId != null)
-                return false;
-        } else if (!vdsGroupId.equals(other.vdsGroupId))
-            return false;
-        if (virtualCpu == null) {
-            if (other.virtualCpu != null)
-                return false;
-        } else if (!virtualCpu.equals(other.virtualCpu))
-            return false;
-        if (memSizeMB == null) {
-            if (other.memSizeMB != null)
-                return false;
-        } else if (!memSizeMB.equals(other.memSizeMB))
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(quotaId, other.quotaId)
+                && ObjectUtils.objectsEqual(quotaVdsGroupId, other.quotaVdsGroupId)
+                && ObjectUtils.objectsEqual(vdsGroupId, other.vdsGroupId)
+                && ObjectUtils.objectsEqual(virtualCpu, other.virtualCpu)
+                && ObjectUtils.objectsEqual(memSizeMB, other.memSizeMB));
     }
 
     /**

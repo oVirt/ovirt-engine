@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class vds_spm_id_map implements Serializable, BusinessEntity<Guid> {
@@ -60,25 +61,18 @@ public class vds_spm_id_map implements Serializable, BusinessEntity<Guid> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         vds_spm_id_map other = (vds_spm_id_map) obj;
-        if (storage_pool_idField == null) {
-            if (other.storage_pool_idField != null)
-                return false;
-        } else if (!storage_pool_idField.equals(other.storage_pool_idField))
-            return false;
-        if (vds_idField == null) {
-            if (other.vds_idField != null)
-                return false;
-        } else if (!vds_idField.equals(other.vds_idField))
-            return false;
-        if (vds_spm_idField != other.vds_spm_idField)
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(storage_pool_idField, other.storage_pool_idField)
+                && ObjectUtils.objectsEqual(vds_idField, other.vds_idField)
+                && vds_spm_idField == other.vds_spm_idField);
     }
 }

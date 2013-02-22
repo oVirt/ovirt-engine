@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.validation.constraints.Min;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -145,34 +146,20 @@ public class QuotaStorage extends IVdcQueryable implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         QuotaStorage other = (QuotaStorage) obj;
-        if (quotaId == null) {
-            if (other.quotaId != null)
-                return false;
-        } else if (!quotaId.equals(other.quotaId))
-            return false;
-        if (quotaStorageId == null) {
-            if (other.quotaStorageId != null)
-                return false;
-        } else if (!quotaStorageId.equals(other.quotaStorageId))
-            return false;
-        if (storageId == null) {
-            if (other.storageId != null)
-                return false;
-        } else if (!storageId.equals(other.storageId))
-            return false;
-        if (storageLimitGigaByte == null) {
-            if (other.storageLimitGigaByte != null)
-                return false;
-        } else if (!storageLimitGigaByte.equals(other.storageLimitGigaByte))
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(quotaId, other.quotaId)
+                && ObjectUtils.objectsEqual(quotaStorageId, other.quotaStorageId)
+                && ObjectUtils.objectsEqual(storageId, other.storageId)
+                && ObjectUtils.objectsEqual(storageLimitGigaByte, other.storageLimitGigaByte));
     }
 
     /**

@@ -6,6 +6,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -75,56 +76,25 @@ public class VmPool extends IVdcQueryable implements Serializable, Nameable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         VmPool other = (VmPool) obj;
-        if (defaultEndTime == null) {
-            if (other.defaultEndTime != null)
-                return false;
-        } else if (!defaultEndTime.equals(other.defaultEndTime))
-            return false;
-        if (defaultStartTime == null) {
-            if (other.defaultStartTime != null)
-                return false;
-        } else if (!defaultStartTime.equals(other.defaultStartTime))
-            return false;
-        if (defaultTimeInDays != other.defaultTimeInDays)
-            return false;
-        if (parameters == null) {
-            if (other.parameters != null)
-                return false;
-        } else if (!parameters.equals(other.parameters))
-            return false;
-        if (vdsGroupId == null) {
-            if (other.vdsGroupId != null)
-                return false;
-        } else if (!vdsGroupId.equals(other.vdsGroupId))
-            return false;
-        if (description == null) {
-            if (other.description != null)
-                return false;
-        } else if (!description.equals(other.description))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        if (type == null) {
-            if (other.type != null)
-                return false;
-        } else if (!type.equals(other.type))
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && ObjectUtils.objectsEqual(defaultEndTime, other.defaultEndTime)
+                && ObjectUtils.objectsEqual(defaultStartTime, other.defaultStartTime)
+                && defaultTimeInDays == other.defaultTimeInDays
+                && ObjectUtils.objectsEqual(parameters, other.parameters)
+                && ObjectUtils.objectsEqual(vdsGroupId, other.vdsGroupId)
+                && ObjectUtils.objectsEqual(description, other.description)
+                && ObjectUtils.objectsEqual(name, other.name)
+                && ObjectUtils.objectsEqual(type, other.type));
     }
 
     private void initializeTimeLeasedDefaultData(String parameter) {

@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.utils;
 
+import java.math.BigDecimal;
+
 public class ObjectUtils {
 
     /**
@@ -14,6 +16,10 @@ public class ObjectUtils {
         } else {
             return obj1.equals(obj2);
         }
+    }
+
+    public static boolean bigDecimalEqual(BigDecimal bd1, BigDecimal bd2) {
+        return bd1 == bd2 || bd1 != null && bd2 != null && bd1.compareTo(bd2) == 0;
     }
 
 }

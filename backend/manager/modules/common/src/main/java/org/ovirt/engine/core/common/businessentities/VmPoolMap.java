@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
@@ -47,23 +48,17 @@ public class VmPoolMap implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         VmPoolMap other = (VmPoolMap) obj;
-        if (vmId == null) {
-            if (other.vmId != null)
-                return false;
-        } else if (!vmId.equals(other.vmId))
-            return false;
-        if (vmPoolId == null) {
-            if (other.vmPoolId != null)
-                return false;
-        } else if (!vmPoolId.equals(other.vmPoolId))
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(vmId, other.vmId)
+                && ObjectUtils.objectsEqual(vmPoolId, other.vmPoolId));
     }
 }

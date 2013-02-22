@@ -8,6 +8,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
@@ -68,96 +69,36 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         VDS other = (VDS) obj;
-        if (cpuName == null) {
-            if (other.cpuName != null)
-                return false;
-        } else if (!cpuName.equals(other.cpuName))
-            return false;
-        if (_spm_status != other._spm_status)
-            return false;
-        if (cpuOverCommitDurationMinutes != other.cpuOverCommitDurationMinutes)
-            return false;
-        if (highUtilization != other.highUtilization)
-            return false;
-        if (lowUtilization != other.lowUtilization)
-            return false;
-        if (mImagesLastCheck == null) {
-            if (other.mImagesLastCheck != null)
-                return false;
-        } else if (!mImagesLastCheck.equals(other.mImagesLastCheck))
-            return false;
-        if (mImagesLastDelay == null) {
-            if (other.mImagesLastDelay != null)
-                return false;
-        } else if (!mImagesLastDelay.equals(other.mImagesLastDelay))
-            return false;
-        if (mInterfaceList == null) {
-            if (other.mInterfaceList != null)
-                return false;
-        } else if (!mInterfaceList.equals(other.mInterfaceList))
-            return false;
-        if (mNetworkList == null) {
-            if (other.mNetworkList != null)
-                return false;
-        } else if (!mNetworkList.equals(other.mNetworkList))
-            return false;
-        if (mVdsStatic == null) {
-            if (other.mVdsStatic != null)
-                return false;
-        } else if (!mVdsStatic.equals(other.mVdsStatic))
-            return false;
-        if (maxVdsMemoryOverCommit != other.maxVdsMemoryOverCommit)
-            return false;
-        if (privateDomains == null) {
-            if (other.privateDomains != null)
-                return false;
-        } else if (!privateDomains.equals(other.privateDomains))
-            return false;
-        if (vdsSpmId == null) {
-            if (other.vdsSpmId != null)
-                return false;
-        } else if (!vdsSpmId.equals(other.vdsSpmId))
-            return false;
-        if (selectionAlgorithm != other.selectionAlgorithm)
-            return false;
-        if (storagePoolId == null) {
-            if (other.storagePoolId != null)
-                return false;
-        } else if (!storagePoolId.equals(other.storagePoolId))
-            return false;
-        if (storagePoolName == null) {
-            if (other.storagePoolName != null)
-                return false;
-        } else if (!storagePoolName.equals(other.storagePoolName))
-            return false;
-        if (vdsGroupCompatibilityVersion == null) {
-            if (other.vdsGroupCompatibilityVersion != null)
-                return false;
-        } else if (!vdsGroupCompatibilityVersion.equals(other.vdsGroupCompatibilityVersion))
-            return false;
-        if (vdsGroupCpuName == null) {
-            if (other.vdsGroupCpuName != null)
-                return false;
-        } else if (!vdsGroupCpuName.equals(other.vdsGroupCpuName))
-            return false;
-        if (vdsGroupDescription == null) {
-            if (other.vdsGroupDescription != null)
-                return false;
-        } else if (!vdsGroupDescription.equals(other.vdsGroupDescription))
-            return false;
-        if (vdsGroupName == null) {
-            if (other.vdsGroupName != null)
-                return false;
-        } else if (!vdsGroupName.equals(other.vdsGroupName))
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(mVdsStatic, other.mVdsStatic)
+                && ObjectUtils.objectsEqual(cpuName, other.cpuName)
+                && _spm_status == other._spm_status
+                && cpuOverCommitDurationMinutes == other.cpuOverCommitDurationMinutes
+                && highUtilization == other.highUtilization
+                && lowUtilization == other.lowUtilization
+                && ObjectUtils.objectsEqual(mImagesLastCheck, other.mImagesLastCheck)
+                && ObjectUtils.objectsEqual(mImagesLastDelay, other.mImagesLastDelay)
+                && ObjectUtils.objectsEqual(mInterfaceList, other.mInterfaceList)
+                && ObjectUtils.objectsEqual(mNetworkList, other.mNetworkList)
+                && maxVdsMemoryOverCommit == other.maxVdsMemoryOverCommit
+                && ObjectUtils.objectsEqual(privateDomains, other.privateDomains)
+                && ObjectUtils.objectsEqual(vdsSpmId, other.vdsSpmId)
+                && selectionAlgorithm == other.selectionAlgorithm
+                && ObjectUtils.objectsEqual(storagePoolId, other.storagePoolId)
+                && ObjectUtils.objectsEqual(storagePoolName, other.storagePoolName)
+                && ObjectUtils.objectsEqual(vdsGroupCompatibilityVersion, other.vdsGroupCompatibilityVersion)
+                && ObjectUtils.objectsEqual(vdsGroupCpuName, other.vdsGroupCpuName)
+                && ObjectUtils.objectsEqual(vdsGroupDescription, other.vdsGroupDescription)
+                && ObjectUtils.objectsEqual(vdsGroupName, other.vdsGroupName));
     }
 
     public VDS(Guid vds_group_id, String vds_group_name, String vds_group_description, Guid vds_id, String vds_name,

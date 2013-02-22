@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmGuestAgentInterface extends IVdcQueryable {
@@ -97,42 +98,11 @@ public class VmGuestAgentInterface extends IVdcQueryable {
             return false;
         }
         VmGuestAgentInterface other = (VmGuestAgentInterface) obj;
-        if (getInterfaceName() == null) {
-            if (other.getInterfaceName() != null) {
-                return false;
-            }
-        } else if (!getInterfaceName().equals(other.getInterfaceName())) {
-            return false;
-        }
-        if (getIpv4Addresses() == null) {
-            if (other.getIpv4Addresses() != null) {
-                return false;
-            }
-        } else if (!getIpv4Addresses().equals(other.getIpv4Addresses())) {
-            return false;
-        }
-        if (getIpv6Addresses() == null) {
-            if (other.getIpv6Addresses() != null) {
-                return false;
-            }
-        } else if (!getIpv6Addresses().equals(other.getIpv6Addresses())) {
-            return false;
-        }
-        if (getMacAddress() == null) {
-            if (other.getMacAddress() != null) {
-                return false;
-            }
-        } else if (!getMacAddress().equals(other.getMacAddress())) {
-            return false;
-        }
-        if (getVmId() == null) {
-            if (other.getVmId() != null) {
-                return false;
-            }
-        } else if (!getVmId().equals(other.getVmId())) {
-            return false;
-        }
-        return true;
+        return (ObjectUtils.objectsEqual(getInterfaceName(), other.getInterfaceName())
+                && ObjectUtils.objectsEqual(getIpv4Addresses(), other.getIpv4Addresses())
+                && ObjectUtils.objectsEqual(getIpv6Addresses(), other.getIpv6Addresses())
+                && ObjectUtils.objectsEqual(getMacAddress(), other.getMacAddress())
+                && ObjectUtils.objectsEqual(getVmId(), other.getVmId()));
     }
 
     @Override

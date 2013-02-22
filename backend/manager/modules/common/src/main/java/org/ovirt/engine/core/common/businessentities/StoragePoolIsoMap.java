@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
@@ -92,28 +93,18 @@ public class StoragePoolIsoMap implements BusinessEntity<StoragePoolIsoMapId> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         StoragePoolIsoMap other = (StoragePoolIsoMap) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (persistentOwner == null) {
-            if (other.persistentOwner != null)
-                return false;
-        } else if (!persistentOwner.equals(other.persistentOwner))
-            return false;
-        if (persistentStorageDomainStatus == null) {
-            if (other.persistentStorageDomainStatus != null)
-                return false;
-        } else if (!persistentStorageDomainStatus.equals(other.persistentStorageDomainStatus))
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && ObjectUtils.objectsEqual(persistentOwner, other.persistentOwner)
+                && ObjectUtils.objectsEqual(persistentStorageDomainStatus, other.persistentStorageDomainStatus));
     }
 }

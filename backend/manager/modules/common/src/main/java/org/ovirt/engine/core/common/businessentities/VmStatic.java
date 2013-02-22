@@ -4,6 +4,7 @@ import javax.validation.constraints.Size;
 import javax.validation.groups.Default;
 
 import org.ovirt.engine.core.common.businessentities.OvfExportOnlyField.ExportOption;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
@@ -208,47 +209,14 @@ public class VmStatic extends VmBase {
             return false;
         }
         VmStatic other = (VmStatic) obj;
-        if (defaultDisplayType != other.defaultDisplayType) {
-            return false;
-        }
-        if (initialized != other.initialized) {
-            return false;
-        }
-        if (diskSize != other.diskSize) {
-            return false;
-        }
-        if (getName() == null) {
-            if (other.getName() != null) {
-                return false;
-            }
-        } else if (!getName().equals(other.getName())) {
-            return false;
-        }
-        if (predefinedProperties == null) {
-            if (other.predefinedProperties != null) {
-                return false;
-            }
-        } else if (!predefinedProperties.equals(other.predefinedProperties)) {
-            return false;
-        }
-        if (userDefinedProperties == null) {
-            if (other.userDefinedProperties != null) {
-                return false;
-            }
-        } else if (!userDefinedProperties.equals(other.userDefinedProperties)) {
-            return false;
-        }
-        if (vmtGuid == null) {
-            if (other.vmtGuid != null) {
-                return false;
-            }
-        } else if (!vmtGuid.equals(other.vmtGuid)) {
-            return false;
-        }
-        if(useHostCpuFlags != other.useHostCpuFlags) {
-            return false;
-        }
-        return true;
+        return (defaultDisplayType == other.defaultDisplayType
+                && initialized == other.initialized
+                && diskSize == other.diskSize
+                && ObjectUtils.objectsEqual(getName(), other.getName())
+                && ObjectUtils.objectsEqual(predefinedProperties, other.predefinedProperties)
+                && ObjectUtils.objectsEqual(userDefinedProperties, other.userDefinedProperties)
+                && ObjectUtils.objectsEqual(vmtGuid, other.vmtGuid)
+                && useHostCpuFlags == other.useHostCpuFlags);
     }
 
     public boolean isUseHostCpuFlags() {

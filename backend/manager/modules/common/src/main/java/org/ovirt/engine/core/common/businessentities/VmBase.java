@@ -12,6 +12,7 @@ import javax.validation.constraints.Size;
 import org.ovirt.engine.core.common.businessentities.OvfExportOnlyField.ExportOption;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.IntegerContainedInConfigValueList;
 import org.ovirt.engine.core.common.validation.annotation.NullOrStringContainedInConfigValueList;
@@ -597,162 +598,39 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             return false;
         }
         VmBase other = (VmBase) obj;
-        if (autoStartup != other.autoStartup) {
-            return false;
-        }
-        if (autoSuspend != other.autoSuspend) {
-            return false;
-        }
-        if (cpuPerSocket != other.cpuPerSocket) {
-            return false;
-        }
-        if (creationDate == null) {
-            if (other.creationDate != null) {
-                return false;
-            }
-        } else if (!creationDate.equals(other.creationDate)) {
-            return false;
-        }
-        if (defaultBootSequence != other.defaultBootSequence) {
-            return false;
-        }
-        if (description == null) {
-            if (other.description != null) {
-                return false;
-            }
-        } else if (!description.equals(other.description)) {
-            return false;
-        }
-        if (domain == null) {
-            if (other.domain != null) {
-                return false;
-            }
-        } else if (!domain.equals(other.domain)) {
-            return false;
-        }
-        if (failBack != other.failBack) {
-            return false;
-        }
-        if (id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!id.equals(other.id)) {
-            return false;
-        }
-        if (initrdUrl == null) {
-            if (other.initrdUrl != null) {
-                return false;
-            }
-        } else if (!initrdUrl.equals(other.initrdUrl)) {
-            return false;
-        }
-        if (isoPath == null) {
-            if (other.isoPath != null) {
-                return false;
-            }
-        } else if (!isoPath.equals(other.isoPath)) {
-            return false;
-        }
-        if (kernelParams == null) {
-            if (other.kernelParams != null) {
-                return false;
-            }
-        } else if (!kernelParams.equals(other.kernelParams)) {
-            return false;
-        }
-        if (kernelUrl == null) {
-            if (other.kernelUrl != null) {
-                return false;
-            }
-        } else if (!kernelUrl.equals(other.kernelUrl)) {
-            return false;
-        }
-        if (os != other.os) {
-            return false;
-        }
-        if (memSizeMb != other.memSizeMb) {
-            return false;
-        }
-        if (niceLevel != other.niceLevel) {
-            return false;
-        }
-        if (numOfSockets != other.numOfSockets) {
-            return false;
-        }
-        if (numOfMonitors != other.numOfMonitors) {
-            return false;
-        }
-        if (origin != other.origin) {
-            return false;
-        }
-        if (priority != other.priority) {
-            return false;
-        }
-        if (stateless != other.stateless) {
-            return false;
-        }
-        if (smartcardEnabled != other.smartcardEnabled) {
-            return false;
-        }
-        if (deleteProtected != other.deleteProtected) {
-            return false;
-        }
-        if (timeZone == null) {
-            if (other.timeZone != null) {
-                return false;
-            }
-        } else if (!timeZone.equals(other.timeZone)) {
-            return false;
-        }
-        if (usbPolicy != other.usbPolicy) {
-            return false;
-        }
-        if (vdsGroupId == null) {
-            if (other.vdsGroupId != null) {
-                return false;
-            }
-        } else if (!vdsGroupId.equals(other.vdsGroupId)) {
-            return false;
-        }
-        if (vmType != other.vmType) {
-            return false;
-        }
-        if (quotaId == null) {
-            if (other.quotaId != null)
-                return false;
-        } else if (!quotaId.equals(other.quotaId))
-            return false;
-        if (allowConsoleReconnect != other.allowConsoleReconnect) {
-            return false;
-        }
-        if (dedicatedVmForVds == null) {
-            if (other.dedicatedVmForVds != null) {
-                return false;
-            }
-        } else {
-            if (!dedicatedVmForVds.equals(other.dedicatedVmForVds)) {
-                return false;
-            }
-        }
-        if (migrationSupport != other.migrationSupport) {
-            return false;
-        }
-        if (tunnelMigration == null) {
-            if (other.tunnelMigration != null) {
-                return false;
-            }
-        } else if (!tunnelMigration.equals(other.tunnelMigration)) {
-            return false;
-        }
-        if (vncKeyboardLayout == null) {
-            if (other.vncKeyboardLayout != null) {
-                return false;
-            }
-        } else if (!vncKeyboardLayout.equals(other.vncKeyboardLayout)) {
-            return false;
-        }
-        return true;
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && autoStartup == other.autoStartup
+                && autoSuspend == other.autoSuspend
+                && cpuPerSocket == other.cpuPerSocket
+                && ObjectUtils.objectsEqual(creationDate, other.creationDate)
+                && defaultBootSequence == other.defaultBootSequence
+                && ObjectUtils.objectsEqual(description, other.description)
+                && ObjectUtils.objectsEqual(domain, other.domain)
+                && failBack == other.failBack
+                && ObjectUtils.objectsEqual(initrdUrl, other.initrdUrl)
+                && ObjectUtils.objectsEqual(isoPath, other.isoPath)
+                && ObjectUtils.objectsEqual(kernelParams, other.kernelParams)
+                && ObjectUtils.objectsEqual(kernelUrl, other.kernelUrl)
+                && os == other.os
+                && memSizeMb == other.memSizeMb
+                && niceLevel == other.niceLevel
+                && numOfSockets == other.numOfSockets
+                && numOfMonitors == other.numOfMonitors
+                && origin == other.origin
+                && priority == other.priority
+                && stateless == other.stateless
+                && smartcardEnabled == other.smartcardEnabled
+                && deleteProtected == other.deleteProtected
+                && ObjectUtils.objectsEqual(timeZone, other.timeZone)
+                && usbPolicy == other.usbPolicy
+                && ObjectUtils.objectsEqual(vdsGroupId, other.vdsGroupId)
+                && vmType == other.vmType
+                && ObjectUtils.objectsEqual(quotaId, other.quotaId)
+                && allowConsoleReconnect == other.allowConsoleReconnect
+                && ObjectUtils.objectsEqual(dedicatedVmForVds, other.dedicatedVmForVds)
+                && migrationSupport == other.migrationSupport
+                && ObjectUtils.objectsEqual(tunnelMigration, other.tunnelMigration)
+                && ObjectUtils.objectsEqual(vncKeyboardLayout, other.vncKeyboardLayout));
     }
 
     public Guid getQuotaId() {

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.Date;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
@@ -142,164 +143,49 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         VmDynamic other = (VmDynamic) obj;
-        if (acpi_enable == null) {
-            if (other.acpi_enable != null)
-                return false;
-        } else if (!acpi_enable.equals(other.acpi_enable))
-            return false;
-        if (appList == null) {
-            if (other.appList != null)
-                return false;
-        } else if (!appList.equals(other.appList))
-            return false;
-        if (boot_sequence != other.boot_sequence)
-            return false;
-        if (client_ip == null) {
-            if (other.client_ip != null)
-                return false;
-        } else if (!client_ip.equals(other.client_ip))
-            return false;
-        if (display == null) {
-            if (other.display != null)
-                return false;
-        } else if (!display.equals(other.display))
-            return false;
-        if (display_ip == null) {
-            if (other.display_ip != null)
-                return false;
-        } else if (!display_ip.equals(other.display_ip))
-            return false;
-        if (display_secure_port == null) {
-            if (other.display_secure_port != null)
-                return false;
-        } else if (!display_secure_port
-                .equals(other.display_secure_port))
-            return false;
-        if (display_type != other.display_type)
-            return false;
-        if (console_cur_user_name == null) {
-            if (other.console_cur_user_name != null)
-                return false;
-        } else if (!console_cur_user_name.equals(other.console_cur_user_name))
-            return false;
-        if (guest_cur_user_name == null) {
-            if (other.guest_cur_user_name != null)
-                return false;
-        } else if (!guest_cur_user_name
-                .equals(other.guest_cur_user_name))
-            return false;
-        if (consoleUserId == null) {
-            if (other.consoleUserId != null)
-                return false;
-        } else if (!consoleUserId.equals(other.consoleUserId))
-            return false;
-        if (guest_last_login_time == null) {
-            if (other.guest_last_login_time != null)
-                return false;
-        } else if (!guest_last_login_time
-                .equals(other.guest_last_login_time))
-            return false;
-        if (guest_last_logout_time == null) {
-            if (other.guest_last_logout_time != null)
-                return false;
-        } else if (!guest_last_logout_time
-                .equals(other.guest_last_logout_time))
-            return false;
-        if (guest_os == null) {
-            if (other.guest_os != null)
-                return false;
-        } else if (!guest_os.equals(other.guest_os))
-            return false;
-        if (guest_requested_memory == null) {
-            if (other.guest_requested_memory != null)
-                return false;
-        } else if (!guest_requested_memory
-                .equals(other.guest_requested_memory))
-            return false;
-        if (hibernation_vol_handle == null) {
-            if (other.hibernation_vol_handle != null)
-                return false;
-        } else if (!hibernation_vol_handle
-                .equals(other.hibernation_vol_handle))
-            return false;
-        if (kvm_enable == null) {
-            if (other.kvm_enable != null)
-                return false;
-        } else if (!kvm_enable.equals(other.kvm_enable))
-            return false;
-        if (last_vds_run_on == null) {
-            if (other.last_vds_run_on != null)
-                return false;
-        } else if (!last_vds_run_on.equals(other.last_vds_run_on))
-            return false;
-        if (mDisks == null) {
-            if (other.mDisks != null)
-                return false;
-        } else if (!mDisks.equals(other.mDisks))
-            return false;
-        if (mExitMessage == null) {
-            if (other.mExitMessage != null)
-                return false;
-        } else if (!mExitMessage.equals(other.mExitMessage))
-            return false;
-        if (mExitStatus != other.mExitStatus)
-            return false;
-        if (mWin2kHackEnable != other.mWin2kHackEnable)
-            return false;
-        if (migrating_to_vds == null) {
-            if (other.migrating_to_vds != null)
-                return false;
-        } else if (!migrating_to_vds.equals(other.migrating_to_vds))
-            return false;
-        if (pauseStatus != other.pauseStatus)
-            return false;
-        if (run_on_vds == null) {
-            if (other.run_on_vds != null)
-                return false;
-        } else if (!run_on_vds.equals(other.run_on_vds))
-            return false;
-        if (session != other.session)
-            return false;
-        if (status != other.status)
-            return false;
-        if (utc_diff == null) {
-            if (other.utc_diff != null)
-                return false;
-        } else if (!utc_diff.equals(other.utc_diff))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (vm_host == null) {
-            if (other.vm_host != null)
-                return false;
-        } else if (!vm_host.equals(other.vm_host))
-            return false;
-        if (vm_ip == null) {
-            if (other.vm_ip != null)
-                return false;
-        } else if (!vm_ip.equals(other.vm_ip))
-            return false;
-        if (lastStartTime == null) {
-            if (other.lastStartTime != null)
-                return false;
-        } else if (!lastStartTime.equals(other.lastStartTime))
-            return false;
-        if (vm_pid == null) {
-            if (other.vm_pid != null)
-                return false;
-        } else if (!vm_pid.equals(other.vm_pid))
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && ObjectUtils.objectsEqual(acpi_enable, other.acpi_enable)
+                && ObjectUtils.objectsEqual(appList, other.appList)
+                && boot_sequence == other.boot_sequence
+                && ObjectUtils.objectsEqual(client_ip, other.client_ip)
+                && ObjectUtils.objectsEqual(display, other.display)
+                && ObjectUtils.objectsEqual(display_ip, other.display_ip)
+                && ObjectUtils.objectsEqual(display_secure_port, other.display_secure_port)
+                && display_type == other.display_type
+                && ObjectUtils.objectsEqual(console_cur_user_name, other.console_cur_user_name)
+                && ObjectUtils.objectsEqual(guest_cur_user_name, other.guest_cur_user_name)
+                && ObjectUtils.objectsEqual(consoleUserId, other.consoleUserId)
+                && ObjectUtils.objectsEqual(guest_last_login_time, other.guest_last_login_time)
+                && ObjectUtils.objectsEqual(guest_last_logout_time, other.guest_last_logout_time)
+                && ObjectUtils.objectsEqual(guest_os, other.guest_os)
+                && ObjectUtils.objectsEqual(guest_requested_memory, other.guest_requested_memory)
+                && ObjectUtils.objectsEqual(hibernation_vol_handle, other.hibernation_vol_handle)
+                && ObjectUtils.objectsEqual(kvm_enable, other.kvm_enable)
+                && ObjectUtils.objectsEqual(last_vds_run_on, other.last_vds_run_on)
+                && ObjectUtils.objectsEqual(mDisks, other.mDisks)
+                && ObjectUtils.objectsEqual(mExitMessage, other.mExitMessage)
+                && mExitStatus == other.mExitStatus
+                && mWin2kHackEnable == other.mWin2kHackEnable
+                && ObjectUtils.objectsEqual(migrating_to_vds, other.migrating_to_vds)
+                && pauseStatus == other.pauseStatus
+                && ObjectUtils.objectsEqual(run_on_vds, other.run_on_vds)
+                && session == other.session
+                && status == other.status
+                && ObjectUtils.objectsEqual(utc_diff, other.utc_diff)
+                && ObjectUtils.objectsEqual(vm_host, other.vm_host)
+                && ObjectUtils.objectsEqual(vm_ip, other.vm_ip)
+                && ObjectUtils.objectsEqual(lastStartTime, other.lastStartTime)
+                && ObjectUtils.objectsEqual(vm_pid, other.vm_pid));
     }
 
     public String getExitMessage() {

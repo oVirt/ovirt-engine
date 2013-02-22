@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RoleGroupMapId implements Serializable {
@@ -30,23 +31,17 @@ public class RoleGroupMapId implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         RoleGroupMapId other = (RoleGroupMapId) obj;
-        if (actionGroup == null) {
-            if (other.actionGroup != null)
-                return false;
-        } else if (!actionGroup.equals(other.actionGroup))
-            return false;
-        if (roleId == null) {
-            if (other.roleId != null)
-                return false;
-        } else if (!roleId.equals(other.roleId))
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(actionGroup, other.actionGroup)
+                && ObjectUtils.objectsEqual(roleId, other.roleId));
     }
 }

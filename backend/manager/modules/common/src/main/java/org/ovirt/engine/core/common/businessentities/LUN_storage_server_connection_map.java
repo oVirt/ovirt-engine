@@ -2,6 +2,8 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
+
 public class LUN_storage_server_connection_map implements Serializable, BusinessEntity<LUN_storage_server_connection_map_id> {
     private static final long serialVersionUID = -4203034156149786569L;
 
@@ -54,23 +56,17 @@ public class LUN_storage_server_connection_map implements Serializable, Business
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         LUN_storage_server_connection_map other = (LUN_storage_server_connection_map) obj;
-        if (id.lunId == null) {
-            if (other.id.lunId != null)
-                return false;
-        } else if (!id.lunId.equals(other.id.lunId))
-            return false;
-        if (id.storageServerConnection == null) {
-            if (other.id.storageServerConnection != null)
-                return false;
-        } else if (!id.storageServerConnection.equals(other.id.storageServerConnection))
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(id.lunId, other.id.lunId)
+                && ObjectUtils.objectsEqual(id.storageServerConnection, other.id.storageServerConnection));
     }
 }

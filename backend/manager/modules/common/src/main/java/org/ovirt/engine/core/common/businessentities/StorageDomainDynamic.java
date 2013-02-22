@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StorageDomainDynamic implements BusinessEntity<Guid> {
@@ -78,28 +79,18 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         StorageDomainDynamic other = (StorageDomainDynamic) obj;
-        if (availableDiskSize == null) {
-            if (other.availableDiskSize != null)
-                return false;
-        } else if (!availableDiskSize.equals(other.availableDiskSize))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (usedDiskSize == null) {
-            if (other.usedDiskSize != null)
-                return false;
-        } else if (!usedDiskSize.equals(other.usedDiskSize))
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && ObjectUtils.objectsEqual(availableDiskSize, other.availableDiskSize)
+                && ObjectUtils.objectsEqual(usedDiskSize, other.usedDiskSize));
     }
 }

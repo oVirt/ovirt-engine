@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
@@ -31,24 +32,18 @@ public class StoragePoolIsoMapId implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         StoragePoolIsoMapId other = (StoragePoolIsoMapId) obj;
-        if (storageId == null) {
-            if (other.storageId != null)
-                return false;
-        } else if (!storageId.equals(other.storageId))
-            return false;
-        if (storagePoolId == null) {
-            if (other.storagePoolId != null)
-                return false;
-        } else if (!storagePoolId.equals(other.storagePoolId))
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(storageId, other.storageId)
+                && ObjectUtils.objectsEqual(storagePoolId, other.storagePoolId));
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmDeviceId implements Serializable,Comparable<VmDeviceId> {
@@ -29,24 +30,18 @@ public class VmDeviceId implements Serializable,Comparable<VmDeviceId> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         VmDeviceId other = (VmDeviceId) obj;
-        if (deviceId == null) {
-            if (other.deviceId != null)
-                return false;
-        } else if (!deviceId.equals(other.deviceId))
-            return false;
-        if (vmId == null) {
-            if (other.vmId != null)
-                return false;
-        } else if (!vmId.equals(other.vmId))
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(deviceId, other.deviceId)
+                && ObjectUtils.objectsEqual(vmId, other.vmId));
     }
 
     @Override

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
@@ -326,29 +327,20 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntity<Guid>
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         StorageDomain other = (StorageDomain) obj;
-        if (committedDiskSize != other.committedDiskSize)
-            return false;
-        if (storageDomainSharedStatus != other.storageDomainSharedStatus)
-            return false;
-        if (storageDomainOverCommitPercent != other.storageDomainOverCommitPercent)
-            return false;
-        if (totalDiskSize == null) {
-            if (other.totalDiskSize != null)
-                return false;
-        } else if (!totalDiskSize.equals(other.totalDiskSize))
-            return false;
-        if (getId() == null) {
-            if (other.getId() != null)
-                return false;
-        } else if (!getId().equals(other.getId()))
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(getId(), other.getId())
+                && committedDiskSize == other.committedDiskSize
+                && storageDomainSharedStatus == other.storageDomainSharedStatus
+                && storageDomainOverCommitPercent == other.storageDomainOverCommitPercent
+                && ObjectUtils.objectsEqual(totalDiskSize, other.totalDiskSize));
     }
 }

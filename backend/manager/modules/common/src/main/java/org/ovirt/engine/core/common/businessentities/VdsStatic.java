@@ -12,6 +12,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Range;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.HostnameOrIp;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -506,142 +507,45 @@ public class VdsStatic implements BusinessEntity<Guid> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         VdsStatic other = (VdsStatic) obj;
-        if (hostname == null) {
-            if (other.hostname != null)
-                return false;
-        } else if (!hostname.equals(other.hostname))
-            return false;
-        if (consoleAddress == null) {
-            if (other.consoleAddress != null)
-                return false;
-        } else if (!consoleAddress.equals(other.consoleAddress))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (managementIp == null) {
-            if (other.managementIp != null)
-                return false;
-        } else if (!managementIp.equals(other.managementIp))
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        if (otpValidity != other.otpValidity)
-            return false;
-        if (pmEnabled != other.pmEnabled)
-            return false;
-        if (pmOptions == null) {
-            if (other.pmOptions != null)
-                return false;
-        } else if (!pmOptions.equals(other.pmOptions))
-            return false;
-        if (pmOptionsMap == null) {
-            if (other.pmOptionsMap != null)
-                return false;
-        } else if (!pmOptionsMap.equals(other.pmOptionsMap))
-            return false;
-        if (pmPassword == null) {
-            if (other.pmPassword != null)
-                return false;
-        } else if (!pmPassword.equals(other.pmPassword))
-            return false;
-        if (pmPort == null) {
-            if (other.pmPort != null)
-                return false;
-        } else if (!pmPort.equals(other.pmPort))
-            return false;
-        if (pmType == null) {
-            if (other.pmType != null)
-                return false;
-        } else if (!pmType.equals(other.pmType))
-            return false;
-        if (pmUser == null) {
-            if (other.pmUser != null)
-                return false;
-        } else if (!pmUser.equals(other.pmUser))
-            return false;
-        if (port != other.port)
-            return false;
-        if (serverSslEnabled == null) {
-            if (other.serverSslEnabled != null)
-                return false;
-        } else if (!serverSslEnabled.equals(other.serverSslEnabled))
-            return false;
-        if (uniqueId == null) {
-            if (other.uniqueId != null)
-                return false;
-        } else if (!uniqueId.equals(other.uniqueId))
-            return false;
-        if (vdsGroupId == null) {
-            if (other.vdsGroupId != null)
-                return false;
-        } else if (!vdsGroupId.equals(other.vdsGroupId))
-            return false;
-        if (vdsStrength == null) {
-            if (other.vdsStrength != null)
-                return false;
-        } else if (!vdsStrength.equals(other.vdsStrength))
-            return false;
-        if (vdsType != other.vdsType)
-            return false;
-        if (sshKeyFingerprint == null) {
-            if (other.sshKeyFingerprint != null)
-                return false;
-        } else if (!sshKeyFingerprint.equals(other.sshKeyFingerprint))
-            return false;
-        if (pmSecondaryIp == null) {
-            if (other.pmSecondaryIp != null)
-                return false;
-        } else if (!pmSecondaryIp.equals(other.pmSecondaryIp))
-            return false;
-        if (pmSecondaryConcurrent != other.pmSecondaryConcurrent)
-            return false;
-        if (pmSecondaryOptions == null) {
-            if (other.pmSecondaryOptions != null)
-                return false;
-        } else if (!pmSecondaryOptions.equals(other.pmSecondaryOptions))
-            return false;
-        if (pmSecondaryOptionsMap == null) {
-            if (other.pmSecondaryOptionsMap != null)
-                return false;
-        } else if (!pmSecondaryOptionsMap.equals(other.pmSecondaryOptionsMap))
-            return false;
-        if (pmSecondaryPassword == null) {
-            if (other.pmSecondaryPassword != null)
-                return false;
-        } else if (!pmSecondaryPassword.equals(other.pmSecondaryPassword))
-            return false;
-        if (pmSecondaryPort == null) {
-            if (other.pmSecondaryPort != null)
-                return false;
-        } else if (!pmSecondaryPort.equals(other.pmSecondaryPort))
-            return false;
-        if (pmSecondaryType == null) {
-            if (other.pmSecondaryType != null)
-                return false;
-        } else if (!pmSecondaryType.equals(other.pmSecondaryType))
-            return false;
-        if (pmSecondaryUser == null) {
-            if (other.pmSecondaryUser != null)
-                return false;
-        } else if (!pmSecondaryUser.equals(other.pmSecondaryUser))
-            return false;
-        if (port != other.port)
-            return false;
-
-        return true;
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && ObjectUtils.objectsEqual(hostname, other.hostname)
+                && ObjectUtils.objectsEqual(consoleAddress, other.consoleAddress)
+                && ObjectUtils.objectsEqual(managementIp, other.managementIp)
+                && ObjectUtils.objectsEqual(name, other.name)
+                && otpValidity == other.otpValidity
+                && pmEnabled == other.pmEnabled
+                && ObjectUtils.objectsEqual(pmOptions, other.pmOptions)
+                && ObjectUtils.objectsEqual(pmOptionsMap, other.pmOptionsMap)
+                && ObjectUtils.objectsEqual(pmPassword, other.pmPassword)
+                && ObjectUtils.objectsEqual(pmPort, other.pmPort)
+                && ObjectUtils.objectsEqual(pmType, other.pmType)
+                && ObjectUtils.objectsEqual(pmUser, other.pmUser)
+                && port == other.port
+                && ObjectUtils.objectsEqual(serverSslEnabled, other.serverSslEnabled)
+                && ObjectUtils.objectsEqual(uniqueId, other.uniqueId)
+                && ObjectUtils.objectsEqual(vdsGroupId, other.vdsGroupId)
+                && ObjectUtils.objectsEqual(vdsStrength, other.vdsStrength)
+                && vdsType == other.vdsType
+                && ObjectUtils.objectsEqual(sshKeyFingerprint, other.sshKeyFingerprint)
+                && ObjectUtils.objectsEqual(pmSecondaryIp, other.pmSecondaryIp)
+                && pmSecondaryConcurrent == other.pmSecondaryConcurrent
+                && ObjectUtils.objectsEqual(pmSecondaryOptions, other.pmSecondaryOptions)
+                && ObjectUtils.objectsEqual(pmSecondaryOptionsMap, other.pmSecondaryOptionsMap)
+                && ObjectUtils.objectsEqual(pmSecondaryPassword, other.pmSecondaryPassword)
+                && ObjectUtils.objectsEqual(pmSecondaryPort, other.pmSecondaryPort)
+                && ObjectUtils.objectsEqual(pmSecondaryType, other.pmSecondaryType)
+                && ObjectUtils.objectsEqual(pmSecondaryUser, other.pmSecondaryUser)
+                && port == other.port);
     }
 
 }

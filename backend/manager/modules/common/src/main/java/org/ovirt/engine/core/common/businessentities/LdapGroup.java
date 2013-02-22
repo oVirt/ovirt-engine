@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class LdapGroup extends IVdcQueryable {
@@ -130,40 +131,21 @@ public class LdapGroup extends IVdcQueryable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         LdapGroup other = (LdapGroup) obj;
-        if (distinguishedName == null) {
-            if (other.distinguishedName != null)
-                return false;
-        } else if (!distinguishedName.equals(other.distinguishedName))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (domain == null) {
-            if (other.domain != null)
-                return false;
-        } else if (!domain.equals(other.domain))
-            return false;
-        if (memberOf == null) {
-            if (other.memberOf != null)
-                return false;
-        } else if (!memberOf.equals(other.memberOf))
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        if (status != other.status)
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && ObjectUtils.objectsEqual(distinguishedName, other.distinguishedName)
+                && ObjectUtils.objectsEqual(domain, other.domain)
+                && ObjectUtils.objectsEqual(memberOf, other.memberOf)
+                && ObjectUtils.objectsEqual(name, other.name)
+                && status == other.status);
     }
 }

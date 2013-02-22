@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -88,13 +89,6 @@ public class LunDisk extends Disk {
             return false;
         }
         LunDisk other = (LunDisk) obj;
-        if (lun == null) {
-            if (other.lun != null) {
-                return false;
-            }
-        } else if (!lun.equals(other.lun)) {
-            return false;
-        }
-        return true;
+        return (ObjectUtils.objectsEqual(lun, other.lun));
     }
 }

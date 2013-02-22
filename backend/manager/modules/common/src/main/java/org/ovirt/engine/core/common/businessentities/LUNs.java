@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.NGuid;
 
 public class LUNs implements Serializable {
@@ -44,93 +45,33 @@ public class LUNs implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         LUNs other = (LUNs) obj;
-        if (_lunConnections == null) {
-            if (other._lunConnections != null)
-                return false;
-        } else if (!_lunConnections.equals(other._lunConnections))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (lunMapping == null) {
-            if (other.lunMapping != null)
-                return false;
-        } else if (!lunMapping.equals(other.lunMapping))
-            return false;
-        if (physicalVolumeId == null) {
-            if (other.physicalVolumeId != null)
-                return false;
-        } else if (!physicalVolumeId.equals(other.physicalVolumeId))
-            return false;
-        if (deviceSize != other.deviceSize)
-            return false;
-        if (lunType != other.lunType)
-            return false;
-        if (pathsDictionary == null) {
-            if (other.pathsDictionary != null)
-                return false;
-        } else if (!pathsDictionary.equals(other.pathsDictionary))
-            return false;
-        if (vendorName == null) {
-            if (other.vendorName != null)
-                return false;
-        } else if (!vendorName.equals(other.vendorName))
-            return false;
-        if (productId == null) {
-            if (other.productId != null)
-                return false;
-        } else if (!productId.equals(other.productId))
-            return false;
-        if (serial == null) {
-            if (other.serial != null)
-                return false;
-        } else if (!serial.equals(other.serial))
-            return false;
-        if (vendorId == null) {
-            if (other.vendorId != null)
-                return false;
-        } else if (!vendorId.equals(other.vendorId))
-            return false;
-        if (volumeGroupId == null) {
-            if (other.volumeGroupId != null)
-                return false;
-        } else if (!volumeGroupId.equals(other.volumeGroupId))
-            return false;
-        if (status == null) {
-            if (other.status != null)
-                return false;
-        } else if (!status.equals(other.status))
-            return false;
-        if (diskId == null) {
-            if (other.diskId != null)
-                return false;
-        } else if (!diskId.equals(other.diskId))
-            return false;
-        if (diskAlias == null) {
-            if (other.diskAlias != null)
-                return false;
-        } else if (!diskAlias.equals(other.diskAlias))
-            return false;
-        if (storageDomainId == null) {
-            if (other.storageDomainId != null)
-                return false;
-        } else if (!storageDomainId.equals(other.storageDomainId))
-            return false;
-        if (storageDomainName == null) {
-            if (other.storageDomainName != null)
-                return false;
-        } else if (!storageDomainName.equals(other.storageDomainName))
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && ObjectUtils.objectsEqual(_lunConnections, other._lunConnections)
+                && ObjectUtils.objectsEqual(lunMapping, other.lunMapping)
+                && ObjectUtils.objectsEqual(physicalVolumeId, other.physicalVolumeId)
+                && deviceSize == other.deviceSize
+                && lunType == other.lunType
+                && ObjectUtils.objectsEqual(pathsDictionary, other.pathsDictionary)
+                && ObjectUtils.objectsEqual(vendorName, other.vendorName)
+                && ObjectUtils.objectsEqual(productId, other.productId)
+                && ObjectUtils.objectsEqual(serial, other.serial)
+                && ObjectUtils.objectsEqual(vendorId, other.vendorId)
+                && ObjectUtils.objectsEqual(volumeGroupId, other.volumeGroupId)
+                && ObjectUtils.objectsEqual(status, other.status)
+                && ObjectUtils.objectsEqual(diskId, other.diskId)
+                && ObjectUtils.objectsEqual(diskAlias, other.diskAlias)
+                && ObjectUtils.objectsEqual(storageDomainId, other.storageDomainId)
+                && ObjectUtils.objectsEqual(storageDomainName, other.storageDomainName));
     }
 
     @Size(min = 1, max = BusinessEntitiesDefinitions.LUN_ID)

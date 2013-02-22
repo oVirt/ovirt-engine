@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -161,46 +162,24 @@ public class StorageDomainStatic implements BusinessEntity<Guid> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         StorageDomainStatic other = (StorageDomainStatic) obj;
-        if (autoRecoverable != other.autoRecoverable)
-            return false;
-        if (connection == null) {
-            if (other.connection != null)
-                return false;
-        } else if (!connection.equals(other.connection))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        if (storage == null) {
-            if (other.storage != null)
-                return false;
-        } else if (!storage.equals(other.storage))
-            return false;
-        if (storageFormat != other.storageFormat)
-            return false;
-        if (storagePoolType != other.storagePoolType)
-            return false;
-        if (storageType != other.storageType)
-            return false;
-        if (description == null) {
-            if (other.description != null)
-                return false;
-        } else if (!description.equals(other.description))
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && autoRecoverable == other.autoRecoverable
+                && ObjectUtils.objectsEqual(connection, other.connection)
+                && ObjectUtils.objectsEqual(name, other.name)
+                && ObjectUtils.objectsEqual(storage, other.storage)
+                && storageFormat == other.storageFormat
+                && storagePoolType == other.storagePoolType
+                && storageType == other.storageType
+                && ObjectUtils.objectsEqual(description, other.description));
     }
 }

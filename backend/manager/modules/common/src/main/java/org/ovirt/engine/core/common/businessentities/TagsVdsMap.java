@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class TagsVdsMap implements Serializable {
@@ -44,23 +45,17 @@ public class TagsVdsMap implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         TagsVdsMap other = (TagsVdsMap) obj;
-        if (id.tagId == null) {
-            if (other.id.tagId != null)
-                return false;
-        } else if (!id.tagId.equals(other.id.tagId))
-            return false;
-        if (id.vdsId == null) {
-            if (other.id.vdsId != null)
-                return false;
-        } else if (!id.vdsId.equals(other.id.vdsId))
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(id.tagId, other.id.tagId)
+                && ObjectUtils.objectsEqual(id.vdsId, other.id.vdsId));
     }
 }

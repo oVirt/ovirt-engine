@@ -6,6 +6,7 @@ import java.util.List;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -67,46 +68,23 @@ public class tags implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         tags other = (tags) obj;
-        if (_children == null) {
-            if (other._children != null)
-                return false;
-        } else if (!_children.equals(other._children))
-            return false;
-        if (description == null) {
-            if (other.description != null)
-                return false;
-        } else if (!description.equals(other.description))
-            return false;
-        if (parent == null) {
-            if (other.parent != null)
-                return false;
-        } else if (!parent.equals(other.parent))
-            return false;
-        if (readonly == null) {
-            if (other.readonly != null)
-                return false;
-        } else if (!readonly.equals(other.readonly))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        if (type != other.type)
-            return false;
-        return true;
+        return (ObjectUtils.objectsEqual(id, other.id)
+                && ObjectUtils.objectsEqual(_children, other._children)
+                && ObjectUtils.objectsEqual(description, other.description)
+                && ObjectUtils.objectsEqual(parent, other.parent)
+                && ObjectUtils.objectsEqual(readonly, other.readonly)
+                && ObjectUtils.objectsEqual(name, other.name)
+                && type == other.type);
     }
 
     public String getdescription() {
