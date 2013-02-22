@@ -1628,20 +1628,6 @@ public final class AsyncDataProvider {
                 path), aQuery);
     }
 
-    public static void GetLocalFSPath(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                return source != null ? (String) source : ""; //$NON-NLS-1$
-            }
-        };
-        GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.RhevhLocalFSPath,
-                        getDefaultConfigurationVersion()),
-                aQuery);
-    }
-
     public static void GetStorageDomainMaxNameLength(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override

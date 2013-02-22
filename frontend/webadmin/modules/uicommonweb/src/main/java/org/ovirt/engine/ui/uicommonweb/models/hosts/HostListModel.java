@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
@@ -1405,26 +1406,14 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     }
 
     private void configureLocalStorage2(ConfigureLocalStorageModel model) {
+        String prefix = (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.RhevhLocalFSPath);
+        if (!StringHelper.isNullOrEmpty(prefix)) {
+            EntityModel pathModel = model.getStorage().getPath();
+            pathModel.setEntity(prefix);
+            pathModel.setIsChangable(false);
+        }
 
-        AsyncDataProvider.GetLocalFSPath(new AsyncQuery(model,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-
-                        String prefix = (String) returnValue;
-                        ConfigureLocalStorageModel model = (ConfigureLocalStorageModel) target;
-
-                        if (!StringHelper.isNullOrEmpty(prefix)) {
-
-                            EntityModel pathModel = model.getStorage().getPath();
-                            pathModel.setEntity(prefix);
-                            pathModel.setIsChangable(false);
-                        }
-
-                        configureLocalStorage3(model);
-                    }
-                })
-                );
+        configureLocalStorage3(model);
     }
 
     private void configureLocalStorage3(ConfigureLocalStorageModel model) {

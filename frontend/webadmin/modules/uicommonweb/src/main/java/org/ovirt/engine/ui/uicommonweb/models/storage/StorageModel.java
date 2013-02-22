@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -191,15 +192,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         setAvailableStorageItems(new ListModel());
         getAvailableStorageItems().getSelectedItemChangedEvent().addListener(this);
 
-        AsyncDataProvider.GetLocalFSPath(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-                        StorageModel storageModel = (StorageModel) target;
-                        storageModel.localFSPath = (String) returnValue;
-                    }
-                },
-                getHash()));
+        localFSPath = (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.RhevhLocalFSPath);
     }
 
     @Override
