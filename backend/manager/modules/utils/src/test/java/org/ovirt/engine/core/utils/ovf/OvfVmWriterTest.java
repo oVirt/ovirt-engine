@@ -33,11 +33,10 @@ public class OvfVmWriterTest {
         manager = new OvfManager();
     }
 
-    private void assertVm(VM vm, VM newVm, long expectedDbGeneration) {
+    private static void assertVm(VM vm, VM newVm, long expectedDbGeneration) {
         assertEquals("imported vm is different than expected", vm, newVm);
         assertEquals("imported db generation is different than expected", expectedDbGeneration, newVm.getDbGeneration());
         assertEquals(vm.getStaticData(), newVm.getStaticData());
-        //assertEquals(vm.getInterfaces(), newVm.getInterfaces());
     }
 
     @Test
