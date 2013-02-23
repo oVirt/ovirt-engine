@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-public class OvfVmWriterTest {
+public class OvfManagerTest {
 
     @ClassRule
     public static MockConfigRule mockConfigRule =
