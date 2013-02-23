@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -43,7 +44,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -2395,10 +2395,6 @@ public final class AsyncDataProvider {
         if (originalInterface.getVlanId() == null) // no vlan:
         {
             // Filter out the Interfaces that have child vlan Interfaces
-
-            ArrayList<InterfaceAndIdQueryParameters> parametersList =
-                    new ArrayList<InterfaceAndIdQueryParameters>();
-            ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
             GetAllChildVlanInterfaces(vdsID, ifacesOptions, new IFrontendMultipleQueryAsyncCallback() {
 
                 @Override
@@ -2410,10 +2406,10 @@ public final class AsyncDataProvider {
                     for (int i = 0; i < returnValueList.size(); i++)
                     {
                         VdcQueryReturnValue returnValue = returnValueList.get(i);
-                        ArrayList<VdsNetworkInterface> childVlanInterfaces = new ArrayList<VdsNetworkInterface>();
                         if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
                         {
-                            childVlanInterfaces = (ArrayList<VdsNetworkInterface>) (returnValue.getReturnValue());
+                            ArrayList<VdsNetworkInterface> childVlanInterfaces =
+                                    (ArrayList<VdsNetworkInterface>) (returnValue.getReturnValue());
 
                             if (childVlanInterfaces.size() == 0)
                             {
@@ -2530,9 +2526,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                ArrayList<VdsNetworkInterface> siblingVlanInterfaces = new ArrayList<VdsNetworkInterface>();
-
-                siblingVlanInterfaces = (ArrayList<VdsNetworkInterface>) source;
+                ArrayList<VdsNetworkInterface> siblingVlanInterfaces = (ArrayList<VdsNetworkInterface>) source;
 
                 if (siblingVlanInterfaces.size() > 0)
                 {
