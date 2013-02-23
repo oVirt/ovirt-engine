@@ -50,8 +50,7 @@ public class BaseAutoCompleter implements IAutoCompleter {
         String[] retval = new String[0];
         if (mVerbCompletion.containsKey(wordPart.toUpperCase())) {
             List<String> curList = mVerbCompletion.get(wordPart.toUpperCase());
-            retval = new String[curList.size()];
-            retval = curList.toArray(new String[] {});
+            retval = curList.toArray(new String[curList.size()]);
         }
         return retval;
     }
