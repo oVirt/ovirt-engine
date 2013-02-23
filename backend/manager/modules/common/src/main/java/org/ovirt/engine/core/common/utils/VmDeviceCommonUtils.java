@@ -6,7 +6,6 @@ import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -49,7 +48,7 @@ public class VmDeviceCommonUtils {
             List<VmDevice> devices,
             boolean isOldCluster) {
         int bootOrder = 0;
-        VmBase vmBase = vm.getStaticData();
+
         // reset current boot order of all relevant devices before recomputing it.
         for (VmDevice device : devices) {
             if (isBootable(device)) {
