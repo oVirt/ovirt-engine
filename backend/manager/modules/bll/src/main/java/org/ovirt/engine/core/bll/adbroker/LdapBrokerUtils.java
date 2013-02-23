@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.adbroker;
 
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -44,7 +43,6 @@ public class LdapBrokerUtils {
      */
     public static List<String> getDomainsList(boolean filterInternalDomain) {
         String[] domains = Config.<String> GetValue(ConfigValues.DomainName).split("[,]", -1);
-        List<String> domainsList = Arrays.asList(domains);
         List<String> results = new ArrayList<String>();
         for (String domain : domains) {
             String trimmedDomain = domain.trim();
