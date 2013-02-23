@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -24,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -529,7 +529,6 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     private void PrepareSanStorageForEdit(final SanStorageModel model)
     {
         StorageModel storageModel = (StorageModel) getWindow();
-        StorageDomain storage = (StorageDomain) getSelectedItem();
         boolean isStorageActive = storageModel.isStorageActive();
 
         if (isStorageActive) {
@@ -1591,7 +1590,6 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         StorageModel model = (StorageModel) getWindow();
         SanStorageModel sanModel = (SanStorageModel) model.getSelectedItem();
         StorageDomain storage = (StorageDomain) getSelectedItem();
-        VDS host = (VDS) model.getHost().getSelectedItem();
 
         boolean isNew = model.getStorage() == null;
 
