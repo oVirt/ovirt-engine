@@ -71,7 +71,6 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     private boolean removeVm() {
         VM vm = getVm();
-        Guid vmId = getVmId();
         hasImages = vm.getDiskList().size() > 0;
 
         if (getParameters().isRemoveDisks() && hasImages) {
