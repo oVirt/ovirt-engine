@@ -171,7 +171,6 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
             public void onSelectionChange(SelectionChangeEvent event) {
                 Set<M> selectedSet = selectionModel.getSelectedSet();
                 HashSet<TreeNodeModel> removedSet = new HashSet<TreeNodeModel>();
-                HashSet<TreeNodeModel> nullSet = new HashSet<TreeNodeModel>();
                 for (TreeNodeModel<T, M> child : root) {
                     if (!selectedSet.contains(child) && child.getSelected()) {
                         selectedSet.remove(child);
