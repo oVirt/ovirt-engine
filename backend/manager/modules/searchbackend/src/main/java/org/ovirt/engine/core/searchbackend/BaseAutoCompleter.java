@@ -45,6 +45,7 @@ public class BaseAutoCompleter implements IAutoCompleter {
         mVerbCompletion.put(" ", emptyKeyList);
     }
 
+    @Override
     public final String[] getCompletion(String wordPart) {
         String[] retval = new String[0];
         if (mVerbCompletion.containsKey(wordPart.toUpperCase())) {
@@ -55,14 +56,17 @@ public class BaseAutoCompleter implements IAutoCompleter {
         return retval;
     }
 
+    @Override
     public final boolean validate(String text) {
         return (text != null) ? mVerbs.containsKey(text.toUpperCase()) : false;
     }
 
+    @Override
     public final boolean validateCompletion(String text) {
         return mVerbCompletion.containsKey(text);
     }
 
+    @Override
     public String changeCaseDisplay(String text) {
         try {
             if (DayOfWeek.valueOf(text) != null) {
