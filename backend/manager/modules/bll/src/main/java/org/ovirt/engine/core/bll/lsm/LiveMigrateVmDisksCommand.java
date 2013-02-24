@@ -27,10 +27,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -186,8 +184,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
     @Override
     protected boolean canDoAction() {
-        if (!isValidParametersList() || !isLiveMigrationEnabled() || !checkImagesStatus()
-                || !isValidSpaceRequirements()) {
+        if (!isValidParametersList() || !checkImagesStatus() || !isValidSpaceRequirements()) {
             return false;
         }
 
@@ -215,16 +212,6 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
     protected boolean checkImagesStatus() {
         return ImagesHandler.checkImagesLocked(getVmId(), getReturnValue().getCanDoActionMessages());
-    }
-
-    private boolean isLiveMigrationEnabled() {
-        if (!Config.<Boolean> GetValue(
-                ConfigValues.LiveStorageMigrationEnabled,
-                getStoragePool().getcompatibility_version().toString())) {
-            return failCanDoAction(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
-        }
-
-        return true;
     }
 
     private boolean isDiskNotShareable(Guid imageId) {

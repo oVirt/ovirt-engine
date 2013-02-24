@@ -1283,10 +1283,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("Active")
     EngineMode(393),
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    LiveStorageMigrationEnabled(394),
-
     /**
      * Refresh rate (in seconds) for light-weight gluster data i.e. data that can be fetched without much of an overhead
      * on the GlusterFS processes

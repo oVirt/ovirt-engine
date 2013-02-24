@@ -22,11 +22,11 @@ import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -1106,29 +1106,30 @@ public class VmDiskListModel extends VmDiskListModelBase
 
     protected void UpdateLiveStorageMigrationEnabled()
     {
-        VM vm = getEntity();
+        final VM vm = getEntity();
 
         AsyncDataProvider.GetDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void OnSuccess(Object target, Object returnValue) {
                 VmDiskListModel model = (VmDiskListModel) target;
-                VM vm = model.getEntity();
 
                 storage_pool dataCenter = (storage_pool) returnValue;
                 Version dcCompatibilityVersion = dataCenter.getcompatibility_version() != null
                         ? dataCenter.getcompatibility_version() : new Version();
 
-                AsyncDataProvider.IsLiveStorageMigrationEnabled(new AsyncQuery(model,
+                AsyncDataProvider.IsCommandCompatible(new AsyncQuery(model,
                         new INewAsyncCallback() {
                             @Override
                             public void OnSuccess(Object target, Object returnValue) {
                                 VmDiskListModel model = (VmDiskListModel) target;
                                 model.setIsLiveStorageMigrationEnabled((Boolean) returnValue);
                             }
-                        }), dcCompatibilityVersion.toString());
+                        }),
+                        VdcActionType.LiveMigrateVmDisks,
+                        vm.getVdsGroupCompatibilityVersion(),
+                        dcCompatibilityVersion);
             }
         }), vm.getStoragePoolId().getValue());
-
     }
 
     @Override

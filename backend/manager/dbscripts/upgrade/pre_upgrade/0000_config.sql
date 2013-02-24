@@ -247,9 +247,6 @@ select fn_db_add_config_value('LicenseCertificateFingerPrint','5f 38 41 89 b1 33
 select fn_db_add_config_value('LiveSnapshotEnabled','false','3.0');
 select fn_db_add_config_value('LiveSnapshotEnabled','true','3.1');
 select fn_db_add_config_value('LiveSnapshotEnabled','true','3.2');
-select fn_db_add_config_value('LiveStorageMigrationEnabled','false','3.0');
-select fn_db_add_config_value('LiveStorageMigrationEnabled','false','3.1');
-select fn_db_add_config_value('LiveStorageMigrationEnabled','true','3.2');
 select fn_db_add_config_value('LocalAdminPassword','123456','general');
 --Handling Enable lock policy for Storage Pool Manager on activation
 select fn_db_add_config_value('LockPolicy','ON','general');
@@ -670,6 +667,9 @@ select fn_db_delete_config_value('UseRtl8139_pv','2.2,3.0,3.1,3.2');
 select fn_db_delete_config_value('VdsFenceOptions','general');
 select fn_db_delete_config_value('VirtualMachineDomainName','general');
 select fn_db_delete_config_value('AuditLogAgingThreashold','general');
+select fn_db_delete_config_value('LiveStorageMigrationEnabled','3.0');
+select fn_db_delete_config_value('LiveStorageMigrationEnabled','3.1');
+select fn_db_delete_config_value('LiveStorageMigrationEnabled','3.2');
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once
