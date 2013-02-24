@@ -77,6 +77,7 @@ echo " "
 echo "} Creating client certificates for oVirt..."
 enroll_certificate engine "$PASS" "/C=${COUNTRY}/O=${ORG}/CN=${SUBJECT}"
 enroll_certificate apache "$PASS" "/C=${COUNTRY}/O=${ORG}/CN=${SUBJECT}"
+enroll_certificate jboss "$PASS" "/C=${COUNTRY}/O=${ORG}/CN=${SUBJECT}"
 
 exit 0
 

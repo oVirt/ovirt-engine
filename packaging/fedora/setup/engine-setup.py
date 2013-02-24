@@ -914,6 +914,9 @@ def _changeCaPermissions():
             logging.debug("changing file permissions for %s to 0640" % item)
             os.chmod(item, 0640)
 
+    # Update keystore permissions
+    utils.chownToEngine(basedefs.FILE_JBOSS_KEYSTORE)
+    os.chmod(basedefs.FILE_JBOSS_KEYSTORE, 0640)
     os.chown(basedefs.FILE_APACHE_KEYSTORE, utils.getUsernameId("apache"), utils.getGroupId("apache"))
     os.chmod(basedefs.FILE_APACHE_KEYSTORE, 0640)
     os.chown(basedefs.FILE_APACHE_PRIVATE_KEY, utils.getUsernameId("apache"), utils.getGroupId("apache"))

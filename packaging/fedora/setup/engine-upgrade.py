@@ -508,6 +508,20 @@ class CA():
                 logging.error("PKI: Cannot dup ca for apache")
                 raise
 
+        # If jboss keystore file does not exist, copy one from apache
+        if not os.path.exists(basedefs.FILE_JBOSS_KEYSTORE):
+            logging.debug("PKI: dup cert for jboss")
+            try:
+                utils.copyFile(
+                    filename=basedefs.FILE_APACHE_KEYSTORE,
+                    destination=basedefs.FILE_JBOSS_KEYSTORE,
+                    filemod=0640,
+                )
+                utils.chownToEngine(basedefs.FILE_JBOSS_KEYSTORE)
+            except OSError:
+                logging.error("PKI: Cannot dup ca for jboss")
+                raise
+
         shutil.copyfile(
             basedefs.FILE_HTTPD_SSL_CONFIG,
             self.TMPAPACHECONF
@@ -543,6 +557,7 @@ class CA():
                 self.TMPAPACHECONF,
                 basedefs.FILE_ENGINE_KEYSTORE,
                 basedefs.FILE_APACHE_KEYSTORE,
+                basedefs.FILE_JBOSS_KEYSTORE,
                 basedefs.FILE_APACHE_CA_CRT_SRC,
                 basedefs.FILE_APACHE_CERT,
                 basedefs.FILE_APACHE_PRIVATE_KEY

@@ -94,6 +94,7 @@ FILE_ETC_EXPORTS="/etc/exports"
 FILE_TRUSTSTORE="%s/.truststore"%(DIR_OVIRT_PKI)
 FILE_ENGINE_KEYSTORE="%s/keys/engine.p12"%(DIR_OVIRT_PKI)
 FILE_APACHE_KEYSTORE="%s/keys/apache.p12"%(DIR_OVIRT_PKI)
+FILE_JBOSS_KEYSTORE="%s/keys/jboss.p12"%(DIR_OVIRT_PKI)
 FILE_APACHE_PRIVATE_KEY="%s/keys/apache.key.nopass"%(DIR_OVIRT_PKI)
 FILE_SSH_PRIVATE_KEY="%s/keys/engine_id_rsa"%(DIR_OVIRT_PKI)
 FILE_YUM_VERSION_LOCK="/etc/yum/pluginconf.d/versionlock.list"

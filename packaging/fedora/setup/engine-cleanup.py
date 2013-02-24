@@ -294,6 +294,7 @@ class CA():
             basedefs.FILE_TRUSTSTORE,
             basedefs.FILE_ENGINE_KEYSTORE,
             basedefs.FILE_APACHE_KEYSTORE,
+            basedefs.FILE_JBOSS_KEYSTORE,
             basedefs.FILE_APACHE_PRIVATE_KEY,
             basedefs.FILE_SSH_PRIVATE_KEY
         ):
