@@ -53,18 +53,24 @@ public class Version implements Comparable<Version>, Serializable {
     }
 
     public String getValue() {
-        String val = "";
+        final StringBuilder val = new StringBuilder();
 
-        if (this.major > -1)
-            val += this.major;
-        if (this.minor > -1)
-            val += (val != "" ? "." : "") + this.minor;
-        if (this.build > -1)
-            val += (val != "" ? "." : "") + this.build;
-        if (this.revision > -1)
-            val += (val != "" ? "." : "") + this.revision;
+        if (this.major > -1) {
+            val.append(this.major);
+        }
+        appendVersionComponent(val, this.minor);
+        appendVersionComponent(val, this.build);
+        appendVersionComponent(val, this.revision);
+        return val.toString();
+    }
 
-        return val;
+    private static void appendVersionComponent(StringBuilder val, int versionNumber) {
+        if (versionNumber > -1) {
+            if (val.length() != 0) {
+                val.append(".");
+            }
+            val.append(versionNumber);
+        }
     }
 
     public void setValue(String value) {
