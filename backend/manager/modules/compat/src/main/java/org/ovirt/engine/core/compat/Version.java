@@ -149,11 +149,7 @@ public class Version implements Comparable<Version>, Serializable {
             return false;
 
         Version other = (Version) obj;
-        if (major == other.major && minor == other.minor && revision == other.revision && build == other.build) {
-            return true;
-        }
-        return false;
-
+        return major == other.major && minor == other.minor && revision == other.revision && build == other.build;
     }
 
     public static boolean OpEquality(Version v1, Version v2) {
