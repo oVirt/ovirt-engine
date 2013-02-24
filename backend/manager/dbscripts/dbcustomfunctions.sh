@@ -15,6 +15,8 @@ set_defaults() {
     USERNAME=""
     VERBOSE=false
     LOGFILE="$ME.log"
+    LC_ALL="C"
+    export LC_ALL
 
     # When running in development environments the .pgpass file may not
     # exist or might not be readable, so we should try to use the file
