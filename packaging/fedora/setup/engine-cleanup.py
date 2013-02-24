@@ -66,7 +66,7 @@ This utility will wipe all existing data including configuration settings, certi
 In addition, all existing DB connections will be closed." % (PROD_NAME)
 MSG_PROCEED_QUESTION = "Would you like to proceed"
 
-MSG_INFO_CLEANING_NFS="Cleaning NFS Exports\n"
+MSG_INFO_CLEANING_NFS="Cleaning NFS Exports"
 MSG_CLEAN_NFS_EXPORTS_QUESTION="Would you like to remove %s configuration from \
 {files}" % basedefs.APP_NAME
 MSG_CLEAN_NFS_EXPORTED_DIRS_QUESTION="Would you like to remove the following \
