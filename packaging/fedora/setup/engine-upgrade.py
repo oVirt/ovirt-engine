@@ -773,6 +773,8 @@ def zombieTasksFound():
     cmd = [
         basedefs.EXEC_TASK_CLEANER,
         "-u", SERVER_ADMIN,
+        "-s", SERVER_NAME,
+        "-p", SERVER_PORT,
         "-d", basedefs.DB_NAME,
         "-z",
     ]
@@ -797,6 +799,8 @@ def clearZombieTasks():
     cmd = [
         basedefs.EXEC_TASK_CLEANER,
         "-u", SERVER_ADMIN,
+        "-s", SERVER_NAME,
+        "-p", SERVER_PORT,
         "-d", basedefs.DB_NAME,
         "-z",
         "-R",
@@ -820,6 +824,8 @@ def deployDbAsyncTasks(dbName=basedefs.DB_NAME):
     cmd = [
         basedefs.EXEC_PSQL,
         "-U", SERVER_ADMIN,
+        "-h", SERVER_NAME,
+        "-p", SERVER_PORT,
         "-f", basedefs.FILE_DB_ASYNC_TASKS,
         "-d", dbName,
     ]

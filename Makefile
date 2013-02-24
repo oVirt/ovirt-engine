@@ -295,6 +295,7 @@ install_setup:
 
         # Task cleaner
 	install -m 750 backend/manager/tools/dbutils/taskcleaner.sh $(DESTDIR)$(DATA_DIR)/scripts/taskcleaner
+	install -m 750 backend/manager/tools/dbutils/common.sh $(DESTDIR)$(DATA_DIR)/scripts/taskcleaner
 	install -m 640 backend/manager/tools/dbutils/taskcleaner_sp.sql $(DESTDIR)$(DATA_DIR)/scripts/taskcleaner
 
 install_aio_plugin:
