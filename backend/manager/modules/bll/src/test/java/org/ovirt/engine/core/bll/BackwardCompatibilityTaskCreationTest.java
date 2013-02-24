@@ -3,8 +3,14 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
+import java.sql.Connection;
+import java.util.Collections;
+
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -32,11 +38,15 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.DbFacadeLocator;
+import org.ovirt.engine.core.dao.AsyncTaskDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 import org.ovirt.engine.core.utils.ejb.BeanType;
+import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 
 /**
@@ -58,6 +68,16 @@ public class BackwardCompatibilityTaskCreationTest {
 
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule(BeanType.SCHEDULER, mock(SchedulerUtil.class));
+
+    @BeforeClass
+    public static void beforeClass() {
+        ejbRule.mockResource(ContainerManagedResourceType.DATA_SOURCE, mock(Connection.class));
+        DbFacade dbFacade = spy(new DbFacade());
+        DbFacadeLocator.setDbFacade(dbFacade);
+        AsyncTaskDAO asyncTaskDao = mock(AsyncTaskDAO.class);
+        when(asyncTaskDao.getAll()).thenReturn(Collections.EMPTY_LIST);
+        when(dbFacade.getAsyncTaskDao()).thenReturn(asyncTaskDao);
+    }
 
     @SuppressWarnings({ "unchecked", "rawtypes", "serial" })
     @DataPoints
@@ -155,8 +175,8 @@ public class BackwardCompatibilityTaskCreationTest {
     @Test(expected = UnsupportedOperationException.class)
     public void testExceptionForCommandWithNoTasks() {
         PermissionsOperationsParametes params = new PermissionsOperationsParametes();
-        AddPermissionCommand<PermissionsOperationsParametes> cmd =
-                new AddPermissionCommand<PermissionsOperationsParametes>(params);
+        AddPermissionCommand<PermissionsOperationsParametes> cmd = spy(
+                new AddPermissionCommand<PermissionsOperationsParametes>(params));
         cmd.concreteCreateTask(nextAsyncTaskCreationInfo(), VdcActionType.Unknown);
     }
 

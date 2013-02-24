@@ -8,12 +8,12 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.ResourceUtils;
 import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
 
@@ -120,4 +120,7 @@ public class DbFacadeLocator {
         return numberStr != null && NumberUtils.isNumber(numberStr);
     }
 
+    public static void setDbFacade(DbFacade value) {
+        dbFacade = value;
+    }
 }
