@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-@LockIdNameAttribute
+@LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> extends AddVmCommand<T> {
 
     public AddVmFromTemplateCommand(T parameters) {
@@ -36,9 +36,9 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
     }
 
     @Override
-    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+    protected Map<String, Pair<String, String>> getSharedLocks() {
         Map<String, Pair<String, String>> locks = new HashMap<String, Pair<String, String>>();
-        Map<String, Pair<String, String>> parentLocks = super.getExclusiveLocks();
+        Map<String, Pair<String, String>> parentLocks = super.getSharedLocks();
         if (parentLocks != null) {
             locks.putAll(parentLocks);
         }
@@ -48,7 +48,6 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
 
     @Override
     protected void executeVmCommand() {
-        VmTemplateHandler.lockVmTemplateInTransaction(getVmTemplateId(), getCompensationContext());
         super.executeVmCommand();
         getParameters().OriginalTemplate = getVm().getVmtGuid();
         getVm().setVmtGuid(VmTemplateHandler.BlankVmTemplateId);
@@ -127,17 +126,5 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
             actualSize += disk.getActualSize();
         }
         return (int) actualSize;
-    }
-
-    @Override
-    protected void endSuccessfully() {
-        super.endSuccessfully();
-        VmTemplateHandler.UnLockVmTemplate(getParameters().OriginalTemplate);
-    }
-
-    @Override
-    protected void endWithFailure() {
-        super.endWithFailure();
-        VmTemplateHandler.UnLockVmTemplate(getParameters().OriginalTemplate);
     }
 }

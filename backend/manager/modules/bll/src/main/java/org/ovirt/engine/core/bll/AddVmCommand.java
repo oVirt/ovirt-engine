@@ -486,7 +486,6 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                     return null;
                 }
             });
-            freeLock();
 
             addVmPermission();
             if (addVmImages()) {
