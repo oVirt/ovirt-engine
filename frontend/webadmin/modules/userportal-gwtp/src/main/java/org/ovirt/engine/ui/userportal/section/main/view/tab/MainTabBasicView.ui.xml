@@ -34,7 +34,7 @@
 			cursor: pointer;
 			border: 1px solid transparent;
 			display: table-cell;
-			width: 30px;
+			width: 34px;
 		}
 		
 		.refreshPanelWrapper {
