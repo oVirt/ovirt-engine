@@ -28,6 +28,13 @@
         <extension module="org.jboss.as.weld"/>
     </extensions>
 
+    <system-properties>
+
+      <!-- Don't let quartz call home to check for updates: -->
+      <property name="org.quartz.scheduler.skipUpdateCheck" value="true"/>
+
+    </system-properties>
+
     <management>
         <security-realms>
             <security-realm name="ManagementRealm">

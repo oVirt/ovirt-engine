@@ -18,6 +18,13 @@
     <extension module="org.jboss.as.web"/>
   </extensions>
 
+  <system-properties>
+
+    <!-- Don't let quartz call home to check for updates: -->
+    <property name="org.quartz.scheduler.skipUpdateCheck" value="true"/>
+
+  </system-properties>
+
   <profile>
 
     <subsystem xmlns="urn:jboss:domain:logging:1.1">
