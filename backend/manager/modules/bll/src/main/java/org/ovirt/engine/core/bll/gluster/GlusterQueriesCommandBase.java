@@ -1,10 +1,15 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
@@ -28,6 +33,14 @@ public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase
         return getGlusterVolumeDao().getById(volumeId).getName();
     }
 
+    private VDSBrokerFrontend getBackendResourceManager() {
+        return Backend.getInstance().getResourceManager();
+    }
+
+    protected ClusterUtils getClusterUtils() {
+        return ClusterUtils.getInstance();
+    }
+
     protected Guid getUpServerId(Guid clusterId) {
         VDS vds = getClusterUtils().getUpServer(clusterId);
         if (vds == null) {
@@ -36,11 +49,13 @@ public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase
         return vds.getId();
     }
 
-    protected ClusterUtils getClusterUtils() {
-        return ClusterUtils.getInstance();
-    }
-
-    protected VDSBrokerFrontend getBackendResourceManager() {
-        return getBackend().getResourceManager();
+    protected VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters)
+            throws VdcBLLException {
+        VDSReturnValue returnValue = getBackendResourceManager().RunVdsCommand(commandType, parameters);
+        if (!returnValue.getSucceeded()) {
+            throw new VdcBLLException(returnValue.getVdsError().getCode(), returnValue.getVdsError()
+                    .getMessage());
+        }
+        return returnValue;
     }
 }

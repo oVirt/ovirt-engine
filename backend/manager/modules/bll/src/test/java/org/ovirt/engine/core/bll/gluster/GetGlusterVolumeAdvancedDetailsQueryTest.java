@@ -136,9 +136,6 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
         doReturn(vdsDao).when(clusterUtils).getVdsDao();
         when(vdsDao.getAllForVdsGroupWithStatus(CLUSTER_ID, VDSStatus.Up)).thenReturn(Collections.singletonList(getVds(VDSStatus.Up)));
 
-        vdsBrokerFrontend = mock(VDSBrokerFrontend.class);
-        doReturn(vdsBrokerFrontend).when(getQuery()).getBackendResourceManager();
-
         // Mock the query's parameters
         doReturn(CLUSTER_ID).when(getQueryParameters()).getClusterId();
         doReturn(VOLUME_NAME).when(getQueryParameters()).getVolumeName();
@@ -148,8 +145,8 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setSucceeded(true);
         returnValue.setReturnValue(expectedVolumeAdvancedDetails);
-        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.GetGlusterVolumeAdvancedDetails),
-                any(VDSParametersBase.class))).thenReturn(returnValue);
+        doReturn(returnValue).when(getQuery()).runVdsCommand(eq(VDSCommandType.GetGlusterVolumeAdvancedDetails),
+                any(VDSParametersBase.class));
 
     }
 

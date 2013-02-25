@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.BrickProfileDetails
 import org.ovirt.engine.core.common.businessentities.gluster.FopStats;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeProfileInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.StatsInfo;
-import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeQueriesParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -40,9 +39,6 @@ public class GetGlusterVolumeProfileInfoQueryTest extends
     private static final Guid VOLUME_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c943");
     private GlusterVolumeProfileInfo expectedProfileInfo;
     private GlusterVolumeQueriesParameters params;
-
-    @Mock
-    private VDSBrokerFrontend vdsBrokerFrontend;
 
     @Mock
     private VdsDAO vdsDao;
@@ -82,11 +78,10 @@ public class GetGlusterVolumeProfileInfoQueryTest extends
     }
 
     private void setupMock() {
-        doReturn(vdsBrokerFrontend).when(getQuery()).getBackendResourceManager();
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setSucceeded(true);
         returnValue.setReturnValue(expectedProfileInfo);
-        doReturn(returnValue).when(vdsBrokerFrontend).RunVdsCommand(eq(VDSCommandType.GetGlusterVolumeProfileInfo),
+        doReturn(returnValue).when(getQuery()).runVdsCommand(eq(VDSCommandType.GetGlusterVolumeProfileInfo),
                 any(VDSParametersBase.class));
     }
 

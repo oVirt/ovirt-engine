@@ -83,14 +83,11 @@ public class GetGlusterVolumeOptionsInfoQueryTest extends AbstractQueryTest<Glus
     }
 
     private void setupMock() {
-        vdsBrokerFrontend = mock(VDSBrokerFrontend.class);
-        doReturn(vdsBrokerFrontend).when(getQuery()).getBackendResourceManager();
-
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setSucceeded(true);
         returnValue.setReturnValue(expected);
-        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.GetGlusterVolumeOptionsInfo),
-                any(VDSParametersBase.class))).thenReturn(returnValue);
+        doReturn(returnValue).when(getQuery()).runVdsCommand(eq(VDSCommandType.GetGlusterVolumeOptionsInfo),
+                any(VDSParametersBase.class));
     }
 
     @Test

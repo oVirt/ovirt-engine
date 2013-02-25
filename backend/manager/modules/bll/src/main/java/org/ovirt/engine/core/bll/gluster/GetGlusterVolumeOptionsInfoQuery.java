@@ -17,7 +17,7 @@ public class GetGlusterVolumeOptionsInfoQuery<P extends GlusterParameters> exten
     @Override
     protected void executeQueryCommand() {
         VDSReturnValue returnValue =
-                getBackendResourceManager().RunVdsCommand(VDSCommandType.GetGlusterVolumeOptionsInfo,
+                runVdsCommand(VDSCommandType.GetGlusterVolumeOptionsInfo,
                         new VdsIdVDSCommandParametersBase(getUpServerId(getParameters().getClusterId())));
         getQueryReturnValue().setReturnValue(returnValue.getReturnValue());
     }

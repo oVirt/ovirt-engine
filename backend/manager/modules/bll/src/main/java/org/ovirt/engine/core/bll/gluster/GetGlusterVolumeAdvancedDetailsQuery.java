@@ -93,7 +93,7 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
 
     private GlusterVolumeAdvancedDetails fetchAdvancedDetails(String volumeName) {
         VDSReturnValue returnValue =
-                getBackendResourceManager().RunVdsCommand(VDSCommandType.GetGlusterVolumeAdvancedDetails,
+                runVdsCommand(VDSCommandType.GetGlusterVolumeAdvancedDetails,
                         new GlusterVolumeAdvancedDetailsVDSParameters(getUpServerId(getParameters().getClusterId()),
                                 getParameters().getClusterId(),
                                 volumeName,

@@ -17,11 +17,10 @@ public class GetGlusterVolumeProfileInfoQuery<P extends GlusterVolumeQueriesPara
 
     @Override
     protected void executeQueryCommand() {
-        VDSReturnValue returnValue =
-                getBackendResourceManager().RunVdsCommand(VDSCommandType.GetGlusterVolumeProfileInfo,
-                        new GlusterVolumeProfileInfoVDSParameters(getParameters().getClusterId(),
-                                getUpServerId(getParameters().getClusterId()),
-                                getGlusterVolumeName(getParameters().getVolumeId())));
+        VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GetGlusterVolumeProfileInfo,
+                new GlusterVolumeProfileInfoVDSParameters(getParameters().getClusterId(),
+                        getUpServerId(getParameters().getClusterId()),
+                        getGlusterVolumeName(getParameters().getVolumeId())));
         getQueryReturnValue().setReturnValue(returnValue.getReturnValue());
     }
 }
