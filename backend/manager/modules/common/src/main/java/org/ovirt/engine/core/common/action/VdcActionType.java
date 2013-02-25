@@ -110,6 +110,7 @@ public enum VdcActionType {
     CreateCloneOfTemplate(229, QuotaDependency.STORAGE),
     RemoveDisk(230, QuotaDependency.STORAGE),
     MoveImageGroup(231, QuotaDependency.STORAGE),
+    GetDiskAlignment(232, QuotaDependency.NONE),
     // VmPoolCommands
     AddVmPool(301, QuotaDependency.NONE),
     AddVmPoolWithVms(304, ActionGroup.CREATE_VM_POOL, QuotaDependency.BOTH),

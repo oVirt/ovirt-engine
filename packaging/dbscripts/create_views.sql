@@ -71,7 +71,9 @@ SELECT images.image_guid as image_guid,
     disk_image_dynamic.write_rate as write_rate,
     disk_image_dynamic.read_latency_seconds as read_latency_seconds,
     disk_image_dynamic.write_latency_seconds as write_latency_seconds,
-    disk_image_dynamic.flush_latency_seconds as flush_latency_seconds
+    disk_image_dynamic.flush_latency_seconds as flush_latency_seconds,
+    base_disks.alignment as alignment,
+    base_disks.last_alignment_scan as last_alignment_scan
 FROM
 images
 left outer join disk_image_dynamic on images.image_guid = disk_image_dynamic.image_id
@@ -132,7 +134,8 @@ SELECT                storage_for_image_view.storage_id as storage_id, storage_f
                       images_storage_domain_view.disk_interface as disk_interface, images_storage_domain_view.boot as boot, images_storage_domain_view.wipe_after_delete as wipe_after_delete, images_storage_domain_view.propagate_errors as propagate_errors, images_storage_domain_view.sgio as sgio,
                       images_storage_domain_view.entity_type as entity_type,images_storage_domain_view.number_of_vms as number_of_vms,images_storage_domain_view.vm_names as vm_names,
                       images_storage_domain_view.quota_id as quota_id, images_storage_domain_view.quota_name as quota_name, images_storage_domain_view.quota_enforcement_type,
-                      images_storage_domain_view.disk_id, images_storage_domain_view.disk_alias as disk_alias, images_storage_domain_view.disk_description as disk_description,images_storage_domain_view.shareable as shareable
+                      images_storage_domain_view.disk_id, images_storage_domain_view.disk_alias as disk_alias, images_storage_domain_view.disk_description as disk_description,images_storage_domain_view.shareable as shareable,
+                      images_storage_domain_view.alignment as alignment, images_storage_domain_view.last_alignment_scan as last_alignment_scan
 FROM         images_storage_domain_view
 INNER JOIN disk_image_dynamic ON images_storage_domain_view.image_guid = disk_image_dynamic.image_id
 INNER JOIN storage_for_image_view ON images_storage_domain_view.image_guid = storage_for_image_view.image_id
@@ -150,7 +153,9 @@ SELECT storage_impl.*,
        bd.disk_description,
        bd.shareable,
        bd.boot,
-       bd.sgio
+       bd.sgio,
+       bd.alignment,
+       bd.last_alignment_scan
 FROM
 (
     SELECT 0 AS disk_storage_type,

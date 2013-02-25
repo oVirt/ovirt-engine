@@ -177,6 +177,8 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc snapshot(String vmId, Map<String, String>[] disks, String memory);
 
+    AlignmentScanReturnForXmlRpc getDiskAlignment(String vmId, Map<String, String> driveSpecs);
+
     // Gluster vdsm Commands
     OneUuidReturnForXmlRpc glusterVolumeCreate(String volumeName,
             String[] brickList,

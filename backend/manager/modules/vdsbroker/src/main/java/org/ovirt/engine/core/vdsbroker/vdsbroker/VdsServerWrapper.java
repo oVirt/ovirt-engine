@@ -866,6 +866,17 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public AlignmentScanReturnForXmlRpc getDiskAlignment(String vmId, Map<String, String> driveSpecs) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.getDiskAlignment(vmId, driveSpecs);
+            AlignmentScanReturnForXmlRpc wrapper = new AlignmentScanReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
     public OneUuidReturnForXmlRpc glusterVolumeCreate(String volumeName,
             String[] brickList,
             int replicaCount,

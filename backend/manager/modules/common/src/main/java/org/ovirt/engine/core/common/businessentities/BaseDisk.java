@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.Date;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -72,6 +74,10 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
     private boolean boot;
 
     private ScsiGenericIO sgio;
+
+    private DiskAlignment alignment;
+
+    private Date lastAlignmentScan;
 
     public BaseDisk() {
     }
@@ -182,6 +188,22 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
 
     public void setSgio(ScsiGenericIO sgio) {
         this.sgio = sgio;
+    }
+
+    public DiskAlignment getAlignment() {
+        return alignment;
+    }
+
+    public void setAlignment(DiskAlignment value) {
+        alignment = value;
+    }
+
+    public Date getLastAlignmentScan() {
+        return (lastAlignmentScan != null) ? (Date) lastAlignmentScan.clone() : null;
+    }
+
+    public void setLastAlignmentScan(Date value) {
+        lastAlignmentScan = (value != null) ? (Date) value.clone() : null;
     }
 
     @Override

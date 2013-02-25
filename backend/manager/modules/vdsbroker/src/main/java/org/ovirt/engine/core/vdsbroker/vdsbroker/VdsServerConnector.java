@@ -160,6 +160,8 @@ public interface VdsServerConnector {
 
     Map<String, Object> snapshot(String vmId, Map<String, String>[] disks, String memory);
 
+    public Map<String, Object> getDiskAlignment(String vmId, Map<String, String> driveSpecs);
+
     // Gluster vdsm commands
     public Map<String, Object> glusterVolumeCreate(String volumeName,
             String[] brickList,

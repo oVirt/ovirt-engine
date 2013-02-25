@@ -16,7 +16,9 @@ Create or replace FUNCTION InsertBaseDisk(
     v_disk_description VARCHAR(500),
     v_shareable BOOLEAN,
     v_boot BOOLEAN,
-    v_sgio INTEGER)
+    v_sgio INTEGER,
+    v_alignment SMALLINT,
+    v_last_alignment_scan TIMESTAMP WITH TIME ZONE)
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -29,7 +31,9 @@ BEGIN
         disk_description,
         shareable,
         boot,
-        sgio)
+        sgio,
+        alignment,
+        last_alignment_scan)
     VALUES(
         v_disk_id,
         v_disk_interface,
@@ -39,7 +43,9 @@ BEGIN
         v_disk_description,
         v_shareable,
         v_boot,
-        v_sgio);
+        v_sgio,
+        v_alignment,
+        v_last_alignment_scan);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -56,7 +62,9 @@ Create or replace FUNCTION UpdateBaseDisk(
     v_disk_description VARCHAR(500),
     v_shareable BOOLEAN,
     v_boot BOOLEAN,
-    v_sgio INTEGER)
+    v_sgio INTEGER,
+    v_alignment SMALLINT,
+    v_last_alignment_scan TIMESTAMP WITH TIME ZONE)
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -68,7 +76,9 @@ BEGIN
            disk_description = v_disk_description,
            shareable = v_shareable,
            boot = v_boot,
-           sgio = v_sgio
+           sgio = v_sgio,
+           alignment = v_alignment,
+           last_alignment_scan = v_last_alignment_scan
     WHERE  disk_id = v_disk_id;
 END; $procedure$
 LANGUAGE plpgsql;
