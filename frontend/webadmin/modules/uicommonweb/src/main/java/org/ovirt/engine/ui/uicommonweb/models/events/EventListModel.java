@@ -1,9 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.events;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -11,6 +7,7 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.NotImplementedException;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -18,13 +15,17 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.GridTimer;
-import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class EventListModel extends SearchableListModel
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class EventListModel extends ListWithDetailsModel
 {
     private final GridTimer timer;
 
@@ -38,6 +39,16 @@ public class EventListModel extends SearchableListModel
     private void setRefreshCommand(UICommand value)
     {
         privateRefreshCommand = value;
+    }
+
+    private UICommand detailsCommand;
+
+    public UICommand getDetailsCommand() {
+        return detailsCommand;
+    }
+
+    private void setDetailsCommand(UICommand value) {
+        detailsCommand = value;
     }
 
     private AuditLog lastEvent;
@@ -84,6 +95,7 @@ public class EventListModel extends SearchableListModel
         setHashName("events"); //$NON-NLS-1$
 
         setRefreshCommand(new UICommand("Refresh", this)); //$NON-NLS-1$
+        setDetailsCommand(new UICommand("Details", this)); //$NON-NLS-1$
 
         setDefaultSearchString("Events:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
@@ -172,16 +184,47 @@ public class EventListModel extends SearchableListModel
         Frontend.RunQuery(VdcQueryType.Search, params, query);
     }
 
+    private void details() {
+
+        AuditLog event = (AuditLog) getSelectedItem();
+
+        if (getWindow() != null || event == null) {
+            return;
+        }
+
+        EventModel model = new EventModel();
+        model.setEvent(event);
+        model.setTitle(ConstantsManager.getInstance().getConstants().eventDetailsTitle());
+        model.setHashName("event_details"); //$NON-NLS-1$
+        setWindow(model);
+
+        UICommand command = new UICommand("Cancel", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().close());
+        command.setIsCancel(true);
+        model.getCommands().add(command);
+    }
+
+    private void cancel() {
+        setWindow(null);
+    }
+
     @Override
-    public void ExecuteCommand(UICommand command)
-    {
+    public void ExecuteCommand(UICommand command) {
         super.ExecuteCommand(command);
 
-        if (command == getRefreshCommand())
-        {
+        if (command == getRefreshCommand()) {
             refreshModel();
             UpdatePagingAvailability();
+        } else if (command == getDetailsCommand()) {
+            details();
+        } else if (StringHelper.stringsEqual(command.getName(), "Cancel")) { //$NON-NLS-1$
+            cancel();
         }
+    }
+
+    @Override
+    public UICommand getDefaultCommand() {
+        return getDetailsCommand();
     }
 
     @Override

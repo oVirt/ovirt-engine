@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+
+    <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.event.EventPopupView.Style">
+        .eventMessage textarea {
+            resize: none;
+            height: 125px;
+            padding-top: 6px;
+            line-height: 18px;
+            font-family: Verdana, sans-serif;
+            font-size: 13px;
+        }
+
+        .editorContent {
+            width: 320px;
+        }
+    </ui:style>
+
+    <d:SimpleDialogPanel width="450px" height="275px">
+        <d:content>
+            <g:FlowPanel>
+	            <e:EntityModelLabelEditor ui:field="eventIdLabel"/>
+	            <e:EntityModelLabelEditor ui:field="eventTimeLabel"/>
+	            <e:EntityModelTextAreaLabelEditor ui:field="eventMessageTextArea" addStyleNames="{style.eventMessage}"/>
+            </g:FlowPanel>
+        </d:content>
+    </d:SimpleDialogPanel>
+
+</ui:UiBinder>

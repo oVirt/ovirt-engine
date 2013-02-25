@@ -65,7 +65,7 @@ public abstract class AbstractModelBoundTableWidget<T, M extends SearchableListM
                 : GWT.<Resources> create(SubTableHeaderlessResources.class);
     }
 
-    protected M getModel() {
+    public M getModel() {
         return modelProvider.getModel();
     }
 

@@ -550,6 +550,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Custom Event Id")
     String customEventIdEvent();
 
+    @DefaultStringValue("ID")
+    String idEvent();
+
     @DefaultStringValue("Until")
     String untilEndTime();
 
@@ -1200,4 +1203,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Console Options")
     String consoleOptions();
 
+    @DefaultStringValue("Details")
+    String details();
 }

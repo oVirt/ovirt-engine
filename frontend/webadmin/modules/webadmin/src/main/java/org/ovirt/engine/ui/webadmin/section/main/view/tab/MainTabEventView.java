@@ -5,14 +5,17 @@ import java.util.Date;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.AuditLogSeverityColumn;
 import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabTableView;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -122,6 +125,14 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
             }
         };
         getTable().addColumn(messageColumn, constants.messageEvent(), "150px"); //$NON-NLS-1$
+
+        getTable().addActionButton(new WebAdminButtonDefinition<AuditLog>(constants.details(),
+                CommandLocation.OnlyFromContext) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getDetailsCommand();
+            }
+        });
     }
 
 }

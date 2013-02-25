@@ -30,6 +30,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.Find
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.NewDataCenterNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.NewNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.RecoveryStoragePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.AddBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.BrickAdvancedDetailsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.DetachGlusterHostsPopupPresenterWidget;
@@ -212,6 +213,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.FindMulti
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.FindSingleStoragePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.NewDataCenterNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.RecoveryStorageConfirmationPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.event.EventPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.AddBrickPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.BrickAdvancedDetailsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.DetachGlusterHostsPopupView;
@@ -1153,5 +1155,10 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(EditNetworkPopupPresenterWidget.class,
                 EditNetworkPopupPresenterWidget.ViewDef.class,
                 EditNetworkPopupView.class);
+
+        // Event
+        bindPresenterWidget(EventPopupPresenterWidget.class,
+            EventPopupPresenterWidget.ViewDef.class,
+            EventPopupView.class);
     }
 }

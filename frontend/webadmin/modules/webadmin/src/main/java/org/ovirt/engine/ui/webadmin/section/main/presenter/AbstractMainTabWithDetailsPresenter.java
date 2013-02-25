@@ -51,17 +51,21 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
                         // Let others know that the table selection has changed
                         fireTableSelectionChangeEvent();
 
-                        // Update the layout
-                        updateLayout();
-
-                        // Reveal the appropriate place based on selection
-                        if (hasSelection()) {
-                            placeManager.revealPlace(getSubTabRequest());
-                        } else {
-                            placeManager.revealPlace(getMainTabRequest());
-                        }
+                        onSelection();
                     }
                 }));
+    }
+
+    protected void onSelection() {
+        // Update the layout
+        updateLayout();
+
+        // Reveal the appropriate place based on selection
+        if (hasSelection()) {
+            placeManager.revealPlace(getSubTabRequest());
+        } else {
+            placeManager.revealPlace(getMainTabRequest());
+        }
     }
 
     @Override

@@ -1787,4 +1787,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Enter a valid FS type (e.g. nfs/glusterfs/cifs/smbfs etc.")
     String posixVfsTypeHint();
+
+    @DefaultStringValue("Event Details")
+    String eventDetailsTitle();
 }
