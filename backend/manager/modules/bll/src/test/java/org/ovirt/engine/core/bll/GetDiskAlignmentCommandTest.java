@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -29,6 +30,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.utils.ejb.BeanType;
@@ -56,6 +58,9 @@ public class GetDiskAlignmentCommandTest {
     @Mock
     private VmDeviceDAO vmDeviceDao;
 
+    @Mock
+    private VdsGroupDAO vdsGroupDao;
+
     private GetDiskAlignmentCommand<GetDiskAlignmentParameters> cmd;
 
     private Guid vmId, diskId, poolId, groupId, vdsId;
@@ -64,6 +69,7 @@ public class GetDiskAlignmentCommandTest {
     private VDS vds;
     private VmDevice vmDevice;
     private StoragePool storagePool;
+    private VDSGroup vdsGroup;
 
     @Before
     public void setUp() {
@@ -88,6 +94,9 @@ public class GetDiskAlignmentCommandTest {
         vmDevice = new VmDevice();
         vmDevice.setId(vmDeviceId);
 
+        vdsGroup = new VDSGroup();
+        vdsGroup.setId(groupId);
+
         vds = new VDS();
         vds.setId(vdsId);
 
@@ -96,17 +105,17 @@ public class GetDiskAlignmentCommandTest {
 
         when(vmDao.getVmsListForDisk(diskId)).thenReturn(Collections.singletonList(vm));
         when(vmDeviceDao.get(vmDeviceId)).thenReturn(vmDevice);
-        when(vdsDao.getAllForVdsGroupWithStatus(groupId, VDSStatus.Up))
-                .thenReturn(Collections.singletonList(vds));
+        when(vdsDao.getAllForVdsGroupWithStatus(groupId, VDSStatus.Up)).thenReturn(Collections.singletonList(vds));
         when(spDao.get(poolId)).thenReturn(storagePool);
+        when(vdsGroupDao.get(groupId)).thenReturn(vdsGroup);
 
-        cmd = spy(new GetDiskAlignmentCommand<GetDiskAlignmentParameters>(
-                new GetDiskAlignmentParameters(diskId)));
+        cmd = spy(new GetDiskAlignmentCommand<GetDiskAlignmentParameters>(new GetDiskAlignmentParameters(diskId)));
 
         doReturn(disk).when(cmd).getDisk();
         doReturn(vdsDao).when(cmd).getVdsDAO();
         doReturn(vmDao).when(cmd).getVmDAO();
         doReturn(spDao).when(cmd).getStoragePoolDao();
+        doReturn(vdsGroupDao).when(cmd).getVdsGroupDAO();
     }
 
     /* Tests for canDoAction() flow */

@@ -75,7 +75,7 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
 
     private ScsiGenericIO sgio;
 
-    private DiskAlignment alignment;
+    private DiskAlignment alignment = DiskAlignment.Unknown;
 
     private Date lastAlignmentScan;
 

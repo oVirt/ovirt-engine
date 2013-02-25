@@ -10,7 +10,7 @@ public enum DiskAlignment {
     Misaligned(2),
     Aligned(3);
 
-    private int intValue;
+    private int value;
     private static final Map<Integer, DiskAlignment> mappings;
 
     static {
@@ -22,11 +22,11 @@ public enum DiskAlignment {
     }
 
     private DiskAlignment(int value) {
-        intValue = value;
+        this.value = value;
     }
 
     public int getValue() {
-        return intValue;
+        return value;
     }
 
     public static DiskAlignment forValue(int value) {

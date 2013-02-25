@@ -75,7 +75,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
 
     private String getDiskIsUsedByGetAlignment() {
         return new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_USED_BY_GET_ALIGNMENT.name())
-                .append(String.format("DiskAlias %1$s", getDiskAlias()))
+                .append(String.format("$DiskAlias %1$s", getDiskAlias()))
                 .toString();
     }
 
@@ -116,7 +116,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
         }
 
-        if (getVdsIdInPool() == null) {
+        if (getVdsIdInGroup() == null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
         }
 
@@ -140,7 +140,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
             DiskImage diskImage = (DiskImage) getDisk();
 
             GetDiskImageAlignmentVDSCommandParameters imageParameters =
-                    new GetDiskImageAlignmentVDSCommandParameters(getVdsIdInPool(), vmId);
+                    new GetDiskImageAlignmentVDSCommandParameters(getVdsIdInGroup(), vmId);
 
             imageParameters.setPoolId(getStoragePoolId());
             imageParameters.setDomainId(diskImage.getStorageIds().get(0));
@@ -152,7 +152,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
             LunDisk lunDisk = (LunDisk) getDisk();
 
             GetDiskLunAlignmentVDSCommandParameters lunParameters =
-                    new GetDiskLunAlignmentVDSCommandParameters(getVdsIdInPool(), vmId);
+                    new GetDiskLunAlignmentVDSCommandParameters(getVdsIdInGroup(), vmId);
 
             lunParameters.setLunId(lunDisk.getLun().getLUN_id());
 
@@ -221,6 +221,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
                 ((DiskImage) getDisk()).getVolumeFormat() != VolumeFormat.RAW);
     }
 
+    @Override
     public Guid getStoragePoolId() {
         if (storagePoolId == null && getVm() != null) {
             storagePoolId = getVm().getStoragePoolId();
@@ -228,16 +229,9 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
         return storagePoolId;
     }
 
-    public Guid getVdsGroupId() {
-        if (vdsGroupId == null && getVm() != null) {
-            vdsGroupId = getVm().getVdsGroupId();
-        }
-        return vdsGroupId;
-    }
-
-    protected Guid getVdsIdInPool() {
-        if (vdsInPool == null && getVdsGroupId() != null) {
-            List<VDS> vdsInPoolList = getVdsDAO().getAllForVdsGroupWithStatus(getVdsGroupId(), VDSStatus.Up);
+    protected Guid getVdsIdInGroup() {
+        if (vdsInPool == null && getVdsGroup() != null) {
+            List<VDS> vdsInPoolList = getVdsDAO().getAllForVdsGroupWithStatus(getVdsGroup().getId(), VDSStatus.Up);
             if (!vdsInPoolList.isEmpty()) {
                 vdsInPool = vdsInPoolList.get(0).getId();
             }
@@ -261,6 +255,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
         return getDbFacade().getStoragePoolDao();
     }
 
+    @Override
     public VM getVm() {
         if (diskVm == null && getDisk() != null) {
             for (VM vm : getVmDAO().getVmsListForDisk(getDisk().getId())) {
