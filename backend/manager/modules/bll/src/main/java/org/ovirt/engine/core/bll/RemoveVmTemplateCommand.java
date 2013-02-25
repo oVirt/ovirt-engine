@@ -85,10 +85,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             return false;
         }
 
-        imageTemplates =
-                ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(getVmTemplateId()),
-                        false,
-                        false);
+        fetchImageTemplates();
         List<Guid> storageDomainsList = getParameters().getStorageDomainsList();
         Set<Guid> allDomainsList = getStorageDoaminsByDisks(imageTemplates, true);
 
@@ -160,6 +157,15 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         }
 
         return true;
+    }
+
+    private void fetchImageTemplates() {
+        if (imageTemplates == null) {
+            imageTemplates =
+                    ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(getVmTemplateId()),
+                            false,
+                            false);
+        }
     }
 
     /**
@@ -274,7 +280,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
         List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
-
+        fetchImageTemplates();
         if (imageTemplates != null) {
             for (DiskImage disk : imageTemplates) {
                 if (disk.getQuotaId() != null && !Guid.Empty.equals(disk.getQuotaId())) {
