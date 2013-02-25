@@ -764,6 +764,24 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetVmByVmNameForDataCenter(v_data_center_id UUID, v_vm_name VARCHAR(255), v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vms
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT DISTINCT vms.*
+   FROM vms
+   WHERE vm_name = v_vm_name
+   AND   (v_data_center_id is null OR storage_pool_id = v_data_center_id)
+   AND   (NOT v_is_filtered OR EXISTS (SELECT 1
+                                       FROM   user_vm_permissions_view
+                                       WHERE  user_id = v_user_id AND entity_id = vms.vm_guid));
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
+
 Create or replace FUNCTION GetVmsByVmtGuid(v_vmt_guid UUID) RETURNS SETOF vms
    AS $procedure$
 BEGIN

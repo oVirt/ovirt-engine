@@ -48,6 +48,12 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
     }
 
     @Override
+    public VM getByNameForDataCenter(Guid dataCenterId, String name, Guid userID, boolean isFiltered) {
+        return getCallsHandler().executeRead("GetVmByVmNameForDataCenter", VMRowMapper.instance, getCustomMapSqlParameterSource()
+                .addValue("data_center_id", dataCenterId).addValue("vm_name", name).addValue("user_id", userID).addValue("is_filtered", isFiltered));
+    }
+
+    @Override
     public VM getForHibernationImage(Guid id) {
         return getCallsHandler().executeRead("GetVmByHibernationImageId",
                 VMRowMapper.instance,

@@ -36,6 +36,19 @@ public interface VmDAO extends DAO {
     VM get(Guid id, Guid userID, boolean isFiltered);
 
     /**
+     * Returns the VM with the specified name, with optional filtering.
+     *
+     * @param id
+     *            the VM name
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     * @return the VM
+     */
+    VM getByNameForDataCenter(Guid dataCenterId, String name, Guid userID, boolean isFiltered);
+
+    /**
      * Retrieves the VM for the specified hibernate image.
      *
      * @param hibernationImage

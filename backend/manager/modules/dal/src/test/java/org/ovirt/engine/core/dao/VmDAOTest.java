@@ -100,6 +100,28 @@ public class VmDAOTest extends BaseDAOTestCase {
     }
 
     /**
+     * Ensures that get by name works as expected when a filtered for permissions
+     * of a privileged user.
+     */
+    @Test
+    public void testGetByNameFilteredWithPermissions() {
+        VM result = dao.getByNameForDataCenter(null, existingVm.getName(), PRIVILEGED_USER_ID, true);
+
+        assertGetResult(result);
+    }
+
+    /**
+     * Ensures that get by name works as expected when a filtered for permissions
+     * of an unprivileged user.
+     */
+    @Test
+    public void testGetByNameFilteredWithPermissionsNoPermissions() {
+        VM result = dao.getByNameForDataCenter(null, existingVm.getName(), UNPRIVILEGED_USER_ID, true);
+
+        assertNull(result);
+    }
+
+    /**
      * Ensures that get works as expected when a filtered for permissions of an unprivileged user, and filtering disabled.
      */
     @Test

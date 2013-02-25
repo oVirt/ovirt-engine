@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.GetVmByVmNameForDataCenterParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -57,12 +58,19 @@ public class BackendTemplatesResource
     public Response add(Template template) {
         validateParameters(template, "name", "vm.id|name");
         validateEnums(Template.class, template);
-        VmStatic staticVm = getMapper(Template.class, VmStatic.class).map(template, getVm(template));
+        Guid clusterId = null;
+        VDSGroup cluster = null;
         if (namedCluster(template)) {
-            staticVm.setVdsGroupId(getClusterId(template));
+            clusterId = getClusterId(template);
+            cluster = lookupCluster(clusterId);
+        }
+        VmStatic staticVm = getMapper(Template.class, VmStatic.class).map(template, getVm(cluster, template));
+        if (namedCluster(template)) {
+            staticVm.setVdsGroupId(clusterId);
         }
 
-        staticVm.setUsbPolicy(VmMapper.getUsbPolicyOnCreate(template.getUsb(), lookupCluster(staticVm.getVdsGroupId())));
+        staticVm.setUsbPolicy(VmMapper.getUsbPolicyOnCreate(template.getUsb(),
+                cluster != null ? cluster : lookupCluster(staticVm.getVdsGroupId())));
 
         // REVISIT: powershell has a IsVmTemlateWithSameNameExist safety check
         AddVmTemplateParameters params = new AddVmTemplateParameters(staticVm,
@@ -119,14 +127,23 @@ public class BackendTemplatesResource
         return collection;
     }
 
-    protected VmStatic getVm(Template template) {
+    protected VmStatic getVm(VDSGroup cluster, Template template) {
         org.ovirt.engine.core.common.businessentities.VM vm;
         if (template.getVm().isSetId()) {
             vm = getEntity(org.ovirt.engine.core.common.businessentities.VM.class,
                            VdcQueryType.GetVmByVmId,
                            new GetVmByVmIdParameters(asGuid(template.getVm().getId())),
                            template.getVm().getId());
-        } else {
+        } else if (isFiltered()) {
+            Guid dataCenterId = null;
+            if (cluster != null && cluster.getStoragePoolId() != null) {
+                dataCenterId = asGuid(cluster.getStoragePoolId());
+            }
+            vm = getEntity(org.ovirt.engine.core.common.businessentities.VM.class,
+                           VdcQueryType.GetVmByVmNameForDataCenter,
+                           new GetVmByVmNameForDataCenterParameters(dataCenterId, template.getVm().getName()),
+                           template.getVm().getName());
+        } else  {
             vm = getEntity(org.ovirt.engine.core.common.businessentities.VM.class,
                            SearchType.VM,
                            "VM: name=" + template.getVm().getName());
