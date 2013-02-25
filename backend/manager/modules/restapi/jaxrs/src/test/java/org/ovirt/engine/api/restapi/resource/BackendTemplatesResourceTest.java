@@ -1,9 +1,11 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import org.easymock.EasyMock;
 
 import org.junit.Test;
 
@@ -26,6 +28,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 import static org.easymock.classextension.EasyMock.expect;
+import org.ovirt.engine.core.common.queries.GetVmByVmNameForDataCenterParameters;
 
 public class BackendTemplatesResourceTest
     extends AbstractBackendCollectionResourceTest<Template, VmTemplate, BackendTemplatesResource> {
@@ -236,6 +239,52 @@ public class BackendTemplatesResourceTest
     }
 
     @Test
+    public void testAddNamedVmFiltered() throws Exception {
+        setUpFilteredQueryExpectations();
+        setUriInfo(setUpBasicUriExpectations());
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+                GetVdsGroupByVdsGroupIdParameters.class,
+                new String[] { "VdsGroupId" },
+                new Object[] { GUIDS[2] },
+                getVdsGroupEntity());
+
+        setUpHttpHeaderExpectations("Expect", "201-created");
+
+        setUpGetEntityExpectations(VdcQueryType.GetVmByVmNameForDataCenter,
+                                   GetVmByVmNameForDataCenterParameters.class,
+                                   new String[] { "Name" },
+                                   new Object[] { NAMES[1] },
+                                   setUpVm(GUIDS[1]));
+
+        setUpGetEntityExpectations();
+
+        setUpCreationExpectations(VdcActionType.AddVmTemplate,
+                                  AddVmTemplateParameters.class,
+                                  new String[] { "Name", "Description" },
+                                  new Object[] { NAMES[0], DESCRIPTIONS[0] },
+                                  true,
+                                  true,
+                                  GUIDS[0],
+                                  asList(GUIDS[2]),
+                                  asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
+                                  VdcQueryType.GetVmTemplate,
+                                  GetVmTemplateParameters.class,
+                                  new String[] { "Id" },
+                                  new Object[] { GUIDS[0] },
+                                  getEntity(0));
+
+        Template model = getModel(0);
+        model.getVm().setId(null);
+        model.getVm().setName(NAMES[1]);
+
+        Response response = collection.add(model);
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof Template);
+        verifyModel((Template)response.getEntity(), 0);
+        assertNull(((Template)response.getEntity()).getCreationStatus());
+    }
+
+    @Test
     public void testAddWithCluster() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
@@ -333,6 +382,13 @@ public class BackendTemplatesResourceTest
     @Test
     public void testAddFailure() throws Exception {
         doTestBadAdd(true, false, FAILURE);
+    }
+
+    protected void setUpFilteredQueryExpectations() {
+        List<String> filterValue = new ArrayList<String>();
+        filterValue.add("true");
+        EasyMock.reset(httpHeaders);
+        expect(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).andReturn(filterValue);
     }
 
     private void doTestBadAdd(boolean canDo, boolean success, String detail) throws Exception {
