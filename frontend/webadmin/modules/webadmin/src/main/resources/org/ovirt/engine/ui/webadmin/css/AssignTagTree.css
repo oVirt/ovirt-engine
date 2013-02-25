@@ -11,7 +11,7 @@
 	padding: 0px;
 	cursor: pointer;
 	zoom: 1;
-	height: 21px;
+	min-height: 21px;
 }
 
 .cellTreeItemImage {
