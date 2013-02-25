@@ -1336,6 +1336,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Related operation is currently in progress. Please try again later.")
     String ACTION_TYPE_FAILED_OBJECT_LOCKED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. This template is currently in use to create VM ${VmName}.")
+    String ACTION_TYPE_FAILED_TEMPLATE_IS_USED_FOR_CREATE_VM();
+
     @DefaultStringValue("Bond attached to vlan, remove bonds vlan first")
     String NETWORK_BOND_HAVE_ATTACHED_VLANS();
 

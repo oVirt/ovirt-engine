@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.bll;
 
+import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -14,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -205,5 +207,37 @@ public class CommandBaseTest {
         when(command.getEntityOldName()).thenReturn("foo");
         when(command.getEntityNewName()).thenReturn(null);
         command.logRenamedEntity();
+    }
+
+    @Test
+    public void testExtractVariableDeclarationsForStaticMsgs() {
+        VdcActionParametersBase parameterMock = mock(VdcActionParametersBase.class);
+        CommandBase<VdcActionParametersBase>command = new CommandBaseDummy(parameterMock);
+        List<String> msgs = Arrays.asList(
+                "ACTION_TYPE_FAILED_TEMPLATE_IS_USED_FOR_CREATE_VM",
+                "IRS_FAILED_RETRIEVING_SNAPSHOT_INFO");
+
+        assertTrue("extractVariableDeclarations didn't return the same static messages",
+                CollectionUtils.isEqualCollection(msgs, command.extractVariableDeclarations(msgs)));
+    }
+
+    @Test
+    public void testExtractVariableDeclarationsForDynamicMsgs() {
+        VdcActionParametersBase parameterMock = mock(VdcActionParametersBase.class);
+        CommandBase<VdcActionParametersBase>command = new CommandBaseDummy(parameterMock);
+        String msg1_1 = "ACTION_TYPE_FAILED_TEMPLATE_IS_USED_FOR_CREATE_VM";
+        String msg1_2 = "$VmName Vm1";
+        String msg2   = "IRS_FAILED_CREATING_SNAPSHOT";
+        String msg3_1 = "ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION";
+        String msg3_2 = "$VmName Vm2";
+        String msg3_3 = "$SnapshotName Snapshot";
+        List<String> appendedMsgs = Arrays.asList(
+                new StringBuilder().append(msg1_1).append(msg1_2).toString(),
+                msg2,
+                new StringBuilder().append(msg3_1).append(msg3_2).append(msg3_3).toString());
+        List<String> extractedMsgs = Arrays.asList(msg1_1, msg1_2, msg2, msg3_1, msg3_2, msg3_3);
+
+        assertTrue("extractVariableDeclarations didn't extract the variables as expected",
+                CollectionUtils.isEqualCollection(extractedMsgs, command.extractVariableDeclarations(appendedMsgs)));
     }
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1502,12 +1503,32 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                     commandLock = lock;
                 } else {
                     log.infoFormat("Failed to Acquire Lock to object {0}", lock);
-                    getReturnValue().getCanDoActionMessages().addAll(lockAcquireResult.getSecond());
+                    getReturnValue().getCanDoActionMessages()
+                    .addAll(extractVariableDeclarations(lockAcquireResult.getSecond()));
                     return false;
                 }
             }
         }
         return true;
+    }
+
+    /**
+     * This method gets {@link Iterable} of strings that might contain
+     * variable declarations inside them, and return a new List in which
+     * every variable declaration is extracted to a separate string in
+     * order to conform the convention of the can-do-action messages.
+     * for example:
+     * "ACTION_TYPE_FAILED_TEMPLATE_IS_USED_FOR_CREATE_VM$VmName MyVm"
+     * will be splited to 2 strings:
+     * "ACTION_TYPE_FAILED_TEMPLATE_IS_USED_FOR_CREATE_VM" and "$VmName MyVm"
+     */
+    protected List<String> extractVariableDeclarations(Iterable<String> appendedCanDoMsgs) {
+        final List<String> result = new ArrayList<String>();
+        Iterator<String> iter = appendedCanDoMsgs.iterator();
+        while(iter.hasNext()) {
+            result.addAll(Arrays.asList(iter.next().split("(?=\\$)")));
+        }
+        return result;
     }
 
     private EngineLock buildLock() {

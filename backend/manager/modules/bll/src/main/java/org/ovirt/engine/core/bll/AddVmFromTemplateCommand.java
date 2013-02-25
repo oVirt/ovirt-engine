@@ -14,8 +14,10 @@ import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @LockIdNameAttribute(isReleaseAtEndOfExecute = false)
@@ -42,8 +44,15 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
         if (parentLocks != null) {
             locks.putAll(parentLocks);
         }
-        locks.put(getVmTemplateId().toString(), LockMessagesMatchUtil.TEMPLATE);
+        locks.put(getVmTemplateId().toString(),
+                new Pair<String, String>(LockingGroup.TEMPLATE.name(), createTemplateSharedLockMessage()));
         return locks;
+    }
+
+    private String createTemplateSharedLockMessage() {
+        return new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_IS_USED_FOR_CREATE_VM.name())
+                .append(String.format("$VmName %1$s", getVmName()))
+                .toString();
     }
 
     @Override
