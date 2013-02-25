@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -35,7 +36,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -302,7 +302,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 getParameters().getMasterVm().isSmartcardEnabled(),
                 getParameters().getMasterVm().isDeleteProtected(),
                 getParameters().getMasterVm().getTunnelMigration(),
-                getParameters().getMasterVm().getVncKeyboardLayout()));
+                getParameters().getMasterVm().getVncKeyboardLayout(),
+                getParameters().getMasterVm().getMinAllocatedMem()));
         getVmTemplate().setAutoStartup(getParameters().getMasterVm().isAutoStartup());
         getVmTemplate().setPriority(getParameters().getMasterVm().getPriority());
         getVmTemplate().setDefaultDisplayType(getParameters().getMasterVm().getDefaultDisplayType());

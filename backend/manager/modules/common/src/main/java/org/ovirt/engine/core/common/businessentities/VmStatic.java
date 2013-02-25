@@ -33,9 +33,6 @@ public class VmStatic extends VmBase {
      */
     private int diskSize;
 
-    @EditableField
-    private int minAllocatedMem;
-
     @EditableOnVmStatusField
     private String customProperties;
 
@@ -87,7 +84,8 @@ public class VmStatic extends VmBase {
                 vmStatic.isSmartcardEnabled(),
                 vmStatic.isDeleteProtected(),
                 vmStatic.getTunnelMigration(),
-                vmStatic.getVncKeyboardLayout());
+                vmStatic.getVncKeyboardLayout(),
+                vmStatic.getMinAllocatedMem());
         setName(vmStatic.getName());
         vmtGuid = vmStatic.getVmtGuid();
         setCustomProperties(vmStatic.getCustomProperties());
@@ -96,7 +94,6 @@ public class VmStatic extends VmBase {
         setDefaultDisplayType(vmStatic.getDefaultDisplayType());
         setDedicatedVmForVds(vmStatic.getDedicatedVmForVds());
         setMigrationSupport(vmStatic.getMigrationSupport());
-        setMinAllocatedMem(vmStatic.getMinAllocatedMem());
     }
 
     public String getCustomProperties() {
@@ -135,6 +132,7 @@ public class VmStatic extends VmBase {
         return !isInitialized();
     }
 
+    @Override
     @Size(min = 1, max = BusinessEntitiesDefinitions.VM_NAME_SIZE, groups = { Default.class, ImportClonedEntity.class })
     @ValidI18NName(message = "ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS",
             groups = { CreateEntity.class, UpdateEntity.class, ImportClonedEntity.class })
@@ -156,17 +154,6 @@ public class VmStatic extends VmBase {
 
     public void setInitialized(boolean value) {
         initialized = value;
-    }
-
-    public int getMinAllocatedMem() {
-        if (minAllocatedMem > 0) {
-            return minAllocatedMem;
-        }
-        return getMemSizeMb();
-    }
-
-    public void setMinAllocatedMem(int value) {
-        minAllocatedMem = value;
     }
 
     @Override
@@ -226,5 +213,14 @@ public class VmStatic extends VmBase {
     public void setUseHostCpuFlags(boolean useHostCpuFlags) {
         this.useHostCpuFlags = useHostCpuFlags;
     }
+
+    @Override
+    public int getMinAllocatedMem() {
+        if (super.getMinAllocatedMem() > 0) {
+            return super.getMinAllocatedMem();
+        }
+        return getMemSizeMb();
+    }
+
 
 }

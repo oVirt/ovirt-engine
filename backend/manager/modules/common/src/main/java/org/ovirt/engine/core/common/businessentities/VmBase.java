@@ -193,6 +193,9 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         message = "VALIDATION.VM.INVALID_KEYBOARD_LAYOUT")
     private String vncKeyboardLayout;
 
+    @EditableField
+    private int minAllocatedMem;
+
     public VmBase(Guid id,
             Guid vdsGroupId,
             VmOsType os,
@@ -222,7 +225,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             boolean smartcardEnabled,
             boolean deleteProtected,
             Boolean tunnelMigration,
-            String vncKeyboardLayout) {
+            String vncKeyboardLayout,
+            int minAllocatedMem) {
         super();
         this.id = id;
         this.vdsGroupId = vdsGroupId;
@@ -253,6 +257,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.deleteProtected = deleteProtected;
         this.tunnelMigration = tunnelMigration;
         this.vncKeyboardLayout = vncKeyboardLayout;
+        this.minAllocatedMem = minAllocatedMem;
         setQuotaId(quotaId);
     }
 
@@ -712,6 +717,14 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
 
     public void setName(String value) {
         this.name = value;
+    }
+
+    public int getMinAllocatedMem() {
+        return minAllocatedMem;
+    }
+
+    public void setMinAllocatedMem(int value) {
+        minAllocatedMem = value;
     }
 
 }

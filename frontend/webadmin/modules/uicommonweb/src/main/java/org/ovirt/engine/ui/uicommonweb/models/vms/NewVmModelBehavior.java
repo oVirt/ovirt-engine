@@ -4,12 +4,12 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -171,7 +171,13 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
 
             InitPriority(template.getPriority());
             InitStorageDomains();
-            UpdateMinAllocatedMemory();
+
+            // use min. allocated memory from the template, if specified
+            if (template.getMinAllocatedMem() == 0) {
+                UpdateMinAllocatedMemory();
+            } else {
+                getModel().getMinAllocatedMemory().setEntity(template.getMinAllocatedMem());
+            }
         }
     }
 
@@ -209,8 +215,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
     public void UpdateMinAllocatedMemory()
     {
         VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
-        if (cluster == null)
-        {
+        if (cluster == null) {
             return;
         }
 

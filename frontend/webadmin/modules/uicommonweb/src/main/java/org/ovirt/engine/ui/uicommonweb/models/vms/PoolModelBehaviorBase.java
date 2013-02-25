@@ -195,7 +195,13 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
             InitPriority(vmBase.getPriority());
             InitStorageDomains();
-            UpdateMinAllocatedMemory();
+
+            // use min. allocated memory from the template, if specified
+            if (vmBase.getMinAllocatedMem() == 0) {
+                UpdateMinAllocatedMemory();
+            } else {
+                getModel().getMinAllocatedMemory().setEntity(vmBase.getMinAllocatedMem());
+            }
         }
     }
 

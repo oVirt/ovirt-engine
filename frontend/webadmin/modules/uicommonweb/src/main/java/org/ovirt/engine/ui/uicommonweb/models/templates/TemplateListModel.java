@@ -15,13 +15,13 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -508,6 +508,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         template.setDescription((String) model.getDescription().getEntity());
         template.setDomain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
         template.setMemSizeMb((Integer) model.getMemSize().getEntity());
+        template.setMinAllocatedMem(((Integer) model.getMinAllocatedMemory().getEntity()));
         template.setVdsGroupId(((VDSGroup) model.getCluster().getSelectedItem()).getId());
         template.setTimeZone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? ((Map.Entry<String, String>) model.getTimeZone()
                 .getSelectedItem()).getKey()
