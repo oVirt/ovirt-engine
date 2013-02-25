@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +51,6 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.utils.Helper;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.Ticketing;
 import org.ovirt.engine.core.utils.linq.Function;
@@ -149,8 +149,8 @@ public class VdsEventListener implements IVdsEventListener {
                         List<VmStatic> vmsToMigrate =
                                 DbFacade.getInstance().getVmStaticDao().getAllWithFailbackByVds(vds.getId());
                         if (vmsToMigrate.size() > 0) {
-                            java.util.ArrayList<VdcActionParametersBase> vmToServerParametersList =
-                                    Helper.ToList(LinqUtils
+                            ArrayList<VdcActionParametersBase> vmToServerParametersList =
+                                    new ArrayList(LinqUtils
                                             .foreach(vmsToMigrate, new Function<VmStatic, VdcActionParametersBase>() {
                                                 @Override
                                                 public VdcActionParametersBase eval(VmStatic vm) {
