@@ -38,3 +38,4 @@ target
 backend/manager/conf/engine.conf.defaults
 backend/manager/tools/engine-tools-common/src/main/shell/engine-prolog.sh
 packaging/fedora/engine-service.py
+packaging/fedora/spec/ovirt-engine.spec

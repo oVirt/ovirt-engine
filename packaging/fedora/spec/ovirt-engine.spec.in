@@ -61,7 +61,8 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	-j1 \\\
 	PACKAGE_NAME=%{name} \\\
 	RPM_VERSION=%{version} \\\
-	RPM_RELEASE_VERSION=%{release} \\\
+	RPM_RELEASE=%{release} \\\
+	DISPLAY_VERSION=%{version}-%{release} \\\
 	ENGINE_NAME=%{engine_name} \\\
 	LOCALSTATE_DIR=%{_localstatedir} \\\
 	ENGINE_STATE=%{engine_state} \\\
@@ -87,14 +88,14 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	%{?BUILD_FLAGS:BUILD_FLAGS="%{BUILD_FLAGS}"} \\\
 	%{?EXTRA_BUILD_FLAGS:EXTRA_BUILD_FLAGS="%{EXTRA_BUILD_FLAGS}"}
 
-Name: ovirt-engine
-Version: @PACKAGE_VERSION@
-Release: @PACKAGE_RELEASE@%{?release_suffix}%{?dist}
+Name: @PACKAGE_NAME@
+Version: @RPM_VERSION@
+Release: @RPM_RELEASE@%{?release_suffix}%{?dist}
 Summary: Management server for Open Virtualization
 Group: Virtualization/Management
 License: ASL 2.0
 URL: http://www.ovirt.org
-Source0: http://ovirt.org/releases/stable/src/%{name}-%{version}.tar.gz
+Source0: http://ovirt.org/releases/stable/src/@PACKAGE_NAME@-@PACKAGE_VERSION@.tar.gz
 
 BuildArch: noarch
 
