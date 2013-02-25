@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -488,7 +489,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
         List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
 
-        for (DiskImage disk : diskInfoDestinationMap.values()) {
+        Collection<DiskImage> disksList =
+                diskInfoDestinationMap.values().size() > 0 ?  diskInfoDestinationMap.values() :
+                        getVm().getDiskList();
+
+        for (DiskImage disk : disksList) {
             list.add(new QuotaStorageConsumptionParameter(
                     disk.getQuotaId(),
                     null,
