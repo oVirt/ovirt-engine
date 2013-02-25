@@ -539,7 +539,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_FAILED_CLEAR_UNKNOWN_VMS, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VM_MIGRATION_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VM_MIGRATION_ABORT, AuditLogSeverity.WARNING);
-        severities.put(AuditLogType.VM_MIGRATION_FAILED_DURING_MOVE_TO_MAINTANANCE, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.VM_MIGRATION_FAILED_DURING_MOVE_TO_MAINTENANCE, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VM_DOWN_ERROR, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VM_MIGRATION_DONE, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.VM_FAILURE, AuditLogSeverity.ERROR);

@@ -162,7 +162,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 : _isRerun ?
                         AuditLogType.VM_MIGRATION_TRYING_RERUN
                         : getVds().getStatus() == VDSStatus.PreparingForMaintenance ?
-                                AuditLogType.VM_MIGRATION_FAILED_DURING_MOVE_TO_MAINTANANCE
+                                AuditLogType.VM_MIGRATION_FAILED_DURING_MOVE_TO_MAINTENANCE
                                 : AuditLogType.VM_MIGRATION_FAILED;
     }
 

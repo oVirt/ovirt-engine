@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 public enum StoragePoolStatus implements Identifiable {
     Uninitialized,
     Up,
-    Maintanance,
+    Maintenance,
     NotOperational,
     Problematic,
     Contend;

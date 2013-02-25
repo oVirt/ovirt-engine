@@ -75,7 +75,7 @@ public class DataCenterMapper {
         switch (storagePoolStatus) {
         case Contend:
             return DataCenterStatus.CONTEND;
-        case Maintanance:
+        case Maintenance:
             return DataCenterStatus.MAINTENANCE;
         case NotOperational:
             return DataCenterStatus.NOT_OPERATIONAL;

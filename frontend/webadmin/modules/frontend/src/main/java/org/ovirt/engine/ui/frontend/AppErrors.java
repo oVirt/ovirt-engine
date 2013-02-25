@@ -94,7 +94,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Delete protection is enabled. In order to delete, disable Delete protection first.")
     String ACTION_TYPE_FAILED_DELETE_PROTECTION_ENABLED();
 
-
     @DefaultStringValue("Failed to attach VM to User.")
     String RESOURCE_MANAGER_FAILED_ATTACHING_VM_TO_USERS();
 
@@ -401,7 +400,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("CPU pinning validation failed - CPU does not exist in host.")
     String VM_PINNING_PCPU_DOES_NOT_EXIST();
 
-
     @DefaultStringValue("Cannot configure CPU pinning twice to the same vCPU.")
     String VM_PINNING_DUPLICATE_DEFINITION();
 
@@ -484,7 +482,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String ACTION_TYPE_FAILED_VDS_VM_NETWORKS();
 
     @DefaultStringValue("The following Hosts have running VMs and cannot be switched to maintenance mode: ${HostsList}.Please ensure that the following Clusters have at least one Host in UP state: ${ClustersList}.")
-    String CANNOT_MAINTANANCE_VDS_RUN_VMS_NO_OTHER_RUNNING_VDS();
+    String CANNOT_MAINTENANCE_VDS_RUN_VMS_NO_OTHER_RUNNING_VDS();
 
     @DefaultStringValue("Cannot ${action} ${type}. VM's tools version (${toolsVersion}) mismatch with the Host's (${serverVersion}) version.")
     String ACTION_TYPE_FAILED_VDS_VM_VERSION();
@@ -829,8 +827,8 @@ public interface AppErrors extends ConstantsWithLookup {
     String USER_FAILED_TO_AUTHENTICATE();
 
     @DefaultStringValue("Login failed. Client not found in kerberos database. Please verify your login information or contact the system administrator.")
-
     String USER_FAILED_TO_AUTHENTICATE_KERBEROS_ERROR();
+
     @DefaultStringValue("Login failed (Authentication Failed).\n- Please verify that the correct authentication method is used in your system.")
     String USER_FAILED_TO_AUTHENTICATION_WRONG_AUTHENTICATION_METHOD();
 
@@ -2170,7 +2168,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String ACTION_TYPE_FAILED_CAN_NOT_INCREASE_REPLICA_COUNT();
 
     @DefaultStringValue("Cannot ${action} ${type}. Replica count cannot be reduced when adding bricks.")
-    String  ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT();
+    String ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT();
 
     @DefaultStringValue("Cannot ${action} ${type}. Replica count cannot be increased by more than one.")
     String ACTION_TYPE_FAILED_CAN_NOT_INCREASE_REPLICA_COUNT_MORE_THAN_ONE();

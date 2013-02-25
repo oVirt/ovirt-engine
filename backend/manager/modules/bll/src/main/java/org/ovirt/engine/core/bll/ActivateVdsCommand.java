@@ -64,7 +64,7 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
                 vds.getName(),
                 vds.getStoragePoolName());
         try {
-            ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintananceVds, false);
+            ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintenanceVds, false);
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
                 @Override

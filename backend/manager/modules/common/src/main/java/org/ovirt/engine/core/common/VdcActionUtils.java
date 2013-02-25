@@ -30,7 +30,7 @@ public final class VdcActionUtils {
         vdsMatrix.put(
                 VDSStatus.Maintenance,
                 new HashSet<VdcActionType>(Arrays
-                        .asList(VdcActionType.MaintananceVds, VdcActionType.ClearNonResponsiveVdsVms,
+                        .asList(VdcActionType.MaintenanceVds, VdcActionType.ClearNonResponsiveVdsVms,
                                 VdcActionType.ApproveVds)));
         vdsMatrix.put(
                 VDSStatus.Up,
@@ -45,7 +45,7 @@ public final class VdcActionUtils {
                 VDSStatus.Installing,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.RemoveVds, VdcActionType.ActivateVds,
                         VdcActionType.ClearNonResponsiveVdsVms,
-                        VdcActionType.ApproveVds, VdcActionType.MaintananceVds, VdcActionType.StartVds,
+                        VdcActionType.ApproveVds, VdcActionType.MaintenanceVds, VdcActionType.StartVds,
                         VdcActionType.StopVds)));
         vdsMatrix.put(
                 VDSStatus.NonResponsive,
@@ -53,7 +53,7 @@ public final class VdcActionUtils {
                         VdcActionType.ApproveVds)));
         vdsMatrix.put(
                 VDSStatus.PreparingForMaintenance,
-                new HashSet<VdcActionType>(Arrays.asList(VdcActionType.RemoveVds, VdcActionType.MaintananceVds,
+                new HashSet<VdcActionType>(Arrays.asList(VdcActionType.RemoveVds, VdcActionType.MaintenanceVds,
                         VdcActionType.ClearNonResponsiveVdsVms,
 
                         VdcActionType.ApproveVds)));
@@ -62,31 +62,31 @@ public final class VdcActionUtils {
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.ActivateVds, VdcActionType.RemoveVds,
                         VdcActionType.ClearNonResponsiveVdsVms,
 
-                        VdcActionType.ApproveVds, VdcActionType.MaintananceVds)));
+                        VdcActionType.ApproveVds, VdcActionType.MaintenanceVds)));
         vdsMatrix.put(
                 VDSStatus.Unassigned,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.ActivateVds, VdcActionType
-                        .RemoveVds, VdcActionType.MaintananceVds,
+                        .RemoveVds, VdcActionType.MaintenanceVds,
                         VdcActionType.ClearNonResponsiveVdsVms, VdcActionType.ApproveVds)));
         vdsMatrix.put(
                 VDSStatus.Initializing,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.ActivateVds, VdcActionType.RemoveVds,
                         VdcActionType.ClearNonResponsiveVdsVms, VdcActionType.ApproveVds,
-                        VdcActionType.MaintananceVds)));
+                        VdcActionType.MaintenanceVds)));
         vdsMatrix.put(
                 VDSStatus.NonOperational,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.RemoveVds, VdcActionType.ApproveVds)));
         vdsMatrix.put(
                 VDSStatus.PendingApproval,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.UpdateVds,
-                        VdcActionType.ActivateVds, VdcActionType.MaintananceVds,
+                        VdcActionType.ActivateVds, VdcActionType.MaintenanceVds,
                         VdcActionType.AttachVdsToTag, VdcActionType.ClearNonResponsiveVdsVms)));
         vdsMatrix.put(
                 VDSStatus.InstallFailed,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.ApproveVds)));
         vdsMatrix.put(
                 VDSStatus.Connecting,
-                new HashSet<VdcActionType>(Arrays.asList(VdcActionType.MaintananceVds, VdcActionType.RemoveVds,
+                new HashSet<VdcActionType>(Arrays.asList(VdcActionType.MaintenanceVds, VdcActionType.RemoveVds,
                         VdcActionType.ActivateVds, VdcActionType.ApproveVds)));
         vdsMatrix.put(
                 VDSStatus.Down,

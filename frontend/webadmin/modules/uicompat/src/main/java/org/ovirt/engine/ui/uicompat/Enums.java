@@ -29,7 +29,7 @@ public interface Enums extends LocalizedEnums {
 
     String StorageDomainSharedStatus___Locked();
 
-    String StoragePoolStatus___Maintanance();
+    String StoragePoolStatus___Maintenance();
 
     String StoragePoolStatus___Notconfigured();
 

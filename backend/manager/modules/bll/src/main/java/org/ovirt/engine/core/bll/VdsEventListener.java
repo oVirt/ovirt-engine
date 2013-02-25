@@ -66,11 +66,11 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 public class VdsEventListener implements IVdsEventListener {
 
     @Override
-    public void vdsMovedToMaintanance(VDS vds) {
+    public void vdsMovedToMaintenance(VDS vds) {
         try {
-            MaintananceVdsCommand.ProcessStorageOnVdsInactive(vds);
+            MaintenanceVdsCommand.ProcessStorageOnVdsInactive(vds);
         } finally {
-            ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintananceVds, true);
+            ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintenanceVds, true);
         }
     }
 
@@ -110,7 +110,7 @@ public class VdsEventListener implements IVdsEventListener {
     public void vdsNonOperational(Guid vdsId, NonOperationalReason reason, boolean logCommand, boolean saveToDb,
             Guid domainId,
             Map<String, String> customLogValues) {
-        ExecutionHandler.updateSpecificActionJobCompleted(vdsId, VdcActionType.MaintananceVds, false);
+        ExecutionHandler.updateSpecificActionJobCompleted(vdsId, VdcActionType.MaintenanceVds, false);
         SetNonOperationalVdsParameters tempVar =
             new SetNonOperationalVdsParameters(vdsId, reason, customLogValues);
         tempVar.setSaveToDb(saveToDb);
@@ -121,7 +121,7 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void vdsNotResponding(final VDS vds) {
-        ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintananceVds, false);
+        ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintenanceVds, false);
         ThreadPoolUtil.execute(new Runnable() {
             @Override
             public void run() {

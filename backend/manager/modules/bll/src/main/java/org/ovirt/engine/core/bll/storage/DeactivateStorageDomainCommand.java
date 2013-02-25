@@ -167,7 +167,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 @Override
                 public Object runInTransaction() {
                     getCompensationContext().snapshotEntityStatus(getStoragePool(), getStoragePool().getstatus());
-                    getStoragePool().setstatus(StoragePoolStatus.Maintanance);
+                    getStoragePool().setstatus(StoragePoolStatus.Maintenance);
                     getStoragePoolDAO().updateStatus(getStoragePool().getId(), getStoragePool().getstatus());
                     getCompensationContext().stateChanged();
                     return null;

@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.action.ApproveVdsParameters;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
-import org.ovirt.engine.core.common.action.MaintananceNumberOfVdssParameters;
+import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -405,8 +405,8 @@ public class BackendHostResourceTest
 
     @Test
     public void testDeactivate() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.MaintananceNumberOfVdss,
-                                           MaintananceNumberOfVdssParameters.class,
+        setUriInfo(setUpActionExpectations(VdcActionType.MaintenanceNumberOfVdss,
+                                           MaintenanceNumberOfVdssParameters.class,
                                            new String[] { "VdsIdList" },
                                            new Object[] { asList(GUIDS[0]) }));
 

@@ -38,7 +38,7 @@ public class DataCenterMapperTest extends
     //The generic test does a round-trip, which would fail when there's only one-way mapping.
     public void testFromBackendToRest() {
         testStatusMapping(StoragePoolStatus.Contend, DataCenterStatus.CONTEND);
-        testStatusMapping(StoragePoolStatus.Maintanance, DataCenterStatus.MAINTENANCE);
+        testStatusMapping(StoragePoolStatus.Maintenance, DataCenterStatus.MAINTENANCE);
         testStatusMapping(StoragePoolStatus.NotOperational, DataCenterStatus.NOT_OPERATIONAL);
         testStatusMapping(StoragePoolStatus.Problematic, DataCenterStatus.PROBLEMATIC);
         testStatusMapping(StoragePoolStatus.Uninitialized, DataCenterStatus.UNINITIALIZED);

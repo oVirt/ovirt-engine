@@ -347,10 +347,10 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         storage_pool pool = DbFacade.getInstance().getStoragePoolDao()
                                 .get(domainPoolMap.getstorage_pool_id().getValue());
                         if (pool != null) {
-                            DbFacade.getInstance().getStoragePoolDao().updateStatus(pool.getId(),StoragePoolStatus.Maintanance);
-                            pool.setstatus(StoragePoolStatus.Maintanance);
+                            DbFacade.getInstance().getStoragePoolDao().updateStatus(pool.getId(),StoragePoolStatus.Maintenance);
+                            pool.setstatus(StoragePoolStatus.Maintenance);
                             ResourceManager.getInstance().getEventListener()
-                                    .storagePoolStatusChanged(pool.getId(), StoragePoolStatus.Maintanance);
+                                    .storagePoolStatusChanged(pool.getId(), StoragePoolStatus.Maintenance);
                         }
                     }
                 }

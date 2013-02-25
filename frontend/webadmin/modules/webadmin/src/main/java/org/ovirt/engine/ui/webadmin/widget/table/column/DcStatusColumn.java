@@ -12,7 +12,7 @@ public class DcStatusColumn extends WebAdminImageResourceColumn<storage_pool> {
         switch (dc.getstatus()) {
         case Contend:
             return getApplicationResources().waitImage();
-        case Maintanance:
+        case Maintenance:
             return getApplicationResources().maintenanceImage();
         case NotOperational:
         case Problematic:

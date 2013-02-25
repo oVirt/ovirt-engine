@@ -356,7 +356,7 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String VdcActionType___LoginAdminUser();
 
-	String VdcActionType___MaintananceNumberOfVdss();
+    String VdcActionType___MaintenanceNumberOfVdss();
 
 	String VdcActionType___MergeSnapshot();
 

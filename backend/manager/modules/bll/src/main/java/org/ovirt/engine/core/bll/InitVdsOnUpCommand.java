@@ -130,7 +130,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         // if no pool or pool is uninitialized or in maintenance mode no need to
         // connect any storage
         if (getStoragePool() == null || StoragePoolStatus.Uninitialized == getStoragePool().getstatus()
-                || StoragePoolStatus.Maintanance == getStoragePool().getstatus()) {
+                || StoragePoolStatus.Maintenance == getStoragePool().getstatus()) {
             returnValue = true;
             _connectStorageSucceeded = true;
             _connectPoolSucceeded = true;

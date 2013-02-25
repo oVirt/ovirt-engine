@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.action.AttachVdsToTagParameters;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
-import org.ovirt.engine.core.common.action.MaintananceNumberOfVdssParameters;
+import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -1084,11 +1084,11 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             VDS vds = (VDS) item;
             vdss.add(vds.getId());
         }
-        list.add(new MaintananceNumberOfVdssParameters(vdss, false));
+        list.add(new MaintenanceNumberOfVdssParameters(vdss, false));
 
         model.StartProgress(null);
 
-        Frontend.RunMultipleAction(VdcActionType.MaintananceNumberOfVdss, list,
+        Frontend.RunMultipleAction(VdcActionType.MaintenanceNumberOfVdss, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendMultipleActionAsyncResult result) {
@@ -1648,7 +1648,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         getApproveCommand().setIsAvailable(approveAvailability);
 
         getMaintenanceCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.CanExecute(items, VDS.class, VdcActionType.MaintananceVds));
+                && VdcActionUtils.CanExecute(items, VDS.class, VdcActionType.MaintenanceVds));
 
         getRestartCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.CanExecute(items, VDS.class, VdcActionType.RestartVds) && isAllPMEnabled);

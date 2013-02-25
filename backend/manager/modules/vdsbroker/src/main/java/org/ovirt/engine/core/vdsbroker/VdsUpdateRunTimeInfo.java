@@ -427,7 +427,7 @@ public class VdsUpdateRunTimeInfo {
 
             if (_vds.getStatus() == VDSStatus.Maintenance) {
                 try {
-                    ResourceManager.getInstance().getEventListener().vdsMovedToMaintanance(_vds);
+                    ResourceManager.getInstance().getEventListener().vdsMovedToMaintenance(_vds);
                 } catch (RuntimeException ex) {
                     log.errorFormat("Host encounter a problem moving to maintenance mode, probably error during disconnecting it from pool {0}. The Host will stay in Maintenance",
                             ex.getMessage());
@@ -506,11 +506,11 @@ public class VdsUpdateRunTimeInfo {
     }
 
     private void refreshVdsRunTimeInfo() {
-        boolean isVdsUpOrGoingToMaintanance = _vds.getStatus() == VDSStatus.Up
+        boolean isVdsUpOrGoingToMaintenance = _vds.getStatus() == VDSStatus.Up
                 || _vds.getStatus() == VDSStatus.PreparingForMaintenance || _vds.getStatus() == VDSStatus.Error
                 || _vds.getStatus() == VDSStatus.NonOperational;
         try {
-            if (isVdsUpOrGoingToMaintanance) {
+            if (isVdsUpOrGoingToMaintenance) {
                 // check if its time for statistics refresh
                 if (_vdsManager.getRefreshStatistics() || _vds.getStatus() == VDSStatus.PreparingForMaintenance) {
                     refreshVdsStats();
@@ -531,7 +531,7 @@ public class VdsUpdateRunTimeInfo {
                 }
                 _saveVdsDynamic = true;
             }
-            beforeFirstRefreshTreatment(isVdsUpOrGoingToMaintanance);
+            beforeFirstRefreshTreatment(isVdsUpOrGoingToMaintenance);
             refreshVmStats();
         } catch (VDSRecoveringException e) {
             // if PreparingForMaintenance and vds is in install failed keep to
@@ -885,7 +885,7 @@ public class VdsUpdateRunTimeInfo {
         return false;
     }
 
-    private void beforeFirstRefreshTreatment(boolean isVdsUpOrGoingToMaintanance) {
+    private void beforeFirstRefreshTreatment(boolean isVdsUpOrGoingToMaintenance) {
         if (_vdsManager.getbeforeFirstRefresh()) {
             boolean flagsChanged = false;
             final AtomicBoolean processHardwareCapsNeededTemp = new AtomicBoolean();
@@ -898,7 +898,7 @@ public class VdsUpdateRunTimeInfo {
             // because get capabilities is called twice on a new server in same
             // loop!
             processHardwareCapsNeeded = (processHardwareCapsNeeded) ? processHardwareCapsNeeded : flagsChanged;
-        } else if (isVdsUpOrGoingToMaintanance || _vds.getStatus() == VDSStatus.Error) {
+        } else if (isVdsUpOrGoingToMaintenance || _vds.getStatus() == VDSStatus.Error) {
             return;
         }
         AuditLogableBase logable = new AuditLogableBase(_vds.getId());

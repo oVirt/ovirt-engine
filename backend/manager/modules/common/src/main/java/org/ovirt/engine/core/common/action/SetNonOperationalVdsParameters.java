@@ -5,7 +5,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.compat.Guid;
 
-public class SetNonOperationalVdsParameters extends MaintananceVdsParameters {
+public class SetNonOperationalVdsParameters extends MaintenanceVdsParameters {
     private static final long serialVersionUID = -2719283555117621122L;
 
     private boolean privateSaveToDb;

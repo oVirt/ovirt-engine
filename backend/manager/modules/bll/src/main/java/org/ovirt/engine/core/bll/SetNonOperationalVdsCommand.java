@@ -19,7 +19,7 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
  * This command will try to migrate all the vds vms (if needed) and move the vds
  * to Non-Operational state
  */
-public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameters> extends MaintananceVdsCommand<T> {
+public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameters> extends MaintenanceVdsCommand<T> {
 
     public SetNonOperationalVdsCommand(T parameters) {
         super(parameters);

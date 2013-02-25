@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.action.ApproveVdsParameters;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
-import org.ovirt.engine.core.common.action.MaintananceNumberOfVdssParameters;
+import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -147,8 +147,8 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     @Override
     public Response deactivate(Action action) {
-        return doAction(VdcActionType.MaintananceNumberOfVdss,
-                        new MaintananceNumberOfVdssParameters(asList(guid), false),
+        return doAction(VdcActionType.MaintenanceNumberOfVdss,
+                        new MaintenanceNumberOfVdssParameters(asList(guid), false),
                         action);
     }
 
