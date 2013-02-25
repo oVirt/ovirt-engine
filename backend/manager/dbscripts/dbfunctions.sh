@@ -30,7 +30,7 @@ execute_file () {
     local ret_instead_exit=${5}
     # tuples_only - supress header (column names) and footer  (rows affected) from output.
     # ON_ERROR_STOP - stop on error.
-    local cmdline="psql --pset=tuples_only=on --set ON_ERROR_STOP=1"
+    local cmdline="psql -w --pset=tuples_only=on --set ON_ERROR_STOP=1"
     cmdline="${cmdline} --file=${filename} "
 
     if [[ -n "${dbname}" ]]; then
@@ -157,10 +157,10 @@ run_post_upgrade() {
     custom_materialized_views_file="upgrade/post_upgrade/custom/create_materialized_views.sql"
     if [ -f ${custom_materialized_views_file} ]; then
         echo "running custom materialized views from ${custom_materialized_views_file} ..."
-        psql -U ${USERNAME} --pset=tuples_only=on  --set ON_ERROR_STOP=1 -h ${SERVERNAME} -p ${PORT} -f "${custom_materialized_views_file}" ${DATABASE} > /dev/null
+        psql -w -U ${USERNAME} --pset=tuples_only=on  --set ON_ERROR_STOP=1 -h ${SERVERNAME} -p ${PORT} -f "${custom_materialized_views_file}" ${DATABASE} > /dev/null
         if [ $? -ne 0 ] ; then
             #drop all custom views
-            psql -U ${USERNAME} -h ${SERVERNAME} -p ${PORT} -c "select DropAllCustomMaterializedViews();" ${DATABASE} > /dev/null
+            psql -w -U ${USERNAME} -h ${SERVERNAME} -p ${PORT} -c "select DropAllCustomMaterializedViews();" ${DATABASE} > /dev/null
             echo "Illegal syntax in custom Materialized Views, Custom Materialized Views were dropped."
         fi
     fi
@@ -224,17 +224,17 @@ set_version() {
 
 get_current_version() {
     echo "select version from schema_version where current = true order by id LIMIT 1;" |
-                    psql -U ${USERNAME} --pset=tuples_only=on ${DATABASE} -h ${SERVERNAME} -p ${PORT}
+                    psql -w -U ${USERNAME} --pset=tuples_only=on ${DATABASE} -h ${SERVERNAME} -p ${PORT}
 }
 
 get_installed_version() {
     local cheksum=${1}
     echo "select version from schema_version where checksum = '${cheksum}' and state = 'INSTALLED';" |
-                    psql -U ${USERNAME} --pset=tuples_only=on ${DATABASE} -h ${SERVERNAME} -p ${PORT}
+                    psql -w -U ${USERNAME} --pset=tuples_only=on ${DATABASE} -h ${SERVERNAME} -p ${PORT}
 }
 
 get_last_installed_id() {
-    echo "select max(id) from schema_version where state in ('INSTALLED','SKIPPED')" | psql -U ${USERNAME} --pset=tuples_only=on ${DATABASE} -h ${SERVERNAME} -p ${PORT}
+    echo "select max(id) from schema_version where state in ('INSTALLED','SKIPPED')" | psql -w -U ${USERNAME} --pset=tuples_only=on ${DATABASE} -h ${SERVERNAME} -p ${PORT}
 }
 set_last_version() {
     id=$(get_last_installed_id)
@@ -243,7 +243,7 @@ set_last_version() {
 }
 
 get_db_time(){
-    echo "select now();" | psql -U ${USERNAME} --pset=tuples_only=on ${DATABASE} -h ${SERVERNAME} -p ${PORT}
+    echo "select now();" | psql -w -U ${USERNAME} --pset=tuples_only=on ${DATABASE} -h ${SERVERNAME} -p ${PORT}
 }
 
 # gets a directory and required depth and return all sql & sh files
@@ -363,7 +363,7 @@ run_upgrade_files() {
                 CMD="insert into schema_version(version,script,checksum,installed_by,started_at,ended_at,state,current,comment)
                      values (trim('$ver'),'$file','$checksum','${USERNAME}',
                      cast(trim('$before') as timestamp),cast(trim('$after') as timestamp),'$state',false,'$comment');"
-                psql -U ${USERNAME} --pset=tuples_only=on -h ${SERVERNAME} -p ${PORT} -c "${CMD}" ${DATABASE} > /dev/null
+                psql -w -U ${USERNAME} --pset=tuples_only=on -h ${SERVERNAME} -p ${PORT} -c "${CMD}" ${DATABASE} > /dev/null
             fi
         done
         set_last_version
@@ -446,7 +446,7 @@ query_locked_entities() {
    if [ "${object_type}" = "vm" ]; then
        CMD="select vm_name as vm_name from vm_static a ,vm_dynamic b
             where a.vm_guid = b.vm_guid and status = ${IMAGE_LOCKED};"
-       psql -c "${CMD}" -U ${USERNAME} -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
+       psql -w -c "${CMD}" -U ${USERNAME} -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
        CMD="select vm_name as vm_name , image_group_id as disk_id
             from images a,vm_static b,vm_device c
             where a.image_group_id = c.device_id and b.vm_guid = c.vm_id and
@@ -454,11 +454,11 @@ query_locked_entities() {
             entity_type ilike 'VM' and
             image_group_id in
             (select device_id from vm_device where is_plugged);"
-       psql -c "${CMD}" -U ${USERNAME} -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
+       psql -w -c "${CMD}" -U ${USERNAME} -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
    elif [ "${object_type}" = "template" ]; then
        CMD="select vm_name as template_name from vm_static
                   where template_status = ${TEMPLATE_LOCKED};"
-       psql -c "${CMD}" -U ${USERNAME} -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
+       psql -w -c "${CMD}" -U ${USERNAME} -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
        CMD="select vm_name as template_name, image_group_id as disk_id
             from images a,vm_static b,vm_device c
             where a.image_group_id = c.device_id and b.vm_guid = c.vm_id and
@@ -466,14 +466,14 @@ query_locked_entities() {
             entity_type ilike 'TEMPLATE' and
             image_group_id in
             (select device_id from vm_device where is_plugged);"
-       psql -c "${CMD}" -U ${USERNAME} -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
+       psql -w -c "${CMD}" -U ${USERNAME} -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
    elif [ "${object_type}" = "disk" ]; then
        CMD="select vm_id as entity_id,disk_id
             from base_disks a ,images b, vm_device c
             where a.disk_id = b.image_group_id and
                   b.image_group_id = c.device_id and
                   imagestatus = ${LOCKED} and is_plugged;"
-       psql -c "${CMD}" -U ${USERNAME} -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
+       psql -w -c "${CMD}" -U ${USERNAME} -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
    fi
 }
 

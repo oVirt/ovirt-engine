@@ -385,6 +385,7 @@ class DB():
                 "-h", SERVER_NAME,
                 "-p", SERVER_PORT,
                 "-d", basedefs.DB_TEMPLATE,
+                "-w",
                 "-f", self.sqlfile,
             ]
             output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_RESTORE_DB, envDict=utils.getPgEnv())
@@ -841,6 +842,7 @@ def deployDbAsyncTasks(dbName=basedefs.DB_NAME):
         "-h", SERVER_NAME,
         "-p", SERVER_PORT,
         "-f", basedefs.FILE_DB_ASYNC_TASKS,
+        "-w",
         "-d", dbName,
     ]
 

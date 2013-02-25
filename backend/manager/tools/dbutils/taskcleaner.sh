@@ -101,7 +101,7 @@ caution() {
 }
 
 # Install taskcleaner procedures
-psql -U ${USERNAME} -h ${SERVERNAME} -p ${PORT} -f ./taskcleaner_sp.sql ${DATABASE} > /dev/null
+psql -w -U ${USERNAME} -h ${SERVERNAME} -p ${PORT} -f ./taskcleaner_sp.sql ${DATABASE} > /dev/null
 status=$?
 if [ ${status} -ne 0 ]; then
     exit ${status}
@@ -232,7 +232,7 @@ else
         CMD1="SELECT ${FIELDS} FROM GetAllFromasync_tasks();"
 fi
 
-psql -U ${USERNAME} -h ${SERVERNAME} -p ${PORT} -c "${CMD1}${CMD2}" -x ${DATABASE}
+psql -w -U ${USERNAME} -h ${SERVERNAME} -p ${PORT} -c "${CMD1}${CMD2}" -x ${DATABASE}
 status=$?
 popd>/dev/null
 exit ${status}

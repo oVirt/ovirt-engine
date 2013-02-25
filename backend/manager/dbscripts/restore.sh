@@ -68,7 +68,7 @@ if [ "${res}" =  "${DATABASE}" ]; then
 fi
 
 echo "Restore of database $DATABASE from $FILE started..."
-psql  -h ${SERVERNAME} -p ${PORT} -U ${USERNAME} -f ${FILE}
+psql -w -h ${SERVERNAME} -p ${PORT} -U ${USERNAME} -f ${FILE}
 
 if [ $? -eq 0 ];then
     echo "Restore of database $DATABASE from $FILE completed."

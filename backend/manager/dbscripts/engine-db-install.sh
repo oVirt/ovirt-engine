@@ -97,7 +97,7 @@ PSQL_BIN=/usr/bin/psql
 
 # Update PSQL BIN to include .pgpass environment variable, host and port values
 ENGINE_PGPASS=${ENGINE_PGPASS:-/etc/ovirt-engine/.pgpass}
-PSQL="${PSQL_BIN} -h $DB_HOST -p $DB_PORT"
+PSQL="${PSQL_BIN} -w -h $DB_HOST -p $DB_PORT"
 
 if [[ "x${REMOTE_INSTALL}" == "xremote" ]]
 then

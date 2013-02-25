@@ -505,6 +505,7 @@ def execRemoteSqlCommand(userName, dbHost, dbPort, dbName, sqlQuery, failOnError
         "-p", dbPort,
         "-U", userName,
         "-d", dbName,
+        "-w",
         "-c", sqlQuery,
     ]
     return execCmd(cmdList=cmd, failOnError=failOnError, msg=errMsg, envDict=getPgEnv())
@@ -880,6 +881,7 @@ def restoreDB(user, host, port, backupFile):
         "-p", port,
         "-U", user,
         "-d", basedefs.DB_POSTGRES,
+        "-w",
         "-f", backupFile,
     ]
 
@@ -1065,6 +1067,7 @@ def clearDbConnections(dbName):
     cmd = [
         basedefs.EXEC_PSQL,
         "-U", getDbAdminUser(),
+        "-w",
         "-c", query,
     ]
     execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_CONNECTIONS_BLOCK, envDict=getPgEnv())
@@ -1082,6 +1085,7 @@ def clearDbConnections(dbName):
             "-p", getDbPort(),
             "-U", getDbAdminUser(),
             "-d", basedefs.DB_TEMPLATE,
+            "-w",
             "-c", version_query,
         ]
     out, rc = execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_POSTGRESQL, envDict=getPgEnv())
@@ -1095,6 +1099,7 @@ def clearDbConnections(dbName):
     cmd = [
         basedefs.EXEC_PSQL,
         "-U", getDbAdminUser(),
+        "-w",
         "-c", query,
     ]
     execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_CONNECTIONS_CLEAR, envDict=getPgEnv())
@@ -1108,6 +1113,7 @@ def listTempDbs():
         "-U", getDbAdminUser(),
         "-h", getDbHostName(),
         "-p", getDbPort(),
+        "-w",
         "--list",
     ]
     output, rc = execCmd(cmdList=cmd, msg=output_messages.ERR_DB_TEMP_LIST, envDict=getPgEnv())

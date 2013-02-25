@@ -55,7 +55,7 @@ DEBUG () {
 validate_db_fks() {
    local fix_it=${1}
    CMD="select * from fn_db_validate_fks(${fix_it});"
-   psql --pset=tuples_only=on --set ON_ERROR_STOP=1 -U ${USERNAME} -c "${CMD}" -h "${SERVERNAME}" -p "${PORT}" "${DATABASE}"
+   psql -w --pset=tuples_only=on --set ON_ERROR_STOP=1 -U ${USERNAME} -c "${CMD}" -h "${SERVERNAME}" -p "${PORT}" "${DATABASE}"
 }
 
 FIXIT=false
@@ -75,7 +75,7 @@ while getopts hs:d:u:p:l:fv option; do
 done
 
 # Install fkvalidator procedures
-psql -U ${USERNAME} -h ${SERVERNAME} -p ${PORT} -f ./fkvalidator_sp.sql ${DATABASE} > /dev/null
+psql -w -U ${USERNAME} -h ${SERVERNAME} -p ${PORT} -f ./fkvalidator_sp.sql ${DATABASE} > /dev/null
 
 if [ "${FIXIT}" = "true" ]; then
     echo "Caution, this operation should be used with care. Please contact support prior to running this command"
