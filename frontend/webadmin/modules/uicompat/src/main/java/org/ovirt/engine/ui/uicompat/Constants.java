@@ -1238,14 +1238,11 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Could not retrieve LUNs, please check your storage.")
     String couldNotRetrieveLUNsLunsFailure();
 
-    @DefaultStringValue("a kernel parameter argument")
-    String kernelInvalid();
+    @DefaultStringValue("If kernel parameters are specified, kernel path must be specified as well.")
+    String kernelParamsInvalid();
 
-    @DefaultStringValue("or")
-    String or();
-
-    @DefaultStringValue("an initrd path")
-    String inetdInvalid();
+    @DefaultStringValue("If initrd path is specified, kernel path must be specified as well.")
+    String initrdPathInvalid();
 
     @DefaultStringValue("Allocation can be modified only when importing a single VM")
     String allocCanBeModifiedOnlyWhenImportSingleVm();

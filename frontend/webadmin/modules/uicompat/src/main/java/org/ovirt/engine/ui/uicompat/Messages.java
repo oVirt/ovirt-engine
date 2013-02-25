@@ -60,9 +60,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("This suffix will cause a name collision with another cloned Template: {0}.")
     String suffixCauseToClonedTemplateNameCollision(String templateName);
 
-    @DefaultMessage("When {0} {1} {2} is used, kernel path must be non-empty")
-    String invalidPath(String kernel, String or, String inetd);
-
     @DefaultMessage("Create operation failed. Domain {0} already exists in the system.")
     String createFailedDomainAlreadyExistStorageMsg(String storageName);
 

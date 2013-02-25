@@ -48,6 +48,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.PoolNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
+import org.ovirt.engine.ui.uicompat.Constants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -1895,8 +1896,7 @@ public class UnitVmModel extends Model {
         }
     }
 
-    public boolean Validate()
-    {
+    public boolean Validate() {
         getDataCenter().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getCluster().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getMemSize().ValidateEntity(new IValidation[] { new ByteSizeValidation() });
@@ -1913,8 +1913,7 @@ public class UnitVmModel extends Model {
                 new IntegerValidation(1, behavior.maxCpus),
                 new TotalCpuCoresComposableValidation() });
 
-        if (getOSType().getIsValid())
-        {
+        if (getOSType().getIsValid()) {
             VmOsType osType = (VmOsType) getOSType().getSelectedItem();
             getName().ValidateEntity(
                     new IValidation[] {
@@ -1956,58 +1955,28 @@ public class UnitVmModel extends Model {
             getCdImage().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         }
 
-        getKernel_path().setIsValid(true);
-        getKernel_parameters().setIsValid(true);
-        getInitrd_path().setIsValid(true);
-        if (getKernel_path().getEntity() == null) {
-            getKernel_path().setEntity(""); //$NON-NLS-1$
-        }
-        if (getKernel_parameters().getEntity() == null) {
-            getKernel_parameters().setEntity(""); //$NON-NLS-1$
-        }
-        if (getInitrd_path().getEntity() == null) {
-            getInitrd_path().setEntity(""); //$NON-NLS-1$
-        }
-
-        if (isLinuxOS) {
+        if (getIsLinuxOS()) {
             getKernel_path().ValidateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
             getInitrd_path().ValidateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
             getKernel_parameters().ValidateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
 
-            String kernelPath = (String) getKernel_path().getEntity();
-            String initrdPath = (String) getInitrd_path().getEntity();
-            String kernelParams = (String) getKernel_parameters().getEntity();
+            // initrd path and kernel params require kernel path to be filled
+            if (StringHelper.isNullOrEmpty((String) getKernel_path().getEntity())) {
+                final Constants constants = ConstantsManager.getInstance().getConstants();
 
-            if ((kernelParams.length() > 0 || initrdPath.length() > 0) && kernelPath.length() == 0) {
-                boolean kernelParamInvalid = false;
-                boolean inetdPathInvalid = false;
-
-                if (kernelParams.length() > 0) {
-                    getKernel_parameters().setIsValid(false);
-                    kernelParamInvalid = true;
-                }
-                if (initrdPath.length() > 0) {
+                if (!StringHelper.isNullOrEmpty((String) getInitrd_path().getEntity())) {
+                    getInitrd_path().getInvalidityReasons().add(constants.initrdPathInvalid());
                     getInitrd_path().setIsValid(false);
-                    inetdPathInvalid = true;
+                    getKernel_path().getInvalidityReasons().add(constants.initrdPathInvalid());
+                    getKernel_path().setIsValid(false);
                 }
 
-                String msg =
-                        ConstantsManager.getInstance()
-                                .getMessages()
-                                .invalidPath(kernelParamInvalid ? ConstantsManager.getInstance()
-                                        .getConstants()
-                                        .kernelInvalid() : "", //$NON-NLS-1$
-                                        kernelParamInvalid && inetdPathInvalid ? ConstantsManager.getInstance()
-                                                .getConstants()
-                                                .or() : "", //$NON-NLS-1$
-                                        inetdPathInvalid ? ConstantsManager.getInstance()
-                                                .getConstants()
-                                                .inetdInvalid() : ""); //$NON-NLS-1$
-
-                getKernel_path().setIsValid(false);
-                getInitrd_path().getInvalidityReasons().add(msg);
-                getKernel_parameters().getInvalidityReasons().add(msg);
-                getKernel_path().getInvalidityReasons().add(msg);
+                if (!StringHelper.isNullOrEmpty((String) getKernel_parameters().getEntity())) {
+                    getKernel_parameters().getInvalidityReasons().add(constants.kernelParamsInvalid());
+                    getKernel_parameters().setIsValid(false);
+                    getKernel_path().getInvalidityReasons().add(constants.kernelParamsInvalid());
+                    getKernel_path().setIsValid(false);
+                }
             }
         }
 
@@ -2036,7 +2005,8 @@ public class UnitVmModel extends Model {
                 && getNumOfMonitors().getIsValid() && getDomain().getIsValid() && getUsbPolicy().getIsValid()
                 && getTimeZone().getIsValid() && getOSType().getIsValid() && getCdImage().getIsValid()
                 && getKernel_path().getIsValid()
-                && getKernel_parameters().getIsValid() && getInitrd_path().getIsValid()
+                && getInitrd_path().getIsValid()
+                && getKernel_parameters().getIsValid()
                 && behavior.Validate()
                 && customPropertySheetValid && getQuota().getIsValid();
 

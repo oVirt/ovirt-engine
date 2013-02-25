@@ -2,12 +2,15 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NoTrimmingWhitespacesValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.Constants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -586,83 +589,56 @@ public class RunOnceModel extends Model
         getIsSysprepEnabled().setEntity(getIsWindowsOS() && getReinitialize());
     }
 
-    public boolean Validate()
-    {
+    public boolean Validate() {
         getIsoImage().setIsValid(true);
-        if ((Boolean) getAttachIso().getEntity())
-        {
+        if ((Boolean) getAttachIso().getEntity()) {
             getIsoImage().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         }
 
         getFloppyImage().setIsValid(true);
-        if ((Boolean) getAttachFloppy().getEntity())
-        {
+        if ((Boolean) getAttachFloppy().getEntity()) {
             getFloppyImage().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         }
 
-        getKernel_path().setIsValid(true);
-        getKernel_parameters().setIsValid(true);
-        getInitrd_path().setIsValid(true);
-        if (getKernel_path().getEntity() == null)
-        {
-            getKernel_path().setEntity(""); //$NON-NLS-1$
-        }
-        if (getKernel_parameters().getEntity() == null)
-        {
-            getKernel_parameters().setEntity(""); //$NON-NLS-1$
-        }
-        if (getInitrd_path().getEntity() == null)
-        {
-            getInitrd_path().setEntity(""); //$NON-NLS-1$
-        }
-
-        //getCustomProperties().ValidateEntity(new IValidation[] { new CustomPropertyValidation(this.getCustomPropertiesKeysList()) });
         boolean customPropertyValidation = getCustomPropertySheet().validate();
 
-        if (getIsLinuxOS()
-                && ((((String) getKernel_parameters().getEntity()).length() > 0 || ((String) getInitrd_path().getEntity()).length() > 0) && ((String) getKernel_path().getEntity()).length() == 0))
-        {
-            boolean kernelParamInvalid = false;
-            boolean inetdPathInvalid = false;
-            if (((String) getKernel_parameters().getEntity()).length() > 0)
-            {
-                getKernel_parameters().setIsValid(false);
-                kernelParamInvalid = true;
-            }
-            if (((String) getInitrd_path().getEntity()).length() > 0)
-            {
-                getInitrd_path().setIsValid(false);
-                inetdPathInvalid = true;
-            }
+        if (getIsLinuxOS()) {
+            getKernel_path().ValidateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
+            getInitrd_path().ValidateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
+            getKernel_parameters().ValidateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
 
-            String msg =
-                    ConstantsManager.getInstance()
-                            .getMessages()
-                            .invalidPath(kernelParamInvalid ? ConstantsManager.getInstance()
-                                    .getConstants()
-                                    .kernelInvalid() : "", //$NON-NLS-1$
-                                    kernelParamInvalid && inetdPathInvalid ? ConstantsManager.getInstance()
-                                            .getConstants()
-                                            .or() : "", //$NON-NLS-1$
-                                    inetdPathInvalid ? ConstantsManager.getInstance()
-                                            .getConstants()
-                                            .inetdInvalid() : ""); //$NON-NLS-1$
-            getKernel_path().setIsValid(false);
-            getInitrd_path().getInvalidityReasons().add(msg);
-            getKernel_parameters().getInvalidityReasons().add(msg);
-            getKernel_path().getInvalidityReasons().add(msg);
+            // initrd path and kernel params require kernel path to be filled
+            if (StringHelper.isNullOrEmpty((String) getKernel_path().getEntity())) {
+                final Constants constants = ConstantsManager.getInstance().getConstants();
+
+                if (!StringHelper.isNullOrEmpty((String) getInitrd_path().getEntity())) {
+                    getInitrd_path().getInvalidityReasons().add(constants.initrdPathInvalid());
+                    getInitrd_path().setIsValid(false);
+                    getKernel_path().getInvalidityReasons().add(constants.initrdPathInvalid());
+                    getKernel_path().setIsValid(false);
+                }
+
+                if (!StringHelper.isNullOrEmpty((String) getKernel_parameters().getEntity())) {
+                    getKernel_parameters().getInvalidityReasons().add(constants.kernelParamsInvalid());
+                    getKernel_parameters().setIsValid(false);
+                    getKernel_path().getInvalidityReasons().add(constants.kernelParamsInvalid());
+                    getKernel_path().setIsValid(false);
+                }
+            }
         }
 
-        if (getIsAutoAssign().getEntity() != null && (Boolean) getIsAutoAssign().getEntity() == false)
-        {
+        if (getIsAutoAssign().getEntity() != null && (Boolean) getIsAutoAssign().getEntity() == false) {
             getDefaultHost().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         }
-        else
-        {
+        else {
             getDefaultHost().setIsValid(true);
         }
 
-        return getIsoImage().getIsValid() && getFloppyImage().getIsValid() && getKernel_path().getIsValid()
+        return getIsoImage().getIsValid()
+                && getFloppyImage().getIsValid()
+                && getKernel_path().getIsValid()
+                && getInitrd_path().getIsValid()
+                && getKernel_parameters().getIsValid()
                 && getDefaultHost().getIsValid()
                 && customPropertyValidation;
     }
