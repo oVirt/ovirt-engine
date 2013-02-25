@@ -2209,7 +2209,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("This action is not allowed when Engine is preparing for maintenance.")
     String ENGINE_IS_RUNNING_IN_PREPARE_MODE();
 
-    @DefaultStringValue("$type Exteral Event.")
+    @DefaultStringValue("$type External Event.")
     String VAR__TYPE__EXTERNAL_EVENT();
 
     @DefaultStringValue(".Cannot ${action} ${type}. Illegal Origin for External Event : oVirt")
