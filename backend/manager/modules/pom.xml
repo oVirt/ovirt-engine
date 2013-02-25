@@ -15,7 +15,6 @@
 
   <modules>
     <module>compat</module>
-    <module>engineencryptutils</module>
     <module>utils</module>
     <module>common</module>
     <module>dal</module>

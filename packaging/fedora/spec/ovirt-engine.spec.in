@@ -601,7 +601,6 @@ fi
 # Jar files:
 %{engine_java}/bll.jar
 %{engine_java}/dal.jar
-%{engine_java}/engineencryptutils.jar
 %{engine_java}/scheduler.jar
 %{engine_java}/searchbackend.jar
 %{engine_java}/vdsbroker.jar
@@ -614,7 +613,6 @@ fi
 %{_mavenpomdir}/JPP.%{name}-tools.pom
 %{_mavenpomdir}/JPP.%{name}-bll.pom
 %{_mavenpomdir}/JPP.%{name}-dal.pom
-%{_mavenpomdir}/JPP.%{name}-engineencryptutils.pom
 %{_mavenpomdir}/JPP.%{name}-scheduler.pom
 %{_mavenpomdir}/JPP.%{name}-searchbackend.pom
 %{_mavenpomdir}/JPP.%{name}-vdsbroker.pom

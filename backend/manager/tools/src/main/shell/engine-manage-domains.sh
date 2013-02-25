@@ -103,7 +103,6 @@ apache-commons-logging \
 log4j \
 ovirt-engine/common \
 ovirt-engine/compat \
-ovirt-engine/engineencryptutils \
 ovirt-engine/tools \
 ovirt-engine/utils \
 postgresql-jdbc \

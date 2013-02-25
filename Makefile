@@ -75,7 +75,6 @@ ARTIFACTS = \
 	compat \
 	dal \
 	tools \
-	engineencryptutils \
 	genericapi \
 	interface-common-jaxrs \
 	manager \
@@ -101,7 +100,6 @@ OWN_JAR_FIXUPS = \
 	$(PKG_EAR_DIR)/lib/engine-common,common \
 	$(PKG_EAR_DIR)/lib/engine-compat,compat \
 	$(PKG_EAR_DIR)/lib/engine-dal,dal \
-	$(PKG_EAR_DIR)/lib/engine-encryptutils,engineencryptutils \
 	$(PKG_EAR_DIR)/lib/engine-tools,tools \
 	$(PKG_EAR_DIR)/lib/engine-utils,utils \
 	$(PKG_EAR_DIR)/lib/engine-vdsbroker,vdsbroker \

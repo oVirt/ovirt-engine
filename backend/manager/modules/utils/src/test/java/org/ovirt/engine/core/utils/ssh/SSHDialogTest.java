@@ -33,7 +33,7 @@ import org.junit.Test;
 
 import org.apache.commons.lang.SystemUtils;
 
-import org.ovirt.engine.core.engineencryptutils.OpenSSHUtils;
+import org.ovirt.engine.core.utils.crypt.OpenSSHUtils;
 
 /*
  * Test properties

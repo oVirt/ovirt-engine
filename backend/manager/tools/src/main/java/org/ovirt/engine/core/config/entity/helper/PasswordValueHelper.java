@@ -12,7 +12,7 @@ import org.ovirt.engine.core.config.EngineConfigLogic;
 import org.ovirt.engine.core.config.db.ConfigDAO;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 import org.ovirt.engine.core.config.entity.ConfigKeyFactory;
-import org.ovirt.engine.core.engineencryptutils.EncryptionUtils;
+import org.ovirt.engine.core.utils.crypt.EncryptionUtils;
 
 public class PasswordValueHelper implements ValueHelper {
     private static ConfigDAO configDAO;

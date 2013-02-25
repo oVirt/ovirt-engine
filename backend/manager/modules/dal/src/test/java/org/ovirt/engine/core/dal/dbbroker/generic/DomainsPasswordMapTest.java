@@ -5,7 +5,7 @@ import java.net.URLDecoder;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.ovirt.engine.core.engineencryptutils.EncryptionUtils;
+import org.ovirt.engine.core.utils.crypt.EncryptionUtils;
 
 public class DomainsPasswordMapTest {
 

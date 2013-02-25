@@ -46,13 +46,6 @@
 
     <dependency>
       <groupId>${engine.groupId}</groupId>
-      <artifactId>engineencryptutils</artifactId>
-      <version>${engine.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>${engine.groupId}</groupId>
       <artifactId>utils</artifactId>
       <version>${engine.version}</version>
       <scope>provided</scope>

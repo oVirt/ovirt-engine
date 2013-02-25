@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
-import org.ovirt.engine.core.engineencryptutils.OpenSSHUtils;
+import org.ovirt.engine.core.utils.crypt.OpenSSHUtils;
 
 /**
  * Send PKI resource.

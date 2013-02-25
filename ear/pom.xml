@@ -195,12 +195,6 @@
 
             <jarModule>
               <groupId>org.ovirt.engine.core</groupId>
-              <artifactId>engineencryptutils</artifactId>
-              <bundleFileName>engine-encryptutils.jar</bundleFileName>
-            </jarModule>
-
-            <jarModule>
-              <groupId>org.ovirt.engine.core</groupId>
               <artifactId>vdsbroker</artifactId>
               <bundleFileName>engine-vdsbroker.jar</bundleFileName>
             </jarModule>
