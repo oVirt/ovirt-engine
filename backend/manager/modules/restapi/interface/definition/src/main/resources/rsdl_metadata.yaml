@@ -1746,8 +1746,8 @@ actions:
     body:
       parameterType: Host
       signatures:
-      - mandatoryArguments: {host.name: 'xs:string', host.address: 'xs:string', host.root_password: 'xs:string', host.display.address: 'xs:string', host.cluster.id|name: 'xs:string'}
-        optionalArguments: {host.port: 'xs:int', host.storage_manager.priority: 'xs:int', host.power_management.type: 'xs:string',
+      - mandatoryArguments: {host.name: 'xs:string', host.address: 'xs:string', host.root_password: 'xs:string', host.cluster.id|name: 'xs:string'}
+        optionalArguments: {host.port: 'xs:int', host.display.address: 'xs:string', host.storage_manager.priority: 'xs:int', host.power_management.type: 'xs:string',
           host.power_management.enabled: 'xs:boolean', host.power_management.address: 'xs:string', host.power_management.user_name: 'xs:string',
           host.power_management.password: 'xs:string', host.power_management.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}, host.power_management.pm_proxy--COLLECTION: {propietary : 'xs:string'}, host.power_management.agents.agent--COLLECTION:{type: 'xs:string', address: 'xs:string', user_name: 'xs:string', password: 'xs:string', options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}}, host.reboot_after_installation: 'xs:boolean'}
     urlparams: {}
