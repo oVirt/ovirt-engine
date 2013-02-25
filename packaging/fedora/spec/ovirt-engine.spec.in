@@ -100,68 +100,25 @@ Source0: http://ovirt.org/releases/stable/src/@PACKAGE_NAME@-@PACKAGE_VERSION@.t
 BuildArch: noarch
 
 # Build time requirements:
-BuildRequires: apache-commons-beanutils
-BuildRequires: apache-commons-codec
-BuildRequires: apache-commons-collections
-BuildRequires: apache-commons-configuration
-BuildRequires: apache-commons-jxpath
-BuildRequires: apache-commons-lang
-BuildRequires: apache-commons-logging
-BuildRequires: apache-commons-compress
-BuildRequires: apache-mina
-BuildRequires: apache-sshd
-BuildRequires: bea-stax-api
 BuildRequires: dos2unix
-BuildRequires: jackson
-BuildRequires: hibernate-commons-annotations
-BuildRequires: hibernate-jpa-2.0-api
-BuildRequires: hibernate-validator
-BuildRequires: jakarta-commons-httpclient
 BuildRequires: java-devel
-BuildRequires: javamail
-BuildRequires: javassist
-BuildRequires: jboss-annotations-1.1-api
-BuildRequires: jboss-ejb-3.1-api
-BuildRequires: jboss-logging
-BuildRequires: jboss-interceptors-1.1-api
-BuildRequires: jboss-servlet-3.0-api
 BuildRequires: jpackage-utils
-BuildRequires: jsch
-BuildRequires: log4j
 BuildRequires: make
 BuildRequires: maven
-BuildRequires: postgresql-jdbc
-BuildRequires: quartz
-BuildRequires: resteasy
-BuildRequires: springframework-instrument
-BuildRequires: springframework-jdbc
-BuildRequires: spring-ldap
-BuildRequires: xmlrpc3-client
 BuildRequires: unzip
-BuildRequires: ovirt-host-deploy-java
 
 # Run time requirements (most of these requirements should be
 # moved to the subpackages):
-Requires: bea-stax-api
 Requires: bind-utils
 Requires: cracklib-python
-Requires: geronimo-validation
-Requires: hibernate-commons-annotations
-Requires: hibernate-jpa-2.0-api
-Requires: hibernate-validator
 Requires: httpd
 Requires: java-1.7.0-openjdk >= 1:1.7.0.9-2.3.3.2
-Requires: jakarta-commons-httpclient
 Requires: java
-Requires: jboss-interceptors-1.1-api
-Requires: jboss-logging
 Requires: jpackage-utils
-Requires: log4j
 Requires: mod_ssl
 Requires: ntp
 Requires: openssl
 Requires: policycoreutils-python
-Requires: postgresql-jdbc
 Requires: python-configobj
 Requires: python-cheetah
 Requires: ovirt-host-deploy-java
@@ -209,39 +166,9 @@ virtualization infrastructure for Servers and Desktops.
 Summary: Engine core of %{product_name_short}
 Group: Virtualization/Management
 Requires: %{name} = %{version}-%{release}
-Requires: apache-commons-beanutils
-Requires: apache-commons-codec
-Requires: apache-commons-collections
-Requires: apache-commons-lang
-Requires: apache-commons-compress
-Requires: apache-mina
-Requires: apache-sshd
-Requires: bea-stax-api
-Requires: dom4j
-Requires: geronimo-validation
-Requires: jackson
-Requires: jakarta-commons-httpclient
 Requires: java
-Requires: javassist
-Requires: jboss-interceptors-1.1-api
-Requires: jsch
-Requires: objectweb-asm
 Requires: openssh
 Requires: openssl
-Requires: picketbox
-Requires: quartz
-Requires: slf4j
-Requires: springframework
-Requires: springframework-aop
-Requires: springframework-beans
-Requires: springframework-context
-Requires: springframework-instrument
-Requires: springframework-jdbc
-Requires: springframework-tx
-Requires: spring-ldap
-Requires: ws-commons-util
-Requires: xmlrpc3-client
-Requires: xmlrpc3-common
 
 
 %description backend
@@ -310,14 +237,6 @@ The web administration interface to %{product_name_short}
 Summary: Common libraries for  %{product_name_short} Tools
 Group: Virtualization/Management
 Requires: %{name} = %{version}-%{release}
-Requires: apache-commons-collections
-Requires: apache-commons-logging
-Requires: apache-commons-lang
-Requires: apache-commons-codec
-Requires: apache-commons-configuration
-Requires: apache-commons-jxpath
-Requires: classpathx-mail
-Requires: log4j
 
 %description tools
 The common libraries used by %{product_name_short} Tools
@@ -393,95 +312,32 @@ do
 done
 %endif
 
-# Remove the jar files that are not needed:
-while read lib_path
+# Replace jar files in the ear with links to their actual locations:
+while read ear_path jar_name
 do
-  rm -rf %{buildroot}%{engine_ear}/lib/${lib_path}*.jar
+  rm -rf %{buildroot}%{engine_ear}/${ear_path}*.jar
+  ln -s %{engine_java}/${jar_name}.jar %{buildroot}%{engine_ear}/${ear_path}.jar
 done <<'.'
-activation
-antlr
-aopalliance
-c3p0
-ejb3-persistence
-jaxb-api
-jaxb-impl
-jboss-interceptors-api_1.1_spec
-stax-api
-xml-apis
+engine-bll bll
+engine-scheduler scheduler
+lib/common common
+lib/dal dal
+lib/utils utils
+lib/vdsbroker vdsbroker
+lib/searchbackend searchbackend
 .
 
-# Attention!
-# spring-asm *IS* required on rhel-6
-rm -rf %{buildroot}%{engine_ear}/lib/spring-asm*.jar
-
-# Then for the system jar files (using build-classpath):
-while read jar_name lib_path
+# Replace jar files in the RESTAPI web application with links to their
+# actual locations:
+while read jar_name
 do
-  rm -rf %{buildroot}%{engine_ear}/lib/${lib_path}*.jar
-  ln -s `build-classpath ${jar_name}` %{buildroot}%{engine_ear}/lib/${lib_path}.jar
+  rm -rf %{buildroot}%{restapi_war}/WEB-INF/lib/${jar_name}*.jar
+  ln -s %{engine_java}/${jar_name}.jar %{buildroot}%{restapi_war}/WEB-INF/lib/${jar_name}.jar
 done <<'.'
-apache-mina/mina-core mina-core
-apache-sshd/sshd-core sshd-core
-commons-beanutils commons-beanutils
-commons-codec commons-codec
-commons-collections commons-collections
-commons-httpclient commons-httpclient
-commons-lang commons-lang
-commons-compress commons-compress
-dom4j dom4j
-geronimo-validation validation-api
-hibernate/hibernate-commons-annotations hibernate-commons-annotations
-hibernate-validator hibernate-validator
-jsch jsch
-objectweb-asm/asm-all asm-all
-quartz quartz
-slf4j/api slf4j-api
-springframework/spring-aop spring-aop
-springframework/spring-beans spring-beans
-springframework/spring-context spring-context
-springframework/spring-core spring-core
-springframework/spring-expression spring-expression
-springframework/spring-instrument spring-instrument
-springframework/spring-jdbc spring-jdbc
-springframework/spring-tx spring-tx
-spring-ldap/spring-ldap-core spring-ldap-core
-ws-commons-util ws-commons-util
-xmlrpc3-client xmlrpc-client
-xmlrpc3-common xmlrpc-common
-otopi/otopi otopi
-ovirt-host-deploy/ovirt-host-deploy ovirt-host-deploy
-.
-
-# Replace jar files in the RESTAPI web application with links to ther
-# actual locations, first for jar files from this package, as for these
-# can't use build-classpath:
-while read jar_name lib_path
-do
-  rm -rf %{buildroot}%{restapi_war}/WEB-INF/lib/${lib_path}*.jar
-  ln -s %{engine_java}/${jar_name}.jar %{buildroot}%{restapi_war}/WEB-INF/lib/${lib_path}.jar
-done <<'.'
-interface-common-jaxrs interface-common-jaxrs
-restapi-definition restapi-definition
-restapi-jaxrs restapi-jaxrs
-restapi-types restapi-types
-.
-
-# Remove the jar files that are not needed:
-while read lib_path
-do
-  rm -rf %{buildroot}%{restapi_war}/WEB-INF/lib/${lib_path}*.jar
-done <<'.'
-commons-codec
-log4j
-.
-
-# Then for the system jar files (using build-classpath):
-while read jar_name lib_path
-do
-  rm -rf %{buildroot}%{restapi_war}/WEB-INF/lib/${lib_path}*.jar
-  ln -s `build-classpath ${jar_name}` %{buildroot}%{restapi_war}/WEB-INF/lib/${lib_path}.jar
-done <<'.'
-snakeyaml snakeyaml
+interface-common-jaxrs
+restapi-definition
+restapi-jaxrs
+restapi-types
 .
 
 # Install the systemd files:

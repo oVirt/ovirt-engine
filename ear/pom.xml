@@ -56,6 +56,13 @@
       <type>jar</type>
     </dependency>
 
+    <dependency>
+      <groupId>org.ovirt.engine.core</groupId>
+      <artifactId>searchbackend</artifactId>
+      <version>${engine.version}</version>
+      <type>jar</type>
+    </dependency>
+
     <!-- WARS -->
     <dependency>
       <groupId>org.ovirt.engine.core</groupId>
@@ -157,8 +164,10 @@
           <!-- params common to ear:ear and ear:generate-application-xml -->
           <defaultLibBundleDir>lib</defaultLibBundleDir>
           <workDirectory>${earDirectory}</workDirectory>
-          <version>1.4</version>
+          <fileNameMapping>no-version</fileNameMapping>
+
           <!-- J2EE version -->
+          <version>1.4</version>
 
           <!-- params for ear:ear -->
           <resourcesDir>${basedir}/target/classes</resourcesDir>
@@ -168,37 +177,6 @@
           <displayName>ENGINE</displayName>
 
           <modules>
-            <!-- ** JARs -->
-            <jarModule>
-              <groupId>org.ovirt.engine.core</groupId>
-              <artifactId>common</artifactId>
-              <bundleFileName>engine-common.jar</bundleFileName>
-            </jarModule>
-
-            <jarModule>
-              <groupId>org.ovirt.engine.core</groupId>
-              <artifactId>compat</artifactId>
-              <bundleFileName>engine-compat.jar</bundleFileName>
-            </jarModule>
-
-            <jarModule>
-              <groupId>org.ovirt.engine.core</groupId>
-              <artifactId>dal</artifactId>
-              <bundleFileName>engine-dal.jar</bundleFileName>
-            </jarModule>
-
-            <jarModule>
-              <groupId>org.ovirt.engine.core</groupId>
-              <artifactId>utils</artifactId>
-              <bundleFileName>engine-utils.jar</bundleFileName>
-            </jarModule>
-
-            <jarModule>
-              <groupId>org.ovirt.engine.core</groupId>
-              <artifactId>vdsbroker</artifactId>
-              <bundleFileName>engine-vdsbroker.jar</bundleFileName>
-            </jarModule>
-
             <!-- ** WARs -->
             <webModule>
               <groupId>org.ovirt.engine.core</groupId>
@@ -266,34 +244,26 @@
             <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
           </archive>
 
+          <!-- Add the META-INF directory, all the EJB and web
+               applications, and our own dependencies from the
+               lib directory, but none of the external dependencies,
+               as they are already included as references in the
+               manifest: -->
+          <packagingIncludes>
+            *.jar/**,
+            *.war/**,
+            META-INF/**,
+            lib/common.jar/**,
+            lib/compat.jar/**,
+            lib/dal.jar/**,
+            lib/searchbackend.jar/**,
+            lib/utils.jar/**,
+            lib/vdsbroker.jar/**,
+          </packagingIncludes>
+
         </configuration>
       </plugin>
 
-      <plugin>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-quartz-jar</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.quartz-scheduler</groupId>
-                  <artifactId>quartz</artifactId>
-                  <version>${quartz.version}</version>
-                  <type>jar</type>
-                  <overWrite>true</overWrite>
-                  <destFileName>quartz-${quartz.version}.jar</destFileName>
-                  <outputDirectory>${project.build.directory}/quartz</outputDirectory>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 
@@ -321,34 +291,13 @@
                 <configuration>
                   <tasks>
                     <property name="deployment.dir" location="${engine.deploymentDir}"/>
-                    <echo>*** Copying updated files from target${file.separator}${project.build.finalName}${file.separator} to ${deployment.dir}${file.separator}...</echo>
-                    <copy todir="${deployment.dir}" verbose="true">
-                      <fileset dir="${basedir}/target/${project.build.finalName}"/>
-                    </copy>
+                    <echo>*** Copying updated files to ${deployment.dir}${file.separator}...</echo>
+                    <unjar src="${project.build.directory}/${project.build.finalName}.ear" dest="${engine.deploymentDir}"/>
                     <property name="deployment.descriptor.file" location="${deployment.dir}/META-INF/application.xml"/>
                     <echo>*** Touching ${deployment.descriptor.file} to force redeployment of ${engine.deploymentName}...</echo>
                     <touch file="${deployment.descriptor.file}"/>
                     <echo>*** Touching ${engine.deploymentName}.dodeploy to force deployment of ${engine.deploymentName}...</echo>
                     <touch file="${jbossServer}/deployments/${engine.deploymentName}.dodeploy"/>
-                  </tasks>
-                </configuration>
-
-                <goals>
-                  <goal>run</goal>
-                </goals>
-              </execution>
-
-              <execution>
-                <id>deploy-ear-meta-inf</id>
-                <phase>package</phase>
-
-                <configuration>
-                  <tasks>
-                    <unjar src="${project.build.directory}/${project.build.finalName}.ear" dest="${engine.deploymentDir}">
-                      <patternset>
-                        <include name="META-INF/**"/>
-                      </patternset>
-                    </unjar>
                   </tasks>
                 </configuration>
 
