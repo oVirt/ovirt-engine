@@ -101,7 +101,7 @@ public class BackendApplication extends Application {
         // Lookup the backend bean:
         try {
             Context initial = new InitialContext();
-            backend = (BackendLocal) initial.lookup("java:global/engine/engine-bll/Backend!org.ovirt.engine.core.common.interfaces.BackendLocal");
+            backend = (BackendLocal) initial.lookup("java:global/engine/bll/Backend!org.ovirt.engine.core.common.interfaces.BackendLocal");
         }
         catch (Exception exception) {
             logger.error("Can't find reference to backend bean.", exception);

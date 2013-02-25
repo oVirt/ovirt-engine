@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module xmlns="urn:jboss:module:1.0" name="org.ovirt.engine.core.utils">
+
+   <resources>
+     <resource-root path="utils.jar"/>
+   </resources>
+
+   <dependencies>
+      <module name="javax.api"/>
+      <module name="javax.ejb.api"/>
+      <module name="javax.interceptor.api"/>
+      <module name="javax.servlet.api"/>
+      <module name="javax.transaction.api"/>
+      <module name="org.apache.commons.codec"/>
+      <module name="org.apache.commons.lang"/>
+      <module name="org.apache.commons.logging"/>
+      <module name="org.apache.log4j"/>
+      <module name="org.codehaus.jackson.jackson-core-asl"/>
+      <module name="org.codehaus.jackson.jackson-mapper-asl"/>
+      <module name="org.ovirt.engine.core.common"/>
+      <module name="org.ovirt.engine.core.compat"/>
+      <module name="org.ovirt.engine.core.dependencies"/>
+   </dependencies>
+
+</module>

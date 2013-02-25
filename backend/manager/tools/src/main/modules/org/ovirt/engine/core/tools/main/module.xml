@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module xmlns="urn:jboss:module:1.0" name="org.ovirt.engine.core.tools">
+
+   <resources>
+     <resource-root path="tools.jar"/>
+   </resources>
+
+   <dependencies>
+      <module name="javax.api"/>
+      <module name="javax.mail.api"/>
+      <module name="org.apache.commons.configuration"/>
+      <module name="org.apache.commons.lang"/>
+      <module name="org.apache.commons.logging"/>
+      <module name="org.apache.log4j"/>
+      <module name="org.ovirt.engine.core.common"/>
+      <module name="org.ovirt.engine.core.compat"/>
+      <module name="org.ovirt.engine.core.dependencies"/>
+      <module name="org.ovirt.engine.core.utils"/>
+      <module name="org.postgresql"/>
+      <module name="sun.jdk"/>
+   </dependencies>
+
+</module>

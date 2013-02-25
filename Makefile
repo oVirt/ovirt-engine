@@ -46,7 +46,6 @@ MAN_DIR=$(DATAROOT_DIR)/man
 DATA_DIR=$(DATAROOT_DIR)/$(ENGINE_NAME)
 MAVENPOM_DIR=$(DATAROOT_DIR)/maven-poms
 JAVA_DIR=$(DATAROOT_DIR)/java
-PKG_JAVA_DIR=$(JAVA_DIR)/$(ENGINE_NAME)
 PKG_SYSCONF_DIR=$(SYSCONF_DIR)/$(ENGINE_NAME)
 PKG_PKI_DIR=$(SYSCONF_DIR)/pki/$(ENGINE_NAME)
 PKG_EAR_DIR=$(DATA_DIR)/engine.ear
@@ -88,22 +87,6 @@ ARTIFACTS = \
 	searchbackend \
 	utils \
 	vdsbroker \
-	$(NULL)
-
-# avoid duplicate jars, remove 1st component
-# link to 2nd component
-# no convention yet...
-OWN_JAR_FIXUPS = \
-	$(PKG_EAR_DIR)/engine-bll,bll \
-	$(PKG_EAR_DIR)/engine-genericapi,genericapi \
-	$(PKG_EAR_DIR)/engine-scheduler,scheduler \
-	$(PKG_EAR_DIR)/lib/engine-common,common \
-	$(PKG_EAR_DIR)/lib/engine-compat,compat \
-	$(PKG_EAR_DIR)/lib/engine-dal,dal \
-	$(PKG_EAR_DIR)/lib/engine-tools,tools \
-	$(PKG_EAR_DIR)/lib/engine-utils,utils \
-	$(PKG_EAR_DIR)/lib/engine-vdsbroker,vdsbroker \
-	$(PKG_EAR_DIR)/lib/searchbackend,searchbackend \
 	$(NULL)
 
 # Don't use any of the bultin rules, in particular don't use the rule
@@ -255,7 +238,6 @@ create_dirs:
 install_artifacts:
 	@echo "*** Deploying EAR to $(DESTDIR)"
 	install -dm 755 $(DESTDIR)$(PKG_EAR_DIR)
-	install -dm 755 $(DESTDIR)$(PKG_JAVA_DIR)
 	install -dm 755 $(DESTDIR)$(MAVENPOM_DIR)
 
 	X=`find "$(MAVEN_OUTPUT_DIR)" -name engine-server-ear-$(POM_VERSION).ear` && unzip "$$X" -d "$(DESTDIR)$(PKG_EAR_DIR)"
@@ -268,16 +250,6 @@ install_artifacts:
 		fi; \
 		JAR=`echo "$${POM}" | sed 's/\.pom/.jar/'`; \
 		install -p -m 644 "$${POM}" "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-$${artifact_id}.pom"; \
-		[ -f "$${JAR}" ] && install -p -m 644 "$${JAR}" "$(DESTDIR)$(PKG_JAVA_DIR)/$${artifact_id}.jar"; \
-	done
-
-	# Replace jar files in the ear with links to their actuals
-	# locations
-	for jar_line in $(OWN_JAR_FIXUPS); do \
-		path=`echo $${jar_line} | sed 's/,.*//'`; \
-		jar=`echo $${jar_line} | sed 's/.*,//'`; \
-		rm -rf "$(DESTDIR)$${path}"*.jar; \
-		ln -s "$(PKG_JAVA_DIR)/$${jar}.jar" "$(DESTDIR)$${path}.jar"; \
 	done
 
 install_setup:
@@ -412,9 +384,9 @@ install_misc:
 install_jboss_modules:
 	@echo "*** Deploying JBoss modules"
 
-	# Uncompress and install the contents of the modules archive to
+	# Uncompress and install the contents of the modules archives to
 	# the directory containing engine modules:
-	X=`find "$(MAVEN_OUTPUT_DIR)" -name "dependencies-$(APP_VERSION)*-modules.zip"` && unzip "$$X" -d "$(DESTDIR)$(PKG_JBOSS_MODULES)"
+	find "$(MAVEN_OUTPUT_DIR)" -name "*-$(APP_VERSION)*-modules.zip" -exec unzip {} -d "$(DESTDIR)$(PKG_JBOSS_MODULES)" \;
 
 install_service:
 	@echo "*** Deploying service"

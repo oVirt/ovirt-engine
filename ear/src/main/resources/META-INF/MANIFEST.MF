@@ -10,4 +10,9 @@ Dependencies: asm.asm,
  org.codehaus.jackson.jackson-mapper-asl,
  org.dom4j,
  org.hibernate.validator,
- org.ovirt.engine.core.dependencies
+ org.ovirt.engine.core.common,
+ org.ovirt.engine.core.compat,
+ org.ovirt.engine.core.dal,
+ org.ovirt.engine.core.dependencies,
+ org.ovirt.engine.core.searchbackend,
+ org.ovirt.engine.core.utils

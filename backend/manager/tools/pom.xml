@@ -18,22 +18,6 @@
   <name>oVirt Engine Tools</name>
   <description>oVirt Engine Tools</description>
 
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <additionalClasspathElements>
-            <additionalClasspathElement>${basedir}/**/src/test/java</additionalClasspathElement>
-          </additionalClasspathElements>
-          <excludes>
-            <exclude>**/*Test.java</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
   <dependencies>
 
     <dependency>
@@ -86,5 +70,28 @@
       </properties>
     </profile>
   </profiles>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <additionalClasspathElements>
+            <additionalClasspathElement>${basedir}/**/src/test/java</additionalClasspathElement>
+          </additionalClasspathElements>
+          <excludes>
+            <exclude>**/*Test.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+
+      <!-- Create the JBoss module: -->
+      <plugin>
+        <groupId>org.ovirt.engine</groupId>
+        <artifactId>jboss-modules-maven-plugin</artifactId>
+      </plugin>
+
+    </plugins>
+  </build>
 
 </project>
