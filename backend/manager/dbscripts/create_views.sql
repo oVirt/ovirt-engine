@@ -877,15 +877,6 @@ WHERE     (audit_log.processed = false);
 
 
 
-
-CREATE OR REPLACE VIEW event_subscriber_notification_methods_view
-
-AS
-SELECT     event_subscriber.subscriber_id as subscriber_id, event_subscriber.event_up_name as event_up_name, event_notification_methods.method_type as method_type
-FROM         event_notification_methods INNER JOIN
-event_subscriber ON event_notification_methods.method_id = event_subscriber.method_id;
-
-
 ----------------------------------------------
 -- Storage Pool
 ----------------------------------------------

@@ -75,21 +75,6 @@ LANGUAGE plpgsql;
 
 
 
-
-
-Create or replace FUNCTION GetAllFromevent_subscriber_notification_methods()
-RETURNS SETOF event_subscriber_notification_methods_view
-   AS $procedure$
-BEGIN
-RETURN QUERY SELECT *
-from event_subscriber_notification_methods_view;
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-
-
 ----------------------------------------------------------------
 -- [event_subscriber] Table
 --
