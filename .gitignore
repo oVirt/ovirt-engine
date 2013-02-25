@@ -45,3 +45,4 @@ __pycache__
 backend/manager/conf/engine.conf.defaults
 backend/manager/tools/src/main/shell/engine-prolog.sh
 packaging/fedora/engine-service.py
+packaging/fedora/spec/ovirt-engine.spec

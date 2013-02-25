@@ -21,10 +21,19 @@
 # information on the Apache Software Foundation, please see
 # <http://www.apache.org/>.
 
+include version.mak
+# major, minor, seq
+POM_VERSION:=$(shell cat pom.xml | grep '<engine.version>' | sed -e 's/.*>\(.*\)<.*/\1/' -e 's/-SNAPSHOT//')
+# major, minor from pom and fix
+APP_VERSION=$(shell echo $(POM_VERSION) | sed 's/\([^.]*\.[^.]\)\..*/\1/').$(FIX_RELEASE)
+RPM_VERSION=$(APP_VERSION)
+PACKAGE_VERSION=$(APP_VERSION)$(if $(MILESTONE),_$(MILESTONE))
+PACKAGE_NAME=ovirt-engine
+DISPLAY_VERSION=$(PACKAGE_VERSION)
+
 MVN=mvn
 EXTRA_BUILD_FLAGS=
 BUILD_FLAGS=-P gwt-admin,gwt-user
-PACKAGE_NAME=ovirt-engine
 ENGINE_NAME=$(PACKAGE_NAME)
 PREFIX=/usr/local
 LOCALSTATE_DIR=$(PREFIX)/var
@@ -49,23 +58,9 @@ RPMBUILD=rpmbuild
 PYTHON=python
 PYTHON_DIR:=$(shell $(PYTHON) -c "from distutils.sysconfig import get_python_lib as f;print(f())")
 
-# RPM version
-POM_VERSION:=$(shell cat pom.xml | grep '<engine.version>' | awk -F\> '{print $$2}' | awk -F\< '{print $$1}')
-APP_VERSION:=$(subst -SNAPSHOT,,$(POM_VERSION))
-RPM_VERSION:=$(shell echo $(APP_VERSION) | sed "s/-/_/")
-
-# Display version
-APP_VERSION_DISPLAY=$(APP_VERSION)
-
-# Release Version; used to create y in <x.x.x-y> numbering.
-# Should be used to create releases.
-RPM_RELEASE_VERSION=0.1.$(shell date +%Y%m%d%H%M%S)
-
-SPEC_FILE_IN=packaging/fedora/spec/ovirt-engine.spec.in
-SPEC_FILE=$(PACKAGE_NAME).spec
 OUTPUT_RPMBUILD=$(shell pwd -P)/tmp.rpmbuild
 OUTPUT_DIR=output
-TARBALL=$(PACKAGE_NAME)-$(RPM_VERSION).tar.gz
+TARBALL=$(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz
 SRPM=$(OUTPUT_DIR)/$(PACKAGE_NAME)-$(RPM_VERSION)*.src.rpm
 ARCH=noarch
 BUILD_FILE=tmp.built
@@ -113,6 +108,10 @@ ARTIFACTS = \
 	-e "s|@ENGINE_LOCK@|$(PKG_LOCK_DIR)|" \
 	-e "s|@ENGINE_CACHE@|$(PKG_CACHE_DIR)|" \
 	-e "s|@ENGINE_PID@|$(PID_DIR)/$(ENGINE_NAME).pid|" \
+	-e "s|@RPM_VERSION@|$(RPM_VERSION)|" \
+	-e "s|@RPM_RELEASE@|$(RPM_RELEASE)|" \
+	-e "s|@PACKAGE_NAME@|$(PACKAGE_NAME)|" \
+	-e "s|@PACKAGE_VERSION@|$(PACKAGE_VERSION)|" \
 	$< > $@
 
 # List of files that will be generated from templates:
@@ -120,6 +119,7 @@ GENERATED = \
 	backend/manager/conf/engine.conf.defaults \
 	backend/manager/tools/src/main/shell/engine-prolog.sh \
 	packaging/fedora/engine-service.py \
+	packaging/fedora/spec/ovirt-engine.spec \
 	$(NULL)
 
 all: \
@@ -140,7 +140,7 @@ $(BUILD_FILE):
 clean:
 	# Clean maven generated stuff:
 	$(MVN) clean $(EXTRA_BUILD_FLAGS)
-	rm -rf $(OUTPUT_RPMBUILD) $(SPEC_FILE) $(OUTPUT_DIR) $(BUILD_FILE)
+	rm -rf $(OUTPUT_RPMBUILD) $(OUTPUT_DIR) $(BUILD_FILE)
 	[ "$(MAVEN_OUTPUT_DIR_DEFAULT)" = "$(MAVEN_OUTPUT_DIR)" ] && rm -fr "$(MAVEN_OUTPUT_DIR)"
 
 	# Clean files generated from templates:
@@ -165,16 +165,18 @@ install: \
 	install_service \
 	$(NULL)
 
-tarball:
-	sed -e 's/@PACKAGE_VERSION@/$(RPM_VERSION)/g' \
-            -e 's/@PACKAGE_RELEASE@/$(RPM_RELEASE_VERSION)/g' $(SPEC_FILE_IN) > $(SPEC_FILE)
-	git ls-files | tar --files-from /proc/self/fd/0 -czf $(TARBALL) $(SPEC_FILE)
-	rm -f $(SPEC_FILE)
+packaging/fedora/spec/ovirt-engine.spec: version.mak
+
+dist:	packaging/fedora/spec/ovirt-engine.spec
+	git ls-files | tar --files-from /proc/self/fd/0 -czf $(TARBALL) packaging/fedora/spec/ovirt-engine.spec
 	@echo
 	@echo You can use $(RPMBUILD) -tb $(TARBALL) to produce rpms
 	@echo
 
-srpm:	tarball
+# legacy
+tarball:	dist
+
+srpm:	dist
 	rm -rf $(OUTPUT_RPMBUILD)
 	mkdir -p $(OUTPUT_RPMBUILD)/{SPECS,RPMS,SRPMS,SOURCES,BUILD,BUILDROOT}
 	mkdir -p $(OUTPUT_DIR)
@@ -239,7 +241,7 @@ install_artifacts:
 	X=`find "$(MAVEN_OUTPUT_DIR)" -name 'engine-server-ear-$(APP_VERSION)*'.ear` && unzip -o "$$X" -d "$(DESTDIR)$(PKG_EAR_DIR)"
 
 	for artifact_id in  $(ARTIFACTS); do \
-		POM=`find "$(MAVEN_OUTPUT_DIR)" -name "$${artifact_id}-$(APP_VERSION)*.pom"`; \
+		POM=`find "$(MAVEN_OUTPUT_DIR)" -name "$${artifact_id}-$(POM_VERSION)*.pom"`; \
 		if ! [ -f "$${POM}" ]; then \
 			echo "ERROR: Cannot find artifact $${artifact_id}"; \
 			exit 1; \
@@ -248,7 +250,7 @@ install_artifacts:
 		install -p -m 644 "$${POM}" "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-$${artifact_id}.pom"; \
 	done
 
-	sed -i "s/MYVERSION/$(RPM_VERSION)-$(RPM_RELEASE_VERSION)/" $(DESTDIR)$(PKG_EAR_DIR)/root.war/engineVersion.js
+	sed -i "s/MYVERSION/$(DISPLAY_VERSION)/" $(DESTDIR)$(PKG_EAR_DIR)/root.war/engineVersion.js
 
 install_setup:
 	@echo "*** Deploying setup executables"
@@ -385,7 +387,7 @@ install_misc:
 	install -m 644 frontend/usbfilter.txt $(DESTDIR)$(PKG_SYSCONF_DIR)
 
 	# Create a version file
-	echo $(APP_VERSION_DISPLAY) > $(DESTDIR)$(DATA_DIR)/conf/version
+	echo $(DISPLAY_VERSION) > $(DESTDIR)$(DATA_DIR)/conf/version
 
 install_jboss_modules:
 	@echo "*** Deploying JBoss modules"
