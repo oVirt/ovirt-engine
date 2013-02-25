@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
@@ -62,12 +62,12 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
     public NGuid getStorageDomainId() {
         if (_storageDomainId.equals(Guid.Empty) && getVm() != null) {
             VmHandler.updateDisksFromDb(getVm());
-            List<StorageDomainStatic> domainsInPool = DbFacade.getInstance()
-                        .getStorageDomainStaticDao().getAllForStoragePool(getVm().getStoragePoolId());
+            List<StorageDomain> domainsInPool = getStorageDomainDAO().getAllForStoragePool(getVm().getStoragePoolId());
             if (domainsInPool.size() > 0) {
-                for (StorageDomainStatic currDomain : domainsInPool) {
-                    if (currDomain.getStorageDomainType().equals(StorageDomainType.Master)
-                                || currDomain.getStorageDomainType().equals(StorageDomainType.Data)) {
+                for (StorageDomain currDomain : domainsInPool) {
+                    if ((currDomain.getStorageDomainType().equals(StorageDomainType.Master)
+                            || currDomain.getStorageDomainType().equals(StorageDomainType.Data))
+                            && currDomain.getStatus() == StorageDomainStatus.Active) {
                         _storageDomainId = currDomain.getId();
                         break;
                     }
