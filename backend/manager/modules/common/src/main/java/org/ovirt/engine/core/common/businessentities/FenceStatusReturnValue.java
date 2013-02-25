@@ -35,14 +35,10 @@ public class FenceStatusReturnValue implements Serializable {
 
     @Override
     public String toString() {
-        final String MSG = "Host Status is: ";
         final String TEST_SUCCEEDED = "Test Succeeded, ";
         final String TEST_FAILED = "Test Failed, ";
-        final String SEP = ". ";
-        final String FAILED_MESSAGE_HEADER = "The fence-agent script reported the following error: ";
-        return (getIsSucceeded()) ? TEST_SUCCEEDED + MSG + getStatus() : TEST_FAILED + MSG + getStatus() + SEP
-               + FAILED_MESSAGE_HEADER + getMessage();
 
+        return getIsSucceeded() ? TEST_SUCCEEDED + getStatus() : TEST_FAILED + getMessage();
     }
 
     public FenceStatusReturnValue() {
