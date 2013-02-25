@@ -74,17 +74,12 @@ ARTIFACTS = \
 	common \
 	compat \
 	dal \
-	engine-config \
-	engine-notifier \
-	engine-notifier-resources \
-	engine-notifier-service \
-	engine-tools-common \
+	tools \
 	engineencryptutils \
 	genericapi \
 	interface-common-jaxrs \
 	manager \
 	manager-modules \
-	manager-tools \
 	restapi-definition \
 	restapi-jaxrs \
 	restapi-parent \
@@ -107,7 +102,7 @@ OWN_JAR_FIXUPS = \
 	$(PKG_EAR_DIR)/lib/engine-compat,compat \
 	$(PKG_EAR_DIR)/lib/engine-dal,dal \
 	$(PKG_EAR_DIR)/lib/engine-encryptutils,engineencryptutils \
-	$(PKG_EAR_DIR)/lib/engine-tools-common,engine-tools-common \
+	$(PKG_EAR_DIR)/lib/engine-tools,tools \
 	$(PKG_EAR_DIR)/lib/engine-utils,utils \
 	$(PKG_EAR_DIR)/lib/engine-vdsbroker,vdsbroker \
 	$(PKG_EAR_DIR)/lib/searchbackend,searchbackend \
@@ -142,7 +137,7 @@ OWN_JAR_FIXUPS = \
 # List of files that will be generated from templates:
 GENERATED = \
 	backend/manager/conf/engine.conf.defaults \
-	backend/manager/tools/engine-tools-common/src/main/shell/engine-prolog.sh \
+	backend/manager/tools/src/main/shell/engine-prolog.sh \
 	packaging/fedora/engine-service.py \
 	packaging/fedora/spec/ovirt-engine.spec \
 	$(NULL)
@@ -358,20 +353,20 @@ install_config:
 	@echo "*** Deploying engine-config & engine-manage-domains"
 
 	# Configuration files for the configuration tool:
-	install -m 644 backend/manager/tools/engine-config/src/main/resources/engine-config.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config/
-	install -m 644 backend/manager/tools/engine-config/src/main/resources/engine-config.*properties $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config/
-	install -m 644 backend/manager/tools/engine-config/src/main/resources/log4j.xml $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config/
+	install -m 644 backend/manager/tools/src/main/conf/engine-config.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config/
+	install -m 644 backend/manager/tools/src/main/conf/engine-config*.properties $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config/
+	install -m 644 backend/manager/tools/src/main/conf/engine-config-log4j.xml $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config/log4j.xml
 
 	# Main program for the configuration tool:
-	install -m 750 backend/manager/tools/engine-config/src/main/resources/engine-config $(DESTDIR)$(DATA_DIR)/bin/engine-config.sh
+	install -m 750 backend/manager/tools/src/main/shell/engine-config.sh $(DESTDIR)$(DATA_DIR)/bin
 	ln -s $(DATA_DIR)/bin/engine-config.sh $(DESTDIR)$(BIN_DIR)/engine-config
 
 	# Configuration files for the domain management tool:
-	install -m 644 backend/manager/modules/utils/src/main/resources/engine-manage-domains.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-manage-domains/
-	install -m 644 backend/manager/modules/utils/src/main/resources/engine-manage-domains/log4j.xml $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-manage-domains/
+	install -m 644 backend/manager/tools/src/main/conf/engine-manage-domains.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-manage-domains/
+	install -m 644 backend/manager/tools/src/main/conf/engine-manage-domains-log4j.xml $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-manage-domains/log4j.xml
 
 	# Main program for the domain management tool:
-	install -m 750 backend/manager/conf/kerberos/engine-manage-domains $(DESTDIR)$(DATA_DIR)/bin/engine-manage-domains.sh
+	install -m 750 backend/manager/tools/src/main/shell/engine-manage-domains.sh $(DESTDIR)$(DATA_DIR)/bin
 	ln -s $(DATA_DIR)/bin/engine-manage-domains.sh $(DESTDIR)$(BIN_DIR)/engine-manage-domains
 
 install_sysprep:
@@ -385,12 +380,12 @@ install_notification_service:
 	install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/notifier
 
 	# Configuration files:
-	install -m 644 backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/log4j.xml $(DESTDIR)$(PKG_SYSCONF_DIR)/notifier/
-	install -m 640 backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/notifier.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/notifier/
+	install -m 644 backend/manager/tools/src/main/conf/engine-notifier-log4j.xml $(DESTDIR)$(PKG_SYSCONF_DIR)/notifier/log4j.xml
+	install -m 640 backend/manager/tools/src/main/conf/engine-notifier.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/notifier/notifier.conf
 
 	# Main program:
-	install -m 755 backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/notifier.sh $(DESTDIR)$(DATA_DIR)/bin/engine-notifier.sh
-	install -m 755 backend/manager/tools/engine-notifier/engine-notifier-resources/src/main/resources/engine-notifierd $(DESTDIR)$(SYSCONF_DIR)/rc.d/init.d/
+	install -m 755 backend/manager/tools/src/main/shell/engine-notifier.sh $(DESTDIR)$(DATA_DIR)/bin
+	install -m 755 backend/manager/tools/src/main/shell/engine-notifier-service.sh $(DESTDIR)$(SYSCONF_DIR)/rc.d/init.d/engine-notifierd
 
 install_db_scripts:
 	@echo "*** Deploying Database scripts"
@@ -404,7 +399,7 @@ install_misc:
 	@echo "*** Copying additional files"
 
 	# Shell scripts used by several programs:
-	install -m 755 backend/manager/tools/engine-tools-common/src/main/shell/engine-prolog.sh $(DESTDIR)$(DATA_DIR)/bin
+	install -m 755 backend/manager/tools/src/main/shell/engine-prolog.sh $(DESTDIR)$(DATA_DIR)/bin
 
 	# Other misc things:
 	install -m 644 backend/manager/conf/jaas.conf $(DESTDIR)$(DATA_DIR)/conf

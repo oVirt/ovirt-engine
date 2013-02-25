@@ -183,10 +183,9 @@ Requires: %{name}-setup >= %{version}-%{release}
 # main package is installed:
 Requires: %{name}-backend = %{version}-%{release}
 Requires: %{name}-restapi = %{version}-%{release}
+Requires: %{name}-tools = %{version}-%{release}
 Requires: %{name}-genericapi = %{version}-%{release}
 Requires: %{name}-userportal = %{version}-%{release}
-Requires: %{name}-config = %{version}-%{release}
-Requires: %{name}-notification-service = %{version}-%{release}
 Requires: %{name}-dbscripts = %{version}-%{release}
 Requires: %{name}-webadmin-portal = %{version}-%{release}
 
@@ -195,6 +194,10 @@ Requires: ovirt-iso-uploader
 Requires: ovirt-image-uploader
 Requires: ovirt-log-collector
 
+# Make sure that obsolete subpackages are removed:
+Obsoletes: %{name}-notification-service
+Obsoletes: %{name}-tools-common
+Obsoletes: %{name}-config
 
 %description
 %{product_name} is a feature-rich server virtualization management
@@ -303,7 +306,7 @@ Requires: %{name} = %{version}-%{release}
 The web administration interface to %{product_name_short}
 
 
-%package tools-common
+%package tools
 Summary: Common libraries for  %{product_name_short} Tools
 Group: Virtualization/Management
 Requires: %{name} = %{version}-%{release}
@@ -313,30 +316,11 @@ Requires: apache-commons-lang
 Requires: apache-commons-codec
 Requires: apache-commons-configuration
 Requires: apache-commons-jxpath
+Requires: classpathx-mail
 Requires: log4j
 
-%description tools-common
+%description tools
 The common libraries used by %{product_name_short} Tools
-
-
-%package notification-service
-Summary: Notification service for %{product_name_short} Tools
-Group: Virtualization/Management
-Requires: %{name} = %{version}-%{release}
-Requires: %{name}-tools-common = %{version}-%{release}
-Requires: classpathx-mail
-
-%description notification-service
-The notification service used by %{product_name_short}
-
-
-%package config
-Summary: Configuration tool for %{product_name_short}
-Group: Virtualization/Management
-Requires: %{name}-tools-common = %{version}-%{release}
-
-%description config
-The configuration tool for %{product_name_short}
 
 
 %package setup-plugin-allinone
@@ -546,12 +530,12 @@ fi
 %create_engine_user
 
 
-%pre notification-service
-%create_engine_user
-
-
 %pre setup
 %create_vdsm_user
+
+
+%pre tools
+%create_engine_user
 
 
 %files
@@ -617,7 +601,6 @@ fi
 # Jar files:
 %{engine_java}/bll.jar
 %{engine_java}/dal.jar
-%{engine_java}/engine-config.jar
 %{engine_java}/engineencryptutils.jar
 %{engine_java}/scheduler.jar
 %{engine_java}/searchbackend.jar
@@ -628,12 +611,9 @@ fi
 %{_mavenpomdir}/JPP.%{name}-backend.pom
 %{_mavenpomdir}/JPP.%{name}-manager.pom
 %{_mavenpomdir}/JPP.%{name}-manager-modules.pom
-%{_mavenpomdir}/JPP.%{name}-manager-tools.pom
+%{_mavenpomdir}/JPP.%{name}-tools.pom
 %{_mavenpomdir}/JPP.%{name}-bll.pom
 %{_mavenpomdir}/JPP.%{name}-dal.pom
-%{_mavenpomdir}/JPP.%{name}-engine-config.pom
-%{_mavenpomdir}/JPP.%{name}-engine-notifier-resources.pom
-%{_mavenpomdir}/JPP.%{name}-engine-notifier-service.pom
 %{_mavenpomdir}/JPP.%{name}-engineencryptutils.pom
 %{_mavenpomdir}/JPP.%{name}-scheduler.pom
 %{_mavenpomdir}/JPP.%{name}-searchbackend.pom
@@ -784,27 +764,18 @@ fi
 %{engine_ear}/webadmin.war
 
 
-%files tools-common
+%files tools
 
 # Scripts:
 %{engine_data}/bin/engine-prolog.sh
-
-# Jar files:
-%{engine_java}/engine-tools-common.jar
-
-# POM files:
-%if %{install_poms}
-%{_mavenpomdir}/JPP.%{name}-engine-tools-common.pom
-%endif
-
-
-%files config
-
-# Scripts and links:
-%{_bindir}/engine-config
-%{_bindir}/engine-manage-domains
 %{engine_data}/bin/engine-config.sh
 %{engine_data}/bin/engine-manage-domains.sh
+%{engine_data}/bin/engine-notifier.sh
+%{_initddir}/engine-notifierd
+
+# Links to the scripts:
+%{_bindir}/engine-config
+%{_bindir}/engine-manage-domains
 
 # Configuration files for the configuration tool:
 %dir %{engine_etc}/engine-config
@@ -817,30 +788,23 @@ fi
 %config(noreplace) %{engine_etc}/engine-manage-domains/engine-manage-domains.conf
 %{engine_etc}/engine-manage-domains/log4j.xml
 
-
-%files notification-service
-
-# Startup scripts:
-%{engine_data}/bin/engine-notifier.sh
-%{_initddir}/engine-notifierd
-
-# Log and state directories must be owned by ovirt because the notifier service
-# runs with that user and needs to write them:
-%dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/notifier
-%dir %attr(-, %{engine_user}, %{engine_group}) %{engine_run}/notifier
-
-# Configuration files:
+# Configuration files for the notifier:
 %dir %{engine_etc}/notifier
 %config(noreplace) %attr(-, %{engine_user}, %{engine_group}) %{engine_etc}/notifier/notifier.conf
 %{engine_etc}/notifier/log4j.xml
 
 # Jar files:
-%{engine_java}/engine-notifier-service.jar
+%{engine_java}/tools.jar
 
 # POM files:
 %if %{install_poms}
-%{_mavenpomdir}/JPP.%{name}-engine-notifier.pom
+%{_mavenpomdir}/JPP.%{name}-tools.pom
 %endif
+
+# Log and state directories must be owned by ovirt because the notifier service
+# runs with that user and needs to write them:
+%dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/notifier
+%dir %attr(-, %{engine_user}, %{engine_group}) %{engine_run}/notifier
 
 
 %changelog

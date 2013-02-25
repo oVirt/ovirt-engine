@@ -19,17 +19,6 @@
       <version>1.0.0.Final</version>
    </dependency>
     <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>engine-tools-common</artifactId>
-      <version>${engine.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-configuration</groupId>
-      <artifactId>commons-configuration</artifactId>
-      <version>${commons-configuration.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils</artifactId>
       <version>1.8.2</version>
