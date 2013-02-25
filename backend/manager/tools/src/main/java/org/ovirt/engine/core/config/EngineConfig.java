@@ -45,7 +45,7 @@ public class EngineConfig {
      */
     public static void main(String... args) {
         try {
-            Logger.getRootLogger().setLevel(Level.OFF);
+            Logger.getRootLogger().setLevel(Level.DEBUG);
             getInstance().setParser(new EngineConfigCLIParser());
             getInstance().setUpAndExecute(args);
 
