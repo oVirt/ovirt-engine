@@ -30,6 +30,7 @@ public class TextCellWithTooltip extends AbstractCellWithTooltip<String> {
     // DOM element ID settings for text container element
     private String elementIdPrefix = DOM.createUniqueId();
     private String columnId;
+    private String title;
 
     // Text longer than this value will be shortened, providing tooltip with original text
     private final int maxTextLength;
@@ -44,6 +45,12 @@ public class TextCellWithTooltip extends AbstractCellWithTooltip<String> {
         if (template == null) {
             template = GWT.create(CellTemplate.class);
         }
+    }
+
+    // This is used to provide an optional tooltip text that is different from the
+    // cell value.
+    public void setTitle(String value) {
+        title = value;
     }
 
     public void setElementIdPrefix(String elementIdPrefix) {
@@ -68,11 +75,15 @@ public class TextCellWithTooltip extends AbstractCellWithTooltip<String> {
 
     @Override
     protected String getTooltip(String value) {
-        return getEscapedValue(value).asString();
+        return getEscapedValue((title != null) ? title : value).asString();
     }
 
     @Override
     protected boolean showTooltip(Element parent, String value) {
+        // Enforce tooltip when the title is explicitly set
+        if (title != null) {
+            return true;
+        }
         // Enforce tooltip when the presented text gets truncated due to maxTextLength
         SafeHtml escapedValue = getEscapedValue(value);
         SafeHtml renderedValue = getRenderedValue(escapedValue);

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common;
 
+import com.google.gwt.i18n.client.Messages.DefaultMessage;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 
 import com.google.gwt.i18n.client.Messages;
@@ -45,6 +46,9 @@ public interface CommonApplicationMessages extends Messages {
 
     @DefaultMessage("Bootable")
     String bootable();
+
+    @DefaultMessage("Last scan: {0}")
+    String lastDiskAlignment(String lastScanDate);
 
     @DefaultMessage("out of {0} VMs in pool")
     String outOfXVMsInPool(String numOfVms);

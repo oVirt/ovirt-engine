@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.disks;
 
+import com.google.gwt.i18n.client.DateTimeFormat;
+
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -92,6 +94,21 @@ public class DiskGeneralModel extends EntityModel
         }
     }
 
+    private String privateAlignment;
+
+    public String getAlignment()
+    {
+        return privateAlignment;
+    }
+
+    public void setAlignment(String value)
+    {
+        if (privateAlignment != value) {
+            privateAlignment = value;
+            onPropertyChanged(new PropertyChangedEventArgs("Alignment")); //$NON-NLS-1$
+        }
+    }
+
     private String privateQuotaName;
 
     public String getQuotaName()
@@ -173,6 +190,15 @@ public class DiskGeneralModel extends EntityModel
         setAlias(disk.getDiskAlias());
         setDescription(disk.getDiskDescription());
         setDiskId(disk.getId().toString());
+
+        if (disk.getLastAlignmentScan() != null) {
+            String lastScanDate = DateTimeFormat
+                    .getFormat("yyyy-MM-dd, HH:mm").format(disk.getLastAlignmentScan()); //$NON-NLS-1$
+            setAlignment(ConstantsManager.getInstance()
+                    .getMessages().diskAlignment(disk.getAlignment().toString(), lastScanDate));
+        } else {
+            setAlignment(disk.getAlignment().toString());
+        }
 
         if (isImage()) {
             DiskImage diskImage = (DiskImage) disk;

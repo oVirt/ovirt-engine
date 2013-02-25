@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
+import org.ovirt.engine.core.common.action.GetDiskAlignmentParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -96,6 +97,18 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         privateMoveCommand = value;
     }
 
+    private UICommand privateScanAlignmentCommand;
+
+    public UICommand getScanAlignmentCommand()
+    {
+        return privateScanAlignmentCommand;
+    }
+
+    private void setScanAlignmentCommand(UICommand value)
+    {
+        privateScanAlignmentCommand = value;
+    }
+
     private UICommand privateChangeQuotaCommand;
 
     public UICommand getChangeQuotaCommand()
@@ -164,6 +177,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         setMoveCommand(new UICommand("Move", this)); //$NON-NLS-1$
         setChangeQuotaCommand(new UICommand("changeQuota", this)); //$NON-NLS-1$
         setCopyCommand(new UICommand("Copy", this)); //$NON-NLS-1$
+        setScanAlignmentCommand(new UICommand("Check Alignment", this)); //$NON-NLS-1$
 
         updateActionAvailability();
 
@@ -286,6 +300,24 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         model.setEntity(this);
         model.init(disks);
         model.startProgress(null);
+    }
+
+    private void scanAlignment()
+    {
+        ArrayList<VdcActionParametersBase> parameterList = new ArrayList<VdcActionParametersBase>();
+
+        for (Disk disk : (ArrayList<Disk>) getSelectedItems())
+        {
+            parameterList.add(new GetDiskAlignmentParameters(disk.getId()));
+        }
+
+        Frontend.RunMultipleAction(VdcActionType.GetDiskAlignment, parameterList,
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void executed(FrontendMultipleActionAsyncResult result) {
+                    }
+                },
+                this);
     }
 
     private void changeQuota()
@@ -440,6 +472,8 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         getNewCommand().setIsExecutionAllowed(true);
         getEditCommand().setIsExecutionAllowed(disk != null && disks != null && disks.size() == 1 && !isDiskLocked);
         getRemoveCommand().setIsExecutionAllowed(disks != null && disks.size() > 0 && isRemoveCommandAvailable());
+        getScanAlignmentCommand().setIsExecutionAllowed(
+                disks != null && disks.size() > 0 && isScanAlignmentCommandAvailable());
         updateCopyAndMoveCommandAvailability(disks);
 
         ChangeQuotaModel.updateChangeQuotaActionAvailability(getItems() != null ? (List<Disk>) getItems() : null,
@@ -507,6 +541,21 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         return true;
     }
 
+    private boolean isScanAlignmentCommandAvailable() {
+        ArrayList<Disk> disks =
+                getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
+
+        for (Disk disk : disks)
+        {
+            if (disk.getDiskStorageType() == DiskStorageType.IMAGE &&
+                    ((DiskImage) disk).getImageStatus() != ImageStatus.OK) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private void cancelConfirm()
     {
         AbstractDiskModel model = (AbstractDiskModel) getWindow();
@@ -539,6 +588,10 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         else if (command == getCopyCommand())
         {
             copy();
+        }
+        else if (command == getScanAlignmentCommand())
+        {
+            scanAlignment();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
+import org.ovirt.engine.core.common.action.GetDiskAlignmentParameters;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -139,6 +140,18 @@ public class VmDiskListModel extends VmDiskListModelBase
         privateMoveCommand = value;
     }
 
+    private UICommand privateScanAlignmentCommand;
+
+    public UICommand getScanAlignmentCommand()
+    {
+        return privateScanAlignmentCommand;
+    }
+
+    private void setScanAlignmentCommand(UICommand value)
+    {
+        privateScanAlignmentCommand = value;
+    }
+
     private boolean privateIsDiskHotPlugSupported;
 
     public boolean getIsDiskHotPlugSupported()
@@ -187,6 +200,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         setPlugCommand(new UICommand("Plug", this)); //$NON-NLS-1$
         setUnPlugCommand(new UICommand("Unplug", this)); //$NON-NLS-1$
         setMoveCommand(new UICommand("Move", this)); //$NON-NLS-1$
+        setScanAlignmentCommand(new UICommand("Scan Alignment", this)); //$NON-NLS-1$
         setChangeQuotaCommand(new UICommand("changeQuota", this)); //$NON-NLS-1$
         getChangeQuotaCommand().setIsAvailable(false);
 
@@ -473,6 +487,24 @@ public class VmDiskListModel extends VmDiskListModelBase
         model.startProgress(null);
     }
 
+    private void scanAlignment()
+    {
+        ArrayList<VdcActionParametersBase> parameterList = new ArrayList<VdcActionParametersBase>();
+
+        for (Disk disk : (ArrayList<Disk>) getSelectedItems())
+        {
+            parameterList.add(new GetDiskAlignmentParameters(disk.getId()));
+        }
+
+        Frontend.RunMultipleAction(VdcActionType.GetDiskAlignment, parameterList,
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void executed(FrontendMultipleActionAsyncResult result) {
+                    }
+                },
+                this);
+    }
+
     private void cancel()
     {
         setWindow(null);
@@ -520,6 +552,8 @@ public class VmDiskListModel extends VmDiskListModelBase
 
         getMoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
                 && (isMoveCommandAvailable() || isLiveMoveCommandAvailable()));
+
+        updateGetAlignmentCommandAvailability();
 
         getPlugCommand().setIsExecutionAllowed(isPlugCommandAvailable(true));
 
@@ -623,6 +657,45 @@ public class VmDiskListModel extends VmDiskListModelBase
         return true;
     }
 
+    private void updateGetAlignmentCommandAvailability() {
+        getScanAlignmentCommand().setIsExecutionAllowed(false);
+
+        if (getSelectedItems() == null || getSelectedItems().size() != 1) {
+            return; // leave the command disabled
+        }
+
+        ArrayList<Disk> disks =
+                getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
+
+        for (Disk disk : disks)
+        {
+            if (!isImageDiskOK(disk)) {
+                return; // leave the command disabled
+            }
+        }
+
+        final VM vm = getEntity();
+
+        AsyncDataProvider.getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object target, Object returnValue) {
+                VmDiskListModel model = (VmDiskListModel) target;
+                StoragePool dataCenter = (StoragePool) returnValue;
+
+                Version minClusterVersion = vm.getVdsGroupCompatibilityVersion();
+                Version minDcVersion = dataCenter.getcompatibility_version();
+
+                AsyncDataProvider.isCommandCompatible(new AsyncQuery(model, new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object target, Object returnValue) {
+                        VmDiskListModel model = (VmDiskListModel) target;
+                        model.getScanAlignmentCommand().setIsExecutionAllowed((Boolean) returnValue);
+                    }
+                }), VdcActionType.GetDiskAlignment, minClusterVersion, minDcVersion);
+            }
+        }), vm.getStoragePoolId());
+    }
+
     @Override
     public void executeCommand(UICommand command)
     {
@@ -643,6 +716,10 @@ public class VmDiskListModel extends VmDiskListModelBase
         else if (command == getMoveCommand())
         {
             move();
+        }
+        else if (command == getScanAlignmentCommand())
+        {
+            scanAlignment();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {

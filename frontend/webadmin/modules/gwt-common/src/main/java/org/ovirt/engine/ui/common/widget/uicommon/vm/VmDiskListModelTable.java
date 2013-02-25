@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
+import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.action.ImageUiCommandButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -110,6 +111,14 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
                 }
             });
         }
+
+        getTable().addActionButton(new UiCommandButtonDefinition<Disk>(getEventBus(), constants.getDiskAlignment(),
+                CommandLocation.OnlyFromContext) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getModel().getScanAlignmentCommand();
+            }
+        });
 
         getTable().addActionButton(new UiCommandButtonDefinition<Disk>(getEventBus(), constants.assignQuota()) {
             @Override

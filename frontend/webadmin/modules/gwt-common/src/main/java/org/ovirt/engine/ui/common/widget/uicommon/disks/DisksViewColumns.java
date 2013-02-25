@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.common.widget.uicommon.disks;
 
 import java.util.Date;
 
+import com.google.gwt.i18n.client.DateTimeFormat;
+
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -11,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer.DiskSizeUnit;
 import org.ovirt.engine.ui.common.widget.table.column.DiskContainersColumn;
@@ -22,12 +25,14 @@ import org.ovirt.engine.ui.common.widget.table.column.ImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.StorageDomainsColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 
 public class DisksViewColumns {
     private static final CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
     private static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
+    private static final CommonApplicationMessages messages = GWT.create(CommonApplicationMessages.class);
 
     public static final TextColumnWithTooltip<Disk> aliasColumn = new TextColumnWithTooltip<Disk>() {
         @Override
@@ -110,6 +115,20 @@ public class DisksViewColumns {
     public static final DiskStatusColumn diskStatusColumn = new DiskStatusColumn();
 
     public static final DiskContainersColumn diskContainersColumn = new DiskContainersColumn();
+
+    public static final TextColumnWithTooltip<Disk> diskAlignmentColumn = new TextColumnWithTooltip<Disk>() {
+        @Override
+        public String getValue(Disk object) {
+            if (object.getLastAlignmentScan() != null) {
+                String lastScanDate = DateTimeFormat
+                        .getFormat("yyyy-MM-dd, HH:mm").format(object.getLastAlignmentScan()); //$NON-NLS-1$
+                setTitle(messages.lastDiskAlignment(lastScanDate));
+            } else {
+                setTitle(null);
+            }
+            return object.getAlignment().toString();
+        }
+    };
 
     public static final StorageDomainsColumn storageDomainsColumn = new StorageDomainsColumn();
 

@@ -123,6 +123,9 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("There are no disks allowing an export, only the configuration will be a part of the VM template.")
     String noExportableDisksFoundForTheTemplate();
 
+    @DefaultMessage("{0} (Last scan: {1})")
+    String diskAlignment(String alignment, String lastScanDate);
+
     @DefaultMessage("Error connecting to Virtual Machine using SPICE:\n{0}")
     String errConnectingVmUsingSpiceMsg(Object errCode);
 

@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.CommonModelManager;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewRadioGroup;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -185,6 +186,14 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getCopyCommand();
+            }
+        });
+
+        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.getDiskAlignment(),
+                CommandLocation.OnlyFromContext) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getScanAlignmentCommand();
             }
         });
 

@@ -29,4 +29,7 @@ public abstract class TextColumnWithTooltip<T> extends Column<T, String> impleme
         return (TextCellWithTooltip) super.getCell();
     }
 
+    public void setTitle(String tooltipText) {
+        getCell().setTitle(tooltipText);
+    }
 }

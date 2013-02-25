@@ -642,6 +642,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Move")
     String moveDisk();
 
+    @DefaultStringValue("Scan Alignment")
+    String getDiskAlignment();
+
     @DefaultStringValue("Name")
     String nameDisk();
 
@@ -701,6 +704,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Destination")
     String destDisk();
+
+    @DefaultStringValue("Alignment")
+    String diskAlignment();
 
     @DefaultStringValue("Attached To")
     String attachedToDisk();
