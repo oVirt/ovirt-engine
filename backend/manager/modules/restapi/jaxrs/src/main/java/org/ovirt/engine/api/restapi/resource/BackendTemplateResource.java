@@ -65,7 +65,7 @@ public class BackendTemplateResource
             params.setForceOverride(true);
         }
 
-        return doAction(VdcActionType.ExportVmTemplate, params, action);
+        return doAction(VdcActionType.ExportVmTemplate, params, action, PollingType.JOB);
     }
 
     @Override
