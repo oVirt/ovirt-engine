@@ -59,6 +59,8 @@ import org.ovirt.engine.api.restapi.resource.BackendApiResource;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
 
 public class RsdlBuilder {
 
@@ -95,7 +97,8 @@ public class RsdlBuilder {
         try {
              InputStream stream = FileUtils.get(RESOURCES_PACKAGE, PARAMS_METADATA);
              if (stream != null) {
-                 Object result = new Yaml().load(stream);
+                 Constructor constructor = new CustomClassLoaderConstructor(Thread.currentThread().getContextClassLoader());
+                 Object result = new Yaml(constructor).load(stream);
                  for (Action action : ((MetaData)result).getActions()) {
                      parametersMetaData.put(action.getName(), action);
                  }

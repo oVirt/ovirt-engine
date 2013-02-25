@@ -34,6 +34,13 @@
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
 
+          <!-- Add a the manifest that contains the required
+               dependencies for JBoss modules: -->
+          <archive>
+            <addMavenDescriptor>false</addMavenDescriptor>
+            <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
+          </archive>
+
           <!-- Don't include any of the external dependencies, as they are
                already included as references in the manifest (note that the
                web.xml file is included regardless of this configuration): -->
