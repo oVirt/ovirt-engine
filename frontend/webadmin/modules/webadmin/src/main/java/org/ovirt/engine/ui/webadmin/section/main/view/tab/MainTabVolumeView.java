@@ -52,6 +52,14 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
         };
         getTable().addColumn(nameColumn, constants.NameVolume(), "150px"); //$NON-NLS-1$
 
+        TextColumnWithTooltip<GlusterVolumeEntity> clusterColumn = new TextColumnWithTooltip<GlusterVolumeEntity>() {
+            @Override
+            public String getValue(GlusterVolumeEntity object) {
+                return object.getVdsGroupName();
+            }
+        };
+        getTable().addColumn(clusterColumn, constants.clusterVolume(), "150px"); //$NON-NLS-1$
+
         TextColumnWithTooltip<GlusterVolumeEntity> volumeTypeColumn =
                 new EnumColumn<GlusterVolumeEntity, GlusterVolumeType>() {
 

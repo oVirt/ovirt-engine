@@ -239,7 +239,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                             new EntitySearchInfo(GlusterVolumeCrossRefAutoCompleter.INSTANCE,
                                     GlusterVolumeConditionFieldAutoCompleter.INSTANCE,
                                     null,
-                                    "gluster_volumes",
+                                    "gluster_volumes_view",
                                     "id",
                                     "vol_name ASC "));
                     put(SearchObjects.VDC_POOL_OBJ_NAME, new EntitySearchInfo(null,

@@ -1484,3 +1484,10 @@ AS
 SELECT       DISTINCT entity_id, user_id
 FROM         user_network_permissions_view_base
 NATURAL JOIN user_flat_groups;
+
+CREATE OR REPLACE VIEW gluster_volumes_view
+AS
+SELECT gluster_volumes.*,
+       vds_groups.name AS vds_group_name
+FROM gluster_volumes
+INNER JOIN vds_groups ON gluster_volumes.cluster_id = vds_groups.vds_group_id;

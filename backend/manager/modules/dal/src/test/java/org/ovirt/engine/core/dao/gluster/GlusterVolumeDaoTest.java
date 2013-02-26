@@ -83,7 +83,7 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
     @Test
     public void testGetAllWithQuery() {
         List<GlusterVolumeEntity> volumes =
-                dao.getAllWithQuery("select * from gluster_volumes where vol_type = '"
+                dao.getAllWithQuery("select * from gluster_volumes_view where vol_type = '"
                         + GlusterVolumeType.DISTRIBUTED_REPLICATE.name() + "'");
 
         assertTrue(volumes != null);
