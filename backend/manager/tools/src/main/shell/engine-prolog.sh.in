@@ -20,6 +20,14 @@ load_config() {
         die "Can't load configuration file \"${ENGINE_VARS}\"."
     fi
     . "${ENGINE_VARS}"
+
+    # Clean the class path:
+    CLASSPATH=""
+    export CLASSPATH
+
+    # Prepare the module path:
+    JAVA_MODULEPATH="${ENGINE_USR}/modules:${JBOSS_HOME}/modules"
+    export JAVA_MODULEPATH
 }
 
 # In addition to defining the functions we also perform some tasks that
