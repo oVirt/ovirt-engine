@@ -6,11 +6,21 @@ public class ActivateDeactivateVmNicParameters extends VmOperationParameterBase 
 
     private Guid nicId;
     private PlugAction action;
+    private String oldMacAddress;
 
-    public ActivateDeactivateVmNicParameters(Guid nicId, PlugAction action) {
+    public ActivateDeactivateVmNicParameters(Guid nicId, PlugAction action, String oldMacAddress) {
         super();
         this.nicId = nicId;
         this.action = action;
+        this.oldMacAddress = oldMacAddress;
+    }
+
+    public String getOldMacAddress() {
+        return oldMacAddress;
+    }
+
+    public void setOldMacAddress(String oldMacAddress) {
+        this.oldMacAddress = oldMacAddress;
     }
 
     public Guid getNicId() {

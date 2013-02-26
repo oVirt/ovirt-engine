@@ -34,15 +34,19 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
         super(parameters);
     }
 
-    protected boolean activateOrDeactivateNic(Guid nicId, PlugAction plugAction) {
+    protected boolean activateOrDeactivateNic(Guid nicId, PlugAction plugAction, String oldMacAddress) {
         VdcReturnValueBase returnValue =
                 getBackend().runInternalAction(VdcActionType.ActivateDeactivateVmNic,
-                        createActivateDeactivateParameters(nicId, plugAction));
+                        createActivateDeactivateParameters(nicId, plugAction, oldMacAddress));
         if (!returnValue.getSucceeded()) {
             propagateFailure(returnValue);
         }
 
         return returnValue.getSucceeded();
+    }
+
+    protected boolean activateOrDeactivateNic(Guid nicId, PlugAction plugAction) {
+        return activateOrDeactivateNic(nicId, plugAction, null);
     }
 
     @Override
@@ -51,9 +55,9 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
     }
 
     private ActivateDeactivateVmNicParameters createActivateDeactivateParameters(Guid nicId,
-            PlugAction plugAction) {
+            PlugAction plugAction, String oldMacAddress) {
         ActivateDeactivateVmNicParameters parameters =
-                new ActivateDeactivateVmNicParameters(nicId, plugAction);
+                new ActivateDeactivateVmNicParameters(nicId, plugAction, oldMacAddress);
         parameters.setVmId(getParameters().getVmId());
 
         return parameters;

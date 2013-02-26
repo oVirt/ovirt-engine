@@ -84,10 +84,15 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     protected void executeVmCommand() {
         // HotPlug in the host is called only if the Vm is UP
         if (hotPlugVmNicRequired(getVm().getStatus())) {
+            VmNetworkInterface nic = getVmNetworkInterfaceDao().get(getParameters().getNicId());
+            // Old MAC address is used in case the host is not familiar with the new MAC address
+            if (getParameters().getOldMacAddress() != null) {
+                nic.setMacAddress(getParameters().getOldMacAddress());
+            }
             runVdsCommand(getParameters().getAction().getCommandType(),
                     new VmNicDeviceVDSParameters(getVdsId(),
                             getVm(),
-                            getVmNetworkInterfaceDao().get(getParameters().getNicId()),
+                            nic,
                             vmDevice));
         }
         // In any case, the device is updated
