@@ -10,8 +10,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 
-import org.ovirt.engine.core.compat.CompatException;
-
 public class FileUtil {
     public static InputStream findFile(String name) {
         try {
@@ -62,7 +60,7 @@ public class FileUtil {
         }
     }
 
-    public static String readAllText(final String filename) {
+    public static String readAllText(final String filename) throws IOException {
         FileInputStream fis = null;
         try {
             java.io.File file = new java.io.File(filename.toString());
@@ -72,7 +70,7 @@ public class FileUtil {
             fis.read(contents);
             return new String(contents);
         } catch (Exception e) {
-            throw new CompatException(e);
+            throw new IOException(e);
         } finally {
             // in the absence of commons io, this workaround is needed to close the file
             if (fis != null) {
@@ -90,7 +88,7 @@ public class FileUtil {
             java.io.File file = new java.io.File(filename.toString());
             return new Date(file.lastModified());
         } catch (Exception e) {
-            throw new CompatException(e);
+            throw new RuntimeException(e);
         }
     }
 

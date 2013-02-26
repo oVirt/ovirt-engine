@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ovirt.engine.core.compat.CompatException;
 
 // This will wrap java beans introspection
 public class TypeCompat {
@@ -28,7 +27,7 @@ public class TypeCompat {
                 }
             }
         } catch (Exception e) {
-            throw new CompatException(e);
+            throw new RuntimeException(e);
         }
         return returnValue;
     }
@@ -42,7 +41,7 @@ public class TypeCompat {
                 }
             }
         } catch (Exception e) {
-            throw new CompatException(e);
+            throw new RuntimeException(e);
         }
         return null;
     }
@@ -76,7 +75,7 @@ public class TypeCompat {
                 }
             }
         } catch (Exception e) {
-            throw new CompatException(e);
+            throw new RuntimeException(e);
         }
     }
 

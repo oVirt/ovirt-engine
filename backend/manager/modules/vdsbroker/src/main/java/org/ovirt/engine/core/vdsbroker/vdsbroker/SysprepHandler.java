@@ -228,7 +228,7 @@ public final class SysprepHandler {
         if (FileUtil.fileExists(fileName)) {
             try {
                 content = FileUtil.readAllText(fileName);
-            } catch (RuntimeException e) {
+            } catch (Exception e) {
                 log.error("Failed to read sysprep template: " + fileName, e);
             }
         } else {

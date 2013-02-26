@@ -163,7 +163,7 @@ public class TimeSpan implements Comparable<TimeSpan>, Serializable {
             return new TimeSpan(data);
         }
         // If we get to here, it is invalid
-        throw new CompatException("Invalid TimeSpan");
+        throw new IllegalArgumentException("Invalid TimeSpan");
     }
 
     @Override
@@ -179,7 +179,7 @@ public class TimeSpan implements Comparable<TimeSpan>, Serializable {
     public static TimeSpan tryParse(String string) {
         try {
             return TimeSpan.Parse(string);
-        } catch (CompatException e) {
+        } catch (IllegalArgumentException e) {
             // eat it, return null
             return null;
         }

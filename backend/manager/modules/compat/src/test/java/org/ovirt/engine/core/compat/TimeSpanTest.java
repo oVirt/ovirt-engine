@@ -63,7 +63,7 @@ public class TimeSpanTest extends TestCase {
         try {
             TimeSpan.Parse("1.02.03");
             fail("No exception was thrown");
-        } catch (CompatException e) {
+        } catch (IllegalArgumentException e) {
             // eat it, we are ok
         }
     }
