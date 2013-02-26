@@ -610,10 +610,11 @@ fi
 %files tools
 
 # Scripts:
-%{engine_data}/bin/engine-prolog.sh
 %{engine_data}/bin/engine-config.sh
+%{engine_data}/bin/engine-encrypt-passwd.sh
 %{engine_data}/bin/engine-manage-domains.sh
 %{engine_data}/bin/engine-notifier.sh
+%{engine_data}/bin/engine-prolog.sh
 %{_initddir}/engine-notifierd
 
 # Links to the scripts:

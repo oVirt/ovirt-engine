@@ -272,6 +272,9 @@ install_setup:
 	install -m 644 packaging/fedora/setup/post_upgrade.py $(DESTDIR)$(DATA_DIR)/scripts
 	install -m 644 packaging/fedora/setup/add_fn_db_get_async_tasks_function.sql $(DESTDIR)$(DATA_DIR)/scripts
 
+	# Script to encrypt passwords:
+	install -m 750 backend/manager/tools/src/main/shell/engine-encrypt-passwd.sh $(DESTDIR)$(DATA_DIR)/bin
+
 	# Install man pages
 	install -dm 755 $(DESTDIR)$(MAN_DIR)/man8
 	install -m 644 packaging/engine-setup.8 $(DESTDIR)$(MAN_DIR)/man8/
