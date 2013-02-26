@@ -17,12 +17,11 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetAllVmPoolsAttachedToUserParameters;
 import org.ovirt.engine.core.common.queries.GetVmPoolByIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.GetVmdataByPoolIdParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmPoolsResource
@@ -38,8 +37,8 @@ public class BackendVmPoolsResource
     @Override
     public VmPools list() {
         if (isFiltered()) {
-            GetAllVmPoolsAttachedToUserParameters params = new GetAllVmPoolsAttachedToUserParameters(getCurrent().get(VdcUser.class).getUserId());
-            return mapCollection(getBackendCollection(VdcQueryType.GetAllVmPoolsAttachedToUser, params));
+            return mapCollection(getBackendCollection(VdcQueryType.GetAllVmPoolsAttachedToUser,
+                    new VdcQueryParametersBase()));
         } else {
             return mapCollection(getBackendCollection(SearchType.VmPools));
         }

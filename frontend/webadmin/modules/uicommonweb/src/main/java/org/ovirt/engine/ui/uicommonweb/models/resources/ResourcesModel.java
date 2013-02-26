@@ -361,7 +361,7 @@ public class ResourcesModel extends SearchableListModel
 
         // Items property will contain list of VMs.
         GetUserVmsByUserIdAndGroupsParameters getUserVmsByUserIdAndGroupsParameters =
-                new GetUserVmsByUserIdAndGroupsParameters(Frontend.getLoggedInUser().getUserId());
+                new GetUserVmsByUserIdAndGroupsParameters();
         getUserVmsByUserIdAndGroupsParameters.setIncludeDiskData(true);
         getUserVmsByUserIdAndGroupsParameters.setRefresh(getIsQueryFirstTime());
         Frontend.RunQuery(VdcQueryType.GetUserVmsByUserIdAndGroups, getUserVmsByUserIdAndGroupsParameters, _asyncQuery);

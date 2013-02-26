@@ -35,32 +35,6 @@ public class GetUserVmsByUserIdAndGroupsQueryTest
         assertExecuteQueryCommandResult(getUser().getUserId(), false, true);
     }
 
-    /** Tests that executing a query with a different user returns an empty list when requesting disks */
-    @Test
-    public void testQueryWithOtherUserWithDisks() {
-        assertExecuteQueryCommandResult(Guid.NewGuid(), true, false);
-    }
-
-    /** Tests that executing a query with a different user returns an empty list when not requesting disks */
-    @Test
-    public void testQueryWithOtherUserNoDisks() {
-        assertExecuteQueryCommandResult(Guid.NewGuid(), false, false);
-    }
-
-    /** Tests that executing a query with a different user works when the query is run in admin mode and disks are requested */
-    @Test
-    public void testAdminQueryWithOtherUserWithDisks() {
-        when(getQueryParameters().isFiltered()).thenReturn(false);
-        assertExecuteQueryCommandResult(Guid.NewGuid(), true, true);
-    }
-
-    /** Tests that executing a query with a different user works when the query is run in admin mode and disks aren't requested */
-    @Test
-    public void testAdminQueryWithOtherUserNoDisks() {
-        when(getQueryParameters().isFiltered()).thenReturn(false);
-        assertExecuteQueryCommandResult(Guid.NewGuid(), false, true);
-    }
-
     @SuppressWarnings("rawtypes")
     public void assertExecuteQueryCommandResult(Guid requestedUser, boolean includeDiskData, boolean expectedResults) {
         mockQueryParameters(requestedUser, includeDiskData);
@@ -119,7 +93,7 @@ public class GetUserVmsByUserIdAndGroupsQueryTest
      * @param includeDiskData Whether or not to include disk data
      */
     private void mockQueryParameters(Guid requestedUser, boolean includeDiskData) {
-        when(getQueryParameters().getUserId()).thenReturn(requestedUser);
+        when(getQuery().getUserID()).thenReturn(requestedUser);
         when(getQueryParameters().getIncludeDiskData()).thenReturn(includeDiskData);
     }
 

@@ -7,14 +7,14 @@ import org.ovirt.engine.core.common.businessentities.ImagesComparerByName;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetUserVmsByUserIdAndGroupsParameters;
 
-public class GetUserVmsByUserIdAndGroupsQuery<P extends GetUserVmsByUserIdAndGroupsParameters> extends GetDataByUserIDQueriesBase<P> {
+public class GetUserVmsByUserIdAndGroupsQuery<P extends GetUserVmsByUserIdAndGroupsParameters> extends QueriesCommandBase<P> {
     public GetUserVmsByUserIdAndGroupsQuery(P parameters) {
         super(parameters);
     }
 
     @Override
-    protected List<VM> getPrivilegedQueryReturnValue() {
-        List<VM> vmList = getDbFacade().getVmDao().getAllForUserWithGroupsAndUserRoles(getParameters().getUserId());
+    protected void executeQueryCommand() {
+        List<VM> vmList = getDbFacade().getVmDao().getAllForUserWithGroupsAndUserRoles(getUserID());
         for (VM vm : vmList) {
             updateVmGuestAgentVersion(vm);
             if (getParameters().getIncludeDiskData()) {
@@ -23,7 +23,8 @@ public class GetUserVmsByUserIdAndGroupsQuery<P extends GetUserVmsByUserIdAndGro
                 fillImagesBySnapshots(vm);
             }
         }
-        return vmList;
+        setReturnValue(vmList);
+
     }
 
     protected void fillImagesBySnapshots(VM vm) {
@@ -37,4 +38,5 @@ public class GetUserVmsByUserIdAndGroupsQuery<P extends GetUserVmsByUserIdAndGro
     protected void updateVmGuestAgentVersion(VM vm) {
         VmHandler.UpdateVmGuestAgentVersion(vm);
     }
+
 }
