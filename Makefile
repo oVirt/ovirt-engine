@@ -341,6 +341,9 @@ install_config:
 	install -m 750 backend/manager/tools/src/main/shell/engine-manage-domains.sh $(DESTDIR)$(DATA_DIR)/bin
 	ln -sf $(DATA_DIR)/bin/engine-manage-domains.sh $(DESTDIR)$(BIN_DIR)/engine-manage-domains
 
+	# Script to encrypt passwords:
+	install -m 750 backend/manager/tools/src/main/shell/engine-encrypt-passwd.sh $(DESTDIR)$(DATA_DIR)/bin
+
 	# Install man pages
 	install -m 644 packaging/engine-manage-domains.8 $(DESTDIR)$(MAN_DIR)/man8/
 
