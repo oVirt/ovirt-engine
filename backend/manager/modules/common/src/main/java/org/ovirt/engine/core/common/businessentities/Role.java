@@ -68,6 +68,7 @@ public class Role extends IVdcQueryable implements BusinessEntity<Guid> {
         return (ObjectUtils.objectsEqual(id, other.id)
                 && ObjectUtils.objectsEqual(description, other.description)
                 && readOnly == other.readOnly
+                && allowsViewingChildren == other.allowsViewingChildren
                 && ObjectUtils.objectsEqual(name, other.name)
                 && type == other.type);
     }

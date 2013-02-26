@@ -86,9 +86,9 @@ public class VmPool extends IVdcQueryable implements Serializable, Nameable {
             return false;
         }
         VmPool other = (VmPool) obj;
+        // Don't use defaultStartTime and defaultEndTime in equals method
+        // as they will never match because of how they are initialized.
         return (ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(defaultEndTime, other.defaultEndTime)
-                && ObjectUtils.objectsEqual(defaultStartTime, other.defaultStartTime)
                 && defaultTimeInDays == other.defaultTimeInDays
                 && ObjectUtils.objectsEqual(parameters, other.parameters)
                 && ObjectUtils.objectsEqual(vdsGroupId, other.vdsGroupId)

@@ -212,7 +212,9 @@ public class QuotaVdsGroup extends IVdcQueryable implements Serializable {
                 && ObjectUtils.objectsEqual(quotaVdsGroupId, other.quotaVdsGroupId)
                 && ObjectUtils.objectsEqual(vdsGroupId, other.vdsGroupId)
                 && ObjectUtils.objectsEqual(virtualCpu, other.virtualCpu)
-                && ObjectUtils.objectsEqual(memSizeMB, other.memSizeMB));
+                && ObjectUtils.objectsEqual(virtualCpuUsage, other.virtualCpuUsage)
+                && ObjectUtils.objectsEqual(memSizeMB, other.memSizeMB)
+                && ObjectUtils.objectsEqual(memSizeMBUsage, other.memSizeMBUsage));
     }
 
     /**

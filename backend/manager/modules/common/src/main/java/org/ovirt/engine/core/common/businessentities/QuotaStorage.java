@@ -159,6 +159,7 @@ public class QuotaStorage extends IVdcQueryable implements Serializable {
         return (ObjectUtils.objectsEqual(quotaId, other.quotaId)
                 && ObjectUtils.objectsEqual(quotaStorageId, other.quotaStorageId)
                 && ObjectUtils.objectsEqual(storageId, other.storageId)
+                && ObjectUtils.objectsEqual(storageLimitGigaByteUsage, other.storageLimitGigaByteUsage)
                 && ObjectUtils.objectsEqual(storageLimitGigaByte, other.storageLimitGigaByte));
     }
 
