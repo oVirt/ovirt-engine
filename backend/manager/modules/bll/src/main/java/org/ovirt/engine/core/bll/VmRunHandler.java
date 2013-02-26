@@ -72,7 +72,7 @@ public class VmRunHandler {
             VmHandler.handleCustomPropertiesError(validationErrors, message);
             retValue = false;
         } else {
-            BootSequence boot_sequence = ((runParams.getBootSequence()) != null) ? runParams.getBootSequence() : vm
+            BootSequence boot_sequence = (runParams.getBootSequence() != null) ? runParams.getBootSequence() : vm
                     .getDefaultBootSequence();
             Guid storagePoolId = vm.getStoragePoolId();
             // Block from running a VM with no HDD when its first boot device is

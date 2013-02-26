@@ -75,10 +75,6 @@ public class BootSequenceModel extends ListModel
 
     public BootSequence getSequence()
     {
-        // string str = Items.Where(a => a.IsChangable)
-        // .Select(a => (BootSequence)a.Entity)
-        // .Aggregate(String.Empty, (a, b) => a += b.ToString());
-
         String str = ""; //$NON-NLS-1$
         for (EntityModel a : getItems())
         {
@@ -89,7 +85,7 @@ public class BootSequenceModel extends ListModel
             }
         }
 
-        return BootSequence.valueOf(str);
+        return !str.equals("") ? BootSequence.valueOf(str) : null;  //$NON-NLS-1$
     }
 
     public BootSequenceModel()
