@@ -354,11 +354,11 @@ public class VdsUpdateRunTimeInfo {
         }
     }
 
-    public VdsUpdateRunTimeInfo(VdsManager vdsManager, VDS vds) {
+    public VdsUpdateRunTimeInfo(VdsManager vdsManager, VDS vds, MonitoringStrategy monitoringStrategy) {
         _vdsManager = vdsManager;
         _vds = vds;
         _firstStatus = _vds.getStatus();
-        monitoringStrategy = getMonitoringStrategyForVds(vds);
+        this.monitoringStrategy = monitoringStrategy;
         _vmDict = getDbFacade().getVmDao().getAllRunningByVds(_vds.getId());
 
         for (VM vm : _vmDict.values()) {
@@ -366,10 +366,6 @@ public class VdsUpdateRunTimeInfo {
                 runningVmsInTransition++;
             }
         }
-    }
-
-    protected MonitoringStrategy getMonitoringStrategyForVds(VDS vds) {
-        return MonitoringStrategyFactory.getMonitoringStrategyForVds(vds);
     }
 
     public void Refresh() {

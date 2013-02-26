@@ -65,16 +65,11 @@ public class VdsUpdateRunTimeInfoTest {
     public void setup() {
         initVds();
         initConditions();
-        updater = new VdsUpdateRunTimeInfo(null, vds) {
+        updater = new VdsUpdateRunTimeInfo(null, vds, mock(MonitoringStrategy.class)) {
 
             @Override
             public DbFacade getDbFacade() {
                 return dbFacade;
-            }
-
-            @Override
-            protected MonitoringStrategy getMonitoringStrategyForVds(VDS param) {
-                return mock(MonitoringStrategy.class);
             }
 
             @Override

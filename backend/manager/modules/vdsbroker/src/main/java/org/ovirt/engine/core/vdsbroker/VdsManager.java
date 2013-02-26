@@ -230,7 +230,7 @@ public class VdsManager {
                         }
                         if (isMonitoringNeeded()) {
                             setStartTime();
-                            _vdsUpdater = new VdsUpdateRunTimeInfo(VdsManager.this, _vds);
+                            _vdsUpdater = new VdsUpdateRunTimeInfo(VdsManager.this, _vds, monitoringStrategy);
                             _vdsUpdater.Refresh();
                             mUnrespondedAttempts.set(0);
                             setLastUpdate();
@@ -521,7 +521,6 @@ public class VdsManager {
 
     public VDSStatus refreshCapabilities(AtomicBoolean processHardwareCapsNeeded, VDS vds) {
         log.debug("GetCapabilitiesVDSCommand started method");
-        MonitoringStrategy vdsMonitoringStrategy = MonitoringStrategyFactory.getMonitoringStrategyForVds(vds);
         VDS oldVDS = vds.clone();
         GetCapabilitiesVDSCommand vdsBrokerCommand = new GetCapabilitiesVDSCommand(
                 new VdsIdAndVdsVDSCommandParametersBase(vds));
@@ -563,7 +562,7 @@ public class VdsManager {
 
             // We process the software capabilities.
             VDSStatus oldStatus = vds.getStatus();
-            vdsMonitoringStrategy.processSoftwareCapabilities(vds);
+            monitoringStrategy.processSoftwareCapabilities(vds);
             returnStatus = vds.getStatus();
 
             if (returnStatus != oldStatus && returnStatus == VDSStatus.NonOperational) {
