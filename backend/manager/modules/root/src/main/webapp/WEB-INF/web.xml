@@ -151,6 +151,51 @@
     <url-pattern>/spice/usbfilter.txt</url-pattern>
   </servlet-mapping>
 
+  <!-- Servlet for automatic registration of hypervisors: -->
+  <servlet>
+    <servlet-name>RegisterServlet</servlet-name>
+    <servlet-class>org.ovirt.engine.core.register.RegisterServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>RegisterServlet</servlet-name>
+    <url-pattern>/OvirtEngineWeb/register</url-pattern>
+    <url-pattern>/OvirtEngineWeb/VdsAutoRegistration.aspx</url-pattern>
+  </servlet-mapping>
+
+  <!-- Servlet used by external applications (the notification service
+       and external clustering infrastructure) to check the health of
+       the engine: -->
+  <servlet>
+    <servlet-name>HealthStatus</servlet-name>
+    <servlet-class>org.ovirt.engine.core.status.HealthStatus</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>HealthStatus</servlet-name>
+    <url-pattern>/OvirtEngineWeb/HealthStatus/*</url-pattern>
+    <url-pattern>/OvirtEngineWeb/HealthStatus.aspx</url-pattern>
+  </servlet-mapping>
+
+  <!-- Redirect servlet (used by the reports integration): -->
+  <servlet>
+    <servlet-name>RedirectServlet</servlet-name>
+    <servlet-class>org.ovirt.engine.core.redirect.RedirectServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>RedirectServlet</servlet-name>
+    <url-pattern>/OvirtEngineWeb/RedirectServlet</url-pattern>
+  </servlet-mapping>
+
+  <!-- Servlet used to validate sessions (used by the reports
+       integration): -->
+  <servlet>
+    <servlet-name>ValidateSession</servlet-name>
+    <servlet-class>org.ovirt.engine.core.validate.ValidateSession</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ValidateSession</servlet-name>
+    <url-pattern>/OvirtEngineWeb/ValidateSession</url-pattern>
+  </servlet-mapping>
+
   <!-- Go to the index when a page is not found (preserving the
        404 status code): -->
   <error-page>

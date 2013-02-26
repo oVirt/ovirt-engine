@@ -51,6 +51,13 @@
       <scope>provided</scope>
     </dependency>
 
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>bll</artifactId>
+      <version>${engine.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
   </dependencies>
 
   <build>

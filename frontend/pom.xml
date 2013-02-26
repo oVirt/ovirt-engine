@@ -13,7 +13,6 @@
   <description>An aggregator module for all frontend modules.</description>
   <modules>
     <module>webadmin</module>
-    <module>wars</module>
   </modules>
   <properties>
     <engine.groupId>org.ovirt.engine.ui</engine.groupId>

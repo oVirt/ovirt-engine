@@ -44,13 +44,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.ovirt.engine.ui</groupId>
-      <artifactId>rmw-war</artifactId>
-      <version>${engine.version}</version>
-      <type>war</type>
-    </dependency>
-
-    <dependency>
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>restapi-webapp</artifactId>
       <version>${engine.version}</version>
@@ -182,13 +175,6 @@
               <artifactId>root-war</artifactId>
               <bundleFileName>root.war</bundleFileName>
               <contextRoot>/</contextRoot>
-            </webModule>
-
-            <webModule>
-              <groupId>org.ovirt.engine.ui</groupId>
-              <artifactId>rmw-war</artifactId>
-              <bundleFileName>ovirtengineweb.war</bundleFileName>
-              <contextRoot>/OvirtEngineWeb</contextRoot>
             </webModule>
 
             <webModule>

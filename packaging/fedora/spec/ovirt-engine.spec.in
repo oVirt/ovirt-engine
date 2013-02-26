@@ -478,7 +478,6 @@ fi
 %{engine_ear}/lib
 %{engine_ear}/bll.jar
 %{engine_ear}/scheduler.jar
-%{engine_ear}/ovirtengineweb.war
 
 # Root web application:
 %{root_war}
