@@ -236,7 +236,7 @@ install_artifacts:
 	install -dm 755 $(DESTDIR)$(PKG_EAR_DIR)
 	install -dm 755 $(DESTDIR)$(MAVENPOM_DIR)
 
-	X=`find "$(MAVEN_OUTPUT_DIR)" -name 'engine-server-ear-$(APP_VERSION)*'.ear` && unzip "$$X" -d "$(DESTDIR)$(PKG_EAR_DIR)"
+	X=`find "$(MAVEN_OUTPUT_DIR)" -name 'engine-server-ear-$(APP_VERSION)*'.ear` && unzip -o "$$X" -d "$(DESTDIR)$(PKG_EAR_DIR)"
 
 	for artifact_id in  $(ARTIFACTS); do \
 		POM=`find "$(MAVEN_OUTPUT_DIR)" -name "$${artifact_id}-$(APP_VERSION)*.pom"`; \
@@ -283,11 +283,11 @@ install_setup:
 
 	# Main programs and links:
 	install -m 755 packaging/fedora/setup/engine-setup.py $(DESTDIR)$(DATA_DIR)/scripts
-	ln -s $(DATA_DIR)/scripts/engine-setup.py $(DESTDIR)$(BIN_DIR)/engine-setup
+	ln -sf $(DATA_DIR)/scripts/engine-setup.py $(DESTDIR)$(BIN_DIR)/engine-setup
 	install -m 755 packaging/fedora/setup/engine-cleanup.py $(DESTDIR)$(DATA_DIR)/scripts
-	ln -s $(DATA_DIR)/scripts/engine-cleanup.py $(DESTDIR)$(BIN_DIR)/engine-cleanup
+	ln -sf $(DATA_DIR)/scripts/engine-cleanup.py $(DESTDIR)$(BIN_DIR)/engine-cleanup
 	install -m 755 packaging/fedora/setup/engine-upgrade.py $(DESTDIR)$(DATA_DIR)/scripts
-	ln -s $(DATA_DIR)/scripts/engine-upgrade.py $(DESTDIR)$(BIN_DIR)/engine-upgrade
+	ln -sf $(DATA_DIR)/scripts/engine-upgrade.py $(DESTDIR)$(BIN_DIR)/engine-upgrade
 	install -m 755 packaging/fedora/setup/engine-check-update $(DESTDIR)$(BIN_DIR)/
 
 	# Backups folder
@@ -329,7 +329,7 @@ install_config:
 
 	# Main program for the configuration tool:
 	install -m 750 backend/manager/tools/src/main/shell/engine-config.sh $(DESTDIR)$(DATA_DIR)/bin
-	ln -s $(DATA_DIR)/bin/engine-config.sh $(DESTDIR)$(BIN_DIR)/engine-config
+	ln -sf $(DATA_DIR)/bin/engine-config.sh $(DESTDIR)$(BIN_DIR)/engine-config
 
 	# Configuration files for the domain management tool:
 	install -m 644 backend/manager/tools/src/main/conf/engine-manage-domains.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-manage-domains/
@@ -337,7 +337,7 @@ install_config:
 
 	# Main program for the domain management tool:
 	install -m 750 backend/manager/tools/src/main/shell/engine-manage-domains.sh $(DESTDIR)$(DATA_DIR)/bin
-	ln -s $(DATA_DIR)/bin/engine-manage-domains.sh $(DESTDIR)$(BIN_DIR)/engine-manage-domains
+	ln -sf $(DATA_DIR)/bin/engine-manage-domains.sh $(DESTDIR)$(BIN_DIR)/engine-manage-domains
 
 	# Install man pages
 	install -m 644 packaging/engine-manage-domains.8 $(DESTDIR)$(MAN_DIR)/man8/
@@ -392,7 +392,7 @@ install_jboss_modules:
 
 	# Uncompress and install the contents of the modules archives to
 	# the directory containing engine modules:
-	find "$(MAVEN_OUTPUT_DIR)" -name "*-$(APP_VERSION)*-modules.zip" -exec unzip {} -d "$(DESTDIR)$(PKG_JBOSS_MODULES)" \;
+	find "$(MAVEN_OUTPUT_DIR)" -name "*-$(APP_VERSION)*-modules.zip" -exec unzip -o {} -d "$(DESTDIR)$(PKG_JBOSS_MODULES)" \;
 
 install_service:
 	@echo "*** Deploying service"
@@ -408,4 +408,4 @@ install_service:
 	install -m 644 packaging/fedora/engine-service.limits $(DESTDIR)$(SYSCONF_DIR)/security/limits.d/10-$(ENGINE_NAME).conf
 
 	# Install the links:
-	ln -s $(DATA_DIR)/service/engine-service.py $(DESTDIR)$(BIN_DIR)/engine-service
+	ln -sf $(DATA_DIR)/service/engine-service.py $(DESTDIR)$(BIN_DIR)/engine-service
