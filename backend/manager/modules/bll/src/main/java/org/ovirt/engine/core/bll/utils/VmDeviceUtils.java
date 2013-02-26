@@ -158,33 +158,20 @@ public class VmDeviceUtils {
         }
     }
 
-
     /**
-     * Copies relevant entries on "Vm from Template" or "Template from VM" creation.
-     *
-     * @param srcId
-     * @param dstId
-     * @param disks
-     *            The disks which were saved for the destination VM.
+     * Copy related data from the given VM/VmBase/VmDevice list to the destination VM/VmTemplate.
      */
-    public static void copyVmDevices(Guid srcId, Guid dstId, List<DiskImage> disks, List<VmNetworkInterface> ifaces) {
+    public static void copyVmDevices(Guid srcId, Guid dstId, VM vm, VmBase vmBase, boolean isVm, List<VmDevice> devicesDataToUse, List<DiskImage> disks, List<VmNetworkInterface> ifaces) {
         Guid id;
-        VM vm = DbFacade.getInstance().getVmDao().get(dstId);
-        VmBase vmBase = (vm != null) ? vm.getStaticData() : null;
         int diskCount = 0;
         int ifaceCount = 0;
-        boolean isVm = (vmBase != null);
-        if (!isVm) {
-            vmBase = DbFacade.getInstance().getVmTemplateDao().get(dstId);
-        }
-        List<VmDevice> devices = dao.getVmDeviceByVmId(srcId);
         String isoPath=vmBase.getIsoPath();
         // indicates that VM should have CD either from its own (iso_path) or from the snapshot it was cloned from.
         boolean shouldHaveCD = StringUtils.isNotEmpty(isoPath);
         // indicates if VM has already a non empty CD in DB
         boolean hasAlreadyCD = (!(DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(vmBase.getId(), VmDeviceType.DISK.getName(), VmDeviceType.CDROM.getName())).isEmpty());
         boolean addCD = (!hasAlreadyCD && shouldHaveCD);
-        for (VmDevice device : devices) {
+        for (VmDevice device : devicesDataToUse) {
             id = Guid.NewGuid();
             Map<String, Object> specParams = new HashMap<String, Object>();
             if (srcId.equals(Guid.Empty)) {
@@ -268,6 +255,24 @@ public class VmDeviceUtils {
             }
 
         }
+    }
+    /**
+     * Copies relevant entries on "Vm from Template" or "Template from VM" creation.
+     *
+     * @param srcId
+     * @param dstId
+     * @param disks
+     *            The disks which were saved for the destination VM.
+     */
+    public static void copyVmDevices(Guid srcId, Guid dstId, List<DiskImage> disks, List<VmNetworkInterface> ifaces) {
+        VM vm = DbFacade.getInstance().getVmDao().get(dstId);
+        VmBase vmBase = (vm != null) ? vm.getStaticData() : null;
+        boolean isVm = (vmBase != null);
+        if (!isVm) {
+            vmBase = DbFacade.getInstance().getVmTemplateDao().get(dstId);
+        }
+        List<VmDevice> devices = dao.getVmDeviceByVmId(srcId);
+        copyVmDevices(srcId, dstId, vm, vmBase, isVm, devices, disks, ifaces);
     }
 
     private static void addVideoDevice(VM vm) {

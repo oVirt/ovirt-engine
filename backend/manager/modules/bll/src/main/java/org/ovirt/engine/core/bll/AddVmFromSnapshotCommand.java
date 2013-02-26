@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
@@ -224,10 +225,9 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
     @Override
     protected void copyVmDevices() {
-        VmDeviceUtils.copyVmDevices(getVmIdFromSnapshot(),
-                getVmId(),
-                newDiskImages,
-                _vmInterfaces);
+        List<VmDevice> devices = new ArrayList<VmDevice>(vmFromConfiguration.getVmUnamagedDeviceList());
+        devices.addAll(vmFromConfiguration.getManagedVmDeviceMap().values());
+        VmDeviceUtils.copyVmDevices(getVmIdFromSnapshot(), getVmId(), vmFromConfiguration, vmFromConfiguration.getStaticData(), true, devices, newDiskImages, _vmInterfaces);
     }
 
     @Override
