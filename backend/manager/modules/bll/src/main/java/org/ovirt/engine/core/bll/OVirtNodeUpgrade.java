@@ -6,13 +6,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+
 import javax.naming.TimeLimitExceededException;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.compat.backendcompat.Path;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -96,7 +96,7 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink {
      */
     public OVirtNodeUpgrade(VDS vds, String iso) {
         _vds = vds;
-        _iso = Path.Combine(Config.resolveOVirtISOsRepositoryPath(), iso);
+        _iso = Config.resolveOVirtISOsRepositoryPath() + File.separator + iso;
 
         _messages = new InstallerMessages(_vds);
         _dialog = new EngineSSHDialog();

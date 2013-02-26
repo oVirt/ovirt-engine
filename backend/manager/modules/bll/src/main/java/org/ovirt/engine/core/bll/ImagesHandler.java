@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -41,7 +42,6 @@ import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.backendcompat.Path;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
@@ -377,7 +377,7 @@ public final class ImagesHandler {
         if (StringUtils.isEmpty(windowsPath)) {
             return windowsPath; // empty string is used for 'eject'.
         }
-        String fileName = Path.GetFileName(windowsPath);
+        String fileName = new File(windowsPath).getName();
         return String.format("%1$s/%2$s", isoPrefix, fileName);
     }
 

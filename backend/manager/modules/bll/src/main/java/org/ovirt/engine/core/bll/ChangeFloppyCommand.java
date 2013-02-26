@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.bll;
 
+import java.io.File;
+
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ChangeDiskVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.compat.backendcompat.Path;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 
@@ -18,7 +19,7 @@ public class ChangeFloppyCommand<T extends ChangeDiskCommandParameters> extends 
     }
 
     public String getDiskName() {
-        return Path.GetFileName(mCdImagePath);
+        return new File(mCdImagePath).getName();
     }
 
     @Override

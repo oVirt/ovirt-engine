@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -58,7 +59,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.compat.backendcompat.Path;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
@@ -641,7 +641,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
             String isoDir = (String) runVdsCommand(VDSCommandType.IsoDirectory,
                     new IrsBaseVDSCommandParameters(getVm().getStoragePoolId())).getReturnValue();
-            rhevToolsPath = Path.Combine(isoDir, rhevToolsPath);
+            rhevToolsPath = isoDir + File.separator + rhevToolsPath;
 
             getVm().setCdPath(ImagesHandler.cdPathWindowsToLinux(rhevToolsPath, getVm().getStoragePoolId()));
         }

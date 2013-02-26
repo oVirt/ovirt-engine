@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import java.io.File;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -10,7 +12,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
-import org.ovirt.engine.core.compat.backendcompat.Path;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.log.Log;
@@ -60,7 +61,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
 
     private boolean isIsoFileValid(String isoFile) {
         return StringUtils.isNotBlank(isoFile)
-                && FileUtil.fileExists(Path.Combine(Config.resolveOVirtISOsRepositoryPath(), isoFile));
+                && FileUtil.fileExists(Config.resolveOVirtISOsRepositoryPath() + File.separator + isoFile);
     }
 
     @Override
