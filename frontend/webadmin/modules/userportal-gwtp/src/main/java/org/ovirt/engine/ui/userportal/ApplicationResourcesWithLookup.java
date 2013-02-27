@@ -63,6 +63,15 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
     @Source("images/os/large/WindowsXP.png")
     ImageResource WindowsXPLargeImage();
 
+    @Source("images/os/large/Windows8.png")
+    ImageResource Windows8LargeImage();
+
+    @Source("images/os/large/Windows8x64.png")
+    ImageResource Windows8x64LargeImage();
+
+    @Source("images/os/large/Windows2012x64.png")
+    ImageResource Windows2012x64LargeImage();
+
     // OS type small images
 
     // TODO remove the same resources from ApplicationResources and rename this
@@ -122,6 +131,15 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
 
     @Source("images/os/WindowsXP.jpg")
     ImageResource WindowsXPSmallImage();
+
+    @Source("images/os/Windows8.png")
+    ImageResource Windows8SmallImage();
+
+    @Source("images/os/Windows8x64.png")
+    ImageResource Windows8x64SmallImage();
+
+    @Source("images/os/Windows2012x64.png")
+    ImageResource Windows2012x64SmallImage();
 
     @Source("images/vmtypes/desktop_vm_icon.png")
     ImageResource desktopVmIcon();
