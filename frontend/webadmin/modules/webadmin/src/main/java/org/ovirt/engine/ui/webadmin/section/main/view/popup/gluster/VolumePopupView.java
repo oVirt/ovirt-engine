@@ -137,6 +137,11 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     @Ignore
     Label messageLabel;
 
+    @UiField
+    @Path(value = "optimizeForVirtStore.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor optimizeForVirtStoreEditor;
+
     @Inject
     public VolumePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
@@ -205,6 +210,7 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
         cifs_accecssProtocolEditor.setLabel(constants.cifsVolume());
         allowAccessEditor.setLabel(constants.allowAccessFromVolume());
         allowAccessLabel.setText(constants.allowAccessFromLabelVolume());
+        optimizeForVirtStoreEditor.setLabel(constants.optimizeForVirtStoreVolume());
     }
 
     @Override

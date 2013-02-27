@@ -2163,6 +2163,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("(Comma separated list of IP addresses/hostnames)")
     String allowAccessFromLabelVolume();
 
+    @DefaultStringValue("Optimize for Virt Store")
+    String optimizeForVirtStoreVolume();
+
     @DefaultStringValue("Name")
     String NameVolume();
 

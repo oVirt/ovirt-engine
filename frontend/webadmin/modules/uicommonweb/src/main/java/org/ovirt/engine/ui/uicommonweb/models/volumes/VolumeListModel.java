@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.volumes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -410,9 +411,17 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     }
 
     private void optimizeForVirtStore() {
-        if (getSelectedItems() == null) {
+        if (getSelectedItems() == null || getSelectedItems().size() == 0) {
             return;
         }
+        ArrayList<Guid> volumeIds = new ArrayList<Guid>();
+        for (Object item : getSelectedItems()) {
+            volumeIds.add(((GlusterVolumeEntity) item).getId());
+        }
+        optimizeVolumesForVirtStore(volumeIds);
+    }
+
+    private void optimizeVolumesForVirtStore(final List<Guid> volumeList) {
         AsyncQuery aQuery = new AsyncQuery();
         aQuery.setModel(this);
         aQuery.asyncCallback = new INewAsyncCallback() {
@@ -437,24 +446,22 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                                 String optionOwnerGroupVirt = (String) resultInner1;
 
                                 ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-                                for (Object item : getSelectedItems())
+                                for (Guid volumeId : volumeList)
                                 {
-                                    GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
-
                                     GlusterVolumeOptionEntity optionGroup = new GlusterVolumeOptionEntity();
-                                    optionGroup.setVolumeId(volume.getId());
+                                    optionGroup.setVolumeId(volumeId);
                                     optionGroup.setKey("group"); //$NON-NLS-1$
                                     optionGroup.setValue(optionGroupVirt);
                                     list.add(new GlusterVolumeOptionParameters(optionGroup));
 
                                     GlusterVolumeOptionEntity optionOwnerUser = new GlusterVolumeOptionEntity();
-                                    optionOwnerUser.setVolumeId(volume.getId());
+                                    optionOwnerUser.setVolumeId(volumeId);
                                     optionOwnerUser.setKey("storage.owner-uid"); //$NON-NLS-1$
                                     optionOwnerUser.setValue(optionOwnerUserVirt);
                                     list.add(new GlusterVolumeOptionParameters(optionOwnerUser));
 
                                     GlusterVolumeOptionEntity optionOwnerGroup = new GlusterVolumeOptionEntity();
-                                    optionOwnerGroup.setVolumeId(volume.getId());
+                                    optionOwnerGroup.setVolumeId(volumeId);
                                     optionOwnerGroup.setKey("storage.owner-gid"); //$NON-NLS-1$
                                     optionOwnerGroup.setValue(optionOwnerGroupVirt);
                                     list.add(new GlusterVolumeOptionParameters(optionOwnerGroup));
@@ -641,6 +648,10 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         if (returnValue != null && returnValue.getSucceeded())
         {
             cancel();
+            Guid volumeId = (Guid) returnValue.getActionReturnValue();
+            if ((Boolean) model.getOptimizeForVirtStore().getEntity()) {
+                optimizeVolumesForVirtStore(Arrays.asList(volumeId));
+            }
         }
     }
 

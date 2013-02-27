@@ -44,6 +44,7 @@ public class VolumeModel extends Model {
     EntityModel nfs_accecssProtocol;
     EntityModel cifs_accecssProtocol;
     EntityModel allowAccess;
+    EntityModel optimizeForVirtStore;
 
     private UICommand addBricksCommand;
 
@@ -166,6 +167,9 @@ public class VolumeModel extends Model {
 
         setAllowAccess(new EntityModel());
         getAllowAccess().setEntity("*"); //$NON-NLS-1$
+
+        setOptimizeForVirtStore(new EntityModel());
+        getOptimizeForVirtStore().setEntity(false);
     }
 
     public EntityModel getName() {
@@ -278,6 +282,14 @@ public class VolumeModel extends Model {
 
     public void setAllowAccess(EntityModel allowAccess) {
         this.allowAccess = allowAccess;
+    }
+
+    public EntityModel getOptimizeForVirtStore() {
+        return optimizeForVirtStore;
+    }
+
+    public void setOptimizeForVirtStore(EntityModel optimizeForVirtStore) {
+        this.optimizeForVirtStore = optimizeForVirtStore;
     }
 
     public void addBricks(){
