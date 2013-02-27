@@ -58,4 +58,21 @@ public class SearchParameters extends VdcQueryParametersBase implements Serializ
         caseSensitive = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder(50);
+        builder.append("search type: ");
+        builder.append(getSearchTypeValue());
+        builder.append(", search pattern: [");
+        builder.append(getSearchPattern());
+        builder.append("], case sensitive: ");
+        builder.append(getCaseSensitive());
+        builder.append(" [from: ");
+        builder.append(getSearchFrom());
+        builder.append(", max: ");
+        builder.append(getMaxCount());
+        builder.append("] ");
+        builder.append(super.toString());
+        return builder.toString();
+    }
 }

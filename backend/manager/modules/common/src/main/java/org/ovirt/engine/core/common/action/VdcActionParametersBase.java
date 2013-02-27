@@ -295,4 +295,17 @@ public class VdcActionParametersBase implements java.io.Serializable {
         ROLLBACK_FLOW;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder(50);
+        builder.append("commandId: "); //$NON-NLS-1$
+        builder.append(getCommandId());
+        builder.append(", user: "); //$NON-NLS-1$
+        if(getParametersCurrentUser() != null) {
+            builder.append(getParametersCurrentUser().getUserName());
+        }
+        builder.append(", commandType: "); //$NON-NLS-1$
+        builder.append(getCommandType());
+        return builder.toString();
+    }
 }

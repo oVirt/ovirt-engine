@@ -31,4 +31,16 @@ public class GetConfigurationValueParameters extends VdcQueryParametersBase {
 
     public GetConfigurationValueParameters() {
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder(50);
+        builder.append("version: "); //$NON-NLS-1$
+        builder.append(getVersion());
+        builder.append(", configuration value: ");
+        builder.append(getConfigValue());
+        builder.append(", ");
+        builder.append(super.toString());
+        return builder.toString();
+    }
 }

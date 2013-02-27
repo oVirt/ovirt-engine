@@ -59,4 +59,14 @@ public class VdcQueryParametersBase implements Serializable {
     public void setFiltered(boolean isFiltered) {
         this.isFiltered = isFiltered;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder(25);
+        builder.append("refresh: ");
+        builder.append(refresh);
+        builder.append(", filtered: ");
+        builder.append(isFiltered);
+        return builder.toString();
+    }
 }

@@ -54,6 +54,7 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
     public VdcQueryReturnValue RunQuery(VdcQueryType search,
             VdcQueryParametersBase searchParameters) {
         log.debug("Server: RunQuery invoked!"); //$NON-NLS-1$
+        debugQuery(search, searchParameters);
         searchParameters.setSessionId(getSessionId());
         return getBackend().RunQuery(search, searchParameters);
     }
@@ -61,7 +62,8 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
     @Override
     public VdcQueryReturnValue RunPublicQuery(VdcQueryType queryType,
             VdcQueryParametersBase params) {
-        log.debug("Server: RunPublicQuery invoked!"); //$NON-NLS-1$
+        log.debug("Server: RunPublicQuery invoked! " + queryType); //$NON-NLS-1$
+        debugQuery(queryType, params);
         return getBackend().RunPublicQuery(queryType, params);
     }
 
@@ -70,7 +72,6 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
             ArrayList<VdcQueryType> queryTypeList,
             ArrayList<VdcQueryParametersBase> queryParamsList) {
         log.debug("Server: RunMultipleQuery invoked! [amount of queries: " + queryTypeList.size() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-
         ArrayList<VdcQueryReturnValue> ret = new ArrayList<VdcQueryReturnValue>();
 
         if (queryTypeList == null || queryParamsList == null) {
@@ -84,6 +85,7 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
 
         else {
             for (int i = 0; i < queryTypeList.size(); i++) {
+                debugQuery(queryTypeList.get(i), queryParamsList.get(i));
                 ret.add(RunQuery(queryTypeList.get(i), queryParamsList.get(i)));
             }
         }
@@ -116,7 +118,7 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
     public VdcReturnValueBase RunAction(VdcActionType actionType,
             VdcActionParametersBase params) {
         log.debug("Server: RunAction invoked!"); //$NON-NLS-1$
-
+        debugAction(actionType, params);
         params.setSessionId(getSessionId());
 
         if (noBackend) {
@@ -197,4 +199,27 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
         // Now that we replaced the message let GWT do what it uses to do:
         super.doUnexpectedFailure(error);
     }
+
+    private void debugQuery(VdcQueryType queryType, VdcQueryParametersBase parameters) {
+        if (log.isDebugEnabled()) {
+            StringBuilder builder = new StringBuilder();
+            builder.append("Query type: "); //$NON-NLS-1$
+            builder.append(queryType);
+            builder.append(", Parameters: "); //$NON-NLS-1$
+            builder.append(parameters);
+            log.debug(builder.toString());
+        }
+    }
+
+    private void debugAction(VdcActionType actionType, VdcActionParametersBase params) {
+        if (log.isDebugEnabled()) {
+            StringBuilder builder = new StringBuilder();
+            builder.append("Action type: "); //$NON-NLS-1$
+            builder.append(actionType);
+            builder.append(", Parameters: "); //$NON-NLS-1$
+            builder.append(params);
+            log.debug(builder.toString());
+        }
+    }
+
 }
