@@ -98,7 +98,7 @@ ARTIFACTS = \
 .in:
 	sed \
 	-e "s|@ENGINE_DEFAULTS@|$(DATA_DIR)/conf/engine.conf.defaults|" \
-	-e "s|@ENGINE_VARS@|$(SYSCONF_DIR)/sysconfig/$(ENGINE_NAME)|" \
+	-e "s|@ENGINE_VARS@|$(PKG_SYSCONF_DIR)/engine.conf|" \
 	-e "s|@ENGINE_ETC@|$(PKG_SYSCONF_DIR)|" \
 	-e "s|@ENGINE_PKI@|$(PKG_PKI_DIR)|" \
 	-e "s|@ENGINE_LOG@|$(PKG_LOG_DIR)|" \
@@ -380,6 +380,7 @@ install_misc:
 	install -m 644 backend/manager/conf/jaas.conf $(DESTDIR)$(DATA_DIR)/conf
 	install -m 640 backend/manager/conf/engine.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/
 	install -m 644 backend/manager/conf/engine.conf.defaults $(DESTDIR)$(DATA_DIR)/conf
+	install -dm 640 $(DESTDIR)$(PKG_SYSCONF_DIR)/engine.conf.d
 	install -m 755 packaging/resources/ovirtlogrot.sh ${DESTDIR}$(DATA_DIR)/scripts/
 	install -m 755 packaging/resources/ovirt-cron ${DESTDIR}$(SYSCONF_DIR)/cron.daily/
 
@@ -401,12 +402,9 @@ install_service:
 
 	# Install the files:
 	install -dm 755 $(DESTDIR)$(DATA_DIR)/service
-	install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/sysconfig
-	install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/sysconfig/ovirt-engine.d
 	install -m 644 packaging/fedora/engine-service.xml.in $(DESTDIR)$(DATA_DIR)/service
 	install -m 644 packaging/fedora/engine-service-logging.properties.in $(DESTDIR)$(DATA_DIR)/service
 	install -m 755 packaging/fedora/engine-service.py $(DESTDIR)$(DATA_DIR)/service
-	install -m 644 packaging/fedora/engine-service.sysconfig $(DESTDIR)$(SYSCONF_DIR)/sysconfig/ovirt-engine
 	install -m 644 packaging/fedora/engine-service.limits $(DESTDIR)$(SYSCONF_DIR)/security/limits.d/10-$(ENGINE_NAME).conf
 
 	# Install the links:

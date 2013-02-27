@@ -108,17 +108,19 @@ FILE_HTTPD_CONF="/etc/httpd/conf/httpd.conf"
 FILE_IMAGE_UPLOADER_CONF="/etc/ovirt-engine/imageuploader.conf"
 FILE_ENGINE_VERSION = "%s/version" % DIR_CONFIG
 
-# File containing the local configuration of the engine:
+# Previous versions of the engine used these files to store the
+# configuration:
 FILE_ENGINE_SYSCONFIG="/etc/sysconfig/ovirt-engine"
-
-# This directory can also contain local configuration files for the
-# engine that will be loaded in alphabetial order:
 DIR_ENGINE_SYSCONFIG="%s.d" % FILE_ENGINE_SYSCONFIG
+
+# Files containing the local configuration of the engine:
+FILE_ENGINE_CONF="/etc/ovirt-engine/engine.conf"
+DIR_ENGINE_CONF="%s.d" % FILE_ENGINE_CONF
 
 # This file will be automatically created when the engine goes into
 # maintenance mode during upgrades and automatically removed when the
 # engine goes back into normal mode once the upgrade is finished:
-FILE_ENGINE_SYSCONFIG_MAINTENANCE="%s/99-maintenance.conf" % DIR_ENGINE_SYSCONFIG
+FILE_ENGINE_CONF_MAINTENANCE="%s/99-maintenance.conf" % DIR_ENGINE_CONF
 
 # ISO FILES
 FILE_VIRTIO_WIN_VFD="/usr/share/virtio-win/virtio-win.vfd"

@@ -43,7 +43,7 @@ public class StandaloneDataSource implements DataSource {
         // Load the service configuration file:
         String configPath = System.getenv("ENGINE_VARS");
         if (configPath == null) {
-            configPath = "/etc/sysconfig/ovirt-engine";
+            configPath = "/etc/ovirt-engine/engine.conf";
         }
         File configFile = new File(configPath);
         if (!configFile.exists()) {

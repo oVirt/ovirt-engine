@@ -3,7 +3,7 @@
 #
 # Please don't edit this file as it won't be preserverd when updating the
 # package that contains it. If you need to do updates use
-# /etc/sysconfig/ovirt-engine instead.
+# /etc/ovirt-engine/engine.conf instead.
 #
 
 #
@@ -158,3 +158,15 @@ ENGINE_DB_PASSWORD=
 #
 ENGINE_DB_MIN_CONNECTIONS=1
 ENGINE_DB_MAX_CONNECTIONS=100
+
+#
+# Timeout value in milliseconds for stop checking if database
+# connectivity is available (5 minutes at the moment):
+#
+ENGINE_DB_CONNECTION_TIMEOUT=300000
+
+#
+# Interval value in milliseconds for sleep between two subsequent
+# database connectivity checks:
+#
+ENGINE_DB_CHECK_INTERVAL=1000

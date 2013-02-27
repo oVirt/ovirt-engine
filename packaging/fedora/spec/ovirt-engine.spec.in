@@ -396,12 +396,13 @@ fi
 # Engine configuration files:
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_etc}
 %config(noreplace) %attr(-, %{engine_user}, %{engine_group}) %{engine_etc}/engine.conf
+%dir %attr(-, %{engine_user}, %{engine_group}) %{engine_etc}/engine.conf.d
+
+# File containing the version number of the engine:
 %{engine_data}/conf/version
 
 # Files needed by the service:
 %config(noreplace) %{_sysconfdir}/security/limits.d/10-ovirt-engine.conf
-%config(noreplace) %{_sysconfdir}/sysconfig/%{engine_name}
-%dir %{_sysconfdir}/sysconfig/%{engine_name}.d
 %{engine_data}/service
 %{_bindir}/engine-service
 %{_unitdir}/%{engine_name}.service

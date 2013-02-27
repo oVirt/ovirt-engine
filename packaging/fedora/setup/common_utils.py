@@ -1173,7 +1173,7 @@ def generateMacRange():
 def editEngineSysconfig(proxyEnabled, dbUrl, dbUser, fqdn, http, https, javaHome):
     # Load the file:
     logging.debug("Loading text file handler")
-    handler = TextConfigFileHandler(basedefs.FILE_ENGINE_SYSCONFIG)
+    handler = TextConfigFileHandler(basedefs.FILE_ENGINE_CONF)
     handler.open()
 
     # Save the Java home:
@@ -1233,7 +1233,7 @@ def configEncryptedPass(password):
     Push the encrypted password into the local configuration file.
     """
     logging.debug("Encrypting database password.")
-    handler = TextConfigFileHandler(basedefs.FILE_ENGINE_SYSCONFIG)
+    handler = TextConfigFileHandler(basedefs.FILE_ENGINE_CONF)
     handler.open()
     handler.editParam("ENGINE_DB_USER", getDbUser())
     handler.editParam("ENGINE_DB_PASSWORD", password)

@@ -28,7 +28,7 @@ public class LocalConfig {
 
     // Default files for defaults and overriden values:
     private static final String DEFAULTS_PATH = "/usr/share/ovirt-engine/conf/engine.conf.defaults";
-    private static final String VARS_PATH = "/etc/sysconfig/ovirt-engine";
+    private static final String VARS_PATH = "/etc/ovirt-engine/engine.conf";
 
     // This is a singleton and this is the instance:
     private static final LocalConfig instance = new LocalConfig();
