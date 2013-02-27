@@ -39,6 +39,7 @@ public class LoginValidator implements Validator, PostProcessInterceptor {
     // do not log passwords
     protected static final String LOGIN_SUCCESS = "Login success, user: {0} domain: {1}";
     protected static final String LOGIN_FAILURE = "Login failure, user: {0} domain: {1} reason: {2}";
+    protected static final String NO_AUTH_TYPE = "Authorization failed due to missing authorization-type";
     protected static final String VALIDATE_SESSION_SUCCESS = "Validating session succeeded";
     protected static final String VALIDATE_SESSION_FAILURE = "Validating session failed, reason: {0}";
     protected static final String NO_DOMAIN = "Missing domain component in User Principal Name (UPN)";
@@ -62,6 +63,9 @@ public class LoginValidator implements Validator, PostProcessInterceptor {
 
     @Override
     public boolean validate(Principal principal, String sessionId) {
+        if (principal == null) {
+            return loginFailureNoAuthType();
+        }
         if (principal.getDomain() == null) {
             return loginFailure(principal, NO_DOMAIN);
         }
@@ -136,6 +140,11 @@ public class LoginValidator implements Validator, PostProcessInterceptor {
 
     private boolean loginFailure(Principal principal, List<String> reasons) {
         return loginFailure(principal, reasons != null ? reasons.toString() : null);
+    }
+
+    private boolean loginFailureNoAuthType() {
+        LOG.infoFormat(NO_AUTH_TYPE);
+        return false;
     }
 
     private boolean loginFailure(Principal principal, String reason) {
