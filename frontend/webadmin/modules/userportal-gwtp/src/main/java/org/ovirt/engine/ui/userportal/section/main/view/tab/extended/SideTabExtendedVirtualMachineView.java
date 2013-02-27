@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
+import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.ApplicationTemplates;
@@ -126,7 +127,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
                 new TooltipProvider<UserPortalItemModel>() {
                     @Override
                     public String getTooltip(UserPortalItemModel value) {
-                        return value.getOsType().name();
+                        return EnumTranslator.createAndTranslate(value.getOsType());
                     }
                 });
         getTable().addColumn(new UserPortalItemSimpleColumn(vmImageColumnWithMaskAndTooltip), constants.empty(), "77px"); //$NON-NLS-1$
