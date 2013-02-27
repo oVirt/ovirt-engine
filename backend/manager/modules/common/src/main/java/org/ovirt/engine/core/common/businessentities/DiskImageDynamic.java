@@ -75,12 +75,12 @@ public class DiskImageDynamic implements BusinessEntity<Guid>, Comparable<DiskIm
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (int) (actualSize ^ (actualSize >>> 32));
         result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + (int) (actualSize ^ (actualSize >>> 32));
         result = prime * result + ((readRate == null) ? 0 : readRate.hashCode());
         result = prime * result + ((writeRate == null) ? 0 : writeRate.hashCode());
-        result = prime * result + ((writeLatency == null) ? 0 : writeLatency.hashCode());
         result = prime * result + ((readLatency == null) ? 0 : readLatency.hashCode());
+        result = prime * result + ((writeLatency == null) ? 0 : writeLatency.hashCode());
         result = prime * result + ((flushLatency == null) ? 0 : flushLatency.hashCode());
         return result;
     }

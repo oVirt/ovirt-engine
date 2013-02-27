@@ -410,25 +410,25 @@ public class AuditLog extends IVdcQueryable implements Serializable {
         int result = 1;
         result = prime * result + (int) (auditLogId ^ (auditLogId >>> 32));
         result = prime * result + ((logTime == null) ? 0 : logTime.hashCode());
-        result = prime * result + (logType * prime);
+        result = prime * result + logType;
         result = prime * result + ((message == null) ? 0 : message.hashCode());
         result = prime * result + ((storageDomainId == null) ? 0 : storageDomainId.hashCode());
         result = prime * result + ((storagePoolId == null) ? 0 : storagePoolId.hashCode());
-        result = prime * result + (severity * prime);
+        result = prime * result + severity;
         result = prime * result + ((userId == null) ? 0 : userId.hashCode());
         result = prime * result + ((vdsId == null) ? 0 : vdsId.hashCode());
         result = prime * result + ((quotaId == null) ? 0 : quotaId.hashCode());
         result = prime * result + ((vmId == null) ? 0 : vmId.hashCode());
         result = prime * result + ((vmTemplateId == null) ? 0 : vmTemplateId.hashCode());
-        result = prime * result + (processed ? prime : 0);
+        result = prime * result + (processed ? 1231 : 1237);
         result = prime * result + ((correlationId == null) ? 0 : correlationId.hashCode());
         result = prime * result + ((jobId == null) ? 0 : jobId.hashCode());
         result = prime * result + ((origin == null) ? 0 : origin.hashCode());
-        result = prime * result + (customEventId * prime);
-        result = prime * result + (eventFloodInSec * prime);
+        result = prime * result + customEventId;
+        result = prime * result + eventFloodInSec;
         result = prime * result + ((customData == null) ? 0 : customData.hashCode());
-        result = prime * result + ((external) ? 1 : 0);
-        result = prime * result + ((deleted) ? 1 : 0);
+        result = prime * result + (external ? 1231 : 1237);
+        result = prime * result + (deleted ? 1231 : 1237);
         return result;
     }
 

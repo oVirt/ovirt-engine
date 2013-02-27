@@ -149,17 +149,16 @@ public class AsyncTasks implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int results = 1;
+        results = prime * results + ((taskId == null) ? 0 : taskId.hashCode());
+        results = prime * results + ((stepId == null) ? 0 : stepId.hashCode());
+        results = prime * results + ((commandId == null) ? 0 : commandId.hashCode());
         results = prime * results + ((actionParameters == null) ? 0 : actionParameters.hashCode());
         results = prime * results + ((actionType == null) ? 0 : actionType.hashCode());
         results = prime * results + ((result == null) ? 0 : result.hashCode());
         results = prime * results + ((status == null) ? 0 : status.hashCode());
-        results = prime * results + ((taskId == null) ? 0 : taskId.hashCode());
-        results = prime * results + ((stepId == null) ? 0 : stepId.hashCode());
-        results = prime * results + ((commandId == null) ? 0 : commandId.hashCode());
-        results =  prime * results + ((startTime == null) ? 0 : startTime.hashCode());
+        results = prime * results + ((startTime == null) ? 0 : startTime.hashCode());
         results = prime * results + ((storagePoolId == null) ? 0 : storagePoolId.hashCode());
         results = prime * results + ((taskType == null) ? 0 : taskType.hashCode());
-
         return results;
     }
 

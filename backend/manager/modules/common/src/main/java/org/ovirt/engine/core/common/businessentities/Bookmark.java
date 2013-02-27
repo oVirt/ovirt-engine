@@ -54,11 +54,12 @@ public class Bookmark extends IVdcQueryable implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = this.name.hashCode() * 7;
-        hash += this.value.hashCode() * 7;
-        hash += this.id.hashCode() * 7;
-
-        return hash;
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((value == null) ? 0 : value.hashCode());
+        return result;
     }
 
     @Override

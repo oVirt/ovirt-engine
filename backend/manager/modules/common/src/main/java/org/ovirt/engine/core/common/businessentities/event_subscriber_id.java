@@ -28,9 +28,9 @@ public class event_subscriber_id implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((subscriberId == null) ? 0 : subscriberId.hashCode());
         result = prime * result + ((eventUpName == null) ? 0 : eventUpName.hashCode());
         result = prime * result + methodId;
-        result = prime * result + ((subscriberId == null) ? 0 : subscriberId.hashCode());
         result = prime * result + ((tagName == null) ? 0 : tagName.hashCode());
         return result;
     }

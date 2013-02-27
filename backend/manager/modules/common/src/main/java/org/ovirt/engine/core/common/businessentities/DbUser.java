@@ -84,36 +84,20 @@ public class DbUser extends IVdcQueryable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((department == null) ? 0 : department.hashCode());
-        result = prime
-                * result
-                + ((desktopDevice == null) ? 0 : desktopDevice
-                        .hashCode());
-        result = prime * result
-                + ((domain == null) ? 0 : domain.hashCode());
-        result = prime * result
-                + ((email == null) ? 0 : email.hashCode());
-        result = prime * result
-                + ((groups == null) ? 0 : groups.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((department == null) ? 0 : department.hashCode());
+        result = prime * result + ((desktopDevice == null) ? 0 : desktopDevice.hashCode());
+        result = prime * result + ((domain == null) ? 0 : domain.hashCode());
+        result = prime * result + ((email == null) ? 0 : email.hashCode());
+        result = prime * result + ((groups == null) ? 0 : groups.hashCode());
         result = prime * result + (lastAdminCheckStatus ? 1231 : 1237);
-        result = prime * result
-                + ((name == null) ? 0 : name.hashCode());
-        result = prime * result
-                + ((note == null) ? 0 : note.hashCode());
-        result = prime * result
-                + ((role == null) ? 0 : role.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((note == null) ? 0 : note.hashCode());
+        result = prime * result + ((role == null) ? 0 : role.hashCode());
         result = prime * result + status;
-        result = prime * result
-                + ((surname == null) ? 0 : surname.hashCode());
-        result = prime
-                * result
-                + ((userIconPath == null) ? 0 : userIconPath
-                        .hashCode());
-        result = prime * result
-                + ((id == null) ? 0 : id.hashCode());
-        result = prime * result
-                + ((username == null) ? 0 : username.hashCode());
+        result = prime * result + ((surname == null) ? 0 : surname.hashCode());
+        result = prime * result + ((userIconPath == null) ? 0 : userIconPath.hashCode());
+        result = prime * result + ((username == null) ? 0 : username.hashCode());
         return result;
     }
 

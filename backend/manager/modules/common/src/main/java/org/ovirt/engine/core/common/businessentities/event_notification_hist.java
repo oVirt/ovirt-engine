@@ -97,12 +97,12 @@ public class event_notification_hist implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + (int) (auditLogId ^ (auditLogId >>> 32));
+        result = prime * result + ((subscriberId == null) ? 0 : subscriberId.hashCode());
         result = prime * result + ((eventName == null) ? 0 : eventName.hashCode());
         result = prime * result + ((methodType == null) ? 0 : methodType.hashCode());
         result = prime * result + ((reason == null) ? 0 : reason.hashCode());
         result = prime * result + ((sentAt == null) ? 0 : sentAt.hashCode());
         result = prime * result + (status ? 1231 : 1237);
-        result = prime * result + ((subscriberId == null) ? 0 : subscriberId.hashCode());
         return result;
     }
 

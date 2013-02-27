@@ -48,9 +48,8 @@ public class LUN_storage_server_connection_map implements Serializable, Business
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id.lunId == null) ? 0 : id.lunId.hashCode());
-        result =
-                prime * result
-                        + ((id.storageServerConnection == null) ? 0 : id.storageServerConnection.hashCode());
+        result = prime * result
+                + ((id.storageServerConnection == null) ? 0 : id.storageServerConnection.hashCode());
         return result;
     }
 

@@ -85,10 +85,10 @@ public abstract class Disk extends BaseDisk {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + numberOfVms;
         result = prime * result + ((plugged == null) ? 0 : plugged.hashCode());
-        result = prime * result + ((vmEntityType == null) ? 0 : vmEntityType.hashCode());
         result = prime * result + ((vmNames == null) ? 0 : vmNames.hashCode());
+        result = prime * result + ((vmEntityType == null) ? 0 : vmEntityType.hashCode());
+        result = prime * result + numberOfVms;
         return result;
     }
 

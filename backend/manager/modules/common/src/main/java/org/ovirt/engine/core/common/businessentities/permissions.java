@@ -134,27 +134,16 @@ public class permissions extends IVdcQueryable implements BusinessEntity<Guid> {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime
-                * result
-                + ((adElementId == null) ? 0 : adElementId
-                        .hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result
-                + ((objectId == null) ? 0 : objectId.hashCode());
-        result = prime * result
-                + ((objectName == null) ? 0 : objectName.hashCode());
-        result = prime * result
-                + ((objectType == null) ? 0 : objectType.hashCode());
-        result = prime * result
-                + ((ownerName == null) ? 0 : ownerName.hashCode());
-        result = prime * result
-                + ((tags == null) ? 0 : tags.hashCode());
-        result = prime * result
-                + ((roleName == null) ? 0 : roleName.hashCode());
-        result = prime * result
-                + ((roleType == null) ? 0 : roleType.hashCode());
-        result = prime * result
-                + ((roleId == null) ? 0 : roleId.hashCode());
+        result = prime * result + ((adElementId == null) ? 0 : adElementId.hashCode());
+        result = prime * result + ((objectId == null) ? 0 : objectId.hashCode());
+        result = prime * result + ((objectName == null) ? 0 : objectName.hashCode());
+        result = prime * result + ((objectType == null) ? 0 : objectType.hashCode());
+        result = prime * result + ((ownerName == null) ? 0 : ownerName.hashCode());
+        result = prime * result + ((tags == null) ? 0 : tags.hashCode());
+        result = prime * result + ((roleName == null) ? 0 : roleName.hashCode());
+        result = prime * result + ((roleType == null) ? 0 : roleType.hashCode());
+        result = prime * result + ((roleId == null) ? 0 : roleId.hashCode());
         return result;
     }
 

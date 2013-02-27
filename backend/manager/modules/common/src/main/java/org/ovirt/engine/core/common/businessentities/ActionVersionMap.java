@@ -70,15 +70,9 @@ public class ActionVersionMap implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + actionType * prime;
-        result =
-                prime * result
-                        + ((clusterMinimalVersion == null) ? 0 : clusterMinimalVersion.hashCode());
-        result =
-                prime
-                        * result
-                        + ((storagePoolMinimalVersion == null) ? 0
-                                : storagePoolMinimalVersion.hashCode());
+        result = prime * result + actionType;
+        result = prime * result + ((clusterMinimalVersion == null) ? 0 : clusterMinimalVersion.hashCode());
+        result = prime * result + ((storagePoolMinimalVersion == null) ? 0 : storagePoolMinimalVersion.hashCode());
         return result;
     }
 

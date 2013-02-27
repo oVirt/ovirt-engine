@@ -19,21 +19,11 @@ public class event_subscriber extends IVdcQueryable implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime
-                * result
-                + ((id.eventUpName == null) ? 0 : id.eventUpName
-                        .hashCode());
-        result = prime
-                * result
-                + ((methodAddress == null) ? 0 : methodAddress
-                        .hashCode());
+        result = prime * result + ((id.eventUpName == null) ? 0 : id.eventUpName.hashCode());
+        result = prime * result + ((methodAddress == null) ? 0 : methodAddress.hashCode());
         result = prime * result + id.methodId;
-        result = prime
-                * result
-                + ((id.subscriberId == null) ? 0 : id.subscriberId
-                        .hashCode());
-        result = prime * result
-                + ((id.tagName == null) ? 0 : id.tagName.hashCode());
+        result = prime * result + ((id.subscriberId == null) ? 0 : id.subscriberId.hashCode());
+        result = prime * result + ((id.tagName == null) ? 0 : id.tagName.hashCode());
         return result;
     }
 

@@ -186,8 +186,8 @@ public class Image implements BusinessEntity<Guid> {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (active ? 1231 : 1237);
         result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + (active ? 1231 : 1237);
         result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
         result = prime * result + ((parentId == null) ? 0 : parentId.hashCode());
         result = prime * result + ((snapshotId == null) ? 0 : snapshotId.hashCode());

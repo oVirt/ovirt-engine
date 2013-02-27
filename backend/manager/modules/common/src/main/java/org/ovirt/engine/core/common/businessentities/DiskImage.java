@@ -423,12 +423,9 @@ public class DiskImage extends DiskImageBase implements IImage {
         result = prime * result + ((storagePoolId == null) ? 0 : storagePoolId.hashCode());
         result = prime * result + ((storagesNames == null) ? 0 : storagesNames.hashCode());
         result = prime * result + writeRateFromDiskImageDynamic;
-        result = prime * result
-                + ((flushLatency == null) ? 0 : flushLatency.hashCode());
-        result = prime * result
-                + ((readLatency == null) ? 0 : readLatency.hashCode());
-        result = prime * result
-                + ((writeLatency == null) ? 0 : writeLatency.hashCode());
+        result = prime * result + ((readLatency == null) ? 0 : readLatency.hashCode());
+        result = prime * result + ((writeLatency == null) ? 0 : writeLatency.hashCode());
+        result = prime * result + ((flushLatency == null) ? 0 : flushLatency.hashCode());
         return result;
     }
 
