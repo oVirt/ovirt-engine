@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:e="urn:import:org.ovirt.engine.ui.userportal.widget.basic"
-	xmlns:r="urn:import:org.ovirt.engine.ui.userportal.widget">
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:e="urn:import:org.ovirt.engine.ui.userportal.widget.basic"
+    xmlns:r="urn:import:org.ovirt.engine.ui.userportal.widget"
+    xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label">
 
 
 	<ui:with field='resources'
@@ -174,7 +175,7 @@
 					<g:FlowPanel addStyleNames="{style.detailsRow}">
 						<g:Image resource='{resources.basicOsIcon}' addStyleNames="{style.rowIcon}" />
 						<g:Label text="{constants.osBasicDetails} : " addStyleNames="{style.rowLabel}" />
-						<g:ValueLabel ui:field="operatingSystem" addStyleNames="{style.rowValue}" />
+						<l:EnumLabel ui:field="operatingSystem" addStyleNames="{style.rowValue}" />
 					</g:FlowPanel>
 				</g:layer>
 

@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.AbstractView;
+import org.ovirt.engine.ui.common.widget.label.EnumLabel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicDetailsPresenterWidget;
@@ -17,12 +18,10 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ValueLabel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -68,10 +67,10 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
     @WithElementId("description")
     Label vmDescription;
 
-    @UiField(provided = true)
+    @UiField
     @Path("SelectedItem.OsType")
     @WithElementId("os")
-    ValueLabel<VmOsType> operatingSystem;
+    EnumLabel<VmOsType> operatingSystem;
 
     @UiField
     @Path("SelectedItemDefinedMemory.Entity")
@@ -103,13 +102,6 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
 
     @Inject
     public MainTabBasicDetailsView(ApplicationResources resources) {
-        operatingSystem = new ValueLabel<VmOsType>(new AbstractRenderer<VmOsType>() {
-            @Override
-            public String render(VmOsType object) {
-                return object.name();
-            }
-        });
-
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         Driver.driver.initialize(this);
         ViewIdHandler.idHandler.generateAndSetIds(this);
