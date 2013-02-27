@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelSuggestBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -45,6 +46,10 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, HostBondPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
+
+    @UiField(provided = true)
+    @Path(value = "bond.selectedItem")
+    ListModelSuggestBoxEditor bondSuggestEditor;
 
     @UiField(provided = true)
     @Path(value = "bond.selectedItem")
@@ -118,6 +123,7 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
     public HostBondPopupView(EventBus eventBus, ApplicationResources resources, final ApplicationConstants constants) {
         super(eventBus, resources);
 
+        bondSuggestEditor = new ListModelSuggestBoxEditor();
         bondEditor = new ListModelListBoxEditor<Object>();
         networkEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
@@ -151,6 +157,7 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
         mainPanel.getElement().setPropertyString("width", "100%"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Localize
+        bondSuggestEditor.setLabel(constants.bondNameHostPopup() + ":"); //$NON-NLS-1$
         bondEditor.setLabel(constants.bondNameHostPopup() + ":"); //$NON-NLS-1$
         networkEditor.setLabel(constants.networkHostPopup() + ":"); //$NON-NLS-1$
         bondingModeEditor.setLabel(constants.bondingModeHostPopup() + ":"); //$NON-NLS-1$
@@ -170,6 +177,9 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
     @Override
     public void edit(final HostBondInterfaceModel object) {
         driver.edit(object);
+
+        bondSuggestEditor.setVisible(false);
+
         if (!object.getBootProtocolAvailable()) {
             bootProtocol.asWidget().setVisible(false);
             bootProtocolLabel.setVisible(false);

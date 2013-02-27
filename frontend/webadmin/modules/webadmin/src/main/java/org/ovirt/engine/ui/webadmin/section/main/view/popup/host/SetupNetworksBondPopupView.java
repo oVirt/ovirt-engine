@@ -19,6 +19,9 @@ public class SetupNetworksBondPopupView extends HostBondPopupView implements Set
     public void edit(final HostBondInterfaceModel object) {
         super.edit(object);
 
+        bondSuggestEditor.setVisible(true);
+        bondEditor.setVisible(false);
+
         // hide widgets
         info.setVisible(false);
         message.setVisible(false);

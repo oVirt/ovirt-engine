@@ -31,7 +31,7 @@ public class HostBondInterfaceModel extends Model
         return privateBond;
     }
 
-    private void setBond(SortedListModel value)
+    protected void setBond(SortedListModel value)
     {
         privateBond = value;
     }

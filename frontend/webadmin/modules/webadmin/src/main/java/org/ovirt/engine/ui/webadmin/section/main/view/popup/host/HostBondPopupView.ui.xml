@@ -19,6 +19,7 @@
 			<g:DockLayoutPanel ui:field="layoutPanel">
 				<g:north size="330">
 					<g:VerticalPanel ui:field="mainPanel">
+						<e:ListModelSuggestBoxEditor ui:field="bondSuggestEditor" />
 						<e:ListModelListBoxEditor ui:field="bondEditor" />
 						<e:ListModelListBoxEditor ui:field="networkEditor" />
 						<e:ListModelListBoxEditor ui:field="bondingModeEditor" />
