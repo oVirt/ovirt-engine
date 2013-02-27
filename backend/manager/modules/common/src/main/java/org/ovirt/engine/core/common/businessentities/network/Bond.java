@@ -6,11 +6,12 @@ public class Bond extends VdsNetworkInterface {
     private static final long serialVersionUID = 268337006285648461L;
 
     public Bond() {
+        setBonded(true);
     }
 
     public Bond(String macAddress, String bondOptions, Integer bondType) {
+        this();
         setMacAddress(macAddress);
-        setBonded(true);
         setBondOptions(bondOptions);
         setBondType(bondType);
     }
