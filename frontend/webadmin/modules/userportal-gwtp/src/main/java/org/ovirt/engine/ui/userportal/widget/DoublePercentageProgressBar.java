@@ -66,6 +66,8 @@ public class DoublePercentageProgressBar extends Composite implements IsEditor<T
     }
 
     public void setZeroValue() {
+        percentageBarB.setVisible(false);
+        percentageBarB.setWidth("0px"); //$NON-NLS-1$
         percentageBarA.setVisible(true);
         percentageBarA.setTitle(title);
         percentageBarA.setStyleName(style.empty());
