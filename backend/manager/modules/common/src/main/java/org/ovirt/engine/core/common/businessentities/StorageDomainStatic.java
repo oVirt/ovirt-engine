@@ -148,9 +148,9 @@ public class StorageDomainStatic implements BusinessEntity<Guid> {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (autoRecoverable ? 1231 : 1237);
-        result = prime * result + ((connection == null) ? 0 : connection.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + (autoRecoverable ? 0 : 1);
+        result = prime * result + ((connection == null) ? 0 : connection.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((storage == null) ? 0 : storage.hashCode());
         result = prime * result + ((storageFormat == null) ? 0 : storageFormat.hashCode());

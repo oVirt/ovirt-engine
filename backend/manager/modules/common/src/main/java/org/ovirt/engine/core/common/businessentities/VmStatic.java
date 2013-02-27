@@ -180,7 +180,7 @@ public class VmStatic extends VmBase {
         result = prime * result + ((predefinedProperties == null) ? 0 : predefinedProperties.hashCode());
         result = prime * result + ((userDefinedProperties == null) ? 0 : userDefinedProperties.hashCode());
         result = prime * result + ((vmtGuid == null) ? 0 : vmtGuid.hashCode());
-        result = prime * result + (useHostCpuFlags ? 0 : 1);
+        result = prime * result + (useHostCpuFlags ? 1231 : 1237);
         return result;
     }
 

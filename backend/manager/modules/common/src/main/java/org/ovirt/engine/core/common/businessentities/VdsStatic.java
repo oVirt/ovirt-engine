@@ -475,9 +475,9 @@ public class VdsStatic implements BusinessEntity<Guid> {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((hostname == null) ? 0 : hostname.hashCode());
         result = prime * result + ((consoleAddress == null) ? 0 : consoleAddress.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((managementIp == null) ? 0 : managementIp.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + (int) (otpValidity ^ (otpValidity >>> 32));
@@ -530,13 +530,6 @@ public class VdsStatic implements BusinessEntity<Guid> {
                 && ObjectUtils.objectsEqual(pmPort, other.pmPort)
                 && ObjectUtils.objectsEqual(pmType, other.pmType)
                 && ObjectUtils.objectsEqual(pmUser, other.pmUser)
-                && port == other.port
-                && ObjectUtils.objectsEqual(serverSslEnabled, other.serverSslEnabled)
-                && ObjectUtils.objectsEqual(uniqueId, other.uniqueId)
-                && ObjectUtils.objectsEqual(vdsGroupId, other.vdsGroupId)
-                && ObjectUtils.objectsEqual(vdsStrength, other.vdsStrength)
-                && vdsType == other.vdsType
-                && ObjectUtils.objectsEqual(sshKeyFingerprint, other.sshKeyFingerprint)
                 && ObjectUtils.objectsEqual(pmSecondaryIp, other.pmSecondaryIp)
                 && pmSecondaryConcurrent == other.pmSecondaryConcurrent
                 && ObjectUtils.objectsEqual(pmSecondaryOptions, other.pmSecondaryOptions)
@@ -545,7 +538,13 @@ public class VdsStatic implements BusinessEntity<Guid> {
                 && ObjectUtils.objectsEqual(pmSecondaryPort, other.pmSecondaryPort)
                 && ObjectUtils.objectsEqual(pmSecondaryType, other.pmSecondaryType)
                 && ObjectUtils.objectsEqual(pmSecondaryUser, other.pmSecondaryUser)
-                && port == other.port);
+                && port == other.port
+                && ObjectUtils.objectsEqual(serverSslEnabled, other.serverSslEnabled)
+                && ObjectUtils.objectsEqual(uniqueId, other.uniqueId)
+                && ObjectUtils.objectsEqual(vdsGroupId, other.vdsGroupId)
+                && ObjectUtils.objectsEqual(vdsStrength, other.vdsStrength)
+                && vdsType == other.vdsType
+                && ObjectUtils.objectsEqual(sshKeyFingerprint, other.sshKeyFingerprint));
     }
 
 }

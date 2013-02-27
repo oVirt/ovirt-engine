@@ -59,6 +59,7 @@ public class VmPool extends IVdcQueryable implements Serializable, Nameable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((defaultEndTime == null) ? 0 : defaultEndTime.hashCode());
         result = prime * result + ((defaultStartTime == null) ? 0 : defaultStartTime.hashCode());
         result = prime * result + defaultTimeInDays;
@@ -67,7 +68,6 @@ public class VmPool extends IVdcQueryable implements Serializable, Nameable {
         result = prime * result + ((vdsGroupName == null) ? 0 : vdsGroupName.hashCode());
         result = prime * result + vmPoolAssignedCount;
         result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + vmPoolRunningCount;
         result = prime * result + ((type == null) ? 0 : type.hashCode());

@@ -169,10 +169,10 @@ public class storage_pool extends IVdcQueryable implements BusinessEntity<Guid> 
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((LVER == null) ? 0 : LVER.hashCode());
-        result = prime * result + ((compatibilityVersion == null) ? 0 : compatibilityVersion.hashCode());
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((LVER == null) ? 0 : LVER.hashCode());
+        result = prime * result + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + ((compatibilityVersion == null) ? 0 : compatibilityVersion.hashCode());
         result = prime * result + masterDomainVersion;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((recovery_mode == null) ? 0 : recovery_mode.hashCode());

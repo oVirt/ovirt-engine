@@ -85,9 +85,8 @@ public class StoragePoolIsoMap implements BusinessEntity<StoragePoolIsoMapId> {
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((persistentOwner == null) ? 0 : persistentOwner.hashCode());
-        result =
-                prime * result
-                        + ((persistentStorageDomainStatus == null) ? 0 : persistentStorageDomainStatus.hashCode());
+        result = prime * result
+              + ((persistentStorageDomainStatus == null) ? 0 : persistentStorageDomainStatus.hashCode());
         return result;
     }
 

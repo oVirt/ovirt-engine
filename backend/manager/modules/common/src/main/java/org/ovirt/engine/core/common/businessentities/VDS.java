@@ -38,6 +38,9 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((mVdsStatic == null) ? 0 : mVdsStatic.hashCode());
+        result = prime * result + ((mVdsDynamic == null) ? 0 : mVdsDynamic.hashCode());
+        result = prime * result + ((mVdsStatistics == null) ? 0 : mVdsStatistics.hashCode());
         result = prime * result + ((cpuName == null) ? 0 : cpuName.hashCode());
         result = prime * result + ((_spm_status == null) ? 0 : _spm_status.hashCode());
         result = prime * result + cpuOverCommitDurationMinutes;
@@ -47,20 +50,14 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         result = prime * result + ((mImagesLastDelay == null) ? 0 : mImagesLastDelay.hashCode());
         result = prime * result + ((mInterfaceList == null) ? 0 : mInterfaceList.hashCode());
         result = prime * result + ((mNetworkList == null) ? 0 : mNetworkList.hashCode());
-        result = prime * result + ((mVdsDynamic == null) ? 0 : mVdsDynamic.hashCode());
-        result = prime * result + ((mVdsStatic == null) ? 0 : mVdsStatic.hashCode());
-        result = prime * result + ((mVdsStatistics == null) ? 0 : mVdsStatistics.hashCode());
         result = prime * result + maxVdsMemoryOverCommit;
         result = prime * result + ((privateDomains == null) ? 0 : privateDomains.hashCode());
         result = prime * result + ((vdsSpmId == null) ? 0 : vdsSpmId.hashCode());
         result = prime * result + ((selectionAlgorithm == null) ? 0 : selectionAlgorithm.hashCode());
         result = prime * result + ((storagePoolId == null) ? 0 : storagePoolId.hashCode());
         result = prime * result + ((storagePoolName == null) ? 0 : storagePoolName.hashCode());
-        result =
-                prime
-                        * result
-                        + ((vdsGroupCompatibilityVersion == null) ? 0
-                                : vdsGroupCompatibilityVersion.hashCode());
+        result = prime * result
+                + ((vdsGroupCompatibilityVersion == null) ? 0 : vdsGroupCompatibilityVersion.hashCode());
         result = prime * result + ((vdsGroupCpuName == null) ? 0 : vdsGroupCpuName.hashCode());
         result = prime * result + ((vdsGroupDescription == null) ? 0 : vdsGroupDescription.hashCode());
         result = prime * result + ((vdsGroupName == null) ? 0 : vdsGroupName.hashCode());

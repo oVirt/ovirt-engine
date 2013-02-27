@@ -247,16 +247,13 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((compatVersion == null) ? 0 : compatVersion.hashCode());
         result = prime * result + ((compatibility_version == null) ? 0 : compatibility_version.hashCode());
         result = prime * result + ((cpu_name == null) ? 0 : cpu_name.hashCode());
-        result =
-            prime
-            * result
-            + cpu_over_commit_duration_minutes;
+        result = prime * result + cpu_over_commit_duration_minutes;
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + high_utilization;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + low_utilization;
         result = prime * result + max_vds_memory_over_commit;
         result = prime * result + (countThreadsAsCores ? 1231 : 1237);

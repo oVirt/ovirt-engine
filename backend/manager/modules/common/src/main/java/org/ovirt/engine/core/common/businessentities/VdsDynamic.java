@@ -573,8 +573,8 @@ public class VdsDynamic implements BusinessEntity<Guid> {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result =
-                prime * result + ((_supportedClusterVersionsSet == null) ? 0 : _supportedClusterVersionsSet.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((_supportedClusterVersionsSet == null) ? 0 : _supportedClusterVersionsSet.hashCode());
         result = prime * result + ((_supportedENGINESVersionsSet == null) ? 0 : _supportedENGINESVersionsSet.hashCode());
         result = prime * result + anonymousHugePages;
         result = prime * result + ((buildName == null) ? 0 : buildName.hashCode());
@@ -589,7 +589,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         result = prime * result + ((hooksStr == null) ? 0 : hooksStr.hashCode());
         result = prime * result + ((host_os == null) ? 0 : host_os.hashCode());
         result = prime * result + ((iScsiInitiatorName == null) ? 0 : iScsiInitiatorName.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((if_total_speed == null) ? 0 : if_total_speed.hashCode());
         result = prime * result + ((kernel_version == null) ? 0 : kernel_version.hashCode());
         result = prime * result + ((kvm_enabled == null) ? 0 : kvm_enabled.hashCode());

@@ -50,95 +50,39 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime
-                * result
-                + ((acpiEnabled == null) ? 0 : acpiEnabled.hashCode());
-        result = prime * result
-                + ((appList == null) ? 0 : appList.hashCode());
-        result = prime
-                * result
-                + bootSequence.hashCode() * prime;
-        result = prime * result
-                + ((clientIp == null) ? 0 : clientIp.hashCode());
-        result = prime * result
-                + ((display == null) ? 0 : display.hashCode());
-        result = prime * result
-                + ((displayIp == null) ? 0 : displayIp.hashCode());
-        result = prime
-                * result
-                + ((displaySecurePort == null) ? 0
-                        : displaySecurePort.hashCode());
-        result = prime
-                * result
-                + displayType.hashCode() * prime;
-        result = prime
-                * result
-                + ((consoleCurUserName == null) ? 0
-                        : consoleCurUserName.hashCode());
-        result = prime
-                * result
-                + ((guestCurUserName == null) ? 0
-                        : guestCurUserName.hashCode());
-        result = prime
-                * result
-                + ((consoleUserId == null) ? 0
-                       : consoleUserId.hashCode());
-        result = prime
-                * result
-                + ((guestLastLoginTime == null) ? 0
-                        : guestLastLoginTime.hashCode());
-        result = prime
-                * result
-                + ((guestLastLogoutTime == null) ? 0
-                        : guestLastLogoutTime.hashCode());
-        result = prime * result
-                + ((guestOs == null) ? 0 : guestOs.hashCode());
-        result = prime
-                * result
-                + ((guestRequestedMemory == null) ? 0
-                        : guestRequestedMemory.hashCode());
-        result = prime
-                * result
-                + ((hibernationVolHandle == null) ? 0
-                        : hibernationVolHandle.hashCode());
-        result = prime * result
-                + ((kvmEnable == null) ? 0 : kvmEnable.hashCode());
-        result = prime
-                * result
-                + ((lastVdsRunOn == null) ? 0 : lastVdsRunOn
-                        .hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((acpiEnabled == null) ? 0 : acpiEnabled.hashCode());
+        result = prime * result + ((appList == null) ? 0 : appList.hashCode());
+        result = prime * result + bootSequence.hashCode();
+        result = prime * result + ((clientIp == null) ? 0 : clientIp.hashCode());
+        result = prime * result + ((display == null) ? 0 : display.hashCode());
+        result = prime * result + ((displayIp == null) ? 0 : displayIp.hashCode());
+        result = prime * result + ((displaySecurePort == null) ? 0 : displaySecurePort.hashCode());
+        result = prime * result + displayType.hashCode();
+        result = prime * result + ((consoleCurUserName == null) ? 0 : consoleCurUserName.hashCode());
+        result = prime * result + ((guestCurUserName == null) ? 0 : guestCurUserName.hashCode());
+        result = prime * result + ((consoleUserId == null) ? 0 : consoleUserId.hashCode());
+        result = prime * result + ((guestLastLoginTime == null) ? 0 : guestLastLoginTime.hashCode());
+        result = prime * result + ((guestLastLogoutTime == null) ? 0 : guestLastLogoutTime.hashCode());
+        result = prime * result + ((guestOs == null) ? 0 : guestOs.hashCode());
+        result = prime * result + ((guestRequestedMemory == null) ? 0 : guestRequestedMemory.hashCode());
+        result = prime * result + ((hibernationVolHandle == null) ? 0 : hibernationVolHandle.hashCode());
+        result = prime * result + ((kvmEnable == null) ? 0 : kvmEnable.hashCode());
+        result = prime * result + ((lastVdsRunOn == null) ? 0 : lastVdsRunOn.hashCode());
         result = prime * result + ((disks == null) ? 0 : disks.hashCode());
-        result = prime * result
-                + ((mExitMessage == null) ? 0 : mExitMessage.hashCode());
-        result = prime * result
-                + exitStatus.hashCode() * prime;
+        result = prime * result + ((mExitMessage == null) ? 0 : mExitMessage.hashCode());
+        result = prime * result + exitStatus.hashCode();
         result = prime * result + (win2kHackEnabled ? 1231 : 1237);
-        result = prime
-                * result
-                + ((migratingToVds == null) ? 0 : migratingToVds
-                        .hashCode());
-        result = prime * result
-                + ((pauseStatus == null) ? 0 : pauseStatus.hashCode());
-        result = prime * result
-                + ((runOnVds == null) ? 0 : runOnVds.hashCode());
-        result = prime * result
-                + session.hashCode() * prime;
-        result = prime * result
-                + status.hashCode() * prime;
-        result = prime * result
-                + ((utcDiff == null) ? 0 : utcDiff.hashCode());
-        result = prime * result
-                + ((id == null) ? 0 : id.hashCode());
-        result = prime * result
-                + ((vmHost == null) ? 0 : vmHost.hashCode());
-        result = prime * result
-                + ((vmIp == null) ? 0 : vmIp.hashCode());
-        result = prime
-                * result
-                + ((lastStartTime == null) ? 0
-                        : lastStartTime.hashCode());
-        result = prime * result
-                + ((vmPid == null) ? 0 : vmPid.hashCode());
+        result = prime * result + ((migratingToVds == null) ? 0 : migratingToVds.hashCode());
+        result = prime * result + ((pauseStatus == null) ? 0 : pauseStatus.hashCode());
+        result = prime * result + ((runOnVds == null) ? 0 : runOnVds.hashCode());
+        result = prime * result + session.hashCode();
+        result = prime * result + status.hashCode();
+        result = prime * result + ((utcDiff == null) ? 0 : utcDiff.hashCode());
+        result = prime * result + ((vmHost == null) ? 0 : vmHost.hashCode());
+        result = prime * result + ((vmIp == null) ? 0 : vmIp.hashCode());
+        result = prime * result + ((lastStartTime == null) ? 0 : lastStartTime.hashCode());
+        result = prime * result + ((vmPid == null) ? 0 : vmPid.hashCode());
         return result;
     }
 

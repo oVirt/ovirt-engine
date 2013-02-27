@@ -205,11 +205,10 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
         result = prime * result + type.hashCode();
         result = prime * result + address.hashCode();
         result = prime * result + bootOrder;
-        result = prime * result
-                + ((specParams == null) ? 0 : specParams.hashCode());
-        result = prime * result + (isManaged ? 1 : 0);
-        result = prime * result + (isPlugged ? 1 : 0);
-        result = prime * result + (isReadOnly ? 1 : 0);
+        result = prime * result + ((specParams == null) ? 0 : specParams.hashCode());
+        result = prime * result + (isManaged ? 1231 : 1237);
+        result = prime * result + (isPlugged ? 1231 : 1237);
+        result = prime * result + (isReadOnly ? 1231 : 1237);
         result = prime * result + alias.hashCode();
         return result;
     }

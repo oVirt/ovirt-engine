@@ -555,6 +555,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + (autoStartup ? 1231 : 1237);
         result = prime * result + (autoSuspend ? 1231 : 1237);
         result = prime * result + cpuPerSocket;
@@ -563,7 +564,6 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((domain == null) ? 0 : domain.hashCode());
         result = prime * result + (failBack ? 1231 : 1237);
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((initrdUrl == null) ? 0 : initrdUrl.hashCode());
         result = prime * result + ((isoPath == null) ? 0 : isoPath.hashCode());
         result = prime * result + ((kernelParams == null) ? 0 : kernelParams.hashCode());
@@ -583,11 +583,10 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         result = prime * result + ((vmType == null) ? 0 : vmType.hashCode());
         result = prime * result + ((quotaId == null) ? 0 : quotaId.hashCode());
         result = prime * result + (allowConsoleReconnect ? 1231 : 1237);
-        result = prime * result + ((migrationSupport == null) ? 0 : migrationSupport.hashCode());
         result = prime * result + ((dedicatedVmForVds == null) ? 0 : dedicatedVmForVds.hashCode());
+        result = prime * result + ((migrationSupport == null) ? 0 : migrationSupport.hashCode());
         result = prime * result + ((tunnelMigration == null) ? 0 : tunnelMigration.hashCode());
         result = prime * result + ((vncKeyboardLayout == null) ? 0 : vncKeyboardLayout.hashCode());
-
         return result;
     }
 

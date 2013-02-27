@@ -48,9 +48,9 @@ public class TagsVmMap implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((defaultDisplayType == null) ? 0 : defaultDisplayType.hashCode());
         result = prime * result + ((id.tagId == null) ? 0 : id.tagId.hashCode());
         result = prime * result + ((id.vmId == null) ? 0 : id.vmId.hashCode());
+        result = prime * result + ((defaultDisplayType == null) ? 0 : defaultDisplayType.hashCode());
         return result;
     }
 

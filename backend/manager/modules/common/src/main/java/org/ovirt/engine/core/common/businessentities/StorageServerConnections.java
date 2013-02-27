@@ -192,7 +192,10 @@ public class StorageServerConnections implements Serializable {
 
     @Override
     public int hashCode() {
-        return getid() != null ? getid().hashCode() : 0;
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((getid() == null) ? 0 : getid().hashCode());
+        return result;
     }
 
     public static StorageServerConnections copyOf(StorageServerConnections ssc) {

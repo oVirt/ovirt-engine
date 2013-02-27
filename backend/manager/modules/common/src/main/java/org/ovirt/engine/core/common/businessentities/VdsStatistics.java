@@ -50,20 +50,20 @@ public class VdsStatistics implements BusinessEntity<Guid> {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((id == null)?0:id.hashCode());
-        result = prime * result + ((cpu_idle == null)?0:cpu_idle.hashCode());
-        result = prime * result + ((cpu_load == null)?0:cpu_load.hashCode());
-        result = prime * result + ((cpu_sys == null)?0:cpu_sys.hashCode());
-        result = prime * result + ((cpu_user == null)?0:cpu_user.hashCode());
-        result = prime * result + ((mem_available == null)?0:mem_available.hashCode());
-        result = prime * result + ((mem_shared == null)?0:mem_shared.hashCode());
-        result = prime * result + ((usage_cpu_percent == null)?0:usage_cpu_percent.hashCode());
-        result = prime * result + ((usage_network_percent == null)?0:usage_network_percent.hashCode());
-        result = prime * result + ((ksm_state == null)?0:ksm_state.hashCode());
-        result = prime * result + ((ksm_pages == null)?0:ksm_pages.hashCode());
-        result = prime * result + ((ksm_cpu_percent == null)?0:ksm_cpu_percent.hashCode());
-        result = prime * result + ((swap_total == null)?0:swap_total.hashCode());
-        result = prime * result + ((swap_free == null)?0:swap_free.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((cpu_idle == null) ? 0 : cpu_idle.hashCode());
+        result = prime * result + ((cpu_load == null) ? 0 : cpu_load.hashCode());
+        result = prime * result + ((cpu_sys == null) ? 0 : cpu_sys.hashCode());
+        result = prime * result + ((cpu_user == null) ? 0 : cpu_user.hashCode());
+        result = prime * result + ((mem_available == null) ? 0 : mem_available.hashCode());
+        result = prime * result + ((mem_shared == null) ? 0 : mem_shared.hashCode());
+        result = prime * result + ((usage_cpu_percent == null) ? 0 : usage_cpu_percent.hashCode());
+        result = prime * result + ((usage_network_percent == null) ? 0 : usage_network_percent.hashCode());
+        result = prime * result + ((ksm_state == null) ? 0 : ksm_state.hashCode());
+        result = prime * result + ((ksm_pages == null) ? 0 : ksm_pages.hashCode());
+        result = prime * result + ((ksm_cpu_percent == null) ? 0 : ksm_cpu_percent.hashCode());
+        result = prime * result + ((swap_total == null) ? 0 : swap_total.hashCode());
+        result = prime * result + ((swap_free == null) ? 0 : swap_free.hashCode());
         return result;
     }
 
