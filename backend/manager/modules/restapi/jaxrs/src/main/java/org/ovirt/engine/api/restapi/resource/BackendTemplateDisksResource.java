@@ -37,7 +37,6 @@ public class BackendTemplateDisksResource
 
     @Override
     protected Response performRemove(String id) {
-        getEntity(id);  //will throw 404 if entity not found.
         return performAction(VdcActionType.RemoveDisk, new RemoveDiskParameters(asGuid(id)));
     }
 

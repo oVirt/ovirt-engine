@@ -151,7 +151,7 @@ public class BackendTemplateDisksResourceTest
 
     @Test
     public void testRemove() throws Exception {
-        setUpGetEntityExpectations(2);
+        setUpGetEntityExpectations(1);
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveDisk,
                                            RemoveDiskParameters.class,
                                            new String[] { "EntityId" },
@@ -211,7 +211,7 @@ public class BackendTemplateDisksResourceTest
     }
 
     protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
-        setUpGetEntityExpectations(2);
+        setUpGetEntityExpectations(1);
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveDisk,
                                            RemoveDiskParameters.class,
                                            new String[] { "EntityId" },
