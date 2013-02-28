@@ -858,8 +858,6 @@ public final class AuditLogDirector {
                     log.infoFormat(loggerString, resolvedMessage);
                 }
             }
-        } else {
-            log.infoFormat("No string for {0} type. Use default Log", auditLogable.getAuditLogTypeValue());
         }
     }
 
