@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.DiskLunMapId;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -32,7 +33,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.ListUtils;
@@ -146,12 +146,28 @@ public final class ImagesHandler {
             log.warnFormat("Disk object is null, the suggested default disk alias to be used is {0}",
                     diskAlias);
         } else {
-            diskAlias = disk.getDiskAlias();
-            if (StringUtils.isEmpty(diskAlias)) {
-                diskAlias = getDefaultDiskAlias(diskPrefix, String.valueOf(count));
-                log.infoFormat("Disk alias retrieved from the client is null or empty, the suggested default disk alias to be used is {0}",
-                        diskAlias);
-            }
+            String defaultAlias = getDefaultDiskAlias(diskPrefix, String.valueOf(count));
+            diskAlias = getDiskAliasWithDefault(disk, defaultAlias);
+        }
+        return diskAlias;
+    }
+
+    /**
+     * Returns an alias for the given disk. If the disk already has an alias, it is returned. If not,
+     * {@link #aliasIfNull} is returned.
+     *
+     * @param disk
+     *            The disk
+     * @param aliasIfNull
+     *            The alias to return if the disk does not have an alias
+     * @return The alias in question
+     */
+    public static String getDiskAliasWithDefault(BaseDisk disk, String aliasIfNull) {
+        String diskAlias = disk.getDiskAlias();
+        if (StringUtils.isEmpty(diskAlias)) {
+            log.infoFormat("Disk alias retrieved from the client is null or empty, the suggested default disk alias to be used is {0}",
+                    aliasIfNull);
+            return aliasIfNull;
         }
         return diskAlias;
     }

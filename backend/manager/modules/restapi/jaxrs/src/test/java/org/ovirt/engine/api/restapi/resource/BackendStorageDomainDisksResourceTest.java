@@ -12,6 +12,7 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
+import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.RegisterDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -115,10 +116,13 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
                 new Object[] {GUIDS[0], GUIDS[3], storagePoolId},
                 getEntity(0));
         Disk model = getModel(0);
+        org.ovirt.engine.core.common.businessentities.Disk imageToRegister = new DiskMapper().map(model, getEntity(0));
+
+        // imageToRegister.setDiskAlias("alias");
         setUpCreationExpectations(VdcActionType.RegisterDisk,
                 RegisterDiskParameters.class,
-                new String[] {"DiskImage"},
-                new Object[] {getEntity(0)},
+                new String[] { "DiskImage" },
+                new Object[] { imageToRegister },
                 true,
                 true,
                 GUIDS[0],
@@ -168,6 +172,7 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
         assertNull(((Disk)response.getEntity()).getCreationStatus());
     }
 
+    @Override
     @Test
     @Ignore
     public void testQuery() throws Exception {

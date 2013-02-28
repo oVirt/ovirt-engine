@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -8,15 +9,16 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.RegisterDiskParameters;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class RegisterDiskCommand <T extends RegisterDiskParameters> extends BaseImagesCommand<T> implements QuotaStorageDependent {
 
     private static final long serialVersionUID = -1201881996330878181L;
+    private static final String DEFAULT_REGISTRATION_FORMAT = "RegisteredDisk_%1$tY-%1$tm-%1$td_%1$tH-%1$tM-%1$tS";
 
     public RegisterDiskCommand(T parameters) {
         super(parameters);
@@ -53,9 +55,15 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
     @Override
     protected void executeCommand() {
         final DiskImage newDiskImage = getParameters().getDiskImage();
+        newDiskImage.setDiskAlias(ImagesHandler.getDiskAliasWithDefault(newDiskImage,
+                generateDefaultAliasForRegiteredDisk(Calendar.getInstance())));
         addDiskImageToDb(newDiskImage, getCompensationContext());
         getReturnValue().setActionReturnValue(newDiskImage.getId());
         getReturnValue().setSucceeded(true);
+    }
+
+    protected static String generateDefaultAliasForRegiteredDisk(Calendar time) {
+        return String.format(DEFAULT_REGISTRATION_FORMAT, time);
     }
 
     @Override

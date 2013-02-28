@@ -52,6 +52,17 @@ public class ImagesHandlerTest {
     }
 
     @Test
+    public void testGetDiskAliasWithDefaultNullAlias() {
+        assertEquals("default", ImagesHandler.getDiskAliasWithDefault(disk1, "default"));
+    }
+
+    @Test
+    public void testGetDiskAliasWithDefaultNotNullAlias() {
+        disk1.setDiskAlias("alias");
+        assertEquals("alias", ImagesHandler.getDiskAliasWithDefault(disk1, "default"));
+    }
+
+    @Test
     public void testGetAllStorageIdsForImageIds() {
         Guid sdIdShared = Guid.NewGuid();
         Guid sdId1 = Guid.NewGuid();

@@ -56,8 +56,11 @@ public class BackendStorageDomainDisksResource extends BackendDisksResource {
             // date and last modified date.
             GetUnregisteredDiskQueryParameters getDiskParams = new GetUnregisteredDiskQueryParameters(
                     asGuid(disk.getId()), storageDomainId, getStoragePoolIdForDomain(storageDomainId));
-            DiskImage unregisteredDisk = getEntity(DiskImage.class, VdcQueryType.GetUnregisteredDisk, getDiskParams,
-                    disk.getId());
+            DiskImage unregisteredDisk =
+                    getEntity(DiskImage.class, VdcQueryType.GetUnregisteredDisk, getDiskParams, disk.getId());
+            unregisteredDisk =
+                    (DiskImage) getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class).map(disk,
+                            unregisteredDisk);
             RegisterDiskParameters registerDiskParams = new RegisterDiskParameters(unregisteredDisk);
             return performCreate(VdcActionType.RegisterDisk, registerDiskParams, ID_RESOLVER);
         } else {
