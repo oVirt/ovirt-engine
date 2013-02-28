@@ -316,8 +316,10 @@ public class UserPortalLoginModel extends LoginModel
                             // ignore:
                             // ALL Everyone/UserPoralBasedVM permissions and
                             // ALL Everyone/QuotaConsumer persmissions
+                            // ALL Everyone/NetworkUser persmissions
                             if (isEveyoneUserPortalBasedVmPermission(permission)
-                                    || isEveryoneQuotaConsumerPermission(permission)) {
+                                    || isEveryoneQuotaConsumerPermission(permission)
+                                    || isEveyoneNetworUserPermission(permission)) {
                                 continue;
                             }
                             if (!roleIdList.contains(permission.getrole_id()))
@@ -337,6 +339,11 @@ public class UserPortalLoginModel extends LoginModel
                             CheckIsENGINEUser(loginModel1);
                         }
 
+                    }
+
+                    private boolean isEveyoneNetworUserPermission(permissions permission) {
+                        return permission.getad_element_id().getValue().equals(ApplicationGuids.everyone.asGuid()) &&
+                                permission.getrole_id().getValue().equals(ApplicationGuids.networkUser.asGuid());
                     }
 
                     private boolean isEveyoneUserPortalBasedVmPermission(permissions permission) {
