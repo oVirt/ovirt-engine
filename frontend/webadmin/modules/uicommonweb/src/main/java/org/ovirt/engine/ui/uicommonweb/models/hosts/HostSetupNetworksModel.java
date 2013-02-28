@@ -395,6 +395,9 @@ public class HostSetupNetworksModel extends EntityModel {
 
                         @Override
                         public void ExecuteCommand(UICommand command) {
+                            if (!bondPopup.Validate()) {
+                                return;
+                            }
                             sourceListModel.setConfirmWindow(null);
                             VdsNetworkInterface bond = new Bond((String) bondPopup.getBond().getSelectedItem());
                             setBondOptions(bond, bondPopup);

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 import java.util.ArrayList;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.utils.LexoNumericComparator;
@@ -13,8 +14,10 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
+import org.ovirt.engine.ui.uicommonweb.validation.BondNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IpAddressValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SubnetMaskValidation;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -239,7 +242,8 @@ public class HostBondInterfaceModel extends Model
     public boolean Validate()
     {
         getNetwork().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
-        getBond().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        getBond().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation(),
+                new LengthValidation(BusinessEntitiesDefinitions.HOST_NIC_NAME_LENGTH), new BondNameValidation() });
 
         getAddress().setIsValid(true);
         getSubnet().setIsValid(true);

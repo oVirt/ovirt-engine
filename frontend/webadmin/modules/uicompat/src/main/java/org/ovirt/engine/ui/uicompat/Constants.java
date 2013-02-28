@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicompat;
 
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 
 
@@ -1017,6 +1018,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("This field must contain integer number")
     String thisFieldMustContainIntegerNumberInvalidReason();
+
+    @DefaultStringValue("A bond name must begin with the prefix 'bond' followed by a number.")
+    String bondNameInvalid();
 
     // Role tree tooltip
     @DefaultStringValue("Allow to Add/Remove Users from the System")
