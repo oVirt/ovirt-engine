@@ -69,14 +69,9 @@ fi
 # Import configurations safely
 old_IFS=$IFS
 IFS=$'\n'
-for line in `cat $CONF_FILE`:
-    do
-    if [[ $line == "\#*" ]] || [[ ${line}x == "x" ]] ;  then
-        #if comment or empty, skip
-        continue
-    else
-        declare "$line"
-    fi
+for line in `sed -e 's/[ \t]*#.*//' -e '/^[ \t]*$/d' $CONF_FILE`:
+do
+    declare "$line"
 done
 IFS=$old_IFS
 
