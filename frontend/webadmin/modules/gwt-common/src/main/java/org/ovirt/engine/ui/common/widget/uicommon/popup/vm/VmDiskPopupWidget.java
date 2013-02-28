@@ -93,7 +93,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     EntityModelTextBoxEditor descriptionEditor;
 
     @UiField(provided = true)
-    @Path("interface.selectedItem")
+    @Path("diskInterface.selectedItem")
     @WithElementId("interface")
     ListModelListBoxEditor<Object> interfaceEditor;
 
@@ -128,7 +128,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     ListModelListBoxEditor<Object> storageTypeEditor;
 
     @UiField(provided = true)
-    @Path("wipeAfterDelete.entity")
+    @Path("isWipeAfterDelete.entity")
     @WithElementId("wipeAfterDelete")
     EntityModelCheckBoxEditor wipeAfterDeleteEditor;
 
@@ -148,7 +148,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     EntityModelCheckBoxEditor isPluggedEditor;
 
     @UiField(provided = true)
-    @Path("attachDisk.entity")
+    @Path("isAttachDisk.entity")
     @WithElementId("attachDisk")
     EntityModelCheckBoxEditor attachEditor;
 
@@ -517,7 +517,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     public void edit(final DiskModel disk) {
         Driver.driver.edit(disk);
 
-        disk.getAttachDisk().getEntityChangedEvent().addListener(new IEventListener() {
+        disk.getIsAttachDisk().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 boolean isAttach = (Boolean) ((EntityModel) sender).getEntity();
@@ -623,7 +623,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     }
 
     private void revealDiskPanel(final DiskModel disk) {
-        boolean isAttachDisk = (Boolean) disk.getAttachDisk().getEntity();
+        boolean isAttachDisk = (Boolean) disk.getIsAttachDisk().getEntity();
         boolean isInternal = internalDiskRadioButton.getValue();
         boolean isInVm = disk.getVm() != null;
 

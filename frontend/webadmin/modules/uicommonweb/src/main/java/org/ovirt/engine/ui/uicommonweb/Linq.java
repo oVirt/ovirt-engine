@@ -195,15 +195,6 @@ public final class Linq
 
     }
 
-    public static class DiskModelByNameComparer implements Comparator<DiskModel>
-    {
-        @Override
-        public int compare(DiskModel x, DiskModel y)
-        {
-            return x.getName().compareTo(y.getName());
-        }
-    }
-
     public static class DiskModelByAliasComparer implements Comparator<DiskModel>
     {
         @Override

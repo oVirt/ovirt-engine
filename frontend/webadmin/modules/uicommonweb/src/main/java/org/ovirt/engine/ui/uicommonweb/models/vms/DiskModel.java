@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -64,361 +63,45 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class DiskModel extends Model
 {
     private static final Constants CONSTANTS = ConstantsManager.getInstance().getConstants();
 
-    private boolean privateIsNew;
+    private boolean isNew;
+    private VM vm;
+    private SanStorageModel sanStorageModel;
+    private String hash;
 
-    public boolean getIsNew()
-    {
-        return privateIsNew;
-    }
-
-    public void setIsNew(boolean value)
-    {
-        privateIsNew = value;
-    }
-
-    private String privateName;
-
-    public String getName()
-    {
-        return privateName;
-    }
-
-    public void setName(String value)
-    {
-        privateName = value;
-    }
-
-    private EntityModel privateAlias;
-
-    public EntityModel getAlias()
-    {
-        return privateAlias;
-    }
-
-    public void setAlias(EntityModel value)
-    {
-        privateAlias = value;
-    }
-
-    private EntityModel privateDescription;
-
-    public EntityModel getDescription()
-    {
-        return privateDescription;
-    }
-
-    public void setDescription(EntityModel value)
-    {
-        privateDescription = value;
-    }
-
-    private VolumeFormat privateVolumeFormat = getVolumeFormat().values()[0];
-
-    public VolumeFormat getVolumeFormat()
-    {
-        return privateVolumeFormat;
-    }
-
-    public void setVolumeFormat(VolumeFormat value)
-    {
-        privateVolumeFormat = value;
-    }
-
-    private Date privateCreationDate = new Date(0);
-
-    public Date getCreationDate()
-    {
-        return privateCreationDate;
-    }
-
-    public void setCreationDate(Date value)
-    {
-        privateCreationDate = value;
-    }
-
-    private int privateActualSize;
-
-    public int getActualSize()
-    {
-        return privateActualSize;
-    }
-
-    public void setActualSize(int value)
-    {
-        privateActualSize = value;
-    }
-
-    private EntityModel privateSize;
-
-    public EntityModel getSize()
-    {
-        return privateSize;
-    }
-
-    public void setSize(EntityModel value)
-    {
-        privateSize = value;
-    }
-
-    private ListModel privatePreset;
-
-    public ListModel getPreset()
-    {
-        return privatePreset;
-    }
-
-    public void setPreset(ListModel value)
-    {
-        privatePreset = value;
-    }
-
-    private ListModel privateVolumeType;
-
-    public ListModel getVolumeType()
-    {
-        return privateVolumeType;
-    }
-
-    public void setVolumeType(ListModel value)
-    {
-        privateVolumeType = value;
-    }
-
-    private ListModel storageType;
-
-    public ListModel getStorageType()
-    {
-        return storageType;
-    }
-
-    public void setStorageType(ListModel value)
-    {
-        storageType = value;
-    }
-
-    private ListModel privateInterface;
-
-    public ListModel getInterface()
-    {
-        return privateInterface;
-    }
-
-    public void setInterface(ListModel value)
-    {
-        privateInterface = value;
-    }
-
-    private ListModel privateSourceStorageDomain;
-
-    public ListModel getSourceStorageDomain()
-    {
-        return privateSourceStorageDomain;
-    }
-
-    public void setSourceStorageDomain(ListModel value)
-    {
-        privateSourceStorageDomain = value;
-    }
-
-    private ListModel privateStorageDomain;
-
-    public ListModel getStorageDomain()
-    {
-        return privateStorageDomain;
-    }
-
-    public void setStorageDomain(ListModel value)
-    {
-        privateStorageDomain = value;
-    }
-
-    private ListModel privateHost;
-
-    public ListModel getHost()
-    {
-        return privateHost;
-    }
-
-    private void setHost(ListModel value)
-    {
-        privateHost = value;
-    }
-
-    private EntityModel privateWipeAfterDelete;
-
-    public EntityModel getWipeAfterDelete()
-    {
-        return privateWipeAfterDelete;
-    }
-
-    public void setWipeAfterDelete(EntityModel value)
-    {
-        privateWipeAfterDelete = value;
-    }
-
-    private EntityModel privateIsBootable;
-
-    public EntityModel getIsBootable()
-    {
-        return privateIsBootable;
-    }
-
-    public void setIsBootable(EntityModel value)
-    {
-        privateIsBootable = value;
-    }
-
-    private EntityModel privateIsShareable;
-
-    public EntityModel getIsShareable()
-    {
-        return privateIsShareable;
-    }
-
-    public void setIsShareable(EntityModel value)
-    {
-        privateIsShareable = value;
-    }
-
-    private EntityModel privateIsPlugged;
-
-    public EntityModel getIsPlugged()
-    {
-        return privateIsPlugged;
-    }
-
-    public void setIsPlugged(EntityModel value)
-    {
-        privateIsPlugged = value;
-    }
-
-    private Disk privateDisk;
-
-    public Disk getDisk()
-    {
-        return privateDisk;
-    }
-
-    public void setDisk(Disk value)
-    {
-        privateDisk = value;
-    }
-
+    private Disk disk;
+    private VolumeFormat volumeFormat;
+    private EntityModel size;
+    private EntityModel alias;
+    private EntityModel description;
     private EntityModel sourceStorageDomainName;
-
-    public EntityModel getSourceStorageDomainName()
-    {
-        return sourceStorageDomainName;
-    }
-
-    public void setSourceStorageDomainName(EntityModel value)
-    {
-        sourceStorageDomainName = value;
-    }
-
-    private ListModel privateDataCenter;
-
-    public ListModel getDataCenter()
-    {
-        return privateDataCenter;
-    }
-
-    private void setDataCenter(ListModel value)
-    {
-        privateDataCenter = value;
-    }
-
-    private ListModel quota;
-
-    public ListModel getQuota()
-    {
-        return quota;
-    }
-
-    public void setQuota(ListModel value)
-    {
-        quota = value;
-    }
-
-    private EntityModel privateAttachDisk;
-
-    public EntityModel getAttachDisk()
-    {
-        return privateAttachDisk;
-    }
-
-    public void setAttachDisk(EntityModel value)
-    {
-        privateAttachDisk = value;
-    }
-
-    private ListModel internalAttachableDisks;
-
-    public ListModel getInternalAttachableDisks()
-    {
-        return internalAttachableDisks;
-    }
-
-    public void setInternalAttachableDisks(ListModel value)
-    {
-        internalAttachableDisks = value;
-    }
-
-    private ListModel externalAttachableDisks;
-
-    public ListModel getExternalAttachableDisks()
-    {
-        return externalAttachableDisks;
-    }
-
-    public void setExternalAttachableDisks(ListModel value)
-    {
-        externalAttachableDisks = value;
-    }
-
+    private EntityModel isWipeAfterDelete;
+    private EntityModel isBootable;
+    private EntityModel isShareable;
+    private EntityModel isPlugged;
+    private EntityModel isAttachDisk;
     private EntityModel isInternal;
-
-    public EntityModel getIsInternal()
-    {
-        return isInternal;
-    }
-
-    public void setIsInternal(EntityModel value)
-    {
-        isInternal = value;
-    }
-
     private EntityModel isDirectLunDiskAvaialable;
 
-    public EntityModel getIsDirectLunDiskAvaialable()
-    {
-        return isDirectLunDiskAvaialable;
-    }
+    private ListModel volumeType;
+    private ListModel storageType;
+    private ListModel diskInterface;
+    private ListModel sourceStorageDomain;
+    private ListModel storageDomain;
+    private ListModel host;
+    private ListModel dataCenter;
+    private ListModel quota;
+    private ListModel internalAttachableDisks;
+    private ListModel externalAttachableDisks;
 
-    public void setIsDirectLunDiskAvaialable(EntityModel value)
-    {
-        isDirectLunDiskAvaialable = value;
-    }
-
-    private SanStorageModel sanStorageModel;
-
-    public SanStorageModel getSanStorageModel()
-    {
-        return sanStorageModel;
-    }
-
-    public void setSanStorageModel(SanStorageModel value)
-    {
-        sanStorageModel = value;
-    }
-
-    private VM vm;
+    private SystemTreeItemModel systemTreeSelectedItem;
+    private UICommand cancelCommand;
+    private boolean previousWipeAfterDeleteEntity;
+    private boolean previousIsQuotaAvailable;
 
     public VM getVm() {
         return vm;
@@ -428,49 +111,259 @@ public class DiskModel extends Model
         this.vm = vm;
     }
 
-    private String hash;
+    public SanStorageModel getSanStorageModel() {
+        return sanStorageModel;
+    }
 
-    public String getHash()
-    {
+    public void setSanStorageModel(SanStorageModel sanStorageModel) {
+        this.sanStorageModel = sanStorageModel;
+    }
+
+    public String getHash() {
         return hash;
     }
 
-    public void setHash(String hash)
-    {
+    public void setHash(String hash) {
         this.hash = hash;
     }
 
-    private SystemTreeItemModel systemTreeSelectedItem;
+    public boolean getIsNew() {
+        return isNew;
+    }
 
-    public SystemTreeItemModel getSystemTreeSelectedItem()
-    {
+    public void setIsNew(boolean isNew) {
+        this.isNew = isNew;
+    }
+
+    public EntityModel getIsWipeAfterDelete() {
+        return isWipeAfterDelete;
+    }
+
+    public void setIsWipeAfterDelete(EntityModel isWipeAfterDelete) {
+        this.isWipeAfterDelete = isWipeAfterDelete;
+    }
+
+    public EntityModel getIsBootable() {
+        return isBootable;
+    }
+
+    public void setIsBootable(EntityModel isBootable) {
+        this.isBootable = isBootable;
+    }
+
+    public EntityModel getIsShareable() {
+        return isShareable;
+    }
+
+    public void setIsShareable(EntityModel isShareable) {
+        this.isShareable = isShareable;
+    }
+
+    public EntityModel getIsPlugged() {
+        return isPlugged;
+    }
+
+    public void setIsPlugged(EntityModel isPlugged) {
+        this.isPlugged = isPlugged;
+    }
+
+    public EntityModel getIsAttachDisk() {
+        return isAttachDisk;
+    }
+
+    public void setIsAttachDisk(EntityModel isAttachDisk) {
+        this.isAttachDisk = isAttachDisk;
+    }
+
+    public EntityModel getIsInternal() {
+        return isInternal;
+    }
+
+    public void setIsInternal(EntityModel isInternal) {
+        this.isInternal = isInternal;
+    }
+
+    public EntityModel getIsDirectLunDiskAvaialable() {
+        return isDirectLunDiskAvaialable;
+    }
+
+    public void setIsDirectLunDiskAvaialable(EntityModel isDirectLunDiskAvaialable) {
+        this.isDirectLunDiskAvaialable = isDirectLunDiskAvaialable;
+    }
+
+    public EntityModel getSize() {
+        return size;
+    }
+
+    public void setSize(EntityModel size) {
+        this.size = size;
+    }
+
+    public EntityModel getAlias() {
+        return alias;
+    }
+
+    public void setAlias(EntityModel alias) {
+        this.alias = alias;
+    }
+
+    public EntityModel getDescription() {
+        return description;
+    }
+
+    public void setDescription(EntityModel description) {
+        this.description = description;
+    }
+
+    public EntityModel getSourceStorageDomainName() {
+        return sourceStorageDomainName;
+    }
+
+    public void setSourceStorageDomainName(EntityModel sourceStorageDomainName) {
+        this.sourceStorageDomainName = sourceStorageDomainName;
+    }
+
+    public VolumeFormat getVolumeFormat() {
+        return volumeFormat;
+    }
+
+    public void setVolumeFormat(VolumeFormat volumeFormat) {
+        this.volumeFormat = volumeFormat;
+    }
+
+    public Disk getDisk() {
+        return disk;
+    }
+
+    public void setDisk(Disk disk) {
+        this.disk = disk;
+    }
+
+    public ListModel getVolumeType() {
+        return volumeType;
+    }
+
+    public void setVolumeType(ListModel volumeType) {
+        this.volumeType = volumeType;
+    }
+
+    public ListModel getStorageType() {
+        return storageType;
+    }
+
+    public void setStorageType(ListModel storageType) {
+        this.storageType = storageType;
+    }
+
+    public ListModel getDiskInterface() {
+        return diskInterface;
+    }
+
+    public void setDiskInterface(ListModel diskInterface) {
+        this.diskInterface = diskInterface;
+    }
+
+    public ListModel getSourceStorageDomain() {
+        return sourceStorageDomain;
+    }
+
+    public void setSourceStorageDomain(ListModel sourceStorageDomain) {
+        this.sourceStorageDomain = sourceStorageDomain;
+    }
+
+    public ListModel getStorageDomain() {
+        return storageDomain;
+    }
+
+    public void setStorageDomain(ListModel storageDomain) {
+        this.storageDomain = storageDomain;
+    }
+
+    public ListModel getHost() {
+        return host;
+    }
+
+    public void setHost(ListModel host) {
+        this.host = host;
+    }
+
+    public ListModel getDataCenter() {
+        return dataCenter;
+    }
+
+    public void setDataCenter(ListModel dataCenter) {
+        this.dataCenter = dataCenter;
+    }
+
+    public ListModel getQuota() {
+        return quota;
+    }
+
+    public void setQuota(ListModel quota) {
+        this.quota = quota;
+    }
+
+    public ListModel getInternalAttachableDisks() {
+        return internalAttachableDisks;
+    }
+
+    public void setInternalAttachableDisks(ListModel internalAttachableDisks) {
+        this.internalAttachableDisks = internalAttachableDisks;
+    }
+
+    public ListModel getExternalAttachableDisks() {
+        return externalAttachableDisks;
+    }
+
+    public void setExternalAttachableDisks(ListModel externalAttachableDisks) {
+        this.externalAttachableDisks = externalAttachableDisks;
+    }
+
+    public SystemTreeItemModel getSystemTreeSelectedItem() {
         return systemTreeSelectedItem;
     }
 
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value)
-    {
-        systemTreeSelectedItem = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("SystemTreeSelectedItem")); //$NON-NLS-1$
-    }
-
-    private UICommand cancelCommand;
-
-    public void setCancelCommand(UICommand cancelCommand) {
-        this.cancelCommand = cancelCommand;
+    public void setSystemTreeSelectedItem(SystemTreeItemModel systemTreeSelectedItem) {
+        this.systemTreeSelectedItem = systemTreeSelectedItem;
     }
 
     public UICommand getCancelCommand() {
         return cancelCommand;
     }
 
-    private boolean previousWipeAfterDeleteEntity;
-    private boolean previousIsQuotaAvailable;
+    public void setCancelCommand(UICommand cancelCommand) {
+        this.cancelCommand = cancelCommand;
+    }
+
+    public boolean isPreviousWipeAfterDeleteEntity() {
+        return previousWipeAfterDeleteEntity;
+    }
+
+    public void setPreviousWipeAfterDeleteEntity(boolean previousWipeAfterDeleteEntity) {
+        this.previousWipeAfterDeleteEntity = previousWipeAfterDeleteEntity;
+    }
+
+    public boolean isPreviousIsQuotaAvailable() {
+        return previousIsQuotaAvailable;
+    }
+
+    public void setPreviousIsQuotaAvailable(boolean previousIsQuotaAvailable) {
+        this.previousIsQuotaAvailable = previousIsQuotaAvailable;
+    }
+
+    public int getQueryCounter() {
+        return queryCounter;
+    }
+
+    public void setQueryCounter(int queryCounter) {
+        this.queryCounter = queryCounter;
+    }
 
     public DiskModel() {
         setSize(new EntityModel());
         getSize().setIsValid(true);
 
-        setInterface(new ListModel());
+        setDiskInterface(new ListModel());
         setStorageDomain(new ListModel());
         setQuota(new ListModel());
 
@@ -487,9 +380,6 @@ public class DiskModel extends Model
         getDataCenter().setIsAvailable(false);
         getDataCenter().getSelectedItemChangedEvent().addListener(this);
 
-        setPreset(new ListModel());
-        getPreset().getSelectedItemChangedEvent().addListener(this);
-
         setVolumeType(new ListModel());
         getVolumeType().setItems(AsyncDataProvider.GetVolumeTypeList());
         getVolumeType().getSelectedItemChangedEvent().addListener(this);
@@ -499,9 +389,13 @@ public class DiskModel extends Model
         getStorageType().setItems(AsyncDataProvider.GetStorageTypeList());
         getStorageType().getSelectedItemChangedEvent().addListener(this);
 
-        setWipeAfterDelete(new EntityModel());
-        getWipeAfterDelete().setEntity(false);
-        getWipeAfterDelete().getEntityChangedEvent().addListener(this);
+        setIsWipeAfterDelete(new EntityModel());
+        getIsWipeAfterDelete().setEntity(false);
+        getIsWipeAfterDelete().getEntityChangedEvent().addListener(this);
+
+        setIsAttachDisk(new EntityModel());
+        getIsAttachDisk().setEntity(false);
+        getIsAttachDisk().getEntityChangedEvent().addListener(this);
 
         setIsBootable(new EntityModel());
         getIsBootable().setEntity(false);
@@ -511,10 +405,6 @@ public class DiskModel extends Model
 
         setIsPlugged(new EntityModel());
         getIsPlugged().setEntity(true);
-
-        setAttachDisk(new EntityModel());
-        getAttachDisk().setEntity(false);
-        getAttachDisk().getEntityChangedEvent().addListener(this);
 
         setQuota(new ListModel());
         getQuota().setIsAvailable(false);
@@ -547,8 +437,8 @@ public class DiskModel extends Model
         // Add progress listeners
         Frontend.getQueryStartedEvent().addListener(this);
         Frontend.getQueryCompleteEvent().addListener(this);
-        Frontend.subscribeAdditionalQueries(new VdcQueryType[] { VdcQueryType.Search, VdcQueryType.GetStoragePoolById,
-                VdcQueryType.GetNextAvailableDiskAliasNameByVMId, VdcQueryType.GetDiskConfigurationList,
+        Frontend.subscribeAdditionalQueries(new VdcQueryType[] { VdcQueryType.Search,
+                VdcQueryType.GetStoragePoolById, VdcQueryType.GetNextAvailableDiskAliasNameByVMId,
                 VdcQueryType.GetPermittedStorageDomainsByStoragePoolId, VdcQueryType.GetAllVdsByStoragePool,
                 VdcQueryType.GetAllAttachableDisks, VdcQueryType.GetAllDisksByVmId,
                 VdcQueryType.GetAllRelevantQuotasForStorage });
@@ -577,7 +467,7 @@ public class DiskModel extends Model
         getStorageType().setIsChangable(false);
         getDataCenter().setIsChangable(false);
         getVolumeType().setIsChangable(false);
-        getInterface().setIsChangable(!getDisk().isShareable());
+        getDiskInterface().setIsChangable(!getDisk().isShareable());
         getSize().setIsChangable(false);
         getSize().setEntity(getDisk().getDiskStorageType() == DiskStorageType.IMAGE ?
                 ((DiskImage) getDisk()).getSizeInGigabytes() :
@@ -588,7 +478,7 @@ public class DiskModel extends Model
         getDescription().setEntity(getDisk().getDiskDescription());
         getIsBootable().setEntity(getDisk().isBoot());
         getIsShareable().setEntity(getDisk().isShareable());
-        getWipeAfterDelete().setEntity(getDisk().isWipeAfterDelete());
+        getIsWipeAfterDelete().setEntity(getDisk().isWipeAfterDelete());
 
         if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
             DiskImage diskImage = (DiskImage) getDisk();
@@ -691,11 +581,8 @@ public class DiskModel extends Model
             return;
         }
 
-        getInterface().setItems(AsyncDataProvider.GetDiskInterfaceList(
-                VmOsType.Unassigned, datacenter.getcompatibility_version()));
-        getInterface().setSelectedItem(getIsNew() ?
-                AsyncDataProvider.GetDefaultDiskInterface(VmOsType.Unassigned, null) :
-                getDisk().getDiskInterface());
+        getDiskInterface().setItems(AsyncDataProvider.GetDiskInterfaceList());
+        getDiskInterface().setSelectedItem(getIsNew() ? DiskInterface.VirtIO : getDisk().getDiskInterface());
     }
 
     private void updateStorageDomains(storage_pool datacenter) {
@@ -718,29 +605,19 @@ public class DiskModel extends Model
 
                 Linq.Sort(filteredStorageDomains, new Linq.StorageDomainByNameComparer());
                 StorageDomain storage = Linq.FirstOrDefault(filteredStorageDomains);
-                StorageType storageType = storage == null ? StorageType.UNKNOWN : storage.getStorageType();
 
                 diskModel.getStorageDomain().setItems(filteredStorageDomains);
                 diskModel.getStorageDomain().setSelectedItem(storage);
 
                 if (storage != null) {
                     updateWipeAfterDelete(storage.getStorageType());
+                    updateVolumeType(storage.getStorageType().isBlockDomain() ?
+                            VolumeType.Preallocated : VolumeType.Sparse);
                     diskModel.setMessage(""); //$NON-NLS-1$
                 }
                 else {
                     diskModel.setMessage(CONSTANTS.noActiveStorageDomainsInDC());
                 }
-
-                AsyncDataProvider.GetDiskPresetList(new AsyncQuery(diskModel, new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-                        DiskModel diskModel = (DiskModel) target;
-                        ArrayList<DiskImageBase> presets = (ArrayList<DiskImageBase>) returnValue;
-
-                        diskModel.getPreset().setItems(presets);
-                        diskModel.getPreset().setSelectedItem(Linq.FirstOrDefault(presets));
-                    }
-                }, getHash()), storageType);
             }
         }, getHash()), datacenter.getId(), ActionGroup.CREATE_DISK);
     }
@@ -857,17 +734,17 @@ public class DiskModel extends Model
 
     private void updateWipeAfterDelete(StorageType storageType) {
         if (storageType.isFileDomain()) {
-            getWipeAfterDelete().setChangeProhibitionReason(CONSTANTS.wipeAfterDeleteNotSupportedForFileDomains());
-            getWipeAfterDelete().setIsChangable(false);
-            getWipeAfterDelete().setEntity(false);
+            getIsWipeAfterDelete().setChangeProhibitionReason(CONSTANTS.wipeAfterDeleteNotSupportedForFileDomains());
+            getIsWipeAfterDelete().setIsChangable(false);
+            getIsWipeAfterDelete().setEntity(false);
         }
         else {
-            getWipeAfterDelete().setIsChangable(true);
-            getWipeAfterDelete().setEntity((Boolean) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.SANWipeAfterDelete));
+            getIsWipeAfterDelete().setIsChangable(true);
+            getIsWipeAfterDelete().setEntity((Boolean) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.SANWipeAfterDelete));
         }
 
         if (!getIsNew()) {
-            getWipeAfterDelete().setEntity(getDisk().isWipeAfterDelete());
+            getIsWipeAfterDelete().setEntity(getDisk().isWipeAfterDelete());
         }
     }
 
@@ -884,6 +761,10 @@ public class DiskModel extends Model
 
     private void updateVolumeFormat(VolumeType volumeType, StorageType storageType) {
         setVolumeFormat(AsyncDataProvider.GetDiskVolumeFormat(volumeType, storageType));
+    }
+
+    private void updateVolumeType(VolumeType volumeType) {
+        getVolumeType().setSelectedItem(volumeType);
     }
 
     private boolean isDatacenterAvailable(storage_pool dataCenter)
@@ -920,40 +801,27 @@ public class DiskModel extends Model
         getSize().setIsAvailable(isInternal);
         getStorageDomain().setIsAvailable(isInternal);
         getVolumeType().setIsAvailable(isInternal);
-        getWipeAfterDelete().setIsAvailable(isInternal);
+        getIsWipeAfterDelete().setIsAvailable(isInternal);
         getHost().setIsAvailable(!isInternal);
         getStorageType().setIsAvailable(!isInternal);
         getDataCenter().setIsAvailable(!isInVm);
 
         if (!isInternal) {
-            previousWipeAfterDeleteEntity = (Boolean) getWipeAfterDelete().getEntity();
+            previousWipeAfterDeleteEntity = (Boolean) getIsWipeAfterDelete().getEntity();
             previousIsQuotaAvailable = getQuota().getIsAvailable();
         }
 
-        getWipeAfterDelete().setEntity(isInternal ? previousWipeAfterDeleteEntity : false);
+        getIsWipeAfterDelete().setEntity(isInternal ? previousWipeAfterDeleteEntity : false);
         getQuota().setIsAvailable(isInternal ? previousIsQuotaAvailable : false);
 
         updateDatacenters();
     }
 
-    private void Preset_SelectedItemChanged()
-    {
-        DiskImageBase preset = (DiskImageBase) getPreset().getSelectedItem() != null ?
-                (DiskImageBase) getPreset().getSelectedItem()
-                : (DiskImageBase) Linq.<DiskImageBase> FirstOrDefault(getPreset().getItems());
-        setVolumeFormat(preset.getVolumeFormat());
-        getVolumeType().setSelectedItem(preset.getVolumeType());
-    }
-
     private void VolumeType_SelectedItemChanged()
     {
-        VolumeType volumeType =
-                getVolumeType().getSelectedItem() == null ? VolumeType.Unassigned
-                        : (VolumeType) getVolumeType().getSelectedItem();
-
-        StorageType storageType =
-                getStorageDomain().getSelectedItem() == null ? StorageType.UNKNOWN
-                        : ((StorageDomain) getStorageDomain().getSelectedItem()).getStorageType();
+        VolumeType volumeType = (VolumeType) getVolumeType().getSelectedItem();
+        StorageType storageType = getStorageDomain().getSelectedItem() == null ? StorageType.UNKNOWN
+                : ((StorageDomain) getStorageDomain().getSelectedItem()).getStorageType();
 
         updateVolumeFormat(volumeType, storageType);
         updateShareable(volumeType, storageType);
@@ -961,15 +829,15 @@ public class DiskModel extends Model
 
     private void WipeAfterDelete_EntityChanged(EventArgs e)
     {
-        if (!getWipeAfterDelete().getIsChangable() && (Boolean) getWipeAfterDelete().getEntity())
+        if (!getIsWipeAfterDelete().getIsChangable() && (Boolean) getIsWipeAfterDelete().getEntity())
         {
-            getWipeAfterDelete().setEntity(false);
+            getIsWipeAfterDelete().setEntity(false);
         }
     }
 
     private void AttachDisk_EntityChanged(EventArgs e)
     {
-        if ((Boolean) getAttachDisk().getEntity())
+        if ((Boolean) getIsAttachDisk().getEntity())
         {
             // Get internal attachable disks
             AsyncDataProvider.GetAllAttachableDisks(new AsyncQuery(this, new INewAsyncCallback() {
@@ -1025,7 +893,7 @@ public class DiskModel extends Model
 
     public boolean Validate()
     {
-        if ((Boolean) getAttachDisk().getEntity()) {
+        if ((Boolean) getIsAttachDisk().getEntity()) {
             if (getInternalAttachableDisks().getSelectedItems() == null &&
                 getExternalAttachableDisks().getSelectedItems() == null) {
                 getInvalidityReasons().add(CONSTANTS.noDisksSelected());
@@ -1149,7 +1017,7 @@ public class DiskModel extends Model
             return;
         }
 
-        if ((Boolean) getAttachDisk().getEntity()) {
+        if ((Boolean) getIsAttachDisk().getEntity()) {
             OnAttachDisks();
             return;
         }
@@ -1184,8 +1052,8 @@ public class DiskModel extends Model
 
         disk.setDiskAlias((String) getAlias().getEntity());
         disk.setDiskDescription((String) getDescription().getEntity());
-        disk.setDiskInterface((DiskInterface) getInterface().getSelectedItem());
-        disk.setWipeAfterDelete((Boolean) getWipeAfterDelete().getEntity());
+        disk.setDiskInterface((DiskInterface) getDiskInterface().getSelectedItem());
+        disk.setWipeAfterDelete((Boolean) getIsWipeAfterDelete().getEntity());
         disk.setBoot((Boolean) getIsBootable().getEntity());
         disk.setShareable((Boolean) getIsShareable().getEntity());
         disk.setPlugged((Boolean) getIsPlugged().getEntity());
@@ -1241,21 +1109,17 @@ public class DiskModel extends Model
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition) && sender == getWipeAfterDelete())
+        if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition) && sender == getIsWipeAfterDelete())
         {
             WipeAfterDelete_EntityChanged(args);
         }
-        else if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition) && sender == getAttachDisk())
+        else if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition) && sender == getIsAttachDisk())
         {
             AttachDisk_EntityChanged(args);
         }
         else if (ev.matchesDefinition(ListModel.EntityChangedEventDefinition) && sender == getIsInternal())
         {
             IsInternal_EntityChanged();
-        }
-        else if (ev.matchesDefinition(ListModel.SelectedItemChangedEventDefinition) && sender == getPreset())
-        {
-            Preset_SelectedItemChanged();
         }
         else if (ev.matchesDefinition(ListModel.SelectedItemChangedEventDefinition) && sender == getVolumeType())
         {
@@ -1294,4 +1158,5 @@ public class DiskModel extends Model
             StopProgress();
         }
     }
+
 }

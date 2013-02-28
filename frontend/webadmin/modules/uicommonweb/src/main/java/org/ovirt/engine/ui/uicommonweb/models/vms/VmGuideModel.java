@@ -234,7 +234,7 @@ public class VmGuideModel extends GuideModel
                 return;
             }
 
-            if ((Boolean) model.getAttachDisk().getEntity())
+            if ((Boolean) model.getIsAttachDisk().getEntity())
             {
                 OnAttachDisks();
                 return;
@@ -267,8 +267,8 @@ public class VmGuideModel extends GuideModel
 
             disk.setDiskAlias((String) model.getAlias().getEntity());
             disk.setDiskDescription((String) model.getDescription().getEntity());
-            disk.setDiskInterface((DiskInterface) model.getInterface().getSelectedItem());
-            disk.setWipeAfterDelete((Boolean) model.getWipeAfterDelete().getEntity());
+            disk.setDiskInterface((DiskInterface) model.getDiskInterface().getSelectedItem());
+            disk.setWipeAfterDelete((Boolean) model.getIsWipeAfterDelete().getEntity());
             disk.setBoot((Boolean) model.getIsBootable().getEntity());
             disk.setShareable((Boolean) model.getIsShareable().getEntity());
             disk.setPlugged((Boolean) model.getIsPlugged().getEntity());

@@ -377,6 +377,7 @@ public class VmDiskListModel extends VmDiskListModelBase
 
             DiskModel diskModel = new DiskModel();
             diskModel.setDisk(disk);
+            diskModel.setVm(getEntity());
 
             items.add(diskModel);
 

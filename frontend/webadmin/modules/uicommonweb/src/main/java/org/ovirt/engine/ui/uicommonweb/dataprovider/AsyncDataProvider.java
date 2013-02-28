@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.LUNs;
@@ -961,38 +960,6 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.GetStorageDomainById,
                 new StorageDomainQueryParametersBase(storageDomainId),
                 aQuery);
-    }
-
-    public static void GetDiskPresetList(AsyncQuery aQuery, StorageType storageType) {
-        aQuery.setData(new Object[] { storageType });
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                if (source == null) {
-                    return null;
-                }
-
-                ArrayList<DiskImageBase> list = new ArrayList<DiskImageBase>();
-                StorageType storageType = (StorageType) _asyncQuery.Data[0];
-                boolean hasBootDisk = false;
-                for (DiskImageBase disk : (ArrayList<DiskImageBase>) source) {
-                    if (!hasBootDisk) {
-                        disk.setBoot(true);
-                        hasBootDisk = true;
-                    }
-
-                    disk.setVolumeType(storageType == StorageType.ISCSI || storageType == StorageType.FCP ?
-                            VolumeType.Preallocated : VolumeType.Sparse);
-
-                    disk.setvolumeFormat(GetDiskVolumeFormat(disk.getVolumeType(), storageType));
-
-                    list.add(disk);
-                }
-                return list;
-            }
-        };
-        Frontend.RunQuery(VdcQueryType.GetDiskConfigurationList, new VdcQueryParametersBase(), aQuery);
     }
 
     public static VolumeFormat GetDiskVolumeFormat(VolumeType volumeType, StorageType storageType) {
@@ -2632,17 +2599,12 @@ public final class AsyncDataProvider {
         }));
     }
 
-    public static ArrayList<DiskInterface> GetDiskInterfaceList(VmOsType osType, Version Version)
+    public static ArrayList<DiskInterface> GetDiskInterfaceList()
     {
-        return osType == VmOsType.WindowsXP && (Version == null || Version.compareTo(new Version("2.2")) < 0) ? new ArrayList<DiskInterface>(Arrays.asList(new DiskInterface[] { DiskInterface.IDE })) //$NON-NLS-1$
-                : new ArrayList<DiskInterface>(Arrays.asList(new DiskInterface[] {
-                        DiskInterface.IDE, DiskInterface.VirtIO }));
-    }
-
-    public static DiskInterface GetDefaultDiskInterface(VmOsType osType, List<Disk> disks)
-    {
-        return osType == VmOsType.WindowsXP ? DiskInterface.IDE : disks != null && disks.size() > 0 ? disks.get(0)
-                .getDiskInterface() : DiskInterface.VirtIO;
+        return new ArrayList<DiskInterface>(Arrays.asList(new DiskInterface[] {
+                DiskInterface.IDE,
+                DiskInterface.VirtIO
+        }));
     }
 
     public static String GetNewNicName(ArrayList<VmNetworkInterface> existingInterfaces)
