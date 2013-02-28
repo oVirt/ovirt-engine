@@ -62,9 +62,6 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
     public storage_pool get(Guid id, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
-
-        ParameterizedRowMapper<storage_pool> mapper = new StoragePoolRawMapper();
-
         return getCallsHandler().executeRead("Getstorage_poolByid", mapper, parameterSource);
     }
 
@@ -72,30 +69,6 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
     public storage_pool getByName(String name) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("name", name);
-
-        ParameterizedRowMapper<storage_pool> mapper = new ParameterizedRowMapper<storage_pool>() {
-            @Override
-            public storage_pool mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                storage_pool entity = new storage_pool();
-                entity.setdescription(rs.getString("description"));
-                entity.setId(Guid.createGuidFromString(rs.getString("id")));
-                entity.setname(rs.getString("name"));
-                entity.setstorage_pool_type(StorageType.forValue(rs
-                        .getInt("storage_pool_type")));
-                entity.setstatus(StoragePoolStatus.forValue(rs.getInt("status")));
-                entity.setmaster_domain_version(rs
-                        .getInt("master_domain_version"));
-                entity.setspm_vds_id(NGuid.createGuidFromString(rs
-                        .getString("spm_vds_id")));
-                entity.setcompatibility_version(new Version(rs
-                        .getString("compatibility_version")));
-                entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
-                entity.setStoragePoolFormatType(getStorageFormatTypeForPool(rs));
-                return entity;
-            }
-        };
-
         return getCallsHandler().executeRead("Getstorage_poolByName", mapper, parameterSource);
     }
 
@@ -103,30 +76,6 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
     public storage_pool getForVds(Guid vds) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vdsId", vds);
-
-        ParameterizedRowMapper<storage_pool> mapper = new ParameterizedRowMapper<storage_pool>() {
-            @Override
-            public storage_pool mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                storage_pool entity = new storage_pool();
-                entity.setdescription(rs.getString("description"));
-                entity.setId(Guid.createGuidFromString(rs.getString("id")));
-                entity.setname(rs.getString("name"));
-                entity.setstorage_pool_type(StorageType.forValue(rs
-                        .getInt("storage_pool_type")));
-                entity.setstatus(StoragePoolStatus.forValue(rs.getInt("status")));
-                entity.setmaster_domain_version(rs
-                        .getInt("master_domain_version"));
-                entity.setspm_vds_id(NGuid.createGuidFromString(rs
-                        .getString("spm_vds_id")));
-                entity.setcompatibility_version(new Version(rs
-                        .getString("compatibility_version")));
-                entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
-                entity.setStoragePoolFormatType(getStorageFormatTypeForPool(rs));
-                return entity;
-            }
-        };
-
         return getCallsHandler().executeRead("Getstorage_poolsByVdsId", mapper, parameterSource);
     }
 
@@ -134,30 +83,6 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
     public storage_pool getForVdsGroup(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("clusterId", id);
-
-        ParameterizedRowMapper<storage_pool> mapper = new ParameterizedRowMapper<storage_pool>() {
-            @Override
-            public storage_pool mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                storage_pool entity = new storage_pool();
-                entity.setdescription(rs.getString("description"));
-                entity.setId(Guid.createGuidFromString(rs.getString("id")));
-                entity.setname(rs.getString("name"));
-                entity.setstorage_pool_type(StorageType.forValue(rs
-                        .getInt("storage_pool_type")));
-                entity.setstatus(StoragePoolStatus.forValue(rs.getInt("status")));
-                entity.setmaster_domain_version(rs
-                        .getInt("master_domain_version"));
-                entity.setspm_vds_id(NGuid.createGuidFromString(rs
-                        .getString("spm_vds_id")));
-                entity.setcompatibility_version(new Version(rs
-                        .getString("compatibility_version")));
-                entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
-                entity.setStoragePoolFormatType(getStorageFormatTypeForPool(rs));
-                return entity;
-            }
-        };
-
         return getCallsHandler().executeRead("Getstorage_poolsByVdsGroupId", mapper,
                 parameterSource);
     }
@@ -179,30 +104,6 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
     public List<storage_pool> getAll(Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource =
                 getCustomMapSqlParameterSource().addValue("user_id", userID).addValue("is_filtered", isFiltered);
-
-        ParameterizedRowMapper<storage_pool> mapper = new ParameterizedRowMapper<storage_pool>() {
-            @Override
-            public storage_pool mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                storage_pool entity = new storage_pool();
-                entity.setdescription(rs.getString("description"));
-                entity.setId(Guid.createGuidFromString(rs.getString("id")));
-                entity.setname(rs.getString("name"));
-                entity.setstorage_pool_type(StorageType.forValue(rs
-                        .getInt("storage_pool_type")));
-                entity.setstatus(StoragePoolStatus.forValue(rs.getInt("status")));
-                entity.setmaster_domain_version(rs
-                        .getInt("master_domain_version"));
-                entity.setspm_vds_id(NGuid.createGuidFromString(rs
-                        .getString("spm_vds_id")));
-                entity.setcompatibility_version(new Version(rs
-                        .getString("compatibility_version")));
-                entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
-                entity.setStoragePoolFormatType(getStorageFormatTypeForPool(rs));
-                return entity;
-            }
-        };
-
         return getCallsHandler().executeReadList("GetAllFromstorage_pool", mapper, parameterSource);
     }
 
@@ -210,30 +111,6 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
     public List<storage_pool> getAllOfType(StorageType type) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("storage_pool_type", type);
-
-        ParameterizedRowMapper<storage_pool> mapper = new ParameterizedRowMapper<storage_pool>() {
-            @Override
-            public storage_pool mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                storage_pool entity = new storage_pool();
-                entity.setdescription(rs.getString("description"));
-                entity.setId(Guid.createGuidFromString(rs.getString("id")));
-                entity.setname(rs.getString("name"));
-                entity.setstorage_pool_type(StorageType.forValue(rs
-                        .getInt("storage_pool_type")));
-                entity.setstatus(StoragePoolStatus.forValue(rs.getInt("status")));
-                entity.setmaster_domain_version(rs
-                        .getInt("master_domain_version"));
-                entity.setspm_vds_id(NGuid.createGuidFromString(rs
-                        .getString("spm_vds_id")));
-                entity.setcompatibility_version(new Version(rs
-                        .getString("compatibility_version")));
-                entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
-                entity.setStoragePoolFormatType(getStorageFormatTypeForPool(rs));
-                return entity;
-            }
-        };
-
         return getCallsHandler().executeReadList("Getstorage_poolsByType", mapper, parameterSource);
     }
 
@@ -241,59 +118,12 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
     public List<storage_pool> getAllForStorageDomain(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("storage_domain_id", id);
-
-        ParameterizedRowMapper<storage_pool> mapper = new ParameterizedRowMapper<storage_pool>() {
-            @Override
-            public storage_pool mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                storage_pool entity = new storage_pool();
-                entity.setdescription(rs.getString("description"));
-                entity.setId(Guid.createGuidFromString(rs.getString("id")));
-                entity.setname(rs.getString("name"));
-                entity.setstorage_pool_type(StorageType.forValue(rs
-                        .getInt("storage_pool_type")));
-                entity.setStoragePoolFormatType(getStorageFormatTypeForPool(rs));
-                entity.setstatus(StoragePoolStatus.forValue(rs.getInt("status")));
-                entity.setmaster_domain_version(rs
-                        .getInt("master_domain_version"));
-                entity.setspm_vds_id(NGuid.createGuidFromString(rs
-                        .getString("spm_vds_id")));
-                entity.setcompatibility_version(new Version(rs
-                        .getString("compatibility_version")));
-                entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
-                return entity;
-            }
-        };
-
         return getCallsHandler().executeReadList("Getstorage_poolsByStorageDomainId", mapper,
                 parameterSource);
     }
 
     @Override
     public List<storage_pool> getAllWithQuery(String query) {
-        ParameterizedRowMapper<storage_pool> mapper = new ParameterizedRowMapper<storage_pool>() {
-            @Override
-            public storage_pool mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                storage_pool entity = new storage_pool();
-                entity.setdescription(rs.getString("description"));
-                entity.setId(Guid.createGuidFromString(rs.getString("id")));
-                entity.setname(rs.getString("name"));
-                entity.setstorage_pool_type(StorageType.forValue(rs
-                        .getInt("storage_pool_type")));
-                entity.setStoragePoolFormatType(getStorageFormatTypeForPool(rs));
-                entity.setstatus(StoragePoolStatus.forValue(rs.getInt("status")));
-                entity.setmaster_domain_version(rs
-                        .getInt("master_domain_version"));
-                entity.setspm_vds_id(NGuid.createGuidFromString(rs
-                        .getString("spm_vds_id")));
-                entity.setcompatibility_version(new Version(rs
-                        .getString("compatibility_version")));
-                entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
-                return entity;
-            }
-        };
-
         return new SimpleJdbcTemplate(jdbcTemplate).query(query, mapper);
     }
 
@@ -378,8 +208,6 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                 .addValue("supports_virt_service", supportsVirtService)
                 .addValue("supports_gluster_service", supportsGlusterService);
 
-        StoragePoolRawMapper mapper = new StoragePoolRawMapper();
-
         return getCallsHandler().executeReadList(
                 "fn_perms_get_storage_pools_with_permitted_action_on_vds_groups",
                 mapper, parameterSource);
@@ -398,7 +226,6 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
         parameterSource
             .addValue("supports_virt_service", supportsVirtService)
             .addValue("supports_gluster_service", supportsGlusterService);
-        final StoragePoolRawMapper mapper = new StoragePoolRawMapper();
         return getCallsHandler().executeReadList("GetStoragePoolsByClusterService", mapper, parameterSource);
     }
 
