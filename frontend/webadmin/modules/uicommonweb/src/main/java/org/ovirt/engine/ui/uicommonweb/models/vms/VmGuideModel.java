@@ -2,23 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.action.AddDiskParameters;
-import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.LUNs;
-import org.ovirt.engine.core.common.businessentities.LunDisk;
-import org.ovirt.engine.core.common.businessentities.PropagateErrors;
-import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -26,13 +12,8 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.GuideModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
 public class VmGuideModel extends GuideModel
@@ -52,7 +33,6 @@ public class VmGuideModel extends GuideModel
 
     private ArrayList<VmNetworkInterface> nics;
     private ArrayList<Disk> disks;
-    private StorageDomain storage;
     private VDSGroup cluster;
 
     @Override
@@ -151,7 +131,6 @@ public class VmGuideModel extends GuideModel
     public void ResetData() {
         nics = null;
         disks = null;
-        storage = null;
         cluster = null;
     }
 
@@ -195,7 +174,12 @@ public class VmGuideModel extends GuideModel
         }
     }
 
-    private void AddDiskUpdateData() {
+    public void AddDisk()
+    {
+        if (getEntity() == null) {
+            return;
+        }
+
         DiskModel model = new DiskModel();
         model.setTitle(ConstantsManager.getInstance().getConstants().addVirtualDiskTitle());
         model.setHashName("new_virtual_disk"); //$NON-NLS-1$
@@ -208,129 +192,6 @@ public class VmGuideModel extends GuideModel
         model.setCancelCommand(cancelCommand);
 
         model.Initialize();
-    }
-
-    public void AddDisk()
-    {
-        if (getEntity() != null)
-        {
-            AddDiskUpdateData();
-        }
-    }
-
-    public void OnAddDisk()
-    {
-        if (getEntity() != null)
-        {
-            DiskModel model = (DiskModel) getWindow();
-
-            if (model.getProgress() != null)
-            {
-                return;
-            }
-
-            if (!model.Validate())
-            {
-                return;
-            }
-
-            if ((Boolean) model.getIsAttachDisk().getEntity())
-            {
-                OnAttachDisks();
-                return;
-            }
-
-            // Save changes.
-            StorageDomain storageDomain = (StorageDomain) model.getStorageDomain().getSelectedItem();
-
-            Disk disk;
-            if ((Boolean) model.getIsInternal().getEntity()) {
-                DiskImage diskImage = new DiskImage();
-                diskImage.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
-                diskImage.setVolumeType((VolumeType) model.getVolumeType().getSelectedItem());
-                diskImage.setvolumeFormat(model.getVolumeFormat());
-                if (model.getQuota().getSelectedItem() != null && model.getQuota().getIsAvailable()) {
-                    diskImage.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
-                }
-
-                disk = diskImage;
-            }
-            else {
-                LUNs luns = (LUNs) model.getSanStorageModel().getAddedLuns().get(0).getEntity();
-                luns.setLunType((StorageType) model.getStorageType().getSelectedItem());
-
-                LunDisk lunDisk = new LunDisk();
-                lunDisk.setLun(luns);
-
-                disk = lunDisk;
-            }
-
-            disk.setDiskAlias((String) model.getAlias().getEntity());
-            disk.setDiskDescription((String) model.getDescription().getEntity());
-            disk.setDiskInterface((DiskInterface) model.getDiskInterface().getSelectedItem());
-            disk.setWipeAfterDelete((Boolean) model.getIsWipeAfterDelete().getEntity());
-            disk.setBoot((Boolean) model.getIsBootable().getEntity());
-            disk.setShareable((Boolean) model.getIsShareable().getEntity());
-            disk.setPlugged((Boolean) model.getIsPlugged().getEntity());
-            disk.setPropagateErrors(PropagateErrors.Off);
-
-            model.StartProgress(null);
-
-            AddDiskParameters tempVar2 = new AddDiskParameters(getEntity().getId(), disk);
-            tempVar2.setStorageDomainId(storageDomain.getId());
-            Frontend.RunAction(VdcActionType.AddDisk, tempVar2,
-                    new IFrontendActionAsyncCallback() {
-                        @Override
-                        public void Executed(FrontendActionAsyncResult result) {
-
-                            VmGuideModel vmGuideModel = (VmGuideModel) result.getState();
-                            vmGuideModel.getWindow().StopProgress();
-                            VdcReturnValueBase returnValueBase = result.getReturnValue();
-                            if (returnValueBase != null && returnValueBase.getSucceeded())
-                            {
-                                vmGuideModel.Cancel();
-                                vmGuideModel.PostAction();
-                            }
-
-                        }
-                    }, this);
-        }
-        else
-        {
-            Cancel();
-        }
-    }
-
-    private void OnAttachDisks()
-    {
-        VM vm = getEntity();
-        DiskModel model = (DiskModel) getWindow();
-        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
-
-        ArrayList<EntityModel> disksToAttach = (Boolean) model.getIsInternal().getEntity() ?
-                (ArrayList<EntityModel>) model.getInternalAttachableDisks().getSelectedItems() :
-                (ArrayList<EntityModel>) model.getExternalAttachableDisks().getSelectedItems();
-
-        for (EntityModel item : disksToAttach)
-        {
-            DiskModel disk = (DiskModel) item.getEntity();
-            AttachDettachVmDiskParameters parameters = new AttachDettachVmDiskParameters(
-                    vm.getId(), disk.getDisk().getId(), (Boolean) model.getIsPlugged().getEntity());
-            paramerterList.add(parameters);
-        }
-
-        model.StartProgress(null);
-
-        Frontend.RunMultipleAction(VdcActionType.AttachDiskToVm, paramerterList,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
-                        VmGuideModel localModel = (VmGuideModel) result.getState();
-                        localModel.getWindow().StopProgress();
-                        Cancel();
-                    }
-                },
-                this);
     }
 
     public void PostAction()
@@ -358,10 +219,6 @@ public class VmGuideModel extends GuideModel
         if (StringHelper.stringsEqual(command.getName(), "AddDisk")) //$NON-NLS-1$
         {
             AddDisk();
-        }
-        if (StringHelper.stringsEqual(command.getName(), "OnAddDisk")) //$NON-NLS-1$
-        {
-            OnAddDisk();
         }
         if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
