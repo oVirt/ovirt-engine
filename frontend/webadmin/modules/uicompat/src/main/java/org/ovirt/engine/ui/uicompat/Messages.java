@@ -111,7 +111,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Direct LUN disk(s) will not be a part of the VM export: {0}.")
     String directLUNDisksWillNotBePartOfTheExport(String diskList);
 
-    @DefaultMessage("There are disks not allowing an export, only the configuration will be a part of the VM export.")
+    @DefaultMessage("There are no disks allowing an export, only the configuration will be a part of the VM export.")
     String noExportableDisksFoundForTheExport();
 
     @DefaultMessage("Shared disk(s) will not be a part of the VM snapshot: {0}.")
@@ -120,7 +120,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Direct LUN disk(s) will not be a part of the VM snapshot: {0}.")
     String directLUNDisksWillNotBePartOfTheSnapshot(String diskList);
 
-    @DefaultMessage("There are disks not allowing a snapshot, only the configuration will be a part of the VM snapshot.")
+    @DefaultMessage("There are no disks allowing a snapshot, only the configuration will be a part of the VM snapshot.")
     String noExportableDisksFoundForTheSnapshot();
 
     @DefaultMessage("Shared disk(s) will not be a part of the VM template: {0}.")
@@ -129,7 +129,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Direct LUN disk(s) will not be a part of the VM template: {0}.")
     String directLUNDisksWillNotBePartOfTheTemplate(String diskList);
 
-    @DefaultMessage("There are disks not allowing an export, only the configuration will be a part of the VM template.")
+    @DefaultMessage("There are no disks allowing an export, only the configuration will be a part of the VM template.")
     String noExportableDisksFoundForTheTemplate();
 
     @DefaultMessage("Error connecting to Virtual Machine using Spice:\n{0}")
