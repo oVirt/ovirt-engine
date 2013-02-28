@@ -84,10 +84,10 @@ public class Challenger implements PreProcessInterceptor {
         boolean preferPersistentAuth = checkPersistentAuthentication(headers);
         boolean hasAuthorizationHeader = checkAuthorizationHeader(headers);
 
-        if (preferPersistentAuth) {
-            // Will create a new one if it is the first session, and then the "isNew" test below will return true
-            httpSession = getCurrentSession(true);
-        }
+        // Will create a new one if it is the first session, and we want to persist sessions
+        // (and then the "isNew" test below will return true)
+        // Otherwise, it will return null
+        httpSession = getCurrentSession(preferPersistentAuth);
 
         // If the session isn't new and doesn't carry authorization header, we validate it
         if (validator != null && httpSession != null && !httpSession.isNew() && !hasAuthorizationHeader) {
