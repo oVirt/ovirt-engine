@@ -385,7 +385,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM is pinned to Host.")
     String ACTION_TYPE_FAILED_VM_IS_PINNED_TO_HOST();
 
-    @DefaultStringValue("Cannot ${action} ${type}. VM is pinned to Host '${VdsName}' but cannot run on it.")
+    @DefaultStringValue("Note: The VM is pinned to Host '${VdsName}' but cannot run on it.")
     String VM_PINNED_TO_HOST_CANNOT_RUN_ON_THE_DEFAULT_VDS();
 
     @DefaultStringValue("$VdsName [N/A]")
