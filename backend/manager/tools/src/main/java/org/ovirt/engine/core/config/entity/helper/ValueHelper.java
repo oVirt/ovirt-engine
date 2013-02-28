@@ -12,4 +12,6 @@ public interface ValueHelper {
     ValidationResult validate(ConfigKey key, String value);
 
     void setParser(EngineConfigCLIParser parser);
+
+    String getHelpNote(ConfigKey key);
 }

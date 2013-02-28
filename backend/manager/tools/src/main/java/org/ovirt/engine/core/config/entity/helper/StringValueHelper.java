@@ -5,7 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.config.EngineConfigCLIParser;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 
-public class StringValueHelper implements ValueHelper {
+public class StringValueHelper extends BaseValueHelper {
 
     @Override
     public String getValue(String value) {
@@ -34,4 +34,10 @@ public class StringValueHelper implements ValueHelper {
     public void setParser(EngineConfigCLIParser parser) {
         // NOP
     }
+
+    @Override
+    public String getHelpNote(ConfigKey key) {
+        return getHelpNoteByType(key, "string");
+    }
+
 }

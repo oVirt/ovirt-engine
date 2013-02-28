@@ -29,7 +29,7 @@ public class EngineConfigCLIParser {
      *             but action is not 'set'.
      */
     public void parse(String[] args) {
-        log.debug("parse: beginning to parse arguments.");
+        log.debug("parse: beginning to parse passed arguments.");
         validateNonEmpty(args);
         parseAction(args);
         parseArguments(args);
@@ -102,7 +102,8 @@ public class EngineConfigCLIParser {
             } else if (getConfigAction().equals(ConfigActionType.ACTION_SET) && getKey() == null) {
                 engineConfigMap.setKey(key);
                 engineConfigMap.setValue(value);
-            } else if (getConfigAction().equals(ConfigActionType.ACTION_GET) && getKey() == null) {
+            } else if ((getConfigAction().equals(ConfigActionType.ACTION_GET) || getConfigAction().equals(ConfigActionType.ACTION_HELP))
+                    && getKey() == null) {
                 engineConfigMap.setKey(arg); // sets the key in 'get' action with format: "-g key"
             } else {
                 log.debug("parsing error: illegal argument " + arg + ". Skipping argument.");
@@ -172,7 +173,6 @@ public class EngineConfigCLIParser {
         int delimiterIndex = args[0].indexOf("=");
         String action = getStringBeforeEqualChar(args[0], delimiterIndex);
         String key = getStringAfterEqualChar(args[0], delimiterIndex);
-
         if (!action.isEmpty()) {
             if (!key.isEmpty()) {
                 handleActionWithKey(action, key);
@@ -237,7 +237,7 @@ public class EngineConfigCLIParser {
      */
     private void handleActionWithKey(String action, String key) {
         engineConfigMap.setConfigAction(ConfigActionType.getActionType(action));
-        if (action.equals("--get")) { // Since this is the only valid case for having a key in the first arg
+        if (action.equals("--get") || action.equals("--help")) {
             engineConfigMap.setKey(key);
         } else {
             log.debug("parseAction error: first argument is illegal.");
@@ -252,6 +252,7 @@ public class EngineConfigCLIParser {
      * @param arg
      */
     private void validateArgStartsWithDash(String arg) {
+        log.debug("Validating arrgument" + arg);
         if (!arg.startsWith("-")) {
             log.debug("parseAction error: first argument '" + arg + "' did not start with '-' or '--'.");
             throw (new IllegalArgumentException("First argument must be an action, and start with '-' or '--'"));

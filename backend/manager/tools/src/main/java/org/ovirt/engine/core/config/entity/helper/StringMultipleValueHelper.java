@@ -12,7 +12,7 @@ import org.ovirt.engine.core.config.entity.ConfigKey;
  * values list. Given Values should be comma separated.
  *
  */
-public class StringMultipleValueHelper implements ValueHelper {
+public class StringMultipleValueHelper extends BaseValueHelper {
 
     @Override
     public String getValue(String value) {
@@ -42,4 +42,10 @@ public class StringMultipleValueHelper implements ValueHelper {
     public void setParser(EngineConfigCLIParser parser) {
         // NOP
     }
+
+    @Override
+    public String getHelpNote(ConfigKey key) {
+        return getHelpNoteByType(key, "a comma delimited subset of any of the possible values");
+    }
+
 }

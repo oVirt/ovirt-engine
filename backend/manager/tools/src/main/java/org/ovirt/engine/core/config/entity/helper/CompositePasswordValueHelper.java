@@ -81,4 +81,9 @@ public class CompositePasswordValueHelper implements ValueHelper {
         this.parser = parser;
         this.pwdValueHelper.setParser(parser);
     }
+
+    @Override
+    public String getHelpNote(ConfigKey key) {
+        return pwdValueHelper.getHelpNote(key);
+    }
 }

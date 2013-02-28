@@ -103,6 +103,9 @@ public class EngineConfigLogic {
         case ACTION_SET:
             persistValue();
             break;
+        case ACTION_HELP:
+            printHelpForKey();
+            break;
         case ACTION_RELOAD:
             reloadConfigurations();
             break;
@@ -253,11 +256,27 @@ public class EngineConfigLogic {
      * Prints all available configuration keys.
      */
     public void printAvailableKeys() {
-        List<ConfigurationNode> configNodes = keysConfig.getRootNode().getChildren();
+        iterateAllKeys(configKeyFactory, keysConfig, new ConfigKeyHandler() {
+
+            @Override
+            public boolean handle(ConfigKey key) {
+                printKeyInFormat(key);
+                return true;
+            }
+        });
+    }
+
+    public static boolean iterateAllKeys(ConfigKeyFactory factory,
+            HierarchicalConfiguration config,
+            ConfigKeyHandler handler) {
+        List<ConfigurationNode> configNodes = config.getRootNode().getChildren();
         for (ConfigurationNode node : configNodes) {
-            ConfigKey key = configKeyFactory.generateByPropertiesKey(node.getName());
-            printKeyInFormat(key);
+            ConfigKey key = factory.generateByPropertiesKey(node.getName());
+            if (!handler.handle(key)) {
+                return true;
+            }
         }
+        return false;
     }
 
     /**
@@ -340,6 +359,26 @@ public class EngineConfigLogic {
                     + (version == null ? "" : " with version " + version) + ".");
             throw new IllegalArgumentException("Error setting " + key + "'s value. No such entry"
                     + (version == null ? "" : " with version " + version) + ".");
+        }
+    }
+
+    private void printHelpForKey() throws Exception {
+        final String keyName = parser.getKey();
+        boolean foundKey = iterateAllKeys(this.configKeyFactory, keysConfig, new ConfigKeyHandler() {
+
+            @Override
+            public boolean handle(ConfigKey key) {
+                if (key.getKey().equals(keyName)) {
+                    log.info(key.getValueHelper().getHelpNote(key));
+                    return false;
+                }
+                return true;
+            }
+        });
+
+        if (!foundKey) {
+            log.error(String.format("Cannot display help for key %1$s. The key does not exist at the configuration file of engine-config",
+                    keyName));
         }
     }
 

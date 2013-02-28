@@ -15,6 +15,7 @@ public enum ConfigActionType {
     ACTION_LIST(Arrays.asList(new String[] { "-l", "--list" }), null),
     ACTION_GET(Arrays.asList(new String[] { "-g", "--get" }), new ValidatorType[] { ValidatorType.get }),
     ACTION_SET(Arrays.asList(new String[] { "-s", "--set" }), new ValidatorType[] { ValidatorType.set }),
+    ACTION_HELP(Arrays.asList(new String[] { "-h", "--help" }), new ValidatorType[] { ValidatorType.help }),
     ACTION_RELOAD(Arrays.asList(new String[] { "-r", "--reload" }), null);
 
     private List<String> optionalStrings;

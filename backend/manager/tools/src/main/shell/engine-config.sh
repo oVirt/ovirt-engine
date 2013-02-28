@@ -35,6 +35,8 @@ usage () {
         printf "###    or via file with one of the following options:\n"
         printf "###        engine-config -s PasswordEntry --admin-pass-file=/tmp/mypass\n"
         printf "###        engine-config -s PasswordEntry=/tmp/mypass\n"
+        printf "###    PasswordEntry varies between the different password options\n"
+        printf "###    See engine-config -h <OptionName> for more specific details\n"
         printf "### 2. In order for your change(s) to take effect,\n"
         printf "###    restart the oVirt engine service (using: 'service ovirt-engine restart').\n"
         printf "################################################################################\n"
@@ -82,7 +84,7 @@ if [ "$#" -gt 8 -o "$#" -lt 1 ]; then
 fi
 
 
-if [ "$1" == "--help" -o "$1" == "-h" ]; then
+if [ "$1" == "--help" -o "$1" == "-h" -a "$#" -eq 1 ]; then
         usage
         exit 0
 fi
