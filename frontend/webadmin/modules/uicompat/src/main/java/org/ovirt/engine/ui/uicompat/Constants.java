@@ -591,9 +591,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String cloneVmFromSnapshotTitle();
 
     // Messages
-    @DefaultStringValue("There are no available Bonds")
-    String thereAreNoAvailableBondsMsg();
-
     @DefaultStringValue("Bookmark(s):")
     String bookmarsMsg();
 

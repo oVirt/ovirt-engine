@@ -24,7 +24,6 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -381,16 +380,7 @@ public class HostSetupNetworksModel extends EntityModel {
         if (operation.isNullOperation()) {
             return;
         } else if (operation == NetworkOperation.BOND_WITH) {
-            List<String> freeBonds = getFreeBonds();
-            if (freeBonds.isEmpty()) {
-                popupWindow = new ConfirmationModel();
-                popupWindow.setTitle(ConstantsManager.getInstance().getConstants().errorTitle());
-                popupWindow.setMessage(ConstantsManager.getInstance().getConstants().thereAreNoAvailableBondsMsg());
-                popupWindow.getCommands().add(cancelCommand);
-                sourceListModel.setConfirmWindow(popupWindow);
-                return;
-            }
-            final SetupNetworksBondModel bondPopup = new SetupNetworksAddBondModel(freeBonds);
+            final SetupNetworksBondModel bondPopup = new SetupNetworksAddBondModel(getFreeBonds());
             bondPopup.getCommands().add(new UICommand("OK", new BaseCommandTarget() { //$NON-NLS-1$
 
                         @Override
