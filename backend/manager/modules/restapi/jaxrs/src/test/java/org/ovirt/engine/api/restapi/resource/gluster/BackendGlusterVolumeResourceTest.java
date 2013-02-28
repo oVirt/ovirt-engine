@@ -66,6 +66,8 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
 
     @Test
     public void testStart() throws Exception {
+        setupParentExpectations();
+        resource.setParent(volumesResourceMock);
         setUriInfo(setUpActionExpectations(VdcActionType.StartGlusterVolume,
                 GlusterVolumeActionParameters.class,
                 new String[] { "VolumeId" },
@@ -76,6 +78,8 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
 
     @Test
     public void testStop() throws Exception {
+        setupParentExpectations();
+        resource.setParent(volumesResourceMock);
         setUriInfo(setUpActionExpectations(VdcActionType.StopGlusterVolume,
                 GlusterVolumeActionParameters.class,
                 new String[] { "VolumeId" },
@@ -86,6 +90,8 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
 
     @Test
     public void testRebalance() throws Exception {
+        setupParentExpectations();
+        resource.setParent(volumesResourceMock);
         setUriInfo(setUpActionExpectations(VdcActionType.StartRebalanceGlusterVolume,
                 GlusterVolumeRebalanceParameters.class,
                 new String[] { "VolumeId" },
@@ -112,6 +118,8 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
 
     @Test
     public void testSetOption() throws Exception {
+        setupParentExpectations();
+        resource.setParent(volumesResourceMock);
         setUriInfo(setUpActionExpectations(VdcActionType.SetGlusterVolumeOption,
                 GlusterVolumeOptionParameters.class,
                 new String[] { "VolumeId" },
@@ -142,7 +150,8 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
 
     @Test
     public void testResetOption() throws Exception {
-
+        setupParentExpectations();
+        resource.setParent(volumesResourceMock);
         setUriInfo(setUpActionExpectations(VdcActionType.ResetGlusterVolumeOptions,
                 ResetGlusterVolumeOptionsParameters.class,
                 new String[] { "VolumeId" },
@@ -156,6 +165,8 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
 
     @Test
     public void testResetAllOptions() throws Exception {
+        setupParentExpectations();
+        resource.setParent(volumesResourceMock);
         setUriInfo(setUpActionExpectations(VdcActionType.ResetGlusterVolumeOptions,
                 ResetGlusterVolumeOptionsParameters.class,
                 new String[] { "VolumeId" },

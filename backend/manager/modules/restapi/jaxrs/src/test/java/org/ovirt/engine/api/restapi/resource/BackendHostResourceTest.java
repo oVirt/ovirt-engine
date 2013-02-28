@@ -149,7 +149,6 @@ public class BackendHostResourceTest
     @Test
     public void testUpdate() throws Exception {
         setUpGetEntityExpectations(2);
-
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
                                            UpdateVdsActionParameters.class,
                                            new String[] { "RootPassword" },

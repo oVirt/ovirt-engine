@@ -353,7 +353,9 @@ public class BackendVmResourceTest
                                            new String[] { "VmId" },
                                            new Object[] { GUIDS[0] }));
 
-        verifyActionResponse(resource.start(new Action()));
+        Response response = resource.start(new Action());
+        verifyActionResponse(response);
+        verifyActionModel(((Action) response.getEntity()).getVm(), 0);
     }
 
     @Test
@@ -804,6 +806,12 @@ public class BackendVmResourceTest
     protected void verifyModel(VM model, int index) {
         super.verifyModel(model, index);
         verifyModelSpecific(model, index);
+    }
+
+    protected void verifyActionModel(VM model, int index) {
+        assertNotNull(model);
+        assertEquals(GUIDS[index].toString(), model.getId());
+        verifyLinks(model);
     }
 
     private void verifyCertificate(VM model) {

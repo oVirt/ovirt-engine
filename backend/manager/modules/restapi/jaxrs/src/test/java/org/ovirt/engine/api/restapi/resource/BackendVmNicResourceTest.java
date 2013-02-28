@@ -209,7 +209,9 @@ public class BackendVmNicResourceTest
 
     @Test
     public void testUpdateWithExistingNetwork() throws Exception {
-        setUpGetEntityExpectations(2);
+        setUriInfo(setUpBasicUriExpectations());
+        setAllContentHeaderExpectation();
+        setUpEntityQueryExpectations(2);
         setGetVmQueryExpectations(2);
         setGetNetworksQueryExpectations(2);
         setGetGuestAgentQueryExpectations(1);

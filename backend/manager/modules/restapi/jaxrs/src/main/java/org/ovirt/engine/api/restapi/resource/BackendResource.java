@@ -1,9 +1,12 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.invocation.MetaData;
@@ -132,11 +135,15 @@ public class BackendResource extends BaseBackendResource {
         }
     }
 
-    protected Response performAction(VdcActionType task, VdcActionParametersBase params) {
-        return performAction(task, params, (Action)null);
+    protected Response performAction(VdcActionType task, VdcActionParametersBase params, Action action) {
+        return performAction(task, params, action, false);
     }
 
-    protected Response performAction(VdcActionType task, VdcActionParametersBase params, Action action) {
+    protected Response performAction(VdcActionType task, VdcActionParametersBase params) {
+        return performAction(task, params, (Action) null, false);
+    }
+
+    protected Response performAction(VdcActionType task, VdcActionParametersBase params, Action action, boolean getEntityWhenDone) {
         try {
             if (QueryHelper.hasMatrixParam(getUriInfo(), ASYNC_CONSTRAINT) ||
                     expectNonBlocking()) {
@@ -144,12 +151,14 @@ public class BackendResource extends BaseBackendResource {
                 return performNonBlockingAction(task, params, action);
             } else {
                 doAction(task, params);
-                if (action!=null) {
-                    action.setStatus(StatusUtils.create(CreationStatus.COMPLETE));
-                    return Response.ok().entity(action).build();
-                } else {
-                    return Response.ok().build();
+                if (action==null) {
+                    action = new Action();
                 }
+                action.setStatus(StatusUtils.create(CreationStatus.COMPLETE));
+                if (getEntityWhenDone) {
+                    setActionItem(action, getEntity());
+                }
+                return Response.ok().entity(action).build();
             }
         } catch (Exception e) {
             return handleError(Response.class, e, false);
@@ -170,7 +179,7 @@ public class BackendResource extends BaseBackendResource {
             if (action!=null) {
                 action.setStatus(StatusUtils.create(CreationStatus.IN_PROGRESS));
                 return Response.status(Response.Status.ACCEPTED).entity(action).build();
-            }else {
+            } else {
                 return Response.status(Response.Status.ACCEPTED).build();
             }
         } catch (Exception e) {
@@ -265,6 +274,107 @@ public class BackendResource extends BaseBackendResource {
             return Boolean.valueOf(populates.get(0)).booleanValue();
         } else {
             return false;
+        }
+    }
+
+    /**
+     * Runs implementation of the @GET annotated method of this resource (get() for single entity resources, and list()
+     * for collection resources).
+     *
+     * @return The result of the @GET annotated method, an entity or list of entities.
+     */
+    protected Object getEntity() {
+        try {
+            Method m = resolveGet();
+            if (m == null) {
+                return null;
+            }
+            Object entity = m.invoke(this);
+            return getEntityWithIdAndHref(entity);
+        } catch (Exception e) {
+            LOG.error("Getting resource after action failed.", e);
+            return null;
+        }
+    }
+
+    private Method resolveGet() throws NoSuchMethodException, SecurityException {
+        Method methodSignature = findGetSignature(this.getClass());
+        if (methodSignature == null) {
+            return null;
+        }
+        Method methodImplementation =
+                this.getClass().getMethod(methodSignature.getName(), methodSignature.getParameterTypes());
+        return methodImplementation;
+    }
+
+    private static Method findGetSignature(Class<?> clazz) {
+        Class<?> currentAncestor = clazz;
+        while (currentAncestor != null) {
+            Class<?>[] interfaces = currentAncestor.getInterfaces();
+            for (Class<?> ifc : interfaces) {
+                Method m = find(ifc);
+                if (m != null) {
+                    return m;
+                }
+            }
+            currentAncestor = currentAncestor.getSuperclass();
+        }
+        return null;
+    }
+
+    private static Method find(Class<?> ifc) {
+        Class<?> currentAncestor = ifc;
+        while (currentAncestor != null) {
+            for (Method m : currentAncestor.getMethods()) {
+                if (m.isAnnotationPresent(GET.class)) {
+                    return m;
+                }
+            }
+            currentAncestor = currentAncestor.getSuperclass();
+        }
+        return null;
+    }
+
+    protected Object getEntityWithIdAndHref(Object entity) throws InstantiationException, IllegalAccessException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
+        Object newEntity = entity.getClass().newInstance();
+        setEntityValue(newEntity, "setId", getEntityValue(entity, "getId"));
+        setEntityValue(newEntity, "setHref", getEntityValue(entity, "getHref"));
+        return entity;
+    }
+
+    private void setEntityValue(Object entity, String methodName, Object value) throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        Method method = entity.getClass().getMethod(methodName);
+        method.invoke(entity, value);
+    }
+
+    private Object getEntityValue(Object entity, String methodName) throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        Object nullObj = null;
+        Method method = entity.getClass().getMethod(methodName);
+        return method.invoke(entity, nullObj);
+    }
+
+    protected Response actionStatus(CreationStatus status, Action action, Object result) {
+        setActionItem(action, result);
+        action.setStatus(StatusUtils.create(status));
+        return Response.ok().entity(action).build();
+    }
+
+    protected void setActionItem(Action action, Object result) {
+        if (result == null) {
+            return;
+        }
+        String name = result.getClass().getSimpleName().toLowerCase();
+        for (Method m : action.getClass().getMethods()) {
+            if (m.getName().startsWith("set") && m.getName().replace("set", "").toLowerCase().equals(name)) {
+                try {
+                    m.invoke(action, result);
+                    break;
+                } catch (Exception e) {
+                    // should not happen
+                    LOG.error("Resource to action asignment failure.", e);
+                    break;
+                }
+            }
         }
     }
 }

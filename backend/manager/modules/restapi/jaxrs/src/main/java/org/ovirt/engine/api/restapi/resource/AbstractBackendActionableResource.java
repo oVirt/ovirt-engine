@@ -1,6 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.List;
 
@@ -46,7 +45,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
                         Object model = resolveCreated(actionResult, entityResolver, null);
                         return actionStatus(status, action, model);
                     }
-                    return actionStatus(status, action);
+                    return actionStatus(status, action, addLinks(newModel(id)));
                 } else {
                     return actionAsync(actionResult, action);
                 }
@@ -66,7 +65,6 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
             // we tolerate a failure in the entity resolution
             // as the substantive action (entity creation) has
             // already succeeded
-            e.printStackTrace();
             return null;
         }
     }
@@ -78,12 +76,12 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
             if (actionResult.getHasAsyncTasks()) {
                 if (expectBlocking(action)) {
                     CreationStatus status = awaitCompletion(actionResult, pollingType);
-                    return actionStatus(status, action);
+                    return actionStatus(status, action, addLinks(newModel(id)));
                 } else {
                     return actionAsync(actionResult, action);
                 }
             } else {
-                return actionSuccess(action);
+                return actionSuccess(action, addLinks(newModel(id)));
             }
         } catch (Exception e) {
             return handleError(e, action);
@@ -186,34 +184,6 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
     private Response actionSuccess(Action action, Object result) {
         setActionItem(action, result);
         action.setStatus(StatusUtils.create(CreationStatus.COMPLETE));
-        return Response.ok().entity(action).build();
-    }
-
-    private void setActionItem(Action action, Object result) {
-        String name = result.getClass().getSimpleName().toLowerCase();
-        for (Method m : action.getClass().getMethods()) {
-            if (m.getName().startsWith("set") && m.getName().replace("set", "").toLowerCase().equals(name)) {
-                try {
-                    m.invoke(action, result);
-                    break;
-                } catch (Exception e) {
-                    // should not happen
-                    LOG.error("Resource to action asignment failure.", e);
-                    e.printStackTrace();
-                    break;
-                }
-            }
-        }
-    }
-
-    protected Response actionStatus(CreationStatus status, Action action) {
-        action.setStatus(StatusUtils.create(status));
-        return Response.ok().entity(action).build();
-    }
-
-    protected Response actionStatus(CreationStatus status, Action action, Object result) {
-        setActionItem(action, result);
-        action.setStatus(StatusUtils.create(status));
         return Response.ok().entity(action).build();
     }
 
