@@ -471,10 +471,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     ComputerADPaths(182),
     @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("System,Sparse,COW,true;Data,Preallocated,RAW,false;Shared,Preallocated,RAW,false;Swap,Preallocated,RAW,false;Temp,Sparse,COW,false")
-    DiskConfigurationList(191),
-    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
     SPMFailOverAttempts(192),
