@@ -48,7 +48,6 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     }
 
     interface Driver extends SimpleBeanEditorDriver<UserPortalItemModel, MainTabBasicListItemView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     public interface Style extends CssResource {
@@ -76,6 +75,8 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
         String suspendButtonAdditionalStyle();
 
     }
+
+    private final Driver driver = GWT.create(Driver.class);
 
     @UiField
     @Path("osType")
@@ -143,7 +144,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         consoleBaner.setVisible(false);
 
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     @Override
@@ -208,12 +209,12 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
 
     @Override
     public void edit(UserPortalItemModel model) {
-        Driver.driver.edit(model);
+        driver.edit(model);
     }
 
     @Override
     public UserPortalItemModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override
