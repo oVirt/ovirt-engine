@@ -48,6 +48,11 @@ ETL_SERVICE="/etc/init.d/ovirt-engine-etl"
 UNSUPPORTED_VERSION = "2.2"
 
 #MSGS
+MSG_ERROR_CLEAR_ZOMBIES = "Error: Couldn't clear zombie tasks"
+MSG_CLEAR_DB_INCONSISTENCIES = "\nINFO: DB validation tools provided the \
+following data: %s\nWould you like to clear inconsistencies \
+before upgrading?\n\
+(Answering 'no' will stop the upgrade)"
 MSG_TASKS_COMPENSATIONS = "\n\nSystem Tasks:\n%s\n%s\n\n"
 MSG_STOP_RUNNING_TASKS = "\nInfo: The following tasks have been found running \
 in the system: %s%sWould you like to proceed and try to stop tasks automatically?\
@@ -783,7 +788,6 @@ def modifyUUIDs():
             MSG_ERROR_CONNECT_DB
         )
 
-
 def zombieTasksFound():
     """
     Fetching and cleaning zombie async tasks
@@ -809,11 +813,11 @@ def zombieTasksFound():
     # If tasks has content and exit status 0, return True
     return (tasks and not rc)
 
-
 def clearZombieTasks():
     """
     Clear zombie tasks, raise Exception if it fails.
     """
+
     cmd = [
         basedefs.EXEC_TASK_CLEANER,
         "-u", SERVER_ADMIN,
@@ -827,14 +831,15 @@ def clearZombieTasks():
         "-q",
     ]
 
-    out, rc = utils.execCmd(cmdList=cmd,
-                  failOnError=False,
-                  msg="Can't clear zombie tasks",
-                  envDict=utils.getPgEnv(),
-                 )
+    out, rc = utils.execCmd(
+        cmdList=cmd,
+        failOnError=False,
+        msg="Can't clear zombie tasks",
+        envDict=utils.getPgEnv(),
+    )
 
     if rc > 1:
-        raise Exception(output_messages.ERR_CANT_CLEAR_ZOMBIE_TASKS)
+        raise Exception(MSG_ERROR_CLEAR_ZOMBIES)
 
 
 def deployDbAsyncTasks(dbName=basedefs.DB_NAME):
@@ -1053,6 +1058,68 @@ def deleteEngineSysconfig():
     if os.path.exists(basedefs.DIR_ENGINE_SYSCONFIG):
         shutil.rmtree(basedefs.DIR_ENGINE_SYSCONFIG)
 
+def checkDb():
+
+    header = "\n\n ======  Validating database '{dbname}' ====== \n".format(
+        dbname=basedefs.DB_NAME,
+    )
+
+    cmd = [
+        basedefs.EXEC_DBVALIDATOR,
+        "--user={admin}".format(
+            admin=SERVER_ADMIN
+        ),
+        "--host={host}".format(
+            host=SERVER_NAME
+        ),
+        "--port={port}".format(
+            port=SERVER_PORT
+        ),
+        "--database={database}".format(
+            database=basedefs.DB_NAME
+        ),
+    ]
+
+    out, rc = utils.execCmd(
+        cmdList=cmd,
+        failOnError=False,
+        envDict=utils.getPgEnv(),
+    )
+
+    # If there was a problem running check, raise Exception
+    if rc > 1:
+        raise Exception(
+            'Error: failed checking DB:\n{output}\n'.format(
+                output=out,
+            )
+        )
+
+    return (header+out, rc)
+
+def fixDb():
+    cmd = [
+        basedefs.EXEC_DBVALIDATOR,
+        "--user={admin}".format(
+            admin=SERVER_ADMIN
+        ),
+        "--host={host}".format(
+            host=SERVER_NAME
+        ),
+        "--port={port}".format(
+            port=SERVER_PORT
+        ),
+        "--database={database}".format(
+            database=basedefs.DB_NAME
+        ),
+        "--fix=1",
+    ]
+
+    out, rc = utils.execCmd(
+        cmdList=cmd,
+        failOnError=True,
+        msg="Can't fix DB inconsistencies",
+        envDict=utils.getPgEnv(),
+    )
 
 def setupVarPrivileges():
     # previous versions mixed root/ovirt
@@ -1219,19 +1286,38 @@ def main(options):
                 if updateRelatedToDB:
                     runFunc([[stopDbRelatedServices, etlService, notificationService]], MSG_INFO_STOP_DB)
 
-                if not options.ignore_tasks:
-                    # Check that there are no running tasks/compensations
                     try:
-                        if zombieTasksFound():
-                        # Now, clean zombie tasks. We assume that the tool works.
-                            runFunc([clearZombieTasks], output_messages.MSG_CLEAN_ASYNC)
+                        # Validate DB first
+                        violations, issues_found = checkDb()
 
-                        checkRunningTasks()
+                        # If violations found, show them
+                        # and ask for cleanup
+                        if issues_found:
+                            if utils.askYesNo(
+                                MSG_CLEAR_DB_INCONSISTENCIES % violations
+                            ) is True:
+                                fixDb()
+                            else:
+                                raise Exception(
+                                    "User decided to skip db fix"
+                                )
+
+                        if not options.ignore_tasks:
+
+                            # Check and clean zombie tasks.
+                            if zombieTasksFound():
+                                runFunc([clearZombieTasks], output_messages.MSG_CLEAN_ASYNC)
+
+                            # Check that there are no running tasks/compensations
+                            checkRunningTasks()
+
                     # If something went wrong, restart DB services and the engine
                     except:
+                        logging.error(traceback.format_exc())
                         runFunc([[startDbRelatedServices, etlService, notificationService]], MSG_INFO_START_DB)
                         runFunc(startEngineService, MSG_INFO_START_ENGINE % engineService)
                         raise
+
             else:
                 # This means that user chose not to stop ovirt-engine
                 logging.debug("exiting gracefully")

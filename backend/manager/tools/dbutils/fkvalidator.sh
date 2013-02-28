@@ -28,7 +28,7 @@ set_defaults
 
 
 usage() {
-    printf "Usage: ${ME} [-h] [-s SERVERNAME [-p PORT]] [-d DATABASE] [-u USERNAME] [-l LOGFILE] [-f] [-v]\n"
+    printf "Usage: ${ME} [-h] [-s SERVERNAME [-p PORT]] [-d DATABASE] [-u USERNAME] [-l LOGFILE] [-f] [-q] [-v]\n"
     printf "\n"
     printf "\t-s SERVERNAME - The database servername for the database  (def. ${SERVERNAME})\n"
     printf "\t-p PORT       - The database port for the database        (def. ${PORT})\n"
@@ -37,6 +37,7 @@ usage() {
     printf "\t-l LOGFILE    - The logfile for capturing output          (def. ${LOGFILE})\n"
     printf "\t-f            - Fix the non consistent data by removing it from DB.\n"
     printf "\t-v            - Turn on verbosity                         (WARNING: lots of output)\n"
+    printf "\t-q            - Run in a quiet mode (don't ask questions).\n"
     printf "\t-h            - This help text.\n"
     printf "\n"
     popd>/dev/null
@@ -54,13 +55,25 @@ DEBUG () {
 # if fix_it is true , constriant violations cause is removed from DB
 validate_db_fks() {
    local fix_it=${1}
-   CMD="select * from fn_db_validate_fks(${fix_it});"
-   psql -w --pset=tuples_only=on --set ON_ERROR_STOP=1 -U ${USERNAME} -c "${CMD}" -h "${SERVERNAME}" -p "${PORT}" "${DATABASE}"
+   if [ "${fix_it}" = "true" ]; then
+       CMD="copy (select fk_violation from fn_db_validate_fks(true)) to stdout;"
+   else
+       CMD="copy (select fk_violation,fk_status from fn_db_validate_fks(false) where fk_status=1) to stdout with csv;"
+   fi
+   res="$(psql -w --pset=tuples_only=on --set ON_ERROR_STOP=1 -U ${USERNAME} -c "${CMD}" -h "${SERVERNAME}" -p "${PORT}" "${DATABASE}")"
+   exit_code=$?
+
+   out="$(echo "${res}" | cut -f1 -d,)"
+   if [ "${exit_code}" = "0" ]; then
+       exit_code="$(echo "${res}" | cut -f2 -d, | head -1)"
+   fi
+   echo "${out}"
+   exit ${exit_code}
 }
 
 FIXIT=false
 
-while getopts hs:d:u:p:l:fv option; do
+while getopts hs:d:u:p:l:fqv option; do
     case $option in
         s) SERVERNAME=$OPTARG;;
         p) PORT=$OPTARG;;
@@ -69,6 +82,7 @@ while getopts hs:d:u:p:l:fv option; do
         l) LOGFILE=$OPTARG;;
         f) FIXIT=true;;
         v) VERBOSE=true;;
+        q) QUIET=true;;
         h) ret=0 && usage;;
        \?) ret=1 && usage;;
     esac
@@ -77,7 +91,7 @@ done
 # Install fkvalidator procedures
 psql -w -U ${USERNAME} -h ${SERVERNAME} -p ${PORT} -f ./fkvalidator_sp.sql ${DATABASE} > /dev/null
 
-if [ "${FIXIT}" = "true" ]; then
+if [[ "${FIXIT}" = "true" && ! "${QUIET}" = "true" ]]; then
     echo "Caution, this operation should be used with care. Please contact support prior to running this command"
     echo "Are you sure you want to proceed? [y/n]"
     read answer

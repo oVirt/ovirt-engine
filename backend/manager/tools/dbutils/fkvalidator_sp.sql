@@ -1,13 +1,15 @@
 -- Database FK validation
+SET client_min_messages=ERROR;
 DROP TYPE IF EXISTS fk_info_rs CASCADE;
 CREATE TYPE fk_info_rs AS
-    (table_name varchar, table_col varchar, fk_table_name varchar, fk_col varchar );
+    (table_name varchar, table_col varchar, fk_table_name varchar, fk_col varchar, fk_violation varchar, fk_status integer);
 CREATE OR REPLACE FUNCTION fn_db_validate_fks(v_fix_it boolean)
-returns void
+returns SETOF fk_info_rs
 AS $procedure$
 DECLARE
     v_sql text;
     v_msg text;
+    v_output text;
     v_rowcount integer;
     v_record fk_info_rs%ROWTYPE;
     v_cur CURSOR FOR
@@ -30,6 +32,8 @@ BEGIN
     LOOP
         FETCH v_cur INTO v_record;
         EXIT WHEN NOT FOUND;
+        v_record.fk_violation := '';
+        v_record.fk_status := 0;
         IF (v_fix_it) THEN
             v_sql := 'delete from ' || v_record.fk_table_name ||
                       ' where ' || v_record.fk_col || ' not in (select ' ||
@@ -44,8 +48,10 @@ BEGIN
         EXECUTE v_sql;
         GET DIAGNOSTICS v_rowcount = ROW_COUNT;
         IF (v_rowcount > 0) THEN
-            RAISE NOTICE '% ... (% record/s)',  v_msg, v_rowcount;
+            v_record.fk_violation := v_msg;
+            v_record.fk_status := 1;
         END IF;
+        RETURN NEXT v_record;
 
     END LOOP;
     CLOSE v_cur;
