@@ -5,7 +5,7 @@ begin
     -- removing first the extension from pg9.x installations
     if exists (select 1 from information_schema.views where table_name = 'pg_available_extensions') then
       -- The - is special character , so need to put -- in the name
-      EXECUTE 'DROP EXTENSION IF EXISTS uuid--ossp CASCADE;';
+      EXECUTE 'DROP EXTENSION IF EXISTS "uuid-ossp" CASCADE;';
     end if;
 
     --Drops all old UUID functions since we have an internal implementation
