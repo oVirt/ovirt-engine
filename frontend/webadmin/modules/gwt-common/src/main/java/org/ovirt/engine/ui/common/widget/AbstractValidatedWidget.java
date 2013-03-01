@@ -30,7 +30,7 @@ public abstract class AbstractValidatedWidget extends Composite implements HasVa
     @Override
     public void markAsInvalid(List<String> validationHints) {
         applyCommonValidationStyles();
-        getValidatedWidgetStyle().setBorderColor("orange"); //$NON-NLS-1$
+        getValidatedWidgetStyle().setBorderColor("red"); //$NON-NLS-1$
         getValidatedWidget().setTitle(getValidationTitle(validationHints));
     }
 
