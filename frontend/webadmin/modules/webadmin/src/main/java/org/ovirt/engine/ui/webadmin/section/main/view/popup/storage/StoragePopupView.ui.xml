@@ -40,8 +40,9 @@
 		}
 
 		.descriptionEditor {
-			width: 325px;
-			padding-left: 10px;
+			position: absolute;
+			right: 2px;
+			width: 350px;
 		}
 
 		.formatListEditor {
