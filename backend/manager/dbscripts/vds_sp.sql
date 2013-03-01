@@ -597,12 +597,12 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetUpAndPrioritizedVds(v_storage_pool_id UUID) RETURNS SETOF vds
 AS $procedure$
-
 BEGIN
 BEGIN
       RETURN QUERY SELECT vds.*
-      FROM vds
-      WHERE (status = 3) AND (storage_pool_id = v_storage_pool_id) AND (vds_spm_priority IS NULL OR vds_spm_priority > (-1))
+      FROM vds vds, vds_groups vdsgroup
+      WHERE (vds.status = 3) AND (vds.storage_pool_id = v_storage_pool_id) AND (vds_spm_priority IS NULL OR vds_spm_priority > -1)
+      AND vds.vds_group_id = vdsgroup.vds_group_id AND vdsgroup.virt_service = true
       ORDER BY vds_spm_priority DESC, RANDOM();
    END;
    RETURN;
