@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
 
 	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
 	
 	<ui:style>
 		.container {
 			width: 100%;
-		}
-
-		.macExample {
-			color: gray;
-			float: right;
 		}
 
 		.errorMessageLabel {
@@ -71,6 +66,14 @@
 			bottom: 0px;
 			position: absolute;
 		}
+
+		.attachDiskPanel {
+			position: absolute;
+			top: 80px;
+			bottom: 50px;
+			padding: 2px;
+			margin-right: 2px;
+		}
 	</ui:style>
 
 	<g:FlowPanel addStyleNames="{style.container}">
@@ -105,9 +108,7 @@
 			<g:FlowPanel ui:field="externalDiskPanel" addStyleNames="{style.externalDiskPanel}"/>
 		</g:VerticalPanel>
 		<g:VerticalPanel ui:field="attachDiskPanel" addStyleNames="{style.mainPanel}" visible="false">
-			<g:ScrollPanel height="410px">
-				<g:SimplePanel ui:field="innerAttachDiskPanel" width="100%" height="100%"/>
-			</g:ScrollPanel>
+			<w:ValidatedPanelWidget ui:field="innerAttachDiskPanel" addStyleNames="{style.attachDiskPanel}" />
 			<e:EntityModelCheckBoxEditor ui:field="isPluggedEditor" addStyleNames="{style.isPluggedEditor}" />
 		</g:VerticalPanel>
 	</g:FlowPanel>

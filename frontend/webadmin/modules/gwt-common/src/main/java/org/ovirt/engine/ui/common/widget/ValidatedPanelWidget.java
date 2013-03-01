@@ -19,18 +19,17 @@ public class ValidatedPanelWidget extends AbstractValidatedWidget {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
     }
 
-    @Override
-    protected Widget getValidatedWidget() {
-        return panel;
+    public ValidatedPanelWidget(Widget contentWidget) {
+        this();
+        setWidget(contentWidget);
     }
 
-    public void setPanelWidget(Widget widget) {
+    public void setWidget(Widget widget) {
         panel.setWidget(widget);
     }
 
     @Override
-    public void markAsValid() {
-        super.markAsValid();
-        getValidatedWidgetStyle().setBorderColor("transparent"); //$NON-NLS-1$
+    protected Widget getValidatedWidget() {
+        return panel;
     }
 }

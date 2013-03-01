@@ -60,7 +60,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> {
@@ -169,7 +168,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     VerticalPanel attachDiskPanel;
 
     @UiField
-    SimplePanel innerAttachDiskPanel;
+    ValidatedPanelWidget innerAttachDiskPanel;
 
     @UiField
     FlowPanel externalDiskPanel;
@@ -202,9 +201,6 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
 
     @Ignore
     AbstractStorageView storageView;
-
-    @Ignore
-    ValidatedPanelWidget attachPanelWidget;
 
     boolean isNewLunDiskEnabled;
     StorageModel storageModel;
@@ -296,9 +292,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         verticalPanel.add(externalDiskTable);
 
         // Create ValidatedPanelWidget and add tables container
-        attachPanelWidget = new ValidatedPanelWidget();
-        attachPanelWidget.setPanelWidget(verticalPanel);
-        innerAttachDiskPanel.add(attachPanelWidget);
+        innerAttachDiskPanel.setWidget(verticalPanel);
     }
 
     private void initInternalDiskTable(final CommonApplicationConstants constants,
@@ -570,7 +564,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         iscsiStorageModel.getPropertyChangedEvent().addListener(progressEventHandler);
         iscsiStorageModel.setIsGrouppedByTarget(true);
         iscsiStorageModel.setIgnoreGrayedOut(true);
-        iscsiStorageView = new IscsiStorageView(false, 108, 207, 246, 268, 275, 125, 55, -59);
+        iscsiStorageView = new IscsiStorageView(false, 108, 206, 246, 275, 125, 55, -59);
         iscsiStorageView.edit(iscsiStorageModel);
 
         // Create FcpStorageModel
@@ -611,9 +605,9 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
                 if (propName.equals("IsValid")) { //$NON-NLS-1$
                     if (disk.getIsValid()) {
-                        attachPanelWidget.markAsValid();
+                        innerAttachDiskPanel.markAsValid();
                     } else {
-                        attachPanelWidget.markAsInvalid(disk.getInvalidityReasons());
+                        innerAttachDiskPanel.markAsInvalid(disk.getInvalidityReasons());
                     }
                 }
             }

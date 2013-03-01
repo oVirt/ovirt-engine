@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.widget.HasValidation;
+import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -21,10 +22,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> implements HasValidation {
@@ -58,16 +57,10 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
     DialogTabPanel dialogTabPanel;
 
     @UiField
-    SimplePanel lunsListPanel;
+    ValidatedPanelWidget lunsListPanel;
 
     @UiField
-    SimplePanel targetsToLunsPanel;
-
-    @UiField
-    FlowPanel targetsToLunsTabContentPanel;
-
-    @UiField
-    FlowPanel lunsToTargetsTabContentPanel;
+    ValidatedPanelWidget targetsToLunsPanel;
 
     @Ignore
     IscsiTargetToLunView iscsiTargetToLunView;
@@ -75,8 +68,8 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
     @Ignore
     IscsiLunToTargetView iscsiLunToTargetView;
 
-    double treeCollapsedHeight = 208, treeExpandedHeight = 307, lunsTreeHeight = 345;
-    double tabPanelHeight = 368, tabContentHeight = 340, tabHeight = 175;
+    double treeCollapsedHeight = 208, treeExpandedHeight = 306, lunsTreeHeight = 345;
+    double tabContentHeight = 340, tabHeight = 175;
     double textTop = 80, textLeft = -84, textWidth = 100;
 
     protected static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
@@ -91,14 +84,13 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
 
     public IscsiStorageView(boolean multiSelection,
             double treeCollapsedHeight, double treeExpandedHeight, double lunsTreeHeight,
-            double tabPanelHeight, double tabContentHeight, double tabHeight,
+            double tabContentHeight, double tabHeight,
             double textTop, double textLeft) {
         this(multiSelection);
 
         this.treeCollapsedHeight = treeCollapsedHeight;
         this.treeExpandedHeight = treeExpandedHeight;
         this.lunsTreeHeight = lunsTreeHeight;
-        this.tabPanelHeight = tabPanelHeight;
         this.tabContentHeight = tabContentHeight;
         this.tabHeight = tabHeight;
         this.textTop = textTop;
@@ -172,16 +164,15 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
 
         // Update Style
         dialogTabPanel.getElement().getStyle().setHeight(tabContentHeight, Unit.PX);
-        updateStyle(targetsToLunsTabContentPanel, targetsToLunTab);
-        updateStyle(lunsToTargetsTabContentPanel, lunToTargetsTab);
+        updateStyle(targetsToLunTab);
+        updateStyle(lunToTargetsTab);
 
         // Add view widgets to panel
-        lunsListPanel.add(iscsiLunToTargetView);
-        targetsToLunsPanel.add(iscsiTargetToLunView);
+        lunsListPanel.setWidget(iscsiLunToTargetView);
+        targetsToLunsPanel.setWidget(iscsiTargetToLunView);
     }
 
-    void updateStyle(FlowPanel tabContentPanel, DialogTab dialogTab) {
-        tabContentPanel.getElement().getStyle().setHeight(tabPanelHeight, Unit.PX);
+    void updateStyle(DialogTab dialogTab) {
         dialogTab.getElement().getStyle().setHeight(tabHeight, Unit.PX);
         dialogTab.getTabLabel().getElement().getStyle().setTop(textTop, Unit.PX);
         dialogTab.getTabLabel().getElement().getStyle().setLeft(textLeft, Unit.PX);
@@ -210,29 +201,14 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
 
     @Override
     public void markAsValid() {
-        markValidation(false, null);
+        lunsListPanel.markAsValid();
+        targetsToLunsPanel.markAsValid();
     }
 
     @Override
     public void markAsInvalid(List<String> validationHints) {
-        markValidation(true, validationHints);
-    }
-
-    private void markValidation(boolean isValid, List<String> validationHints) {
-        String oldStyle = isValid ? style.validTabContentPanel() : style.invalidTabContentPanel();
-        String newStyle = isValid ? style.invalidTabContentPanel() : style.validTabContentPanel();
-
-        targetsToLunsTabContentPanel.removeStyleName(oldStyle);
-        lunsToTargetsTabContentPanel.removeStyleName(oldStyle);
-        targetsToLunsTabContentPanel.addStyleName(newStyle);
-        lunsToTargetsTabContentPanel.addStyleName(newStyle);
-
-        targetsToLunsTabContentPanel.setTitle(getValidationTitle(validationHints));
-        lunsToTargetsTabContentPanel.setTitle(getValidationTitle(validationHints));
-    }
-
-    private String getValidationTitle(List<String> validationHints) {
-        return validationHints != null && validationHints.size() > 0 ? validationHints.get(0) : null;
+        lunsListPanel.markAsInvalid(validationHints);
+        targetsToLunsPanel.markAsInvalid(validationHints);
     }
 
     @Override
@@ -255,10 +231,6 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
         String dialogTab();
 
         String expandedlunsListPanel();
-
-        String validTabContentPanel();
-
-        String invalidTabContentPanel();
     }
 
 }

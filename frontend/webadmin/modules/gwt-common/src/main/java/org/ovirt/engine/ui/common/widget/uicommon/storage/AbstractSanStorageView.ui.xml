@@ -1,49 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
 
-	<ui:style type="org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractSanStorageView.WidgetStyle">		
+	<ui:style>
 		.contentPanel {
 			padding: 2px;
 			margin: 4px;
 		}
-		
-		.validContentPanel {
-			border: 1px lightGray solid;
-		}
-		
-		.invalidContentPanel {
-			border: 1px orange solid;
-		}
-		
-		.listPanel {
-			height: 100%;
-		}
-		
-		.treePanel {
-			height: 100%;
-			overflow: auto;
-		}
-		
+
 		.errorMessageLabel {			
 			color: red;
 			margin: 2px;
 			height: 16px;
 		}
-		
-		.listLabel {
-			margin: 2px;
-		}
 	</ui:style>
 	
 	<g:FlowPanel>
 		<g:Label ui:field="errorMessage" addStyleNames="{style.errorMessageLabel}" />		
-		<g:FlowPanel ui:field="contentPanel" addStyleNames="{style.contentPanel} {style.validContentPanel}">			
-			<g:FlowPanel ui:field="extraContentPanel" />
-			<g:Label ui:field="listLabel" addStyleNames="{style.listLabel}" />
-			<g:ScrollPanel ui:field="listPanel" addStyleNames="{style.listPanel}" />
-		</g:FlowPanel>	
+		<w:ValidatedPanelWidget ui:field="contentPanel" addStyleNames="{style.contentPanel}" />
 	</g:FlowPanel>
 
 </ui:UiBinder>

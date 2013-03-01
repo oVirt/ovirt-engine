@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.widget.HasValidation;
+import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -13,12 +14,8 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -33,20 +30,7 @@ public abstract class AbstractSanStorageView extends AbstractStorageView<SanStor
     }
 
     @UiField
-    WidgetStyle style;
-
-    @UiField
-    ScrollPanel listPanel;
-
-    @UiField
-    FlowPanel contentPanel;
-
-    @UiField
-    FlowPanel extraContentPanel;
-
-    @UiField
-    @Ignore
-    Label listLabel;
+    ValidatedPanelWidget contentPanel;
 
     protected static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
 
@@ -99,26 +83,12 @@ public abstract class AbstractSanStorageView extends AbstractStorageView<SanStor
 
     @Override
     public void markAsValid() {
-        markValidation(false, null);
+        contentPanel.markAsValid();
     }
 
     @Override
     public void markAsInvalid(List<String> validationHints) {
-        markValidation(true, validationHints);
-    }
-
-    private void markValidation(boolean isValid, List<String> validationHints) {
-        String oldStyle = isValid ? style.validContentPanel() : style.invalidContentPanel();
-        String newStyle = isValid ? style.invalidContentPanel() : style.validContentPanel();
-
-        contentPanel.removeStyleName(oldStyle);
-        contentPanel.addStyleName(newStyle);
-
-        contentPanel.setTitle(getValidationTitle(validationHints));
-    }
-
-    private String getValidationTitle(List<String> validationHints) {
-        return validationHints != null && validationHints.size() > 0 ? validationHints.get(0) : null;
+        contentPanel.markAsInvalid(validationHints);
     }
 
     @Override
@@ -128,15 +98,5 @@ public abstract class AbstractSanStorageView extends AbstractStorageView<SanStor
 
     @Override
     public void focus() {
-    }
-
-    interface WidgetStyle extends CssResource {
-        String validContentPanel();
-
-        String invalidContentPanel();
-
-        String listPanel();
-
-        String treePanel();
     }
 }

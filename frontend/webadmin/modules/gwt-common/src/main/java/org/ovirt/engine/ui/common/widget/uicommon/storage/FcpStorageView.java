@@ -39,6 +39,6 @@ public class FcpStorageView extends AbstractSanStorageView {
         contentPanel.getElement().getStyle().setHeight(panelHeight, Unit.PX);
 
         // Add view widget to panel
-        listPanel.add(sanStorageLunToTargetList);
+        contentPanel.setWidget(sanStorageLunToTargetList);
     }
 }
