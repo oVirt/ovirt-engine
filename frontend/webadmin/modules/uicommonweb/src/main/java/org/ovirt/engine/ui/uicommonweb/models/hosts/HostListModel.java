@@ -594,6 +594,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                         break;
                     case Hosts:
                     case Cluster:
+                    case Cluster_Gluster:
                         VDSGroup cluster = (VDSGroup) hostListModel.getSystemTreeSelectedItem().getEntity();
                         for (storage_pool dc : dataCenters)
                         {
@@ -1231,6 +1232,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 break;
             case Hosts:
             case Cluster:
+            case Cluster_Gluster:
                 model.getCluster().setIsChangable(false);
                 model.getCluster().setInfo("Cannot change Host's Cluster in tree context"); //$NON-NLS-1$
                 model.getDataCenter().setIsChangable(false);
