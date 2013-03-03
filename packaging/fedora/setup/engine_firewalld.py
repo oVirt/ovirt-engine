@@ -1,5 +1,3 @@
-from gi.repository import GObject
-import sys
 from firewall.client import FirewallClient
 from firewall.errors import *
 
