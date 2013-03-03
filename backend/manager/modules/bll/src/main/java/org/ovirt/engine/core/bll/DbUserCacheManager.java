@@ -29,8 +29,8 @@ import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
 public class DbUserCacheManager {
-    private static Log log = LogFactory.getLog(DbUserCacheManager.class);
-    private static DbUserCacheManager _instance = new DbUserCacheManager();
+    private static final Log log = LogFactory.getLog(DbUserCacheManager.class);
+    private static final DbUserCacheManager _instance = new DbUserCacheManager();
     private String jobId;
     private boolean initialized = false;
 
@@ -88,7 +88,7 @@ public class DbUserCacheManager {
      * @param updatedUsers
      *            list of changed users.
      */
-    private void updateDBUserFromADUser(DbUser dbUser, LdapUser ldapUser, HashSet<Guid> updatedUsers) {
+    private static void updateDBUserFromADUser(DbUser dbUser, LdapUser ldapUser, HashSet<Guid> updatedUsers) {
         boolean succeeded = false;
 
         if ((ldapUser == null) || (ldapUser.getUserId().equals(Guid.Empty))
@@ -230,7 +230,7 @@ public class DbUserCacheManager {
         refreshAllUserData(groups);
     }
 
-    private List<LdapGroup> updateGroups() {
+    private static List<LdapGroup> updateGroups() {
         List<LdapGroup> groups = DbFacade.getInstance().getAdGroupDao().getAll();
         for (LdapGroup group : groups) {
             /**
