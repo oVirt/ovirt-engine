@@ -1,8 +1,11 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
@@ -159,16 +162,15 @@ public class DbUserCacheManager {
 
             List<String> domainsList = LdapBrokerUtils.getDomainsList(true);
             List<DbUser> filteredUsers = LinqUtils.filter(allUsers, new UsersPerDomainPredicate(domainsList));
-            java.util.HashMap<String, java.util.HashMap<Guid, DbUser>> userByDomains =
-                    new java.util.HashMap<String, java.util.HashMap<Guid, DbUser>>();
+            Map<String, Map<Guid, DbUser>> userByDomains = new HashMap<String, Map<Guid, DbUser>>();
 
             /**
              * Filter all users by domains
              */
             for (DbUser user : filteredUsers) {
-                java.util.HashMap<Guid, DbUser> domainUser;
+                Map<Guid, DbUser> domainUser;
                 if (!userByDomains.containsKey(user.getdomain())) {
-                    domainUser = new java.util.HashMap<Guid, DbUser>();
+                    domainUser = new HashMap<Guid, DbUser>();
                     userByDomains.put(user.getdomain(), domainUser);
                 } else {
                     domainUser = userByDomains.get(user.getdomain());
@@ -181,11 +183,11 @@ public class DbUserCacheManager {
                  * refresh users in each domain separately
                  */
                 for (String domain : userByDomains.keySet()) {
-                    java.util.ArrayList<LdapUser> adUsers =
-                            (java.util.ArrayList<LdapUser>) LdapFactory.getInstance(domain)
+                    List<LdapUser> adUsers =
+                            (List<LdapUser>) LdapFactory.getInstance(domain)
                             .RunAdAction(
                                     AdActionType.GetAdUserByUserIdList,
-                                    new LdapSearchByUserIdListParameters(domain, new java.util.ArrayList<Guid>(userByDomains
+                                    new LdapSearchByUserIdListParameters(domain, new ArrayList<Guid>(userByDomains
                                             .get(domain).keySet()),false)).getReturnValue();
                     HashSet<Guid> updatedUsers = new HashSet<Guid>();
                     if (adUsers == null) {

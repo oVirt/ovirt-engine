@@ -291,7 +291,7 @@ public class LdapBrokerUtils {
         }
     }
 
-    public static void performGroupPopulationForUsers(ArrayList<LdapUser> adUsers,
+    public static void performGroupPopulationForUsers(List<LdapUser> adUsers,
             String domain,
             List<LdapGroup> updatedGroups) {
         Domain domainObject = UsersDomainsCacheManagerService.getInstance().getDomain(domain.toLowerCase());
