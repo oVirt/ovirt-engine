@@ -66,7 +66,7 @@ public class ImageStorageDomainMapDaoDbFacadeImpl extends BaseDAODbFacade implem
         throw new UnsupportedOperationException();
     }
 
-    private static ParameterizedRowMapper<image_storage_domain_map> IMAGE_STORAGE_DOMAIN_MAP_MAPPER =
+    private static final ParameterizedRowMapper<image_storage_domain_map> IMAGE_STORAGE_DOMAIN_MAP_MAPPER =
             new ParameterizedRowMapper<image_storage_domain_map>() {
 
                 @Override
