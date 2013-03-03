@@ -149,7 +149,6 @@ public class DbUserCacheManager {
         }
         if (succeeded) {
             DbFacade.getInstance().getDbUserDao().update(dbUser);
-        } else {
         }
     }
 
