@@ -2121,7 +2121,6 @@ def main(configFile=None):
     MiniYum.setup_log_hook(sink=miniyumsink)
     extraLog = open(logFile, "a")
     miniyum = MiniYum(sink=miniyumsink, extraLog=extraLog)
-    miniyum.selinux_role()
     # END: PROCESS-INITIALIZATION
 
     try:
