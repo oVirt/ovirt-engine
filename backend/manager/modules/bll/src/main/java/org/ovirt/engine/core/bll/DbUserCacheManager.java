@@ -164,9 +164,7 @@ public class DbUserCacheManager {
             List<DbUser> filteredUsers = LinqUtils.filter(allUsers, new UsersPerDomainPredicate(domainsList));
             Map<String, Map<Guid, DbUser>> userByDomains = new HashMap<String, Map<Guid, DbUser>>();
 
-            /**
-             * Filter all users by domains
-             */
+            // Filter all users by domains
             for (DbUser user : filteredUsers) {
                 Map<Guid, DbUser> domainUser;
                 if (!userByDomains.containsKey(user.getdomain())) {
@@ -179,9 +177,7 @@ public class DbUserCacheManager {
             }
 
             if (userByDomains.size() != 0) {
-                /**
-                 * refresh users in each domain separately
-                 */
+                // Refresh users in each domain separately
                 for (String domain : userByDomains.keySet()) {
                     List<LdapUser> adUsers =
                             (List<LdapUser>) LdapFactory.getInstance(domain)
@@ -234,7 +230,7 @@ public class DbUserCacheManager {
     private static List<LdapGroup> updateGroups() {
         List<LdapGroup> groups = DbFacade.getInstance().getAdGroupDao().getAll();
         for (LdapGroup group : groups) {
-            /**
+            /*
              * Vitaly workaround. Temporary treatment on missing group domains
              */
 
