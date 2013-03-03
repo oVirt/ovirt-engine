@@ -1041,7 +1041,7 @@ public class UnitVmModel extends Model {
 
         Frontend.Subscribe(new VdcQueryType[] { VdcQueryType.GetStorageDomainsByStoragePoolId,
                 VdcQueryType.GetAllIsoImagesListByStoragePoolId, VdcQueryType.GetTimeZones,
-                VdcQueryType.GetDefualtTimeZone,
+                VdcQueryType.GetDefualtTimeZone, VdcQueryType.GetStoragePoolsByClusterService,
                 VdcQueryType.GetDomainList, VdcQueryType.GetConfigurationValue,
                 VdcQueryType.GetVdsGroupsByStoragePoolId, VdcQueryType.GetVmTemplatesByStoragePoolId,
                 VdcQueryType.GetVmTemplatesDisks, VdcQueryType.GetStorageDomainsByVmTemplateId,
