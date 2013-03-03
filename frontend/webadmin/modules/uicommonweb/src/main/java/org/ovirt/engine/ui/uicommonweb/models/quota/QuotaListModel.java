@@ -255,6 +255,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         qModel.getCommands().add(command);
         command = new UICommand("Cancel", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        command.setIsCancel(true);
         qModel.getCommands().add(command);
     }
 
@@ -370,6 +371,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         qModel.getCommands().add(command);
         command = new UICommand("Cancel", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        command.setIsCancel(true);
         qModel.getCommands().add(command);
 
         AsyncQuery asyncQuery = new AsyncQuery();
