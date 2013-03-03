@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #
 # otopi -- plugable installer
-# Copyright (C) 2012 Red Hat, Inc.
+# Copyright (C) 2012-2013 Red Hat, Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -557,18 +557,10 @@ class MiniYum(object):
             ctx1 = selinux.context_new(ctx)
             if not ctx1:
                 raise Exception(_('Cannot create selinux context'))
-            if selinux.context_type_get(ctx1) != 'rpm_t':
-                if selinux.context_type_set(ctx1, 'rpm_t') != 0:
-                    raise Exception(
-                        _('Cannot set type within selinux context')
-                    )
+            if selinux.context_role_get(ctx1) != 'system_r':
                 if selinux.context_role_set(ctx1, 'system_r') != 0:
                     raise Exception(
                         _('Cannot set role within selinux context')
-                    )
-                if selinux.context_user_set(ctx1, 'unconfined_u') != 0:
-                    raise Exception(
-                        _('Cannot set user within selinux context')
                     )
                 if selinux.setexeccon(selinux.context_str(ctx1)) != 0:
                     raise Exception(
@@ -955,7 +947,8 @@ class Example(object):
         with miniyum.transaction():
             miniyum.remove(('cman',), ignoreErrors=True)
             miniyum.install(('qemu-kvm-tools',))
-            miniyum.installUpdate(('vdsm', 'vdsm-cli'))
+            miniyum.install(('vdsm', 'vdsm-cli'))
+            miniyum.update(('vdsm', 'vdsm-cli'))
             if miniyum.buildTransaction():
                 miniyumsink.info('Transaction Summary:')
                 for p in miniyum.queryTransaction():
