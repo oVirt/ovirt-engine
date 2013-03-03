@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.AddVdsGroupCommand;
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
+import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -60,6 +61,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
         net.setDataCenterId(getStoragePool().getId());
         net.setVmNetwork(true);
         getNetworkDAO().save(net);
+        NetworkHelper.addPermissions(getCurrentUser().getUserId(), net.getId(), true);
     }
 
     @Override
