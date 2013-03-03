@@ -178,13 +178,16 @@ public class DbUserCacheManager {
 
             if (userByDomains.size() != 0) {
                 // Refresh users in each domain separately
-                for (String domain : userByDomains.keySet()) {
+                for (Map.Entry<String, Map<Guid, DbUser>> entry : userByDomains.entrySet()) {
+                    String domain = entry.getKey();
                     List<LdapUser> adUsers =
                             (List<LdapUser>) LdapFactory.getInstance(domain)
                             .RunAdAction(
                                     AdActionType.GetAdUserByUserIdList,
-                                    new LdapSearchByUserIdListParameters(domain, new ArrayList<Guid>(userByDomains
-                                            .get(domain).keySet()),false)).getReturnValue();
+                                            new LdapSearchByUserIdListParameters(domain,
+                                                    new ArrayList<Guid>(entry.getValue().keySet()),
+                                                    false))
+                                    .getReturnValue();
                     HashSet<Guid> updatedUsers = new HashSet<Guid>();
                     if (adUsers == null) {
                         log.warn("No users returned from directory server during refresh users");
@@ -195,7 +198,7 @@ public class DbUserCacheManager {
                             userByDomains.get(domain).remove(adUser.getUserId());
                         }
                     }
-                    Collection<DbUser> usersForDomain = userByDomains.get(domain).values();
+                    Collection<DbUser> usersForDomain = entry.getValue().values();
                     if (usersForDomain == null) {
                         log.warnFormat("No users for domain {0}",domain);
                     } else {
