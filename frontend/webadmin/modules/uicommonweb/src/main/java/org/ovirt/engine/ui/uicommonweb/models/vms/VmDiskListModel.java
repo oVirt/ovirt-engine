@@ -262,7 +262,7 @@ public class VmDiskListModel extends VmDiskListModelBase
             return;
         }
 
-        DiskModel model = new DiskModel();
+        NewDiskModel model = new NewDiskModel();
         model.setTitle(ConstantsManager.getInstance().getConstants().addVirtualDiskTitle());
         model.setHashName("new_virtual_disk"); //$NON-NLS-1$
         model.setVm(vm);
@@ -338,12 +338,11 @@ public class VmDiskListModel extends VmDiskListModelBase
             return;
         }
 
-        DiskModel model = new DiskModel();
+        EditDiskModel model = new EditDiskModel();
         model.setTitle(ConstantsManager.getInstance().getConstants().editVirtualDiskTitle());
         model.setHashName("edit_virtual_disk"); //$NON-NLS-1$
         model.setVm(getEntity());
         model.setDisk(disk);
-        model.setIsNew(false);
         setWindow(model);
 
         UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$

@@ -180,7 +180,7 @@ public class VmGuideModel extends GuideModel
             return;
         }
 
-        DiskModel model = new DiskModel();
+        NewDiskModel model = new NewDiskModel();
         model.setTitle(ConstantsManager.getInstance().getConstants().addVirtualDiskTitle());
         model.setHashName("new_virtual_disk"); //$NON-NLS-1$
         model.setVm(getEntity());

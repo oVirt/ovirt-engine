@@ -43,6 +43,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.NewEditStorageModelBehavio
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractDiskModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -62,9 +63,9 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> {
+public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDiskModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<DiskModel, VmDiskPopupWidget> {
+    interface Driver extends SimpleBeanEditorDriver<AbstractDiskModel, VmDiskPopupWidget> {
         Driver driver = GWT.create(Driver.class);
     }
 
@@ -508,7 +509,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     }
 
     @Override
-    public void edit(final DiskModel disk) {
+    public void edit(final AbstractDiskModel disk) {
         Driver.driver.edit(disk);
 
         disk.getIsAttachDisk().getEntityChangedEvent().addListener(new IEventListener() {
@@ -616,7 +617,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         revealDiskPanel(disk);
     }
 
-    private void revealDiskPanel(final DiskModel disk) {
+    private void revealDiskPanel(final AbstractDiskModel disk) {
         boolean isAttachDisk = (Boolean) disk.getIsAttachDisk().getEntity();
         boolean isInternal = internalDiskRadioButton.getValue();
         boolean isInVm = disk.getVm() != null;
@@ -649,7 +650,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         aliasEditor.setFocus(!isInVm);
     }
 
-    private void revealStorageView(final DiskModel diskModel) {
+    private void revealStorageView(final AbstractDiskModel diskModel) {
         if (!diskModel.getIsNew()) {
             return;
         }
@@ -693,7 +694,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     };
 
     @Override
-    public DiskModel flush() {
+    public AbstractDiskModel flush() {
         return Driver.driver.flush();
     }
 

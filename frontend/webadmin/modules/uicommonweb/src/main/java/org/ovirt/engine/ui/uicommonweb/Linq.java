@@ -1002,7 +1002,6 @@ public final class Linq
 
     public static DiskModel DiskToModel(Disk disk) {
         DiskModel diskModel = new DiskModel();
-        diskModel.setIsNew(true);
         diskModel.getAlias().setEntity(disk.getDiskAlias());
 
         if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {

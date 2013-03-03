@@ -36,8 +36,10 @@ import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.CopyDiskModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.MoveDiskModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.NewDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveDiskModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -251,7 +253,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
 
     private void New()
     {
-        DiskModel model = new DiskModel(getSystemTreeSelectedItem());
+        NewDiskModel model = new NewDiskModel(getSystemTreeSelectedItem());
         model.setTitle(ConstantsManager.getInstance().getConstants().addVirtualDiskTitle());
         model.setHashName("new_virtual_disk"); //$NON-NLS-1$
         setWindow(model);
@@ -539,7 +541,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
 
     private void CancelConfirm()
     {
-        DiskModel model = (DiskModel) getWindow();
+        AbstractDiskModel model = (AbstractDiskModel) getWindow();
         SanStorageModel sanStorageModel = model.getSanStorageModel();
         sanStorageModel.setForce(false);
         setConfirmWindow(null);
