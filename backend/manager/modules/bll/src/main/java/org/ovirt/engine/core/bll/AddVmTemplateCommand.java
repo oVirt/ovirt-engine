@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -355,11 +354,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                     .get(0));
             createParams.setDiskAlias(diskInfoDestinationMap.get(diskImage.getId()).getDiskAlias());
             createParams.setParentParameters(getParameters());
-            if (getParameters().getDiskInfoDestinationMap() != null
-                    && getParameters().getDiskInfoDestinationMap().get(diskImage.getId()) != null) {
-            createParams.setQuotaId(getParameters().getDiskInfoDestinationMap().get(diskImage.getId()).getQuotaId() != null
-                    ? getParameters().getDiskInfoDestinationMap().get(diskImage.getId()).getQuotaId() : null);
-            }
+            createParams.setQuotaId(getQuotaIdForDisk(diskImage));
             // The return value of this action is the 'copyImage' task GUID:
             VdcReturnValueBase retValue = Backend.getInstance().runInternalAction(
                     VdcActionType.CreateImageTemplate,
@@ -487,17 +482,22 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_TEMPLATE);
     }
 
+    private Guid getQuotaIdForDisk(DiskImage diskImage) {
+        // If the DiskInfoDestinationMap is available and contains information about the disk
+        if (getParameters().getDiskInfoDestinationMap() != null
+                && getParameters().getDiskInfoDestinationMap().get(diskImage.getId()) != null) {
+            return  getParameters().getDiskInfoDestinationMap().get(diskImage.getId()).getQuotaId();
+        }
+        return diskImage.getQuotaId();
+    }
+
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
         List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
 
-        Collection<DiskImage> disksList =
-                diskInfoDestinationMap.values().size() > 0 ?  diskInfoDestinationMap.values() :
-                        getVm().getDiskList();
-
-        for (DiskImage disk : disksList) {
+        for (DiskImage disk : getVm().getDiskList()) {
             list.add(new QuotaStorageConsumptionParameter(
-                    disk.getQuotaId(),
+                    getQuotaIdForDisk(disk),
                     null,
                     QuotaStorageConsumptionParameter.QuotaAction.CONSUME,
                     disk.getStorageIds().get(0),
