@@ -345,18 +345,6 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Gettags_vds_mapByTagName(v_tag_name VARCHAR(50)) RETURNS SETOF tags_vds_map_view
-   AS $procedure$
-BEGIN
-      RETURN QUERY SELECT tags_vds_map_view.*
-      FROM tags_vds_map_view
-      WHERE tag_name = v_tag_name;
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-
 Create or replace FUNCTION GetTagsByVdsId(v_vds_ids VARCHAR(4000)) RETURNS SETOF tags_vds_map_view
    AS $procedure$
 BEGIN

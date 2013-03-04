@@ -174,8 +174,6 @@ public interface TagDAO extends DAO {
 
     void detachVdsFromTag(Guid tagId, Guid vdsId);
 
-    List<TagsVdsMap> getTagVdsMapByTagName(String tagName);
-
     TagsVmMap getTagVmByTagIdAndByVmId(Guid tagId, Guid vmId);
 
     void attachVmToTag(TagsVmMap tagVmMap);
