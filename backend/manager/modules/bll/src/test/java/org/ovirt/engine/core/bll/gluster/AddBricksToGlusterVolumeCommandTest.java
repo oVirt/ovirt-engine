@@ -56,6 +56,8 @@ public class AddBricksToGlusterVolumeCommandTest {
 
     private Guid volumeId2 = new Guid("b2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
 
+    private static final String BRICK_DIRECTORY = "/tmp/s1";
+
     /**
      * The command under test.
      */
@@ -72,8 +74,12 @@ public class AddBricksToGlusterVolumeCommandTest {
     }
 
     private List<GlusterBrickEntity> getBricks(Guid volumeId, int max) {
+        return getBricks(volumeId, max, false);
+    }
+
+    private List<GlusterBrickEntity> getBricks(Guid volumeId, int max, boolean withDuplicates) {
         List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
-        GlusterBrickEntity brick;
+        GlusterBrickEntity brick = null;
         for (Integer i = 0; i < max; i++) {
             brick =
                     new GlusterBrickEntity(volumeId,
@@ -90,30 +96,30 @@ public class AddBricksToGlusterVolumeCommandTest {
                             GlusterStatus.UP);
             bricks.add(brick);
         }
-        return bricks;
-    }
 
-    private List<GlusterBrickEntity> getBricks(Guid glusterServerId) {
-        List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
-        GlusterBrickEntity brick;
-        for (Integer i = 0; i < 5; i++) {
-            brick =
-                    new GlusterBrickEntity(volumeId1,
-                            new VdsStatic(serverName,
-                                    "127.0.0.1",
-                                    "0934390834",
-                                    20,
-                                    new Guid(),
-                                    glusterServerId,
-                                    serverName,
-                                    true,
-                                    VDSType.oVirtNode),
-                            "/tmp/s" + i.toString(),
-                            GlusterStatus.UP);
+        if (max > 0 && withDuplicates) {
             bricks.add(brick);
         }
         return bricks;
     }
+
+    private GlusterBrickEntity getBrick(Guid volumeId) {
+        GlusterBrickEntity brick =
+                new GlusterBrickEntity(volumeId,
+                        new VdsStatic(serverName,
+                                "127.0.0.1",
+                                "0934390834",
+                                20,
+                                new Guid(),
+                                serverId,
+                                serverName,
+                                true,
+                                VDSType.oVirtNode),
+                        BRICK_DIRECTORY,
+                        GlusterStatus.UP);
+        return brick;
+    }
+
     private VDS getVds(VDSStatus status) {
         VDS vds = new VDS();
         vds.setId(Guid.NewGuid());
@@ -130,7 +136,7 @@ public class AddBricksToGlusterVolumeCommandTest {
         doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
         doReturn(getSingleBrickVolume(volumeId1)).when(volumeDao).getById(volumeId1);
         doReturn(getMultiBrickVolume(volumeId2)).when(volumeDao).getById(volumeId2);
-        doReturn(getBricks(serverId)).when(brickDao).getGlusterVolumeBricksByServerId(serverId);
+        doReturn(getBrick(volumeId1)).when(brickDao).getBrickByServerIdAndDirectory(serverId, BRICK_DIRECTORY);
         doReturn(null).when(volumeDao).getById(null);
         doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);
         doReturn(getVDsGroup()).when(command).getVdsGroup();
@@ -189,6 +195,13 @@ public class AddBricksToGlusterVolumeCommandTest {
     @Test
     public void canDoActionFails() {
         cmd = spy(createTestCommand(volumeId1, getBricks(volumeId1, 2), 0, 4));
+        prepareMocks(cmd);
+        assertFalse(cmd.canDoAction());
+    }
+
+    @Test
+    public void canDoActionFailsWithDuplicateBricks() {
+        cmd = spy(createTestCommand(volumeId2, getBricks(volumeId2, 1, true), 2, 0));
         prepareMocks(cmd);
         assertFalse(cmd.canDoAction());
     }

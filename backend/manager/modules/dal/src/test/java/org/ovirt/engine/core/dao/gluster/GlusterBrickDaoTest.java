@@ -20,6 +20,9 @@ public class GlusterBrickDaoTest extends BaseDAOTestCase {
     private static final Guid EXISTING_VOL_ID = new Guid("0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8");
     private static final Guid EXISTING_BRICK_ID = new Guid("6ccdc294-d77b-4929-809d-8afe7634b47d");
 
+    private static final Guid BRICK_SERVER_ID = new Guid("23f6d691-5dfb-472b-86dc-9e1d2d3c18f3");
+    private static final String BRICK_DIRECTORY = "/export/test-vol-distribute-1/dir1";
+
     private GlusterBrickDao dao;
     private VdsStatic server;
 
@@ -49,6 +52,14 @@ public class GlusterBrickDaoTest extends BaseDAOTestCase {
     public void testGlusterVolumeBricksByServerId() {
         List<GlusterBrickEntity> bricks = dao.getGlusterVolumeBricksByServerId(SERVER_ID);
         assertNotNull(bricks);
+    }
+
+    @Test
+    public void testGetBrickByServerIdAndDirectory() {
+        GlusterBrickEntity brick = dao.getBrickByServerIdAndDirectory(BRICK_SERVER_ID, BRICK_DIRECTORY);
+        assertNotNull(brick);
+        assertEquals(brick.getServerId(), BRICK_SERVER_ID);
+        assertEquals(brick.getBrickDirectory(), BRICK_DIRECTORY);
     }
 
     @Test

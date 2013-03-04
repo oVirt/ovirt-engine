@@ -2176,7 +2176,10 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Stripe count can not be reduced.")
     String ACTION_TYPE_FAILED_CAN_NOT_REDUCE_STRIPE_COUNT();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Brick ${brick} already used by the volume ${volumeName}.")
+    @DefaultStringValue("Cannot ${action} ${type}. Duplicate entries found for brick ${brick}.")
+    String ACTION_TYPE_FAILED_DUPLICATE_BRICKS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Brick ${brick} is already used by the volume ${volumeName}.")
     String ACTION_TYPE_FAILED_BRICK_ALREADY_EXISTS_IN_VOLUME();
 
     @DefaultStringValue("Cannot ${action} ${type}. No up server found in ${clusterName}.")

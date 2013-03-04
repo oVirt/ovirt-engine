@@ -137,6 +137,15 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
     }
 
     @Override
+    public GlusterBrickEntity getBrickByServerIdAndDirectory(Guid serverId, String brickDirectory) {
+        return getCallsHandler().executeRead(
+                "GetBrickByServerIdAndDirectory", brickRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("server_id", serverId)
+                        .addValue("brick_dir", brickDirectory));
+    }
+
+    @Override
     protected MapSqlParameterSource createFullParametersMapper(GlusterBrickEntity brick) {
         return createBrickParams(brick);
     }

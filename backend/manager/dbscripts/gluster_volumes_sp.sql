@@ -186,6 +186,17 @@ ORDER BY brick_order;
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION GetBrickByServerIdAndDirectory(v_server_id UUID, v_brick_dir VARCHAR(4096))
+    RETURNS SETOF gluster_volume_bricks
+    AS $procedure$
+BEGIN
+    RETURN QUERY SELECT *
+    FROM  gluster_volume_bricks
+    WHERE server_id = v_server_id
+    AND brick_dir = v_brick_dir;
+END; $procedure$
+LANGUAGE plpgsql;
+
 Create or replace FUNCTION GetGlusterOptionById(v_id UUID)
     RETURNS SETOF gluster_volume_options
     AS $procedure$

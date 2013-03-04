@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
@@ -12,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeBricksActionVDSParameters;
@@ -186,26 +187,26 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
     }
 
     private boolean validateBricks(List<GlusterBrickEntity> newBricks) {
+        Set<String> bricks = new HashSet<String>();
         for (GlusterBrickEntity brick : newBricks) {
-            if (brickExists(brick))  {
+            if (bricks.contains(brick.getQualifiedName())) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DUPLICATE_BRICKS);
+                addCanDoActionMessage(String.format("$brick %1$s", brick.getQualifiedName()));
+                return false;
+            }
+            bricks.add(brick.getQualifiedName());
+
+            GlusterBrickEntity existingBrick =
+                    getGlusterBrickDao().getBrickByServerIdAndDirectory(brick.getServerId(), brick.getBrickDirectory());
+            if (existingBrick != null) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_BRICK_ALREADY_EXISTS_IN_VOLUME);
                 addCanDoActionMessage(String.format("$brick %1$s", brick.getQualifiedName()));
-                addCanDoActionMessage(String.format("$volumeName %1$s", getGlusterVolumeDao().getById(brick.getVolumeId()).getName()));
+                addCanDoActionMessage(String.format("$volumeName %1$s",
+                        getGlusterVolumeDao().getById(existingBrick.getVolumeId()).getName()));
                 return false;
             }
         }
         return true;
-    }
-
-    public boolean brickExists(GlusterBrickEntity newBrick) {
-        for (GlusterBrickEntity brick : getGlusterBrickDao().getGlusterVolumeBricksByServerId(newBrick.getServerId())) {
-            if (ObjectUtils.objectsEqual(newBrick.getVolumeId(), brick.getVolumeId())
-                    && ObjectUtils.objectsEqual(newBrick.getServerId(), brick.getServerId())
-                    && ObjectUtils.objectsEqual(newBrick.getBrickDirectory(), brick.getBrickDirectory())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override
