@@ -705,6 +705,7 @@ public class ManageDomains {
                 userIds.setValueForDomain(domain, userGuid.toString());
                 if (isValidate) {
                     System.out.println("Domain " + domain + " is valid.");
+                    System.out.println("The configured user for domain " + domain + " is " + currUserName);
                 }
                 log.info("Successfully tested kerberos configuration for domain: " + domain);
             } catch (Exception e) {
