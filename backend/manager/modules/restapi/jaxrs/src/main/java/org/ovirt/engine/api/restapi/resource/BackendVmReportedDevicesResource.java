@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
-import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
@@ -39,7 +38,6 @@ public class BackendVmReportedDevicesResource extends AbstractBackendCollectionR
     }
 
     @Override
-    @GET
     public ReportedDevices list() {
         ReportedDevices model = new ReportedDevices();
         for (VmGuestAgentInterface device : getCollection()) {

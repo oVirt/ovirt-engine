@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import javax.ws.rs.GET;
-
 import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.resource.VmReportedDeviceResource;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
@@ -15,7 +13,6 @@ public class BackendVmReportedDeviceResource extends AbstractBackendSubResource<
         this.parent = vmDevicesResource;
     }
 
-    @GET
     @Override
     public ReportedDevice get() {
         return parent.lookupReportedDevice(asGuid(id));

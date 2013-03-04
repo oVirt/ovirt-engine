@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.HashMap;
 
-import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
@@ -25,7 +24,6 @@ public class BackendHostHooksResource extends AbstractBackendCollectionResource<
     private String hostId;
 
     @Override
-    @GET
     public Hooks list() {
         @SuppressWarnings("unchecked")
         HashMap<String, HashMap<String, HashMap<String, String>>> hooksMap =
