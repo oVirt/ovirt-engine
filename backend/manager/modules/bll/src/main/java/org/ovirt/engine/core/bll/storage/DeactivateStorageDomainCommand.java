@@ -77,7 +77,13 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
 
     @Override
     protected boolean canDoAction() {
-        if (!(checkStorageDomain() && checkStorageDomainStatus(StorageDomainStatus.Active))) {
+        if (!(checkStorageDomain())) {
+            return false;
+        }
+
+        // when the execution is internal, proceed also if the domain is in unknown status.
+        if (!((getParameters().getIsInternal() && checkStorageDomainStatus(StorageDomainStatus.Active,
+                StorageDomainStatus.Unknown)) || checkStorageDomainStatus(StorageDomainStatus.Active))) {
             return false;
         }
 
