@@ -79,6 +79,6 @@ public interface ApplicationMessages extends CommonApplicationMessages {
     @DefaultMessage("{0} out of {1} GB")
     String limitedStorageConsumption(String storage, double limit);
 
-    @DefaultMessage("Some new hosts are detected in the cluster. You can <a>Import</a> them to oVirt engine or <a>Detach</a> them from the cluster.")
+    @DefaultMessage("Some new hosts are detected in the cluster. You can <a>Import</a> them to engine or <a>Detach</a> them from the cluster.")
     String clusterHasNewGlusterHosts();
 }
