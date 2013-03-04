@@ -128,7 +128,6 @@ public enum VdcQueryType implements Serializable {
 
     // Tags queries
     GetAllTags,
-    GetAllNotReadonlyTags,
     GetRootTag,
     GetTagByTagId,
     GetTagByTagName,
