@@ -2,12 +2,12 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.common.businessentities.TagsUserMap;
 import org.ovirt.engine.core.common.businessentities.TagsVdsMap;
 import org.ovirt.engine.core.common.businessentities.TagsVmMap;
 import org.ovirt.engine.core.common.businessentities.TagsVmPoolMap;
+import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
@@ -169,8 +169,6 @@ public interface TagDAO extends DAO {
     void attachUserToTag(TagsUserMap tagUserMap);
 
     void detachUserFromTag(Guid tagId, Guid userId);
-
-    List<TagsUserMap> getTagUserMapByTagName(String tagName);
 
     TagsVdsMap getTagVdsByTagIdAndByVdsId(Guid tagId, Guid vdsId);
 

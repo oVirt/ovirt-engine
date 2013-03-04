@@ -1,17 +1,20 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.common.businessentities.TagsUserMap;
 import org.ovirt.engine.core.common.businessentities.TagsVdsMap;
 import org.ovirt.engine.core.common.businessentities.TagsVmMap;
+import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -386,17 +389,6 @@ public class TagDAOTest extends BaseDAOTestCase {
         assertEquals("Tag ID is not equal",existing.gettag_id(), result.gettag_id());
         assertEquals("USER ID is not equal",existing.getuser_id(), result.getuser_id());
         assertEquals("Object equation",existing,result);
-    }
-
-    @Test
-    public void testGetTagUserMapByTagName() {
-        List<TagsUserMap> result = dao.getTagUserMapByTagName(existingTag.gettag_name());
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (TagsUserMap mapping : result) {
-            assertEquals(existingTag.gettag_id(), mapping.gettag_id());
-        }
     }
 
     @Test
