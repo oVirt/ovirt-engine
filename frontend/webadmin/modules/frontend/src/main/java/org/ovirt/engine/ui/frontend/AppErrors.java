@@ -1867,12 +1867,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot migrate - Host not found.")
     String AUTO_MIGRATE_VDS_NOT_FOUND();
 
-    @DefaultStringValue("Cannot migrate - Power Client not found.")
-    String AUTO_MIGRATE_POWERCLIENT_NOT_FOUND();
-
-    @DefaultStringValue("Cannot migrate - VM already resides on Power Client.")
-    String AUTO_MIGRATE_ALREADY_ON_POWERCLIENT();
-
     @DefaultStringValue("Cannot migrate - VM already running on Host.")
     String AUTO_MIGRATE_ALREADY_RUNNING_ON_VDS();
 

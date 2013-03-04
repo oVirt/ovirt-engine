@@ -123,14 +123,6 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
     }
 
     @Override
-    public List<VM> getAllForDedicatedPowerClientByVds(Guid id) {
-        return getCallsHandler().executeReadList("GetVmsDedicatedToPowerClientByVdsId",
-                VMRowMapper.instance,
-                getCustomMapSqlParameterSource()
-                        .addValue("dedicated_vm_for_vds", id));
-    }
-
-    @Override
     public Map<Guid, VM> getAllRunningByVds(Guid id) {
         HashMap<Guid, VM> map = new HashMap<Guid, VM>();
 

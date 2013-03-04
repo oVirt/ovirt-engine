@@ -108,15 +108,6 @@ public interface VmDAO extends DAO {
     List<VM> getAllRunningForVds(Guid vds);
 
     /**
-     * Finds those VMs associated with a specific power client by VDS.
-     *
-     * @param vds
-     *            the VDS id
-     * @return the list of VMs
-     */
-    List<VM> getAllForDedicatedPowerClientByVds(Guid vds);
-
-    /**
      * Returns the list of virtual machines running on the specified VDS instance.
      *
      * @param vds

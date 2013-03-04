@@ -201,9 +201,9 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
             Guid vdsGroupId;
             if (Guid.Empty.equals(getParameters().getVdsGroupId())) {
                 vdsGroupId = Guid.createGuidFromString(
-                        Config.<String> GetValue(ConfigValues.PowerClientAutoRegistrationDefaultVdsGroupID));
+                        Config.<String> GetValue(ConfigValues.AutoRegistrationDefaultVdsGroupID));
                 log.debugFormat(
-                        "RegisterVdsQuery::ExecuteCommand - VdsGroupId received as -1, using PowerClientAutoRegistrationDefaultVdsGroupID: {0}",
+                        "RegisterVdsQuery::ExecuteCommand - VdsGroupId received as -1, using AutoRegistrationDefaultVdsGroupID: {0}",
                         vdsGroupId);
             } else {
                 vdsGroupId = getParameters().getVdsGroupId();
@@ -513,8 +513,8 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         log.debugFormat("RegisterVdsQuery::CheckAutoApprovalDefinitions - Entering");
 
         isPending.argvalue = true;
-        if (!Config.<String> GetValue(ConfigValues.PowerClientAutoApprovePatterns).equals("")) {
-            for (String pattern : Config.<String> GetValue(ConfigValues.PowerClientAutoApprovePatterns)
+        if (!Config.<String> GetValue(ConfigValues.AutoApprovePatterns).equals("")) {
+            for (String pattern : Config.<String> GetValue(ConfigValues.AutoApprovePatterns)
                     .split("[,]", -1)) {
                 try {
                     String pattern_helper = pattern.toLowerCase();

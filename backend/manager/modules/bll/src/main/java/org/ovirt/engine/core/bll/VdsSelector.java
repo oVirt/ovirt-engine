@@ -134,15 +134,7 @@ public class VdsSelector {
             log.infoFormat("Checking for a specific VDS only - id:{0}, name:{1}, host_name(ip):{2}",
                     getDestinationVdsId(), target_vds.getName(), target_vds.getHostName());
             VmHandler.UpdateVmGuestAgentVersion(getVm());
-            if (target_vds.getVdsType() == VDSType.PowerClient
-                    && !Config.<Boolean> GetValue(ConfigValues.PowerClientAllowRunningGuestsWithoutTools)
-                    && getVm() != null && getVm().getHasAgent()) {
-                log.infoFormat(
-                        "VdcBLL.RunVmCommandBase.getVdsToRunOn - VM {0} has no tools - skipping power client check",
-                        getVm().getId());
-            } else {
-                result = getVdsToRunOn(new ArrayList<VDS>(Arrays.asList(new VDS[] { target_vds })), isMigrate);
-            }
+            result = getVdsToRunOn(new ArrayList<VDS>(Arrays.asList(new VDS[] { target_vds })), isMigrate);
         }
         return result;
     }
@@ -277,18 +269,6 @@ public class VdsSelector {
                     if (isMigrate && (getVm().getRunOnVds() != null && getVm().getRunOnVds().equals(vds.getId()))) {
                         sb.append("is the same host the VM is currently running on");
                         return VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_TO_SAME_HOST;
-                    }
-                    return null;
-                }
-            });
-            add(new HostValidator() {
-
-                @Override
-                public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate) {
-                    // check capacity to run power clients
-                    if (!RunVmCommandBase.hasCapacityToRunVM(vds)) {
-                        sb.append("has insufficient capacity to run power client");
-                        return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CPUS;
                     }
                     return null;
                 }

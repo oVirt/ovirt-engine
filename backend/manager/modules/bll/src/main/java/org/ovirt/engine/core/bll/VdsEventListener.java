@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
-import org.ovirt.engine.core.common.action.PowerClientMigrateOnConnectCheckParameters;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
@@ -34,12 +33,9 @@ import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
@@ -51,7 +47,6 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.Ticketing;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -168,26 +163,6 @@ public class VdsEventListener implements IVdsEventListener {
                                     vmToServerParametersList,
                                     executionContext);
                         }
-
-                        // run dedicated vm logic
-                        // not passing clientinfo will cause to launch on a VDS
-                        // instead of power client. this is a possible use case
-                        // to fasten the inital boot, then live migrate to power
-                        // client on spice connect.
-                        List<VM> vms = DbFacade.getInstance().getVmDao().getAllForDedicatedPowerClientByVds(vds.getId());
-                        if (vms.size() != 0) {
-                            if (Config
-                                    .<Boolean> GetValue(ConfigValues.PowerClientDedicatedVmLaunchOnVdsWhilePowerClientStarts)) {
-                                Backend.getInstance().runInternalAction(VdcActionType.RunVmOnDedicatedVds,
-                                        new RunVmParams(vms.get(0).getId(), vds.getId()),
-                                        ExecutionHandler.createInternalJobContext());
-                            } else {
-                                ThreadUtils.sleep(10000);
-                                Backend.getInstance().runInternalAction(VdcActionType.RunVmOnPowerClient,
-                                        new RunVmParams(vms.get(0).getId(), vds.getId()),
-                                        ExecutionHandler.createInternalJobContext());
-                            }
-                        }
                     } catch (RuntimeException e) {
                         log.errorFormat("Failed to initialize Vds on up. Error: {0}", e);
                     }
@@ -200,32 +175,9 @@ public class VdsEventListener implements IVdsEventListener {
     @Override
     public void processOnClientIpChange(final VDS vds, final Guid vmId) {
         final VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(vmId);
-        // when a spice client connects to the VM, we need to check if the
-        // client is local or remote to adjust compression and migration aspects
-        // we first check if we need to disable/enable compression for power
-        // clients, so we won't need to handle migration errors
-        if (StringUtils.isNotEmpty(vmDynamic.getclient_ip())) {
-            ThreadPoolUtil.execute(new Runnable() {
-                @Override
-                public void run() {
-                    RunVmCommandBase.doCompressionCheck(vds, vmDynamic);
-
-                    // Run PowerClientMigrateOnConnectCheck if configured.
-                    if (Config.<Boolean> GetValue(ConfigValues.PowerClientAutoMigrateToPowerClientOnConnect)
-                            || Config.<Boolean> GetValue(ConfigValues.PowerClientAutoMigrateFromPowerClientToVdsWhenConnectingFromRegularClient)) {
-                        Backend.getInstance().runInternalAction(VdcActionType.PowerClientMigrateOnConnectCheck,
-                                new PowerClientMigrateOnConnectCheckParameters(false,
-                                        vmDynamic.getId(),
-                                        vmDynamic.getclient_ip(),
-                                        vds.getId()),
-                                ExecutionHandler.createInternalJobContext());
-                    }
-                }
-            });
-        }
         // in case of empty clientIp we clear the logged in user.
         // (this happened when user close the console to spice/vnc)
-        else {
+        if (StringUtils.isEmpty(vmDynamic.getclient_ip())) {
             vmDynamic.setConsole_current_user_name(null);
             DbFacade.getInstance().getVmDynamicDao().update(vmDynamic);
         }

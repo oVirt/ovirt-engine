@@ -28,8 +28,6 @@ public enum VdcActionType {
     ExportVm(23, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
     ExportVmTemplate(24, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
     RestoreStatelessVm(25, QuotaDependency.NONE),
-    RunVmOnPowerClient(26, QuotaDependency.VDS_GROUP),
-    RunVmOnDedicatedVds(27, QuotaDependency.VDS_GROUP),
     AddVmInterface(28, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
     RemoveVmInterface(29, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
     UpdateVmInterface(30, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
@@ -50,10 +48,6 @@ public enum VdcActionType {
     ChangeVMCluster(40, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
     CancelMigrateVm(41, ActionGroup.MIGRATE_VM, false, QuotaDependency.NONE),
     ActivateDeactivateVmNic(42, QuotaDependency.NONE),
-
-    // powerclient 4.2
-    PowerClientMigrateOnConnectCheck(50, QuotaDependency.NONE),
-    SetDedicatedVm(51, QuotaDependency.NONE),
     AddVmFromSnapshot(52, ActionGroup.CREATE_VM, QuotaDependency.BOTH),
     // VdsCommands
     AddVds(101, ActionGroup.CREATE_HOST, QuotaDependency.NONE),

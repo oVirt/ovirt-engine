@@ -24,10 +24,8 @@ import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.job.Job;
@@ -37,7 +35,6 @@ import org.ovirt.engine.core.common.vdscommands.FailedToRunVmVDSCommandParameter
 import org.ovirt.engine.core.common.vdscommands.UpdateVdsDynamicDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VmMonitorCommandVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
@@ -147,68 +144,6 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         return retVal;
     }
 
-    public static boolean hasCapacityToRunVM(VDS curVds) {
-        boolean hasCapacity = true;
-        if (curVds.getVdsType() == VDSType.PowerClient) {
-            log.infoFormat(
-                    "Checking capacity for a power client - id:{0}, name:{1}, host_name(ip):{2}, vds.vm_count:{3}, PowerClientMaxNumberOfConcurrentVMs:{4}",
-                    curVds.getId(),
-                    curVds.getName(),
-                    curVds.getHostName(),
-                    curVds.getVmCount(),
-                    Config.<Integer> GetValue(ConfigValues.PowerClientMaxNumberOfConcurrentVMs));
-            int pending_vm_count = 0;
-            if (Config.<Boolean> GetValue(ConfigValues.PowerClientRunVmShouldVerifyPendingVMsAsWell)
-                    && _vds_pending_vm_count.containsKey(curVds.getId())) {
-                pending_vm_count = _vds_pending_vm_count.get(curVds.getId());
-            }
-
-            final int powerClientMaxNumberOfConcurrentVMs = Config
-            .<Integer> GetValue(ConfigValues.PowerClientMaxNumberOfConcurrentVMs);
-            if ((curVds.getVmCount() + pending_vm_count + 1) > powerClientMaxNumberOfConcurrentVMs) {
-                log.infoFormat(
-                        "No capacity for a power client - id:{0}, name:{1}, host_name(ip):{2}, vds.vm_count:{3}, PowerClientMaxNumberOfConcurrentVMs:{4}",
-                        curVds.getId(),
-                        curVds.getName(),
-                        curVds.getHostName(),
-                        curVds.getVmCount(),
-                        powerClientMaxNumberOfConcurrentVMs);
-                hasCapacity = false;
-            }
-        }
-        return hasCapacity;
-    }
-
-    public static void doCompressionCheck(VDS vds, VmDynamic vm) {
-        if (Config.<Boolean> GetValue(ConfigValues.PowerClientSpiceDynamicCompressionManagement)) {
-            // compression always enabled on VDS
-            if (vds.getVdsType() != VDSType.PowerClient) {
-                return;
-            } else {
-                String compression_enabled = "on";
-                if (StringUtils.equals(vds.getHostName(), vm.getclient_ip())) {
-                    compression_enabled = "off";
-                }
-                log.infoFormat(
-                        "VdcBLL.VmHandler.DoCompressionCheck - sending monitor command for vmid: {0} - set_red_image_compression and set_red_streaming_video to {1}",
-                        vm.getId(),
-                        compression_enabled);
-                Backend.getInstance()
-                        .getResourceManager()
-                        .RunVdsCommand(
-                                VDSCommandType.VmMonitorCommand,
-                                new VmMonitorCommandVDSCommandParameters(vds.getId(), vm.getId(),
-                                        "set_red_image_compression " + compression_enabled));
-                Backend.getInstance()
-                        .getResourceManager()
-                        .RunVdsCommand(
-                                VDSCommandType.VmMonitorCommand,
-                                new VmMonitorCommandVDSCommandParameters(vds.getId(), vm.getId(),
-                                        "set_red_streaming_video " + compression_enabled));
-            }
-        }
-    }
-
     @Override
     public void rerun() {
         Guid vdsId = getDestinationVds() != null ? getDestinationVds().getId() : getCurrentVdsId();
@@ -316,6 +251,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         if (!getRunVdssList().isEmpty()) {
             ThreadPoolUtil.execute(new Runnable() {
 
+                @Override
                 public void run() {
                     for (Guid vdsId : getRunVdssList()) {
                         if (!getCurrentVdsId().equals(vdsId)) {
@@ -476,10 +412,10 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     }
 
     /**
-     * get the monitor object of this host. VDSs have monitors exposed by their {@link VdsManager}
+     * get the monitor object of this host. VDSs have monitors exposed by their {@link org.ovirt.engine.core.vdsbroker.VdsManager}
      *
      * @param vdsId
-     * @return {@link VdsMonitor} for signaling on thread actions
+     * @return {@link org.ovirt.engine.core.vdsbroker.VdsMonitor} for signaling on thread actions
      */
     private VdsMonitor getMonitor(Guid vdsId) {
         return ResourceManager.getInstance().GetVdsManager(vdsId).getVdsMonitor();

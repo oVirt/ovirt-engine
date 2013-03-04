@@ -66,11 +66,6 @@ public class RunVmParams extends VmOperationParameterBase {
         _internal = isInternal;
     }
 
-    public RunVmParams(Guid vmId, Guid powerClientId) {
-        this(vmId);
-        _destinationVdsId = powerClientId;
-    }
-
     public Guid getDestinationVdsId() {
         return _destinationVdsId;
     }

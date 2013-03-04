@@ -1388,7 +1388,6 @@ public class VdsUpdateRunTimeInfo {
             VmDynamic runningVm = vmInternalData.getVmDynamic();
             VM vmToUpdate = _vmDict.get(runningVm.getId());
 
-            // launch powerclient on clientIp change logic
             // if not migrating here and not down
             if (!inMigrationTo(runningVm, vmToUpdate) && runningVm.getstatus() != VMStatus.Down) {
                 if (vmToUpdate != null) {

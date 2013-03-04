@@ -559,8 +559,6 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_UNLOCKED_VM, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.VM_MIGRATION_ON_CONNECT_CHECK_FAILED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.VM_MIGRATION_ON_CONNECT_CHECK_SUCCEEDED, AuditLogSeverity.NORMAL);
-        severities.put(AuditLogType.USER_DEDICATE_VM_TO_POWERCLIENT, AuditLogSeverity.NORMAL);
-        severities.put(AuditLogType.USER_DEDICATE_VM_TO_POWERCLIENT_FAILED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.VM_CLEARED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.CANNOT_HIBERNATE_RUNNING_VMS_AFTER_CLUSTER_CPU_UPGRADE, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.HA_VM_FAILED, AuditLogSeverity.ERROR);

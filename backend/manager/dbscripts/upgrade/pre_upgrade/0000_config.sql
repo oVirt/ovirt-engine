@@ -21,7 +21,9 @@ PLEASE NOTE THAT THIS SCRIPT MUST REMAIN RE-ENTRANT!
 -- Rename existing configuration key names, values modifications are preserved
 ------------------------------------------------------------------------------------
 select fn_db_rename_config_key('AuditLogAgingThreashold', 'AuditLogAgingThreshold', 'general');
-
+select fn_db_rename_config_key('PowerClientAutoApprovePatterns','AutoApprovePatterns','general');
+select fn_db_rename_config_key('PowerClientAutoRegistrationDefaultVdsGroupID','AutoRegistrationDefaultVdsGroupID','general');
+select fn_db_rename_config_key('PowerClientAutoInstallCertificateOnApprove','AutoInstallCertificateOnApprove','general');
 
 ------------------------------------------------------------------------------------
 --                  Add configuration values section
@@ -53,7 +55,11 @@ select fn_db_add_config_value('AuditLogCleanupTime','03:35:35','general');
 select fn_db_add_config_value('OnlyRequiredNetworksMandatoryForVdsSelection','false','general');
 --Handling Authentication Method
 select fn_db_add_config_value('AuthenticationMethod','LDAP','general');
+--Handling Auto Approve Patterns
+select fn_db_add_config_value('AutoApprovePatterns','','general');
+select fn_db_add_config_value('AutoInstallCertificateOnApprove','true','general');
 select fn_db_add_config_value('AutoRecoverySchedule','0 0/5 * * * ?','general');
+select fn_db_add_config_value('AutoRegistrationDefaultVdsGroupID','99408929-82CF-4DC7-A532-9D998063FA95','general');
 select fn_db_add_config_value('AutoRepoDomainRefreshTime','60','general');
 select fn_db_add_config_value('BlockMigrationOnSwapUsagePercentage','0','general');
 --Handling CA Base Directory
@@ -323,33 +329,6 @@ select fn_db_add_config_value('PostgresLikeSyntax','ILIKE','general');
 select fn_db_add_config_value('PostgresPagingSyntax',E' OFFSET (%1$s -1) LIMIT %2$s','general');
 select fn_db_add_config_value('PostgresPagingType','Offset','general');
 select fn_db_add_config_value('PostgresSearchTemplate',E'SELECT * FROM (%2$s) %1$s) as T1 %3$s','general');
---Handling Allow Running Guests Without Tools
-select fn_db_add_config_value('PowerClientAllowRunningGuestsWithoutTools','false','general');
---Handling Auto-AdjustMemory Base On Available Memory
-select fn_db_add_config_value('PowerClientAutoAdjustMemoryBaseOnAvailableMemory','false','general');
---Handling Client Auto Adjust Memory
-select fn_db_add_config_value('PowerClientAutoAdjustMemory','false','general');
-select fn_db_add_config_value('PowerClientAutoAdjustMemoryGeneralReserve','768','general');
---Handling Auto-Adjust Memory Log
-select fn_db_add_config_value('PowerClientAutoAdjustMemoryLog','false','general');
-select fn_db_add_config_value('PowerClientAutoAdjustMemoryMaxMemory','2048','general');
-select fn_db_add_config_value('PowerClientAutoAdjustMemoryModulus','64','general');
-select fn_db_add_config_value('PowerClientAutoAdjustMemorySpicePerMonitorReserve','0','general');
-select fn_db_add_config_value('PowerClientAutoAdjustMemorySpicePerSessionReserve','0','general');
---Handling Auto Approve Patterns
-select fn_db_add_config_value('PowerClientAutoApprovePatterns','','general');
-select fn_db_add_config_value('PowerClientAutoInstallCertificateOnApprove','true','general');
-select fn_db_add_config_value('PowerClientAutoMigrateFromPowerClientToVdsWhenConnectingFromRegularClient','false','general');
---Handling AutoMigrate To PowerClient On Connect
-select fn_db_add_config_value('PowerClientAutoMigrateToPowerClientOnConnect','false','general');
-select fn_db_add_config_value('PowerClientAutoRegistrationDefaultVdsGroupID','99408929-82CF-4DC7-A532-9D998063FA95','general');
-select fn_db_add_config_value('PowerClientDedicatedVmLaunchOnVdsWhilePowerClientStarts','false','general');
---Handling Enable Power Client GUI
-select fn_db_add_config_value('PowerClientLogDetection','false','general');
-select fn_db_add_config_value('PowerClientMaxNumberOfConcurrentVMs','1','general');
-select fn_db_add_config_value('PowerClientRunVmShouldVerifyPendingVMsAsWell','false','general');
---Handling Spice Dynamic Compression Management
-select fn_db_add_config_value('PowerClientSpiceDynamicCompressionManagement','false','general');
 select fn_db_add_config_value('PredefinedVMProperties','sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$','3.0');
 select fn_db_add_config_value('PredefinedVMProperties','sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$','3.1');
 select fn_db_add_config_value('PredefinedVMProperties','sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$','3.2');
@@ -666,8 +645,25 @@ select fn_db_delete_config_value('LogDBCommands','general');
 select fn_db_delete_config_value('LogVdsRegistration','general');
 select fn_db_delete_config_value('LogXmlRpcData','general');
 select fn_db_delete_config_value('NetConsolePort','general');
+-- removing power client
 select fn_db_delete_config_value('PowerClientAllowUsingAsIRS','general');
 select fn_db_delete_config_value('PowerClientGUI','general');
+select fn_db_delete_config_value('PowerClientAllowRunningGuestsWithoutTools','general');
+select fn_db_delete_config_value('PowerClientAutoAdjustMemoryBaseOnAvailableMemory','general');
+select fn_db_delete_config_value('PowerClientAutoAdjustMemory','general');
+select fn_db_delete_config_value('PowerClientAutoAdjustMemoryGeneralReserve','general');
+select fn_db_delete_config_value('PowerClientAutoAdjustMemoryLog','general');
+select fn_db_delete_config_value('PowerClientAutoAdjustMemoryMaxMemory','general');
+select fn_db_delete_config_value('PowerClientAutoAdjustMemoryModulus','general');
+select fn_db_delete_config_value('PowerClientAutoAdjustMemorySpicePerMonitorReserve','general');
+select fn_db_delete_config_value('PowerClientAutoAdjustMemorySpicePerSessionReserve','general');
+select fn_db_delete_config_value('PowerClientAutoMigrateFromPowerClientToVdsWhenConnectingFromRegularClient','general');
+select fn_db_delete_config_value('PowerClientAutoMigrateToPowerClientOnConnect','general');
+select fn_db_delete_config_value('PowerClientDedicatedVmLaunchOnVdsWhilePowerClientStarts','general');
+select fn_db_delete_config_value('PowerClientLogDetection','general');
+select fn_db_delete_config_value('PowerClientMaxNumberOfConcurrentVMs','general');
+select fn_db_delete_config_value('PowerClientRunVmShouldVerifyPendingVMsAsWell','general');
+select fn_db_delete_config_value('PowerClientSpiceDynamicCompressionManagement','general');
 select fn_db_delete_config_value('PredefinedVMProperties','general');
 select fn_db_delete_config_value('PublicURLPort','general');
 select fn_db_delete_config_value('RDPLoginWithFQN','general');

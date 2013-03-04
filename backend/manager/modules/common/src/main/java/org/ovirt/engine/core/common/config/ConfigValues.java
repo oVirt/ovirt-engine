@@ -443,81 +443,20 @@ public enum ConfigValues {
     @DefaultValueAttribute("120")
     MaxVdsMemOverCommitForServers(149),
     @Reloadable
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("1")
-    PowerClientMaxNumberOfConcurrentVMs(151),
-    @Reloadable
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    PowerClientAutoMigrateToPowerClientOnConnect(153),
-    @Reloadable
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    PowerClientAutoMigrateFromPowerClientToVdsWhenConnectingFromRegularClient(154),
-    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    PowerClientSpiceDynamicCompressionManagement(156),
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    PowerClientAutoAdjustMemory(157),
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    PowerClientAutoAdjustMemoryBaseOnAvailableMemory(158),
-    @Reloadable
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    PowerClientAutoAdjustMemoryLog(159),
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("256")
-    PowerClientAutoAdjustMemoryGeneralReserve(160),
-    @Reloadable
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("100")
-    PowerClientAutoAdjustMemorySpicePerSessionReserve(161),
-    @Reloadable
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("50")
-    PowerClientAutoAdjustMemorySpicePerMonitorReserve(162),
-    @Reloadable
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("3712")
-    PowerClientAutoAdjustMemoryMaxMemory(163),
-    @Reloadable
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("64")
-    PowerClientAutoAdjustMemoryModulus(164),
-    @Reloadable
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    PowerClientAutoInstallCertificateOnApprove(165),
-    @Reloadable
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    PowerClientAllowRunningGuestsWithoutTools(166),
-    @Reloadable
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    PowerClientLogDetection(167),
+    AutoInstallCertificateOnApprove(165),
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     DebugTimerLogging(169),
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    PowerClientAutoApprovePatterns(171),
+    AutoApprovePatterns(171),
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("99408929-82CF-4DC7-A532-9D998063FA95")
-    PowerClientAutoRegistrationDefaultVdsGroupID(172),
-    @Reloadable
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    PowerClientRunVmShouldVerifyPendingVMsAsWell(173),
-    @Reloadable
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    PowerClientDedicatedVmLaunchOnVdsWhilePowerClientStarts(174),
+    AutoRegistrationDefaultVdsGroupID(172),
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
     StoragePoolRefreshTimeInSeconds(179),

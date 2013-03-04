@@ -223,8 +223,6 @@ public interface Enums extends LocalizedEnums {
 
     String VDSType___VDS();
 
-    String VDSType___PowerClient();
-
     String VDSType___oVirtNode();
 
     String StorageDomainType___Master();

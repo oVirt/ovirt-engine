@@ -51,7 +51,7 @@ public class ApproveVdsCommand<T extends ApproveVdsParameters> extends InstallVd
     @Override
     protected void executeCommand() {
         _failureLogTypeValue = AuditLogType.VDS_INSTALL_FAILED;
-        if (Config.<Boolean> GetValue(ConfigValues.PowerClientAutoInstallCertificateOnApprove)) {
+        if (Config.<Boolean> GetValue(ConfigValues.AutoInstallCertificateOnApprove)) {
             super.executeCommand();
         } else {
             setSucceeded(true);

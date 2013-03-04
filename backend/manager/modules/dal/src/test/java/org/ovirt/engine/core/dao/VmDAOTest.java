@@ -257,20 +257,6 @@ public class VmDAOTest extends BaseDAOTestCase {
     }
 
     /**
-     * Ensures that getting all VMs for a specific VDS client.
-     */
-    @Test
-    public void testGetAllForDedicatedPowerClientByVds() {
-        List<VM> result = dao.getAllForDedicatedPowerClientByVds(VDS_STATIC_ID);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (VM vm : result) {
-            assertEquals(VDS_GROUP_ID, vm.getVdsGroupId());
-        }
-    }
-
-    /**
      * Ensures that retrieving all VMs for a specified user works as expected.
      */
     @Test

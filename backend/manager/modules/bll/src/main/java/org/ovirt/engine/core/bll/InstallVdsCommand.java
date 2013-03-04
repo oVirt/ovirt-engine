@@ -145,7 +145,6 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                     installer.setPassword(parameters.getRootPassword());
                     installer.setFirewall(parameters.getOverrideFirewall());
                     break;
-                case PowerClient:
                 case oVirtNode:
                     if (parameters.getOverrideFirewall()) {
                         log.warnFormat(

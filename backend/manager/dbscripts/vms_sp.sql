@@ -944,23 +944,6 @@ LANGUAGE plpgsql;
 
 
 
-
-
-Create or replace FUNCTION GetVmsDedicatedToPowerClientByVdsId(v_dedicated_vm_for_vds UUID) RETURNS SETOF vms
-   AS $procedure$
-BEGIN
-RETURN QUERY SELECT DISTINCT vms.*
-   FROM vms inner join
-   vds_static on vms.dedicated_vm_for_vds = vds_static.vds_id
-   WHERE vms.dedicated_vm_for_vds = v_dedicated_vm_for_vds
-   and vds_static.vds_type = 1;
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-
-
 Create or replace FUNCTION GetVmsByDiskId(v_disk_guid UUID) RETURNS SETOF vms_with_plug_info
    AS $procedure$
 BEGIN

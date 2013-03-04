@@ -23,10 +23,6 @@ public class RunVmOnceParams extends RunVmParams {
         super(vmId, isInternal);
     }
 
-    public RunVmOnceParams(Guid vmId, Guid powerClientId) {
-        super(vmId, powerClientId);
-    }
-
     public void setSysPrepDomainName(String sysPrepDomainName) {
         this.sysPrepDomainName = sysPrepDomainName;
     }
