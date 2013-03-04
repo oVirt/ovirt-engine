@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.interfaces.*;
-import org.ovirt.engine.core.dal.dbbroker.*;
+import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.interfaces.ITagsHandler;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class TagsHandler implements ITagsHandler {
 
@@ -14,11 +14,6 @@ public class TagsHandler implements ITagsHandler {
     @Override
     public tags GetTagByTagName(String tagName) {
         return TagsDirector.getInstance().GetTagByName(tagName);
-    }
-
-    @Override
-    public String GetTagIdsAndChildrenIdsByRegExp(String tagNameRegExp) {
-        return TagsDirector.getInstance().GetTagIdsAndChildrenIdsByRegExp(tagNameRegExp);
     }
 
     @Override

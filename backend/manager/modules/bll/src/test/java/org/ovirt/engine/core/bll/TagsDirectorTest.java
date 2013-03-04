@@ -363,54 +363,6 @@ public class TagsDirectorTest {
         assertEquals(tag2.gettag_id(), changedTag.getparent_id());
     }
 
-    @Test
-    public void testGetTagIdsAndChildrenIdsByRegExpNoTagMatches() {
-        String result = tagsDirector.GetTagIdsAndChildrenIdsByRegExp("tag*");
-        assertEquals(StringUtils.EMPTY, result);
-    }
-
-    @Test
-    public void testGetTagIdsAndChildrenIdsByRegExp() {
-        tags tag1 = createTag("tag1", "desc1");
-        tagsDirector.AddTag(tag1);
-        validateRegexpQueryResult("tag1", tag1);
-    }
-
-    @Test
-    public void testGetTagIdsAndChildrenIdsByRegExpWithWildcard() {
-        tags tag1 = createTag("tag1", "desc1");
-        tagsDirector.AddTag(tag1);
-        validateRegexpQueryResult("tag1*", tag1);
-    }
-
-    @Test
-    public void testGetTagIdsAndChildrenIdsByRegExpWithWildcardAndSeveralChildren() {
-        tags tag1 = createTag("tag1", "desc1");
-        tagsDirector.AddTag(tag1);
-        tags tag2 = createTag("tag2", "desc2");
-        tagsDirector.AddTag(tag2);
-        validateRegexpQueryResult("tag*", tag1, tag2);
-    }
-
-    @Test
-    public void testGetTagIdsAndChildrenIdsByRegExpWithWildcardAndSeveralChildrenAndHierachy() {
-        tags tag1 = createTag("tag1", "desc1");
-        tags tag2 = createTag("tag2", "desc2");
-        tag2.getChildren().add(tag1);
-        tag1.setparent_id(tag2.gettag_id());
-        tagsDirector.AddTag(tag2);
-        tagsDirector.AddTag(tag1);
-        validateRegexpQueryResult("tag*", tag1, tag2);
-    }
-
-    private void validateRegexpQueryResult(String regexp, tags... tagArray) {
-        String result = tagsDirector.GetTagIdsAndChildrenIdsByRegExp(regexp);
-        for (int counter = 0; counter < tagArray.length; counter++) {
-            tags tagToCheck = tagArray[counter];
-            assertTrue(result.indexOf(tagToCheck.gettag_id().toString()) > -1);
-        }
-    }
-
     public void testDirectDescetor() {
         tags tag1 = createTag("tag1", "desc1");
         tags tag2 = createTag("tag2", "desc2");

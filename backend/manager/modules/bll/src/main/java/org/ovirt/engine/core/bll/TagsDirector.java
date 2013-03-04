@@ -290,26 +290,6 @@ public class TagsDirector {
         return sb.toString();
     }
 
-    /**
-     * This function will return the tags IDs of all tags that their names match the specified regular expression and
-     * ALL their children (regardless if the children match the reg-exp or not). Its used to determine if a tag is
-     * assigned to an entity. Tag is determined as assigned to an entity if the entity is assigned to the tag or to one
-     * of its children.
-     *
-     * @param tagNameRegExp
-     *            the name of the 'root' tag.
-     * @return a comma separated list of IDs.
-     */
-    public String GetTagIdsAndChildrenIdsByRegExp(String tagNameRegExp) {
-        // add RegEx chars or beginning of string ('^') and end of string ('$'):
-        tagNameRegExp = String.format("^%1$s$", tagNameRegExp);
-        // convert to the regular expression format:
-        tagNameRegExp = tagNameRegExp.replace("*", ".*");
-        StringBuilder sb = new StringBuilder();
-        RecursiveGetTagsAndChildrenByRegExp(tagNameRegExp, sb, GetRootTag(), TagReturnValueIndicator.ID);
-        return sb.toString();
-    }
-
     public String GetTagNamesAndChildrenNamesByRegExp(String tagNameRegExp) {
         // add RegEx chars or beginning of string ('^') and end of string ('$'):
         tagNameRegExp = String.format("^%1$s$", tagNameRegExp);
