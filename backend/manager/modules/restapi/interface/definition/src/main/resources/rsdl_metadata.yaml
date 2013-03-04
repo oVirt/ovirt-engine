@@ -57,6 +57,7 @@ actions:
           vm.display.allow_override: xs:boolean
           vm.display.smartcard_enabled: xs:boolean
           vm.os.cmdline: xs:string
+          vm.cpu.mode: xs:string
           vm.cpu.topology.cores: xs:int
           vm.memory: xs:long
           vm.high_availability.priority: xs:int
@@ -105,6 +106,7 @@ actions:
           vm.description: xs:string
           vm.stateless: xs:boolean
           vm.delete_protected: xs:boolean
+          vm.cpu.mode: xs:string
           vm.cpu.topology.sockets: xs:int
           vm.placement_policy.affinity: xs:string
           vm.placement_policy.host.id|name: xs:string
