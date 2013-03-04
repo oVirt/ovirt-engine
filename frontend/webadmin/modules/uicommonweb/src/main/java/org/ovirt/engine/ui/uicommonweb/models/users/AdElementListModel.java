@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.users;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
@@ -170,57 +171,55 @@ public class AdElementListModel extends SearchableListModel
 
         setIsTimerDisabled(true);
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+
+        AsyncDataProvider.GetDomainList(new AsyncQuery(this, new INewAsyncCallback() {
+
             @Override
-            public void OnSuccess(Object model, Object result)
-            {
-                AdElementListModel adElementListModel = (AdElementListModel) model;
-                ArrayList<String> domains = (ArrayList<String>) result;
-                adElementListModel.getDomain().setItems(domains);
-                adElementListModel.getDomain().setSelectedItem(Linq.FirstOrDefault(domains));
-                AsyncQuery _asyncQuery1 = new AsyncQuery();
-                _asyncQuery1.setModel(adElementListModel);
-                _asyncQuery1.asyncCallback = new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object model1, Object result1)
-                    {
-                        AdElementListModel adElementListModel1 = (AdElementListModel) model1;
-                        Role roleValue = null;
-                        boolean first = true;
-                        ArrayList<Role> roles = (ArrayList<Role>) result1;
-                        ArrayList<Role> newRoles = new ArrayList<Role>();
-                        for (Role r : roles) {
-                            // ignore CONSUME_QUOTA_ROLE in UI
-                            if (!r.getId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
-                                newRoles.add(r);
-                            }
-                        }
-                        for (Role r : roles)
-                        {
-                            if (r.getId() != null && r.getId().equals(ApplicationGuids.engineUser.asGuid())) //$NON-NLS-1$
-                            {
-                                roleValue = r;
-                                break;
-                            }
-                        }
-
-                        Collections.sort(newRoles, new Linq.RoleNameComparer());
-
-                        adElementListModel1.getRole().setItems(newRoles);
-                        if (roleValue != null) {
-                            adElementListModel1.getRole().setSelectedItem(roleValue);
-                        } else if (newRoles.size() > 0){
-                            adElementListModel1.getRole().setSelectedItem(newRoles.get(0));
-                        }
-
-                    }
-                };
-                AsyncDataProvider.GetRoleList(_asyncQuery1);
+            public void OnSuccess(Object model, Object result) {
+                populateDomains((List<String>) result);
             }
-        };
-        AsyncDataProvider.GetDomainList(_asyncQuery, false);
+        }), false);
+
+
+        AsyncDataProvider.GetRoleList(new AsyncQuery(this, new INewAsyncCallback() {
+
+            @Override
+            public void OnSuccess(Object model, Object result) {
+                populateRoles((List<Role>) result);
+
+            }
+        }));
+    }
+
+    protected void populateDomains(List<String> domains){
+        getDomain().setItems(domains);
+        getDomain().setSelectedItem(Linq.FirstOrDefault(domains));
+    }
+
+    protected void populateRoles(List<Role> roles){
+        Role selectedRole = null;
+        for (Role role : roles) {
+            if (role.getId() != null) {
+             // ignore CONSUME_QUOTA_ROLE in UI
+                if (role.getId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
+                    roles.remove(role);
+                }
+                //select engine user if it exists
+                if (role.getId().equals(ApplicationGuids.engineUser.asGuid())) {
+                    selectedRole = role;
+                }
+            }
+        }
+
+        Collections.sort(roles, new Linq.RoleNameComparer());
+
+        getRole().setItems(roles);
+        if (selectedRole != null) {
+            getRole().setSelectedItem(selectedRole);
+        } else if (roles.size() > 0){
+            //if engine user does not exist, pick the first on the list
+            getRole().setSelectedItem(roles.get(0));
+        }
     }
 
     @Override
