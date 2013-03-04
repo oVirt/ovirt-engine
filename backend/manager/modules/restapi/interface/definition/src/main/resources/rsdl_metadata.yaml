@@ -3004,7 +3004,7 @@ actions:
       search: {context: query, type: 'xs:string', value: query, required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
-      unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required:false}
+      unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /api/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=get
   request:
@@ -3012,7 +3012,7 @@ actions:
       parameterType: null
       signatures: []
     urlparams:
-      unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required:false}
+      unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /api/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=delete
   request:
@@ -3063,7 +3063,7 @@ actions:
       search: {context: query, type: 'xs:string', value: query, required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
-      unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required:false}
+      unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=get
   request:
@@ -3071,7 +3071,7 @@ actions:
       parameterType: null
       signatures: []
     urlparams:
-      unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required:false}
+      unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=delete
   request:
