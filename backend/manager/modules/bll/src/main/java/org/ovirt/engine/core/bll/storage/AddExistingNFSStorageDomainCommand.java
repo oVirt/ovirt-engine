@@ -29,8 +29,8 @@ public class AddExistingNFSStorageDomainCommand<T extends StorageDomainManagemen
     }
 
     @Override
-    protected boolean CanAddDomain() {
-        return CheckExistingStorageDomain();
+    protected boolean canAddDomain() {
+        return checkExistingStorageDomain();
     }
 
     @Override
@@ -44,13 +44,13 @@ public class AddExistingNFSStorageDomainCommand<T extends StorageDomainManagemen
                                     new StorageServerConnectionParametersBase(getStorageDomain().getStorageStaticData()
                                             .getConnection(), getVds().getId())).getActionReturnValue());
         }
-        AddStorageDomainInDb();
-        UpdateStorageDomainDynamicFromIrs();
+        addStorageDomainInDb();
+        updateStorageDomainDynamicFromIrs();
         setSucceeded(true);
     }
 
     @Override
-    protected boolean ConcreteCheckExistingStorageDomain(Pair<StorageDomainStatic, SANState> domain) {
+    protected boolean concreteCheckExistingStorageDomain(Pair<StorageDomainStatic, SANState> domain) {
         boolean returnValue = false;
         StorageDomainStatic domainFromIrs = domain.getFirst();
         if (StringUtils.isEmpty(getStorageDomain().getStorageStaticData().getStorage())

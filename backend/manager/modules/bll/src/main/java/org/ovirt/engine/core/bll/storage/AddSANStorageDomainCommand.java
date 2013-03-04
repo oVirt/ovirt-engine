@@ -33,27 +33,27 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
 
     @Override
     protected void executeCommand() {
-        InitializeStorageDomain();
+        initializeStorageDomain();
         // save storage if got from parameters in order to save first empty
         // storage in db and use it later
         String storage = ((getStorageDomain().getStorage()) != null) ? getStorageDomain().getStorage() : "";
         // set domain storage to empty because not nullable in db and for shared
         // status to be locked
         getStorageDomain().setStorage("");
-        AddStorageDomainInDb();
+        addStorageDomainInDb();
         getStorageDomain().setStorage(storage);
         if (StringUtils.isEmpty(getStorageDomain().getStorage())) {
-            getStorageDomain().setStorage(CreateVG());
+            getStorageDomain().setStorage(createVG());
         }
-        if (StringUtils.isNotEmpty(getStorageDomain().getStorage()) && (AddStorageDomainInIrs())) {
+        if (StringUtils.isNotEmpty(getStorageDomain().getStorage()) && (addStorageDomainInIrs())) {
             DbFacade.getInstance().getStorageDomainStaticDao().update(getStorageDomain().getStorageStaticData());
-            UpdateStorageDomainDynamicFromIrs();
-            ProceedVGLunsInDb();
+            updateStorageDomainDynamicFromIrs();
+            proceedVGLunsInDb();
             setSucceeded(true);
         }
     }
 
-    protected void ProceedVGLunsInDb() {
+    protected void proceedVGLunsInDb() {
         final ArrayList<LUNs> luns = (ArrayList<LUNs>) Backend
                 .getInstance()
                 .getResourceManager()
@@ -73,7 +73,7 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
 
     }
 
-    private String CreateVG() {
+    private String createVG() {
         VDSReturnValue returnValue = Backend
                 .getInstance()
                 .getResourceManager()
@@ -87,7 +87,7 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
     }
 
     @Override
-    protected boolean CanAddDomain() {
+    protected boolean canAddDomain() {
         // !AddSANStorageDomainParametersValue.IsExistingStorageDomain &&
         if (((getParameters().getLunIds() == null || getParameters().getLunIds().isEmpty()) && StringUtils
                 .isEmpty(getStorageDomain().getStorage()))) {

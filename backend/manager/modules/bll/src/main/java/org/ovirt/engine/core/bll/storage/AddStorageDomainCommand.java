@@ -48,11 +48,11 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         super(commandId);
     }
 
-    protected void InitializeStorageDomain() {
+    protected void initializeStorageDomain() {
         getStorageDomain().setId(Guid.NewGuid());
     }
 
-    protected boolean AddStorageDomainInIrs() {
+    protected boolean addStorageDomainInIrs() {
         // No need to run in separate transaction - counting on rollback of external transaction wrapping the command
         return Backend
                 .getInstance()
@@ -63,7 +63,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
                                 .getStorageStaticData(), getStorageArgs())).getSucceeded();
     }
 
-    protected void AddStorageDomainInDb() {
+    protected void addStorageDomainInDb() {
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
@@ -80,7 +80,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         });
     }
 
-    protected void UpdateStorageDomainDynamicFromIrs() {
+    protected void updateStorageDomainDynamicFromIrs() {
         final StorageDomain sd =
                 (StorageDomain) Backend
                         .getInstance()
@@ -102,10 +102,10 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
 
     @Override
     protected void executeCommand() {
-        InitializeStorageDomain();
-        AddStorageDomainInDb();
-        if (AddStorageDomainInIrs()) {
-            UpdateStorageDomainDynamicFromIrs();
+        initializeStorageDomain();
+        addStorageDomainInDb();
+        if (addStorageDomainInIrs()) {
+            updateStorageDomainDynamicFromIrs();
             setSucceeded(true);
         }
     }
@@ -146,7 +146,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
                     String.format("$storageFormat %1$s", getStorageDomain().getStorageFormat().toString()));
             returnValue = false;
         }
-        return returnValue && CanAddDomain();
+        return returnValue && canAddDomain();
     }
 
     private boolean isStorageFormatSupportedByStoragePool() {
@@ -190,7 +190,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         return true;
     }
 
-    protected boolean CheckExistingStorageDomain() {
+    protected boolean checkExistingStorageDomain() {
         boolean returnValue = true;
         // prevent importing DATA domain
         if (getParameters().getStorageDomain().getStorageDomainType() == StorageDomainType.Data) {
@@ -227,13 +227,13 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_CHANGE_STORAGE_DOMAIN_TYPE);
                     returnValue = false;
                 }
-                returnValue = returnValue && ConcreteCheckExistingStorageDomain(domainFromIrs);
+                returnValue = returnValue && concreteCheckExistingStorageDomain(domainFromIrs);
             }
         }
         return returnValue;
     }
 
-    protected boolean ConcreteCheckExistingStorageDomain(Pair<StorageDomainStatic, SANState> domainFromIrs) {
+    protected boolean concreteCheckExistingStorageDomain(Pair<StorageDomainStatic, SANState> domainFromIrs) {
         return true;
     }
 
@@ -241,7 +241,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         return getStorageDomain().getStorage();
     }
 
-    protected abstract boolean CanAddDomain();
+    protected abstract boolean canAddDomain();
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
