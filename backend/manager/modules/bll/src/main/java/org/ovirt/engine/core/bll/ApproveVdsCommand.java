@@ -20,24 +20,19 @@ public class ApproveVdsCommand<T extends ApproveVdsParameters> extends InstallVd
     @Override
     protected boolean canDoAction() {
         boolean returnValue = true;
-        if (getVds().getVdsType() != VDSType.oVirtNode) {
+        if (getVds() == null) {
+            addCanDoActionMessage(VdcBllMessages.VDS_APPROVE_VDS_NOT_FOUND);
+            returnValue = false;
+        } else if (getVds().getVdsType() != VDSType.oVirtNode) {
             addCanDoActionMessage(VdcBllMessages.VDS_APPROVE_WRONG_VDS_TYPE);
             returnValue = false;
-        } else {
-            if (getVds() == null) {
-                addCanDoActionMessage(VdcBllMessages.VDS_APPROVE_VDS_NOT_FOUND);
-                returnValue = false;
-            } else if (getVds().getStatus() != VDSStatus.PendingApproval
-                    && getVds().getStatus() != VDSStatus.InstallFailed) {
-                getReturnValue().getCanDoActionMessages()
-                .add(VdcBllMessages.VDS_APPROVE_VDS_IN_WRONG_STATUS.toString());
-                returnValue = false;
-            }
+        } else if (getVds().getStatus() != VDSStatus.PendingApproval
+                && getVds().getStatus() != VDSStatus.InstallFailed) {
+            addCanDoActionMessage(VdcBllMessages.VDS_APPROVE_VDS_IN_WRONG_STATUS.toString());
+            returnValue = false;
         }
         return returnValue ? super.canDoAction() : false;
     }
-
-    private AuditLogType _failureLogTypeValue = AuditLogType.forValue(0);
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
@@ -50,14 +45,12 @@ public class ApproveVdsCommand<T extends ApproveVdsParameters> extends InstallVd
 
     @Override
     protected void executeCommand() {
-        _failureLogTypeValue = AuditLogType.VDS_INSTALL_FAILED;
         if (Config.<Boolean> GetValue(ConfigValues.AutoInstallCertificateOnApprove)) {
             super.executeCommand();
         } else {
             setSucceeded(true);
         }
         if (getSucceeded()) {
-            _failureLogTypeValue = AuditLogType.VDS_APPROVE_FAILED;
             Backend.getInstance()
             .getResourceManager()
             .RunVdsCommand(VDSCommandType.SetVdsStatus,
