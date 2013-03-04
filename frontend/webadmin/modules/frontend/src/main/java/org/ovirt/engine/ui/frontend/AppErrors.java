@@ -1321,7 +1321,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Illegal Domain name: ${Domain}. Domain name has unsupported special character ${Char}.")
     String ACTION_TYPE_FAILED_ILLEGAL_DOMAIN_NAME();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Compatibility version is invalid, previous value restored.")
+    @DefaultStringValue("Cannot ${action} ${type}. Compatibility version cannot be decreased, previous value restored.")
     String ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION();
 
     @DefaultStringValue("Cannot ${action} ${type}. Selected Compatibility Version is not supported.")
