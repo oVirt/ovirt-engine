@@ -62,6 +62,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
     }
 
     void initTable() {
+        getTable().enableColumnResizing();
 
         TextColumnWithTooltip<NetworkView> nameColumn = new TextColumnWithTooltip<NetworkView>() {
             @Override
@@ -70,7 +71,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
             }
         };
 
-        getTable().addColumn(nameColumn, constants.nameNetwork());
+        getTable().addColumn(nameColumn, constants.nameNetwork(), "200px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<NetworkView> dcColumn = new TextColumnWithTooltip<NetworkView>() {
             @Override
@@ -79,15 +80,15 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
             }
         };
 
-        getTable().addColumn(dcColumn, constants.dcNetwork());
+        getTable().addColumn(dcColumn, constants.dcNetwork(), "200px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<NetworkView> descriptionColumn = new TextColumnWithTooltip<NetworkView>(40) {
+        TextColumnWithTooltip<NetworkView> descriptionColumn = new TextColumnWithTooltip<NetworkView>() {
             @Override
             public String getValue(NetworkView object) {
                 return object.getDescription();
             }
         };
-        getTable().addColumn(descriptionColumn, constants.descriptionNetwork());
+        getTable().addColumn(descriptionColumn, constants.descriptionNetwork(), "300px"); //$NON-NLS-1$
 
         SafeHtmlWithSafeHtmlTooltipColumn<NetworkView> roleColumn =
                 new SafeHtmlWithSafeHtmlTooltipColumn<NetworkView>() {
@@ -137,7 +138,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
                 return object.getVlanId() == null ? "-" : object.getVlanId().toString(); //$NON-NLS-1$
             }
         };
-        getTable().addColumn(vlanColumn, constants.vlanNetwork());
+        getTable().addColumn(vlanColumn, constants.vlanNetwork(), "200px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<NetworkView>(constants.newNetwork()) {
             @Override
