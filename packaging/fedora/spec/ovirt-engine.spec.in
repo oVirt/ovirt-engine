@@ -188,10 +188,11 @@ The RESTful API for %{product_name_short}
 Summary: Setup and upgrade scripts for %{product_name_short}
 Group: Virtualization/Management
 Requires: %{name}
-Requires: yum
+Requires: libxml2-python
 Requires: lsof
 Requires: nfs-utils
 Requires: python-cheetah
+Requires: yum
 
 %description setup
 Setup and upgrade scripts for %{product_name_short}
