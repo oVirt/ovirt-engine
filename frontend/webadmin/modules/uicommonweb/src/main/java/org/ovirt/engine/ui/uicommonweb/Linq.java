@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -1278,5 +1279,13 @@ public final class Linq
     public interface IPredicate<TSource>
     {
         boolean Match(TSource source);
+    }
+
+
+    public final static class RoleNameComparer implements Comparator<Role>{
+        @Override
+        public int compare(Role left, Role right) {
+            return left.getname().compareTo(right.getname());
+        }
     }
 }

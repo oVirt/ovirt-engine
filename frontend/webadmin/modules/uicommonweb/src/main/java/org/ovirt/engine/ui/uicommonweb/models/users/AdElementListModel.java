@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.users;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
@@ -198,11 +199,6 @@ public class AdElementListModel extends SearchableListModel
                         }
                         for (Role r : roles)
                         {
-                            if (first)
-                            {
-                                roleValue = r;
-                                first = false;
-                            }
                             if (r.getId() != null && r.getId().equals(ApplicationGuids.engineUser.asGuid())) //$NON-NLS-1$
                             {
                                 roleValue = r;
@@ -210,8 +206,14 @@ public class AdElementListModel extends SearchableListModel
                             }
                         }
 
+                        Collections.sort(newRoles, new Linq.RoleNameComparer());
+
                         adElementListModel1.getRole().setItems(newRoles);
-                        adElementListModel1.getRole().setSelectedItem(roleValue);
+                        if (roleValue != null) {
+                            adElementListModel1.getRole().setSelectedItem(roleValue);
+                        } else if (newRoles.size() > 0){
+                            adElementListModel1.getRole().setSelectedItem(newRoles.get(0));
+                        }
 
                     }
                 };
