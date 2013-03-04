@@ -162,8 +162,6 @@ public interface TagDAO extends DAO {
 
     void detachUserGroupFromTag(Guid tagId, Guid groupId);
 
-    List<TagsUserGroupMap> getTagUserGroupMapsForTagName(String tagName);
-
     TagsUserMap getTagUserByTagIdAndByuserId(Guid tagId, Guid userId);
 
     void attachUserToTag(TagsUserMap tagUserMap);

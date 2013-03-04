@@ -366,17 +366,6 @@ public class TagDAOTest extends BaseDAOTestCase {
     }
 
     @Test
-    public void testGetAllUserGroupMapsForTagName() {
-        List<TagsUserGroupMap> result = dao.getTagUserGroupMapsForTagName(existingTag.gettag_name());
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (TagsUserGroupMap mapping : result) {
-            assertEquals(existingTag.gettag_id(), mapping.gettag_id());
-        }
-    }
-
-    @Test
     public void testGetUserTag() {
         TagsUserMap result =
                 dao.getTagUserByTagIdAndByuserId(existingUserTag.gettag_id(), existingUserTag.getuser_id());

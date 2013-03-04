@@ -182,18 +182,6 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Gettags_user_group_mapByTagName(v_tag_name VARCHAR(50)) RETURNS SETOF tags_user_group_map_view
-   AS $procedure$
-BEGIN
-      RETURN QUERY SELECT tags_user_group_map_view.*
-      FROM tags_user_group_map_view
-      WHERE tag_name = v_tag_name;
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-
 Create or replace FUNCTION GetTagsByUserGroupId(v_group_ids VARCHAR(4000)) RETURNS SETOF tags_user_group_map_view
    AS $procedure$
 BEGIN

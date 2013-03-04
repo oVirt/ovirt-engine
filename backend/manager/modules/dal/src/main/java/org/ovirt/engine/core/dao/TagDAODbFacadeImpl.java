@@ -258,25 +258,6 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
                 .executeModification("Deletetags_user_group_map", parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<TagsUserGroupMap> getTagUserGroupMapsForTagName(String tagName) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("tag_name", tagName);
-
-        ParameterizedRowMapper<TagsUserGroupMap> mapper = new ParameterizedRowMapper<TagsUserGroupMap>() {
-            @Override
-            public TagsUserGroupMap mapRow(ResultSet rs, int rowNum) throws SQLException {
-                TagsUserGroupMap entity = new TagsUserGroupMap();
-                entity.setgroup_id(Guid.createGuidFromString(rs.getString("group_id")));
-                entity.settag_id(Guid.createGuidFromString(rs.getString("tag_id")));
-                return entity;
-            }
-        };
-
-        return getCallsHandler()
-                        .executeReadList("Gettags_user_group_mapByTagName", mapper, parameterSource);
-    }
-
     @Override
     public TagsUserMap getTagUserByTagIdAndByuserId(Guid tagId, Guid userId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("tag_id", tagId).addValue(
