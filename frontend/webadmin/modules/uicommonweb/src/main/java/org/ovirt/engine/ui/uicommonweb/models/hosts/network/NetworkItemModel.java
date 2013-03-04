@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
+import org.ovirt.engine.core.common.utils.LexoNumericComparator;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 
@@ -26,7 +27,7 @@ public abstract class NetworkItemModel<T extends Enum<T>> extends ListModel impl
 
     @Override
     public int compareTo(NetworkItemModel<T> o) {
-        return getName().compareTo(o.getName());
+        return LexoNumericComparator.comp(getName(), o.getName());
     }
 
     public String getError() {
