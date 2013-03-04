@@ -441,7 +441,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @Ignore
     protected KeyValueWidget customPropertiesSheetEditor;
 
-    CommonApplicationConstants constants;
     CommonApplicationMessages messages;
 
     @UiField
@@ -468,7 +467,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
             final CommonApplicationMessages messages,
             CommonApplicationTemplates applicationTemplates) {
 
-        this.constants = constants;
         this.messages = messages;
         this.applicationTemplates = applicationTemplates;
 
