@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-import org.ovirt.engine.core.common.vdscommands.MarkPoolInReconstructModeVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
-public class MarkPoolInReconstructModeVDSCommand<P extends MarkPoolInReconstructModeVDSCommandParameters>
+public class MarkPoolInReconstructModeVDSCommand<P extends IrsBaseVDSCommandParameters>
         extends IrsBrokerCommand<P> {
 
     public MarkPoolInReconstructModeVDSCommand(P parameters) {
@@ -15,16 +15,8 @@ public class MarkPoolInReconstructModeVDSCommand<P extends MarkPoolInReconstruct
     protected void executeVDSCommand() {
         try {
             IrsProxyData proxyData = getCurrentIrsProxyData();
-            switch (getParameters().getReconstructMarkAction()) {
-            case ClearJobs:
-                proxyData.clearPoolTimers();
-                break;
-            case ClearCache:
-                proxyData.clearCache();
-                break;
-            default:
-                break;
-            }
+            proxyData.clearPoolTimers();
+            proxyData.clearCache();
         } catch (Exception e) {
             log.error("Could not change timers for pool " + getParameters().getStoragePoolId(), e);
         }

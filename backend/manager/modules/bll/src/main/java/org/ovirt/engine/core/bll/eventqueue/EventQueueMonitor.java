@@ -69,7 +69,9 @@ public class EventQueueMonitor implements EventQueue {
             if (currentEvent != null) {
                 switch (currentEvent.getEventType()) {
                 case RECOVERY:
-                    if (event.getEventType() == EventType.VDSCONNECTTOPOOL) {
+                    if (event.getEventType() == EventType.VDSCONNECTTOPOOL
+                            || event.getEventType() == EventType.VDSCLEARCACHE
+                            || event.getEventType() == EventType.DOMAINFAILOVER) {
                         task = addTaskToQueue(event, callable, storagePoolId, isEventShouldBeFirst(event));
                     } else {
                         log.debugFormat("Current event was skiped because of recovery is running now for pool {0}, event {1}",
@@ -77,7 +79,10 @@ public class EventQueueMonitor implements EventQueue {
                     }
                     break;
                 case RECONSTRUCT:
-                    if (event.getEventType() == EventType.VDSCONNECTTOPOOL || event.getEventType() == EventType.RECOVERY) {
+                    if (event.getEventType() == EventType.VDSCONNECTTOPOOL
+                            || event.getEventType() == EventType.RECOVERY
+                            || event.getEventType() == EventType.DOMAINFAILOVER
+                            || event.getEventType() == EventType.VDSCLEARCACHE) {
                         task = addTaskToQueue(event, callable, storagePoolId, isEventShouldBeFirst(event));
                     } else {
                         log.debugFormat("Current event was skiped because of reconstruct is running now for pool {0}, event {1}",
@@ -185,7 +190,9 @@ public class EventQueueMonitor implements EventQueue {
                                         new LinkedList<Pair<Event, FutureTask<EventResult>>>();
                                 for (Pair<Event, FutureTask<EventResult>> task : poolsEventsMap.get(storagePoolId)) {
                                     EventType eventType = task.getFirst().getEventType();
-                                    if (eventType == EventType.VDSCONNECTTOPOOL || (eventType == EventType.RECOVERY && !result.isSuccess())) {
+                                    if (eventType == EventType.VDSCONNECTTOPOOL
+                                            ||
+                                            ((eventType == EventType.RECOVERY || eventType == EventType.DOMAINFAILOVER || eventType == EventType.VDSCLEARCACHE) && !result.isSuccess())) {
                                         queue.add(task);
                                     } else {
                                         log.infoFormat("The following operation {0} was cancelled, because of recosntruct was run before",

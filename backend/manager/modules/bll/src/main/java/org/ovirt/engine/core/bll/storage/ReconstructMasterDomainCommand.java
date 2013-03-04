@@ -8,19 +8,18 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.MarkPoolInReconstructModeVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.ReconstructMarkAction;
+import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ReconstructMasterVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.RefreshStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ResetIrsVDSCommandParameters;
@@ -96,10 +95,6 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
             return stopSpm();
         }
 
-        // Pause the timers for the domain error handling
-        runVdsCommand(VDSCommandType.MarkPoolInReconstructMode,
-                new MarkPoolInReconstructModeVDSCommandParameters(
-                        getStoragePoolId().getValue(), ReconstructMarkAction.ClearJobs));
         boolean commandSucceeded = stopSpm();
 
         final List<String> disconnectPoolFormats = Config.<List<String>> GetValue(
@@ -134,28 +129,27 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
 
     @Override
     protected void executeCommand() {
-        try {
-            boolean reconstructOpSucceeded = reconstructMaster();
-            setActionReturnValue(reconstructOpSucceeded);
-            connectAndRefreshAllUpHosts(reconstructOpSucceeded);
-            if (!_isLastMaster && reconstructOpSucceeded) {
-                // all vms/templates metadata should be copied to the new master domain, so we need
-                // to perform increment of the db version for all the vms in the storage pool.
-                // currently this method is used for both templates and vms.
-                getVmStaticDAO().incrementDbGenerationForAllInStoragePool(getStoragePoolId().getValue());
-            }
-            if(_isLastMaster) {
-                getCompensationContext().resetCompensation();
-            }
-            setSucceeded(!_isLastMaster && reconstructOpSucceeded);
-        } finally {
-            // reset cache and mark reconstruct for pool as finished
+        boolean reconstructOpSucceeded = reconstructMaster();
+        setActionReturnValue(reconstructOpSucceeded);
+        connectAndRefreshAllUpHosts(reconstructOpSucceeded);
+        if (!_isLastMaster && reconstructOpSucceeded) {
+            // all vms/templates metadata should be copied to the new master domain, so we need
+            // to perform increment of the db version for all the vms in the storage pool.
+            // currently this method is used for both templates and vms.
+            getVmStaticDAO().incrementDbGenerationForAllInStoragePool(getStoragePoolId().getValue());
+        }
+        if (_isLastMaster) {
+            getCompensationContext().resetCompensation();
+        }
+        setSucceeded(!_isLastMaster && reconstructOpSucceeded);
+
+        if (getSucceeded()) {
             Backend.getInstance()
                     .getResourceManager()
                     .RunVdsCommand(
                             VDSCommandType.MarkPoolInReconstructMode,
-                            new MarkPoolInReconstructModeVDSCommandParameters(getStoragePoolId()
-                                    .getValue(), ReconstructMarkAction.ClearCache));
+                            new IrsBaseVDSCommandParameters(getStoragePoolId()
+                                    .getValue()));
         }
     }
 
