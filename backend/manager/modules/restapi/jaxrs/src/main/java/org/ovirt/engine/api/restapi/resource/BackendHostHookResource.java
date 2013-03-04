@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import javax.ws.rs.GET;
-
 import org.ovirt.engine.api.model.Hook;
 import org.ovirt.engine.api.model.Hooks;
 import org.ovirt.engine.api.resource.HostHookResource;
@@ -17,7 +15,6 @@ public class BackendHostHookResource extends AbstractBackendSubResource<Hook, Ob
     }
 
     @Override
-    @GET
     public Hook get() {
         Hooks hooks = parent.list();
         return getHook(hooks);
