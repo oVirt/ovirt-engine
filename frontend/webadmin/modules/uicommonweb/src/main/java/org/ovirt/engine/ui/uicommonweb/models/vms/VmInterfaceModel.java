@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -11,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.utils.LexoNumericComparator;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -451,6 +454,22 @@ public abstract class VmInterfaceModel extends Model
                 if (hotUpdateSupported) {
                     networks.add(null);
                 }
+
+                Collections.sort(networks, new Comparator<Network>() {
+
+                    private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+
+                    @Override
+                    public int compare(Network net1, Network net2) {
+                        if (net1 == null) {
+                            return net2 == null ? 0 : 1;
+                        } else if (net2 == null) {
+                            return -1;
+                        }
+                        return lexoNumeric.compare(net1.getName(), net2.getName());
+                    }
+
+                });
 
                 getNetwork().setItems(networks);
                 initSelectedNetwork();
