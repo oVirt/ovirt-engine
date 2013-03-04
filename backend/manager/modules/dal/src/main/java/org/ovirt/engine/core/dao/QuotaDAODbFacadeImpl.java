@@ -588,4 +588,8 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
         return dbResults.get(resultKey) != null && (Boolean) dbResults.get(resultKey);
     }
 
+    @Override
+    public List<Integer> getNonCountableQutoaVmStatuses() {
+        return getCallsHandler().executeReadList("getNonCountableQutoaVmStatuses", getIntegerMapper(), null);
+    }
 }

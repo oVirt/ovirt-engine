@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaUsagePerUser;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -35,6 +36,7 @@ public class QuotaManager {
 
     private static final QuotaManagerAuditLogger quotaManagerAuditLogger = new QuotaManagerAuditLogger();
     private final List<QuotaConsumptionParameter> corruptedParameters = new ArrayList<QuotaConsumptionParameter>();
+    private final List<Integer> nonCountableQutoaVmStatusesList = new ArrayList<Integer>();
 
     public static QuotaManager getInstance() {
         return INSTANCE;
@@ -1008,5 +1010,16 @@ public class QuotaManager {
         }
 
         return cacheCount < quotaCount * Config.<Integer> GetValue(ConfigValues.MinimumPercentageToUpdateQuotaCache)/100;
+    }
+
+    public boolean isVmStatusQuotaCountable(VMStatus status) {
+        if (nonCountableQutoaVmStatusesList.size() == 0) {
+            synchronized (nonCountableQutoaVmStatusesList) {
+                nonCountableQutoaVmStatusesList.addAll(DbFacade.getInstance()
+                        .getQuotaDao()
+                        .getNonCountableQutoaVmStatuses());
+            }
+        }
+        return !nonCountableQutoaVmStatusesList.contains(status.getValue());
     }
 }

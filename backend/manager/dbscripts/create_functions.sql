@@ -513,6 +513,17 @@ DROP TYPE IF EXISTS vds_group_usage_rs CASCADE;
 CREATE TYPE vds_group_usage_rs AS
     ( virtual_cpu_usage INTEGER,mem_size_mb_usage BIGINT);
 
+-- returns a set of integers representing vm statuses on which the vm shouldn't
+-- be used for quota calculation
+CREATE OR REPLACE FUNCTION getNonCountableQutoaVmStatuses()
+RETURNS SETOF INTEGER
+    AS $BODY$
+BEGIN
+    RETURN query select 0 union select 13 union select 14 union select 15;
+--(Down(0), Suspended(13), ImageIllegal(14), ImageLocked(15))
+END; $BODY$
+LANGUAGE plpgsql;
+
 
 -- Summarize the VCPU usage and the RAM usage for all the VMs in the quota which are not down or suspended
 -- If vds group id is null, then returns the global usage of the quota, other wise returns only the summarize of all VMs in the specific cluster.
@@ -526,7 +537,7 @@ BEGIN
     FROM vm_static,vm_dynamic
     WHERE quota_id = v_quota_id
       AND vm_dynamic.vm_guid = vm_static.vm_guid
-      AND vm_dynamic.status not in (0, 13 , 14, 15)
+      AND vm_dynamic.status not in (SELECT getNonCountableQutoaVmStatuses())
       AND (v_vds_group_id = vm_static.vds_group_id or v_vds_group_id IS NULL);
 END; $function$
 LANGUAGE plpgsql;
@@ -550,9 +561,7 @@ BEGIN
         quota_limitation.vds_group_id as vds_group_id,
         vds_groups.name AS vds_group_name,
         quota_limitation.virtual_cpu,
-        cast(COALESCE(sum(num_of_sockets * cpu_per_socket * cast(vm_dynamic.status not in (0, 13 , 14, 15) as INTEGER)), 0) as INTEGER) as virtual_cpu_usage,
-        --(Down(0),Suspended(13),ImageIllegal(14),ImageLocked(15))
-
+        cast(COALESCE(sum(num_of_sockets * cpu_per_socket * cast(vm_dynamic.status not in (SELECT getNonCountableQutoaVmStatuses()) as INTEGER)), 0) as INTEGER) as virtual_cpu_usage,
         quota_limitation.mem_size_mb,
         COALESCE(sum(vm_static.mem_size_mb), 0) as mem_size_mb_usage
     FROM quota_limitation

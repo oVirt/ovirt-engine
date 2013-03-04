@@ -201,4 +201,11 @@ public interface QuotaDAO extends DAO, SearchDAO<Quota> {
      * @return - True if the Quota is in use by at least ont VM or one Image.
      */
     public boolean isQuotaInUse(Quota quota);
+
+    /**
+     * gets all the vm statuses that we are not counting for: Down(0),Suspended(13),ImageIllegal(14),ImageLocked(15) in
+     * order DB and server to be in sync.
+     * @return array of vm statuses that quota shouldn't be calculated for.
+     */
+    public List<Integer> getNonCountableQutoaVmStatuses();
 }

@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
@@ -354,11 +353,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
 
         // The cases must be persistent with the create_functions_sp
-        if (getVm().getStatus() == VMStatus.Down
-                || getVm().getStatus() == VMStatus.Suspended
-                || getVm().getStatus() == VMStatus.ImageIllegal
-                || getVm().getStatus() == VMStatus.ImageLocked
-                || getVm().getStatus() == VMStatus.PoweringDown) {
+        if (!getQuotaManager().isVmStatusQuotaCountable(getVm().getStatus())) {
             list.add(new QuotaSanityParameter(getParameters().getVmStaticData().getQuotaId(), null));
             quotaSanityOnly = true;
         } else {
@@ -402,6 +397,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     public void setEntityId(AuditLogableBase logable) {
        logable.setVmId(oldVm.getId());
     }
+    @Override
     public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
         // if only quota sanity is checked the user may use a quota he cannot consume
         // (it will be consumed only when the vm will run)

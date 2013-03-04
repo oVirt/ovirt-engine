@@ -176,10 +176,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
         List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
 
         if (getVm().getQuotaId() != null && !Guid.Empty.equals(getVm().getQuotaId())
-                && (getVm().getStatus() == VMStatus.Up
-                || getVm().getStatus() == VMStatus.Paused
-                || getVm().getStatus() == VMStatus.PoweringUp
-                ||getVm().getStatus() == VMStatus.RebootInProgress)) {
+                && getQuotaManager().isVmStatusQuotaCountable(getVm().getStatus())) {
             list.add(new QuotaVdsGroupConsumptionParameter(getVm().getQuotaId(),
                     null,
                     QuotaConsumptionParameter.QuotaAction.RELEASE,
