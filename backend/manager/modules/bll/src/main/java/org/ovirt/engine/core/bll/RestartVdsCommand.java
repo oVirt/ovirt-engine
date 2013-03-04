@@ -21,8 +21,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class RestartVdsCommand<T extends FenceVdsActionParameters> extends FenceVdsBaseCommand<T> {
     protected List<VM> getVmList() {
@@ -93,16 +91,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
         super.rollback();
         final Guid vdsId = getVdsId();
         log.warnFormat("Restart host action failed, updating host {0} to {1}", vdsId, VDSStatus.NonResponsive.name());
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                Backend.getInstance()
-                        .getResourceManager()
-                        .RunVdsCommand(VDSCommandType.SetVdsStatus,
-                                new SetVdsStatusVDSCommandParameters(vdsId, VDSStatus.NonResponsive));
-                return null;
-            }
-        });
+        runVdsCommand(VDSCommandType.SetVdsStatus, new SetVdsStatusVDSCommandParameters(vdsId, VDSStatus.NonResponsive));
     }
 
     @Override

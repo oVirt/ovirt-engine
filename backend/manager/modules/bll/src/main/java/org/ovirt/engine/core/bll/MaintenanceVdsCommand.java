@@ -42,6 +42,7 @@ import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 
+@NonTransactiveCommandAttribute
 public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends VdsCommand<T> {
 
     private static final long serialVersionUID = -7604781532599945079L;
