@@ -48,14 +48,14 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
             }
         }, constants.lastNameUser(), "150px"); //$NON-NLS-1$
 
-        getTable().addColumn(new TextColumnWithTooltip<DbUser>(40) {
+        getTable().addColumn(new TextColumnWithTooltip<DbUser>() {
             @Override
             public String getValue(DbUser object) {
                 return object.getusername();
             }
         }, constants.userNameUser(), "150px"); //$NON-NLS-1$
 
-        getTable().addColumn(new TextColumnWithTooltip<DbUser>(40) {
+        getTable().addColumn(new TextColumnWithTooltip<DbUser>() {
             @Override
             public String getValue(DbUser object) {
                 return object.getgroups();
