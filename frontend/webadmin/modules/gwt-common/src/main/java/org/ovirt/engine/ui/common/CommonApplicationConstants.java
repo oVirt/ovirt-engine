@@ -88,7 +88,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("VNC")
     String runOncePopupDisplayConsoleVncLabel();
 
-    @DefaultStringValue("Spice")
+    @DefaultStringValue("SPICE")
     String runOncePopupDisplayConsoleSpiceLabel();
 
     @DefaultStringValue("Run Stateless")

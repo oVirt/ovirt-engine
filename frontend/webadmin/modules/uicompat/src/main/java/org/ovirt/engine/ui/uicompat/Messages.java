@@ -132,7 +132,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("There are no disks allowing an export, only the configuration will be a part of the VM template.")
     String noExportableDisksFoundForTheTemplate();
 
-    @DefaultMessage("Error connecting to Virtual Machine using Spice:\n{0}")
+    @DefaultMessage("Error connecting to Virtual Machine using SPICE:\n{0}")
     String errConnectingVmUsingSpiceMsg(Object errCode);
 
     @DefaultMessage("Error connecting to Virtual Machine using RPD:\n{0}")

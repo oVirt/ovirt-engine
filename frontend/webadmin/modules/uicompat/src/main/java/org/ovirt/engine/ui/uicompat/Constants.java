@@ -550,7 +550,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("VNC")
     String VNCTitle();
 
-    @DefaultStringValue("Spice")
+    @DefaultStringValue("SPICE")
     String spiceTitle();
 
     @DefaultStringValue("New Template")
