@@ -1,6 +1,7 @@
 package org.ovirt.engine.core;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -29,7 +30,7 @@ public class GetAttachmentServlet extends HttpServlet {
         if (fileName == null) {
             fileName = "attachment";
         }
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+        response.setHeader("Content-Disposition", "attachment; filename*='UTF-8'" + URLEncoder.encode(StringEscapeUtils.unescapeHtml(fileName), "UTF-8"));
 
         if (!cache) {
             response.setHeader("Cache-Control", "no-cache, must-revalidate"); //disable caching HTTP/1.1
@@ -50,7 +51,7 @@ public class GetAttachmentServlet extends HttpServlet {
                 throw new IOException("Error when writing to response stream");
             }
         } else {
-            throw new ServletException(String.format("Unsupported encoding type {0}", encodingType));
+            throw new ServletException(String.format("Unsupported encoding type %s", encodingType));
         }
     }
 }
