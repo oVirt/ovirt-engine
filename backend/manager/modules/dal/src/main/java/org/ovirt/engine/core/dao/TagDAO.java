@@ -184,8 +184,6 @@ public interface TagDAO extends DAO {
 
     void detachVmFromTag(Guid tagId, Guid vmId);
 
-    List<TagsVmMap> getTagVmMapByTagName(String tagName);
-
     List<TagsVmMap> getTagVmMapByVmIdAndDefaultTag(Guid vmid);
 
     List<TagsVmMap> getTimeLeasedUserVmsByAdGroupAndVmPoolId(Guid adGroupId, Guid vmPoolId);

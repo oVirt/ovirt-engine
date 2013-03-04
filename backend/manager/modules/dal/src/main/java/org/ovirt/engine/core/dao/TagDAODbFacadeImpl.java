@@ -402,25 +402,6 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<TagsVmMap> getTagVmMapByTagName(String tagName) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("tag_name", tagName);
-
-        ParameterizedRowMapper<TagsVmMap> mapper = new ParameterizedRowMapper<TagsVmMap>() {
-            @Override
-            public TagsVmMap mapRow(ResultSet rs, int rowNum) throws SQLException {
-                TagsVmMap entity = new TagsVmMap();
-                entity.settag_id(Guid.createGuidFromString(rs.getString("tag_id")));
-                entity.setvm_id(Guid.createGuidFromString(rs.getString("vm_id")));
-                return entity;
-            }
-        };
-
-        return getCallsHandler()
-                .executeReadList("Gettags_vm_mapByTagName", mapper, parameterSource);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
     public List<TagsVmMap> getTagVmMapByVmIdAndDefaultTag(Guid vmid) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_id", vmid);
 

@@ -470,17 +470,6 @@ public class TagDAOTest extends BaseDAOTestCase {
     }
 
     @Test
-    public void testGetTagVmMapByTagName() {
-        List<TagsVmMap> result = dao.getTagVmMapByTagName(existingTag.gettag_name());
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (TagsVmMap mapping : result) {
-            assertEquals(existingTag.gettag_id(), mapping.gettag_id());
-        }
-    }
-
-    @Test
     public void testGetTagVmMapByByVmIdAndDefaultTag() {
         List<TagsVmMap> result = dao.getTagVmMapByVmIdAndDefaultTag(EXISTING_VM_ID);
 
