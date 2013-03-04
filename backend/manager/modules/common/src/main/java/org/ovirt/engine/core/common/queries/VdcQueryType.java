@@ -135,7 +135,6 @@ public enum VdcQueryType implements Serializable {
     GetTagsByUserId,
     GetTagsByVmId,
     GetTagsByVdsId,
-    GetTagIdAndChildrenIds,
 
     // System
     GetSystemStatistics,
