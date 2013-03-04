@@ -30,11 +30,11 @@ import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 
 public class QuotaManager {
     private static final QuotaManager INSTANCE = new QuotaManager();
-    private static final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-    private static final Log log = LogFactory.getLog(QuotaManager.class);
-    private static HashMap<Guid, Map<Guid, Quota>> storagePoolQuotaMap = new HashMap<Guid, Map<Guid, Quota>>();
+    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    private final Log log = LogFactory.getLog(QuotaManager.class);
+    private HashMap<Guid, Map<Guid, Quota>> storagePoolQuotaMap = new HashMap<Guid, Map<Guid, Quota>>();
 
-    private static final QuotaManagerAuditLogger quotaManagerAuditLogger = new QuotaManagerAuditLogger();
+    private final QuotaManagerAuditLogger quotaManagerAuditLogger = new QuotaManagerAuditLogger();
     private final List<QuotaConsumptionParameter> corruptedParameters = new ArrayList<QuotaConsumptionParameter>();
     private final List<Integer> nonCountableQutoaVmStatusesList = new ArrayList<Integer>();
 
