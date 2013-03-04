@@ -18,10 +18,9 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
+@NonTransactiveCommandAttribute
 public class RestartVdsCommand<T extends FenceVdsActionParameters> extends FenceVdsBaseCommand<T> {
     protected List<VM> getVmList() {
         return mVmList;
@@ -110,8 +109,6 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
             return isInternalExecution() ? SYSTEM_FAILED_VDS_RESTART : USER_FAILED_VDS_RESTART;
         }
     }
-
-    private static Log log = LogFactory.getLog(RestartVdsCommand.class);
 
     @Override
     protected int getRerties() {

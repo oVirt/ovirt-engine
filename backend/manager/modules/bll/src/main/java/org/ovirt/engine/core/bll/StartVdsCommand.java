@@ -7,9 +7,8 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 
+@NonTransactiveCommandAttribute
 public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVdsBaseCommand<T> {
     public StartVdsCommand(T parameters) {
         super(parameters);
@@ -71,6 +70,4 @@ public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVd
     protected int getDelayInSeconds() {
         return Config.<Integer> GetValue(ConfigValues.FenceStartStatusDelayBetweenRetriesInSec);
     }
-
-    private static Log log = LogFactory.getLog(StartVdsCommand.class);
 }

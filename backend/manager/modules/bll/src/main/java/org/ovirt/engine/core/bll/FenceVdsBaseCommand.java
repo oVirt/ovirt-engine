@@ -35,14 +35,11 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.ThreadUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> extends VdsCommand<T> {
     private final int SLEEP_BEFORE_FIRST_ATTEMPT = 5000;
     private static final String INTERNAL_FENCE_USER = "Engine";
-    private static Log log = LogFactory.getLog(FenceVdsBaseCommand.class);
     protected FenceExecutor executor;
     protected List<VM> mVmList = null;
     private boolean privateFenceSucceeded;

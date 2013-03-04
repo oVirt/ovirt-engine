@@ -16,9 +16,8 @@ import org.ovirt.engine.core.common.vdscommands.SetVmStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 
+@NonTransactiveCommandAttribute
 public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters> extends RestartVdsCommand<T> {
     /**
      * use this member to determine if fence failed but vms moved to unknown mode (for the audit log type)
@@ -136,6 +135,4 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         }
         return jobProperties;
     }
-
-    private static Log log = LogFactory.getLog(VdsNotRespondingTreatmentCommand.class);
 }
