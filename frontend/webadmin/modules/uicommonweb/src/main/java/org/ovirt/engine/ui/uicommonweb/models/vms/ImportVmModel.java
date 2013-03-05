@@ -182,42 +182,44 @@ public class ImportVmModel extends ListWithDetailsModel {
                     getCluster().getSelectedItemChangedEvent().addListener(quotaClusterListener);
                 }
                 // get cluster
-                AsyncDataProvider.GetClusterByServiceList(new AsyncQuery(ImportVmModel.this, new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object model, Object returnValue) {
-                        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
-                        getCluster().setItems(clusters);
-                        getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
-                        // get storage domains
-                        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(ImportVmModel.this,
-                                new INewAsyncCallback() {
+                if (dataCenter != null) {
+                    AsyncDataProvider.GetClusterByServiceList(new AsyncQuery(ImportVmModel.this, new INewAsyncCallback() {
+                        @Override
+                        public void OnSuccess(Object model, Object returnValue) {
+                            ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
+                            getCluster().setItems(clusters);
+                            getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
+                            // get storage domains
+                            AsyncDataProvider.GetStorageDomainList(new AsyncQuery(ImportVmModel.this,
+                                    new INewAsyncCallback() {
 
-                                    @Override
-                                    public void OnSuccess(Object model, Object returnValue) {
-                                        ArrayList<StorageDomain> storageDomains =
-                                                (ArrayList<StorageDomain>) returnValue;
-                                        // filter storage domains
-                                        filteredStorageDomains =
-                                                new ArrayList<StorageDomain>();
-                                        for (StorageDomain domain : storageDomains) {
-                                            if (Linq.IsDataActiveStorageDomain(domain)) {
-                                                filteredStorageDomains.add(domain);
+                                        @Override
+                                        public void OnSuccess(Object model, Object returnValue) {
+                                            ArrayList<StorageDomain> storageDomains =
+                                                    (ArrayList<StorageDomain>) returnValue;
+                                            // filter storage domains
+                                            filteredStorageDomains =
+                                                    new ArrayList<StorageDomain>();
+                                            for (StorageDomain domain : storageDomains) {
+                                                if (Linq.IsDataActiveStorageDomain(domain)) {
+                                                    filteredStorageDomains.add(domain);
+                                                }
+                                            }
+
+                                            getStorage().setItems(filteredStorageDomains);
+                                            if (hasQuota) {
+                                                initQuotaForStorageDomains();
+                                            } else {
+                                                initDisksStorageDomainsList();
                                             }
                                         }
 
-                                        getStorage().setItems(filteredStorageDomains);
-                                        if (hasQuota) {
-                                            initQuotaForStorageDomains();
-                                        } else {
-                                            initDisksStorageDomainsList();
-                                        }
-                                    }
-
-                                }),
-                                getStoragePool().getId());
-                    }
-                }),
-                dataCenter.getId(), true, false);
+                                    }),
+                                    getStoragePool().getId());
+                        }
+                    }),
+                    dataCenter.getId(), true, false);
+                }
             }
         }),
                 storageDomainId);
