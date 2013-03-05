@@ -427,7 +427,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Run On:")
     String runOnVmPopup();
 
-    @DefaultStringValue("Run/Migration Options:")
+    @DefaultStringValue("Migration Options:")
     String runMigrationOptionsVmPopup();
 
     @DefaultStringValue("Priority for Run/Migration queue:")
@@ -771,10 +771,6 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Down")
     String unlinkedNetworkInteface();
-
-    // Pool popup
-    @DefaultStringValue("Do not migrate VM")
-    String dontMigrageVmPoolPopup();
 
     @DefaultStringValue("Number of VMs")
     String numOfVmsPoolPopup();

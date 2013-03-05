@@ -732,7 +732,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         if (getModel().getCluster().getSelectedItem() != null) {
             VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
             String compatibilityVersion = cluster.getcompatibility_version().toString();
-            boolean hasCpuPinning = true;
+            boolean hasCpuPinning = Boolean.TRUE.equals(getModel().getHostCpu().getEntity());
 
             if (Boolean.FALSE.equals(AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.CpuPinningEnabled,
                     compatibilityVersion))) {
@@ -752,13 +752,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     private boolean isVmMigratable() {
-        if (Boolean.TRUE.equals(getModel().getRunVMOnSpecificHost().getEntity()) ||
-                (Boolean.FALSE.equals(getModel().getIsAutoAssign().getEntity())
-                && Boolean.TRUE.equals(getModel().getDontMigrateVM().getEntity())
-                        && Boolean.TRUE.equals(getModel().getHostCpu().getEntity()))) {
-            return false;
-        }
-        return true;
+        return getModel().getMigrationMode().getSelectedItem() != MigrationSupport.PINNED_TO_HOST;
     }
 
     public void numOfSocketChanged() {
@@ -938,16 +932,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateHostPinning(MigrationSupport migrationSupport) {
-        getModel().getRunVMOnSpecificHost().setEntity(false);
-        getModel().getDontMigrateVM().setEntity(false);
-        switch (migrationSupport)
-        {
-        case PINNED_TO_HOST:
-            getModel().getRunVMOnSpecificHost().setEntity(true);
-            break;
-        case IMPLICITLY_NON_MIGRATABLE:
-            getModel().getDontMigrateVM().setEntity(true);
-            break;
-        }
+        getModel().setMigrationMode(migrationSupport);
     }
 }

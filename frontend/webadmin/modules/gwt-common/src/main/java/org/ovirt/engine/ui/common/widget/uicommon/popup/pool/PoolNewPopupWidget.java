@@ -36,13 +36,6 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
     }
 
     @Override
-    protected void localize(CommonApplicationConstants constants) {
-        super.localize(constants);
-
-        dontMigrateVMEditor.setLabel(constants.dontMigrageVmPoolPopup());
-    }
-
-    @Override
     public void edit(final UnitVmModel object) {
         super.edit(object);
         initTabAvailabilityListeners(object);

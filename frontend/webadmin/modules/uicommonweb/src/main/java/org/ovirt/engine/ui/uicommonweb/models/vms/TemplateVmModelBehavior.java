@@ -53,15 +53,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
                     template.getstorage_pool_id().getValue());
         }
 
-        switch (template.getMigrationSupport())
-        {
-        case PINNED_TO_HOST:
-            getModel().getRunVMOnSpecificHost().setEntity(true);
-            break;
-        case IMPLICITLY_NON_MIGRATABLE:
-            getModel().getDontMigrateVM().setEntity(true);
-            break;
-        }
+        getModel().setMigrationMode(template.getMigrationSupport());
     }
 
     @Override

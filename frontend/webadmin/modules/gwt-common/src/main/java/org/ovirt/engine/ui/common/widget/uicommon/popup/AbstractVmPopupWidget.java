@@ -292,19 +292,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     protected DialogTab hostTab;
 
     @UiField(provided = true)
-    @Path(value = "runVMOnSpecificHost.entity")
-    @WithElementId("runVMOnSpecificHost")
-    public EntityModelCheckBoxEditor runVMOnSpecificHostEditor;
-
-    @UiField(provided = true)
     @Path(value = "hostCpu.entity")
     @WithElementId("hostCpu")
     public EntityModelCheckBoxEditor hostCpuEditor;
 
     @UiField(provided = true)
-    @Path(value = "dontMigrateVM.entity")
-    @WithElementId("dontMigrateVM")
-    public EntityModelCheckBoxEditor dontMigrateVMEditor;
+    @Path(value = "migrationMode.selectedItem")
+    @WithElementId("migrationMode")
+    public ListModelListBoxEditor<Object> migrationModeEditor;
 
     @UiField(provided = true)
     @Ignore
@@ -478,9 +473,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
                 new MemorySizeRenderer(constants), new MemorySizeParser());
 
         // TODO: How to align right without creating the widget manually?
-        runVMOnSpecificHostEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         hostCpuEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        dontMigrateVMEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isHighlyAvailableEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isStatelessEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isDeleteProtectedEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -650,6 +643,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
             }
         });
 
+        migrationModeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
+
         // Resource Allocation
         provisioningThinEditor = new EntityModelRadioButtonEditor("provisioningGroup"); //$NON-NLS-1$
         provisioningCloneEditor = new EntityModelRadioButtonEditor("provisioningGroup"); //$NON-NLS-1$
@@ -726,9 +721,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         hostTab.setLabel(constants.hostVmPopup());
         isAutoAssignEditor.setLabel(constants.anyHostInClusterVmPopup());
         // specificHostEditor.setLabel("Specific");
-        runVMOnSpecificHostEditor.setLabel(constants.runOnSelectedHostVmPopup());
         hostCpuEditor.setLabel(constants.useHostCpu());
-        dontMigrateVMEditor.setLabel(constants.allowMigrationOnlyAdminVmPopup());
         cpuPinning.setLabel(constants.cpuPinningLabel());
         cpuPinningLabel.setHTML(constants.cpuPinningLabelExplanation());
 
@@ -750,9 +743,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     }
 
     private void applyStyles() {
-        runVMOnSpecificHostEditor.addContentWidgetStyleName(style.longCheckboxContent());
         hostCpuEditor.addContentWidgetStyleName(style.longCheckboxContent());
-        dontMigrateVMEditor.addContentWidgetStyleName(style.longCheckboxContent());
         allowConsoleReconnectEditor.addContentWidgetStyleName(style.longCheckboxContent());
         provisioningEditor.addContentWidgetStyleName(style.provisioningEditorContent());
         provisioningThinEditor.addContentWidgetStyleName(style.provisioningRadioContent());
@@ -1100,9 +1091,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         isAutoAssignEditor.setTabIndex(nextTabIndex++);
         specificHost.setTabIndex(nextTabIndex++);
         defaultHostEditor.setTabIndex(nextTabIndex++);
-        runVMOnSpecificHostEditor.setTabIndex(nextTabIndex++);
+        migrationModeEditor.setTabIndex(nextTabIndex++);
         hostCpuEditor.setTabIndex(nextTabIndex++);
-        dontMigrateVMEditor.setTabIndex(nextTabIndex++);
         cpuPinning.setTabIndex(nextTabIndex++);
 
         // ==High Availability Tab==

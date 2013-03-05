@@ -2437,21 +2437,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             getcurrentVm().setDedicatedVmForVds(defaultHost.getId());
         }
 
-        getcurrentVm().setMigrationSupport(MigrationSupport.MIGRATABLE);
-        if ((Boolean) model.getRunVMOnSpecificHost().getEntity())
-        {
-            getcurrentVm().setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
-            getcurrentVm().setUseHostCpuFlags((Boolean) model.getHostCpu().getEntity());
-        }
-        else if ((Boolean) model.getDontMigrateVM().getEntity())
-        {
-            getcurrentVm().setMigrationSupport(MigrationSupport.IMPLICITLY_NON_MIGRATABLE);
-            getcurrentVm().setUseHostCpuFlags((Boolean) model.getHostCpu().getEntity());
-        }
-        else
-        {
-            getcurrentVm().setUseHostCpuFlags(Boolean.FALSE);
-        }
+        getcurrentVm().setMigrationSupport((MigrationSupport) model.getMigrationMode().getSelectedItem());
+
+        getcurrentVm().setUseHostCpuFlags((Boolean) model.getHostCpu().getEntity());
+
 
         if (model.getIsNew())
         {

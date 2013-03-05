@@ -548,15 +548,8 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
             template.setDedicatedVmForVds(defaultHost.getId());
         }
 
-        template.setMigrationSupport(MigrationSupport.MIGRATABLE);
-        if ((Boolean) model.getRunVMOnSpecificHost().getEntity())
-        {
-            template.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
-        }
-        else if ((Boolean) model.getDontMigrateVM().getEntity())
-        {
-            template.setMigrationSupport(MigrationSupport.IMPLICITLY_NON_MIGRATABLE);
-        }
+        template.setMigrationSupport((MigrationSupport) model.getMigrationMode().getSelectedItem());
+
 
         model.StartProgress(null);
 

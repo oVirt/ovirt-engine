@@ -1379,17 +1379,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             gettempVm().setDedicatedVmForVds(defaultHost.getId());
         }
 
-        gettempVm().setMigrationSupport(MigrationSupport.MIGRATABLE);
-        if ((Boolean) model.getRunVMOnSpecificHost().getEntity())
-        {
-            gettempVm().setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
-            gettempVm().setUseHostCpuFlags((Boolean)model.getHostCpu().getEntity());
-        }
-        else if ((Boolean) model.getDontMigrateVM().getEntity())
-        {
-            gettempVm().setMigrationSupport(MigrationSupport.IMPLICITLY_NON_MIGRATABLE);
-            gettempVm().setUseHostCpuFlags((Boolean)model.getHostCpu().getEntity());
-        }
+        gettempVm().setMigrationSupport((MigrationSupport) model.getMigrationMode().getSelectedItem());
 
         if (model.getIsNew())
         {

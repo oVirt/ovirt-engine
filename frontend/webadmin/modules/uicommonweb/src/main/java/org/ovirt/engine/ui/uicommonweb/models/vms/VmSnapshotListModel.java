@@ -597,17 +597,8 @@ public class VmSnapshotListModel extends SearchableListModel
         getcurrentVm().setDedicatedVmForVds(
                 (Boolean) model.getIsAutoAssign().getEntity() ? null : defaultHost.getId());
 
-        getcurrentVm().setMigrationSupport(MigrationSupport.MIGRATABLE);
-        if ((Boolean) model.getRunVMOnSpecificHost().getEntity())
-        {
-            getcurrentVm().setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
-            getcurrentVm().setUseHostCpuFlags((Boolean)model.getHostCpu().getEntity());
-        }
-        else if ((Boolean) model.getDontMigrateVM().getEntity())
-        {
-            getcurrentVm().setMigrationSupport(MigrationSupport.IMPLICITLY_NON_MIGRATABLE);
-            getcurrentVm().setUseHostCpuFlags((Boolean)model.getHostCpu().getEntity());
-        }
+        getcurrentVm().setMigrationSupport((MigrationSupport) model.getMigrationMode().getSelectedItem());
+        getcurrentVm().setUseHostCpuFlags((Boolean)model.getHostCpu().getEntity());
         getcurrentVm().setDiskMap(behavior.getVm().getDiskMap());
 
         HashMap<Guid, DiskImage> imageToDestinationDomainMap =

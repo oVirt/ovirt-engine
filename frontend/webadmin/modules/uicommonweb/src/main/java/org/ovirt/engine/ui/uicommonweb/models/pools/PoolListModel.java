@@ -467,15 +467,6 @@ public class PoolListModel extends ListWithDetailsModel
                             default_host = defaultHost.getId();
                         }
 
-                        MigrationSupport migrationSupport = MigrationSupport.MIGRATABLE;
-                        if ((Boolean) model.getRunVMOnSpecificHost().getEntity())
-                        {
-                            migrationSupport = MigrationSupport.PINNED_TO_HOST;
-                        }
-                        else if ((Boolean) model.getDontMigrateVM().getEntity())
-                        {
-                            migrationSupport = MigrationSupport.IMPLICITLY_NON_MIGRATABLE;
-                        }
 
                         VM desktop = new VM();
                         desktop.setVmtGuid(((VmTemplate) model.getTemplate().getSelectedItem()).getId());
@@ -506,7 +497,7 @@ public class PoolListModel extends ListWithDetailsModel
                         desktop.setKernelUrl((String) model.getKernel_path().getEntity());
                         desktop.setKernelParams((String) model.getKernel_parameters().getEntity());
                         desktop.setInitrdUrl((String) model.getInitrd_path().getEntity());
-                        desktop.setMigrationSupport(migrationSupport);
+                        desktop.setMigrationSupport((MigrationSupport) (model.getMigrationMode().getSelectedItem()));
 
                         EntityModel displayProtocolSelectedItem =
                                 (EntityModel) model.getDisplayProtocol().getSelectedItem();

@@ -357,4 +357,10 @@ public interface Enums extends LocalizedEnums {
     String ServiceType___NFS();
 
     String ServiceType___SHD();
+
+    String MigrationSupport___MIGRATABLE();
+
+    String MigrationSupport___IMPLICITLY_NON_MIGRATABLE();
+
+    String MigrationSupport___PINNED_TO_HOST();
 }

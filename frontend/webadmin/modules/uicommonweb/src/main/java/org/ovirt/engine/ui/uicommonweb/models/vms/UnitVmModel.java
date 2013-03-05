@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -119,9 +120,8 @@ public class UnitVmModel extends Model {
             // ==Host Tab==
             getIsAutoAssign().setIsChangable(false);
             getDefaultHost().setIsChangable(false);
-            getRunVMOnSpecificHost().setIsChangable(false);
             getHostCpu().setIsChangable(false);
-            getDontMigrateVM().setIsChangable(false);
+            getMigrationMode().setIsChangable(false);
             getCpuPinning().setIsChangable(false);
 
             // ==Resource Allocation Tab==
@@ -825,18 +825,6 @@ public class UnitVmModel extends Model {
         privateIsAutoAssign = value;
     }
 
-    private NotChangableForVmInPoolEntityModel privateRunVMOnSpecificHost;
-
-    public EntityModel getRunVMOnSpecificHost()
-    {
-        return privateRunVMOnSpecificHost;
-    }
-
-    public void setRunVMOnSpecificHost(NotChangableForVmInPoolEntityModel value)
-    {
-        privateRunVMOnSpecificHost = value;
-    }
-
     private NotChangableForVmInPoolEntityModel hostCpu;
 
     public EntityModel getHostCpu() {
@@ -847,16 +835,16 @@ public class UnitVmModel extends Model {
         this.hostCpu = hostCpu;
     }
 
-    private NotChangableForVmInPoolEntityModel privateDontMigrateVM;
+    private NotChangableForVmInPoolListModel migrationMode;
 
-    public EntityModel getDontMigrateVM()
+    public ListModel getMigrationMode()
     {
-        return privateDontMigrateVM;
+        return migrationMode;
     }
 
-    public void setDontMigrateVM(NotChangableForVmInPoolEntityModel value)
+    public void setMigrationMode(NotChangableForVmInPoolListModel value)
     {
-        privateDontMigrateVM = value;
+        migrationMode = value;
     }
 
     private NotChangableForVmInPoolEntityModel privateIsTemplatePublic;
@@ -1080,7 +1068,6 @@ public class UnitVmModel extends Model {
         getCdAttached().setEntity(false);
 
         setIsHighlyAvailable(new NotChangableForVmInPoolEntityModel());
-        setDontMigrateVM(new NotChangableForVmInPoolEntityModel());
         setIsTemplatePublic(new NotChangableForVmInPoolEntityModel());
         setKernel_parameters(new NotChangableForVmInPoolEntityModel());
         setKernel_path(new NotChangableForVmInPoolEntityModel());
@@ -1130,14 +1117,11 @@ public class UnitVmModel extends Model {
         setCoresPerSocket(new NotChangableForVmInPoolListModel());
         getCoresPerSocket().getSelectedItemChangedEvent().addListener(this);
 
-        setRunVMOnSpecificHost(new NotChangableForVmInPoolEntityModel());
-        getRunVMOnSpecificHost().getEntityChangedEvent().addListener(this);
+        setMigrationMode(new NotChangableForVmInPoolListModel());
+        getMigrationMode().getSelectedItemChangedEvent().addListener(this);
 
         setHostCpu(new NotChangableForVmInPoolEntityModel());
         getHostCpu().getEntityChangedEvent().addListener(this);
-
-        setDontMigrateVM(new NotChangableForVmInPoolEntityModel());
-        getDontMigrateVM().getEntityChangedEvent().addListener(this);
 
         setIsAutoAssign(new NotChangableForVmInPoolEntityModel());
         getIsAutoAssign().getEntityChangedEvent().addListener(this);
@@ -1209,15 +1193,11 @@ public class UnitVmModel extends Model {
         getIsStateless().setEntity(false);
         getIsSmartcardEnabled().setEntity(false);
         getIsHighlyAvailable().setEntity(false);
-        getDontMigrateVM().setEntity(false);
         getIsAutoAssign().setEntity(true);
         getIsTemplatePublic().setEntity(true);
 
-        getRunVMOnSpecificHost().setEntity(false);
-        getRunVMOnSpecificHost().setIsChangable(false);
-
         getHostCpu().setEntity(false);
-        getRunVMOnSpecificHost().setIsChangable(false);
+        getMigrationMode().setIsChangable(true);
 
         getCdImage().setIsChangable(false);
 
@@ -1228,6 +1208,7 @@ public class UnitVmModel extends Model {
         InitAllowConsoleReconnect();
         InitMinimalVmMemSize();
         InitMaximalVmMemSize32OS();
+        initMigrationMode();
 
         behavior.Initialize(SystemTreeSelectedItem);
     }
@@ -1292,6 +1273,10 @@ public class UnitVmModel extends Model {
             {
                 CoresPerSocket_EntityChanged(sender, args);
             }
+            else if (sender == getMigrationMode())
+            {
+                MigrationMode_EntityChanged(sender, args);
+            }
         }
         else if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition))
         {
@@ -1302,18 +1287,6 @@ public class UnitVmModel extends Model {
             else if (sender == getTotalCPUCores())
             {
                 TotalCPUCores_EntityChanged(sender, args);
-            }
-            else if (sender == getRunVMOnSpecificHost())
-            {
-                RunVMOnSpecificHost_EntityChanged(sender, args);
-            }
-            else if (sender == getDontMigrateVM())
-            {
-                DontMigrateVM_EntityChanged(sender, args);
-            }
-            else if (sender == getIsAutoAssign())
-            {
-                IsAutoAssign_EntityChanged(sender, args);
             }
             else if (sender == getHostCpu())
             {
@@ -1553,6 +1526,10 @@ public class UnitVmModel extends Model {
         getFirstBootDevice().setSelectedItem(hardDiskOption);
     }
 
+    private void initMigrationMode() {
+        getMigrationMode().setItems(Arrays.asList(MigrationSupport.values()));
+    }
+
     private void DataCenter_SelectedItemChanged(Object sender, EventArgs args)
     {
         behavior.DataCenter_SelectedItemChanged();
@@ -1687,51 +1664,15 @@ public class UnitVmModel extends Model {
         behavior.coresPerSocketChanged();
     }
 
-    private void clearAndDisable(EntityModel entityModel) {
-        entityModel.setEntity(false);
-        entityModel.setIsChangable(false);
-    }
-
-    private void RunVMOnSpecificHost_EntityChanged(Object sender, EventArgs args)
+    private void MigrationMode_EntityChanged(Object sender, EventArgs args)
     {
-        if ((Boolean) getRunVMOnSpecificHost().getEntity() == true)
-        {
-            clearAndDisable(getDontMigrateVM());
+        if (MigrationSupport.PINNED_TO_HOST == getMigrationMode().getSelectedItem()) {
             getHostCpu().setIsChangable(true);
+        } else {
+            getHostCpu().setEntity(false);
+            getHostCpu().setIsChangable(false);
         }
-        else
-        {
-            clearAndDisable(getHostCpu());
-            getDontMigrateVM().setIsChangable(true);
-        }
-        behavior.updateCpuPinningVisibility();
-    }
 
-    private void DontMigrateVM_EntityChanged(Object sender, EventArgs args)
-    {
-        if((Boolean) getDontMigrateVM().getEntity() == true ) {
-            clearAndDisable(getRunVMOnSpecificHost());
-            getHostCpu().setIsChangable(true);
-        }
-        else
-        {
-            clearAndDisable(getHostCpu());
-            getRunVMOnSpecificHost().setIsChangable(true);
-        }
-        behavior.updateCpuPinningVisibility();
-    }
-
-    private void IsAutoAssign_EntityChanged(Object sender, EventArgs args)
-    {
-        if ((Boolean) getIsAutoAssign().getEntity() == true)
-        {
-            clearAndDisable(getRunVMOnSpecificHost());
-            clearAndDisable(getHostCpu());
-        }
-        else
-        {
-            getRunVMOnSpecificHost().setIsChangable(true);
-        }
         behavior.updateCpuPinningVisibility();
     }
 
@@ -1812,6 +1753,10 @@ public class UnitVmModel extends Model {
                 }
             }
         }
+    }
+
+    public void setMigrationMode(MigrationSupport value) {
+        getMigrationMode().setSelectedItem(value);
     }
 
     public void SetDataCenter(UnitVmModel model, ArrayList<storage_pool> list)
