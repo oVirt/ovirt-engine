@@ -14,33 +14,28 @@
 * limitations under the License.
 */
 
-package org.ovirt.engine.api.common.util;
+package org.ovirt.engine.core.utils;
 
-import static org.easymock.EasyMock.expect;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 
-import org.easymock.IExpectationSetters;
-import org.easymock.classextension.EasyMock;
-import org.easymock.classextension.IMocksControl;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.ovirt.engine.core.utils.ReapedMap.IdAwareReference;
 
 
-public class ReapableMapTest extends Assert {
+public class ReapedMapTest extends Assert {
 
     private static final String[] NUMBERS = { "one", "two", "three", "four", "five" };
 
     private static final NumberMapper MAPPER = new NumberMapper();
 
-    private IMocksControl control;
     private ReapedMap<String, Integer> map;
-
-    @Before
-    public void setUp() {
-        control = EasyMock.createNiceControl();
-    }
 
     @Test
     public void testReapingWithoutGC() throws Exception {
@@ -78,8 +73,6 @@ public class ReapableMapTest extends Assert {
         assertExpected(3);
         assertSizes(1, 1);
         assertNull(map.get("three"));
-
-        control.verify();
     }
 
     @Test
@@ -106,8 +99,6 @@ public class ReapableMapTest extends Assert {
         assertExpected(2);
         assertSizes(1, 0);
         assertNull(map.get("three"));
-
-        control.verify();
     }
 
     @Test
@@ -121,8 +112,6 @@ public class ReapableMapTest extends Assert {
         populate(4);
         assertSizes(2, 1);
         assertNull(map.get("three"));
-
-        control.verify();
     }
 
     @Test
@@ -136,36 +125,32 @@ public class ReapableMapTest extends Assert {
         map.remove("two");
         assertSizes(0, 1);
         assertNull(map.get("three"));
-
-        control.verify();
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void setUpGCExpectations(int gcAfter) {
-        ReferenceQueue<Integer> queue = (ReferenceQueue<Integer>)control.createMock(ReferenceQueue.class);
+    private void setUpGCExpectations(final int gcAfter) {
+        ReferenceQueue<Integer> queue = mock(ReferenceQueue.class);
         map = new ReapedMap<String, Integer>(10000, false, queue);
-        for (int i = 0 ; i < gcAfter ; i++) {
-            expect(queue.poll()).andReturn(null);
-        }
-        // the gcAfter^th queue poll simulates a GC event and triggers deletion
-        // on the reapable map
-        ReapedMap.IdAwareReference<String, Integer> ref = control.createMock(ReapedMap.IdAwareReference.class);
-        // awkward syntax required to work around compilation error
-        // on Reference<capture#nnn ? extends Integer> mismatch
-        ((IExpectationSetters) expect(queue.poll())).andReturn(ref);
-        IExpectationSetters<? extends String> refSetter = expect(ref.getKey());
-        ((IExpectationSetters<String>)refSetter).andReturn("three");
 
-        control.replay();
+        final IdAwareReference ref = mock(IdAwareReference.class);
+        when(ref.getKey()).thenReturn("three").thenReturn(null);
+
+        // the gcAfter queue poll simulates a GC event and triggers deletion
+        // on the reapable map
+        when(queue.poll()).thenAnswer(new Answer<Reference<Integer>>() {
+            private int times = 0;
+
+            @Override
+            public Reference<Integer> answer(InvocationOnMock invocation) throws Throwable {
+                return times++ == gcAfter ? ref : null;
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
     private void setUpAccessBaseAgingExpectations() {
-        ReferenceQueue<Integer> queue = (ReferenceQueue<Integer>)control.createMock(ReferenceQueue.class);
+        ReferenceQueue<Integer> queue = mock(ReferenceQueue.class);
         map = new ReapedMap<String, Integer>(1000, true, queue);
-        expect(queue.poll()).andReturn(null).anyTimes();
-
-        control.replay();
     }
 
     private void populate(Integer ... values) {
@@ -189,5 +174,5 @@ public class ReapableMapTest extends Assert {
         public String getKey(Integer i) {
             return i <= NUMBERS.length ? NUMBERS[i-1] : null;
         }
-    };
+    }
 }

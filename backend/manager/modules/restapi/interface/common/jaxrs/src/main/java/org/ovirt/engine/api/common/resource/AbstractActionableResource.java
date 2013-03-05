@@ -23,17 +23,17 @@ import java.text.MessageFormat;
 import java.util.concurrent.Executor;
 
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.common.util.LinkHelper;
-import org.ovirt.engine.api.common.util.ReapedMap;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.resource.ActionResource;
+import org.ovirt.engine.core.utils.ReapedMap;
 
 public abstract class AbstractActionableResource<R extends BaseResource> extends AbstractUpdatableResource<R> {
 
