@@ -25,9 +25,9 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.GetImageDomainsListVDSCommandParameters;
@@ -241,9 +241,9 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     private void endVmTemplateRelatedOps() {
         if (getVmTemplate() != null) {
+            VmDeviceUtils.setVmDevices(getVmTemplate());
             incrementDbGeneration();
             VmTemplateHandler.UnLockVmTemplate(getVmTemplateId());
-            VmDeviceUtils.setVmDevices(getVmTemplate());
         }
         else {
             setCommandShouldBeLogged(false);
