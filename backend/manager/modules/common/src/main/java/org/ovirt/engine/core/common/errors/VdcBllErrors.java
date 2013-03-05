@@ -334,6 +334,12 @@ public enum VdcBllErrors {
     VolumeGeneralException(4000),
 
     // Gluster VDSM errors
+    GlusterGeneralException(4101),
+    GlusterPermissionDeniedException(4102),
+    GlusterSyntaxErrorException(4103),
+    GlusterMissingArgumentException(4104),
+    GlusterCmdExecFailedException(4105),
+    GlusterXmlErrorException(4106),
     GlusterVolumeCreateFailed(4122),
     GlusterVolumeStartFailed(4125),
     GlusterVolumeStopFailed(4127),

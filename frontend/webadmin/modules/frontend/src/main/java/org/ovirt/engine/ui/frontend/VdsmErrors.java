@@ -673,6 +673,24 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     String VM_WITH_SAME_NAME_EXIST();
 
+    @DefaultStringValue("Gluster General Exception occurred.")
+    String GlusterGeneralException();
+
+    @DefaultStringValue("Permission denied")
+    String GlusterPermissionDeniedException();
+
+    @DefaultStringValue("Command failed due to a Syntax error")
+    String GlusterSyntaxErrorException();
+
+    @DefaultStringValue("Command failed due to a missing argument")
+    String GlusterMissingArgumentException();
+
+    @DefaultStringValue("Command execution failed")
+    String GlusterCmdExecFailedException();
+
+    @DefaultStringValue("XML error")
+    String GlusterXmlErrorException();
+
     @DefaultStringValue("Gluster Volume Delete Failed.")
     String GlusterVolumeDeleteFailed();
 

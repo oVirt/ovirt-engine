@@ -18,6 +18,12 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
     protected void ProceedProxyReturnValue() {
         VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
+        case GlusterGeneralException:
+        case GlusterPermissionDeniedException:
+        case GlusterSyntaxErrorException:
+        case GlusterMissingArgumentException:
+        case GlusterCmdExecFailedException:
+        case GlusterXmlErrorException:
         case GlusterVolumeCreateFailed:
         case GlusterVolumeStartFailed:
         case GlusterVolumeStopFailed:
