@@ -573,6 +573,9 @@ BEGIN
       SET rx_drop = v_rx_drop,rx_rate = v_rx_rate,tx_drop = v_tx_drop,tx_rate = v_tx_rate,
       vm_id = v_vm_id,iface_status = v_iface_status
       WHERE id = v_id;
+
+      PERFORM fn_dwh_update_last_statistics();
+
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -681,6 +684,9 @@ BEGIN
       SET rx_drop = v_rx_drop,rx_rate = v_rx_rate,tx_drop = v_tx_drop,tx_rate = v_tx_rate,
       vds_id = v_vds_id,iface_status = v_iface_status
       WHERE id = v_id;
+
+      PERFORM fn_dwh_update_last_statistics();
+
 END; $procedure$
 LANGUAGE plpgsql;
 

@@ -574,3 +574,14 @@ begin
     RETURN;
 END; $procedure$
 LANGUAGE plpgsql;
+
+-- update dwh lastStatisticsUpdate on dwh_history_timekeeping
+create or replace FUNCTION fn_dwh_update_last_statistics()
+returns VOID
+AS $procedure$
+begin
+   update dwh_history_timekeeping set var_datetime = now() where var_name = 'lastStatisticsUpdate';
+   RETURN;
+END; $procedure$
+LANGUAGE plpgsql;
+

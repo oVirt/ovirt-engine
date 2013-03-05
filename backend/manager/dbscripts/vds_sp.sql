@@ -70,6 +70,9 @@ BEGIN
       swap_free = v_swap_free,swap_total = v_swap_total,ksm_cpu_percent = v_ksm_cpu_percent,
       ksm_pages = v_ksm_pages,ksm_state = v_ksm_state
       WHERE vds_id = v_vds_id;
+
+      PERFORM fn_dwh_update_last_statistics();
+
    END;
 
    RETURN;

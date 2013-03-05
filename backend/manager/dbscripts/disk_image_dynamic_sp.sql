@@ -42,6 +42,9 @@ BEGIN
       UPDATE disk_image_dynamic
       SET read_rate = v_read_rate,write_rate = v_write_rate,actual_size = v_actual_size,read_latency_seconds = v_read_latency_seconds,write_latency_seconds = v_write_latency_seconds,flush_latency_seconds = v_flush_latency_seconds
       WHERE image_id = v_image_id;
+
+      PERFORM fn_dwh_update_last_statistics();
+
 END; $procedure$
 LANGUAGE plpgsql;
 
