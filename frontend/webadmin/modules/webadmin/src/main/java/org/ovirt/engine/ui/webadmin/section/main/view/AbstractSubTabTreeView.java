@@ -1,10 +1,12 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.action.SubTabTreeActionPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
+import org.ovirt.engine.ui.common.widget.label.NoItemsLabel;
 import org.ovirt.engine.ui.common.widget.tree.AbstractSubTabTree;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -92,14 +94,28 @@ public abstract class AbstractSubTabTreeView<E extends AbstractSubTabTree, I, T,
     }
 
     private final IEventListener itemsChangedListener = new IEventListener() {
+        @SuppressWarnings("unchecked")
         @Override
         public void eventRaised(Event ev, Object sender, EventArgs args) {
             table.setRowData(new ArrayList<EntityModel>());
+            // Since tree views don't have an 'emptyTreeWidget to display, we will
+            // use the fact that we are using a table to display the 'header' to have
+            // it display the no items to display message.
+            if (sender instanceof ListModel) {
+                ListModel model = (ListModel) sender;
+                Iterable<M> items = model.getItems();
+                if (model.getItems() == null || (items instanceof List && ((List<M>) items).isEmpty())) {
+                    table.setEmptyTableWidget(new NoItemsLabel(model.getTitle()));
+                } else {
+                    table.setEmptyTableWidget(null);
+                }
+            }
         }
     };
 
     @Override
     public void setMainTabSelectedItem(I selectedItem) {
+        table.setEmptyTableWidget(null);
         if (getDetailModel().getItems() == null) {
             table.setLoadingState(LoadingState.LOADING);
         }
