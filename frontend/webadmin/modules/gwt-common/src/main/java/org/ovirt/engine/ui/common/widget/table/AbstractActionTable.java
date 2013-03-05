@@ -462,7 +462,8 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
 
     List<TableCellElement> getTableHeaderCells(int columnIndex) {
         Element tableHeaderElement = showDefaultHeader ? table.getElement() : tableHeader.getElement();
-        TableSectionElement tHeadElement = ((TableElement) tableHeaderElement).getTHead();
+        TableElement tableHeaderElementCast = tableHeaderElement.cast();
+        TableSectionElement tHeadElement = tableHeaderElementCast.getTHead();
         return tHeadElement != null ? getCells(tHeadElement.getRows(), columnIndex)
                 : Collections.<TableCellElement> emptyList();
     }
