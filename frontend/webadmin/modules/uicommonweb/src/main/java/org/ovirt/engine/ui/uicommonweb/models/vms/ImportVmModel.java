@@ -10,12 +10,12 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DiskImageList;
@@ -167,15 +167,14 @@ public class ImportVmModel extends ListWithDetailsModel {
             @Override
             public void OnSuccess(Object model, Object returnValue) {
                 ArrayList<storage_pool> pools = (ArrayList<storage_pool>) returnValue;
-                storage_pool dataCenter = null;
-                if (pools != null && pools.size() == 1) {
-                    dataCenter = pools.get(0);
-                } else {
-                    //TODO internal client ERROR
+                if (pools == null || pools.size() != 1) {
+                    return;
                 }
+
+                storage_pool dataCenter = pools.get(0);
                 setStoragePool(dataCenter);
                 // show quota
-                if (dataCenter != null && dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
+                if (dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
                     hasQuota = true;
                 }
                 if (hasQuota) {
