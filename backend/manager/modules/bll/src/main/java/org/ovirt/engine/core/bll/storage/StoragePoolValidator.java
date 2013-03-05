@@ -38,6 +38,22 @@ public class StoragePoolValidator {
         return ValidationResult.VALID;
     }
 
+    /**
+     * Checks in case the DC is of GLUSTER type that the compatibility version matches.
+     * In case there is mismatch, a
+     * proper canDoAction message will be added
+     *
+     * @return true if the version matches
+     */
+    public ValidationResult isGlusterDcAndMatchingCompatiblityVersion() {
+        if (storagePool.getstorage_pool_type() == StorageType.GLUSTERFS
+                && !Config.<Boolean> GetValue
+                        (ConfigValues.GlusterFsStorageEnabled, storagePool.getcompatibility_version().toString())) {
+            return new ValidationResult(VdcBllMessages.DATA_CENTER_GLUSTER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
+        }
+        return ValidationResult.VALID;
+    }
+
     protected VdsGroupDAO getVdsGroupDao() {
         return DbFacade.getInstance().getVdsGroupDao();
     }

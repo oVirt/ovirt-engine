@@ -969,6 +969,7 @@ public final class AsyncDataProvider {
         case NFS:
         case LOCALFS:
         case POSIXFS:
+        case GLUSTERFS:
             return VolumeFormat.RAW;
 
         case ISCSI:
@@ -2534,14 +2535,16 @@ public final class AsyncDataProvider {
             StorageType.ISCSI,
             StorageType.FCP,
             StorageType.LOCALFS,
-            StorageType.POSIXFS
+            StorageType.POSIXFS,
+            StorageType.GLUSTERFS
         }));
     }
 
     public static boolean IsVersionMatchStorageType(Version version, StorageType type)
     {
-        return !((type == StorageType.LOCALFS && version.compareTo(new Version(2, 2)) <= 0) || (type == StorageType.POSIXFS && version.compareTo(new Version(3,
-                0)) <= 0));
+        return !((type == StorageType.LOCALFS && version.compareTo(new Version(2, 2)) <= 0)
+               || (type == StorageType.POSIXFS && version.compareTo(new Version(3, 0)) <= 0)
+               || (type == StorageType.GLUSTERFS && version.compareTo(new Version(3, 2)) <= 0));
     }
 
     public static int GetClusterDefaultMemoryOverCommit()

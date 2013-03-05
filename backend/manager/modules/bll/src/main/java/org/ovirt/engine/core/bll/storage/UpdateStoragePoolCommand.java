@@ -200,6 +200,9 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         if (returnValue) {
             returnValue = validate(validator.isPosixDcAndMatchingCompatiblityVersion());
         }
+        if (returnValue) {
+            returnValue = validate(validator.isGlusterDcAndMatchingCompatiblityVersion());
+        }
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
         return returnValue;
     }

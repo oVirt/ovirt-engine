@@ -186,6 +186,10 @@ public class BackendStorageDomainsResource
             validateParameters(storageDomain.getStorage(), "path", "vfsType");
             resp = addNfsOrLocalOrPosix(VdcActionType.AddPosixFsStorageDomain, storageDomain, entity, hostId);
             break;
+        case GLUSTERFS:
+            validateParameters(storageDomain.getStorage(), "path", "vfsType");
+            resp = addNfsOrLocalOrPosix(VdcActionType.AddGlusterFsStorageDomain, storageDomain, entity, hostId);
+            break;
 
         default:
             break;

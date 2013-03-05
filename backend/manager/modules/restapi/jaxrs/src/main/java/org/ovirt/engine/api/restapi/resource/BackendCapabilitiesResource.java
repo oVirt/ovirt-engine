@@ -128,6 +128,12 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
             minor = 2;
         }
     };
+    public static final Version VERSION_3_3 = new Version() {
+        {
+            major = 3;
+            minor = 3;
+        }
+    };
     private static Version currentVersion = null;
 
     @Override
@@ -412,6 +418,10 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
 
         if (VersionUtils.greaterOrEqual(version, VERSION_3_1)) {
             ret.add(StorageType.POSIXFS);
+        }
+
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_3)) {
+            ret.add(StorageType.GLUSTERFS);
         }
         return ret;
     }

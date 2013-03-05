@@ -1335,6 +1335,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     SpiceProxyDefault(420),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    GlusterFsStorageEnabled(421),
+
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Auto")
     ClientConsoleModeDefault(501),

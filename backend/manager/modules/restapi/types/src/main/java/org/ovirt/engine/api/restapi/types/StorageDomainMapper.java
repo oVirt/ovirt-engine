@@ -85,6 +85,7 @@ public class StorageDomainMapper {
                     }
                     break;
                 case POSIXFS:
+                case GLUSTERFS:
                     if (storage.isSetAddress() && storage.isSetPath()) {
                         entity.setconnection(storage.getAddress() + ":" + storage.getPath());
                     } else if (storage.isSetPath()) {
@@ -154,6 +155,8 @@ public class StorageDomainMapper {
             return org.ovirt.engine.core.common.businessentities.StorageType.LOCALFS;
         case POSIXFS:
             return org.ovirt.engine.core.common.businessentities.StorageType.POSIXFS;
+        case GLUSTERFS:
+            return org.ovirt.engine.core.common.businessentities.StorageType.GLUSTERFS;
         default:
             return null;
         }
@@ -172,6 +175,8 @@ public class StorageDomainMapper {
             return StorageType.LOCALFS.value();
         case POSIXFS:
             return StorageType.POSIXFS.value();
+        case GLUSTERFS:
+            return StorageType.GLUSTERFS.value();
         default:
             return null;
         }

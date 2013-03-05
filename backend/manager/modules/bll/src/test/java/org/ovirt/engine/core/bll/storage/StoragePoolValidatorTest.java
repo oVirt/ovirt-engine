@@ -27,7 +27,11 @@ public class StoragePoolValidatorTest {
             (mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_1.toString(), true),
                     mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_0.toString(), false),
                     mockConfig(ConfigValues.PosixStorageEnabled, Version.v2_2.toString(), false),
-                    mockConfig(ConfigValues.PosixStorageEnabled, "general", false));
+                    mockConfig(ConfigValues.PosixStorageEnabled, "general", false),
+                    mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_1.toString(), false),
+                    mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_2.toString(), false),
+                    mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_0.toString(), false),
+                    mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_3.toString(), true));
 
     private StoragePoolValidator validator = null;
     private storage_pool storagePool = null;
@@ -57,6 +61,22 @@ public class StoragePoolValidatorTest {
         ValidationResult result = validator.isPosixDcAndMatchingCompatiblityVersion();
         assertFalse(result.isValid());
         assertMessage(result, VdcBllMessages.DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
+    }
+
+    @Test
+    public void testGlusterDcAndMatchingCompatiblityVersion() {
+        storagePool.setcompatibility_version(Version.v3_3);
+        storagePool.setstorage_pool_type(StorageType.GLUSTERFS);
+        assertTrue(validator.isGlusterDcAndMatchingCompatiblityVersion().isValid());
+    }
+
+    @Test
+    public void testGlusterDcAndNotMatchingCompatiblityVersion() {
+        storagePool.setcompatibility_version(Version.v3_1);
+        storagePool.setstorage_pool_type(StorageType.GLUSTERFS);
+        ValidationResult result = validator.isGlusterDcAndMatchingCompatiblityVersion();
+        assertFalse(result.isValid());
+        assertMessage(result, VdcBllMessages.DATA_CENTER_GLUSTER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
     }
 
     @Test

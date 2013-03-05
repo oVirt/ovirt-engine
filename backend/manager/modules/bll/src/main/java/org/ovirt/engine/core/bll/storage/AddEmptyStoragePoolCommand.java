@@ -81,6 +81,8 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
             result = false;
         } else if (!validate(storagePoolValidator.isPosixDcAndMatchingCompatiblityVersion())) {
             result = false;
+        } else if (!validate(storagePoolValidator.isGlusterDcAndMatchingCompatiblityVersion())) {
+            result = false;
         }
         return result;
     }

@@ -1465,6 +1465,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("\"File based storage\" is not supported with data center compatibility version.")
     String DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION();
 
+    @DefaultStringValue("\"Gluster based storage\" is not supported with current data center compatibility version.")
+    String DATA_CENTER_GLUSTER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION();
+
     @DefaultStringValue("Updating Host's Cluster cannot be performed through update Host action, please use Change Host Cluster action instead.")
     String VDS_CANNOT_UPDATE_CLUSTER();
 
