@@ -1,22 +1,24 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.RefObject;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IpAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SubnetMaskValidation;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
-import java.util.ArrayList;
-import java.util.Map;
 
 @SuppressWarnings("unused")
 public class HostBondInterfaceModel extends Model
@@ -34,14 +36,14 @@ public class HostBondInterfaceModel extends Model
         compactMode = value;
     }
 
-    private ListModel privateBond;
+    private SortedListModel privateBond;
 
-    public ListModel getBond()
+    public SortedListModel getBond()
     {
         return privateBond;
     }
 
-    private void setBond(ListModel value)
+    private void setBond(SortedListModel value)
     {
         privateBond = value;
     }
@@ -194,7 +196,7 @@ public class HostBondInterfaceModel extends Model
         setAddress(new EntityModel());
         setSubnet(new EntityModel());
         setGateway(new EntityModel());
-        setBond(new ListModel());
+        setBond(new SortedListModel(new Linq.InterfaceComparator()));
         setNetwork(new ListModel());
         setBootProtocolAvailable(true);
         setBondingOptions(new ListModel());

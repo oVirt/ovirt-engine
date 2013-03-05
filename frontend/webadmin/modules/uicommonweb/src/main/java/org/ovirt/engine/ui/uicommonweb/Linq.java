@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.utils.LexoNumericComparator;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.compat.RpmVersion;
@@ -1287,5 +1288,16 @@ public final class Linq
         public int compare(Role left, Role right) {
             return left.getname().compareTo(right.getname());
         }
+    }
+
+    public final static class InterfaceComparator implements Comparator<VdsNetworkInterface> {
+
+        LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+
+        @Override
+        public int compare(VdsNetworkInterface bond1, VdsNetworkInterface bond2) {
+            return lexoNumeric.compare(bond1.getName(), bond2.getName());
+        }
+
     }
 }

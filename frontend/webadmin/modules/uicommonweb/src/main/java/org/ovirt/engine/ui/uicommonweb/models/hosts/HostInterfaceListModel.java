@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -27,7 +26,6 @@ import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.LexoNumericComparator;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.NGuid;
@@ -503,16 +501,7 @@ public class HostInterfaceListModel extends SearchableListModel
     }
 
     private void sortNics() {
-        Collections.sort(getOriginalItems(), new Comparator<VdsNetworkInterface>() {
-
-            private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
-
-            @Override
-            public int compare(VdsNetworkInterface nic1, VdsNetworkInterface nic2) {
-                return lexoNumeric.compare(nic1.getName(), nic2.getName());
-            }
-
-        });
+        Collections.sort(getOriginalItems(), new Linq.InterfaceComparator());
     }
 
     private void classifyNics(List<Bond> nonEmptyBonds,
