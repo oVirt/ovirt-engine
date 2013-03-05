@@ -254,8 +254,10 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
      *            The snapshot ID to return to being active.
      */
     protected void revertToActiveSnapshot(Guid createdSnapshotId) {
-        getSnapshotDao().remove(createdSnapshotId);
-        getSnapshotDao().updateId(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE), createdSnapshotId);
+        if (createdSnapshotId != null) {
+            getSnapshotDao().remove(createdSnapshotId);
+            getSnapshotDao().updateId(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE), createdSnapshotId);
+        }
         setSucceeded(false);
     }
 
