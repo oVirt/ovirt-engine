@@ -16,10 +16,11 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.Callable;
+
 import javax.naming.TimeLimitExceededException;
 
+import org.apache.commons.collections.EnumerationUtils;
 import org.apache.commons.lang.StringUtils;
-
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -40,7 +41,6 @@ import org.ovirt.engine.core.utils.ssh.EngineSSHDialog;
 import org.ovirt.engine.core.utils.ssh.SSHDialog;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
-
 import org.ovirt.otopi.constants.BaseEnv;
 import org.ovirt.otopi.constants.Confirms;
 import org.ovirt.otopi.constants.CoreEnv;
@@ -197,7 +197,7 @@ public class VdsDeploy implements SSHDialog.Sink {
      * Return the engine ssh public key to install on host.
      * @return ssh public key.
      */
-    private static String _getEngineSSHPublicKey() {
+    protected static String getEngineSSHPublicKey() {
         final String keystoreFile = Config.<String>GetValue(ConfigValues.keystoreUrl);
         final String alias = Config.<String>GetValue(ConfigValues.CertAlias);
         final char[] password = Config.<String>GetValue(ConfigValues.keystorePass).toCharArray();
@@ -210,6 +210,8 @@ public class VdsDeploy implements SSHDialog.Sink {
 
             final Certificate cert = ks.getCertificate(alias);
             if (cert == null) {
+                log.info("Alias with name '"+alias+"' not found in "+keystoreFile);
+                log.info("aliases: " + StringUtils.join(EnumerationUtils.toList(ks.aliases()), ','));
                 throw new KeyStoreException(
                     String.format(
                         "Failed to find certificate store '%1$s' using alias '%2$s'",
@@ -341,7 +343,7 @@ public class VdsDeploy implements SSHDialog.Sink {
         new Callable<Object>() { public Object call() throws Exception {
             _parser.cliEnvironmentSet(
                 NetEnv.SSH_KEY,
-                _getEngineSSHPublicKey().replace("\n", "")
+                getEngineSSHPublicKey().replace("\n", "")
             );
             return null;
         }},
