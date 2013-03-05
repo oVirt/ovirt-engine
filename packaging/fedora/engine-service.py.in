@@ -20,13 +20,13 @@
 # description: oVirt Engine
 # pidfile: /var/run/ovirt-engine.pid
 
-import configobj
 import errno
 import glob
 import grp
 import optparse
 import os
 import pwd
+import re
 import resource
 import shutil
 import signal
@@ -86,20 +86,69 @@ engineServerLogFile = None
 # Helper class to simplify getting values from the configuration, specially
 # from the template used to generate the application server configuration
 # file:
-class Config(configobj.ConfigObj):
+class Config():
+    # Compile regular expressions:
+    COMMENT_EXPR = re.compile(r"\s*#.*$")
+    BLANK_EXPR = re.compile(r"^\s*$")
+    VALUE_EXPR = re.compile(r"^\s*(\w+)\s*=\s*(.*?)\s*$")
+    REF_EXPR = re.compile(r"\$\{(\w+)\}")
+
     def __init__(self, files):
-        # Initialize ourselves as an empty configuration object:
-        configobj.ConfigObj.__init__(self)
+        # Save the list of files:
+        self.files = files
+
+        # Start with an empty set of values:
+        self.values = {}
 
         # Merge all the given configuration files, in the same order
         # given, so that the values in one file are overriden by values
         # in files appearing later in the list:
-        for file in files:
-            config = configobj.ConfigObj(file)
-            self.merge(config)
+        for file in self.files:
+            self.loadFile(file)
+
+    def loadFile(self, file):
+        with open(file, "r") as fd:
+            for line in fd:
+                self.loadLine(line)
+
+    def loadLine(self, line):
+        # Remove comments:
+        commentMatch = Config.COMMENT_EXPR.search(line)
+        if commentMatch is not None:
+            line = line[:commentMatch.start()] + line[commentMatch.end():]
+
+        # Skip empty lines:
+        emptyMatch = Config.BLANK_EXPR.search(line)
+        if emptyMatch is not None:
+            return
+
+        # Separate name from value:
+        keyValueMatch = Config.VALUE_EXPR.search(line)
+        if keyValueMatch is None:
+            return
+        key = keyValueMatch.group(1)
+        value = keyValueMatch.group(2)
+
+        # Strip quotes from value:
+        if len(value) >= 2 and value[0] == '"' and value[-1] == '"':
+            value = value[1:-1]
+
+        # Expand references to other parameters:
+        while True:
+            refMatch = Config.REF_EXPR.search(value)
+            if refMatch is None:
+                break
+            refKey = refMatch.group(1)
+            refValue = self.values.get(refKey)
+            if refValue is None:
+                break
+            value = value[:refMatch.start()] + refValue + value[refMatch.end():]
+
+        # Update the values:
+        self.values[key] = value
 
     def getString(self, name):
-        text = self.get(name)
+        text = self.values.get(name)
         if text is None:
             raise Exception("The parameter \"%s\" doesn't have a value." % name)
         return text

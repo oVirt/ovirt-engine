@@ -1,24 +1,28 @@
 package org.ovirt.engine.core.utils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
-import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
 /**
  * This class stores the local configuration (understanding local as the
- * configuration of the local machine, as oposed to the global configuration
+ * configuration of the local machine, as opposed to the global configuration
  * stored in the database) of the engine loaded from the file specified by the
  * <code>ENGINE_VARS</code> environment variable.
  */
@@ -26,9 +30,15 @@ public class LocalConfig {
     // The log:
     private static final Logger log = Logger.getLogger(LocalConfig.class);
 
-    // Default files for defaults and overriden values:
+    // Default files for defaults and overridden values:
     private static final String DEFAULTS_PATH = "/usr/share/ovirt-engine/conf/engine.conf.defaults";
     private static final String VARS_PATH = "/etc/ovirt-engine/engine.conf";
+
+    // Compile regular expressions:
+    private static final Pattern COMMENT_EXPR = Pattern.compile("\\s*#.*$");
+    private static final Pattern BLANK_EXPR = Pattern.compile("^\\s*$");
+    private static final Pattern VALUE_EXPR = Pattern.compile("^\\s*(\\w+)\\s*=\\s*(.*?)\\s*$");
+    private static final Pattern REF_EXPR = Pattern.compile("\\$\\{(\\w+)\\}");
 
     // This is a singleton and this is the instance:
     private static final LocalConfig instance = new LocalConfig();
@@ -38,7 +48,7 @@ public class LocalConfig {
     }
 
     // The properties object storing the current values of the parameters:
-    private Properties values = new Properties();
+    private Map<String, String> values = new HashMap<String, String>();
 
     private LocalConfig() {
         // This is the list of configuration files that will be loaded and
@@ -54,7 +64,7 @@ public class LocalConfig {
         File defaultsFile = new File(defaultsPath);
         configFiles.add(defaultsFile);
 
-        // Locate the overriden values file and add it to the list:
+        // Locate the overridden values file and add it to the list:
         String varsPath = System.getenv("ENGINE_VARS");
         if (varsPath == null) {
             varsPath = VARS_PATH;
@@ -105,12 +115,15 @@ public class LocalConfig {
         // Dump the properties to the log (this should probably be DEBUG, but as
         // it will usually happen only once, during the startup, is not that a
         // problem to use INFO):
-        @SuppressWarnings("unchecked")
-        Enumeration<String> keys = (Enumeration<String>) values.propertyNames();
-        while (keys.hasMoreElements()) {
-            String key = keys.nextElement();
-            String value = values.getProperty(key);
-            log.info("Value of property \"" + key + "\" is \"" + value + "\".");
+        if (log.isInfoEnabled()) {
+            Set<String> keys = values.keySet();
+            List<String> list = new ArrayList<String>(keys.size());
+            list.addAll(keys);
+            Collections.sort(list);
+            for (String key : list) {
+                String value = values.get(key);
+                log.info("Value of property \"" + key + "\" is \"" + value + "\".");
+            }
         }
     }
 
@@ -129,10 +142,13 @@ public class LocalConfig {
         }
 
         // Load the file:
-        Reader reader = null;
+        BufferedReader reader = null;
         try {
-            reader = new FileReader(file);
-            values.load(reader);
+            reader = new BufferedReader(new FileReader(file));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                loadLine(line);
+            }
             log.info("Loaded file \"" + file.getAbsolutePath() + "\".");
         }
         catch (IOException exception) {
@@ -152,6 +168,56 @@ public class LocalConfig {
     }
 
     /**
+     * Load the contents of a line from a properties file, expanding
+     * references to variables.
+     *
+     * @param line the line from the properties file
+     */
+    private void loadLine(String line) throws IOException {
+        // Remove comments:
+        Matcher commentMatch = COMMENT_EXPR.matcher(line);
+        if (commentMatch.find()) {
+            line = line.substring(0, commentMatch.start()) + line.substring(commentMatch.end());
+        }
+
+        // Skip empty lines:
+        Matcher blankMatch = BLANK_EXPR.matcher(line);
+        if (blankMatch.find()) {
+            return;
+        }
+
+        // Separate name from value:
+        Matcher keyValueMatch = VALUE_EXPR.matcher(line);
+        if (!keyValueMatch.find()) {
+            return;
+        }
+        String key = keyValueMatch.group(1);
+        String value = keyValueMatch.group(2);
+
+        // Strip quotes from value:
+        if (value.length() >= 2 && value.startsWith("\"") && value.endsWith("\"")) {
+            value = value.substring(1, value.length() - 1);
+        }
+
+        // Expand references to other parameters:
+        for (;;) {
+            Matcher refMatch = REF_EXPR.matcher(value);
+            if (!refMatch.find()) {
+                break;
+            }
+            String refKey = refMatch.group(1);
+            String refValue = values.get(refKey);
+            if (refValue == null) {
+                break;
+            }
+            value = value.substring(0, refMatch.start()) + refValue + value.substring(refMatch.end());
+        }
+
+        // Update the values:
+        values.put(key, value);
+    }
+
+    /**
      * Get the value of a property given its name.
      *
      * @param key the name of the property
@@ -160,7 +226,7 @@ public class LocalConfig {
      *     value
      */
     public String getProperty(String key) {
-        String value = values.getProperty(key);
+        String value = values.get(key);
         if (value == null) {
             // Loudly alert in the log and throw an exception:
             String message = "The property \"" + key + "\" doesn't have a value.";
@@ -171,7 +237,7 @@ public class LocalConfig {
             // a serious error:
             // System.exit(1)
         }
-        return values.getProperty(key);
+        return values.get(key);
     }
 
     // Accepted values for boolean properties (please keep them sorted as we use

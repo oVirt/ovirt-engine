@@ -118,7 +118,6 @@ Requires: mod_ssl
 Requires: ntp
 Requires: openssl
 Requires: policycoreutils-python
-Requires: python-configobj
 Requires: python-cheetah
 Requires: ovirt-host-deploy-java
 Requires: xz
