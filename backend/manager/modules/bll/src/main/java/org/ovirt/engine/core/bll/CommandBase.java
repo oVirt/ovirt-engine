@@ -1637,10 +1637,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     /**
-     * Add validation message and return false. See {@link #addCanDoActionMessage(String)}
-     * @param message   the message to add
+     * Add validation message and return false.
      *
+     * @param message   the message to add
      * @return  false always
+     * @see {@link #addCanDoActionMessage(String)}
      */
     protected final boolean failCanDoAction(VdcBllMessages message) {
         addCanDoActionMessage(message);
