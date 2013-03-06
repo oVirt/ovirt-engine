@@ -122,7 +122,6 @@ Requires: python-cheetah
 Requires: ovirt-host-deploy-java
 Requires: xz
 Requires: yum-plugin-versionlock
-Requires: ovirt-engine-cli
 
 # For local database:
 Requires: postgresql-server >= 8.4.7
@@ -238,9 +237,10 @@ Summary: All-in-one plugin for %{product_name_short}'s setup
 Group: Virtualization/Management
 Requires: %{name}-setup
 Requires: %{name}-sdk >= 3.1.0.6
-Requires: vdsm
-Requires: ovirt-host-deploy-offline
 Requires: openssh-server
+Requires: ovirt-engine-cli
+Requires: ovirt-host-deploy-offline
+Requires: vdsm
 
 %description setup-plugin-allinone
 All-in-one plugin for %{product_name_short}'s setup
