@@ -83,26 +83,26 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                 new TextColumnWithTooltip<GlusterVolumeEntity>() {
                     @Override
                     public String getValue(GlusterVolumeEntity object) {
-                        String transportTypes = "";//$NON-NLS-1$
+                        StringBuilder transportTypes = new StringBuilder();
                         Iterator<TransportType> iterator = object.getTransportTypes().iterator();
                         while (iterator.hasNext())
                         {
                             TransportType transportType = iterator.next();
                             if (transportTypeTranslator.containsKey(transportType))
                             {
-                                transportTypes += transportTypeTranslator.get(transportType);
+                                transportTypes.append(transportTypeTranslator.get(transportType));
                             }
                             else
                             {
-                                transportTypes += transportType.toString();
+                                transportTypes.append(transportType.toString());
                             }
 
                             if (iterator.hasNext())
                             {
-                                transportTypes += ", ";//$NON-NLS-1$
+                                transportTypes.append(", "); //$NON-NLS-1$
                             }
                         }
-                        return transportTypes;
+                        return transportTypes.toString();
                     }
 
                 };
