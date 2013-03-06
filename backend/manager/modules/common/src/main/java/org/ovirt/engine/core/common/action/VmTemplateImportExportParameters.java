@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.compat.Guid;
 
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 
 public class VmTemplateImportExportParameters extends VmTemplateParametersBase implements java.io.Serializable {
     private static final long serialVersionUID = -3811237640112907464L;

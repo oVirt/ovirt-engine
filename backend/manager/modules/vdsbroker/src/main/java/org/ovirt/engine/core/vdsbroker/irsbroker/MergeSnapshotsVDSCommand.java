@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.asynctasks.*;
-import org.ovirt.engine.core.common.vdscommands.*;
+import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
+import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.vdscommands.MergeSnapshotsVDSCommandParameters;
+import org.ovirt.engine.core.compat.Guid;
 
 public class MergeSnapshotsVDSCommand<P extends MergeSnapshotsVDSCommandParameters> extends IrsCreateCommand<P> {
     public MergeSnapshotsVDSCommand(P parameters) {

@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import org.ovirt.engine.core.common.vdscommands.*;
+import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
 
 public class DisconnectStoragePoolVDSCommand<P extends DisconnectStoragePoolVDSCommandParameters>
         extends VdsBrokerCommand<P> {

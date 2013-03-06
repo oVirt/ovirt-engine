@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.dal.dbbroker.*;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class DestroyStoragePoolVDSCommand<P extends IrsBaseVDSCommandParameters> extends IrsBrokerCommand<P> {
     public DestroyStoragePoolVDSCommand(P parameters) {

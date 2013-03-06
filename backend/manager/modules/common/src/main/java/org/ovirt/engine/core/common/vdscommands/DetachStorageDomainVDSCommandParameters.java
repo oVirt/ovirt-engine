@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.Guid;
 
 public class DetachStorageDomainVDSCommandParameters extends DeactivateStorageDomainVDSCommandParameters {
     public DetachStorageDomainVDSCommandParameters(Guid storagePoolId, Guid storageDomainId,
