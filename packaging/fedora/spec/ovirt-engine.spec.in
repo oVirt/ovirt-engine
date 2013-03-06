@@ -1,8 +1,22 @@
+# Enable/disable features according to the type of distribution:
+%if 0%{?fedora}
+%global install_systemd 1
+%global install_systemv 0
+%global install_poms 1
+%global require_maven 1
+%endif
+
+%if 0%{?rhel}
+%global install_systemd 0
+%global install_systemv 1
+%global install_poms 0
+%global require_maven 0
+%endif
+
 # Settings
 %global product_name oVirt Engine
 %global product_name_short oVirt Engine
 %global user_description oVirt Manager
-%global install_poms 1
 
 # Short names for engine directories:
 %global engine_name ovirt-engine
@@ -103,7 +117,9 @@ BuildRequires: dos2unix
 BuildRequires: java-devel
 BuildRequires: jpackage-utils
 BuildRequires: make
+%if %{require_maven}
 BuildRequires: maven
+%endif
 BuildRequires: unzip
 
 # Run time requirements (most of these requirements should be
@@ -336,10 +352,18 @@ done
 %endif
 
 # Install the systemd files:
+%if %{install_systemd}
 install -dm 755 %{buildroot}%{_unitdir}
 install -m 644 packaging/fedora/engine-service.systemd %{buildroot}%{_unitdir}/%{engine_name}.service
 install -dm 755 %{buildroot}%{_sysconfdir}/tmpfiles.d
 install -m 644 packaging/resources/ovirt-tmpfilesd %{buildroot}%{_sysconfdir}/tmpfiles.d/ovirt-engine.conf
+%endif
+
+# Install System V init scripts:
+%if %{install_systemv}
+install -dm 755 %{buildroot}%{_sysconfdir}/rc.d/init.d
+ln -s %{engine_data}/service/engine-service.py %{buildroot}%{_sysconfdir}/rc.d/init.d/ovirt-engine
+%endif
 
 
 %preun
@@ -400,7 +424,9 @@ fi
 
 # Misc configuration files:
 %{engine_data}/conf
+%if %{install_systemd}
 %{_sysconfdir}/tmpfiles.d/ovirt-engine.conf
+%endif
 
 # Engine configuration files:
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_etc}
@@ -412,7 +438,12 @@ fi
 %dir %{_sysconfdir}/sysconfig/%{engine_name}.d
 %{engine_data}/service
 %{_bindir}/engine-service
+%if %{install_systemd}
 %{_unitdir}/%{engine_name}.service
+%endif
+%if %{install_systemv}
+%{_initddir}/ovirt-engine
+%endif
 
 # Jar files used by all the components:
 %dir %{engine_java}
