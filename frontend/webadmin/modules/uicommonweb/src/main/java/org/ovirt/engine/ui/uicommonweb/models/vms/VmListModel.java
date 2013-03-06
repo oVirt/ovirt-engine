@@ -1828,6 +1828,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         tempVar.setKernelParams(vm.getKernelParams());
         tempVar.setDedicatedVmForVds(vm.getDedicatedVmForVds());
         tempVar.setMigrationSupport(vm.getMigrationSupport());
+        tempVar.setVncKeyboardLayout(vm.getVncKeyboardLayout());
 
         VM newvm = tempVar;
 
@@ -2410,6 +2411,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         getcurrentVm().setCpuPinning((String) model.getCpuPinning()
                 .getEntity());
+        getcurrentVm().setVncKeyboardLayout((String) model.getVncKeyboardLayout().getSelectedItem());
 
         if ((Boolean) model.getIsAutoAssign().getEntity()) {
             getcurrentVm().setDedicatedVmForVds(null);

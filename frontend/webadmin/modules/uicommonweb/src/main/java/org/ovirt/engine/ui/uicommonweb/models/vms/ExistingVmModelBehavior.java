@@ -146,6 +146,8 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         getModel().getCustomPropertySheet().setEntity(vm.getCustomProperties());
         getModel().getCpuPinning().setEntity(vm.getCpuPinning());
 
+        getModel().getVncKeyboardLayout().setSelectedItem(vm.getVncKeyboardLayout());
+
         if (vm.isInitialized())
         {
             getModel().getTimeZone()

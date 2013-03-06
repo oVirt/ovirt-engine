@@ -262,6 +262,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     public ListModelListBoxEditor<Object> displayProtocolEditor;
 
     @UiField(provided = true)
+    @Path(value = "vncKeyboardLayout.selectedItem")
+    @WithElementId("vncKeyboardLayout")
+    public ListModelListBoxEditor<Object> vncKeyboardLayoutEditor;
+
+    @UiField(provided = true)
     @Path(value = "usbPolicy.selectedItem")
     @WithElementId("usbPolicy")
     public ListModelListBoxEditor<Object> usbSupportEditor;
@@ -634,6 +639,21 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
             }
         });
 
+        vncKeyboardLayoutEditor = new ListModelListBoxEditor<Object>(new AbstractRenderer<Object>() {
+
+            final String globalLayout = (String)AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.VncKeyboardLayout);
+
+            @Override
+            public String render(Object object) {
+                if (object == null) {
+                    return messages.globalVncKeyboardLayoutCaption(globalLayout);
+                } else {
+                    return object.toString();
+                }
+            }
+
+        });
+
         // Host Tab
         specificHost = new RadioButton("runVmOnHostGroup"); //$NON-NLS-1$
         isAutoAssignEditor = new EntityModelRadioButtonEditor("runVmOnHostGroup"); //$NON-NLS-1$
@@ -714,6 +734,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         // Console Tab
         consoleTab.setLabel(constants.consoleVmPopup());
         displayProtocolEditor.setLabel(constants.protocolVmPopup());
+        vncKeyboardLayoutEditor.setLabel(constants.vncKeyboardLayoutVmPopup());
         usbSupportEditor.setLabel(constants.usbPolicyVmPopup());
         numOfMonitorsEditor.setLabel(constants.monitorsVmPopup());
         allowConsoleReconnectEditor.setLabel(constants.allowConsoleReconnect());
@@ -1076,6 +1097,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         // ==Console Tab==
         nextTabIndex = consoleTab.setTabIndexes(nextTabIndex);
         displayProtocolEditor.setTabIndex(nextTabIndex++);
+        vncKeyboardLayoutEditor.setTabIndex(nextTabIndex++);
         usbSupportEditor.setTabIndex(nextTabIndex++);
         numOfMonitorsEditor.setTabIndex(nextTabIndex++);
         isSmartcardEnabledEditor.setTabIndex(nextTabIndex++);

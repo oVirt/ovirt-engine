@@ -487,6 +487,7 @@ public class PoolListModel extends ListWithDetailsModel
                         desktop.setKernelParams((String) model.getKernel_parameters().getEntity());
                         desktop.setInitrdUrl((String) model.getInitrd_path().getEntity());
                         desktop.setMigrationSupport((MigrationSupport) (model.getMigrationMode().getSelectedItem()));
+                        desktop.setVncKeyboardLayout((String) model.getVncKeyboardLayout().getSelectedItem());
 
                         EntityModel displayProtocolSelectedItem =
                                 (EntityModel) model.getDisplayProtocol().getSelectedItem();

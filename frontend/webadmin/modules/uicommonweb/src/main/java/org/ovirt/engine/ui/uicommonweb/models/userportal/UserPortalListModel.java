@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
@@ -644,6 +645,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         tempVar.setInitrdUrl(vm.getInitrdUrl());
         tempVar.setKernelUrl(vm.getKernelUrl());
         tempVar.setKernelParams(vm.getKernelParams());
+        tempVar.setVncKeyboardLayout(vm.getVncKeyboardLayout());
         VM newvm = tempVar;
 
         EntityModel displayProtocolSelectedItem = (EntityModel) model.getDisplayProtocol().getSelectedItem();
@@ -1337,6 +1339,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         gettempVm().setIsoPath(model.getCdImage().getIsChangable() ? (String) model.getCdImage()
                 .getSelectedItem() : ""); //$NON-NLS-1$
         gettempVm().setAutoStartup((Boolean) model.getIsHighlyAvailable().getEntity());
+        gettempVm().setVncKeyboardLayout((String) model.getVncKeyboardLayout().getSelectedItem());
 
         gettempVm().setInitrdUrl((String) model.getInitrd_path().getEntity());
         gettempVm().setKernelUrl((String) model.getKernel_path().getEntity());

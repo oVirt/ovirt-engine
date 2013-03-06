@@ -100,6 +100,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
 
             getModel().getIsSmartcardEnabled().setEntity(template.isSmartcardEnabled());
             getModel().getIsDeleteProtected().setEntity(template.isDeleteProtected());
+            getModel().getVncKeyboardLayout().setSelectedItem(template.getVncKeyboardLayout());
 
             if (getModel().getVmType() == VmType.Desktop) {
                 getModel().getIsStateless().setEntity(template.isStateless());

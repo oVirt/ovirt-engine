@@ -83,6 +83,8 @@ public enum ConfigurationValues {
     CpuPinMigrationEnabled,
     MigrationSupportForNativeUsb(ConfigAuthType.User),
     MigrationNetworkEnabled,
+    VncKeyboardLayout(ConfigAuthType.User),
+    VncKeyboardLayoutValidValues(ConfigAuthType.User)
     ;
 
     public static enum ConfigAuthType {

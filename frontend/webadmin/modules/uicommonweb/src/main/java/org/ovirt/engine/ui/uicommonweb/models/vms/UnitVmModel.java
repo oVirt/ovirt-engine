@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -117,6 +118,7 @@ public class UnitVmModel extends Model {
             getNumOfMonitors().setIsChangable(false);
             getIsSmartcardEnabled().setIsChangable(false);
             getAllowConsoleReconnect().setIsChangable(false);
+            getVncKeyboardLayout().setIsChangable(false);
 
             // ==Host Tab==
             getIsAutoAssign().setIsChangable(false);
@@ -1023,6 +1025,17 @@ public class UnitVmModel extends Model {
         this.cpuPinning = cpuPinning;
     }
 
+    private ListModel vncKeyboardLayout;
+
+    public ListModel getVncKeyboardLayout() {
+        return vncKeyboardLayout;
+    }
+
+    public void setVncKeyboardLayout(ListModel vncKeyboardLayout) {
+        this.vncKeyboardLayout = vncKeyboardLayout;
+    }
+
+
     public UnitVmModel(VmModelBehaviorBase behavior)
     {
         Frontend.getQueryStartedEvent().addListener(this);
@@ -1055,6 +1068,7 @@ public class UnitVmModel extends Model {
         setIsStateless(new NotChangableForVmInPoolEntityModel());
         setIsSmartcardEnabled(new NotChangableForVmInPoolEntityModel());
         setIsDeleteProtected(new NotChangableForVmInPoolEntityModel());
+        setVncKeyboardLayout(new NotChangableForVmInPoolListModel());
 
         setCdImage(new NotChangableForVmInPoolListModel());
         getCdImage().setIsChangable(false);
@@ -1211,6 +1225,7 @@ public class UnitVmModel extends Model {
         InitMinimalVmMemSize();
         InitMaximalVmMemSize32OS();
         initMigrationMode();
+        initVncKeyboardLayout();
 
         behavior.Initialize(SystemTreeSelectedItem);
     }
@@ -1534,6 +1549,17 @@ public class UnitVmModel extends Model {
         getMigrationMode().setItems(Arrays.asList(MigrationSupport.values()));
     }
 
+    private void initVncKeyboardLayout() {
+
+        final List<String> layouts = (List<String>)AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.VncKeyboardLayoutValidValues);
+        final ArrayList<String> vncKeyboardLayoutItems = new ArrayList<String>();
+        vncKeyboardLayoutItems.add(null);   // null value means the global VncKeyboardLayout from vdc_options will be used
+        vncKeyboardLayoutItems.addAll(layouts);
+        getVncKeyboardLayout().setItems(vncKeyboardLayoutItems);
+
+        getVncKeyboardLayout().setIsAvailable(isVncSelected());
+    }
+
     private void DataCenter_SelectedItemChanged(Object sender, EventArgs args)
     {
         behavior.DataCenter_SelectedItemChanged();
@@ -1636,6 +1662,8 @@ public class UnitVmModel extends Model {
         getUsbPolicy().setIsChangable(type == DisplayType.qxl);
         getIsSmartcardEnabled().setIsChangable(type == DisplayType.qxl);
 
+        getVncKeyboardLayout().setIsAvailable(type == DisplayType.vnc);
+
         UpdateNumOfMonitors();
     }
 
@@ -1667,8 +1695,7 @@ public class UnitVmModel extends Model {
         behavior.coresPerSocketChanged();
     }
 
-    private void UpdateNumOfMonitors()
-    {
+    private boolean isVncSelected() {
         boolean isVnc = false;
 
         if (getDisplayProtocol().getSelectedItem() != null)
@@ -1677,7 +1704,12 @@ public class UnitVmModel extends Model {
             isVnc = displayType == DisplayType.vnc;
         }
 
-        if (isVnc)
+        return isVnc;
+    }
+
+    private void UpdateNumOfMonitors()
+    {
+        if (isVncSelected())
         {
             getNumOfMonitors().setSelectedItem(1);
             getNumOfMonitors().setIsChangable(false);

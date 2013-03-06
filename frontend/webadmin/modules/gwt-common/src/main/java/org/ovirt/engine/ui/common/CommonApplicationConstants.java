@@ -370,6 +370,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Protocol")
     String protocolVmPopup();
 
+    @DefaultStringValue("VNC Keyboard Layout")
+    String vncKeyboardLayoutVmPopup();
+
     @DefaultStringValue("USB Support")
     String usbPolicyVmPopup();
 

@@ -200,6 +200,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         getModel().getIsStateless().setEntity(this.vm.isStateless());
         getModel().getIsDeleteProtected().setEntity(this.vm.isDeleteProtected());
         getModel().getIsSmartcardEnabled().setEntity(this.vm.isSmartcardEnabled());
+        getModel().getVncKeyboardLayout().setSelectedItem(this.vm.getVncKeyboardLayout());
 
         if (!StringHelper.isNullOrEmpty(this.vm.getTimeZone()))
         {

@@ -99,4 +99,7 @@ public interface CommonApplicationMessages extends Messages {
 
     @DefaultMessage("{0} sec")
     String refreshRateSeconds(Integer seconds);
+
+    @DefaultMessage("default [{0}]")
+    String globalVncKeyboardLayoutCaption(String currentDefault);
 }

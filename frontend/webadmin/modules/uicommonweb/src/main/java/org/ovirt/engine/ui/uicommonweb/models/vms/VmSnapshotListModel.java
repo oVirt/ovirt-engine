@@ -575,6 +575,8 @@ public class VmSnapshotListModel extends SearchableListModel
             getcurrentVm().setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
         }
 
+        getcurrentVm().setVncKeyboardLayout((String) model.getVncKeyboardLayout().getSelectedItem());
+
         EntityModel displayProtocolSelectedItem = (EntityModel) model.getDisplayProtocol().getSelectedItem();
         getcurrentVm().setDefaultDisplayType((DisplayType) displayProtocolSelectedItem.getEntity());
 

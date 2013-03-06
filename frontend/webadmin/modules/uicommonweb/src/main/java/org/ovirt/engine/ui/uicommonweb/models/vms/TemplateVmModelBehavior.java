@@ -151,6 +151,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         getModel().getIsStateless().setEntity(this.template.isStateless());
         getModel().getIsDeleteProtected().setEntity(this.template.isDeleteProtected());
         getModel().getIsSmartcardEnabled().setEntity(this.template.isSmartcardEnabled());
+        getModel().getVncKeyboardLayout().setSelectedItem(this.template.getVncKeyboardLayout());
 
         getModel().getKernel_parameters().setEntity(this.template.getKernelParams());
         getModel().getKernel_path().setEntity(this.template.getKernelUrl());

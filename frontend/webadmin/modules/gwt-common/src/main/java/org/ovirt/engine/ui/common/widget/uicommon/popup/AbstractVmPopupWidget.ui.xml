@@ -307,6 +307,7 @@
 				<t:content>
 					<g:FlowPanel>
 						<e:ListModelListBoxEditor ui:field="displayProtocolEditor" />
+						<e:ListModelListBoxEditor ui:field="vncKeyboardLayoutEditor" />
 						<e:ListModelListBoxEditor ui:field="usbSupportEditor" />
 						<e:ListModelListBoxEditor ui:field="numOfMonitorsEditor" />
 						<e:EntityModelCheckBoxEditor ui:field="isSmartcardEnabledEditor" addStyleNames="{style.checkbox}" />
