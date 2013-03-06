@@ -1822,12 +1822,29 @@ def _addIsoDomaintoDB(uuid, description):
 
 def _startNfsServices():
     logging.debug("Enabling the rpcbind & nfs services")
+
+    # The collection of services needed to have NFS working:
+    services = []
+
+    # First we need the rpcbind service:
+    rpcbindService = utils.Service("rpcbind")
+    services.append(rpcbindService)
+
+    # Then we need the NFS service itself, but its name is "nfs-service"
+    # in some distributions like Fedora 18 and just "nfs" in other
+    # distributions like RHEL or CentOS:
+    for nfsServiceName in ["nfs-service", "nfs"]:
+        nfsService = utils.Service(nfsServiceName)
+        if nfsService.available():
+            services.append(nfsService)
+            break
+
+    # Start the services:
     try:
-        for service in ["rpcbind", basedefs.NFS_SERVICE_NAME]:
-            srv = utils.Service(service)
-            srv.autoStart(True)
-            srv.stop(False)
-            srv.start(True)
+        for service in services:
+            service.autoStart(True)
+            service.stop(False)
+            service.start(True)
     except:
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_FAILED_TO_START_NFS_SERVICE)
