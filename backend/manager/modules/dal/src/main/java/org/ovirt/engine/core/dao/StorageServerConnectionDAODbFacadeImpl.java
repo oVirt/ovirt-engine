@@ -40,8 +40,8 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
     }
 
     @Override
-    public List<StorageServerConnections> getAllForStoragePool(Guid pool) {
-        return getCallsHandler().executeReadList("Getstorage_server_connectionsByStoragePoolId",
+    public List<StorageServerConnections> getAllConnectableStorageSeverConnection(Guid pool) {
+        return getCallsHandler().executeReadList("GetAllConnectableStorageSeverConnection",
                 mapper,
                 getCustomMapSqlParameterSource()
                         .addValue("storage_pool_id", pool));

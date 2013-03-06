@@ -73,7 +73,7 @@ public abstract class ConnectHostToStoragePooServerCommandBase<T extends Storage
                 getStorageDomainsByStoragePoolId(allDomains, StorageDomainType.ImportExport);
 
         Set<StorageServerConnections> connections = new HashSet<StorageServerConnections>(
-                DbFacade.getInstance().getStorageServerConnectionDao().getAllForStoragePool(getStoragePool().getId()));
+                DbFacade.getInstance().getStorageServerConnectionDao().getAllConnectableStorageSeverConnection(getStoragePool().getId()));
         if (isoDomains.size() != 0) {
             _isoType = isoDomains.get(0).getStorageType();
             Set<StorageServerConnections> isoConnections =
@@ -105,12 +105,13 @@ public abstract class ConnectHostToStoragePooServerCommandBase<T extends Storage
         _connections = new ArrayList<StorageServerConnections>(connections);
     }
 
-    protected List<StorageDomain> getStorageDomainsByStoragePoolId(List<StorageDomain> allDomains, StorageDomainType type) {
+    protected List<StorageDomain> getStorageDomainsByStoragePoolId(List<StorageDomain> allDomains,
+            StorageDomainType type) {
         List<StorageDomain> domains = new ArrayList<StorageDomain>();
         for (StorageDomain s : allDomains) {
             StorageDomainStatus status = s.getStatus();
             if (s.getStorageDomainType() == type
-                    && (StorageDomainStatus.Active == status || StorageDomainStatus.Unknown == status)) {
+                    && (StorageDomainStatus.Active == status || StorageDomainStatus.Unknown == status || StorageDomainStatus.InActive == status)) {
                 domains.add(s);
             }
         }

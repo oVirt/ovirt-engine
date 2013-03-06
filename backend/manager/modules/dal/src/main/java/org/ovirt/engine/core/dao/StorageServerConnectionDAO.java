@@ -38,13 +38,13 @@ public interface StorageServerConnectionDAO extends DAO {
     List<StorageServerConnections> getAll();
 
     /**
-     * Retrieves all connections for the specified storage pool.
+     * Retrieves all connections of Active/Unknown/InActive domains in the specified storage pool.
      *
      * @param pool
      *            the storage pool
      * @return the list of connections
      */
-    List<StorageServerConnections> getAllForStoragePool(Guid pool);
+    List<StorageServerConnections> getAllConnectableStorageSeverConnection(Guid pool);
 
     /**
      * Retrieves all connections for the specified volume group.

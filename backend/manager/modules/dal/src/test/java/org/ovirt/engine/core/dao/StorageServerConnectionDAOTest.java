@@ -90,8 +90,8 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
      * @return
      */
     @Test
-    public void testgetAllForStoragePoolWithNoConnections() {
-        List<StorageServerConnections> result = dao.getAllForStoragePool(Guid.NewGuid());
+    public void testgetAllConnectableStorageSeverConnectionWithNoConnections() {
+        List<StorageServerConnections> result = dao.getAllConnectableStorageSeverConnection(Guid.NewGuid());
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -101,8 +101,8 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
      * Ensures that a set of records are returned.
      */
     @Test
-    public void testgetAllForStoragePool() {
-        List<StorageServerConnections> result = dao.getAllForStoragePool(EXISTING_STORAGE_POOL_ID);
+    public void testgetAllConnectableStorageSeverConnectionl() {
+        List<StorageServerConnections> result = dao.getAllConnectableStorageSeverConnection(EXISTING_STORAGE_POOL_ID);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());

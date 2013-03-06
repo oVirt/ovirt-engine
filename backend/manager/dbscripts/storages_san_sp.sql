@@ -538,7 +538,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Getstorage_server_connectionsByStoragePoolId(v_storage_pool_id UUID)
+Create or replace FUNCTION GetAllConnectableStorageSeverConnection(v_storage_pool_id UUID)
 RETURNS SETOF storage_server_connections
    AS $procedure$
 BEGIN
@@ -548,12 +548,12 @@ RETURN QUERY SELECT distinct storage_server_connections.*
    INNER JOIN  LUNs ON LUN_storage_server_connection_map.LUN_id = LUNs.LUN_id
    INNER JOIN  storage_domains ON LUNs.volume_group_id = storage_domains.storage
    INNER JOIN  storage_server_connections ON LUN_storage_server_connection_map.storage_server_connection = storage_server_connections.id
-   WHERE     (storage_domains.storage_pool_id = v_storage_pool_id  and storage_domains.status in(0,3))
+   WHERE     (storage_domains.storage_pool_id = v_storage_pool_id  and storage_domains.status in(0,3,4))
    UNION
    SELECT distinct storage_server_connections.*
    FROM         storage_server_connections
    INNER JOIN  storage_domains ON storage_server_connections.id = storage_domains.storage
-   WHERE     (storage_domains.storage_pool_id = v_storage_pool_id and storage_domains.status in(0,3));
+   WHERE     (storage_domains.storage_pool_id = v_storage_pool_id and storage_domains.status in(0,3,4));
 END; $procedure$
 LANGUAGE plpgsql;
 
