@@ -196,10 +196,10 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                 if (waitForStatus(getVds().getName(), getParameters().getAction(), FenceAgentOrder.Primary)) {
                     handleSpecificCommandActions();
                 } else {
-                    handleWaitFailure(lastStatus);
+                    handleWaitFailure(lastStatus, FenceAgentOrder.Primary);
                 }
             } else {
-                handleError(lastStatus, vdsReturnValue);
+                handleError(lastStatus, vdsReturnValue, FenceAgentOrder.Primary);
             }
         }
     }
@@ -219,24 +219,32 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                 if (waitForStatus(getVds().getName(), getParameters().getAction(), FenceAgentOrder.Primary)) {
                     handleSpecificCommandActions();
                 } else {
-                    vdsReturnValue = executor.Fence(FenceAgentOrder.Secondary);
-                    setFenceSucceeded(vdsReturnValue.getSucceeded());
-                    if (getFenceSucceeded()) {
-                        executor = new FenceExecutor(getVds(), FenceActionType.Status);
-                        if (waitForStatus(getVds().getName(), getParameters().getAction(),FenceAgentOrder.Secondary)) {
-                            handleSpecificCommandActions();
-                        }
-                        else {
-                            handleWaitFailure(lastStatus);
-                        }
-                    }
-                    else {
-                        handleError(lastStatus, vdsReturnValue);
-                    }
+                    tryOtherSequentialAgent(lastStatus);
                 }
             } else {
-                handleError(lastStatus, vdsReturnValue);
+                tryOtherSequentialAgent(lastStatus);
             }
+        }
+    }
+
+    /**
+     * fence the Host via the secondary agent if primary fails
+     * @param lastStatus
+     */
+    private void tryOtherSequentialAgent(VDSStatus lastStatus) {
+        VDSReturnValue vdsReturnValue = executor.Fence(FenceAgentOrder.Secondary);
+        setFenceSucceeded(vdsReturnValue.getSucceeded());
+        if (getFenceSucceeded()) {
+            executor = new FenceExecutor(getVds(), FenceActionType.Status);
+            if (waitForStatus(getVds().getName(), getParameters().getAction(),FenceAgentOrder.Secondary)) {
+                handleSpecificCommandActions();
+            }
+            else {
+                handleWaitFailure(lastStatus, FenceAgentOrder.Secondary);
+            }
+        }
+        else {
+            handleError(lastStatus, vdsReturnValue, FenceAgentOrder.Secondary);
         }
     }
 
@@ -277,12 +285,12 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                     handleSpecificCommandActions();
                     setFenceSucceeded(true);
                 } else {
-                    tryOtherAgent(lastStatus, ecs);
+                    tryOtherConcurrentAgent(lastStatus, ecs);
                 }
                 } catch (InterruptedException e) {
-                    tryOtherAgent(lastStatus, ecs);
+                    tryOtherConcurrentAgent(lastStatus, ecs);
                 } catch (ExecutionException e) {
-                    tryOtherAgent(lastStatus, ecs);
+                    tryOtherConcurrentAgent(lastStatus, ecs);
                 }
 
                 break;
@@ -302,7 +310,8 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                     setFenceSucceeded(true);
                 } else {
                     handleError(lastStatus,
-                            (!primaryResult.isSucceeded()) ? primaryResult.getValue() : secondaryResult.getValue());
+                            !primaryResult.isSucceeded() ? primaryResult.getValue() : secondaryResult.getValue(),
+                            !primaryResult.isSucceeded() ? FenceAgentOrder.Primary : FenceAgentOrder.Secondary);
                 }
                 break;
             default:
@@ -316,7 +325,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         }
     }
 
-    private void tryOtherAgent(VDSStatus lastStatus, ExecutorCompletionService<FenceInvocationResult> ecs)
+    private void tryOtherConcurrentAgent(VDSStatus lastStatus, ExecutorCompletionService<FenceInvocationResult> ecs)
             throws InterruptedException, ExecutionException {
         Future<FenceInvocationResult> f2;
         f2 = ecs.take();
@@ -325,8 +334,8 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             handleSpecificCommandActions();
             setFenceSucceeded(true);
         } else {
-            handleError(lastStatus, primaryResult.getValue());
-            handleError(lastStatus, secondaryResult.getValue());
+            handleError(lastStatus, primaryResult.getValue(),FenceAgentOrder.Primary);
+            handleError(lastStatus, secondaryResult.getValue(), FenceAgentOrder.Secondary);
         }
     }
 
@@ -349,7 +358,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         }
         return fenceInvocationResult;
     }
-    private void handleWaitFailure(VDSStatus lastStatus) {
+    private void handleWaitFailure(VDSStatus lastStatus, FenceAgentOrder order) {
         VDSReturnValue vdsReturnValue;
         // since there is a chance that Agent & Host use the same power supply and
         // a Start command had failed (because we just get success on the script
@@ -357,17 +366,17 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         // before giving up
         if (getParameters().getAction() == FenceActionType.Start) {
             executor = new FenceExecutor(getVds(), FenceActionType.Start);
-            vdsReturnValue = executor.Fence();
+            vdsReturnValue = executor.Fence(order);
             setFenceSucceeded(vdsReturnValue.getSucceeded());
             if (getFenceSucceeded()) {
                 executor = new FenceExecutor(getVds(), FenceActionType.Status);
-                if (waitForStatus(getVds().getName(), FenceActionType.Start, FenceAgentOrder.Primary)) {
+                if (waitForStatus(getVds().getName(), FenceActionType.Start,order)) {
                     handleSpecificCommandActions();
                 } else {
                     setFenceSucceeded(false);
                 }
             } else {
-                handleError(lastStatus, vdsReturnValue);
+                handleError(lastStatus, vdsReturnValue, order);
             }
 
         } else {
@@ -379,13 +388,13 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         }
     }
 
-    private void handleError(VDSStatus lastStatus, final VDSReturnValue vdsReturnValue) {
+    private void handleError(VDSStatus lastStatus, final VDSReturnValue vdsReturnValue, FenceAgentOrder order) {
         if (!((FenceStatusReturnValue) (vdsReturnValue.getReturnValue())).getIsSkipped()) {
             // Since this is a non-transactive command , restore last status
             setSucceeded(false);
-            log.errorFormat("Failed to {0} VDS", getParameters().getAction()
+            log.errorFormat("Failed to {0} VDS using {1} Power Management agent", getParameters().getAction()
                     .name()
-                    .toLowerCase());
+                    .toLowerCase(), order.name());
             throw new VdcBLLException(VdcBllErrors.VDS_FENCE_OPERATION_FAILED);
         } else { // Fence operation was skipped because Host is already in the requested state.
             setStatus(lastStatus);
