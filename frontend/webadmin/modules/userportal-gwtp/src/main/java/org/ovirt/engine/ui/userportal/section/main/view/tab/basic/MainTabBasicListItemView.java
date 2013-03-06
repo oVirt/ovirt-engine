@@ -32,7 +32,6 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -117,8 +116,6 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     private final ApplicationConstants constants;
     private final ErrorPopupManager errorPopupManager;
 
-    private String elementId = DOM.createUniqueId();
-
     private MainTabBasicListItemActionButton runButton;
     private MainTabBasicListItemActionButton shutdownButton;
     private MainTabBasicListItemActionButton suspendButton;
@@ -152,9 +149,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
         MainTabBasicListItemActionButton button = new MainTabBasicListItemActionButton(
                 null, resources.playIcon(), resources.playDisabledIcon(),
                 style.runButtonAdditionalStyle());
-        button.setElementId(ElementIdUtils.createElementId(elementId, "runButton")); //$NON-NLS-1$
         this.runButton = button;
-
         addButtonToPanel(button);
         return button;
     }
@@ -170,9 +165,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
         MainTabBasicListItemActionButton button = new MainTabBasicListItemActionButton(
                 constants.shutdownVm(), resources.stopIcon(), resources.stopDisabledIcon(),
                 style.shutdownButtonAdditionalStyle());
-        button.setElementId(ElementIdUtils.createElementId(elementId, "shutdownButton")); //$NON-NLS-1$
         this.shutdownButton = button;
-
         addButtonToPanel(button);
         return button;
     }
@@ -187,9 +180,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
         MainTabBasicListItemActionButton button = new MainTabBasicListItemActionButton(
                 constants.suspendVm(), resources.pauseIcon(), resources.pauseDisabledIcon(),
                 style.suspendButtonAdditionalStyle());
-        button.setElementId(ElementIdUtils.createElementId(elementId, "suspendButton")); //$NON-NLS-1$
         this.suspendButton = button;
-
         addButtonToPanel(button);
         return button;
     }
@@ -292,12 +283,17 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
 
     @Override
     public void setElementId(String elementId) {
-        this.elementId = elementId;
-
         vmName.getElement().setId(
                 ElementIdUtils.createElementId(elementId, "name")); //$NON-NLS-1$
         vmStatus.getElement().setId(
                 ElementIdUtils.createElementId(elementId, "status")); //$NON-NLS-1$
+
+        runButton.setElementId(
+                ElementIdUtils.createElementId(elementId, "runButton")); //$NON-NLS-1$
+        shutdownButton.setElementId(
+                ElementIdUtils.createElementId(elementId, "shutdownButton")); //$NON-NLS-1$
+        suspendButton.setElementId(
+                ElementIdUtils.createElementId(elementId, "suspendButton")); //$NON-NLS-1$
     }
 
 }
