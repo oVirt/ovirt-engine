@@ -19,10 +19,10 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -38,8 +38,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     private static final long serialVersionUID = 5915267156998835363L;
     private List<PermissionSubject> listPermissionSubjects;
-    private final Disk oldDisk;
-    private final Disk newDisk;
+    protected final Disk oldDisk;
+    protected final Disk newDisk;
     private Map<String, Pair<String, String>> sharedLockMap;
     private Map<String, Pair<String, String>> exclusiveLockMap;
 
@@ -113,8 +113,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             allVmDisks.removeAll(LinqUtils.filter(allVmDisks, new Predicate<Disk>() {
                 @Override
                 public boolean eval(Disk o) {
-                    return o.getId().equals(
-                            oldDisk.getId());
+                    return o.getId().equals(oldDisk.getId());
                 }
             }));
             allVmDisks.add(newDisk);
@@ -289,7 +288,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 newDisk instanceof DiskImage && DiskStorageType.IMAGE == oldDisk.getDiskStorageType();
     }
 
-    private Guid getQuotaId() {
+    protected Guid getQuotaId() {
         if (newDisk != null && isQuotaValidationNeeded()) {
             return ((DiskImage) newDisk).getQuotaId();
         }
