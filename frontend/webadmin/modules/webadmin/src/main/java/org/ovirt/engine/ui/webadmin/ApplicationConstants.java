@@ -773,7 +773,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Select the Events for Notification:")
     String manageEventsPopupTitleLabel();
 
-    @DefaultStringValue("Required actions:")
+    @DefaultStringValue("Devices to configure:")
     String guidePopupRequiredActionsLabel();
 
     @DefaultStringValue("Optional actions:")
