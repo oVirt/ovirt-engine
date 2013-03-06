@@ -404,7 +404,7 @@
 								<e:ListModelListBoxEditor ui:field="cdImageEditor" />
 							</g:HorizontalPanel>
 						</g:FlowPanel>
-						<g:FlowPanel ui:field="linuxBootOptionsPanel" addStyleNames="{style.sectionPanel}">
+						<g:FlowPanel ui:field="linuxBootOptionsPanel" addStyleNames="{style.sectionPanel}" visible="false">
 							<g:Label addStyleNames="{style.sectionLabel}" text="{constants.linuxBootOptionsVmPopup}" />
 							<e:EntityModelTextBoxEditor ui:field="kernel_pathEditor" />
 							<e:EntityModelTextBoxEditor ui:field="initrd_pathEditor" />

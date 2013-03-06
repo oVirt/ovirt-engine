@@ -279,16 +279,16 @@ public class RunOnceModel extends Model
         privateDisplayConsole_Spice_IsSelected = value;
     }
 
-    private boolean privateIsLinux_Unassign_UnknownOS;
+    private boolean privateIsLinuxOS;
 
-    public boolean getIsLinux_Unassign_UnknownOS()
+    public boolean getIsLinuxOS()
     {
-        return privateIsLinux_Unassign_UnknownOS;
+        return privateIsLinuxOS;
     }
 
-    public void setIsLinux_Unassign_UnknownOS(boolean value)
+    public void setIsLinuxOS(boolean value)
     {
-        privateIsLinux_Unassign_UnknownOS = value;
+        privateIsLinuxOS = value;
     }
 
     private boolean privateIsWindowsOS;
@@ -619,7 +619,7 @@ public class RunOnceModel extends Model
         //getCustomProperties().ValidateEntity(new IValidation[] { new CustomPropertyValidation(this.getCustomPropertiesKeysList()) });
         boolean customPropertyValidation = getCustomPropertySheet().validate();
 
-        if (getIsLinux_Unassign_UnknownOS()
+        if (getIsLinuxOS()
                 && ((((String) getKernel_parameters().getEntity()).length() > 0 || ((String) getInitrd_path().getEntity()).length() > 0) && ((String) getKernel_path().getEntity()).length() == 0))
         {
             boolean kernelParamInvalid = false;

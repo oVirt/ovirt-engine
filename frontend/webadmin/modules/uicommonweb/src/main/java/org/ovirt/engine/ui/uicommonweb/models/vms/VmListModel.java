@@ -1392,9 +1392,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.setCustomPropertiesKeysList(this.getCustomPropertiesKeysList()
                 .get(vm.getVdsGroupCompatibilityVersion()));
 
-        model.setIsLinux_Unassign_UnknownOS(AsyncDataProvider.IsLinuxOsType(vm.getVmOs())
-                || vm.getVmOs() == VmOsType.Unassigned || vm.getVmOs() == VmOsType.Other);
-        model.getIsLinuxOptionsAvailable().setEntity(model.getIsLinux_Unassign_UnknownOS());
+        model.setIsLinuxOS(AsyncDataProvider.IsLinuxOsType(vm.getVmOs()));
+        model.getIsLinuxOptionsAvailable().setEntity(model.getIsLinuxOS());
         model.setIsWindowsOS(AsyncDataProvider.IsWindowsOsType(vm.getVmOs()));
         model.getIsVmFirstRun().setEntity(!vm.isInitialized());
         model.getSysPrepDomainName().setSelectedItem(vm.getVmDomain());

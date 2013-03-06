@@ -13,12 +13,12 @@ import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -203,19 +203,19 @@ public class UnitVmModel extends Model {
         }
     }
 
-    private boolean isLinux_Unassign_UnknownOS;
+    private boolean isLinuxOS;
 
-    public boolean getIsLinux_Unassign_UnknownOS()
+    public boolean getIsLinuxOS()
     {
-        return isLinux_Unassign_UnknownOS;
+        return isLinuxOS;
     }
 
-    public void setIsLinux_Unassign_UnknownOS(boolean value)
+    public void setIsLinuxOS(boolean value)
     {
-        if (isLinux_Unassign_UnknownOS != value)
+        if (isLinuxOS != value)
         {
-            isLinux_Unassign_UnknownOS = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsLinux_Unassign_UnknownOS")); //$NON-NLS-1$
+            isLinuxOS = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("IsLinuxOS")); //$NON-NLS-1$
         }
     }
 
@@ -1564,17 +1564,16 @@ public class UnitVmModel extends Model {
         VmOsType osType = (VmOsType) getOSType().getSelectedItem();
 
         setIsWindowsOS(AsyncDataProvider.IsWindowsOsType(osType));
-        setIsLinux_Unassign_UnknownOS(AsyncDataProvider.IsLinuxOsType(osType) || osType == VmOsType.Unassigned
-                || osType == VmOsType.Other);
+        setIsLinuxOS(AsyncDataProvider.IsLinuxOsType(osType));
 
-        getInitrd_path().setIsChangable(getIsLinux_Unassign_UnknownOS());
-        getInitrd_path().setIsAvailable(getIsLinux_Unassign_UnknownOS());
+        getInitrd_path().setIsChangable(getIsLinuxOS());
+        getInitrd_path().setIsAvailable(getIsLinuxOS());
 
-        getKernel_path().setIsChangable(getIsLinux_Unassign_UnknownOS());
-        getKernel_path().setIsAvailable(getIsLinux_Unassign_UnknownOS());
+        getKernel_path().setIsChangable(getIsLinuxOS());
+        getKernel_path().setIsAvailable(getIsLinuxOS());
 
-        getKernel_parameters().setIsChangable(getIsLinux_Unassign_UnknownOS());
-        getKernel_parameters().setIsAvailable(getIsLinux_Unassign_UnknownOS());
+        getKernel_parameters().setIsChangable(getIsLinuxOS());
+        getKernel_parameters().setIsAvailable(getIsLinuxOS());
 
         getDomain().setIsChangable(getIsWindowsOS());
         if (getTimeZone().getSelectedItem() == null) {
@@ -1970,7 +1969,7 @@ public class UnitVmModel extends Model {
             getInitrd_path().setEntity(""); //$NON-NLS-1$
         }
 
-        if (isLinux_Unassign_UnknownOS) {
+        if (isLinuxOS) {
             getKernel_path().ValidateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
             getInitrd_path().ValidateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
             getKernel_parameters().ValidateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });

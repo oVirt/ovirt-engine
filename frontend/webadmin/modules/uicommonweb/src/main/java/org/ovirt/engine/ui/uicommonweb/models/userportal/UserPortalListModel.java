@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -32,7 +33,6 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
@@ -732,10 +732,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         model.getCustomProperties().setEntity(vm.getCustomProperties());
 
-        model.setIsLinux_Unassign_UnknownOS(AsyncDataProvider.IsLinuxOsType(vm.getVmOs())
-                || vm.getVmOs() == VmOsType.Unassigned || vm.getVmOs() == VmOsType.Other);
+        model.setIsLinuxOS(AsyncDataProvider.IsLinuxOsType(vm.getVmOs()));
 
-        model.getIsLinuxOptionsAvailable().setEntity(model.getIsLinux_Unassign_UnknownOS());
+        model.getIsLinuxOptionsAvailable().setEntity(model.getIsLinuxOS());
         model.setIsWindowsOS(AsyncDataProvider.IsWindowsOsType(vm.getVmOs()));
         model.getIsVmFirstRun().setEntity(!vm.isInitialized());
         model.getSysPrepDomainName().setSelectedItem(vm.getVmDomain());

@@ -944,8 +944,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
-                if ("IsLinux_Unassign_UnknownOS".equals(propName)) { //$NON-NLS-1$
-                    linuxBootOptionsPanel.setVisible(vm.getIsLinux_Unassign_UnknownOS());
+                if ("IsLinuxOS".equals(propName)) { //$NON-NLS-1$
+                    linuxBootOptionsPanel.setVisible(vm.getIsLinuxOS());
                 }
             }
         });
