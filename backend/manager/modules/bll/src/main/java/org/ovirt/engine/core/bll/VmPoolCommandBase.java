@@ -248,16 +248,24 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
     protected static boolean canRunPoolVm(Guid vmId, ArrayList<String> messages) {
         VM vm = DbFacade.getInstance().getVmDao().get(vmId);
 
+        if (vm == null) {
+            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND.name());
+            return false;
+        }
+
         // TODO: This is done to keep consistency with VmDAO.getById.
         // It can probably be removed, but that requires some more research
         VmHandler.updateNetworkInterfacesFromDb(vm);
 
-        RunVmParams tempVar = new RunVmParams(vmId);
-        tempVar.setUseVnc(vm.getVmOs().isLinux() || vm.getVmType() == VmType.Server);
-        RunVmParams runVmParams = tempVar;
-        VdsSelector vdsSelector = new VdsSelector(vm,
-                ((runVmParams.getDestinationVdsId()) != null) ? runVmParams.getDestinationVdsId()
-                        : vm.getDedicatedVmForVds(), true, new VdsFreeMemoryChecker(new NonWaitingDelayer()));
+        RunVmParams runVmParams = new RunVmParams(vmId);
+        runVmParams.setUseVnc(vm.getVmOs().isLinux() || vm.getVmType() == VmType.Server);
+        VdsSelector vdsSelector =
+                new VdsSelector(vm,
+                        runVmParams.getDestinationVdsId() != null ?
+                                runVmParams.getDestinationVdsId() : vm.getDedicatedVmForVds(),
+                        true,
+                        new VdsFreeMemoryChecker(new NonWaitingDelayer()));
+
         return VmRunHandler.getInstance().canRunVm(vm,
                 messages,
                 runVmParams,

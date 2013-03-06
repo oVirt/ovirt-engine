@@ -344,11 +344,10 @@ public class RunVmCommandTest {
         initDAOMocks(Collections.<Disk> emptyList(), Collections.<VmDevice> emptyList());
 
         final VM vm = new VM();
-        doReturn(vm).when(command).getVm();
         doReturn(new VdsSelector(vm, new Guid(), true, new VdsFreeMemoryChecker(command))).when(command)
                 .getVdsSelector();
 
-        assertFalse(command.canRunVm());
+        assertFalse(command.canRunVm(vm));
         assertTrue(command.getReturnValue().getCanDoActionMessages().contains("VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK"));
     }
 
@@ -362,11 +361,10 @@ public class RunVmCommandTest {
         final VM vm = new VM();
         vm.setStatus(VMStatus.Up);
         vm.setStoragePoolId(Guid.NewGuid());
-        doReturn(vm).when(command).getVm();
         doReturn(new VdsSelector(vm, new NGuid(), true, new VdsFreeMemoryChecker(command))).when(command)
                 .getVdsSelector();
 
-        assertFalse(command.canRunVm());
+        assertFalse(command.canRunVm(vm));
         assertTrue(command.getReturnValue().getCanDoActionMessages().contains("ACTION_TYPE_FAILED_VM_IS_RUNNING"));
     }
 
@@ -382,9 +380,8 @@ public class RunVmCommandTest {
         when(snapshotsValidator.vmNotDuringSnapshot(vm.getId()))
                 .thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT));
         doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
-        doReturn(vm).when(command).getVm();
 
-        assertFalse(command.canRunVm());
+        assertFalse(command.canRunVm(vm));
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
                 .contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT.name()));
@@ -412,10 +409,9 @@ public class RunVmCommandTest {
         // set stateless and HA
         vm.setStateless(isVmStateless);
         vm.setAutoStartup(autoStartUp);
-        doReturn(vm).when(command).getVm();
 
         command.getParameters().setRunAsStateless(isStatelessParam);
-        boolean canRunVm = command.canRunVm();
+        boolean canRunVm = command.canRunVm(vm);
 
         final List<String> messages = command.getReturnValue().getCanDoActionMessages();
         assertEquals(shouldPass, canRunVm);

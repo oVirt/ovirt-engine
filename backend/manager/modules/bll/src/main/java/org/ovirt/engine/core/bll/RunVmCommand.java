@@ -660,14 +660,12 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
-        boolean canDoAction;
-
         if (vm.getStatus() == VMStatus.Paused) {
             // if VM is paused, it was already checked before that it is capable to run
-            canDoAction = true;
+            return true;
         }
         else {
-            canDoAction = canRunVm() && validateNetworkInterfaces();
+            boolean canDoAction = canRunVm(vm) && validateNetworkInterfaces();
 
             // check for Vm Payload
             if (canDoAction && getParameters().getVmPayload() != null) {
@@ -683,12 +681,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     getVm().setVmPayload(getParameters().getVmPayload());
                 }
             }
+
+            return canDoAction;
         }
-        return canDoAction;
     }
 
-    protected boolean canRunVm() {
-        return getVmRunHandler().canRunVm(getVm(),
+    protected boolean canRunVm(VM vm) {
+        return getVmRunHandler().canRunVm(vm,
                 getReturnValue().getCanDoActionMessages(),
                 getParameters(),
                 getVdsSelector(),

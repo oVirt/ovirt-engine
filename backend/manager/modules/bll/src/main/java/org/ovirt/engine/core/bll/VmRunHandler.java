@@ -57,27 +57,34 @@ public class VmRunHandler {
         return instance;
     }
 
+    /**
+     * This method checks whether the given VM is capable to run.
+     *
+     * @param vm not null {@link VM}
+     * @param message
+     * @param runParams
+     * @param vdsSelector
+     * @param snapshotsValidator
+     * @param vmPropsUtils
+     * @return true if the given VM can run with the given properties, false otherwise
+     */
     public boolean canRunVm(VM vm, ArrayList<String> message, RunVmParams runParams,
             VdsSelector vdsSelector, SnapshotsValidator snapshotsValidator, VmPropertiesUtils vmPropsUtils) {
         boolean retValue = true;
 
-        List<VmPropertiesUtils.ValidationError> validationErrors = null;
+        List<VmPropertiesUtils.ValidationError> validationErrors = vmPropsUtils.validateVMProperties(
+                vm.getVdsGroupCompatibilityVersion(),
+                vm.getStaticData());
 
-        if (vm == null) {
-            retValue = false;
-            message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND.toString());
-        } else if (!(validationErrors =
-                vmPropsUtils.validateVMProperties(vm.getVdsGroupCompatibilityVersion(),
-                        vm.getStaticData())).isEmpty()) {
+        if (!validationErrors.isEmpty()) {
             VmHandler.handleCustomPropertiesError(validationErrors, message);
             retValue = false;
         } else {
-            BootSequence boot_sequence = (runParams.getBootSequence() != null) ? runParams.getBootSequence() : vm
-                    .getDefaultBootSequence();
+            BootSequence boot_sequence = (runParams.getBootSequence() != null) ?
+                    runParams.getBootSequence() : vm.getDefaultBootSequence();
             Guid storagePoolId = vm.getStoragePoolId();
             // Block from running a VM with no HDD when its first boot device is
-            // HD
-            // and no other boot devices are configured
+            // HD and no other boot devices are configured
             List<Disk> vmDisks = getPluggedDisks(vm);
             if (boot_sequence == BootSequence.C && vmDisks.size() == 0) {
                 String messageStr = !vmDisks.isEmpty() ?
