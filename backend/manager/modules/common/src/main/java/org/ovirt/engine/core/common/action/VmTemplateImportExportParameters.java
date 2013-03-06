@@ -3,8 +3,6 @@ package org.ovirt.engine.core.common.action;
 import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.core.common.businessentities.*;
 
-import org.ovirt.engine.core.common.queries.*;
-
 import java.util.List;
 import java.util.LinkedList;
 

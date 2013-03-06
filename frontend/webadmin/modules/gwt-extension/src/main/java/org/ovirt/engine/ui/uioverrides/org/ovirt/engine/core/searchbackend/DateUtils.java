@@ -6,7 +6,6 @@ import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import org.ovirt.engine.core.compat.DateTime;
 
 import java.text.DateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 class DateUtils {

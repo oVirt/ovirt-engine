@@ -20,7 +20,6 @@ package org.ovirt.engine.ui.uicompat.external;
 //package org.apache.commons.codec.binary;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 

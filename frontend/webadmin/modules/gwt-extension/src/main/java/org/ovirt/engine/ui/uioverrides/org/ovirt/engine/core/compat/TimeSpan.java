@@ -2,7 +2,6 @@ package org.ovirt.engine.core.compat;
 
 import java.io.Serializable;
 
-import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 
 public class TimeSpan implements Comparable<TimeSpan>, Serializable
