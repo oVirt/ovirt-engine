@@ -1308,15 +1308,22 @@ class Service():
     def available(self):
         logging.debug("checking if %s service is available", self.name)
 
-        # Checks if systemd service available
-        cmd = [
-            basedefs.EXEC_SYSTEMCTL,
-            "show",
-            "%s.service" % self.name
-        ]
+        # Checks if systemd service available. Note that in systemd a
+        # service can have several aliases, for example, the NFS service
+        # can be used with "nfs" or "nfs-server", but then only the
+        # main name can be used to manipulate the service with commands
+        # like "systemctl enable ...". So we need to check that we are
+        # using the main name, otherwise later methods will use the
+        # wrong name and fail.
         if os.path.exists(basedefs.EXEC_SYSTEMCTL):
+            cmd = [
+                basedefs.EXEC_SYSTEMCTL,
+                "show",
+                "%s.service" % self.name
+            ]
             out, rc = execCmd(cmdList=cmd)
-            sysd = "LoadState=loaded" in out
+            sysd = re.search(r"^Id=%s\.service$" % self.name, out, re.MULTILINE) is not None and \
+                   re.search(r"^LoadState=loaded$", out, re.MULTILINE) is not None
         else:
             sysd = False
 
