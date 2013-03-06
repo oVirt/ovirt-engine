@@ -40,6 +40,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -653,22 +654,34 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         // since canRunVm is static and can not call non-static method isInternalExecution
         getParameters().setIsInternal(isInternalExecution());
 
-        boolean canDoAction = canRunVm();
+        VM vm = getVm();
 
-        canDoAction = canDoAction && validateNetworkInterfaces();
+        if (vm == null) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+        }
 
-        // check for Vm Payload
-        if (canDoAction && getParameters().getVmPayload() != null) {
-            canDoAction = checkPayload(getParameters().getVmPayload(),
-                    getParameters().getDiskPath());
+        boolean canDoAction;
 
-            if (canDoAction && !StringUtils.isEmpty(getParameters().getFloppyPath()) &&
-                    getParameters().getVmPayload().getType() == VmDeviceType.FLOPPY) {
-                addCanDoActionMessage(VdcBllMessages.VMPAYLOAD_FLOPPY_EXCEEDED);
-                canDoAction = false;
-            }
-            else {
-                getVm().setVmPayload(getParameters().getVmPayload());
+        if (vm.getStatus() == VMStatus.Paused) {
+            // if VM is paused, it was already checked before that it is capable to run
+            canDoAction = true;
+        }
+        else {
+            canDoAction = canRunVm() && validateNetworkInterfaces();
+
+            // check for Vm Payload
+            if (canDoAction && getParameters().getVmPayload() != null) {
+                canDoAction = checkPayload(getParameters().getVmPayload(),
+                        getParameters().getDiskPath());
+
+                if (canDoAction && !StringUtils.isEmpty(getParameters().getFloppyPath()) &&
+                        getParameters().getVmPayload().getType() == VmDeviceType.FLOPPY) {
+                    addCanDoActionMessage(VdcBllMessages.VMPAYLOAD_FLOPPY_EXCEEDED);
+                    canDoAction = false;
+                }
+                else {
+                    getVm().setVmPayload(getParameters().getVmPayload());
+                }
             }
         }
         return canDoAction;
