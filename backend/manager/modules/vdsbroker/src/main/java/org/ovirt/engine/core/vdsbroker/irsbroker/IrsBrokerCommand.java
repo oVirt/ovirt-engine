@@ -706,7 +706,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                                RefObject<SpmStatusResult> spmStatus, StoragePoolStatus prevStatus) {
             String returnValue = null;
             if (spmStatus.argvalue == null || spmStatus.argvalue.getSpmStatus() != SpmStatus.SPM) {
-                movePoolToProblematicInDB(storagePool, true);
+                movePoolToProblematicInDB(storagePool);
 
                 selectedVds.argvalue = null;
                 log.infoFormat(
@@ -766,17 +766,15 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             }
         }
 
-        private void movePoolToProblematicInDB(storage_pool storagePool, boolean resetSpmInDB) {
+        private void movePoolToProblematicInDB(storage_pool storagePool) {
             ResourceManager
                     .getInstance()
                     .getEventListener()
                     .storagePoolStatusChange(storagePool.getId(), StoragePoolStatus.Problematic,
                             AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC, VdcBllErrors.ENGINE);
 
-            if (resetSpmInDB) {
-                storagePool.setspm_vds_id(null);
-                DbFacade.getInstance().getStoragePoolDao().update(storagePool);
-            }
+            storagePool.setspm_vds_id(null);
+            DbFacade.getInstance().getStoragePoolDao().update(storagePool);
         }
 
         private SpmStatusResult handleSpmStatusResult(Guid curVdsId,
