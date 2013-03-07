@@ -743,23 +743,25 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
          * @param curVdsId
          */
         private void waitForVdsIfIsInitializing(Guid curVdsId) {
-            if (!Guid.Empty.equals(curVdsId)
-                    && DbFacade.getInstance().getVdsDao().get(curVdsId).getStatus() == VDSStatus.Initializing) {
-                final int DELAY = 5;// 5 Sec
-                int total = 0;
-                Integer maxSecToWait = Config.GetValue(ConfigValues.WaitForVdsInitInSec);
-                String vdsName = DbFacade.getInstance().getVdsDao().get(curVdsId).getName();
-                while (total <= maxSecToWait
-                        && DbFacade.getInstance().getVdsDao().get(curVdsId).getStatus() == VDSStatus.Initializing) {
-                    try {
-                        Thread.sleep(DELAY * 1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        // exit the while block
-                        break;
+            if (!Guid.Empty.equals(curVdsId)) {
+                VDS vds = DbFacade.getInstance().getVdsDao().get(curVdsId);
+                String vdsName = vds.getName();
+                if (vds.getStatus() == VDSStatus.Initializing) {
+                    final int DELAY = 5;// 5 Sec
+                    int total = 0;
+                    Integer maxSecToWait = Config.GetValue(ConfigValues.WaitForVdsInitInSec);
+                    while (total <= maxSecToWait
+                            && DbFacade.getInstance().getVdsDynamicDao().get(curVdsId).getstatus() == VDSStatus.Initializing) {
+                        try {
+                            Thread.sleep(DELAY * 1000);
+                        } catch (InterruptedException e) {
+                            log.errorFormat("Interrupt exception {0}", e.getMessage());
+                            // exit the while block
+                            break;
+                        }
+                        total += DELAY;
+                        log.infoFormat("Waiting to Host {0} to finish initialization for {1} Sec.", vdsName, total);
                     }
-                    total += DELAY;
-                    log.infoFormat("Waiting to Host {0} to finish initialization for {1} Sec.", vdsName, total);
                 }
             }
         }
