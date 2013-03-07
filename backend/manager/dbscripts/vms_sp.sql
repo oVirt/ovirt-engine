@@ -159,8 +159,6 @@ BEGIN
       usage_cpu_percent = v_usage_cpu_percent,usage_mem_percent = v_usage_mem_percent,
       usage_network_percent = v_usage_network_percent,disks_usage = v_disks_usage
       WHERE vm_guid = v_vm_guid;
-
-      PERFORM fn_dwh_update_last_statistics();
 END; $procedure$
 LANGUAGE plpgsql;
 
