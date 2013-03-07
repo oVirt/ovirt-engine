@@ -297,6 +297,7 @@ public class SystemPermissionListModel extends SearchableListModel
         else if (StringHelper.stringsEqual(command.getName(), "OnAttach")) //$NON-NLS-1$
         {
             OnAttach();
+            getForceRefreshCommand().Execute();
         }
         else if (command == getRemoveCommand())
         {
