@@ -195,6 +195,13 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
         return (HibernateVmParameters) ((tempVar instanceof HibernateVmParameters) ? tempVar : null);
     }
 
+    /**
+     * Note: the treatment for {@link CommandActionState#END_SUCCESS} is the same as for {@link CommandActionState#END_FAILURE}
+     * because if after calling {@link HibernateVmCommand#endSuccessfully()} the method {@link HibernateVmCommand#getSucceeded()}
+     * returns true, the command is set not to be logged and this method is not called
+     *
+     * @see {@link HibernateVmCommand#endSuccessfully()}
+     */
     @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
@@ -204,11 +211,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                     : AuditLogType.USER_FAILED_SUSPEND_VM;
 
         case END_SUCCESS:
-            return getHibernateVmParams().getAutomaticSuspend() ? getSucceeded() ? AuditLogType.AUTO_SUSPEND_VM_FINISH_SUCCESS
-                    : AuditLogType.AUTO_SUSPEND_VM_FINISH_FAILURE
-                    : getSucceeded() ? AuditLogType.USER_SUSPEND_VM_FINISH_SUCCESS
-                            : isHibernateVdsProblematic ? AuditLogType.USER_SUSPEND_VM_FINISH_FAILURE_WILL_TRY_AGAIN : AuditLogType.USER_SUSPEND_VM_FINISH_FAILURE;
-
+        case END_FAILURE:
         default:
             return getHibernateVmParams().getAutomaticSuspend() ? AuditLogType.AUTO_SUSPEND_VM_FINISH_FAILURE
                     : isHibernateVdsProblematic ? AuditLogType.USER_SUSPEND_VM_FINISH_FAILURE_WILL_TRY_AGAIN : AuditLogType.USER_SUSPEND_VM_FINISH_FAILURE;
@@ -296,6 +299,12 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
 
     @Override
     protected void endSuccessfully() {
+        endSuccessfullyImpl();
+        // no event should be displayed if the command ended successfully
+        setCommandShouldBeLogged(!getSucceeded());
+    }
+
+    private void endSuccessfullyImpl() {
         if (getVm() != null) {
             if (getVm().getStatus() != VMStatus.SavingState && getVm().getStatus() != VMStatus.Up) {
                 // If the Vm is not in SavingState/Up status, we shouldn't
@@ -345,7 +354,6 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
         }
 
         else {
-            setCommandShouldBeLogged(false);
             log.warn("HibernateVmCommand::EndSuccessfully: Vm is null - not performing full EndAction.");
             setSucceeded(true);
         }
