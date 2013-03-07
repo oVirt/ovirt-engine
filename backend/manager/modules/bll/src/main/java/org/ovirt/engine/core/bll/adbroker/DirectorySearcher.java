@@ -69,7 +69,7 @@ public class DirectorySearcher {
 
         final Domain domain = getDomainObject(domainName);
         if (domain == null) {
-            log.errorFormat("Error in finding LDAP servers for domain {0}", domainName);
+            log.errorFormat("Error in finding LDAP servers for domain {0} using user {1}", domainName, ldapCredentials.getUserName());
             return null;
         }
 
@@ -121,12 +121,14 @@ public class DirectorySearcher {
             Exception translatedException = handlingResponse.getTranslatedException();
             setException(translatedException);
             LdapServersOrderingAlgorithmFactory.getInstance().getOrderingAlgorithm(handlingResponse.getOrderingAlgorithm()).reorder(ldapURI, modifiedLdapServersURIs);
-            log.errorFormat("Failed ldap search server {0} due to {1}. We {2} try the next server",
+            log.errorFormat("Failed ldap search server {0} using user {1} due to {2}. We {3} try the next server",
                     ldapURI,
+                    ldapCredentials.getUserName(),
                     LdapBrokerUtils.getFriendlyExceptionMessage(translatedException),
                     handlingResponse.isTryNextServer() ? "should" : "should not");
-            log.debugFormat("Failed ldap search server {0} due to {1}. We {2} try the next server",
+            log.debugFormat("Failed ldap search server {0} using user {1} due to {2}. We {3} try the next server",
                     ldapURI,
+                    ldapCredentials.getUserName(),
                     translatedException,
                     handlingResponse.isTryNextServer() ? "should" : "should not");
             if (!handlingResponse.isTryNextServer()) {
