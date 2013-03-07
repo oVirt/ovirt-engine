@@ -42,7 +42,7 @@
     <!-- Regular expression that matches types that GWT compiler shouldn't prune (avoid dead code optimization) -->
     <gwt.dontPrune>-Dgwt.dontPrune=org\.ovirt\.engine\.core\.(common|compat)\..*</gwt.dontPrune>
     <!-- This can be overridden by setting this property in your personal settings.xml -->
-    <gwt-plugin.extraJvmArgs>${aspectj.agent} -Xms1024M -Xmx2048M -XX:PermSize=256M -XX:MaxPermSize=256M ${gwt.dontPrune}</gwt-plugin.extraJvmArgs>
+    <gwt-plugin.extraJvmArgs>-Xms1024M -Xmx2048M -XX:PermSize=256M -XX:MaxPermSize=512M</gwt-plugin.extraJvmArgs>
     <!-- Control target browsers for GWT compilation, maps to 'user.agent' deferred binding property in *.gwt.xml -->
     <!-- By default, all browsers are supported, see [gwt-user.jar:com/google/gwt/user/UserAgent.gwt.xml] for a complete list -->
     <gwt.userAgent>ie6,ie8,ie9,gecko1_8,safari,opera</gwt.userAgent>
@@ -160,7 +160,7 @@
             <noServer>true</noServer>
             <bindAddress>0.0.0.0</bindAddress>
             <gen>${gwtGenDirectory}</gen>
-            <extraJvmArgs>${gwt-plugin.extraJvmArgs}</extraJvmArgs>
+            <extraJvmArgs>${aspectj.agent} ${gwt-plugin.extraJvmArgs} ${gwt.dontPrune}</extraJvmArgs>
             <copyWebapp>true</copyWebapp>
             <compileSourcesArtifacts>
               <compileSourcesArtifact>${engine.groupId}:gwt-extension</compileSourcesArtifact>
