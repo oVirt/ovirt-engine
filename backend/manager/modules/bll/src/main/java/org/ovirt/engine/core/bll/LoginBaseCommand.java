@@ -177,7 +177,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
              * the system in order to perform this check. The user is indeed logged in when running every command
              * except the login command
              */
-            if (!checkUserAndGroupsAuthorization(ldapUser.getUserId(), ldapUser.getGroupIds(), getActionType().getActionGroup(), MultiLevelAdministrationHandler.BOTTOM_OBJECT_ID, VdcObjectType.Bottom)) {
+            if (!checkUserAndGroupsAuthorization(ldapUser.getUserId(), ldapUser.getGroupIds(), getActionType().getActionGroup(), MultiLevelAdministrationHandler.BOTTOM_OBJECT_ID, VdcObjectType.Bottom, true)) {
                 addCanDoActionMessage(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
                 return false;
             }

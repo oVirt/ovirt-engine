@@ -424,7 +424,7 @@ LANGUAGE plpgsql;
 
 -- gets entity permissions given the user id, groups, action group id and the object type and object id
 Create or replace FUNCTION get_entity_permissions_for_user_and_groups(v_user_id UUID,v_group_ids text,v_action_group_id INTEGER,v_object_id UUID,v_object_type_id INTEGER,
-OUT v_permission_id UUID)
+v_ignore_everyone BOOLEAN, OUT v_permission_id UUID)
 	-- Add the parameters for the stored procedure here
    AS $procedure$
    DECLARE
@@ -437,7 +437,7 @@ BEGIN
 		-- get allparents of object
    and (object_id in(select id from  fn_get_entity_parents(v_object_id,v_object_type_id)))
 		-- get user and his groups
-   and (ad_element_id = v_everyone_object_id or
+   and ((NOT v_ignore_everyone and ad_element_id = v_everyone_object_id) or
    ad_element_id = v_user_id or ad_element_id in(select * from fnsplitteruuid(v_group_ids)))   LIMIT 1;
 END; $procedure$
 LANGUAGE plpgsql;

@@ -840,16 +840,19 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *            the object to check
      * @param type
      *            the type of the object to check
+     * @param ignoreEveryone
+     *            if true, the "everyone" will not be considered
      * @return <code>true</code> if the current user is authorized to run the action, <code>false</code> otherwise
      */
     protected boolean checkUserAndGroupsAuthorization(Guid userId,
             String groupIds,
             final ActionGroup actionGroup,
             final Guid object,
-            final VdcObjectType type) {
+            final VdcObjectType type,
+            final boolean ignoreEveryone) {
         // Grant if there is matching permission in the database:
         final NGuid permId =
-                getDbFacade().getEntityPermissionsForUserAndGroups(userId, groupIds, actionGroup, object, type);
+                getDbFacade().getEntityPermissionsForUserAndGroups(userId, groupIds, actionGroup, object, type, ignoreEveryone);
         if (permId != null) {
             if (log.isDebugEnabled()) {
                 log.debugFormat("Found permission {0} for user when running {1}, on {2} with id {3}",

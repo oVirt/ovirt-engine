@@ -231,10 +231,10 @@ public class DbFacade {
     }
 
     public NGuid getEntityPermissionsForUserAndGroups(Guid userId, String groupIds, ActionGroup actionGroup, Guid objectId,
-            VdcObjectType vdcObjectType) {
+            VdcObjectType vdcObjectType, boolean ignoreEveryone) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("user_id", userId)
                 .addValue("group_ids", groupIds).addValue("action_group_id", actionGroup.getId()).addValue("object_id", objectId).addValue(
-                        "object_type_id", vdcObjectType.getValue());
+                        "object_type_id", vdcObjectType.getValue()).addValue("ignore_everyone", ignoreEveryone);
 
         String resultKey = "permission_id";
         Map<String, Object> dbResults =

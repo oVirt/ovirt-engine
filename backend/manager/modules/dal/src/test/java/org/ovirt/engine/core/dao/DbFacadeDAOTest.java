@@ -518,11 +518,11 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
     public void testGetEntityPermissionsByUserAndGroups(){
             // Should not return null since the user has the relevant permission
             assertNotNull(dbFacade.getEntityPermissionsForUserAndGroups(Guid.NewGuid(), DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS.toString(), ActionGroup.VM_BASIC_OPERATIONS,
-                    VMT_ID, VdcObjectType.VM));
+                    VMT_ID, VdcObjectType.VM, false));
 
             // Should return null since the user does not has the relevant permission
             assertNull(dbFacade.getEntityPermissionsForUserAndGroups(Guid.NewGuid(), DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS.toString(), ActionGroup.CREATE_TEMPLATE,
-                    VMT_ID, VdcObjectType.VM));
+                    VMT_ID, VdcObjectType.VM, false));
     }
 
 }
