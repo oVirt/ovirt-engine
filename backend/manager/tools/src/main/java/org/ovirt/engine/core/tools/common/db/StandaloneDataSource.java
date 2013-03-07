@@ -6,14 +6,16 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.sql.Statement;
 
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
-import org.ovirt.engine.core.utils.crypt.EncryptionUtils;
 import org.ovirt.engine.core.utils.LocalConfig;
+import org.ovirt.engine.core.utils.crypt.EncryptionUtils;
 
 public class StandaloneDataSource implements DataSource {
     // The log:
@@ -108,9 +110,23 @@ public class StandaloneDataSource implements DataSource {
         wrapper = null;
     }
 
-    private void checkConnection () throws SQLException {
-        if (!connection.isValid(0)) {
-            throw new SQLException("The connection has been closed or invalid.");
+    @SuppressWarnings("resource")
+    private void checkConnection() throws SQLException {
+        Statement statement = null;
+        ResultSet rs = null;
+        try {
+            statement = connection.createStatement();
+            rs = statement.executeQuery("select null");
+            rs.next();
+        }
+        finally {
+            if (rs != null) {
+                rs.close();
+            }
+
+            if (statement != null) {
+                statement.close();
+            }
         }
     }
 
