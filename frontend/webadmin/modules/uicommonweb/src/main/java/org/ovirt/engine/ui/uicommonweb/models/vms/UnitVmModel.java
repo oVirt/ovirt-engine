@@ -1755,10 +1755,6 @@ public class UnitVmModel extends Model {
         }
     }
 
-    public void setMigrationMode(MigrationSupport value) {
-        getMigrationMode().setSelectedItem(value);
-    }
-
     public void SetDataCenter(UnitVmModel model, ArrayList<storage_pool> list)
     {
         if (model.getBehavior().getSystemTreeSelectedItem() != null

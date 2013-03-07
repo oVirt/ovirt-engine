@@ -626,4 +626,10 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String AuditLogType___VDS_HIGH_SWAP_USE();
 
     String AuditLogType___VDS_LOW_SWAP();
+
+    String MigrationSupport___MIGRATABLE();
+
+    String MigrationSupport___IMPLICITLY_NON_MIGRATABLE();
+
+    String MigrationSupport___PINNED_TO_HOST();
 }

@@ -53,7 +53,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
                     template.getstorage_pool_id().getValue());
         }
 
-        getModel().setMigrationMode(template.getMigrationSupport());
+        getModel().getMigrationMode().setSelectedItem(template.getMigrationSupport());
     }
 
     @Override

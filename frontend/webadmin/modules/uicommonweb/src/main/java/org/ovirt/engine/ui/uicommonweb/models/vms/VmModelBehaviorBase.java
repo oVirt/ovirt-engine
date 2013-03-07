@@ -932,6 +932,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateHostPinning(MigrationSupport migrationSupport) {
-        getModel().setMigrationMode(migrationSupport);
+        getModel().getMigrationMode().setSelectedItem(migrationSupport);
     }
 }
