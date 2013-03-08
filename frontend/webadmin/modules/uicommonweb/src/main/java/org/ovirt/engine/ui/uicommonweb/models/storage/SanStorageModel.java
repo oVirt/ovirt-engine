@@ -392,6 +392,19 @@ public abstract class SanStorageModel extends SanStorageModelBase
             }
 
             setItems(items);
+
+            if (!isMultiSelection() && newLuns != null) {
+                addLunModelSelectionEventListeners(newLuns);
+            }
+        }
+    }
+
+    private void addLunModelSelectionEventListeners(List<LunModel> luns) {
+        for (LunModel lun : luns) {
+            // Adding PropertyEventListener to LunModel if needed
+            if (!lun.getPropertyChangedEvent().getListeners().contains(lunModelEventListener)) {
+                lun.getPropertyChangedEvent().addListener(lunModelEventListener);
+            }
         }
     }
 
@@ -425,12 +438,6 @@ public abstract class SanStorageModel extends SanStorageModelBase
                     currLun.setIsSelected(lun.getIsSelected());
                     currLun.setEntity(lun.getEntity());
                 }
-            }
-
-            // Adding PropertyEventListener to LunModel
-            if (!isMultiSelection()) {
-                lun.getPropertyChangedEvent().removeListener(lunModelEventListener);
-                lun.getPropertyChangedEvent().addListener(lunModelEventListener);
             }
         }
     }
