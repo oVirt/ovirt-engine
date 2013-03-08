@@ -19,7 +19,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -244,21 +243,6 @@ public class UpdateVmDiskCommandTest {
         DiskImage disk = createDiskImage();
         disk.setvolumeFormat(volumeFormat);
         disk.setShareable(true);
-        return disk;
-    }
-
-    /**
-     * The following method will create a VirtIO disk , which is marked as unplugged
-     * @return
-     */
-    protected DiskImage cretaeVirtIODisk() {
-        DiskImage disk = new DiskImage();
-        disk.setImageId(diskImageGuid);
-        disk.setDiskInterface(DiskInterface.VirtIO);
-        disk.setPlugged(false);
-        disk.setActive(true);
-        disk.setId(diskImageGuid);
-        when(diskDao.get(diskImageGuid)).thenReturn(disk);
         return disk;
     }
 }
