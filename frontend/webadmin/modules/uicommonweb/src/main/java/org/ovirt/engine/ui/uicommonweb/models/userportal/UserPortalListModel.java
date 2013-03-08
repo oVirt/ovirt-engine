@@ -128,6 +128,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
     private UICommand privateEditCommand;
 
+    @Override
     public UICommand getEditCommand()
     {
         return privateEditCommand;
@@ -1205,11 +1206,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 UserPortalListModel userPortalListModel = (UserPortalListModel) model1;
                 AttachCdModel _attachCdModel = (AttachCdModel) userPortalListModel.getWindow();
                 List<String> images = (List<String>) result;
-                if (images.size() > 0)
-                {
-                    images.add(0, ConsoleModel.EjectLabel);
-                    _attachCdModel.getIsoImage().setItems(images);
-                }
+                images.add(0, ConsoleModel.EjectLabel);
+                _attachCdModel.getIsoImage().setItems(images);
                 if (_attachCdModel.getIsoImage().getIsChangable())
                 {
                     _attachCdModel.getIsoImage().setSelectedItem(Linq.FirstOrDefault(images));

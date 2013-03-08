@@ -2277,11 +2277,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 VmListModel vmListModel2 = (VmListModel) model;
                 AttachCdModel _attachCdModel = (AttachCdModel) vmListModel2.getWindow();
                 ArrayList<String> images = (ArrayList<String>) result;
-                if (images.size() > 0)
-                {
-                    images.add(0, ConsoleModel.EjectLabel);
-                    _attachCdModel.getIsoImage().setItems(images);
-                }
+                images.add(0, ConsoleModel.EjectLabel);
+                _attachCdModel.getIsoImage().setItems(images);
                 if (_attachCdModel.getIsoImage().getIsChangable())
                 {
                     _attachCdModel.getIsoImage().setSelectedItem(Linq.FirstOrDefault(images));
