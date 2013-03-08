@@ -1,13 +1,17 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-@SuppressWarnings("unused")
 public class HostVmListModel extends VmListModel
 {
-
     @Override
     public VDS getEntity()
     {
@@ -20,19 +24,43 @@ public class HostVmListModel extends VmListModel
     }
 
     @Override
+    protected void AsyncSearch()
+    {
+        Search();
+    }
+
+    @Override
+    protected void SyncSearch()
+    {
+        Search();
+    }
+
+    @Override
     protected void OnEntityChanged()
     {
         super.OnEntityChanged();
-        getSearchCommand().Execute();
+        Search();
     }
 
     @Override
     public void Search()
     {
+        // Override standard search query mechanism.
+        // During the migration, the VM should be visible on source host (Migrating From), and also
+        // on destination host (Migrating To)
         if (getEntity() != null)
         {
-            setSearchString("Vms: host.name=" + getEntity().getName()); //$NON-NLS-1$
-            super.Search();
+            AsyncDataProvider.GetVmsRunningOnOrMigratingToVds(new AsyncQuery(this, new INewAsyncCallback() {
+                @Override
+                public void OnSuccess(Object target, Object returnValue) {
+                    @SuppressWarnings("unchecked")
+                    final ArrayList<VM> list = (ArrayList<VM>) returnValue;
+                    final HostVmListModel model = (HostVmListModel) target;
+                    model.setItems(list);
+                }
+            }), getEntity().getId());
+        } else {
+            setItems(new ArrayList<VM>());
         }
     }
 
@@ -43,7 +71,7 @@ public class HostVmListModel extends VmListModel
 
         if (e.PropertyName.equals("vds_name")) //$NON-NLS-1$
         {
-            getSearchCommand().Execute();
+            Search();
         }
     }
 }

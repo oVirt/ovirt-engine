@@ -86,6 +86,7 @@ import org.ovirt.engine.core.common.queries.GetVmPoolByIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
+import org.ovirt.engine.core.common.queries.GetVmsRunningOnOrMigratingToVdsParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
 import org.ovirt.engine.core.common.queries.IsVmPoolWithSameNameExistsParameters;
@@ -1890,6 +1891,22 @@ public final class AsyncDataProvider {
         };
 
         Frontend.RunQuery(VdcQueryType.GetAllVmSnapshotsByVmId, new GetAllVmSnapshotsByVmIdParameters(id), aQuery);
+    }
+
+    public static void GetVmsRunningOnOrMigratingToVds(AsyncQuery aQuery, Guid id) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+                if (source == null) {
+                    return new ArrayList<VM>();
+                }
+                return source;
+            }
+        };
+
+        Frontend.RunQuery(VdcQueryType.GetVmsRunningOnOrMigratingToVds,
+                new GetVmsRunningOnOrMigratingToVdsParameters(id),
+                aQuery);
     }
 
     public static void GetVmDiskList(AsyncQuery aQuery, Guid id) {

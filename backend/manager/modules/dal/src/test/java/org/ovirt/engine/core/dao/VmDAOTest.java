@@ -290,6 +290,17 @@ public class VmDAOTest extends BaseDAOTestCase {
     }
 
     /**
+     * Ensures that it retrieves all VMs running on or migrating to the specified VDS.
+     */
+    @Test
+    public void getAllRunningOnOrMigratingToVds() {
+        List<VM> result = dao.getAllRunningOnOrMigratingToVds(VDS_STATIC_ID);
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+    }
+
+    /**
      * Ensures that all running VMs associated with a storage domain.
      */
     @Test

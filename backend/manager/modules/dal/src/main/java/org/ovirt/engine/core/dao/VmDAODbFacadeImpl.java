@@ -123,6 +123,14 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
     }
 
     @Override
+    public List<VM> getAllRunningOnOrMigratingToVds(Guid id) {
+        return getCallsHandler().executeReadList("GetVmsRunningOnOrMigratingToVds",
+                VMRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("vds_id", id));
+    }
+
+    @Override
     public Map<Guid, VM> getAllRunningByVds(Guid id) {
         HashMap<Guid, VM> map = new HashMap<Guid, VM>();
 

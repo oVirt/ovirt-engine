@@ -826,6 +826,21 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetVmsRunningOnOrMigratingToVds(v_vds_id UUID) RETURNS SETOF vms
+   AS $procedure$
+BEGIN
+    -- use migrating_to_vds column when the VM is in status Migrating From
+    RETURN QUERY SELECT DISTINCT V.* FROM VMS V
+    WHERE V.RUN_ON_VDS=V_VDS_ID OR (V.STATUS = 5 AND V.MIGRATING_TO_VDS=V_VDS_ID)
+    ORDER BY V.VM_NAME;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
+
 Create or replace FUNCTION GetVmsDynamicRunningOnVds(v_vds_id UUID) RETURNS SETOF vm_dynamic
    AS $procedure$
 BEGIN

@@ -99,6 +99,12 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
             @Override
             protected VMStatus getRawValue(VM object) {
+                // check, if the current host is a target for the migration, then override status
+                final VDS vds = getDetailModel().getEntity();
+                if (object.getStatus().equals(VMStatus.MigratingFrom) && vds.getId().equals(object.getMigratingToVds())) {
+                    return VMStatus.MigratingTo;
+                }
+
                 return object.getStatus();
             }
         };
