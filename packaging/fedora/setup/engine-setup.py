@@ -1881,7 +1881,8 @@ def _loadFilesToIsoDomain():
     to the configured nfs shared domain
     """
     #TODO: add more iso files in the future
-    fileList = [basedefs.FILE_VIRTIO_WIN_VFD, basedefs.FILE_VIRTIO_WIN_ISO, basedefs.FILE_RHEV_GUEST_TOOLS_ISO]
+    fileList = basedefs.VIRTIO_WIN_FILE_LIST
+    fileList.append(basedefs.FILE_RHEV_GUEST_TOOLS_ISO)
 
     # Prepare the full path for the iso files
     targetPath = os.path.join(controller.CONF["NFS_MP"], controller.CONF["sd_uuid"], "images", "11111111-1111-1111-1111-111111111111")

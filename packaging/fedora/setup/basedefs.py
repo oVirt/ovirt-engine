@@ -123,8 +123,12 @@ DIR_ENGINE_CONF="%s.d" % FILE_ENGINE_CONF
 FILE_ENGINE_CONF_MAINTENANCE="%s/99-maintenance.conf" % DIR_ENGINE_CONF
 
 # ISO FILES
-FILE_VIRTIO_WIN_VFD="/usr/share/virtio-win/virtio-win.vfd"
-FILE_VIRTIO_WIN_ISO="/usr/share/virtio-win/virtio-win.iso"
+VIRTIO_WIN_FILE_LIST = [
+    "/usr/share/virtio-win/virtio-win_x86.vfd",
+    "/usr/share/virtio-win/virtio-win_amd64.vfd",
+    "/usr/share/virtio-win/virtio-win.iso"
+]
+
 FILE_RHEV_GUEST_TOOLS_ISO="/usr/share/rhev-guest-tools-iso/rhev-tools-setup.iso"
 
 #Locations of kernel configuration files
