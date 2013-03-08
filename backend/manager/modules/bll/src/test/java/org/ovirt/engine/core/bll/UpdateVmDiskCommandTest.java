@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
@@ -8,7 +9,10 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +22,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -72,6 +77,25 @@ public class UpdateVmDiskCommandTest {
     protected UpdateVmDiskCommand<UpdateVmDiskParameters> command;
 
     @Test
+    public void getOtherVmDisks() {
+        UpdateVmDiskParameters parameters = createParameters();
+
+        DiskImage otherDisk = new DiskImage();
+        otherDisk.setId(Guid.NewGuid());
+        otherDisk.setActive(true);
+        when(diskDao.getAllForVm(vmId)).thenReturn(new LinkedList<Disk>(Arrays.asList(parameters.getDiskInfo(),
+                otherDisk)));
+        when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
+        initializeCommand(parameters);
+
+        mockVmStatusDown();
+
+        List<Disk> otherDisks = command.getOtherVmDisks();
+        assertEquals("Wrong number of other disks", 1, otherDisks.size());
+        assertFalse("Wrong other disk", otherDisks.contains(parameters.getDiskInfo()));
+    }
+
+    @Test
     public void canDoActionFailedVMNotFound() throws Exception {
         initializeCommand();
         mockNullVm();
@@ -123,6 +147,35 @@ public class UpdateVmDiskCommandTest {
 
         assertTrue(command.canDoAction());
         assertTrue(oldDisk.getVmSnapshotId() == null);
+    }
+
+    @Test
+    public void canDoActionMakeDiskBootableSuccess() {
+        canDoActionMakeDiskBootable(false);
+    }
+
+    @Test
+    public void canDoActionMakeDiskBootableFail() {
+        canDoActionMakeDiskBootable(true);
+    }
+
+    private void canDoActionMakeDiskBootable(boolean boot) {
+        UpdateVmDiskParameters parameters = createParameters();
+        Disk newDisk = parameters.getDiskInfo();
+        newDisk.setBoot(true);
+
+        DiskImage otherDisk = new DiskImage();
+        otherDisk.setId(Guid.NewGuid());
+        otherDisk.setActive(true);
+        otherDisk.setBoot(boot);
+        when(diskDao.getAllForVm(vmId)).thenReturn(new LinkedList<Disk>(Collections.singleton(otherDisk)));
+        when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
+        initializeCommand(parameters);
+
+        mockVmStatusDown();
+
+        // The command should only succeed if there is no other bootable disk
+        assertEquals(!boot, command.canDoAction());
     }
 
     private void initializeCommand() {
@@ -217,6 +270,7 @@ public class UpdateVmDiskCommandTest {
      */
     protected UpdateVmDiskParameters createParameters() {
         DiskImage diskInfo = new DiskImage();
+        diskInfo.setId(diskImageGuid);
         return new UpdateVmDiskParameters(vmId, diskImageGuid, diskInfo);
     }
 

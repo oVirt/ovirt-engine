@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,8 +29,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -40,6 +40,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     private List<PermissionSubject> listPermissionSubjects;
     protected final Disk oldDisk;
     protected final Disk newDisk;
+    private List<Disk> otherVmDisks;
     private Map<String, Pair<String, String>> sharedLockMap;
     private Map<String, Pair<String, String>> exclusiveLockMap;
 
@@ -109,13 +110,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             List<VmNetworkInterface> allVmInterfaces = DbFacade.getInstance()
                     .getVmNetworkInterfaceDao().getAllForVm(getVmId());
 
-            List<Disk> allVmDisks = getDiskDao().getAllForVm(getVmId());
-            allVmDisks.removeAll(LinqUtils.filter(allVmDisks, new Predicate<Disk>() {
-                @Override
-                public boolean eval(Disk o) {
-                    return o.getId().equals(oldDisk.getId());
-                }
-            }));
+            List<Disk> allVmDisks = new LinkedList<Disk>(getOtherVmDisks());
             allVmDisks.add(newDisk);
             if (!checkPciAndIdeLimit(getVm().getNumOfMonitors(),
                     allVmInterfaces,
@@ -127,9 +122,9 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
         // Validate update boot disk.
         if (newDisk.isBoot()) {
-            VmHandler.updateDisksFromDb(getVm());
+            VmHandler.updateDisksForVm(getVm(), getOtherVmDisks());
             for (Disk disk : getVm().getDiskMap().values()) {
-                if (disk.isBoot() && !disk.getId().equals(oldDisk.getId())) {
+                if (disk.isBoot()) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_BOOT_IN_USE);
                     getReturnValue().getCanDoActionMessages().add(
                             String.format("$DiskName %1$s", disk.getDiskAlias()));
@@ -141,6 +136,21 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         // Set disk alias name in the disk retrieved from the parameters.
         ImagesHandler.setDiskAlias(newDisk, getVm());
         return validateShareableDisk();
+    }
+
+    protected List<Disk> getOtherVmDisks() {
+        if (otherVmDisks == null) {
+            otherVmDisks = getDiskDao().getAllForVm(getVmId());
+            Iterator<Disk> iter = otherVmDisks.iterator();
+            while (iter.hasNext()) {
+                Disk evalDisk = iter.next();
+                if (evalDisk.getId().equals(oldDisk.getId())) {
+                    iter.remove();
+                }
+                break;
+            }
+        }
+        return otherVmDisks;
     }
 
     /**
