@@ -68,7 +68,7 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
     @Ignore
     IscsiLunToTargetView iscsiLunToTargetView;
 
-    double treeCollapsedHeight = 208, treeExpandedHeight = 306, lunsTreeHeight = 345;
+    double treeCollapsedHeight = 207, treeExpandedHeight = 306, lunsTreeHeight = 345;
     double tabContentHeight = 340, tabHeight = 175;
     double textTop = 80, textLeft = -84, textWidth = 100;
 
