@@ -710,7 +710,6 @@ public class CommonModel extends ListModel
 
         AboutModel model = new AboutModel();
         setWindow(model);
-        model.setShowOnlyVersion(false);
         model.setTitle(ConstantsManager.getInstance().getConstants().aboutOVirtEngineTitle());
         model.setHashName("about_rhev_manager"); //$NON-NLS-1$
 

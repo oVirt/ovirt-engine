@@ -1,11 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.common.presenter.AbstractPopupPresenterWidget;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 
@@ -31,13 +27,6 @@ public class AboutPopupPresenterWidget extends AbstractPopupPresenterWidget<Abou
     @Override
     protected void onReveal() {
         super.onReveal();
-
-        AsyncQuery aQuery = new AsyncQuery();
-
-        Frontend.RunPublicQuery(VdcQueryType.GetConfigurationValue,
-                new GetConfigurationValueParameters(ConfigurationValues.VdcVersion,
-                        AsyncDataProvider.getDefaultConfigurationVersion()),
-                aQuery);
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);

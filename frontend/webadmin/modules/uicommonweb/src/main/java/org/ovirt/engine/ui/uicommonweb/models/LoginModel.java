@@ -364,7 +364,6 @@ public class LoginModel extends Model
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().aboutOVirtEngineTitle());
         model.setHashName("about_rhev_manager"); //$NON-NLS-1$
-        model.setShowOnlyVersion(true);
 
         UICommand tempVar = new UICommand("Cancel", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
