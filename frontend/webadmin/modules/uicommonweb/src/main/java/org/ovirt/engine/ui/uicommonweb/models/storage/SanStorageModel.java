@@ -289,13 +289,13 @@ public abstract class SanStorageModel extends SanStorageModelBase
         lunModel.setIsGrayedOut(isIgnoreGrayedOut() ? lun.getDiskId() != null : nonEmpty);
 
         // Adding 'GrayedOutReasons'
-        if (lun.getStorageDomainId() != null) {
-            lunModel.getGrayedOutReasons().add(
-                    messages.lunAlreadyPartOfStorageDomainWarning(lun.getStorageDomainName()));
-        }
-        else if (lun.getDiskId() != null) {
+        if (lun.getDiskId() != null) {
             lunModel.getGrayedOutReasons().add(
                     messages.lunUsedByDiskWarning(lun.getDiskAlias()));
+        }
+        else if (lun.getStorageDomainId() != null) {
+            lunModel.getGrayedOutReasons().add(
+                    messages.lunAlreadyPartOfStorageDomainWarning(lun.getStorageDomainName()));
         }
         else if (lun.getStatus() == LunStatus.Unusable) {
             lunModel.getGrayedOutReasons().add(
