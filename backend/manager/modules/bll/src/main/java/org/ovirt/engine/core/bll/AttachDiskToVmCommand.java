@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
+@LockIdNameAttribute
 public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> extends AbstractDiskVmCommand<T> {
 
     private static final long serialVersionUID = -1686587389737849288L;
@@ -51,58 +52,56 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
 
     @Override
     protected boolean canDoAction() {
-        boolean retValue = true;
         if (disk == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
         }
+
         boolean isImageDisk = disk.getDiskStorageType() == DiskStorageType.IMAGE;
         if (isImageDisk && ((DiskImage) disk).getImageStatus() == ImageStatus.ILLEGAL) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_DISK_OPERATION);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_DISK_OPERATION);
         }
 
-        retValue = acquireLockInternal();
-
-        if (retValue && isImageDisk && ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED) {
+        if (isImageDisk && ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED);
             addCanDoActionMessage(String.format("$%1$s %2$s", "diskAliases", disk.getDiskAlias()));
             return false;
         }
 
-        retValue = retValue && isVmExist() && isVmUpOrDown() && isDiskCanBeAddedToVm(disk)
-                && isDiskPassPciAndIdeLimit(disk);
-
-        if (retValue && getVmDeviceDao().exists(new VmDeviceId(disk.getId(), getVmId()))) {
-            retValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_ALREADY_ATTACHED);
+        if (!isVmExist() || !isVmUpOrDown() || !isDiskCanBeAddedToVm(disk)
+                || !isDiskPassPciAndIdeLimit(disk)) {
+            return false;
         }
-        if (retValue
-                && disk.isShareable()
+
+        if (getVmDeviceDao().exists(new VmDeviceId(disk.getId(), getVmId()))) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_ALREADY_ATTACHED);
+        }
+
+        if (disk.isShareable()
                 && !isVersionSupportedForShareable(disk, getStoragePoolDAO().get(getVm().getStoragePoolId())
                         .getcompatibility_version()
                         .getValue())) {
-            retValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
+            return failCanDoAction(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
         }
-        if (retValue && !disk.isShareable() && disk.getNumberOfVms() > 0) {
-            retValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NOT_SHAREABLE_DISK_ALREADY_ATTACHED);
+
+        if (!disk.isShareable() && disk.getNumberOfVms() > 0) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NOT_SHAREABLE_DISK_ALREADY_ATTACHED);
         }
-        if (retValue && isImageDisk && getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
+
+        if (isImageDisk && getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
                 ((DiskImage) disk).getStorageIds().get(0), getVm().getStoragePoolId())) == null) {
-            retValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
         }
-        if (retValue && isImageDisk) {
-            retValue = validate(new SnapshotsValidator().vmNotDuringSnapshot(getVm().getId()));
+
+        if (isImageDisk && !validate(new SnapshotsValidator().vmNotDuringSnapshot(getVm().getId()))) {
+            return false;
         }
-        if (retValue && getParameters().isPlugUnPlug()
+
+        if (getParameters().isPlugUnPlug()
                 && getVm().getStatus() != VMStatus.Down) {
-            retValue = isOsSupportingHotPlug() && isHotPlugSupported()
+            return isOsSupportingHotPlug() && isHotPlugSupported()
                     && isInterfaceSupportedForPlugUnPlug(disk);
         }
-        return retValue;
+        return true;
     }
 
     @Override
