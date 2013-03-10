@@ -835,6 +835,13 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             {
                 UserPortalListModel userPortalListModel = (UserPortalListModel) model;
                 ArrayList<Disk> vmDisks = (ArrayList<Disk>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                RunOnceModel runOnceModel = (RunOnceModel) userPortalListModel.getWindow();
+
+                if (vmDisks.isEmpty()) {
+                    runOnceModel.getRunAsStateless().setIsChangable(false);
+                    runOnceModel.getRunAsStateless().setChangeProhibitionReason("Diskless Virtual Machine cannot run in stateless mode"); //$NON-NLS-1$
+                    runOnceModel.getRunAsStateless().setEntity(false);
+                }
 
                 boolean hasBootableDisk = false;
                 for (Disk disk : vmDisks) {
@@ -846,8 +853,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
                 if (!hasBootableDisk)
                 {
-                    BootSequenceModel bootSequenceModel =
-                            ((RunOnceModel) userPortalListModel.getWindow()).getBootSequence();
+                    BootSequenceModel bootSequenceModel = runOnceModel.getBootSequence();
                     bootSequenceModel.getHardDiskOption().setIsChangable(false);
                     bootSequenceModel.getHardDiskOption()
                             .setChangeProhibitionReason("Virtual Machine must have at least one bootable disk defined to boot from hard disk."); //$NON-NLS-1$

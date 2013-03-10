@@ -1402,7 +1402,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         RunOnceUpdateFloppy(vm, new ArrayList<String>());
         RunOnceUpdateImages(vm);
         RunOnceUpdateDomains();
-        RunOnceUpdateBootSequence(vm);
+        updateInterfacesRelatedRunOnceData(vm);
+        updateDisksRelatedRunOnceData(vm);
         RunOnceLoadHosts(vm);
 
         UICommand tempVar = new UICommand("OnRunOnce", this); //$NON-NLS-1$
@@ -1442,7 +1443,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.getDisplayProtocol().setSelectedItem(isVncSelected ? vncProtocol : qxlProtocol);
     }
 
-    private void RunOnceUpdateBootSequence(VM vm)
+    private void updateInterfacesRelatedRunOnceData(VM vm)
     {
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -1467,11 +1468,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         };
 
         Frontend.RunQuery(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(vm.getId()), _asyncQuery);
-
-        setIsBootFromHardDiskAllowedForVm(vm);
     }
 
-    private void setIsBootFromHardDiskAllowedForVm(VM vm) {
+    private void updateDisksRelatedRunOnceData(VM vm) {
         AsyncQuery vmDisksQuery = new AsyncQuery();
         vmDisksQuery.setModel(this);
 
@@ -1479,8 +1478,15 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             @Override
             public void OnSuccess(Object model, Object returnValue)
             {
-                VmListModel userPortalListModel = (VmListModel) model;
+                VmListModel vmListModel = (VmListModel) model;
                 ArrayList<Disk> vmDisks = (ArrayList<Disk>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                RunOnceModel runOnceModel = (RunOnceModel) vmListModel.getWindow();
+
+                if (vmDisks.isEmpty()) {
+                    runOnceModel.getRunAsStateless().setIsChangable(false);
+                    runOnceModel.getRunAsStateless().setChangeProhibitionReason("Diskless Virtual Machine cannot run in stateless mode"); //$NON-NLS-1$
+                    runOnceModel.getRunAsStateless().setEntity(false);
+                }
 
                 boolean hasBootableDisk = false;
                 for (Disk disk : vmDisks) {
@@ -1492,8 +1498,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                 if (!hasBootableDisk)
                 {
-                    BootSequenceModel bootSequenceModel =
-                            ((RunOnceModel) userPortalListModel.getWindow()).getBootSequence();
+                    BootSequenceModel bootSequenceModel = runOnceModel.getBootSequence();
                     bootSequenceModel.getHardDiskOption().setIsChangable(false);
                     bootSequenceModel.getHardDiskOption()
                             .setChangeProhibitionReason("Virtual Machine must have at least one bootable disk defined to boot from hard disk."); //$NON-NLS-1$
