@@ -30,7 +30,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
-import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
@@ -186,9 +186,8 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         return getDbFacade().getImageDao();
     }
 
-    @Override
-    protected DiskDao getDiskDao() {
-        return getDbFacade().getDiskDao();
+    protected BaseDiskDao getBaseDiskDao() {
+        return getDbFacade().getBaseDiskDao();
     }
 
     protected SnapshotDao getSnapshotDao() {

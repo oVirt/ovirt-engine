@@ -51,7 +51,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
@@ -265,10 +264,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     @Override
     protected SnapshotDao getSnapshotDao() {
         return DbFacade.getInstance().getSnapshotDao();
-    }
-
-    protected BaseDiskDao getBaseDiskDao() {
-        return DbFacade.getInstance().getBaseDiskDao();
     }
 
     protected DiskLunMapDao getDiskLunMapDao() {

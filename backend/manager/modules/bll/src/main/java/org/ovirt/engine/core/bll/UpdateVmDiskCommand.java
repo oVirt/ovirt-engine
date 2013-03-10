@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -107,8 +106,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     private boolean checkCanPerformRegularUpdate() {
         if (oldDisk.getDiskInterface() != newDisk.getDiskInterface()) {
-            List<VmNetworkInterface> allVmInterfaces = DbFacade.getInstance()
-                    .getVmNetworkInterfaceDao().getAllForVm(getVmId());
+            List<VmNetworkInterface> allVmInterfaces = getVmNetworkInterfaceDao().getAllForVm(getVmId());
 
             List<Disk> allVmDisks = new LinkedList<Disk>(getOtherVmDisks());
             allVmDisks.add(newDisk);
@@ -199,8 +197,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             }
 
             // If disk is not floating, then update its vm snapshot id to the active VM snapshot.
-            ((DiskImage) oldDisk).setVmSnapshotId(DbFacade.getInstance()
-                    .getSnapshotDao()
+            ((DiskImage) oldDisk).setVmSnapshotId(getSnapshotDao()
                     .getId(getVmId(), SnapshotType.ACTIVE)
                     .getValue());
 
@@ -234,7 +231,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 oldDisk.setDiskAlias(newDisk.getDiskAlias());
                 oldDisk.setDiskDescription(newDisk.getDiskDescription());
                 oldDisk.setShareable(newDisk.isShareable());
-                DbFacade.getInstance().getBaseDiskDao().update(oldDisk);
+                getBaseDiskDao().update(oldDisk);
                 if (oldDisk.getDiskStorageType() == DiskStorageType.IMAGE) {
                     DiskImage diskImage = (DiskImage) oldDisk;
                     diskImage.setQuotaId(getQuotaId());
