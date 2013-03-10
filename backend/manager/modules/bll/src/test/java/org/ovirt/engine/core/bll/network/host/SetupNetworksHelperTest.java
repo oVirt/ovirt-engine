@@ -7,6 +7,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -15,27 +16,36 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SetupNetworksHelperTest {
 
     private static final String BOND_NAME = "bond0";
+    private static final String MANAGEMENT_NETWORK_NAME = "management";
+
+    @Rule
+    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.ManagementNetwork,
+            MANAGEMENT_NETWORK_NAME));
 
     @Mock
     private NetworkDao networkDAO;
@@ -195,6 +205,61 @@ public class SetupNetworksHelperTest {
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
 
         validateAndAssertNetworkModified(helper, net);
+    }
+
+    @Test
+    public void managementNetworkChangedCorrectly() {
+        Network net = createNetwork(MANAGEMENT_NETWORK_NAME);
+        mockExistingNetworks(net);
+        VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
+        nic.setBootProtocol(NetworkBootProtocol.STATIC_IP);
+        nic.setAddress(RandomUtils.instance().nextString(10));
+        mockExistingIfaces(nic);
+        nic.setAddress(RandomUtils.instance().nextString(10));
+
+        VDS vds = mock(VDS.class);
+        when(vds.getId()).thenReturn(Guid.Empty);
+        when(vds.getHostName()).thenReturn(RandomUtils.instance().nextString(10));
+        SetupNetworksHelper helper = createHelper(createParametersForNics(nic), vds);
+
+        validateAndAssertNetworkModified(helper, net);
+    }
+
+    @Test
+    public void managementNetworkChangedCorrectlyWhenDhcpSet() {
+        Network net = createNetwork(MANAGEMENT_NETWORK_NAME);
+        mockExistingNetworks(net);
+        VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
+        nic.setBootProtocol(NetworkBootProtocol.DHCP);
+        nic.setAddress(RandomUtils.instance().nextString(10));
+        mockExistingIfaces(nic);
+        nic.setAddress(RandomUtils.instance().nextString(10));
+
+        VDS vds = mock(VDS.class);
+        when(vds.getId()).thenReturn(Guid.Empty);
+        when(vds.getHostName()).thenReturn(RandomUtils.instance().nextString(10));
+        SetupNetworksHelper helper = createHelper(createParametersForNics(nic), vds);
+
+        validateAndAssertNetworkModified(helper, net);
+    }
+
+    @Test
+    public void managementNetworkChangedIncorrectly() {
+        Network net = createNetwork(MANAGEMENT_NETWORK_NAME);
+        mockExistingNetworks(net);
+        VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
+        nic.setBootProtocol(NetworkBootProtocol.STATIC_IP);
+        nic.setAddress(RandomUtils.instance().nextString(10));
+        mockExistingIfaces(nic);
+        nic.setAddress(RandomUtils.instance().nextString(10));
+
+        VDS vds = mock(VDS.class);
+        when(vds.getId()).thenReturn(Guid.Empty);
+        when(vds.getHostName()).thenReturn("1.1.1.1");
+        SetupNetworksHelper helper = createHelper(createParametersForNics(nic), vds);
+
+        validateAndExpectViolation(helper,
+                VdcBllMessages.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_ADDRESS_CANNOT_BE_CHANGED);
     }
 
     /* --- Tests for sync network functionality --- */
@@ -1090,6 +1155,12 @@ public class SetupNetworksHelperTest {
                 violations.contains(violatingEntityMessage));
     }
 
+    private void validateAndExpectViolation(SetupNetworksHelper helper, VdcBllMessages violation) {
+        List<String> violations = helper.validate();
+        assertTrue(MessageFormat.format("Expected violation {0} but only got {1}.", violation, violations),
+                violations.contains(violation.name()));
+    }
+
     private void validateAndAssertNoChanges(SetupNetworksHelper helper) {
         validateAndExpectNoViolations(helper);
         assertNoBondsModified(helper);
@@ -1404,7 +1475,13 @@ public class SetupNetworksHelperTest {
     }
 
     private SetupNetworksHelper createHelper(SetupNetworksParameters params) {
-        SetupNetworksHelper helper = spy(new SetupNetworksHelper(params, Guid.Empty));
+        VDS vds = mock(VDS.class);
+        when(vds.getId()).thenReturn(Guid.Empty);
+        return createHelper(params, vds);
+    }
+
+    private SetupNetworksHelper createHelper(SetupNetworksParameters params, VDS vds) {
+        SetupNetworksHelper helper = spy(new SetupNetworksHelper(params, vds));
 
         when(helper.getVmInterfaceManager()).thenReturn(vmInterfaceManager);
         DbFacade dbFacade = mock(DbFacade.class);

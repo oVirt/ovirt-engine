@@ -68,7 +68,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
             return false;
         }
 
-        helper = new SetupNetworksHelper(getParameters(), vds.getVdsGroupId());
+        helper = new SetupNetworksHelper(getParameters(), vds);
         List<String> validationMesseges = helper.validate();
 
         if (!validationMesseges.isEmpty()) {

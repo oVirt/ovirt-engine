@@ -1234,6 +1234,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The management network '${NetworkName}' must be required, please change the network to be required and try again.")
     String ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_REQUIRED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The management network address cannot be modified without reinstalling the host, since this address was used to create the host's certification.")
+    String ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_ADDRESS_CANNOT_BE_CHANGED();
+
     @DefaultStringValue("The currently used VM Snapshot Image cannot be used in Preview command.")
     String CANNOT_PREIEW_CURRENT_IMAGE();
 

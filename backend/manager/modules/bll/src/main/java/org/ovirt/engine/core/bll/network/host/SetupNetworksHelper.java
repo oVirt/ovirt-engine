@@ -13,10 +13,11 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -24,7 +25,7 @@ import org.ovirt.engine.core.utils.NetworkUtils;
 public class SetupNetworksHelper {
     protected static final String VIOLATING_ENTITIES_LIST_FORMAT = "${0}_LIST {1}";
     private SetupNetworksParameters params;
-    private Guid vdsGroupId;
+    private VDS vds;
     private Map<VdcBllMessages, List<String>> violations = new HashMap<VdcBllMessages, List<String>>();
     private Map<String, VdsNetworkInterface> existingIfaces;
     private Map<String, Network> existingClusterNetworks;
@@ -45,9 +46,9 @@ public class SetupNetworksHelper {
 
     private Map<String, List<NetworkType>> ifacesWithExclusiveNetwork = new HashMap<String, List<NetworkType>>();
 
-    public SetupNetworksHelper(SetupNetworksParameters parameters, Guid vdsGroupId) {
+    public SetupNetworksHelper(SetupNetworksParameters parameters, VDS vds) {
         params = parameters;
-        this.vdsGroupId = vdsGroupId;
+        this.vds = vds;
     }
 
     /**
@@ -223,7 +224,7 @@ public class SetupNetworksHelper {
     private Map<String, Network> getExistingClusterNetworks() {
         if (existingClusterNetworks == null) {
             existingClusterNetworks = Entities.entitiesByName(
-                    getDbFacade().getNetworkDao().getAllForCluster(vdsGroupId));
+                    getDbFacade().getNetworkDao().getAllForCluster(vds.getVdsGroupId()));
         }
 
         return existingClusterNetworks;
@@ -295,6 +296,10 @@ public class SetupNetworksHelper {
                         addViolation(VdcBllMessages.NETWORKS_NOT_IN_SYNC, networkName);
                     }
                 } else if (networkWasModified(iface)) {
+                    if (NetworkUtils.isManagementNetwork(iface.getNetworkName())
+                            && !managementNetworkModifiedCorrectly(iface)) {
+                        addViolation(VdcBllMessages.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_ADDRESS_CANNOT_BE_CHANGED, networkName);
+                    }
                     modifiedNetworks.add(network);
                 }
             } else {
@@ -308,6 +313,26 @@ public class SetupNetworksHelper {
                 }
             }
         }
+    }
+
+    /**
+     * Checks that the management network is configured correctly:
+     * <ul>
+     * <li>If the host was added to the system using its IP address as the computer name for the certification creation,
+     * it is forbidden to modify the IP address without reinstalling the host.</li>
+     * </ul>
+     *
+     * @param iface
+     *            The network interface which carries the management network
+     * @return <code>true</code> if the management network was reconfigured properly
+     */
+    private boolean managementNetworkModifiedCorrectly(VdsNetworkInterface iface) {
+        if (iface.getBootProtocol() == NetworkBootProtocol.STATIC_IP
+                && vds.getHostName().matches(ValidationUtils.IP_PATTERN)) {
+            return StringUtils.equals(vds.getHostName(), iface.getAddress());
+        }
+
+        return true;
     }
 
     private NetworkType determineNetworkType(Integer vlanId, boolean vmNetwork) {

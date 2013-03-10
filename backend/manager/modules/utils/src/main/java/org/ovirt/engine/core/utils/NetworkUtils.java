@@ -189,6 +189,17 @@ public final class NetworkUtils {
      * @return <code>true</code> iff the network is a management network.
      */
     public static boolean isManagementNetwork(Network net) {
-        return Config.<String> GetValue(ConfigValues.ManagementNetwork).equals(net.getName());
+        return isManagementNetwork(net.getName());
+    }
+
+    /**
+     * Determine if the network is management network.
+     *
+     * @param networkName
+     *            The network name to check.
+     * @return <code>true</code> iff the network is a management network.
+     */
+    public static boolean isManagementNetwork(String networkName) {
+        return Config.<String> GetValue(ConfigValues.ManagementNetwork).equals(networkName);
     }
 }
