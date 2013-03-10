@@ -69,8 +69,10 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                     used = object.getGlobalQuotaVdsGroup().getMemSizeMBUsage();
                 } else {
                     for (QuotaVdsGroup quotaVdsGroup : object.getQuotaVdsGroups()) {
-                        allocated += quotaVdsGroup.getMemSizeMB();
-                        used += quotaVdsGroup.getMemSizeMBUsage();
+                        if (!QuotaVdsGroup.UNLIMITED_MEM.equals(quotaVdsGroup.getMemSizeMB())) {
+                            allocated += quotaVdsGroup.getMemSizeMB();
+                            used += quotaVdsGroup.getMemSizeMBUsage();
+                        }
                     }
                 }
                 if (allocated == 0) {
@@ -98,8 +100,10 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                     used = object.getGlobalQuotaVdsGroup().getMemSizeMBUsage();
                 } else {
                     for (QuotaVdsGroup quotaVdsGroup : object.getQuotaVdsGroups()) {
-                        allocated += quotaVdsGroup.getMemSizeMB();
-                        used += quotaVdsGroup.getMemSizeMBUsage();
+                        if (!QuotaVdsGroup.UNLIMITED_MEM.equals(quotaVdsGroup.getMemSizeMB())) {
+                            allocated += quotaVdsGroup.getMemSizeMB();
+                            used += quotaVdsGroup.getMemSizeMBUsage();
+                        }
                     }
                 }
                 value = (int)(allocated-used);
@@ -128,8 +132,10 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                     used = object.getGlobalQuotaVdsGroup().getVirtualCpuUsage();
                 } else {
                     for (QuotaVdsGroup quotaVdsGroup : object.getQuotaVdsGroups()) {
-                        allocated += quotaVdsGroup.getVirtualCpu();
-                        used += quotaVdsGroup.getVirtualCpuUsage();
+                        if (!QuotaVdsGroup.UNLIMITED_VCPU.equals(quotaVdsGroup.getVirtualCpu())) {
+                            allocated += quotaVdsGroup.getVirtualCpu();
+                            used += quotaVdsGroup.getVirtualCpuUsage();
+                        }
                     }
                 }
                 if (allocated == 0) {
@@ -157,8 +163,10 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                     used = object.getGlobalQuotaVdsGroup().getVirtualCpuUsage();
                 } else {
                     for (QuotaVdsGroup quotaVdsGroup : object.getQuotaVdsGroups()) {
-                        allocated += quotaVdsGroup.getVirtualCpu();
-                        used += quotaVdsGroup.getVirtualCpuUsage();
+                        if (!QuotaVdsGroup.UNLIMITED_VCPU.equals(quotaVdsGroup.getVirtualCpu())) {
+                            allocated += quotaVdsGroup.getVirtualCpu();
+                            used += quotaVdsGroup.getVirtualCpuUsage();
+                        }
                     }
                 }
                 value = allocated - used;
@@ -186,8 +194,10 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                     used = object.getGlobalQuotaStorage().getStorageSizeGBUsage();
                 } else {
                     for (QuotaStorage quotaStorage : object.getQuotaStorages()) {
-                        allocated += quotaStorage.getStorageSizeGB();
-                        used += quotaStorage.getStorageSizeGBUsage();
+                        if (!QuotaStorage.UNLIMITED.equals(quotaStorage.getStorageSizeGB())) {
+                            allocated += quotaStorage.getStorageSizeGB();
+                            used += quotaStorage.getStorageSizeGBUsage();
+                        }
                     }
                 }
                 if (allocated == 0) {
@@ -215,8 +225,10 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                     used = object.getGlobalQuotaStorage().getStorageSizeGBUsage();
                 } else {
                     for (QuotaStorage quotaStorage : object.getQuotaStorages()) {
-                        allocated += quotaStorage.getStorageSizeGB();
-                        used += quotaStorage.getStorageSizeGBUsage();
+                        if (!QuotaStorage.UNLIMITED.equals(quotaStorage.getStorageSizeGB())) {
+                            allocated += quotaStorage.getStorageSizeGB();
+                            used += quotaStorage.getStorageSizeGBUsage();
+                        }
                     }
                 }
                 value = allocated - used;
