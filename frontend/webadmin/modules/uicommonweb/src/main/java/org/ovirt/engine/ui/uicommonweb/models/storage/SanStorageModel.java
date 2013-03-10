@@ -392,10 +392,10 @@ public abstract class SanStorageModel extends SanStorageModelBase
             }
 
             setItems(items);
+        }
 
-            if (!isMultiSelection() && newLuns != null) {
-                addLunModelSelectionEventListeners(newLuns);
-            }
+        if (!isMultiSelection() && newLuns != null) {
+            addLunModelSelectionEventListeners(newLuns);
         }
     }
 
