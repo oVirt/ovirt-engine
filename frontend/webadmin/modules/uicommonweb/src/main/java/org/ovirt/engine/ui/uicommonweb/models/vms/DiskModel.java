@@ -467,7 +467,6 @@ public class DiskModel extends Model
         getStorageType().setIsChangable(false);
         getDataCenter().setIsChangable(false);
         getVolumeType().setIsChangable(false);
-        getDiskInterface().setIsChangable(!getDisk().isShareable());
         getSize().setIsChangable(false);
         getSize().setEntity(getDisk().getDiskStorageType() == DiskStorageType.IMAGE ?
                 ((DiskImage) getDisk()).getSizeInGigabytes() :
