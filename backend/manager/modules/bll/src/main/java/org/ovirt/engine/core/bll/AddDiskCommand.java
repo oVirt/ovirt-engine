@@ -90,7 +90,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         if (vm != null) {
             updateDisksFromDb();
             // if user sent drive check that its not in use
-            if (!isDiskCanBeAddedToVm(getParameters().getDiskInfo()) ||
+            if (!isDiskCanBeAddedToVm(getParameters().getDiskInfo(), vm) ||
                     !isDiskPassPciAndIdeLimit(getParameters().getDiskInfo())) {
                 return false;
             }

@@ -110,13 +110,15 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
                 getReturnValue().getCanDoActionMessages());
     }
 
-    protected boolean isDiskCanBeAddedToVm(Disk diskInfo) {
+    protected boolean isDiskCanBeAddedToVm(Disk diskInfo, VM vm) {
         if (diskInfo.isBoot()) {
-            for (Disk disk : getVm().getDiskMap().values()) {
+            for (Disk disk : vm.getDiskMap().values()) {
                 if (disk.isBoot()) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_BOOT_IN_USE);
                     getReturnValue().getCanDoActionMessages().add(
                             String.format("$DiskName %1$s", disk.getDiskAlias()));
+                    getReturnValue().getCanDoActionMessages().add(
+                            String.format("$VmName %1$s", vm.getName()));
                     return false;
                 }
             }

@@ -88,9 +88,9 @@ public class UpdateVmDiskCommandTest {
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
         initializeCommand(parameters);
 
-        mockVmStatusDown();
+        VM vm = mockVmStatusDown();
 
-        List<Disk> otherDisks = command.getOtherVmDisks();
+        List<Disk> otherDisks = command.getOtherVmDisks(vm.getId());
         assertEquals("Wrong number of other disks", 1, otherDisks.size());
         assertFalse("Wrong other disk", otherDisks.contains(parameters.getDiskInfo()));
     }
@@ -178,6 +178,39 @@ public class UpdateVmDiskCommandTest {
         assertEquals(!boot, command.canDoAction());
     }
 
+    @Test
+    public void canDoActionMakeDiskBootableOnOtherVmSuccess() {
+        canDoActionMakeDiskBootableOnOtherVm(false);
+    }
+
+    @Test
+    public void canDoActionMakeDiskBootableOnOtherVmFail() {
+        canDoActionMakeDiskBootableOnOtherVm(true);
+    }
+
+    private void canDoActionMakeDiskBootableOnOtherVm(boolean boot) {
+        UpdateVmDiskParameters parameters = createParameters();
+        Disk newDisk = parameters.getDiskInfo();
+        newDisk.setBoot(true);
+
+        Guid otherVmId = Guid.NewGuid();
+        VM otherVm = new VM();
+        otherVm.setId(otherVmId);
+
+        DiskImage otherDisk = new DiskImage();
+        otherDisk.setId(Guid.NewGuid());
+        otherDisk.setActive(true);
+        otherDisk.setBoot(boot);
+        when(diskDao.getAllForVm(otherVmId)).thenReturn(new LinkedList<Disk>(Collections.singleton(otherDisk)));
+        when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
+        initializeCommand(parameters);
+
+        mockVmStatusDown(otherVm);
+
+        // The command should only succeed if there is no other bootable disk
+        assertEquals(!boot, command.canDoAction());
+    }
+
     private void initializeCommand() {
         initializeCommand(createParameters());
     }
@@ -202,7 +235,7 @@ public class UpdateVmDiskCommandTest {
 
     private void mockNullVm() {
         doReturn(vmDAO).when(command).getVmDAO();
-        mockGetForDisk(null);
+        mockGetForDisk((VM) null);
         mockGetVmsListForDisk(null);
         when(vmDAO.get(command.getParameters().getVmId())).thenReturn(null);
     }
@@ -210,13 +243,15 @@ public class UpdateVmDiskCommandTest {
     /**
      * Mock a VM in status Up
      */
-    protected VM mockVmStatusDown() {
+    protected VM mockVmStatusDown(VM... otherPluggedVMs) {
         VM vm = new VM();
         vm.setStatus(VMStatus.Down);
         vm.setGuestOs("rhel6");
         vm.setId(vmId);
         doReturn(vmDAO).when(command).getVmDAO();
-        mockGetForDisk(vm);
+        List<VM> vms = new LinkedList<VM>(Arrays.asList(otherPluggedVMs));
+        vms.add(vm);
+        mockGetForDisk(vms);
         mockGetVmsListForDisk(vm);
         storage_pool storagePool = mockStoragePool(Version.v3_1);
         vm.setStoragePoolId(storagePool.getId());
@@ -225,8 +260,10 @@ public class UpdateVmDiskCommandTest {
     }
 
     private void mockGetForDisk(VM vm) {
-        List<VM> vms = new ArrayList<VM>();
-        vms.add(vm);
+        mockGetForDisk(Collections.singletonList(vm));
+    }
+
+    private void mockGetForDisk(List<VM> vms) {
         Map<Boolean, List<VM>> vmsMap = new HashMap<Boolean, List<VM>>();
         vmsMap.put(Boolean.TRUE, vms);
         when(vmDAO.getForDisk(diskImageGuid)).thenReturn(vmsMap);

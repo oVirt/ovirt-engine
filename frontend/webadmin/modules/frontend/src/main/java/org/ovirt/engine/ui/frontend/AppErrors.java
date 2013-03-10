@@ -1411,7 +1411,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot create Pool with 0 VMs")
     String VM_POOL_CANNOT_CREATE_WITH_NO_VMS();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Disk ${DiskName} already marked as boot")
+    @DefaultStringValue("Cannot ${action} ${type}. Disk ${DiskName} in VM ${VmName} already marked as boot.")
     String ACTION_TYPE_FAILED_DISK_BOOT_IN_USE();
 
     @DefaultStringValue("Cannot change cpu level when VMs are running.")

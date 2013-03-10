@@ -39,7 +39,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     private List<PermissionSubject> listPermissionSubjects;
     protected final Disk oldDisk;
     protected final Disk newDisk;
-    private List<Disk> otherVmDisks;
+    private Map<Guid, List<Disk>> otherVmDisks = new HashMap<Guid, List<Disk>>();
     private Map<String, Pair<String, String>> sharedLockMap;
     private Map<String, Pair<String, String>> exclusiveLockMap;
 
@@ -76,9 +76,15 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                     return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
                 }
             }
+
+            if (!checkCanPerformRegularUpdate(vmsDiskPluggedTo)) {
+                return false;
+            }
         }
 
-        return checkCanPerformRegularUpdate();
+        // Set disk alias name in the disk retrieved from the parameters.
+        ImagesHandler.setDiskAlias(newDisk, getVm());
+        return validateShareableDisk();
     }
 
 
@@ -104,37 +110,39 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_DISK);
     }
 
-    private boolean checkCanPerformRegularUpdate() {
-        if (oldDisk.getDiskInterface() != newDisk.getDiskInterface()) {
-            List<VmNetworkInterface> allVmInterfaces = getVmNetworkInterfaceDao().getAllForVm(getVmId());
+    private boolean checkCanPerformRegularUpdate(List<VM> vmsDiskPluggedTo) {
+        for (VM vm : vmsDiskPluggedTo) {
+            Guid vmId = vm.getId();
+            if (oldDisk.getDiskInterface() != newDisk.getDiskInterface()) {
+                List<VmNetworkInterface> allVmInterfaces = getVmNetworkInterfaceDao().getAllForVm(vmId);
 
-            List<Disk> allVmDisks = new LinkedList<Disk>(getOtherVmDisks());
-            allVmDisks.add(newDisk);
-            if (!checkPciAndIdeLimit(getVm().getNumOfMonitors(),
-                    allVmInterfaces,
-                    allVmDisks,
-                    getReturnValue().getCanDoActionMessages())) {
-                return false;
+                List<Disk> allVmDisks = new LinkedList<Disk>(getOtherVmDisks(vmId));
+                allVmDisks.add(newDisk);
+                if (!checkPciAndIdeLimit(vm.getNumOfMonitors(),
+                        allVmInterfaces,
+                        allVmDisks,
+                        getReturnValue().getCanDoActionMessages())) {
+                    return false;
+                }
+            }
+
+            // Validate update boot disk.
+            if (newDisk.isBoot()) {
+                VmHandler.updateDisksForVm(vm, getOtherVmDisks(vmId));
+                if (!isDiskCanBeAddedToVm(newDisk, vm)) {
+                    return false;
+                }
             }
         }
 
-        // Validate update boot disk.
-        if (newDisk.isBoot()) {
-            VmHandler.updateDisksForVm(getVm(), getOtherVmDisks());
-            if (!isDiskCanBeAddedToVm(newDisk)) {
-                return false;
-            }
-        }
-
-        // Set disk alias name in the disk retrieved from the parameters.
-        ImagesHandler.setDiskAlias(newDisk, getVm());
-        return validateShareableDisk();
+        return true;
     }
 
-    protected List<Disk> getOtherVmDisks() {
-        if (otherVmDisks == null) {
-            otherVmDisks = getDiskDao().getAllForVm(getVmId());
-            Iterator<Disk> iter = otherVmDisks.iterator();
+    protected List<Disk> getOtherVmDisks(Guid vmId) {
+        List<Disk> disks = otherVmDisks.get(vmId);
+        if (disks == null) {
+            disks = getDiskDao().getAllForVm(vmId);
+            Iterator<Disk> iter = disks.iterator();
             while (iter.hasNext()) {
                 Disk evalDisk = iter.next();
                 if (evalDisk.getId().equals(oldDisk.getId())) {
@@ -143,7 +151,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 break;
             }
         }
-        return otherVmDisks;
+        return disks;
     }
 
     /**
