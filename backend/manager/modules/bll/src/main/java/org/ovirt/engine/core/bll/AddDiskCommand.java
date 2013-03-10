@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.DiskLunMap;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -40,7 +41,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -82,24 +82,29 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     @Override
     protected boolean canDoAction() {
-        boolean returnValue = isVmExist() && acquireLockInternal();
+        if (!isVmExist() || !acquireLockInternal()) {
+            return false;
+        }
+
         VM vm = getVm();
 
-        if (returnValue && vm != null) {
+        if (vm != null) {
             // if user sent drive check that its not in use
-            returnValue = isDiskCanBeAddedToVm(getParameters().getDiskInfo()) &&
-                    isDiskPassPciAndIdeLimit(getParameters().getDiskInfo());
+            if (!isDiskCanBeAddedToVm(getParameters().getDiskInfo()) ||
+                    !isDiskPassPciAndIdeLimit(getParameters().getDiskInfo())) {
+                return false;
+            }
         }
 
-        if (returnValue && DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
-            returnValue = checkIfImageDiskCanBeAdded(vm);
+        if (DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
+            return checkIfImageDiskCanBeAdded(vm);
         }
 
-        if (returnValue && DiskStorageType.LUN == getParameters().getDiskInfo().getDiskStorageType()) {
-            returnValue = checkIfLunDiskCanBeAdded();
+        if (DiskStorageType.LUN == getParameters().getDiskInfo().getDiskStorageType()) {
+            return checkIfLunDiskCanBeAdded();
         }
 
-        return returnValue;
+        return true;
     }
 
     protected boolean checkIfLunDiskCanBeAdded() {
