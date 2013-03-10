@@ -10,16 +10,16 @@ import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
-import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -111,20 +111,17 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     }
 
     protected boolean isDiskCanBeAddedToVm(Disk diskInfo) {
-        boolean returnValue = true;
-        updateDisksFromDb();
-        if (returnValue && diskInfo.isBoot()) {
+        if (diskInfo.isBoot()) {
             for (Disk disk : getVm().getDiskMap().values()) {
                 if (disk.isBoot()) {
-                    returnValue = false;
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_BOOT_IN_USE);
                     getReturnValue().getCanDoActionMessages().add(
                             String.format("$DiskName %1$s", disk.getDiskAlias()));
-                    break;
+                    return false;
                 }
             }
         }
-        return returnValue;
+        return true;
     }
 
     /** Updates the VM's disks from the database */
@@ -189,6 +186,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         return getDbFacade().getImageDao();
     }
 
+    @Override
     protected DiskDao getDiskDao() {
         return getDbFacade().getDiskDao();
     }

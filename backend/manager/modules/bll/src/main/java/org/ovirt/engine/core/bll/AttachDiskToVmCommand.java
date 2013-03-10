@@ -67,8 +67,12 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
             return false;
         }
 
-        if (!isVmExist() || !isVmUpOrDown() || !isDiskCanBeAddedToVm(disk)
-                || !isDiskPassPciAndIdeLimit(disk)) {
+        if (!isVmExist() || !isVmUpOrDown()) {
+            return false;
+        }
+
+        updateDisksFromDb();
+        if (!isDiskCanBeAddedToVm(disk) || !isDiskPassPciAndIdeLimit(disk)) {
             return false;
         }
 
