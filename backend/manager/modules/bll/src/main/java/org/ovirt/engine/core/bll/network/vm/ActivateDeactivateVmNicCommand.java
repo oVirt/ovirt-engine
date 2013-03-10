@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -33,7 +32,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicParameters> extends VmCommand<T> {
 
     private VmDevice vmDevice;
-    private VmNetworkInterface vmNetworkInterface;
 
     public ActivateDeactivateVmNicCommand(T parameters) {
         super(parameters);
@@ -57,9 +55,8 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
             }
         }
 
-        vmDevice = getVmDeviceDao().get(new VmDeviceId(getParameters().getNicId(), getParameters().getVmId()));
-        vmNetworkInterface = getVmNetworkInterfaceDao().get(getParameters().getNicId());
-        if (vmDevice == null || vmNetworkInterface == null) {
+        vmDevice = getVmDeviceDao().get(new VmDeviceId(getParameters().getNic().getId(), getParameters().getVmId()));
+        if (vmDevice == null) {
             addCanDoActionMessage(VdcBllMessages.VM_INTERFACE_NOT_EXIST);
             return false;
         }
@@ -68,31 +65,27 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     }
 
     private String getNetworkName() {
-        VmNetworkInterface vmNetworkInterface = getVmNetworkInterfaceDao().get(getParameters().getNicId());
-        return vmNetworkInterface == null ? null : vmNetworkInterface.getNetworkName();
+        return getParameters().getNic().getNetworkName();
     }
 
     public String getInterfaceName() {
-        return vmNetworkInterface.getName();
+
+        return getParameters().getNic().getName();
     }
 
     public String getInterfaceType() {
-        return VmInterfaceType.forValue(vmNetworkInterface.getType()).getDescription();
+
+        return VmInterfaceType.forValue(getParameters().getNic().getType()).getDescription();
     }
 
     @Override
     protected void executeVmCommand() {
         // HotPlug in the host is called only if the Vm is UP
         if (hotPlugVmNicRequired(getVm().getStatus())) {
-            VmNetworkInterface nic = getVmNetworkInterfaceDao().get(getParameters().getNicId());
-            // Old MAC address is used in case the host is not familiar with the new MAC address
-            if (getParameters().getOldMacAddress() != null) {
-                nic.setMacAddress(getParameters().getOldMacAddress());
-            }
             runVdsCommand(getParameters().getAction().getCommandType(),
                     new VmNicDeviceVDSParameters(getVdsId(),
                             getVm(),
-                            nic,
+                            getParameters().getNic(),
                             vmDevice));
         }
         // In any case, the device is updated

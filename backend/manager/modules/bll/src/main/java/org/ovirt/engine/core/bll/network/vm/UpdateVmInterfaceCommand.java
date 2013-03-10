@@ -109,10 +109,10 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         if (getRequiredAction() != null){
             switch (getRequiredAction()) {
             case PLUG: {
-                return activateOrDeactivateNic(getInterface().getId(), PlugAction.PLUG);
+                return activateOrDeactivateNic(getInterface(), PlugAction.PLUG);
             }
             case UNPLUG: {
-                return activateOrDeactivateNic(getInterface().getId(), PlugAction.UNPLUG, oldIface.getMacAddress());
+                return activateOrDeactivateNic(oldIface, PlugAction.UNPLUG);
             }
             case UPDATE_VM_DEVICE: {
                 runVdsCommand(VDSCommandType.UpdateVmInterface,

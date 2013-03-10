@@ -68,7 +68,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             });
 
             if (getInterface().isPlugged()) {
-                succeeded = activateOrDeactivateNic(getInterface().getId(), PlugAction.PLUG);
+                succeeded = activateOrDeactivateNic(getInterface(), PlugAction.PLUG);
             } else {
                 succeeded = true;
             }
