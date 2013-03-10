@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -112,6 +113,15 @@ public enum NetworkOperation {
                     }
                     VdsNetworkInterface vlanBridge = networkToAttach.attach(targetNic, true);
                     if (vlanBridge != null) {
+                        Iterator<VdsNetworkInterface> i = allNics.iterator();
+                        // If a vlan device with the same name as the new one already exists- remove it
+                        while (i.hasNext()) {
+                            VdsNetworkInterface nic = i.next();
+                            if (nic.getName().equals(vlanBridge.getName())) {
+                                i.remove();
+                                break;
+                            }
+                        }
                         allNics.add(vlanBridge);
                     }
                 }
