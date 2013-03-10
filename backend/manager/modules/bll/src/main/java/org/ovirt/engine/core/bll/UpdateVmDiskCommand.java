@@ -123,13 +123,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         // Validate update boot disk.
         if (newDisk.isBoot()) {
             VmHandler.updateDisksForVm(getVm(), getOtherVmDisks());
-            for (Disk disk : getVm().getDiskMap().values()) {
-                if (disk.isBoot()) {
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_BOOT_IN_USE);
-                    getReturnValue().getCanDoActionMessages().add(
-                            String.format("$DiskName %1$s", disk.getDiskAlias()));
-                    return false;
-                }
+            if (!isDiskCanBeAddedToVm(newDisk)) {
+                return false;
             }
         }
 
