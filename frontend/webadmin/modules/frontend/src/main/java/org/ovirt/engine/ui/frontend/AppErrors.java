@@ -1273,6 +1273,15 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The provider doesn't exist in the system.")
     String ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The external network already exists as '${NetworkName}' in the data center.")
+    String ACTION_TYPE_FAILED_EXTERNAL_NETWORK_ALREADY_EXISTS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. An external network cannot be a non-VM network.")
+    String ACTION_TYPE_FAILED_EXTERNAL_NETWORK_MUST_BE_VM_NETWORK();
+
+    @DefaultStringValue("Cannot ${action} ${type}. External network details (except name and description) cannot be changed.")
+    String ACTION_TYPE_FAILED_EXTERNAL_NETWORK_DETAILS_CANNOT_BE_EDITED();
+
     @DefaultStringValue("Cannot ${action} ${type}. The management network '${NetworkName}' must be required, please change the network to be required and try again.")
     String ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_REQUIRED();
 

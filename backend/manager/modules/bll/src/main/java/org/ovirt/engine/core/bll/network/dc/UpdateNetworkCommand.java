@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.network.dc;
 
 import java.util.List;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
@@ -53,7 +54,13 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 && validate(validatorOld.notRenamingManagementNetwork(getNetwork()))
                 && validate(validatorNew.networkNameNotUsed())
                 && validate(validatorOld.networkNotUsedByVms())
-                && validate(validatorOld.networkNotUsedByTemplates());
+                && validate(validatorOld.networkNotUsedByTemplates())
+                && (oldAndNewNetworkIsNotExternal()
+                || validate(validatorOld.externalNetworkDetailsUnchanged(getNetwork())));
+    }
+
+    private boolean oldAndNewNetworkIsNotExternal() {
+        return getOldNetwork().getProvidedBy() == null && getNetwork().getProvidedBy() == null;
     }
 
     @Override
@@ -74,7 +81,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         return oldNetwork;
     }
 
-    private class UpdateNetworkValidator extends NetworkValidator {
+    protected static class UpdateNetworkValidator extends NetworkValidator {
 
         public UpdateNetworkValidator(Network network) {
             super(network);
@@ -86,6 +93,24 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                     !newNetwork.getName().equals(managementNetwork)
                     ? new ValidationResult(VdcBllMessages.NETWORK_CAN_NOT_REMOVE_DEFAULT_NETWORK)
                     : ValidationResult.VALID;
+        }
+
+        /**
+         * Check that the external network details that can't be updated were not updated.<br>
+         * The check is undefined if both the validator's network and the new network are internal networks.
+         *
+         * @param newNetwork
+         *            The new network definition to check.
+         * @return A valid result iff the details that shouldn't be changed remained unchanged, An error otherwise.
+         */
+        public ValidationResult externalNetworkDetailsUnchanged(Network newNetwork) {
+            return ObjectUtils.equals(network.getVlanId(), newNetwork.getVlanId())
+                    && network.getMtu() == newNetwork.getMtu()
+                    && network.getStp() == newNetwork.getStp()
+                    && network.isVmNetwork() == newNetwork.isVmNetwork()
+                    && ObjectUtils.equals(network.getProvidedBy(), newNetwork.getProvidedBy())
+                    ? ValidationResult.VALID
+                    : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_DETAILS_CANNOT_BE_EDITED);
         }
 
     }
