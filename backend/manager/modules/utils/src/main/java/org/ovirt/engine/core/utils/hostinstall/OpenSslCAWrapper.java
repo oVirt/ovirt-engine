@@ -15,12 +15,11 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 import org.apache.commons.codec.binary.Base64;
-
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.utils.FileUtil;
 
 public class OpenSslCAWrapper {
 
@@ -109,7 +108,7 @@ public class OpenSslCAWrapper {
         log.debug("Entered SignCertificateRequest");
         boolean returnValue = true;
         String signRequestBatch = Config.resolveSignScriptPath();
-        if (FileUtil.fileExists(signRequestBatch)) {
+        if (new File(signRequestBatch).exists()) {
             String organization = Config.<String> GetValue(ConfigValues.OrganizationName);
             Integer signatureTimeout = Config.<Integer> GetValue(ConfigValues.SignCertTimeoutInSeconds);
             String[] command_array =

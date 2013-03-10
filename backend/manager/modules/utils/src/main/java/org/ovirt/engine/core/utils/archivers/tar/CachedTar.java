@@ -2,15 +2,13 @@ package org.ovirt.engine.core.utils.archivers.tar;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.FileUtil;
 
 /**
  * Handles cache tar file based on directory.
@@ -104,12 +102,12 @@ public class CachedTar {
                 )
             );
             this.nextCheckTime = System.currentTimeMillis() + this.refreshInterval;
-            create(FileUtil.getTimestampRecursive(this.dir));
+            create(getTimestampRecursive(this.dir));
         }
         else if (this.nextCheckTime <= System.currentTimeMillis()) {
             this.nextCheckTime = System.currentTimeMillis() + this.refreshInterval;
 
-            long treeTimestamp = FileUtil.getTimestampRecursive(this.dir);
+            long treeTimestamp = getTimestampRecursive(this.dir);
             if (archive.lastModified() != treeTimestamp) {
                 log.info(
                     String.format(
@@ -152,5 +150,28 @@ public class CachedTar {
     public File getFile() throws IOException {
         ensure();
         return this.archive;
+    }
+
+    /**
+     * Returns the maximum timestamp of directory tree.
+     *
+     * @param file
+     *            directory/file name.
+     * @return max timestamp.
+     */
+    private static long getTimestampRecursive(File file) {
+        if (file.isDirectory()) {
+            long m = 0;
+            for (String name : file.list()) {
+                m = Math.max(m, getTimestampRecursive(new File(file, name)));
+            }
+            return m;
+        }
+        else if (file.isFile()) {
+            return file.lastModified();
+        }
+        else {
+            return 0;
+        }
     }
 }

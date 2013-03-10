@@ -4,10 +4,15 @@
 package org.ovirt.engine.core.domains;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,7 +34,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.ovirt.engine.core.ldap.LdapSRVLocator;
 import org.ovirt.engine.core.utils.CLIParser;
-import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.dns.DnsSRVLocator;
 import org.ovirt.engine.core.utils.dns.DnsSRVLocator.DnsSRVResult;
 import org.ovirt.engine.core.utils.ipa.ReturnStatus;
@@ -350,7 +354,7 @@ public class ManageDomains {
         FileReader in = new FileReader(passwordFile);
         BufferedReader bufferedReader = new BufferedReader(in);
         String readLine = bufferedReader.readLine();
-        FileUtil.closeQuietly(in, bufferedReader);
+        closeQuietly(in, bufferedReader);
         return readLine;
     }
 
@@ -725,17 +729,17 @@ public class ManageDomains {
     private void applyKerberosConfiguration() throws ManageDomainsResult {
         try {
             // We backup the kerberos configuration file in case it already exists
-            if (FileUtil.fileExists(utilityConfiguration.getkrb5confFilePath())) {
+            if (new File(utilityConfiguration.getkrb5confFilePath()).exists()) {
                 SimpleDateFormat ft = new SimpleDateFormat("yyyyMMddhhmmsszzz");
                 String destFileName = utilityConfiguration.getkrb5confFilePath() + ".backup_" + ft.format(new Date());
                 log.info("Performing backup of kerberos configuration file to " + destFileName);
-                FileUtil.copyFile(utilityConfiguration.getkrb5confFilePath(), destFileName);
+                copyFile(utilityConfiguration.getkrb5confFilePath(), destFileName);
             }
 
             log.info("Applying kerberos configuration");
-            FileUtil.copyFile(utilityConfiguration.getkrb5confFilePath() + TESTING_KRB5_CONF_SUFFIX,
+            copyFile(utilityConfiguration.getkrb5confFilePath() + TESTING_KRB5_CONF_SUFFIX,
                     utilityConfiguration.getkrb5confFilePath());
-            FileUtil.deleteFile(utilityConfiguration.getkrb5confFilePath() + TESTING_KRB5_CONF_SUFFIX);
+            deleteFile(utilityConfiguration.getkrb5confFilePath() + TESTING_KRB5_CONF_SUFFIX);
         } catch (IOException e) {
             throw new ManageDomainsResult(ManageDomainsResultEnum.FAILURE_WHILE_APPLYING_KERBEROS_CONFIGURATION,
                     e.getMessage());
@@ -1068,6 +1072,37 @@ public class ManageDomains {
         if (arguments.size() > 0){
             throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ARGUMENT_FOR_COMMAND,
                     arguments.toString().replaceAll("\\[", "").replaceAll("\\]",""));
+        }
+    }
+
+    private static void closeQuietly(Closeable... closeables) {
+        for (Closeable c : closeables) {
+            try {
+                c.close();
+            } catch (Exception e) {
+                // Ignore
+            }
+        }
+    }
+
+    private static void copyFile(String srcFilePath, String dstFilePath) throws IOException {
+        InputStream in = new FileInputStream(srcFilePath);
+        OutputStream out = new FileOutputStream(dstFilePath);
+
+        // Transfer bytes from in to out
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) > 0) {
+            out.write(buf, 0, len);
+        }
+        in.close();
+        out.close();
+    }
+
+    private static void deleteFile(String filePath) {
+        File file = new File(filePath);
+        if (file.exists()) {
+            file.delete();
         }
     }
 }

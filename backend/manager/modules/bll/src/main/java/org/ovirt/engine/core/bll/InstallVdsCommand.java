@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -61,7 +60,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
 
     private boolean isIsoFileValid(String isoFile) {
         return StringUtils.isNotBlank(isoFile)
-                && FileUtil.fileExists(Config.resolveOVirtISOsRepositoryPath() + File.separator + isoFile);
+                && new File(Config.resolveOVirtISOsRepositoryPath() + File.separator + isoFile).exists();
     }
 
     @Override

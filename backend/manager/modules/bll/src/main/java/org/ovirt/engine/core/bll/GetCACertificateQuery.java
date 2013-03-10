@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.ovirt.engine.core.common.config.Config;
@@ -15,7 +16,7 @@ public class GetCACertificateQuery<P extends VdcQueryParametersBase> extends Que
     protected void executeQueryCommand() {
         getQueryReturnValue().setSucceeded(false);
         String path = Config.resolveCACertificatePath();
-        if (FileUtil.fileExists(path)) {
+        if (new File(path).exists()) {
             try {
                 getQueryReturnValue().setReturnValue(FileUtil.readAllText(path));
             } catch (IOException e) {

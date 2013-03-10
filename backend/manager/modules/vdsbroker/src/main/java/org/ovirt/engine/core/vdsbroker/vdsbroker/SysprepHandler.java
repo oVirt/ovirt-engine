@@ -225,7 +225,7 @@ public final class SysprepHandler {
     private static String LoadFile(String fileName) {
         String content = "";
         fileName = ConfigUtil.resolvePath(getSysprepDir(), fileName);
-        if (FileUtil.fileExists(fileName)) {
+        if (new File(fileName).exists()) {
             try {
                 content = FileUtil.readAllText(fileName);
             } catch (Exception e) {

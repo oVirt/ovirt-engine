@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +49,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
-import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.ssh.SSHClient;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -313,7 +313,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 returnValue = returnValue && validateSingleHostAttachedToLocalStorage();
 
                 if (Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers)
-                        && !FileUtil.fileExists(Config.resolveCertificatePath())) {
+                        && !new File(Config.resolveCertificatePath()).exists()) {
                     addCanDoActionMessage(VdcBllMessages.VDS_TRY_CREATE_SECURE_CERTIFICATE_NOT_FOUND);
                     returnValue = false;
                 } else if (!getParameters().getAddPending()
