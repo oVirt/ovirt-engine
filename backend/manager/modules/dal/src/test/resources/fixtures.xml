@@ -1810,6 +1810,7 @@
         <column>ksm_cpu_percent</column>
         <column>ksm_pages</column>
         <column>ksm_state</column>
+        <column>_update_date</column>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value>100</value>
@@ -1826,6 +1827,7 @@
             <value>0</value>
             <value>64</value>
             <value>0</value>
+            <null />
         </row>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
@@ -1843,6 +1845,7 @@
             <value>0</value>
             <value>64</value>
             <value>0</value>
+            <null />
         </row>
         <row>
             <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
@@ -1860,6 +1863,7 @@
             <value>0</value>
             <value>64</value>
             <value>0</value>
+            <null />
         </row>
         <row>
             <value>2001751e-549b-4e7a-aff6-32d36856c125</value>
@@ -1877,6 +1881,7 @@
             <value>0</value>
             <value>64</value>
             <value>0</value>
+            <null />
         </row>
     </table>
 
@@ -2091,6 +2096,8 @@
         <column>usage_network_percent</column>
         <column>usage_mem_percent</column>
         <column>usage_cpu_percent</column>
+        <column>_update_date</column>
+
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
             <value>17</value>
@@ -2099,6 +2106,7 @@
             <value>0</value>
             <value>0</value>
             <value>17</value>
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
@@ -2108,6 +2116,7 @@
             <value>0</value>
             <value>0</value>
             <value>17</value>
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
@@ -2117,6 +2126,7 @@
             <value>0</value>
             <value>0</value>
             <value>17</value>
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
@@ -2126,6 +2136,7 @@
             <value>0</value>
             <value>0</value>
             <value>17</value>
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4360</value>
@@ -2135,6 +2146,7 @@
             <value>0</value>
             <value>0</value>
             <value>17</value>
+            <null />
         </row>
     </table>
 
@@ -2231,35 +2243,42 @@
         <column>id</column>
         <column>available_disk_size</column>
         <column>used_disk_size</column>
+        <column>_update_date</column>
         <row>
             <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
             <value>196</value>
             <value>3</value>
+            <null />
         </row>
         <row>
             <value>72e3a666-89e1-4005-a7ca-f7548004a9ac</value>
             <value>196</value>
             <value>3</value>
+            <null />
         </row>
 		<row>
             <value>17e7489d-d490-4681-a322-073ca19bd33d</value>
             <value>14</value>
             <value>14</value>
+            <null />
         </row>
         <row>
             <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
             <value>14</value>
             <value>14</value>
+            <null />
         </row>
         <row>
             <value>d034f3b2-fb9c-414a-b1be-1e642cfe57ae</value>
             <value>14</value>
             <value>14</value>
+            <null />
         </row>
         <row>
             <value>c2211b56-8869-41cd-84e1-78d7cb96f31d</value>
             <value>14</value>
             <value>14</value>
+            <null />
         </row>
 
     </table>
@@ -2913,29 +2932,34 @@
         <column>read_rate</column>
         <column>write_rate</column>
         <column>actual_size</column>
+        <column>_update_date</column>
         <row>
             <value>42058975-3d5e-484a-80c1-01c31207f578</value>
             <value>0</value>
             <value>0</value>
             <value>1073741824</value>
+            <null />
         </row>
         <row>
             <value>52058975-3d5e-484a-80c1-01c31207f578</value>
             <value>0</value>
             <value>0</value>
             <value>1073741824</value>
+            <null />
         </row>
         <row>
             <value>42058975-3d5e-484a-80c1-01c31207f579</value>
             <value>0</value>
             <value>0</value>
             <value>1073741824</value>
+            <null />
         </row>
         <row>
             <value>c9a559d9-8666-40d1-9967-759502b19f0b</value>
             <value>0</value>
             <value>0</value>
             <value>1073741824</value>
+            <null />
         </row>
     </table>
 
@@ -3086,6 +3110,7 @@
         <column>rx_drop</column>
         <column>tx_drop</column>
         <column>iface_status</column>
+        <column>_update_date</column>
         <row>
             <value>e2817b12-f873-4046-b0da-0098293c14fd</value>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
@@ -3094,6 +3119,7 @@
             <value>0</value>
             <value>0</value>
             <value>0</value>
+            <null />
         </row>
         <row>
             <value>e2817b12-f873-4046-b0da-0098293c14fe</value>
@@ -3103,6 +3129,7 @@
             <value>0</value>
             <value>0</value>
             <value>1</value>
+            <null />
         </row>
         <row>
             <value>e2817b12-f873-4046-b0da-0098293c0000</value>
@@ -3112,6 +3139,7 @@
             <value>0</value>
             <value>0</value>
             <value>1</value>
+            <null />
         </row>
             <row>
             <value>14550e82-1e1f-47b5-ae41-b009348dabfb</value>
@@ -3121,6 +3149,7 @@
             <value>0</value>
             <value>0</value>
             <value>1</value>
+            <null />
         </row>
     </table>
 
@@ -3213,6 +3242,7 @@
         <column>rx_drop</column>
         <column>tx_drop</column>
         <column>iface_status</column>
+        <column>_update_date</column>
         <row>
             <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9db</value>
             <null />
@@ -3221,6 +3251,7 @@
             <value>0</value>
             <value>0</value>
             <value>0</value>
+            <null />
         </row>
         <row>
             <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9dc</value>
@@ -3230,6 +3261,7 @@
             <value>0</value>
             <value>0</value>
             <value>0</value>
+            <null />
         </row>
         <row>
             <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9dd</value>
@@ -3239,6 +3271,7 @@
             <value>0</value>
             <value>0</value>
             <value>0</value>
+            <null />
         </row>
         <row>
             <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9de</value>
@@ -3248,6 +3281,7 @@
             <value>0</value>
             <value>0</value>
             <value>0</value>
+            <null />
         </row>
     </table>
 
