@@ -238,7 +238,7 @@ install_artifacts:
 	install -dm 755 $(DESTDIR)$(PKG_EAR_DIR)
 	install -dm 755 $(DESTDIR)$(MAVENPOM_DIR)
 
-	X=`find "$(MAVEN_OUTPUT_DIR)" -name 'engine-server-ear-$(APP_VERSION)*'.ear` && unzip -o "$$X" -d "$(DESTDIR)$(PKG_EAR_DIR)"
+	X=`find "$(MAVEN_OUTPUT_DIR)" -name 'engine-server-ear-$(POM_VERSION)*'.ear` && unzip -o "$$X" -d "$(DESTDIR)$(PKG_EAR_DIR)"
 
 	for artifact_id in  $(ARTIFACTS); do \
 		POM=`find "$(MAVEN_OUTPUT_DIR)" -name "$${artifact_id}-$(POM_VERSION)*.pom"`; \
@@ -398,7 +398,7 @@ install_jboss_modules:
 
 	# Uncompress and install the contents of the modules archives to
 	# the directory containing engine modules:
-	find "$(MAVEN_OUTPUT_DIR)" -name "*-$(APP_VERSION)*-modules.zip" -exec unzip -o {} -d "$(DESTDIR)$(PKG_JBOSS_MODULES)" \;
+	find "$(MAVEN_OUTPUT_DIR)" -name "*-$(POM_VERSION)*-modules.zip" -exec unzip -o {} -d "$(DESTDIR)$(PKG_JBOSS_MODULES)" \;
 
 install_service:
 	@echo "*** Deploying service"
