@@ -1053,6 +1053,7 @@ public class AuditLogableBaseTest {
         assertEquals(AuditLogType.UNASSIGNED.toString(), s);
     }
 
+    @SuppressWarnings("serial")
     protected static class TestAuditLogableBase extends AuditLogableBase {
         public final StorageDomain STORAGE_DOMAIN = new StorageDomain();
 
