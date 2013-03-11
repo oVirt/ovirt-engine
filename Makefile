@@ -385,7 +385,7 @@ install_jboss_modules:
 
 	# Uncompress and install the contents of the modules archives to
 	# the directory containing engine modules:
-	find "$(MAVEN_OUTPUT_DIR)" -name "*-$(APP_VERSION)*-modules.zip" -exec unzip {} -d "$(DESTDIR)$(PKG_JBOSS_MODULES)" \;
+	find "$(MAVEN_OUTPUT_DIR)" -name "*-$(POM_VERSION)*-modules.zip" -exec unzip {} -d "$(DESTDIR)$(PKG_JBOSS_MODULES)" \;
 
 install_service:
 	@echo "*** Deploying service"
