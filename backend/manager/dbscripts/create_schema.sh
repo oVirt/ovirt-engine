@@ -34,30 +34,38 @@ while getopts :hs:d:u:p:l:f:v option; do
         p) PORT=$OPTARG;;
         d) DATABASE=$OPTARG;;
         u) USERNAME=$OPTARG;;
-    	l) LOGFILE=$OPTARG;;
+        l) LOGFILE=$OPTARG;;
         v) VERBOSE=true;;
         h) ret=0 && usage;;
        \?) ret=1 && usage;;
     esac
 done
 
-printf "Creating the database: ${DATABASE}\n"
+createlang --host=${SERVERNAME} --port=${PORT} --dbname=${DATABASE} --echo --username=${USERNAME} plpgsql >& /dev/null
+#set database min error level
+CMD="ALTER DATABASE \"${DATABASE}\" SET client_min_messages=ERROR;"
+execute_command "${CMD}"  ${DATABASE} ${SERVERNAME} ${PORT}> /dev/null
 
-#try to drop the database first (if exists)
-dropdb --username=${USERNAME} --host=${SERVERNAME} --port=${PORT} ${DATABASE} -e > /dev/null
-createdb --username=${USERNAME} --host=${SERVERNAME} --port=${PORT} ${DATABASE} -e -E UTF8 --lc-collate en_US.UTF8  --lc-ctype en_US.UTF8 -T template0 > /dev/null
-if [ $? -ne 0 ]
-    then
-      printf "Failed to create database ${DATABASE}\n"
-      popd>/dev/null
-      exit 1;
-fi
+echo user name is: ${USERNAME}
 
-if ! ./create_schema.sh -s "${SERVERNAME}" -p "${PORT}" -d "${DATABASE}" -u "${USERNAME}" -l "${LOGFILE}"; then
-      printf "Failed to create schema for database ${DATABASE}\n"
-      popd>/dev/null
-      exit 1;
-fi
+printf "Creating tables...\n"
+execute_file "create_tables.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
+
+printf "Creating functions...\n"
+execute_file "create_functions.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
+
+printf "Creating common functions...\n"
+execute_file "common_sp.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
+
+#inserting initial data
+insert_initial_data
+
+#remove checksum file in clean install in order to run views/sp creation
+rm -f .${DATABASE}.scripts.md5 >& /dev/null
+
+# Running upgrade scripts
+printf "Running upgrade scripts...\n"
+run_upgrade_files
 
 popd>/dev/null
 exit $?
