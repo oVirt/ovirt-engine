@@ -77,4 +77,13 @@ public class FeatureSupported {
     public static boolean tunnelMigration(Version version) {
         return supportedInConfig(ConfigValues.TunnelMigrationEnabled, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if hot plug is supported for the version, <code>false</code> if it's not.
+     */
+    public static boolean hotPlug(Version version) {
+        return supportedInConfig(ConfigValues.HotPlugEnabled, version);
+    }
 }
