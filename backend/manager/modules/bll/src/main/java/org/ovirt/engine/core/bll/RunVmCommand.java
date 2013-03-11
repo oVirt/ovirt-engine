@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -57,7 +56,6 @@ import org.ovirt.engine.core.common.vdscommands.ResumeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -318,13 +316,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         } else {
             log.infoFormat("VdcBll.RunVmCommand.RunVmAsStateless - Creating snapshot for stateless vm {0} - {1}",
                     getVm().getName(), getVm().getId());
-            CreateAllSnapshotsFromVmParameters createAllSnapshotsFromVmParameters =
-                    new CreateAllSnapshotsFromVmParameters(getVm().getId(), "stateless snapshot");
-            createAllSnapshotsFromVmParameters.setShouldBeLogged(false);
-            createAllSnapshotsFromVmParameters.setParentCommand(getActionType());
-            createAllSnapshotsFromVmParameters.setParentParameters(getParameters());
-            createAllSnapshotsFromVmParameters.setEntityId(getParameters().getEntityId());
-            createAllSnapshotsFromVmParameters.setSnapshotType(SnapshotType.STATELESS);
+            CreateAllSnapshotsFromVmParameters createAllSnapshotsFromVmParameters = buildCreateSnapshotParameters();
 
             Map<String, String> values = getVmValuesForMsgResolving();
 
@@ -359,6 +351,17 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 log.errorFormat("RunVmAsStateless - {0} - failed to create snapshots", getVm().getName());
             }
         }
+    }
+
+    private CreateAllSnapshotsFromVmParameters buildCreateSnapshotParameters() {
+        CreateAllSnapshotsFromVmParameters createAllSnapshotsFromVmParameters =
+                new CreateAllSnapshotsFromVmParameters(getVm().getId(), "stateless snapshot");
+        createAllSnapshotsFromVmParameters.setShouldBeLogged(false);
+        createAllSnapshotsFromVmParameters.setParentCommand(getActionType());
+        createAllSnapshotsFromVmParameters.setParentParameters(getParameters());
+        createAllSnapshotsFromVmParameters.setEntityId(getParameters().getEntityId());
+        createAllSnapshotsFromVmParameters.setSnapshotType(SnapshotType.STATELESS);
+        return createAllSnapshotsFromVmParameters;
     }
 
     private boolean areDisksLocked(VdcReturnValueBase vdcReturnValue) {
@@ -709,10 +712,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         setIsVmRunningStateless();
 
         if (_isVmRunningStateless) {
-            VdcActionParametersBase createSnapshotParameters = getParameters().getImagesParameters().get(0);
-            if (createSnapshotParameters != null) {
-                createSnapshotParameters.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-            }
+            CreateAllSnapshotsFromVmParameters createSnapshotParameters = buildCreateSnapshotParameters();
+            createSnapshotParameters.setImagesParameters(getParameters().getImagesParameters());
             getBackend().EndAction(VdcActionType.CreateAllSnapshotsFromVm, createSnapshotParameters);
 
             getParameters().setShouldBeLogged(false);
@@ -760,8 +761,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     protected void endWithFailure() {
         setIsVmRunningStateless();
         if (_isVmRunningStateless) {
+            CreateAllSnapshotsFromVmParameters createSnapshotParameters = buildCreateSnapshotParameters();
+            createSnapshotParameters.setImagesParameters(getParameters().getImagesParameters());
             VdcReturnValueBase vdcReturnValue = getBackend().endAction(VdcActionType.CreateAllSnapshotsFromVm,
-                    getParameters().getImagesParameters().get(0), new CommandContext(getCompensationContext()));
+                    createSnapshotParameters, new CommandContext(getCompensationContext()));
 
             setSucceeded(vdcReturnValue.getSucceeded());
             // we are not running the VM, of course,
