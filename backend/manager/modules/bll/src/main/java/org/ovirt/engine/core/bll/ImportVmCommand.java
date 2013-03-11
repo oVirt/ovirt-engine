@@ -795,8 +795,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             MultiValueMapUtils.addToMap(image.getId(), image, retVal);
         }
 
-        for (Guid key : retVal.keySet()) {
-            sortImageList(retVal.get(key));
+        for (List<DiskImage> list : retVal.values()) {
+            sortImageList(list);
         }
         return retVal;
     }
