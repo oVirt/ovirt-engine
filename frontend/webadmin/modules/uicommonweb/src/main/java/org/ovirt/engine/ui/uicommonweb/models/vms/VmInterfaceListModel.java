@@ -61,6 +61,7 @@ public class VmInterfaceListModel extends SearchableListModel
     }
 
 
+    @Override
     public UICommand getEditCommand()
     {
         return privateEditCommand;
@@ -323,5 +324,15 @@ public class VmInterfaceListModel extends SearchableListModel
     public void setEntity(Object value) {
         super.setEntity(value);
         updateConfigValues();
+    }
+
+    @Override
+    public void setItems(Iterable value) {
+        super.setItems(value);
+        if (getSelectedItem() == null && (getSelectedItems() == null || getSelectedItems().size() == 0)) {
+            if (value != null && value.iterator().hasNext()) {
+                setSelectedItem(value.iterator().next());
+            }
+        }
     }
 }
