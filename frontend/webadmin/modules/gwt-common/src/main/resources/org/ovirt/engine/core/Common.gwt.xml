@@ -305,6 +305,12 @@
 		<include name="common/businessentities/gluster/MemoryStatus.java"/>
 		<include name="common/businessentities/gluster/Mempool.java"/>
 		<include name="common/businessentities/gluster/ServiceType.java"/>
+		<include name="common/businessentities/gluster/GlusterHookEntity.java"/>
+		<include name="common/businessentities/gluster/GlusterServerHook.java"/>
+		<include name="common/businessentities/gluster/GlusterHookStage.java"/>
+		<include name="common/businessentities/gluster/GlusterHookStatus.java"/>
+		<include name="common/businessentities/gluster/GlusterHookContentType.java"/>
+		<include name="common/businessentities/gluster/GlusterHookConflictFlags.java"/>
 		<include name="common/action/gluster/*.java"/>
 		<include name="common/queries/gluster/*.java"/>
 		<include name="common/constants/gluster/GlusterConstants.java"/>

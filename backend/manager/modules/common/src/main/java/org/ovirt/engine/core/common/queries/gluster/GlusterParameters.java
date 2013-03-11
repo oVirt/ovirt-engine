@@ -7,7 +7,6 @@ import org.ovirt.engine.core.compat.Guid;
 
 /**
  * Parameter class with cluster Id as parameters. <br>
- * This will be used by gluster volume option help command. <br>
  */
 public class GlusterParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = -1224829720081853632L;

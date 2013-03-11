@@ -4487,6 +4487,96 @@
             <value>RDMA</value>
         </row>
     </table>
+
+    <table name="gluster_hooks">
+        <column>id</column>
+        <column>cluster_id</column>
+        <column>gluster_command</column>
+        <column>stage</column>
+        <column>name</column>
+        <column>hook_status</column>
+        <column>content_type</column>
+        <column>checksum</column>
+        <column>content</column>
+        <column>conflict_status</column>
+        <column>_create_date</column>
+        <column>_update_date</column>
+        <row>
+            <value>d2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
+            <value>ae956031-6be2-43d6-bb8f-5191c9253314</value>
+            <value>start volume</value>
+            <value>POST</value>
+            <value>28cifs_config</value>
+            <value>ENABLED</value>
+            <value>TEXT</value>
+            <value>bf35fa420d3e0f669e27b337062bf19f510480d4</value>
+            <value>Sample text for hook content </value>
+            <value>4</value>
+            <value>2012-12-27 13:54:18</value>
+            <value>2012-12-31 11:45:27</value>
+        </row>
+        <row>
+            <value>da9e2f09-2835-4530-9bf5-576c52b11941</value>
+            <value>ae956031-6be2-43d6-bb8f-5191c9253314</value>
+            <value>stop volume</value>
+            <value>POST</value>
+            <value>23virt_config</value>
+            <value>ENABLED</value>
+            <value>BINARY</value>
+            <value>e435fa420d3efff9e27b337062bf19f510480d4</value>
+            <null />
+            <value>0</value>
+            <value>2012-12-28 09:27:18</value>
+            <value>2012-12-31 11:54:27</value>
+        </row>
+    </table>
+
+    <table name="gluster_server_hooks">
+        <column>hook_id</column>
+        <column>server_id</column>
+        <column>hook_status</column>
+        <column>content_type</column>
+        <column>checksum</column>
+        <column>_create_date</column>
+        <column>_update_date</column>
+        <row>
+            <value>d2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
+            <value>2001751e-549b-4e7a-aff6-32d36856c125</value>
+            <value>ENABLED</value>
+            <value>TEXT</value>
+            <value>bf35fa420d3e0f669e27b337062bf19f510480d4</value>
+            <value>2012-12-27 13:54:18</value>
+            <value>2012-12-31 11:45:27</value>
+        </row>
+        <row>
+            <value>d2cb2f73-fab3-4a42-93f0-d5e4c069a43e</value>
+            <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
+            <value>MISSING</value>
+            <null/>
+            <null/>
+            <value>2012-12-27 13:54:18</value>
+            <value>2012-12-31 11:45:27</value>
+        </row>
+        <row>
+            <value>da9e2f09-2835-4530-9bf5-576c52b11941</value>
+            <value>2001751e-549b-4e7a-aff6-32d36856c125</value>
+            <value>ENABLED</value>
+            <value>BINARY</value>
+            <value>e435fa420d3efff9e27b337062bf19f510480d4</value>
+            <value>2012-12-27 13:54:18</value>
+            <value>2012-12-31 11:45:27</value>
+        </row>
+        <row>
+            <value>da9e2f09-2835-4530-9bf5-576c52b11941</value>
+            <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
+            <value>ENABLED</value>
+            <value>BINARY</value>
+            <value>e435fa420d3efff9e27b337062bf19f510480d4</value>
+            <value>2012-12-27 13:54:18</value>
+            <value>2012-12-31 11:45:27</value>
+        </row>
+    </table>
+
     <table name="object_column_white_list">
         <column>object_name</column>
         <column>column_name</column>

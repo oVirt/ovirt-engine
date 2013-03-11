@@ -341,6 +341,19 @@ public class FixturesTool {
      */
     public static final Guid VDS_NETWORK_INTERFACE = new Guid("ba31682e-6ae7-4f9d-8c6f-04c93acca9db");
 
+
     public static final String MAC_ADDRESS = "00:1a:4a:16:87:db";
+
     public static final int NUMBER_OF_VM_INTERFACES = 3;
+
+    /**
+     * Gluster Hook ID(s)
+     */
+    public static final Guid HOOK_ID = new Guid("d2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
+
+    public static final Guid HOOK_ID2 = new Guid("da9e2f09-2835-4530-9bf5-576c52b11941");
+
+    public static final Guid NEW_HOOK_ID = new Guid("d2cb2f73-fab3-4a42-93f0-d5e4c069a43f");
+
+    public static final Guid CLUSTER_ID = new Guid("ae956031-6be2-43d6-bb8f-5191c9253314");
 }

@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
+import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
 public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
@@ -27,6 +28,10 @@ public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase
 
     protected GlusterBrickDao getGlusterBrickDao() {
         return DbFacade.getInstance().getGlusterBrickDao();
+    }
+
+    protected GlusterHooksDao getGlusterHookDao() {
+        return DbFacade.getInstance().getGlusterHooksDao();
     }
 
     protected String getGlusterVolumeName(Guid volumeId) {
