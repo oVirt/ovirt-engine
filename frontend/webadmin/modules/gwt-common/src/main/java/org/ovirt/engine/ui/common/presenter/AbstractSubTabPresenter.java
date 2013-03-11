@@ -119,6 +119,10 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
 
         // Notify model provider that the tab has been revealed
         modelProvider.onSubTabSelected();
+
+        if (getView().getTable() != null) {
+            getView().getTable().setLoadingState(LoadingState.LOADING);
+        }
     }
 
     @Override

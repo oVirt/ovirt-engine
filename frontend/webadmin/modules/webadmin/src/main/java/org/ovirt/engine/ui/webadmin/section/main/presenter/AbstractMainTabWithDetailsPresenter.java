@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
@@ -80,6 +81,9 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
         }
 
         getView().getTable().resetScrollPosition();
+
+        // Set state to loading, so we see the loading image when switching tab.
+        getView().getTable().setLoadingState(LoadingState.LOADING);
     }
 
     /**

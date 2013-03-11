@@ -24,6 +24,15 @@ import com.google.gwt.event.shared.EventBus;
  */
 public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
 
+    /**
+     * Callback triggered when the user clicks the refresh button.
+     */
+    public interface ManualRefreshCallback {
+
+        void onManualRefresh();
+
+    }
+
     // Prefix for keys used to store refresh rates of individual data grids
     private static final String GRID_REFRESH_RATE_PREFIX = "GridRefreshRate"; //$NON-NLS-1$
 
@@ -49,6 +58,7 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
     private final ModelProvider<? extends GridController> modelProvider;
     private final ClientStorage clientStorage;
     private final T refreshPanel;
+    private ManualRefreshCallback manualRefreshCallback;
 
     private GridController controller;
 
@@ -122,6 +132,9 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
         refreshPanel.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
+                if (manualRefreshCallback != null) {
+                    manualRefreshCallback.onManualRefresh();
+                }
                 controller.refresh();
             }
         });
@@ -169,6 +182,10 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
 
     protected int getDefaultRefreshRate() {
         return DEFAULT_REFRESH_RATE;
+    }
+
+    public void setManualRefreshCallback(ManualRefreshCallback manualRefreshCallback) {
+        this.manualRefreshCallback = manualRefreshCallback;
     }
 
 }

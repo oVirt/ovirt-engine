@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.widget.action.ActionButton;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.SimpleActionButton;
 import org.ovirt.engine.ui.common.widget.refresh.AbstractRefreshManager;
+import org.ovirt.engine.ui.common.widget.refresh.AbstractRefreshManager.ManualRefreshCallback;
 import org.ovirt.engine.ui.common.widget.refresh.RefreshPanel;
 import org.ovirt.engine.ui.common.widget.refresh.SimpleRefreshManager;
 
@@ -17,6 +18,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -81,6 +83,13 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
         prevPageButton.setVisible(false);
         nextPageButton.setVisible(false);
         itemsCountLabel.setVisible(false);
+
+        refreshManager.setManualRefreshCallback(new ManualRefreshCallback() {
+            @Override
+            public void onManualRefresh() {
+                setLoadingState(LoadingState.LOADING);
+            }
+        });
     }
 
     @Override
