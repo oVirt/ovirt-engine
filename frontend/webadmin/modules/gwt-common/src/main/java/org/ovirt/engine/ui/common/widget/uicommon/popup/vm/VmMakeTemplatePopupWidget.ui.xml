@@ -5,27 +5,18 @@
 	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.storage">
 
 	<ui:style  type="org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmMakeTemplatePopupWidget.WidgetStyle">
-		.content {
-
-		}
-
 		.editorLabel {
 			width: 360px;
 		}
 
 		.messagePanel {
 			color: #CD2127;
-			position: absolute;
-			bottom: 15px;
-		}
-
-		.isTemplatePublicEditor {
-			position: absolute;
-			bottom: 80px;
+			height: 65px;
 		}
 
 		.disksAllocationPanel {
 			width: 100%;
+			height: 190px;
 			float: right;
 		}
 
@@ -42,12 +33,13 @@
 		<e:ListModelListBoxEditor ui:field="clusterEditor" />
 		<e:ListModelListBoxEditor ui:field="quotaEditor" />
 		<g:Label ui:field="disksAllocationLabel" addStyleNames="{style.disksAllocationLabel}" />
-		<w:DisksAllocationView ui:field="disksAllocationView" listHeight="170px" listWidth="475px" addStyleNames="{style.disksAllocationPanel}" />
-		<g:VerticalPanel>
-			<e:EntityModelCheckBoxEditor ui:field="isTemplatePublicEditor" addStyleNames="{style.isTemplatePublicEditor}" />
-			<g:FlowPanel ui:field="messagePanel" addStyleNames="{style.messagePanel}">
-			</g:FlowPanel>
-		</g:VerticalPanel>
+		<w:DisksAllocationView ui:field="disksAllocationView" listHeight="155px" listWidth="445px" addStyleNames="{style.disksAllocationPanel}" />
+		<g:FlowPanel>
+			<e:EntityModelCheckBoxEditor ui:field="isTemplatePublicEditor" />
+			<g:ScrollPanel>
+				<g:FlowPanel ui:field="messagePanel" addStyleNames="{style.messagePanel}" />
+			</g:ScrollPanel>
+		</g:FlowPanel>
 	</g:FlowPanel>
 
 </ui:UiBinder>
