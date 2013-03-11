@@ -18,13 +18,8 @@ usage () {
         printf "\tPass                        = Certificate password\n"
         printf "\tHost                        = CN\n"
         printf "\tOrganization                = O\n"
-        printf "\tlock file                   = Name of file to be used for locking\n"
         printf "\tlocking timeout             = Amount of seconds to wait for locking\n"
         return 0
-}
-
-rollback () {
-       [[ $step -eq 1 ]] && rm -f $lock_file
 }
 
 sign () {
@@ -46,7 +41,6 @@ if [ "$#" -lt 6 ]; then
         die "Error: wrong argument number: $#.\n"
 fi
 
-step=0
 result=9
 req_file=$1
 out_file=$2
@@ -57,32 +51,19 @@ cert_pass=$6
 req_name=$7
 req_org=$8
 
-shift
-lock_file=$8
-if [ -z "$lock_file" ]; then
-        lock_file=/var/lock/ovirt-engine/.openssl.exclusivelock
-fi
-
+lock_file="$(dirname "$0")/SignReq.lock"
 shift
 timeout=$8
 if [ -z "$timeout" ]; then
         timeout=20
 fi
 
-trap "rollback; exit $result" HUP KILL INT QUIT TERM
-
 {
         # Wait for lock on $lock_file (fd 200) for $timeout seconds
-        flock -e -w $timeout 200
-        if [ $? -eq 0 ];
-        then
-                step=1
-                sign
-        else
-                die "Timeout waiting for lock. Giving up"
-        fi
+        flock -e -w $timeout 200 || die "Timeout waiting for lock. Giving up"
+        sign
         result=$?
 
-} 200>$lock_file
+} 200< $lock_file
 
 exit $result

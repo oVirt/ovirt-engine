@@ -799,10 +799,6 @@ public enum ConfigValues {
     LdapServers(305),
 
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("/var/lock/ovirt-engine/.openssl.exclusivelock")
-    SignLockFile(306),
-
-    @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("3.0.0.0")
     ProductRPMVersion(307),
 

@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -223,17 +222,6 @@ public class Backend implements BackendInternal {
         SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(QuotaManager.getInstance(),
                 "updateQuotaCache",  new Class[] {}, new Object[] {},
                 1, quotaCacheIntervalInMinutes, TimeUnit.MINUTES);
-
-        try {
-            File fLock = new File(Config.<String> GetValue(ConfigValues.SignLockFile));
-            if (fLock.exists()) {
-                if (!fLock.delete()) {
-                    log.error("Cleanup lockfile failed to delete the locking file.");
-                }
-            }
-        } catch (SecurityException se) {
-            log.error("Cleanup lockfile failed!", se);
-        }
     }
 
     private void initJobRepository() {

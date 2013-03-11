@@ -369,7 +369,6 @@ select fn_db_add_config_value('ShareableDiskEnabled','false','3.0');
 select fn_db_add_config_value('ShareableDiskEnabled','true','3.1');
 select fn_db_add_config_value('ShareableDiskEnabled','true','3.2');
 select fn_db_add_config_value('SignCertTimeoutInSeconds','30','general');
-select fn_db_add_config_value('SignLockFile','/var/lock/engine/.openssl.exclusivelock','general');
 --Handling Script name for signing
 select fn_db_add_config_value('SignScriptName','SignReq.sh','general');
 select fn_db_add_config_value('SpiceDriverNameInGuest','RHEV-Spice','general');
@@ -577,7 +576,6 @@ select fn_db_update_config_value('RhevhLocalFSPath','/data/images/rhev','general
 select fn_db_update_config_value('ServerCPUList','3:Intel Conroe Family:vmx,nx,model_Conroe:Conroe; 4:Intel Penryn Family:vmx,nx,model_Penryn:Penryn; 5:Intel Nehalem Family:vmx,nx,model_Nehalem:Nehalem; 6:Intel Westmere Family:aes,vmx,nx,model_Westmere:Westmere; 2:AMD Opteron G1:svm,nx,model_Opteron_G1:Opteron_G1; 3:AMD Opteron G2:svm,nx,model_Opteron_G2:Opteron_G2; 4:AMD Opteron G3:svm,nx,model_Opteron_G3:Opteron_G3;','3.0');
 select fn_db_update_config_value('ServerCPUList','3:Intel Conroe Family:vmx,nx,model_Conroe:Conroe; 4:Intel Penryn Family:vmx,nx,model_Penryn:Penryn; 5:Intel Nehalem Family:vmx,nx,model_Nehalem:Nehalem; 6:Intel Westmere Family:aes,vmx,nx,model_Westmere:Westmere; 7:Intel SandyBridge Family:vmx,nx,model_SandyBridge:SandyBridge; 2:AMD Opteron G1:svm,nx,model_Opteron_G1:Opteron_G1; 3:AMD Opteron G2:svm,nx,model_Opteron_G2:Opteron_G2; 4:AMD Opteron G3:svm,nx,model_Opteron_G3:Opteron_G3; 5:AMD Opteron G4:svm,nx,model_Opteron_G4:Opteron_G4;','3.1');
 select fn_db_update_config_value('ServerCPUList','3:Intel Conroe Family:vmx,nx,model_Conroe:Conroe; 4:Intel Penryn Family:vmx,nx,model_Penryn:Penryn; 5:Intel Nehalem Family:vmx,nx,model_Nehalem:Nehalem; 6:Intel Westmere Family:aes,vmx,nx,model_Westmere:Westmere; 7:Intel SandyBridge Family:vmx,nx,model_SandyBridge:SandyBridge; 8:Intel Haswell:vmx,nx,model_Haswell:Haswell; 2:AMD Opteron G1:svm,nx,model_Opteron_G1:Opteron_G1; 3:AMD Opteron G2:svm,nx,model_Opteron_G2:Opteron_G2; 4:AMD Opteron G3:svm,nx,model_Opteron_G3:Opteron_G3; 5:AMD Opteron G4:svm,nx,model_Opteron_G4:Opteron_G4; 6:AMD Opteron G5:smx,nx,model_Opteron_G5:Opteron_G5;','3.2');
-select fn_db_update_config_value('SignLockFile','/var/lock/ovirt-engine/.openssl.exclusivelock','general');
 select fn_db_update_config_value('SpiceDriverNameInGuest','{"windows": "RHEV-Spice", "linux" : "xorg-x11-drv-qxl" }','general');
 select fn_db_update_config_value('SupportedClusterLevels','3.0,3.1,3.2','general');
 select fn_db_update_config_value('SupportedStorageFormats','0,2,3','3.1');
@@ -673,6 +671,7 @@ select fn_db_delete_config_value('RedirectServletReportsPageError','general');
 select fn_db_delete_config_value('RenewGuestIpOnVdsSubnetChange','general');
 select fn_db_delete_config_value('RenewGuestIpOnVdsSubnetChangeOnParseError','general');
 select fn_db_delete_config_value('RpmsRepositoryUrl','general');
+select fn_db_delete_config_value('SignLockFile','general');
 select fn_db_delete_config_value('SQLServerI18NPrefix','general');
 select fn_db_delete_config_value('SQLServerLikeSyntax','general');
 select fn_db_delete_config_value('SQLServerPagingSyntax','general');

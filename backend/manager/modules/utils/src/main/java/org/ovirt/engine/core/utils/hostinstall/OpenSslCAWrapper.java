@@ -226,7 +226,6 @@ public class OpenSslCAWrapper {
         log.debug("Building command array for Sign Certificate request script");
         String baseDirectoryPath = Config.resolveCABasePath();
         String keystorePass = Config.<String> GetValue(ConfigValues.keystorePass);
-        String lockfileName = Config.<String> GetValue(ConfigValues.SignLockFile);
         Calendar yesterday = Calendar.getInstance();
         yesterday.add(Calendar.DATE, -1);
         SimpleDateFormat format = new SimpleDateFormat("yyMMddHHmmssZ");
@@ -234,7 +233,7 @@ public class OpenSslCAWrapper {
         String[] command_array = { signRequestBatch, requestFileName, signedCertificateFileName, "" + days,
                 baseDirectoryPath, format.format(yesterday.getTime()), keystorePass,
                 hostname, organization,
-                lockfileName, "" + (signatureTimeout / 2) };
+                "" + (signatureTimeout / 2) };
         log.debug("Finished building command array for Sign Certificate request script");
         return command_array;
     }

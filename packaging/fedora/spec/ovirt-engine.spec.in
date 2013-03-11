@@ -534,6 +534,7 @@ fi
 
 # PKI scripts:
 %{engine_pki}/*.sh
+%{engine_pki}/*.lock
 
 # PKI configuration files:
 %config(noreplace) %{engine_pki}/openssl.conf
