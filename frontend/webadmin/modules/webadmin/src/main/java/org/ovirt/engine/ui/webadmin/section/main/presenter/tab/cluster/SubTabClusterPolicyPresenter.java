@@ -1,12 +1,12 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster;
 
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
-import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterVmListModel;
+import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterPolicyModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.ClusterSelectionChangeEvent;
@@ -23,32 +23,33 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabClusterVmPresenter extends AbstractSubTabPresenter<VDSGroup, ClusterListModel, ClusterVmListModel, SubTabClusterVmPresenter.ViewDef, SubTabClusterVmPresenter.ProxyDef> {
+public class SubTabClusterPolicyPresenter extends AbstractSubTabPresenter<VDSGroup, ClusterListModel, ClusterPolicyModel, SubTabClusterPolicyPresenter.ViewDef, SubTabClusterPolicyPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.clusterVmSubTabPlace)
-    public interface ProxyDef extends TabContentProxyPlace<SubTabClusterVmPresenter> {
+    @NameToken(ApplicationPlaces.clusterPolicySubTabPlace)
+    public interface ProxyDef extends TabContentProxyPlace<SubTabClusterPolicyPresenter> {
     }
 
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<VDSGroup> {
     }
 
+    private final ApplicationConstants constants;
+
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().clusterVmSubTabLabel(), 4,
-                ginjector.getSubTabClusterVmModelProvider());
+        return new ModelBoundTabData(ginjector.getApplicationConstants().clusterPolicySubTabLabel(), 1,
+                ginjector.getSubTabClusterPolicyModelProvider());
     }
 
     @Inject
-    public SubTabClusterVmPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
+    public SubTabClusterPolicyPresenter(EventBus eventBus,
+            ViewDef view,
+            ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<VM, ClusterListModel, ClusterVmListModel> modelProvider) {
+            DetailModelProvider<ClusterListModel, ClusterPolicyModel> modelProvider,
+            ApplicationConstants constants) {
         super(eventBus, view, proxy, placeManager, modelProvider);
-    }
-
-    @Override
-    protected void revealInParent() {
-        RevealContentEvent.fire(this, ClusterSubTabPanelPresenter.TYPE_SetTabContent, this);
+        this.constants = constants;
     }
 
     @Override
@@ -56,9 +57,13 @@ public class SubTabClusterVmPresenter extends AbstractSubTabPresenter<VDSGroup, 
         return new PlaceRequest(ApplicationPlaces.clusterMainTabPlace);
     }
 
+    @Override
+    protected void revealInParent() {
+        RevealContentEvent.fire(this, ClusterSubTabPanelPresenter.TYPE_SetTabContent, this);
+    }
+
     @ProxyEvent
     public void onClusterSelectionChange(ClusterSelectionChangeEvent event) {
         updateMainTabSelection(event.getSelectedItems());
     }
-
 }

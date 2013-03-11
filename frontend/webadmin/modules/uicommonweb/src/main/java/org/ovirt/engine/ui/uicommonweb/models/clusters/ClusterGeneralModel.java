@@ -33,10 +33,6 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class ClusterGeneralModel extends EntityModel {
 
-    public static Integer lowLimitPowerSaving = null;
-    public static Integer highLimitPowerSaving = null;
-    public static Integer highLimitEvenlyDistributed = null;
-
     private Integer noOfVolumesTotal;
     private Integer noOfVolumesUp;
     private Integer noOfVolumesDown;
@@ -66,18 +62,6 @@ public class ClusterGeneralModel extends EntityModel {
 
     public void setNoOfVolumesDown(Integer noOfVolumesDown) {
         this.noOfVolumesDown = noOfVolumesDown;
-    }
-
-    private UICommand privateEditPolicyCommand;
-
-    public UICommand getEditPolicyCommand()
-    {
-        return privateEditPolicyCommand;
-    }
-
-    public void setEditPolicyCommand(UICommand value)
-    {
-        privateEditPolicyCommand = value;
     }
 
     private boolean hasAnyAlert;
@@ -180,48 +164,6 @@ public class ClusterGeneralModel extends EntityModel {
         setConsoleAddressPartiallyOverridden(false);
         setImportNewGlusterHostsCommand(new UICommand("ImportGlusterHosts", this)); //$NON-NLS-1$
         setDetachNewGlusterHostsCommand(new UICommand("DetachGlusterHosts", this)); //$NON-NLS-1$
-
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object model, Object result)
-            {
-                ClusterGeneralModel.highLimitEvenlyDistributed = (Integer) result;
-            }
-        };
-        if (ClusterGeneralModel.highLimitEvenlyDistributed == null)
-        {
-            AsyncDataProvider.GetHighUtilizationForEvenDistribution(_asyncQuery);
-        }
-        _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object model, Object result)
-            {
-                ClusterGeneralModel.lowLimitPowerSaving = (Integer) result;
-            }
-        };
-        if (ClusterGeneralModel.lowLimitPowerSaving == null)
-        {
-            AsyncDataProvider.GetLowUtilizationForPowerSave(_asyncQuery);
-        }
-
-        _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object model, Object result)
-            {
-                ClusterGeneralModel.highLimitPowerSaving = (Integer) result;
-            }
-        };
-        if (ClusterGeneralModel.highLimitPowerSaving == null)
-        {
-            AsyncDataProvider.GetHighUtilizationForPowerSave(_asyncQuery);
-        }
-
     }
 
     @Override
@@ -236,8 +178,6 @@ public class ClusterGeneralModel extends EntityModel {
             updateConsoleAddressPartiallyOverridden(getEntity());
             updateProperties();
         }
-
-        UpdateActionAvailability();
     }
 
     private void updateProperties() {
@@ -466,10 +406,6 @@ public class ClusterGeneralModel extends EntityModel {
         setWindow(null);
     }
 
-    private void UpdateActionAvailability()
-    {
-        getEditPolicyCommand().setIsExecutionAllowed(getEntity() != null);
-    }
 
     private void UpdateVolumeDetails()
     {

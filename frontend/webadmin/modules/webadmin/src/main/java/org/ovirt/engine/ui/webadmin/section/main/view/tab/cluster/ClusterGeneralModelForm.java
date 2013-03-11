@@ -13,10 +13,10 @@ import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGeneralModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 
 public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<ClusterGeneralModel> {
 
@@ -46,14 +46,14 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
         Condition supportsVirtService = new Condition() {
             @Override
             public boolean isTrue() {
-                return getModel().getEntity().supportsVirtService();
+                return getModel().getEntity() != null && getModel().getEntity().supportsVirtService();
             }
         };
 
         Condition supportsGlusterService = new Condition() {
             @Override
             public boolean isTrue() {
-                return getModel().getEntity().supportsGlusterService();
+                return getModel().getEntity() != null && getModel().getEntity().supportsGlusterService();
             }
         };
 
@@ -69,7 +69,12 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
         formBuilder.addFormItem(new FormItem(constants.descriptionCluster(), description, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.dcCluster(), dataCenterName, 2, 0));
         formBuilder.addFormItem(new FormItem(constants.compatibilityVersionCluster(), compatibilityVersion, 3, 0));
-        formBuilder.addFormItem(new FormItem(constants.clusterType(), clusterType, 4, 0));
+
+        // Show the cluster type only if the application is running in both the modes
+        if (ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly)
+                && ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly)) {
+            formBuilder.addFormItem(new FormItem(constants.clusterType(), clusterType, 4, 0));
+        }
 
         // properties for virt support
         if (ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly)) {

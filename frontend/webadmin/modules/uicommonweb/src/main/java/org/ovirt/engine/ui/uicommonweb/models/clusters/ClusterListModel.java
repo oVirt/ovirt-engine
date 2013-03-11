@@ -53,7 +53,6 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
     private UICommand privateNewCommand;
     private boolean clusterPolicyFirst;
-    private ClusterGeneralModel clusterGeneralModel;
 
     public UICommand getNewCommand()
     {
@@ -144,6 +143,16 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         privateGuideContext = value;
     }
 
+    private ClusterPolicyModel clusterPolicyModel;
+
+    public ClusterPolicyModel getClusterPolicyModel() {
+        return clusterPolicyModel;
+    }
+
+    public void setClusterPolicyModel(ClusterPolicyModel clusterPolicyModel) {
+        this.clusterPolicyModel = clusterPolicyModel;
+    }
+
     private ClusterServiceModel clusterServiceModel;
 
     public ClusterServiceModel getClusterServiceModel() {
@@ -185,7 +194,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
-        clusterGeneralModel.setEditPolicyCommand(getEditCommand());
+        getClusterPolicyModel().setEditPolicyCommand(getEditCommand());
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setGuideCommand(new UICommand("Guide", this)); //$NON-NLS-1$
         setAddMultipleHostsCommand(new UICommand("AddHosts", this)); //$NON-NLS-1$
@@ -231,12 +240,13 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         super.InitDetailModels();
 
         setClusterVmListModel(new ClusterVmListModel());
+        setClusterPolicyModel(new ClusterPolicyModel());
         setClusterServiceModel(new ClusterServiceModel());
         setClusterGlusterHookListModel(new ClusterGlusterHookListModel());
 
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-        clusterGeneralModel = new ClusterGeneralModel();
-        list.add(clusterGeneralModel);
+        list.add(new ClusterGeneralModel());
+        list.add(getClusterPolicyModel());
         list.add(new ClusterNetworkListModel());
         list.add(new ClusterHostListModel());
         list.add(getClusterVmListModel());
@@ -254,6 +264,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         getClusterServiceModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsGlusterService()
                 && Version.v3_2.compareTo(vdsGroup.getcompatibility_version()) <= 0);
         getClusterGlusterHookListModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsGlusterService());
+        getClusterPolicyModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsVirtService());
     }
 
     @Override

@@ -1639,48 +1639,6 @@ public final class AsyncDataProvider {
                 SearchType.StorageDomain), aQuery);
     }
 
-    public static void GetHighUtilizationForEvenDistribution(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                return source != null ? ((Integer) source).intValue() : 0;
-            }
-        };
-        GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForEvenlyDistribute,
-                        getDefaultConfigurationVersion()),
-                aQuery);
-    }
-
-    public static void GetLowUtilizationForPowerSave(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                return source != null ? ((Integer) source).intValue() : 0;
-            }
-        };
-        GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.LowUtilizationForPowerSave,
-                        getDefaultConfigurationVersion()),
-                aQuery);
-    }
-
-    public static void GetHighUtilizationForPowerSave(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                return source != null ? ((Integer) source).intValue() : 0;
-            }
-        };
-        GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForPowerSave,
-                        getDefaultConfigurationVersion()),
-                aQuery);
-    }
-
     public static void GetNetworkConnectivityCheckTimeoutInSeconds(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override

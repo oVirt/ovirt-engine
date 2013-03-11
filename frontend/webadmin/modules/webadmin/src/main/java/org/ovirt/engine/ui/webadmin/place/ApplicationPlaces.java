@@ -102,6 +102,9 @@ public class ApplicationPlaces {
     public static final String clusterGeneralSubTabPlace = clusterMainTabPlace + SUB_TAB_PREFIX
             + "general"; //$NON-NLS-1$
 
+    public static final String clusterPolicySubTabPlace = clusterMainTabPlace + SUB_TAB_PREFIX
+            + "policy"; //$NON-NLS-1$
+
     public static final String clusterHostSubTabPlace = clusterMainTabPlace + SUB_TAB_PREFIX
             + "hosts"; //$NON-NLS-1$
 

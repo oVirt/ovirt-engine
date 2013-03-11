@@ -24,6 +24,7 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGlusterHookListMod
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterHostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkListModel;
+import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterPolicyModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterServiceModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -114,6 +115,14 @@ public class ClusterModule extends AbstractGinModule {
                 }
             }
         };
+    }
+
+    @Provides
+    @Singleton
+    public DetailModelProvider<ClusterListModel, ClusterPolicyModel> getClusterPolicyProvider(ClientGinjector ginjector) {
+        return new DetailTabModelProvider<ClusterListModel, ClusterPolicyModel>(ginjector,
+                ClusterListModel.class,
+                ClusterPolicyModel.class);
     }
 
     // Searchable Detail Models

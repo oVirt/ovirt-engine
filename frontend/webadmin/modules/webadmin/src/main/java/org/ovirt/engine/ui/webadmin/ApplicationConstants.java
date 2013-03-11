@@ -298,6 +298,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("General")
     String clusterGeneralSubTabLabel();
 
+    @DefaultStringValue("Policy")
+    String clusterPolicySubTabLabel();
+
     @DefaultStringValue("Hosts")
     String clusterHostSubTabLabel();
 

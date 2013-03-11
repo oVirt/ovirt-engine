@@ -1,16 +1,22 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class ClusterPolicyModel extends EntityModel
-{
+public class ClusterPolicyModel extends EntityModel {
 
+    public static Integer lowLimitPowerSaving = null;
+    public static Integer highLimitPowerSaving = null;
+    public static Integer highLimitEvenlyDistributed = null;
 
     private EntityModel privateOverCommitTime;
     private boolean editClusterPolicyFirst;
@@ -111,17 +117,47 @@ public class ClusterPolicyModel extends EntityModel
     {
         if (getSelectionAlgorithm() == VdsSelectionAlgorithm.EvenlyDistribute)
         {
-            ClusterGeneralModel.highLimitEvenlyDistributed = getOverCommitHighLevel();
+            ClusterPolicyModel.highLimitEvenlyDistributed = getOverCommitHighLevel();
         }
         else if (getSelectionAlgorithm() == VdsSelectionAlgorithm.PowerSave)
         {
-            ClusterGeneralModel.lowLimitPowerSaving = getOverCommitLowLevel();
-            ClusterGeneralModel.highLimitPowerSaving = getOverCommitHighLevel();
+            ClusterPolicyModel.lowLimitPowerSaving = getOverCommitLowLevel();
+            ClusterPolicyModel.highLimitPowerSaving = getOverCommitHighLevel();
         }
+    }
+
+    private UICommand privateEditPolicyCommand;
+
+    public UICommand getEditPolicyCommand()
+    {
+        return privateEditPolicyCommand;
+    }
+
+    public void setEditPolicyCommand(UICommand value)
+    {
+        privateEditPolicyCommand = value;
     }
 
     public ClusterPolicyModel()
     {
+        setTitle(ConstantsManager.getInstance().getConstants().clusterPolicyTitle());
+        setHashName("policy"); //$NON-NLS-1$
+
+        if (ClusterPolicyModel.highLimitEvenlyDistributed == null) {
+            ClusterPolicyModel.highLimitEvenlyDistributed =
+                    (Integer) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.HighUtilizationForEvenlyDistribute);
+        }
+
+        if (ClusterPolicyModel.lowLimitPowerSaving == null) {
+            ClusterPolicyModel.lowLimitPowerSaving =
+                    (Integer) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.LowUtilizationForPowerSave);
+        }
+
+        if (ClusterPolicyModel.highLimitPowerSaving == null) {
+            ClusterPolicyModel.highLimitPowerSaving =
+                    (Integer) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.HighUtilizationForPowerSave);
+        }
+
         setOverCommitTime(new EntityModel());
 
         // Set all properties according to default selected algorithm:
@@ -158,8 +194,8 @@ public class ClusterPolicyModel extends EntityModel
             setHasOverCommitLowLevel(false);
             setHasOverCommitHighLevel(true);
             setOverCommitLowLevel(0);
-            setOverCommitHighLevel((ClusterGeneralModel.highLimitEvenlyDistributed == null ? 0
-                    : ClusterGeneralModel.highLimitEvenlyDistributed));
+            setOverCommitHighLevel((ClusterPolicyModel.highLimitEvenlyDistributed == null ? 0
+                    : ClusterPolicyModel.highLimitEvenlyDistributed));
             break;
 
         case PowerSave:
@@ -167,11 +203,11 @@ public class ClusterPolicyModel extends EntityModel
             getOverCommitTime().setIsChangable(true);
             setHasOverCommitLowLevel(true);
             setHasOverCommitHighLevel(true);
-            setOverCommitLowLevel((ClusterGeneralModel.lowLimitPowerSaving == null ? 0
-                    : ClusterGeneralModel.lowLimitPowerSaving));
+            setOverCommitLowLevel((ClusterPolicyModel.lowLimitPowerSaving == null ? 0
+                    : ClusterPolicyModel.lowLimitPowerSaving));
 
-            setOverCommitHighLevel((ClusterGeneralModel.highLimitPowerSaving == null ? 0
-                    : ClusterGeneralModel.highLimitPowerSaving));
+            setOverCommitHighLevel((ClusterPolicyModel.highLimitPowerSaving == null ? 0
+                    : ClusterPolicyModel.highLimitPowerSaving));
             break;
         }
     }

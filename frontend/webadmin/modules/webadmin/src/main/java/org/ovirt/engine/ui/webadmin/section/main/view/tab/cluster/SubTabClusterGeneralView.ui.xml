@@ -8,55 +8,6 @@
 	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
 	<ui:style>
-		.button {
-			width: 100px;
-			margin: 10px;
-		}
-		.transparent {
-			width: 400px;
-			height: 40px;
-			opacity: .8;
-			
-		}
-		.absolutePanel {
-			position: absolute; 
-		}
-		.geryPanel { 
-			background-color: grey;	
-			height: 20px;
-			width: 160px;
-		}
-		.gerySplitPanel {
-			background-color: grey;	
-			height: 20px;
-			width: 8px;
-		}
-		.minLabel {
-			height: 10px;
-			width: 10px;
-			background-color: #AFBF27;	
-		}
-		.maxLabel {
-			height: 10px;
-			width: 10px;
-			background-color: #4E9FDD;	
-		}
-		.topMarginPanel {
-			margin-top: 10px;
-		}
-		.rightMarginStyle {
-			margin-right: 5px;
-		}
-		.minMaxPanel {
-			margin-top: 50px;
-		}
-		.marginLeft {
-			margin-left: 5px;
-		}
-		.headerLabel {
-			font-weight: bold;
-			padding-left: 5px;
-		}
 		@external alertsPanel;
 		.alertsPanel {
 			padding-top: 5px;
@@ -67,61 +18,17 @@
 			color: black;
 			text-decoration: underline;
 		}
-
-		.leftPanel {
-		 	border-right: 1px solid #c0c0c0;
-		}
 	</ui:style>
-	<g:DockLayoutPanel height="100%">
-		<g:west size="570">
-			<g:FlowPanel addStyleNames="{style.leftPanel}">
-				<g:HorizontalPanel spacing="5">
-					<g:HorizontalPanel ui:field="policyPanel" addStyleNames="{style.marginLeft}">
-						<g:FlowPanel width="400px">
-							<w:UiCommandButton ui:field="editPolicyButton" addStyleNames="{style.button}"/>
-							<g:HorizontalPanel>
-								<g:Label ui:field="policyLabel" addStyleNames="{style.rightMarginStyle}"/>
-								<g:Label ui:field="policyFieldLabel"/>
-							</g:HorizontalPanel>
-							<g:AbsolutePanel ui:field="sliderPanel" addStyleNames="{style.topMarginPanel}">
-								<g:HorizontalPanel addStyleNames="{style.absolutePanel}">
-									<g:SimplePanel ui:field="leftDummySlider" addStyleNames="{style.geryPanel}"/>
-									<f:Slider ui:field="leftSlider"/>
-									<g:SimplePanel addStyleNames="{style.gerySplitPanel}"/>
-									<f:Slider ui:field="rightSlider"/>
-								</g:HorizontalPanel>
-								<g:SimplePanel addStyleNames="{style.transparent}"/>
-							</g:AbsolutePanel>
-							<g:Label ui:field="policyTimeLabel"/>
-						</g:FlowPanel>
-						<g:FlowPanel addStyleNames="{style.minMaxPanel}">
-							<g:HorizontalPanel>
-								<g:SimplePanel addStyleNames="{style.maxLabel}"/>
-								<g:Label ui:field="maxServiceLevelLabel"/>
-							</g:HorizontalPanel>
-							<g:HorizontalPanel>
-								<g:SimplePanel addStyleNames="{style.minLabel}"/>
-								<g:Label ui:field="minServiceLevelLabel"/>
-							</g:HorizontalPanel>
-						</g:FlowPanel>
-					</g:HorizontalPanel>
-				</g:HorizontalPanel>
-			</g:FlowPanel>
-		</g:west>
-		<g:center size="300">
-			<g:ScrollPanel>
-				<c:ClusterGeneralModelForm ui:field="form"/>
-			</g:ScrollPanel>
-		</g:center>
-		<g:south size="50">
-			<g:HTMLPanel ui:field="alertsPanel" addStyleNames="{style.alertsPanel}">
-				<div>
-					<b>
-						<g:Label text="{constants.actionItemsHostGeneral}"></g:Label>
-					</b>
-				</div>
-				<g:FlowPanel ui:field="alertsList"/>
-			</g:HTMLPanel>
-		</g:south>
-	</g:DockLayoutPanel>
+
+	<g:FlowPanel>
+		<c:ClusterGeneralModelForm ui:field="form"/>
+		<g:HTMLPanel ui:field="alertsPanel" addStyleNames="{style.alertsPanel}">
+			<div>
+				<b>
+					<g:Label text="{constants.actionItemsHostGeneral}"></g:Label>
+				</b>
+			</div>
+			<g:FlowPanel ui:field="alertsList"/>
+		</g:HTMLPanel>
+	</g:FlowPanel>
 </ui:UiBinder>
