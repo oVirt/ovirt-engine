@@ -226,7 +226,9 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     @Override
     protected void UpdateDetailsAvailability() {
         super.UpdateDetailsAvailability();
-        getClusterServiceModel().setIsAvailable(((VDSGroup) getSelectedItem()).supportsGlusterService());
+        VDSGroup vdsGroup = (VDSGroup) getSelectedItem();
+        getClusterServiceModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsGlusterService()
+                && Version.v3_2.compareTo(vdsGroup.getcompatibility_version()) <= 0);
     }
 
     @Override

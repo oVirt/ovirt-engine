@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.Mempool;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -774,7 +775,36 @@ public class VolumeBrickListModel extends SearchableListModel {
     }
 
     private void showBrickAdvancedDetails() {
-        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+        final GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+        AsyncDataProvider.GetClusterById(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                VDSGroup vdsGroup = (VDSGroup) returnValue;
+                if (Version.v3_2.compareTo(vdsGroup.getcompatibility_version()) <= 0) {
+                    onShowBrickAdvancedDetails(volumeEntity);
+                }
+                else {
+                    ConfirmationModel model = new ConfirmationModel();
+                    setWindow(model);
+                    model.setTitle(ConstantsManager.getInstance().getConstants().advancedDetailsBrickTitle());
+                    model.setMessage(ConstantsManager.getInstance()
+                            .getMessages()
+                            .brickDetailsNotSupportedInClusterCompatibilityVersion(vdsGroup.getcompatibility_version() != null ? vdsGroup.getcompatibility_version()
+                                    .toString()
+                                    : "")); //$NON-NLS-1$
+                    model.setHashName("brick_details_not_supported"); //$NON-NLS-1$
+
+                    UICommand command = new UICommand("Cancel", VolumeBrickListModel.this); //$NON-NLS-1$
+                    command.setTitle(ConstantsManager.getInstance().getConstants().close());
+                    command.setIsCancel(true);
+                    model.getCommands().add(command);
+                }
+            }
+        }), volumeEntity.getClusterId());
+
+    }
+
+    private void onShowBrickAdvancedDetails(GlusterVolumeEntity volumeEntity) {
         final GlusterBrickEntity brickEntity = (GlusterBrickEntity) getSelectedItem();
 
         final BrickAdvancedDetailsModel brickModel = new BrickAdvancedDetailsModel();

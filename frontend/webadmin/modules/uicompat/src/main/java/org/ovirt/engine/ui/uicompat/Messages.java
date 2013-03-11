@@ -255,4 +255,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Custom({0})")
     String customSpmPriority(int priority);
+
+    @DefaultMessage("Brick Details not supported for this Cluster''s compatibility version({0}).")
+    String brickDetailsNotSupportedInClusterCompatibilityVersion(String version);
 }
