@@ -33,10 +33,10 @@ import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 
 public class AuditLogableBaseTest {
 
-    private static final Guid GUID = new Guid("11111111-1111-1111-1111-111111111111");
-    private static final Guid GUID2 = new Guid("11111111-1111-1111-1111-111111111112");
-    private static final Guid GUID3 = new Guid("11111111-1111-1111-1111-111111111113");
-    private static final String NAME = "testName";
+    protected static final Guid GUID = new Guid("11111111-1111-1111-1111-111111111111");
+    protected static final Guid GUID2 = new Guid("11111111-1111-1111-1111-111111111112");
+    protected static final Guid GUID3 = new Guid("11111111-1111-1111-1111-111111111113");
+    protected static final String NAME = "testName";
 
     @Test
     public void nGuidCtor() {
@@ -1053,7 +1053,7 @@ public class AuditLogableBaseTest {
         assertEquals(AuditLogType.UNASSIGNED.toString(), s);
     }
 
-    private class TestAuditLogableBase extends AuditLogableBase {
+    protected static class TestAuditLogableBase extends AuditLogableBase {
         public final StorageDomain STORAGE_DOMAIN = new StorageDomain();
 
         @Override
