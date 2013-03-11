@@ -149,7 +149,7 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE storage_domain_dynamic
-      SET available_disk_size = v_available_disk_size,used_disk_size = v_used_disk_size
+      SET available_disk_size = v_available_disk_size,used_disk_size = v_used_disk_size, _update_date = LOCALTIMESTAMP
       WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;

@@ -571,7 +571,7 @@ RETURNS VOID
 BEGIN
       UPDATE vm_interface_statistics
       SET rx_drop = v_rx_drop,rx_rate = v_rx_rate,tx_drop = v_tx_drop,tx_rate = v_tx_rate,
-      vm_id = v_vm_id,iface_status = v_iface_status
+      vm_id = v_vm_id,iface_status = v_iface_status, _update_date = LOCALTIMESTAMP
       WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -679,7 +679,7 @@ RETURNS VOID
 BEGIN
       UPDATE vds_interface_statistics
       SET rx_drop = v_rx_drop,rx_rate = v_rx_rate,tx_drop = v_tx_drop,tx_rate = v_tx_rate,
-      vds_id = v_vds_id,iface_status = v_iface_status
+      vds_id = v_vds_id,iface_status = v_iface_status, _update_date = LOCALTIMESTAMP
       WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;

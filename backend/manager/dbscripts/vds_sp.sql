@@ -68,7 +68,7 @@ BEGIN
       usage_network_percent = v_usage_network_percent,
       mem_available = v_mem_available,mem_shared = v_mem_shared,
       swap_free = v_swap_free,swap_total = v_swap_total,ksm_cpu_percent = v_ksm_cpu_percent,
-      ksm_pages = v_ksm_pages,ksm_state = v_ksm_state
+      ksm_pages = v_ksm_pages,ksm_state = v_ksm_state, _update_date = LOCALTIMESTAMP
       WHERE vds_id = v_vds_id;
    END;
 

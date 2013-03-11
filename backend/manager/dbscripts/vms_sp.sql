@@ -157,7 +157,7 @@ BEGIN
       UPDATE vm_statistics
       SET cpu_sys = v_cpu_sys,cpu_user = v_cpu_user,elapsed_time = v_elapsed_time,
       usage_cpu_percent = v_usage_cpu_percent,usage_mem_percent = v_usage_mem_percent,
-      usage_network_percent = v_usage_network_percent,disks_usage = v_disks_usage
+      usage_network_percent = v_usage_network_percent,disks_usage = v_disks_usage, _update_date = LOCALTIMESTAMP
       WHERE vm_guid = v_vm_guid;
 END; $procedure$
 LANGUAGE plpgsql;
