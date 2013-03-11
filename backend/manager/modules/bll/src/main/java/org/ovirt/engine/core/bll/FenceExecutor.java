@@ -271,7 +271,7 @@ public class FenceExecutor {
 
     private boolean isHostNetworkUnreacable(VDS vds) {
         VdsDynamic vdsDynamic = vds.getDynamicData();
-        return (vdsDynamic.getstatus() == VDSStatus.NonOperational && vdsDynamic.getNonOperationalReason() == NonOperationalReason.NETWORK_UNREACHABLE);
+        return ((vdsDynamic.getstatus() == VDSStatus.Reboot) || (vdsDynamic.getstatus() == VDSStatus.NonOperational && vdsDynamic.getNonOperationalReason() == NonOperationalReason.NETWORK_UNREACHABLE));
     }
 
     private VDS getFenceProxy(final boolean onlyUpHost, final boolean filterSelf, final PMProxyOptions proxyOptions) {
