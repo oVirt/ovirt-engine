@@ -8,8 +8,11 @@ import java.util.List;
 import org.easymock.IMocksControl;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickProperties;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.MallInfo;
+import org.ovirt.engine.core.common.businessentities.gluster.MemoryStatus;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GlusterTestHelper {
@@ -21,6 +24,7 @@ public class GlusterTestHelper {
     protected static final Guid clusterId = GUIDS[0];
     protected static final Guid serverId = GUIDS[1];
     protected static final Guid volumeId = GUIDS[2];
+    protected static final Guid brickId = GUIDS[0];
     protected static final String brickDir = "/export/vol1/brick1";
     protected static final String brickName = "server:" + brickDir;
     protected static final String volumeName = "AnyVolume";
@@ -34,6 +38,30 @@ public class GlusterTestHelper {
         this.control = control;
     }
 
+    protected GlusterBrickEntity getBrickEntity(int index, boolean hasDetails) {
+        GlusterBrickEntity entity = control.createMock(GlusterBrickEntity.class);
+
+        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
+        expect(entity.getServerId()).andReturn(serverId).anyTimes();
+        expect(entity.getBrickDirectory()).andReturn(GlusterTestHelper.brickDir).anyTimes();
+        expect(entity.getQualifiedName()).andReturn(GlusterTestHelper.brickName).anyTimes();
+        expect(entity.getVolumeId()).andReturn(volumeId).anyTimes();
+        if (hasDetails) {
+            BrickDetails brickDetails = control.createMock(BrickDetails.class);
+            BrickProperties brickProps = control.createMock(BrickProperties.class);
+            MemoryStatus memStatus = control.createMock(MemoryStatus.class);
+            MallInfo mallInfo = control.createMock(MallInfo.class);
+            expect(mallInfo.getArena()).andReturn(888);
+            expect(brickProps.getMntOptions()).andReturn(GlusterTestHelper.BRICK_MNT_OPT).anyTimes();
+            expect(brickProps.getPort()).andReturn(GlusterTestHelper.BRICK_PORT).anyTimes();
+            expect(brickDetails.getMemoryStatus()).andReturn(memStatus);
+            expect(memStatus.getMallInfo()).andReturn(mallInfo);
+            expect(brickDetails.getBrickProperties()).andReturn(brickProps).anyTimes();
+            expect(entity.getBrickDetails()).andReturn(brickDetails).anyTimes();
+        }
+
+        return entity;
+    }
 
     protected GlusterVolumeEntity getVolumeEntity(int index) {
         GlusterVolumeEntity entity = control.createMock(GlusterVolumeEntity.class);

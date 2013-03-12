@@ -1110,15 +1110,15 @@ public final class AsyncDataProvider {
         };
         // Passing empty values for Volume and Brick to get the services of all the volumes/hosts in the cluster
         GlusterVolumeAdvancedDetailsParameters parameters =
-                new GlusterVolumeAdvancedDetailsParameters(clusterId, "", "", false); //$NON-NLS-1$ //$NON-NLS-2$
+                new GlusterVolumeAdvancedDetailsParameters(clusterId, null, null, false); //$NON-NLS-1$ //$NON-NLS-2$
         Frontend.RunQuery(VdcQueryType.GetGlusterVolumeAdvancedDetails,
                 parameters,
                 aQuery);
     }
 
-    public static void GetGlusterVolumeBrickDetails(AsyncQuery aQuery, Guid clusterId, String volume, String brick) {
+    public static void GetGlusterVolumeBrickDetails(AsyncQuery aQuery, Guid clusterId, Guid volumeId, Guid brickId) {
         GlusterVolumeAdvancedDetailsParameters parameters =
-                new GlusterVolumeAdvancedDetailsParameters(clusterId, volume, brick, true);
+                new GlusterVolumeAdvancedDetailsParameters(clusterId, volumeId, brickId, true);
         Frontend.RunQuery(VdcQueryType.GetGlusterVolumeAdvancedDetails,
                 parameters,
                 aQuery);

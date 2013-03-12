@@ -2,6 +2,10 @@ package org.ovirt.engine.api.restapi.resource.gluster;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
+import static org.ovirt.engine.api.restapi.resource.gluster.GlusterTestHelper.brickId;
+import static org.ovirt.engine.api.restapi.resource.gluster.GlusterTestHelper.clusterId;
+import static org.ovirt.engine.api.restapi.resource.gluster.GlusterTestHelper.serverId;
+import static org.ovirt.engine.api.restapi.resource.gluster.GlusterTestHelper.volumeId;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,26 +26,17 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeReplaceBrickActionParameters;
-import org.ovirt.engine.core.common.businessentities.gluster.BrickDetails;
-import org.ovirt.engine.core.common.businessentities.gluster.BrickProperties;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.MallInfo;
-import org.ovirt.engine.core.common.businessentities.gluster.MemoryStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
-import org.ovirt.engine.core.compat.Guid;
 
 
 public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceTest<GlusterBrick, GlusterBrickEntity, BackendGlusterBrickResource> {
 
-    private static final Guid volumeId = GlusterTestHelper.volumeId;//GUIDS[1];
-    private static final Guid clusterId = GlusterTestHelper.clusterId;//GUIDS[2];
-    private static final Guid serverId = GlusterTestHelper.serverId; //GUIDS[3];
-    private static final Guid brickId = GUIDS[3];
-
     private BackendGlusterVolumeResource volumeResourceMock;
     private BackendGlusterBricksResource bricksResourceMock;
+    private GlusterTestHelper helper;
 
     public BackendGlusterBrickResourceTest() {
         super(new BackendGlusterBrickResource(brickId.toString()));
@@ -50,6 +45,7 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
     @Override
     protected void init() {
         super.init();
+        helper = new GlusterTestHelper(control);
     }
 
     @Test
@@ -163,36 +159,11 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
 
     @Override
     protected GlusterBrickEntity getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(GlusterBrickEntity.class), index, false);
-    }
-
-    private GlusterBrickEntity setUpEntityExpectations(
-            GlusterBrickEntity entity, int index, boolean hasDetails) {
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getServerId()).andReturn(serverId).anyTimes();
-        expect(entity.getBrickDirectory()).andReturn(GlusterTestHelper.brickDir).anyTimes();
-        expect(entity.getQualifiedName()).andReturn(GlusterTestHelper.brickName).anyTimes();
-        expect(entity.getVolumeId()).andReturn(volumeId).anyTimes();
-        if (hasDetails){
-            BrickDetails brickDetails = control.createMock(BrickDetails.class);
-            BrickProperties brickProps = control.createMock(BrickProperties.class);
-            MemoryStatus memStatus = control.createMock(MemoryStatus.class);
-            MallInfo mallInfo = control.createMock(MallInfo.class);
-            expect(mallInfo.getArena()).andReturn(888);
-            expect(brickProps.getMntOptions()).andReturn(GlusterTestHelper.BRICK_MNT_OPT).anyTimes();
-            expect(brickProps.getPort()).andReturn(GlusterTestHelper.BRICK_PORT).anyTimes();
-            expect(brickDetails.getMemoryStatus()).andReturn(memStatus);
-            expect(memStatus.getMallInfo()).andReturn(mallInfo);
-            expect(brickDetails.getBrickProperties()).andReturn(brickProps).anyTimes();
-            //List<BrickDetails> brickDetailsList = Arrays.asList(brickDetails);
-            expect(entity.getBrickDetails()).andReturn(brickDetails).anyTimes();
-      }
-
-        return entity;
+        return helper.getBrickEntity(index, false);
     }
 
     private GlusterBrickEntity getEntityWithDetails(int index) {
-        return setUpEntityExpectations(control.createMock(GlusterBrickEntity.class), index, true);
+        return helper.getBrickEntity(index, true);
     }
 
     /**
@@ -237,13 +208,13 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
     private void setupEntityExpectationAdvancedDetails(int times, boolean notFound, boolean hasBrickDetails) throws Exception {
         // the brick entity should be returned. We are not testing for not found on that.
         //setUpGetEntityExpectations(times,false);
-        GlusterTestHelper helper = new GlusterTestHelper(control);
         while (times-- > 0) {
             setUpGetEntityExpectations(VdcQueryType.GetGlusterBrickById,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { brickId },
-                hasBrickDetails? getEntityWithDetails(0): getEntity(0));
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { brickId },
+                    hasBrickDetails ? getEntityWithDetails(0) : getEntity(0));
+
             setUpGetEntityExpectations(VdcQueryType.GetGlusterVolumeById,
                     IdQueryParameters.class,
                     new String[] { "Id" },
@@ -252,16 +223,14 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
 
             setUpGetEntityExpectations(VdcQueryType.GetGlusterVolumeAdvancedDetails,
                     GlusterVolumeAdvancedDetailsParameters.class,
-                    new String[] { "ClusterId", "VolumeName", "BrickName", "DetailRequired" },
-                    new Object[] { clusterId, GlusterTestHelper.volumeName, GlusterTestHelper.brickName, true },
+                    new String[] { "ClusterId", "VolumeId", "BrickId", "DetailRequired" },
+                    new Object[] { clusterId, volumeId, brickId, true },
                     notFound ? null : helper.getVolumeAdvancedDetailsEntity(0));
         }
     }
 
 
     private void setupParentExpectations() {
-
-
         bricksResourceMock = control.createMock(BackendGlusterBricksResource.class);
         volumeResourceMock = control.createMock(BackendGlusterVolumeResource.class);
         expect(bricksResourceMock.getParent()).andReturn(volumeResourceMock).anyTimes();

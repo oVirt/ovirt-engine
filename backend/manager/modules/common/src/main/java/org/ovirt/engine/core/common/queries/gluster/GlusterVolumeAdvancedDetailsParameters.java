@@ -9,34 +9,34 @@ import org.ovirt.engine.core.compat.Guid;
 public class GlusterVolumeAdvancedDetailsParameters extends GlusterParameters {
     private static final long serialVersionUID = -1224829720081853632L;
 
-    private String volumeName;
-    private String brickName;
+    private Guid volumeId;
+    private Guid brickId;
     private boolean detailRequired;
 
     public GlusterVolumeAdvancedDetailsParameters(Guid clusterId,
-            String volumeName,
-            String brickName,
+            Guid volumeId,
+            Guid brickId,
             boolean detailRequired) {
         super(clusterId);
-        setVolumeName(volumeName);
-        setBrickName(brickName);
+        setVolumeId(volumeId);
+        setBrickId(brickId);
         setDetailRequired(detailRequired);
     }
 
-    public String getVolumeName() {
-        return volumeName;
+    public Guid getVolumeId() {
+        return volumeId;
     }
 
-    public void setVolumeName(String volumeName) {
-        this.volumeName = volumeName;
+    public void setVolumeId(Guid volumeId) {
+        this.volumeId = volumeId;
     }
 
-    public String getBrickName() {
-        return brickName;
+    public Guid getBrickId() {
+        return brickId;
     }
 
-    public void setBrickName(String brickName) {
-        this.brickName = brickName;
+    public void setBrickId(Guid brickId) {
+        this.brickId = brickId;
     }
 
     public boolean isDetailRequired() {

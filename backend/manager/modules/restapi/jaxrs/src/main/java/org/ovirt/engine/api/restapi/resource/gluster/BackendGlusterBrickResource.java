@@ -95,8 +95,8 @@ public class BackendGlusterBrickResource
         GlusterVolumeAdvancedDetails detailsEntity = getEntity(GlusterVolumeAdvancedDetails.class,
                                                 VdcQueryType.GetGlusterVolumeAdvancedDetails,
                                                 new GlusterVolumeAdvancedDetailsParameters(volumeEntity.getClusterId(),
-                                                                                           volumeEntity.getName(),
-                                                                                           entity.getQualifiedName(),true),
+                                                                                           volumeEntity.getId(),
+                                                                                           entity.getId(),true),
                                                 null,
                                                 true);
 
@@ -127,8 +127,8 @@ public class BackendGlusterBrickResource
                 GlusterVolumeAdvancedDetails detailsEntity = getEntity(GlusterVolumeAdvancedDetails.class,
                         VdcQueryType.GetGlusterVolumeAdvancedDetails,
                         new GlusterVolumeAdvancedDetailsParameters(volumeEntity.getClusterId(),
-                                                                   volumeEntity.getName(),
-                                                                   brickEntity.getQualifiedName(),true),
+                                                                   volumeEntity.getId(),
+                                                                   brickEntity.getId(),true),
                         null,
                         true);
                 brickEntity.setBrickDetails(detailsEntity.getBrickDetails().get(0));

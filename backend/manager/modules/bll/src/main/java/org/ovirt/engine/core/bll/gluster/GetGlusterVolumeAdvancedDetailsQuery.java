@@ -3,7 +3,9 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -24,6 +26,10 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
     private static final List<GlusterVolumeType> replicateVolumeTypes =
             Arrays.asList(new GlusterVolumeType[] {
                     GlusterVolumeType.REPLICATE, GlusterVolumeType.DISTRIBUTED_REPLICATE });
+    private GlusterBrickEntity brick = null;
+    private Guid clusterId = null;
+    private Guid volumeId = null;
+    private boolean detailRequired = false;
 
     public GetGlusterVolumeAdvancedDetailsQuery(P params) {
         super(params);
@@ -31,39 +37,50 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
 
     @Override
     protected void executeQueryCommand() {
-        String volumeName = getParameters().getVolumeName();
-        if (StringUtils.isNotEmpty(volumeName)) {
-            getQueryReturnValue().setReturnValue(fetchAdvancedDetails(volumeName));
+        clusterId = getParameters().getClusterId();
+        detailRequired = getParameters().isDetailRequired();
+        volumeId = getParameters().getVolumeId();
+        if (volumeId != null) {
+            GlusterVolumeEntity volume = getGlusterVolumeDao().getById(volumeId);
+            if (volume == null) {
+                throw new RuntimeException(String.format("Invalid volume id %s", volumeId));
+            }
+
+            brick = getBrick(getParameters().getBrickId());
+            getQueryReturnValue().setReturnValue(fetchAdvancedDetails(volume.getName()));
         } else {
             getQueryReturnValue().setReturnValue(getServiceInfo());
         }
     }
 
-    /*
+    private GlusterBrickEntity getBrick(Guid brickId) {
+        return (brickId == null) ? null : getGlusterBrickDao().getById(brickId);
+    }
+
+    /**
      * To get the service info, the UI will not pass the volume name, in that case engine will fetch the volume name in
      * the database.
      *
      * NFS volume name should be passed to get nfs service details, similarly REPLICATE/DISTRIBUTED_REPLICATE volume
      * name should be passed as an argument to get the SHD details.
      *
-     * So to get volume name from database engine will do the following steps.
-     * 1. First fetch NFS + REPLICATE/DISTRIBUTED_REPLICATE volume name
-     * 2. If not found then fetch the nfs volume name and then fetch
-     * REPLICATE/DISTRIBUTED_REPLICATE volume name
-     * 3. The VDS query will be called twice, one with nfs volume name and
-     * another with replicate volume name, finally combine the service details.
+     * So to get volume name from database engine will do the following steps.<br>
+     * 1. First fetch NFS + REPLICATE/DISTRIBUTED_REPLICATE volume name<br>
+     * 2. If not found then fetch the nfs volume name and then fetch REPLICATE/DISTRIBUTED_REPLICATE volume name<br>
+     * 3. The VDS query will be called twice, one with nfs volume name and another with replicate volume name, finally
+     * combine the service details.
      */
     private GlusterVolumeAdvancedDetails getServiceInfo() {
         // Get Nfs + Replicated/Distributed Replicate volume.
-        GlusterVolumeEntity nfsReplicateVolume = getNfsReplicateVolume(getParameters().getClusterId());
+        GlusterVolumeEntity nfsReplicateVolume = getNfsReplicateVolume(clusterId);
         if (nfsReplicateVolume != null) {
             return fetchAdvancedDetails(nfsReplicateVolume.getName());
         }
 
         // Get Nfs enabled volume
-        GlusterVolumeEntity nfsVolume = getNfsVolume(getParameters().getClusterId());
+        GlusterVolumeEntity nfsVolume = getNfsVolume(clusterId);
         // Get Replicated volume
-        GlusterVolumeEntity replicateVolume = getReplicateVolume(getParameters().getClusterId());
+        GlusterVolumeEntity replicateVolume = getReplicateVolume(clusterId);
 
         // If there is no volume present in the cluster, then return empty Volume Advanced Details
         if (nfsVolume == null && replicateVolume == null) {
@@ -91,14 +108,34 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
         return nfsServiceInfo;
     }
 
+    /**
+     * Returns the server id on which the brick resides if <br>
+     * a) brick id passed is not null <br>
+     * b) the brick server is UP <br>
+     * Otherwise returns a random up server from the cluster
+     */
+    protected Guid getUpServerId() {
+        if (brick == null) {
+            return getUpServerId(clusterId);
+        }
+
+        VDS brickServer = getVdsDao().get(brick.getServerId());
+        if (brickServer.getStatus() == VDSStatus.Up) {
+            return brickServer.getId();
+        }
+
+        // brick server is down
+        return super.getUpServerId(clusterId);
+    }
+
     private GlusterVolumeAdvancedDetails fetchAdvancedDetails(String volumeName) {
         VDSReturnValue returnValue =
                 runVdsCommand(VDSCommandType.GetGlusterVolumeAdvancedDetails,
-                        new GlusterVolumeAdvancedDetailsVDSParameters(getUpServerId(getParameters().getClusterId()),
-                                getParameters().getClusterId(),
+                        new GlusterVolumeAdvancedDetailsVDSParameters(getUpServerId(),
+                                clusterId,
                                 volumeName,
-                                getParameters().getBrickName(),
-                                getParameters().isDetailRequired()));
+                                brick == null ? null : brick.getQualifiedName(),
+                                detailRequired));
         return (GlusterVolumeAdvancedDetails) returnValue.getReturnValue();
     }
 

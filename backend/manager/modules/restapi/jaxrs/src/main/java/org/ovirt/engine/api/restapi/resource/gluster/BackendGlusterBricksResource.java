@@ -187,8 +187,8 @@ public class BackendGlusterBricksResource
         GlusterVolumeAdvancedDetails detailsEntity = getEntity(GlusterVolumeAdvancedDetails.class,
                                                 VdcQueryType.GetGlusterVolumeAdvancedDetails,
                                                 new GlusterVolumeAdvancedDetailsParameters(volumeEntity.getClusterId(),
-                                                                                           volumeEntity.getName(),
-                                                                                           entity.getQualifiedName(),true),
+                                                                                           volumeEntity.getId(),
+                                                                                           entity.getId(),true),
                                                 null,
                                                 true);
 

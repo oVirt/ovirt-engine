@@ -7,6 +7,9 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.times;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,32 +22,36 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickProperties;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterClientInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.MallInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.MemoryStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.Mempool;
-import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
+import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
 public class GetGlusterVolumeAdvancedDetailsQueryTest extends
         AbstractQueryTest<GlusterVolumeAdvancedDetailsParameters, GetGlusterVolumeAdvancedDetailsQuery<GlusterVolumeAdvancedDetailsParameters>> {
 
     private static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
-    private static final String VOLUME_NAME = "test-volume1";
-    private static final String BRICK_NAME = "test-server1:/tmp/b1";
+    private static final Guid VOLUME_ID = Guid.NewGuid();
+    private static final Guid BRICK_ID = Guid.NewGuid();
+    private static final Guid SERVER_ID = Guid.NewGuid();
     private static final String SERVER_NAME = "server1";
     private GlusterVolumeAdvancedDetails expectedVolumeAdvancedDetails;
     private ClusterUtils clusterUtils;
-    private VDSBrokerFrontend vdsBrokerFrontend;
     private VdsDAO vdsDao;
-    private GlusterVolumeAdvancedDetailsParameters parameters;
+    private GlusterVolumeDao volumeDao;
+    private GlusterBrickDao brickDao;
 
     @Before
     @Override
@@ -55,10 +62,22 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
     }
 
     private void setupExpectedVolume() {
-        parameters = new GlusterVolumeAdvancedDetailsParameters(CLUSTER_ID, VOLUME_NAME, BRICK_NAME, false);
         expectedVolumeAdvancedDetails = new GlusterVolumeAdvancedDetails();
-        expectedVolumeAdvancedDetails.setVolumeId(Guid.NewGuid());
+        expectedVolumeAdvancedDetails.setVolumeId(VOLUME_ID);
         expectedVolumeAdvancedDetails.setBrickDetails(getBrickDetails());
+    }
+
+    private GlusterVolumeEntity getVolume() {
+        GlusterVolumeEntity volume = new GlusterVolumeEntity();
+        volume.setId(VOLUME_ID);
+        return volume;
+    }
+
+    private GlusterBrickEntity getBrick() {
+        GlusterBrickEntity brick = new GlusterBrickEntity();
+        brick.setId(BRICK_ID);
+        brick.setServerId(SERVER_ID);
+        return brick;
     }
 
     private List<BrickDetails> getBrickDetails() {
@@ -131,15 +150,20 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
     private void setupMock() {
         clusterUtils = mock(ClusterUtils.class);
         vdsDao = mock(VdsDAO.class);
-        doReturn(clusterUtils).when(getQuery()).getClusterUtils();
-        doReturn(getVds(VDSStatus.Up)).when(clusterUtils).getUpServer(CLUSTER_ID);
-        doReturn(vdsDao).when(clusterUtils).getVdsDao();
-        when(vdsDao.getAllForVdsGroupWithStatus(CLUSTER_ID, VDSStatus.Up)).thenReturn(Collections.singletonList(getVds(VDSStatus.Up)));
+        volumeDao = mock(GlusterVolumeDao.class);
+        brickDao = mock(GlusterBrickDao.class);
 
-        // Mock the query's parameters
+        doReturn(vdsDao).when(getQuery()).getVdsDao();
+
+        doReturn(volumeDao).when(getQuery()).getGlusterVolumeDao();
+        when(volumeDao.getById(VOLUME_ID)).thenReturn(getVolume());
+
+        doReturn(brickDao).when(getQuery()).getGlusterBrickDao();
+        when(brickDao.getById(BRICK_ID)).thenReturn(getBrick());
+
+        // Mock the query's parameters. Note that the brick id is
+        // mocked inside the test methods to test different scenarios.
         doReturn(CLUSTER_ID).when(getQueryParameters()).getClusterId();
-        doReturn(VOLUME_NAME).when(getQueryParameters()).getVolumeName();
-        doReturn(BRICK_NAME).when(getQueryParameters()).getBrickName();
         doReturn(true).when(getQueryParameters()).isDetailRequired();
 
         VDSReturnValue returnValue = new VDSReturnValue();
@@ -147,16 +171,51 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
         returnValue.setReturnValue(expectedVolumeAdvancedDetails);
         doReturn(returnValue).when(getQuery()).runVdsCommand(eq(VDSCommandType.GetGlusterVolumeAdvancedDetails),
                 any(VDSParametersBase.class));
-
     }
 
     @Test
-    public void testExecuteQueryCommnad() {
+    public void testQueryForBrickDetails() {
+        doReturn(VOLUME_ID).when(getQueryParameters()).getVolumeId();
+        doReturn(BRICK_ID).when(getQueryParameters()).getBrickId();
+        when(vdsDao.get(SERVER_ID)).thenReturn(getVds(VDSStatus.Up));
+
         getQuery().executeQueryCommand();
         GlusterVolumeAdvancedDetails volumeAdvancedDetails =
                 (GlusterVolumeAdvancedDetails) getQuery().getQueryReturnValue().getReturnValue();
 
         assertNotNull(volumeAdvancedDetails);
         assertEquals(expectedVolumeAdvancedDetails, volumeAdvancedDetails);
+
+        // Server is fetched directly from the brick's server,
+        // and clusterUtils is not used to fetch a random UP server
+        verify(vdsDao, times(1)).get(SERVER_ID);
+        verifyZeroInteractions(clusterUtils);
+    }
+
+    @Test (expected = RuntimeException.class)
+    public void testQueryForInvalidVolumeId() {
+        doReturn(Guid.Empty).when(getQueryParameters()).getVolumeId();
+        doReturn(null).when(volumeDao).getById(Guid.Empty);
+
+        getQuery().executeQueryCommand();
+    }
+
+    @Test
+    public void testQueryForNullBrickId() {
+        doReturn(VOLUME_ID).when(getQueryParameters()).getVolumeId();
+        doReturn(null).when(getQueryParameters()).getBrickId();
+        doReturn(clusterUtils).when(getQuery()).getClusterUtils();
+        doReturn(getVds(VDSStatus.Up)).when(clusterUtils).getUpServer(CLUSTER_ID);
+
+        getQuery().executeQueryCommand();
+        GlusterVolumeAdvancedDetails volumeAdvancedDetails =
+                (GlusterVolumeAdvancedDetails) getQuery().getQueryReturnValue().getReturnValue();
+
+        assertNotNull(volumeAdvancedDetails);
+        assertEquals(expectedVolumeAdvancedDetails, volumeAdvancedDetails);
+
+        // Brick's server is not fetched, rather clusterUtil is used to fetch a random UP server
+        verifyZeroInteractions(vdsDao);
+        verify(clusterUtils, times(1)).getUpServer(CLUSTER_ID);
     }
 }

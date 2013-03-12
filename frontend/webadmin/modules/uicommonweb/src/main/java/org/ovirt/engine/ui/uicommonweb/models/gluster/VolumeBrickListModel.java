@@ -851,7 +851,7 @@ public class VolumeBrickListModel extends SearchableListModel {
                     brickModel.getMemoryPools().setItems(memoryPools);
                 }
             }
-        },true), volumeEntity.getClusterId(), volumeEntity.getName(), brickEntity.getQualifiedName());
+        },true), volumeEntity.getClusterId(), volumeEntity.getId(), brickEntity.getId());
 
         UICommand command = new UICommand("Cancel", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().close());
