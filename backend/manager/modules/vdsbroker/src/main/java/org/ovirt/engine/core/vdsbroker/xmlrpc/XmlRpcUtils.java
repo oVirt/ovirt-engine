@@ -169,11 +169,19 @@ public class XmlRpcUtils {
             FutureTask<Object> future;
             FutureCall annotation = m.getAnnotation(FutureCall.class);
             if (annotation != null) {
-                future = new FutureTask<Object>(createCallable(getMethod(m, annotation, proxy), args));
+                future =
+                        new FutureTask<Object>(createCallable(obj,
+                                getMethod(m, annotation, proxy),
+                                args,
+                                ThreadLocalParamsContainer.getCorrelationId()));
                 ThreadPoolUtil.execute(future);
                 return future;
             } else {
-                future = new FutureTask<Object>(createCallable(m, args));
+                future =
+                        new FutureTask<Object>(createCallable(obj,
+                                m,
+                                args,
+                                ThreadLocalParamsContainer.getCorrelationId()));
                 ThreadPoolUtil.execute(future);
                 try {
                     result = future.get(timeoutInMilisec, TimeUnit.MILLISECONDS);
@@ -196,17 +204,34 @@ public class XmlRpcUtils {
             return m;
         }
 
-        private Callable<Object> createCallable(final Method m, final Object[] args) {
-            return new Callable<Object>() {
-                @Override
-                public Object call() throws Exception {
-                    try {
-                        return m.invoke(obj, args);
-                    } catch (Exception e) {
-                        throw e;
-                    }
+        private Callable<Object> createCallable(Object obj, Method m, Object[] args, String correlationId) {
+            return new InternalCallable(obj, m, args, correlationId);
+        }
+
+        private final class InternalCallable implements Callable<Object> {
+
+            private Object obj;
+            private Method m;
+            private Object[] args;
+            private String correlationId;
+
+            public InternalCallable(Object obj, Method m, Object[] args, String correlationId) {
+                this.obj = obj;
+                this.m = m;
+                this.args = args;
+                this.correlationId = correlationId;
+            }
+
+            @Override
+            public Object call() throws Exception {
+                try {
+                    ThreadLocalParamsContainer.setCorrelationId(correlationId);
+                    return m.invoke(obj, args);
+                } catch (Exception e) {
+                    throw e;
                 }
-            };
+            }
+
         }
 
     }
