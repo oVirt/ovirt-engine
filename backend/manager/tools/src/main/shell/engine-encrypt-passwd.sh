@@ -1,7 +1,12 @@
 #!/bin/sh
 
-# Load the prolog:
-. "$(dirname "$(readlink -f "$0")")"/engine-prolog.sh
+JBOSS_HOME="${JBOSS_HOME:-/usr/share/jboss-as}"
+export CLASSPATH=""
+export JAVA_MODULEPATH="${JBOSS_HOME}/modules"
+
+# Load the prolog, not during installation
+[ -z "${ENGINE_CONFIG_IGNORE}" ] && \
+	. "$(dirname "$(readlink -f "$0")")"/engine-prolog.sh
 
 die () {
     printf >&2 "$@"
