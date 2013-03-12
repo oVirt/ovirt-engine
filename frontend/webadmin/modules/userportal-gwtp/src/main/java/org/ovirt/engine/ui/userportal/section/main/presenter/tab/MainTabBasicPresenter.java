@@ -75,7 +75,6 @@ public class MainTabBasicPresenter extends AbstractModelActivationPresenter<User
 
             @Override
             public void onUserPortalModelInit(UserPortalModelInitEvent event) {
-                connectAutomaticallyManager.unregisterModels();
                 connectAutomaticallyManager.registerModel(provider.getModel());
             }
 

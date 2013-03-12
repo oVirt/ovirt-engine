@@ -83,7 +83,7 @@ public class ConnectAutomaticallyManager {
         @Override
         public void eventRaised(Event ev, Object sender, EventArgs args) {
             if (connectAutomatically.readConnectAutomatically() && model.getCanConnectAutomatically() && !alreadyOpened) {
-                UserPortalItemModel userPortalItemModel = model.GetStatusUpVms(model.getItems()).get(0);
+                UserPortalItemModel userPortalItemModel = model.GetUpVms(model.getItems()).get(0);
                 if (userPortalItemModel != null) {
                     userPortalItemModel.getDefaultConsole().getConnectCommand().Execute();
                     alreadyOpened = true;
