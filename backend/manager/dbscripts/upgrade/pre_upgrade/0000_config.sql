@@ -557,6 +557,7 @@ select fn_db_update_config_value('IPTablesConfigForGluster',
 
 # Ports for gluster volume bricks (default 100 ports)
 -A INPUT -p tcp -m tcp --dport 24009:24108 -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 49152:49251 -j ACCEPT
 ','general');
 select fn_db_update_config_value('IsMultilevelAdministrationOn','true','general');
 select fn_db_update_config_value('keystoreUrl','keys/engine.p12','general');
