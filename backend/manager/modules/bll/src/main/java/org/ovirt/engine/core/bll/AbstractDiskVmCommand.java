@@ -139,8 +139,9 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         return volumeFormat == VolumeFormat.RAW;
     }
 
-    protected boolean isVmUpOrDown() {
-        if (getVm().getStatus() != VMStatus.Up && getVm().getStatus() != VMStatus.Down) {
+    protected boolean isVmInUpPausedDownStatus() {
+        if (getVm().getStatus() != VMStatus.Up && getVm().getStatus() != VMStatus.Down
+                && getVm().getStatus() != VMStatus.Paused) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
             return false;
         }

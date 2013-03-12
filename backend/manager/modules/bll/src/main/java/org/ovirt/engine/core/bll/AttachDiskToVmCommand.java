@@ -68,7 +68,7 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
             return false;
         }
 
-        if (!isVmExist() || !isVmUpOrDown()) {
+        if (!isVmExist() || !isVmInUpPausedDownStatus()) {
             return false;
         }
 

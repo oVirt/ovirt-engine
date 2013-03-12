@@ -9,7 +9,6 @@ import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.businessentities.Disk;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -41,13 +40,13 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
     @Override
     protected boolean canDoAction() {
         disk = getDiskDao().get(getParameters().getDiskId());
-        return isVmExist() && isVmUpOrDown() && isDiskExist(disk) && checkCanPerformPlugUnPlugDisk()
+        return isVmExist() && isVmInUpPausedDownStatus() && isDiskExist(disk) && checkCanPerformPlugUnPlugDisk()
                 && validate(getSnapshotsValidator().vmNotDuringSnapshot(getVmId()));
     }
 
     private boolean checkCanPerformPlugUnPlugDisk() {
         boolean returnValue = true;
-        if (getVm().getStatus() == VMStatus.Up) {
+        if (getVm().getStatus().isUpOrPaused()) {
             setVdsId(getVm().getRunOnVds().getValue());
             returnValue =
                     isHotPlugSupported() && isOsSupportingHotPlug()
@@ -74,7 +73,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
 
     @Override
     protected void executeVmCommand() {
-        if (getVm().getStatus() == VMStatus.Up) {
+        if (getVm().getStatus().isUpOrPaused()) {
             performPlugCommand(getPlugAction(), disk, oldVmDevice);
         }
 
