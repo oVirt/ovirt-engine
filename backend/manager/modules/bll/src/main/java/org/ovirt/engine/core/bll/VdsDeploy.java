@@ -292,7 +292,7 @@ public class VdsDeploy implements SSHDialog.Sink {
      * This is tick based vector, every event execute the next
      * tick.
      */
-    private final Callable[] _customizationDialog = new Callable[] {
+    private final Callable<?>[] _customizationDialog = new Callable<?>[] {
         new Callable<Object>() { public Object call() throws Exception {
             _parser.cliEnvironmentSet(
                 "OVIRT_ENGINE/correlationId",
@@ -513,7 +513,7 @@ public class VdsDeploy implements SSHDialog.Sink {
      * This is tick based vector, every event execute the next
      * tick.
      */
-    private final Callable[] _terminationDialog = new Callable[] {
+    private final Callable<?>[] _terminationDialog = new Callable<?>[] {
         new Callable<Object>() { public Object call() throws Exception {
             _resultError = (Boolean)_parser.cliEnvironmentGet(
                 BaseEnv.ERROR
