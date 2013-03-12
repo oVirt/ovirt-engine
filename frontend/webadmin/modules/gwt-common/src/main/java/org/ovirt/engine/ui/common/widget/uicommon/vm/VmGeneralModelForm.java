@@ -14,8 +14,9 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralModel> {
 
     interface Driver extends SimpleBeanEditorDriver<VmGeneralModel, VmGeneralModelForm> {
-        Driver driver = GWT.create(Driver.class);
     }
+
+    private final Driver driver = GWT.create(Driver.class);
 
     TextBoxLabel name = new TextBoxLabel();
     TextBoxLabel description = new TextBoxLabel();
@@ -44,7 +45,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
         super(modelProvider, 3, 7);
         isHighlyAvailable = new BooleanLabel(constants.yes(), constants.no());
 
-        Driver.driver.initialize(this);
+        driver.initialize(this);
 
         formBuilder.setColumnsWidth("120px", "240px", "160px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         formBuilder.addFormItem(new FormItem(constants.nameVm(), name, 0, 0));
@@ -111,7 +112,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
 
     @Override
     protected void doEdit(VmGeneralModel model) {
-        Driver.driver.edit(model);
+        driver.edit(model);
 
         // TODO required because of GWT#5864
         monitorCount.setText(Integer.toString(getModel().getMonitorCount()));

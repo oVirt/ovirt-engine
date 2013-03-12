@@ -14,8 +14,9 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<TemplateGeneralModel> {
 
     interface Driver extends SimpleBeanEditorDriver<TemplateGeneralModel, TemplateGeneralModelForm> {
-        Driver driver = GWT.create(Driver.class);
     }
+
+    private final Driver driver = GWT.create(Driver.class);
 
     TextBoxLabel name = new TextBoxLabel();
     TextBoxLabel description = new TextBoxLabel();
@@ -40,7 +41,7 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
 
     public TemplateGeneralModelForm(ModelProvider<TemplateGeneralModel> modelProvider, CommonApplicationConstants constants) {
         super(modelProvider, 3, 6);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
         isHighlyAvailable = new BooleanLabel(constants.yes(), constants.no());
 
         // Build a form using the FormBuilder
@@ -93,7 +94,7 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
 
     @Override
     protected void doEdit(TemplateGeneralModel model) {
-        Driver.driver.edit(model);
+        driver.edit(model);
 
         // TODO required because of GWT#5864
         monitorCount.setText(Integer.toString(getModel().getMonitorCount()));
