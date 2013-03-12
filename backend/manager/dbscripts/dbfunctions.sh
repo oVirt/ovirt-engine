@@ -82,10 +82,12 @@ execute_file "common_sp.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
 drop_sps() {
 # common stored procedures are executed first (for new added functions to be valid)
 execute_file "common_sp.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
+    local drop_all_functions=$(mktemp)
+
     CMD="select * from generate_drop_all_functions_syntax();"
-    execute_command "$CMD"  ${DATABASE} ${SERVERNAME} ${PORT} > drop_all_functions.sql
-    execute_file "drop_all_functions.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
-    \rm -f drop_all_functions.sql
+    execute_command "$CMD"  ${DATABASE} ${SERVERNAME} ${PORT} > "${drop_all_functions}"
+    execute_file "${drop_all_functions}" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
+    \rm -f "${drop_all_functions}"
 
     #
     # dropping the uuid extension and old functions is
