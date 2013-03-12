@@ -33,7 +33,6 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, C
         implements SubTabClusterServicePresenter.ViewDef, Editor<ClusterServiceModel> {
 
     interface Driver extends SimpleBeanEditorDriver<ClusterServiceModel, SubTabClusterServiceView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<Widget, SubTabClusterServiceView> {
@@ -63,6 +62,8 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, C
     @WithElementId
     EntityModelCellTable<ListModel> servicesTable;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public SubTabClusterServiceView(final DetailModelProvider<ClusterListModel, ClusterServiceModel> modelProvider,
             ApplicationConstants constants) {
@@ -73,7 +74,7 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, C
         localize(constants);
         initTableColumns(constants);
         initButtons();
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     private void initListBoxEditors() {
@@ -167,6 +168,7 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, C
     @Override
     public void setMainTabSelectedItem(VDSGroup selectedItem) {
         servicesTable.edit(getDetailModel().getServiceList());
-        Driver.driver.edit(getDetailModel());
+        driver.edit(getDetailModel());
     }
+
 }

@@ -32,7 +32,6 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
     }
 
     interface Driver extends SimpleBeanEditorDriver<UserPortalBasicListModel, MainTabBasicDetailsView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewIdHandler extends ElementIdHandler<MainTabBasicDetailsView> {
@@ -100,21 +99,23 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
     @UiField
     Style style;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public MainTabBasicDetailsView(ApplicationResources resources) {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        Driver.driver.initialize(this);
+        driver.initialize(this);
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     @Override
     public void edit(UserPortalBasicListModel model) {
-        Driver.driver.edit(model);
+        driver.edit(model);
     }
 
     @Override
     public UserPortalBasicListModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override

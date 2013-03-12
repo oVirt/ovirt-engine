@@ -35,7 +35,6 @@ import com.google.inject.Inject;
 public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopupView<ConfirmationModel> implements RecoveryStoragePopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<ConfirmationModel, RecoveryStorageConfirmationPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, RecoveryStorageConfirmationPopupView> {
@@ -67,6 +66,8 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
     @UiField
     ScrollPanel sdItemsScrollPanel;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     private final ApplicationConstants applicationConstants;
 
     @Inject
@@ -82,14 +83,14 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     @Override
     public void edit(final ConfirmationModel object) {
         storageDomainItems.setRowData(new ArrayList<EntityModel>());
         storageDomainItems.edit(object);
-        Driver.driver.edit(object);
+        driver.edit(object);
 
         // Bind "Latch.IsAvailable"
         object.getLatch().getPropertyChangedEvent().addListener(new IEventListener() {
@@ -121,7 +122,7 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
     @Override
     public ConfirmationModel flush() {
         storageDomainItems.flush();
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     private void initTable() {
@@ -148,4 +149,5 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
         storageDomainItems.setColumnWidth(freeSpaceColumn, "80px"); //$NON-NLS-1$
         storageDomainItems.addEntityModelColumn(freeSpaceColumn, applicationConstants.freeSpaceStorage());
     }
+
 }

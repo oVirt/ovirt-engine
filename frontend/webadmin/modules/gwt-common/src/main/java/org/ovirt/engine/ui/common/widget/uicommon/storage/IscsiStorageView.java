@@ -29,7 +29,6 @@ import com.google.gwt.user.client.ui.Widget;
 public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> implements HasValidation {
 
     interface Driver extends SimpleBeanEditorDriver<IscsiStorageModel, IscsiStorageView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<Widget, IscsiStorageView> {
@@ -68,9 +67,11 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
     @Ignore
     IscsiLunToTargetView iscsiLunToTargetView;
 
-    double treeCollapsedHeight = 207, treeExpandedHeight = 306, lunsTreeHeight = 345;
-    double tabContentHeight = 340, tabHeight = 175;
-    double textTop = 80, textLeft = -84, textWidth = 100;
+    private double treeCollapsedHeight = 207, treeExpandedHeight = 306, lunsTreeHeight = 345;
+    private double tabContentHeight = 340, tabHeight = 175;
+    private double textTop = 80, textLeft = -84, textWidth = 100;
+
+    private final Driver driver = GWT.create(Driver.class);
 
     protected static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
 
@@ -79,7 +80,7 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
         addStyles();
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     public IscsiStorageView(boolean multiSelection,
@@ -110,7 +111,7 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
 
     @Override
     public void edit(final IscsiStorageModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
 
         initLists(object);
 
@@ -218,7 +219,7 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
 
     @Override
     public IscsiStorageModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override

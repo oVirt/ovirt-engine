@@ -1,17 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.guide;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.inject.Inject;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
@@ -31,10 +19,22 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.inject.Inject;
+
 public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> implements GuidePopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<GuideModel, GuidePopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, GuidePopupView> {
@@ -78,6 +78,8 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> impl
     @UiField
     Style style;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     private final ApplicationResources resources;
     private final ApplicationConstants constants;
 
@@ -91,7 +93,7 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> impl
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     void localize(ApplicationConstants constants) {
@@ -106,7 +108,7 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> impl
 
     @Override
     public void edit(GuideModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
 
         object.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
@@ -224,7 +226,7 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> impl
 
     @Override
     public GuideModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     interface Style extends CssResource {
@@ -232,4 +234,5 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> impl
 
         String actionButton();
     }
+
 }

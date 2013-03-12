@@ -45,7 +45,6 @@ public class EditQuotaStoragePopupView extends AbstractModelBoundPopupView<EditQ
     Label storageLabel;
 
     interface Driver extends SimpleBeanEditorDriver<EditQuotaStorageModel, EditQuotaStoragePopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, EditQuotaStoragePopupView> {
@@ -56,6 +55,8 @@ public class EditQuotaStoragePopupView extends AbstractModelBoundPopupView<EditQ
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public EditQuotaStoragePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
@@ -64,7 +65,7 @@ public class EditQuotaStoragePopupView extends AbstractModelBoundPopupView<EditQ
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
         addStyles();
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     private void addStyles() {
@@ -87,12 +88,12 @@ public class EditQuotaStoragePopupView extends AbstractModelBoundPopupView<EditQ
 
     @Override
     public void edit(EditQuotaStorageModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
     }
 
     @Override
     public EditQuotaStorageModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     interface WidgetStyle extends CssResource {
@@ -102,4 +103,5 @@ public class EditQuotaStoragePopupView extends AbstractModelBoundPopupView<EditQ
 
         String labelVisible();
     }
+
 }

@@ -16,8 +16,6 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
     interface Driver extends SimpleBeanEditorDriver<TemplateGeneralModel, TemplateGeneralModelForm> {
     }
 
-    private final Driver driver = GWT.create(Driver.class);
-
     TextBoxLabel name = new TextBoxLabel();
     TextBoxLabel description = new TextBoxLabel();
     TextBoxLabel hostCluster = new TextBoxLabel();
@@ -38,6 +36,8 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
     TextBoxLabel monitorCount = new TextBoxLabel();
     @Ignore
     TextBoxLabel isStateless = new TextBoxLabel();
+
+    private final Driver driver = GWT.create(Driver.class);
 
     public TemplateGeneralModelForm(ModelProvider<TemplateGeneralModel> modelProvider, CommonApplicationConstants constants) {
         super(modelProvider, 3, 6);

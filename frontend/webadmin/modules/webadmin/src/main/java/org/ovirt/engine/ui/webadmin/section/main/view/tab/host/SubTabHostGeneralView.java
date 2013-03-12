@@ -43,7 +43,6 @@ import com.google.gwt.user.client.ui.Widget;
 public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListModel, HostGeneralModel> implements SubTabHostGeneralPresenter.ViewDef, Editor<HostGeneralModel> {
 
     interface Driver extends SimpleBeanEditorDriver<HostGeneralModel, SubTabHostGeneralView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     // We need this in order to find the icon for alert messages:
@@ -103,6 +102,8 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
     @UiField
     FlowPanel alertsList;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     interface ViewUiBinder extends UiBinder<Widget, SubTabHostGeneralView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
@@ -120,7 +121,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         formPanel = new GeneralFormPanel();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        Driver.driver.initialize(this);
+        driver.initialize(this);
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 3, 7);
@@ -194,7 +195,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
     @SuppressWarnings("unchecked")
     @Override
     public void setMainTabSelectedItem(VDS selectedItem) {
-        Driver.driver.edit(getDetailModel());
+        driver.edit(getDetailModel());
 
         automaticLargePage.setValue((VdsTransparentHugePagesState) getDetailModel().getAutomaticLargePage());
 
@@ -229,4 +230,5 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
             alertsPanel.setVisible(true);
         }
     }
+
 }

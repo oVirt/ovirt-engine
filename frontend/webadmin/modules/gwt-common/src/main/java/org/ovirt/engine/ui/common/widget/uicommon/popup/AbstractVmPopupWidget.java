@@ -74,7 +74,6 @@ import com.google.gwt.user.client.ui.ValueLabel;
 public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidget<UnitVmModel> {
 
     interface Driver extends SimpleBeanEditorDriver<UnitVmModel, AbstractVmPopupWidget> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<DialogTabPanel, AbstractVmPopupWidget> {
@@ -436,7 +435,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @Ignore
     protected KeyValueWidget customPropertiesSheetEditor;
 
-    CommonApplicationMessages messages;
+    private final CommonApplicationMessages messages;
 
     @UiField
     @Ignore
@@ -453,6 +452,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @UiField
     @Ignore
     Panel generalAdvancedParameterExpanderContent;
+
+    private final Driver driver = GWT.create(Driver.class);
 
     private final CommonApplicationTemplates applicationTemplates;
 
@@ -510,7 +511,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
             }
         }, ""); //$NON-NLS-1$
 
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     protected void initPoolSpecificWidgets(CommonApplicationResources resources,
@@ -755,7 +756,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     public void edit(UnitVmModel object) {
         priorityEditor.setRowData(new ArrayList<EntityModel>());
         priorityEditor.edit(object.getPriority());
-        Driver.driver.edit(object);
+        driver.edit(object);
         initTabAvailabilityListeners(object);
         initListeners(object);
         initCustomPropertySheet(object);
@@ -1024,7 +1025,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @Override
     public UnitVmModel flush() {
         priorityEditor.flush();
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override

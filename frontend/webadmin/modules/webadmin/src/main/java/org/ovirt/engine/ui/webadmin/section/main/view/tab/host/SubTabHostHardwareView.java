@@ -25,7 +25,6 @@ import com.google.gwt.user.client.ui.Widget;
 public class SubTabHostHardwareView extends AbstractSubTabFormView<VDS, HostListModel, HostHardwareGeneralModel> implements SubTabHostHardwarePresenter.ViewDef, Editor<HostHardwareGeneralModel> {
 
     interface Driver extends SimpleBeanEditorDriver<HostHardwareGeneralModel, SubTabHostHardwareView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     // We need this in order to find the icon for alert messages:
@@ -43,6 +42,8 @@ public class SubTabHostHardwareView extends AbstractSubTabFormView<VDS, HostList
 
     FormBuilder formBuilder;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     interface ViewUiBinder extends UiBinder<Widget, SubTabHostHardwareView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
@@ -59,7 +60,7 @@ public class SubTabHostHardwareView extends AbstractSubTabFormView<VDS, HostList
         formPanel = new GeneralFormPanel();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        Driver.driver.initialize(this);
+        driver.initialize(this);
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 3, 6);
@@ -74,8 +75,9 @@ public class SubTabHostHardwareView extends AbstractSubTabFormView<VDS, HostList
 
     @Override
     public void setMainTabSelectedItem(VDS selectedItem) {
-        Driver.driver.edit(getDetailModel());
+        driver.edit(getDetailModel());
 
         formBuilder.showForm(getDetailModel());
     }
+
 }

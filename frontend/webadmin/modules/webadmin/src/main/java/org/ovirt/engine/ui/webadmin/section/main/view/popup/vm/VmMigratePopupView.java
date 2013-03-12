@@ -28,7 +28,6 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
         implements VmMigratePopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<MigrateModel, VmMigratePopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, VmMigratePopupView> {
@@ -59,6 +58,8 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
     @Ignore
     Label message3;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public VmMigratePopupView(EventBus eventBus,
             ApplicationResources resources,
@@ -68,7 +69,7 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants, messages);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     void initEditors() {
@@ -100,7 +101,7 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
 
     @Override
     public void edit(final MigrateModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
 
         updateMessages(object);
 
@@ -118,7 +119,7 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
 
     @Override
     public MigrateModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
 }

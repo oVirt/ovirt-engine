@@ -24,7 +24,6 @@ import com.google.inject.Inject;
 public class HostManagementConfirmationPopupView extends AbstractModelBoundPopupView<ConfirmationModel> implements HostManagementConfirmationPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<ConfirmationModel, HostManagementConfirmationPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, HostManagementConfirmationPopupView> {
@@ -48,6 +47,8 @@ public class HostManagementConfirmationPopupView extends AbstractModelBoundPopup
     @Ignore
     protected HTML noteLabel;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public HostManagementConfirmationPopupView(EventBus eventBus,
             ApplicationResources resources,
@@ -59,12 +60,12 @@ public class HostManagementConfirmationPopupView extends AbstractModelBoundPopup
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants, templates);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     @Override
     public void edit(ConfirmationModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
     }
 
     protected void localize(ApplicationConstants constants, ApplicationTemplates templates) {
@@ -75,6 +76,7 @@ public class HostManagementConfirmationPopupView extends AbstractModelBoundPopup
 
     @Override
     public ConfirmationModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
+
 }

@@ -29,7 +29,6 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
         implements SubTabClusterGeneralPresenter.ViewDef, Editor<ClusterGeneralModel> {
 
     interface Driver extends SimpleBeanEditorDriver<ClusterGeneralModel, SubTabClusterGeneralView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<Widget, SubTabClusterGeneralView> {
@@ -52,6 +51,8 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
     // can clear and add elements inside without affecting the panel:
     @UiField
     FlowPanel alertsList;
+
+    private final Driver driver = GWT.create(Driver.class);
 
     private final ApplicationConstants constants;
 
@@ -78,12 +79,12 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
             }
         });
 
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     @Override
     public void setMainTabSelectedItem(VDSGroup selectedItem) {
-        Driver.driver.edit(getDetailModel());
+        driver.edit(getDetailModel());
         form.update();
     }
 
@@ -103,4 +104,5 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
             alertsPanel.setVisible(true);
         }
     }
+
 }

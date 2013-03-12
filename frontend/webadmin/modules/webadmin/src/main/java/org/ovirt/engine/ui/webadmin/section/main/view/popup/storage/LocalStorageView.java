@@ -20,7 +20,6 @@ import com.google.inject.Inject;
 public class LocalStorageView extends AbstractStorageView<LocalStorageModel> {
 
     interface Driver extends SimpleBeanEditorDriver<LocalStorageModel, LocalStorageView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<Widget, LocalStorageView> {
@@ -42,6 +41,8 @@ public class LocalStorageView extends AbstractStorageView<LocalStorageModel> {
     @UiField
     Label message;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public LocalStorageView() {
         createPathEditor();
@@ -50,7 +51,7 @@ public class LocalStorageView extends AbstractStorageView<LocalStorageModel> {
         localize(ClientGinjectorProvider.instance().getApplicationConstants());
         ViewIdHandler.idHandler.generateAndSetIds(this);
         addStyles();
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     void addStyles() {
@@ -63,12 +64,12 @@ public class LocalStorageView extends AbstractStorageView<LocalStorageModel> {
 
     @Override
     public void edit(LocalStorageModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
     }
 
     @Override
     public LocalStorageModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     interface WidgetStyle extends CssResource {
@@ -79,4 +80,5 @@ public class LocalStorageView extends AbstractStorageView<LocalStorageModel> {
     public void focus() {
         localPathEditor.setFocus(true);
     }
+
 }

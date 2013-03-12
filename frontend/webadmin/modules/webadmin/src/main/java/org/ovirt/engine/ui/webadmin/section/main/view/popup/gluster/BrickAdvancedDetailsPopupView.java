@@ -31,7 +31,6 @@ import com.google.inject.Inject;
 public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<BrickAdvancedDetailsModel> implements BrickAdvancedDetailsPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<BrickAdvancedDetailsModel, BrickAdvancedDetailsPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, BrickAdvancedDetailsPopupView> {
@@ -175,6 +174,8 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
     @Ignore
     Label messageLabel;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public BrickAdvancedDetailsPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
@@ -184,7 +185,7 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
         addStyles();
         initTableColumns(constants);
         localize(constants);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     private void initEditors() {
@@ -346,14 +347,14 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
 
     @Override
     public void edit(BrickAdvancedDetailsModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
         clientsTable.edit(object.getClients());
         memoryPoolsTable.edit(object.getMemoryPools());
     }
 
     @Override
     public BrickAdvancedDetailsModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override
@@ -369,4 +370,5 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
 
         String generalValue();
     }
+
 }

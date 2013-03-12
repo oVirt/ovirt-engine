@@ -34,7 +34,6 @@ import com.google.gwt.user.client.ui.Widget;
 public class DisksAllocationView extends Composite implements HasEditorDriver<DisksAllocationModel>, HasElementId, FocusableComponentsContainer {
 
     interface Driver extends SimpleBeanEditorDriver<DisksAllocationModel, DisksAllocationView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<Widget, DisksAllocationView> {
@@ -54,6 +53,8 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
     boolean showSource;
     boolean showQuota;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     private CommonApplicationConstants constants;
 
     private String elementId = DOM.createUniqueId();
@@ -62,6 +63,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
     public DisksAllocationView() {
     }
 
+    @Override
     public int setTabIndexes(int nextTabIndex) {
         int nbWidgetsInDiskListPanel = diskListPanel.getWidgetCount();
         for (int i=0; i<nbWidgetsInDiskListPanel; ++i) {
@@ -75,7 +77,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
     public DisksAllocationView(CommonApplicationConstants constants) {
         this.constants = constants;
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     void updateListHeader(DisksAllocationModel model) {
@@ -109,7 +111,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
 
     @Override
     public void edit(DisksAllocationModel model) {
-        Driver.driver.edit(model);
+        driver.edit(model);
         initListerners(model);
         updateColumnsAvailability(model);
         updateListHeader(model);
@@ -150,7 +152,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
 
     @Override
     public DisksAllocationModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     public void setListHeight(String listHeight) {

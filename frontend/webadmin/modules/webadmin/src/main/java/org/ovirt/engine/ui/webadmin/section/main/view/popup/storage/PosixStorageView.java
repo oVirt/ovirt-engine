@@ -23,8 +23,6 @@ import com.google.inject.Inject;
 public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
 
     interface Driver extends SimpleBeanEditorDriver<PosixStorageModel, PosixStorageView> {
-
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<Widget, PosixStorageView> {
@@ -73,6 +71,7 @@ public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
     @UiField
     Label message;
 
+    private final Driver driver = GWT.create(Driver.class);
 
     @Inject
     public PosixStorageView() {
@@ -80,7 +79,7 @@ public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
         localize(ClientGinjectorProvider.instance().getApplicationConstants());
         ViewIdHandler.idHandler.generateAndSetIds(this);
         addStyles();
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     void addStyles() {
@@ -97,7 +96,7 @@ public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
 
     @Override
     public void edit(PosixStorageModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
 
         pathHintLabel.setVisible(object.getPath().getIsAvailable() && object.getPath().getIsChangable());
 
@@ -123,7 +122,7 @@ public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
 
     @Override
     public PosixStorageModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     interface WidgetStyle extends CssResource {
@@ -135,4 +134,5 @@ public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
     public void focus() {
         pathEditor.setFocus(true);
     }
+
 }

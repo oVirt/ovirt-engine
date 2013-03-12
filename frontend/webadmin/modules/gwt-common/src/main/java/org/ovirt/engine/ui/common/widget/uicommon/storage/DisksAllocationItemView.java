@@ -29,7 +29,6 @@ import com.google.gwt.user.client.ui.Widget;
 public class DisksAllocationItemView extends Composite implements HasEditorDriver<DiskModel>, HasElementId, FocusableComponentsContainer {
 
     interface Driver extends SimpleBeanEditorDriver<DiskModel, DisksAllocationItemView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<Widget, DisksAllocationItemView> {
@@ -81,8 +80,11 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
     @Path(value = "quota.selectedItem")
     ListModelListBoxEditor<Object> quotaListEditor;
 
-    CommonApplicationConstants constants;
+    private final Driver driver = GWT.create(Driver.class);
 
+    private final CommonApplicationConstants constants;
+
+    @Override
     public int setTabIndexes(int nextTabIndex) {
         diskAliasEditor.setTabIndex(nextTabIndex++);
         storageListEditor.setTabIndex(nextTabIndex++);
@@ -94,7 +96,7 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
 
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     void initEditors() {
@@ -138,7 +140,7 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
 
     @Override
     public void edit(final DiskModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
 
         diskAliasLabel.asValueBox().setValue(object.getAlias().getEntity());
         diskSizeLabel.asValueBox().setValue((new DiskSizeRenderer<Long>(DiskSizeUnit.GIGABYTE).render(
@@ -154,7 +156,7 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
 
     @Override
     public DiskModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override

@@ -32,7 +32,6 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
     }
 
     interface Driver extends SimpleBeanEditorDriver<NetworkGeneralModel, SubTabNetworkGeneralView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     private final ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
@@ -49,7 +48,7 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
 
     FormBuilder formBuilder;
 
-
+    private final Driver driver = GWT.create(Driver.class);
 
     @Inject
     public SubTabNetworkGeneralView(DetailModelProvider<NetworkListModel, NetworkGeneralModel> modelProvider) {
@@ -59,7 +58,7 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
         formPanel = new GeneralFormPanel();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        Driver.driver.initialize(this);
+        driver.initialize(this);
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 2, 3);
@@ -76,7 +75,7 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
 
     @Override
     public void setMainTabSelectedItem(NetworkView selectedItem) {
-        Driver.driver.edit(getDetailModel());
+        driver.edit(getDetailModel());
         formBuilder.showForm(getDetailModel());
     }
 

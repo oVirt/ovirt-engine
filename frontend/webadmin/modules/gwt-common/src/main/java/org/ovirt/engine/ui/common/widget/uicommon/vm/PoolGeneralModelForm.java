@@ -13,7 +13,6 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 public class PoolGeneralModelForm extends AbstractModelBoundFormWidget<PoolGeneralModel> {
 
     interface Driver extends SimpleBeanEditorDriver<PoolGeneralModel, PoolGeneralModelForm> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     TextBoxLabel name = new TextBoxLabel();
@@ -30,9 +29,11 @@ public class PoolGeneralModelForm extends AbstractModelBoundFormWidget<PoolGener
     @Ignore
     TextBoxLabel monitorCount = new TextBoxLabel();
 
+    private final Driver driver = GWT.create(Driver.class);
+
     public PoolGeneralModelForm(ModelProvider<PoolGeneralModel> modelProvider, CommonApplicationConstants constants) {
         super(modelProvider, 3, 7);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
 
         formBuilder.setColumnsWidth("120px", "240px", "160px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         formBuilder.addFormItem(new FormItem(constants.namePoolGeneral(), name, 0, 0));
@@ -52,7 +53,7 @@ public class PoolGeneralModelForm extends AbstractModelBoundFormWidget<PoolGener
 
     @Override
     protected void doEdit(PoolGeneralModel model) {
-        Driver.driver.edit(model);
+        driver.edit(model);
 
         // TODO required because of GWT#5864
         monitorCount.setText(Integer.toString(getModel().getMonitorCount()));

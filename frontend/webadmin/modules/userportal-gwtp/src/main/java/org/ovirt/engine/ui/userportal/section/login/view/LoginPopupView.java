@@ -31,7 +31,6 @@ import com.google.inject.Inject;
 public class LoginPopupView extends AbstractLoginPopupView implements LoginPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<UserPortalLoginModel, LoginPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<DialogBoxWithKeyHandlers, LoginPopupView> {
@@ -93,6 +92,8 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     @Ignore
     Panel errorMessagePanel;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public LoginPopupView(EventBus eventBus,
             ClientAgentType clientAgentType,
@@ -123,7 +124,7 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
         passwordEditor.setAutoComplete("off"); //$NON-NLS-1$
 
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     void localize(ApplicationConstants constants) {
@@ -143,12 +144,12 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
 
     @Override
     public void edit(UserPortalLoginModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
     }
 
     @Override
     public UserPortalLoginModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override

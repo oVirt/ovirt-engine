@@ -41,8 +41,6 @@ import com.google.inject.Inject;
 public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupView<ConfigureLocalStorageModel> implements ConfigureLocalStoragePopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<ConfigureLocalStorageModel, HostConfigureLocalStoragePopupView> {
-
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, HostConfigureLocalStoragePopupView> {
@@ -54,6 +52,8 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
 
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
+
+    private final Driver driver = GWT.create(Driver.class);
 
     private final ApplicationConstants constants;
 
@@ -186,7 +186,7 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
         ViewIdHandler.idHandler.generateAndSetIds(this);
         addStyles();
         localize();
-        Driver.driver.initialize(this);
+        driver.initialize(this);
 
 
         // Data center edit button.
@@ -302,7 +302,7 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
 
     @Override
     public void edit(final ConfigureLocalStorageModel model) {
-        Driver.driver.edit(model);
+        driver.edit(model);
 
         dataCenterNameEditor.setEnabled(false);
         clusterNameEditor.setEnabled(false);
@@ -371,7 +371,7 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
 
     @Override
     public ConfigureLocalStorageModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override
@@ -381,4 +381,5 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
     interface WidgetStyle extends CssResource {
         String fullWidth();
     }
+
 }

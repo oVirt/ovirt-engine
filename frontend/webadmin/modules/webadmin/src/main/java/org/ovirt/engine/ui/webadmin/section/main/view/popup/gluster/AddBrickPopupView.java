@@ -37,7 +37,6 @@ import com.google.inject.Inject;
 public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickModel> implements AddBrickPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<VolumeBrickModel, AddBrickPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, AddBrickPopupView> {
@@ -114,7 +113,9 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
     @Ignore
     Label messageLabel;
 
-    ApplicationConstants constants;
+    private final Driver driver = GWT.create(Driver.class);
+
+    private final ApplicationConstants constants;
 
     @Inject
     public AddBrickPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
@@ -128,7 +129,7 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
         addStyles();
         initTableColumns(constants);
         initButtons();
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     private void initListBoxEditors() {
@@ -239,7 +240,7 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
     @Override
     public void edit(VolumeBrickModel object) {
         bricksTable.edit(object.getBricks());
-        Driver.driver.edit(object);
+        driver.edit(object);
 
         addBrickButton.setCommand(object.getAddBrickCommand());
         removeBricksButton.setCommand(object.getRemoveBricksCommand());
@@ -269,7 +270,7 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
     @Override
     public VolumeBrickModel flush() {
         bricksTable.flush();
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     interface WidgetStyle extends CssResource {

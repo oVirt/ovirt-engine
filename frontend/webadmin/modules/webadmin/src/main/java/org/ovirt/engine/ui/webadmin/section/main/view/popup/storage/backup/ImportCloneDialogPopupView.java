@@ -28,7 +28,6 @@ import com.google.inject.Inject;
 public class ImportCloneDialogPopupView extends AbstractModelBoundPopupView<ImportCloneModel> implements ImportCloneDialogPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<ImportCloneModel, ImportCloneDialogPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ImportCloneDialogPopupView> {
@@ -68,6 +67,8 @@ public class ImportCloneDialogPopupView extends AbstractModelBoundPopupView<Impo
     @Path(value = "applyToAll.entity")
     EntityModelCheckBoxEditor applyToAllEditor;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public ImportCloneDialogPopupView(EventBus eventBus,
             ApplicationResources resources,
@@ -81,7 +82,7 @@ public class ImportCloneDialogPopupView extends AbstractModelBoundPopupView<Impo
         initSelectWidgets();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     private void initSelectWidgets() {
@@ -110,11 +111,12 @@ public class ImportCloneDialogPopupView extends AbstractModelBoundPopupView<Impo
             cloneEditor.setLabel(constants.cloneImportTemplate());
             suffixEditor.setLabel(constants.cloneImportSuffixTemplate());
         }
-        Driver.driver.edit(object);
+        driver.edit(object);
     }
 
     @Override
     public ImportCloneModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
+
 }

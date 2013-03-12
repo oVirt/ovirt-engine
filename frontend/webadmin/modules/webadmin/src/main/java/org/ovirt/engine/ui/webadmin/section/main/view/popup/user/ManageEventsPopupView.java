@@ -39,7 +39,6 @@ public class ManageEventsPopupView extends AbstractModelBoundPopupView<EventNoti
         implements ManageEventsPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<EventNotificationModel, ManageEventsPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ManageEventsPopupView> {
@@ -71,6 +70,8 @@ public class ManageEventsPopupView extends AbstractModelBoundPopupView<EventNoti
     @Ignore
     Button collapseAllButton;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public ManageEventsPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
@@ -79,7 +80,7 @@ public class ManageEventsPopupView extends AbstractModelBoundPopupView<EventNoti
         initExpandButtons();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     void localize(ApplicationConstants constants) {
@@ -114,7 +115,7 @@ public class ManageEventsPopupView extends AbstractModelBoundPopupView<EventNoti
 
     @Override
     public void edit(EventNotificationModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
 
         // Listen to Properties
         object.getPropertyChangedEvent().addListener(new IEventListener() {
@@ -176,7 +177,7 @@ public class ManageEventsPopupView extends AbstractModelBoundPopupView<EventNoti
 
     @Override
     public EventNotificationModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     interface AssignTagTreeResources extends CellTree.Resources {

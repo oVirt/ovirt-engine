@@ -30,7 +30,6 @@ public class StorageForceCreatePopupView extends AbstractConfirmationPopupView
         implements StorageForceCreatePopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<ConfirmationModel, StorageForceCreatePopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, StorageForceCreatePopupView> {
@@ -53,7 +52,9 @@ public class StorageForceCreatePopupView extends AbstractConfirmationPopupView
     @UiField
     VerticalPanel descriptionPanel;
 
-    ApplicationMessages messages;
+    private final Driver driver = GWT.create(Driver.class);
+
+    private final ApplicationMessages messages;
 
     @Inject
     public StorageForceCreatePopupView(EventBus eventBus, ApplicationResources resources,
@@ -65,7 +66,7 @@ public class StorageForceCreatePopupView extends AbstractConfirmationPopupView
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     void localize(ApplicationConstants constants) {
@@ -74,7 +75,7 @@ public class StorageForceCreatePopupView extends AbstractConfirmationPopupView
 
     @Override
     public void edit(final ConfirmationModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
         object.getLatch().setIsAvailable(true);
 
         object.getItemsChangedEvent().addListener(new IEventListener() {
@@ -95,7 +96,7 @@ public class StorageForceCreatePopupView extends AbstractConfirmationPopupView
 
     @Override
     public ConfirmationModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
 }

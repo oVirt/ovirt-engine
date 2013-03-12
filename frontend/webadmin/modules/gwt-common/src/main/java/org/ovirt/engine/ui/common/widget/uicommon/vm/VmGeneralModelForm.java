@@ -16,8 +16,6 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     interface Driver extends SimpleBeanEditorDriver<VmGeneralModel, VmGeneralModelForm> {
     }
 
-    private final Driver driver = GWT.create(Driver.class);
-
     TextBoxLabel name = new TextBoxLabel();
     TextBoxLabel description = new TextBoxLabel();
     TextBoxLabel quotaName = new TextBoxLabel();
@@ -40,6 +38,8 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
 
     @Ignore
     TextBoxLabel monitorCount = new TextBoxLabel();
+
+    private final Driver driver = GWT.create(Driver.class);
 
     public VmGeneralModelForm(ModelProvider<VmGeneralModel> modelProvider, CommonApplicationConstants constants) {
         super(modelProvider, 3, 7);

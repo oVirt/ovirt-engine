@@ -36,8 +36,6 @@ import com.google.inject.Inject;
 public class MultipleHostsPopupView extends AbstractModelBoundPopupView<MultipleHostsModel> implements MultipleHostsPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<MultipleHostsModel, MultipleHostsPopupView> {
-
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, MultipleHostsPopupView> {
@@ -73,6 +71,8 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
     @Ignore
     Label messageLabel;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public MultipleHostsPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
@@ -83,7 +83,7 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
         initTableColumns(constants);
         initButtons();
 
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     private void initEditors() {
@@ -161,7 +161,7 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
     @Override
     public void edit(MultipleHostsModel object) {
         hostsTable.edit(object.getHosts());
-        Driver.driver.edit(object);
+        driver.edit(object);
         applyPasswordButton.setCommand(object.getApplyPasswordCommand());
     }
 
@@ -174,6 +174,7 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
     @Override
     public MultipleHostsModel flush() {
         hostsTable.flush();
-        return Driver.driver.flush();
+        return driver.flush();
     }
+
 }

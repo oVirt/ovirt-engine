@@ -33,7 +33,6 @@ public class AssignTagsPopupView extends AbstractModelBoundPopupView<TagListMode
         implements AssignTagsPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<TagListModel, AssignTagsPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, AssignTagsPopupView> {
@@ -48,6 +47,8 @@ public class AssignTagsPopupView extends AbstractModelBoundPopupView<TagListMode
     @Ignore
     EntityModelCellTree<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel> tree;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public AssignTagsPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
@@ -55,7 +56,7 @@ public class AssignTagsPopupView extends AbstractModelBoundPopupView<TagListMode
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     void localize(ApplicationConstants constants) {
@@ -68,7 +69,7 @@ public class AssignTagsPopupView extends AbstractModelBoundPopupView<TagListMode
 
     @Override
     public void edit(TagListModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
 
         // Listen to Properties
         object.getPropertyChangedEvent().addListener(new IEventListener() {
@@ -127,7 +128,7 @@ public class AssignTagsPopupView extends AbstractModelBoundPopupView<TagListMode
 
     @Override
     public TagListModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     interface AssignTagTreeResources extends CellTree.Resources {

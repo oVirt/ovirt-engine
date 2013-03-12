@@ -49,7 +49,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceModel> {
 
     interface Driver extends SimpleBeanEditorDriver<RunOnceModel, VmRunOncePopupWidget> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<FlowPanel, VmRunOncePopupWidget> {
@@ -220,8 +219,9 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
     private BootSequenceModel bootSequenceModel;
 
-    private CommonApplicationResources resources;
+    private final Driver driver = GWT.create(Driver.class);
 
+    private final CommonApplicationResources resources;
     private final CommonApplicationConstants constants;
 
     @UiFactory
@@ -243,7 +243,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         addStyles();
         ViewIdHandler.idHandler.generateAndSetIds(this);
 
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     void localize() {
@@ -332,7 +332,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
     @Override
     public void edit(final RunOnceModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
 
         object.getCustomPropertySheet().getKeyValueLines().getItemsChangedEvent().addListener(new IEventListener() {
             @Override
@@ -512,7 +512,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
     @Override
     public RunOnceModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
 }

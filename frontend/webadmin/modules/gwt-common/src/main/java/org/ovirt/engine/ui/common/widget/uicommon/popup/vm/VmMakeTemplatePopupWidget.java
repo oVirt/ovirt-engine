@@ -29,7 +29,6 @@ import com.google.gwt.user.client.ui.Label;
 public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<UnitVmModel> {
 
     interface Driver extends SimpleBeanEditorDriver<UnitVmModel, VmMakeTemplatePopupWidget> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<FlowPanel, VmMakeTemplatePopupWidget> {
@@ -85,6 +84,8 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     @UiField
     WidgetStyle style;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     public VmMakeTemplatePopupWidget(CommonApplicationConstants constants) {
         initListBoxEditors();
         initCheckBoxEditors();
@@ -92,7 +93,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
         addStyle();
     }
 
@@ -131,7 +132,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
 
     @Override
     public void edit(final UnitVmModel model) {
-        Driver.driver.edit(model);
+        driver.edit(model);
 
         model.getStorageDomain().getItemsChangedEvent().addListener(new IEventListener() {
             @Override
@@ -158,7 +159,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
 
     @Override
     public UnitVmModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override

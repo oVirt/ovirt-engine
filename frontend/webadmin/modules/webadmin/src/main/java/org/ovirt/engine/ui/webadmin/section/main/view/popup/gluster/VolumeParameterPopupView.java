@@ -26,7 +26,6 @@ import com.google.inject.Inject;
 public class VolumeParameterPopupView extends AbstractModelBoundPopupView<VolumeParameterModel> implements VolumeParameterPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<VolumeParameterModel, VolumeParameterPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, VolumeParameterPopupView> {
@@ -67,6 +66,8 @@ public class VolumeParameterPopupView extends AbstractModelBoundPopupView<Volume
     @Ignore
     Label messageLabel;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public VolumeParameterPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
@@ -74,7 +75,7 @@ public class VolumeParameterPopupView extends AbstractModelBoundPopupView<Volume
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     private void localize(ApplicationConstants constants) {
@@ -102,12 +103,12 @@ public class VolumeParameterPopupView extends AbstractModelBoundPopupView<Volume
 
     @Override
     public void edit(final VolumeParameterModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
     }
 
     @Override
     public VolumeParameterModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override
@@ -115,4 +116,5 @@ public class VolumeParameterPopupView extends AbstractModelBoundPopupView<Volume
         super.setMessage(message);
         messageLabel.setText(message);
     }
+
 }

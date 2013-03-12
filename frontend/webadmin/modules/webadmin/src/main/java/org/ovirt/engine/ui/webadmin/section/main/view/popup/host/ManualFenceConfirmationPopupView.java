@@ -30,7 +30,6 @@ import com.google.inject.Inject;
 public class ManualFenceConfirmationPopupView extends AbstractModelBoundPopupView<ConfirmationModel> implements ManualFencePopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<ConfirmationModel, ManualFenceConfirmationPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ManualFenceConfirmationPopupView> {
@@ -58,6 +57,8 @@ public class ManualFenceConfirmationPopupView extends AbstractModelBoundPopupVie
     @Ignore
     Label messageLabel;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     private final ApplicationConstants applicationConstants;
     private final ApplicationMessages applicationMessages;
 
@@ -72,12 +73,12 @@ public class ManualFenceConfirmationPopupView extends AbstractModelBoundPopupVie
         latch = new EntityModelCheckBoxEditor(Align.RIGHT);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     @Override
     public void edit(final ConfirmationModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
 
         // Bind "Latch.IsAvailable"
         object.getLatch().getPropertyChangedEvent().addListener(new IEventListener() {
@@ -123,7 +124,7 @@ public class ManualFenceConfirmationPopupView extends AbstractModelBoundPopupVie
 
     @Override
     public ConfirmationModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
 }

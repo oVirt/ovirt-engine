@@ -38,7 +38,6 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         implements StoragePopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<StorageModel, StoragePopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, StoragePopupView> {
@@ -91,6 +90,8 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
     @WithElementId
     AbstractStorageView storageView;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public StoragePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
@@ -100,7 +101,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         asWidget().enableResizeSupport(true);
         localize(constants);
         addStyles();
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -181,7 +182,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
 
     @Override
     public void edit(StorageModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
 
         final StorageModel storageModel = object;
         storageModel.getSelectedItemChangedEvent().addListener(new IEventListener() {
@@ -233,7 +234,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
 
     @Override
     public StorageModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override

@@ -40,8 +40,6 @@ import com.google.inject.Inject;
 public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<HostSetupNetworksModel> implements HostSetupNetworksPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<HostSetupNetworksModel, HostSetupNetworksPopupView> {
-
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, HostSetupNetworksPopupView> {
@@ -57,7 +55,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     @UiField
     AnimatedVerticalPanel nicList;
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     @Ignore
     StatusLabel status;
 
@@ -78,6 +76,8 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     @UiField(provided = true)
     InfoIcon commitChangesInfo;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     private boolean rendered = false;
 
     @Inject
@@ -95,7 +95,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
         commitChanges.setContentWidgetStyleName(style.commitChanges());
         initUnassignedNetworksPanel();
         localize();
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     private void initUnassignedNetworksPanel() {
@@ -110,7 +110,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
 
     @Override
     public void edit(HostSetupNetworksModel uicommonModel) {
-        Driver.driver.edit(uicommonModel);
+        driver.edit(uicommonModel);
         uicommonModel.getNicsChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
@@ -142,7 +142,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
 
     @Override
     public HostSetupNetworksModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     private void updateNetworks(List<LogicalNetworkModel> allNetworks) {
@@ -166,4 +166,5 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
         }
         nicList.addAll(groups, !rendered);
     }
+
 }

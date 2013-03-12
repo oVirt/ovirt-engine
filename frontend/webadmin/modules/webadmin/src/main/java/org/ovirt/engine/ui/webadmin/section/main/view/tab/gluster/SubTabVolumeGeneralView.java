@@ -31,7 +31,6 @@ import com.google.gwt.uibinder.client.UiField;
 public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolumeEntity, VolumeListModel, VolumeGeneralModel> implements SubTabVolumeGeneralPresenter.ViewDef, Editor<VolumeGeneralModel> {
 
     interface Driver extends SimpleBeanEditorDriver<VolumeGeneralModel, SubTabVolumeGeneralView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     // We need this in order to find the icon for alert messages:
@@ -51,6 +50,8 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
     FormItem replicaFormItem;
     FormItem stripeFormItem;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public SubTabVolumeGeneralView(DetailModelProvider<VolumeListModel, VolumeGeneralModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
@@ -62,7 +63,7 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
         formPanel = new GeneralFormPanel();
 
         initWidget(formPanel);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 1, 4);
@@ -89,10 +90,9 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
         });
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void setMainTabSelectedItem(GlusterVolumeEntity selectedItem) {
-        Driver.driver.edit(getDetailModel());
+        driver.edit(getDetailModel());
 
         if (selectedItem.getVolumeType() == GlusterVolumeType.REPLICATE
                 || selectedItem.getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE)
@@ -122,4 +122,5 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
             getDetailModel().setVolumeTypeSilently(translator.get(volumeEntity.getVolumeType()));
         }
     }
+
 }

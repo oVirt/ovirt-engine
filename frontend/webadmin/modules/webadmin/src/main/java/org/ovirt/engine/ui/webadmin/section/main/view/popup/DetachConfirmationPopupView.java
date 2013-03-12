@@ -24,7 +24,6 @@ import com.google.inject.Inject;
 public class DetachConfirmationPopupView extends AbstractModelBoundPopupView<HostInterfaceModel> implements DetachConfirmationPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<HostInterfaceModel, DetachConfirmationPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, DetachConfirmationPopupView> {
@@ -51,6 +50,8 @@ public class DetachConfirmationPopupView extends AbstractModelBoundPopupView<Hos
     @Path(value = "commitChanges.entity")
     EntityModelCheckBoxEditor commitChanges;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public DetachConfirmationPopupView(EventBus eventBus, ApplicationResources resources, ApplicationMessages messages, ApplicationConstants constants) {
         super(eventBus, resources);
@@ -62,17 +63,17 @@ public class DetachConfirmationPopupView extends AbstractModelBoundPopupView<Hos
         info.setHTML(constants.changesTempWarningDetachConfirmPopup());
         commitChanges.setLabel(constants.saveNetCongDetachConfirmPopup());
 
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     @Override
     public void edit(HostInterfaceModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
     }
 
     @Override
     public HostInterfaceModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override

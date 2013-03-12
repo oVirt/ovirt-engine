@@ -18,7 +18,6 @@ import com.google.gwt.user.client.ui.Widget;
 public class IscsiTargetToLunView extends Composite implements HasEditorDriver<SanStorageModelBase> {
 
     interface Driver extends SimpleBeanEditorDriver<SanStorageModelBase, IscsiTargetToLunView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<Widget, IscsiTargetToLunView> {
@@ -36,10 +35,12 @@ public class IscsiTargetToLunView extends Composite implements HasEditorDriver<S
 
     SanStorageTargetToLunList sanStorageTargetToLunList;
 
-    double treeCollapsedHeight;
-    double treeExpandedHeight;
-    boolean hideLeaf;
-    boolean multiSelection;
+    private double treeCollapsedHeight;
+    private double treeExpandedHeight;
+    private boolean hideLeaf;
+    private boolean multiSelection;
+
+    private final Driver driver = GWT.create(Driver.class);
 
     public IscsiTargetToLunView(double treeCollapsedHeight, double treeExpandedHeight) {
         this(treeCollapsedHeight, treeExpandedHeight, false, false);
@@ -53,12 +54,12 @@ public class IscsiTargetToLunView extends Composite implements HasEditorDriver<S
         this.multiSelection = multiSelection;
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     @Override
     public void edit(final SanStorageModelBase object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
 
         initLists(object);
 
@@ -106,7 +107,7 @@ public class IscsiTargetToLunView extends Composite implements HasEditorDriver<S
 
     @Override
     public SanStorageModelBase flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     public void activateItemsUpdate() {

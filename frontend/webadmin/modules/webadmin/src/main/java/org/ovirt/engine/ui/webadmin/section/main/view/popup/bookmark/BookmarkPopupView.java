@@ -20,7 +20,6 @@ import com.google.inject.Inject;
 public class BookmarkPopupView extends AbstractModelBoundPopupView<BookmarkModel> implements BookmarkPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<BookmarkModel, BookmarkPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, BookmarkPopupView> {
@@ -41,12 +40,14 @@ public class BookmarkPopupView extends AbstractModelBoundPopupView<BookmarkModel
     @WithElementId("searchString")
     EntityModelTextBoxEditor searchStringEditor;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public BookmarkPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
@@ -57,12 +58,12 @@ public class BookmarkPopupView extends AbstractModelBoundPopupView<BookmarkModel
 
     @Override
     public void edit(BookmarkModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
     }
 
     @Override
     public BookmarkModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override

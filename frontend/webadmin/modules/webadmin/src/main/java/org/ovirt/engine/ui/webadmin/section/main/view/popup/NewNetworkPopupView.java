@@ -15,15 +15,16 @@ import com.google.inject.Inject;
 public class NewNetworkPopupView extends AbstractNetworkPopupView<NewNetworkModel> implements NewNetworkPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<NewNetworkModel, NewNetworkPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
+
+    private final Driver driver = GWT.create(Driver.class);
 
     @Inject
     public NewNetworkPopupView(EventBus eventBus,
             ApplicationResources resources,
             ApplicationConstants constants, ApplicationTemplates templates) {
         super(eventBus, resources, constants, templates);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     @Override
@@ -41,12 +42,12 @@ public class NewNetworkPopupView extends AbstractNetworkPopupView<NewNetworkMode
 
     @Override
     public void edit(NewNetworkModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
     }
 
     @Override
     public NewNetworkModel flush() {
-       return Driver.driver.flush();
+       return driver.flush();
     }
 
     @Override

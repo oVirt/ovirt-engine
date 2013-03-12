@@ -37,7 +37,6 @@ import com.google.inject.Inject;
 public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> implements VolumePopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<VolumeModel, VolumePopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, VolumePopupView> {
@@ -142,6 +141,8 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     @WithElementId
     EntityModelCheckBoxEditor optimizeForVirtStoreEditor;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public VolumePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
@@ -152,7 +153,7 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
         localize(constants);
         initAddBricksButton();
         initBricksCountLabele();
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     private void initCheckboxEditors() {
@@ -220,7 +221,7 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
 
     @Override
     public void edit(final VolumeModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
         addBricksButton.setCommand(object.getAddBricksCommand());
 
         object.getPropertyChangedEvent().addListener(new IEventListener() {
@@ -241,7 +242,7 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
 
     @Override
     public VolumeModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override
@@ -249,4 +250,5 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
         super.setMessage(message);
         messageLabel.setText(message);
     }
+
 }

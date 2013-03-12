@@ -42,7 +42,6 @@ import com.google.inject.Inject;
 public class IscsiDiscoverTargetsView extends FocusComposite implements HasEditorDriver<SanStorageModelBase>, HasKeyPressHandlers {
 
     interface Driver extends SimpleBeanEditorDriver<SanStorageModelBase, IscsiDiscoverTargetsView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<Widget, IscsiDiscoverTargetsView> {
@@ -95,9 +94,11 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
     @Ignore
     Label messageLabel;
 
-    protected static CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
-    protected static CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
-    protected static CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
+    protected static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
+    protected static final CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
+    protected static final CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
+
+    private final Driver driver = GWT.create(Driver.class);
 
     @Inject
     public IscsiDiscoverTargetsView() {
@@ -105,7 +106,7 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
         addStyles(templates, constants, resources);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
 
         addFocusWidget(addressEditor.asValueBox());
         addFocusWidget(portEditor.asValueBox());
@@ -164,7 +165,7 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
 
     @Override
     public void edit(final SanStorageModelBase object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
 
         // Handle property change event
         object.getPropertyChangedEvent().addListener(new IEventListener() {
@@ -229,7 +230,7 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
 
     @Override
     public SanStorageModelBase flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override

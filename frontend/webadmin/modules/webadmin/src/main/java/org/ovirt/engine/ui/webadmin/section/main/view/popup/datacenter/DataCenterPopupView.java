@@ -25,7 +25,6 @@ import com.google.inject.Inject;
 public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterModel> implements DataCenterPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<DataCenterModel, DataCenterPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, DataCenterPopupView> {
@@ -64,6 +63,8 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
     @UiField
     Style style;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public DataCenterPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
@@ -72,7 +73,7 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
         addContentStyleName(style.contentStyle());
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -99,12 +100,12 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
 
     @Override
     public void edit(DataCenterModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
     }
 
     @Override
     public DataCenterModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override
@@ -119,4 +120,5 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
     interface Style extends CssResource {
         String contentStyle();
     }
+
 }

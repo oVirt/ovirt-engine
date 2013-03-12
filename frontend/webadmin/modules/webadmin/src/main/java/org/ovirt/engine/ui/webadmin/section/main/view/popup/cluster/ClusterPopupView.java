@@ -1,10 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster;
 
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.RadioButton;
-import com.google.gwt.user.client.ui.SimplePanel;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -40,12 +35,17 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.Cluster
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
@@ -60,7 +60,6 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     private static final String MIN_COLOR = "#AFBF27"; //$NON-NLS-1$
 
     interface Driver extends SimpleBeanEditorDriver<ClusterModel, ClusterPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ClusterPopupView> {
@@ -284,7 +283,9 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     @Ignore
     Label minTimeLabel;
 
-    private ApplicationMessages messages;
+    private final Driver driver = GWT.create(Driver.class);
+
+    private final ApplicationMessages messages;
 
     @Inject
     public ClusterPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, ApplicationMessages messages, ApplicationTemplates templates) {
@@ -305,7 +306,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
         addStyles();
         localize(constants);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
         applyModeCustomizations();
     }
 
@@ -438,7 +439,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
     @Override
     public void edit(final ClusterModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
 
         if (object.getClusterPolicyModel().isEditClusterPolicyFirst()) {
             tabsPanel.switchTab(clusterPolicyTab);
@@ -551,7 +552,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
     @Override
     public ClusterModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override

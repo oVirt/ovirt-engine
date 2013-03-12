@@ -27,18 +27,19 @@ public class KeyValueWidget extends Composite implements HasEditorDriver<KeyValu
     }
 
     interface Driver extends SimpleBeanEditorDriver<KeyValueModel, KeyValueWidget> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     @UiField
     VerticalPanel panel;
+
+    private final Driver driver = GWT.create(Driver.class);
 
     private ArrayList<KeyValueLineWidget> widgetList = new ArrayList<KeyValueLineWidget>();
     private boolean enabled = true;
 
     KeyValueWidget() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     @Override
@@ -74,7 +75,7 @@ public class KeyValueWidget extends Composite implements HasEditorDriver<KeyValu
         for (KeyValueLineWidget lineWidget : widgetList) {
             lineWidget.flush();
         }
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override

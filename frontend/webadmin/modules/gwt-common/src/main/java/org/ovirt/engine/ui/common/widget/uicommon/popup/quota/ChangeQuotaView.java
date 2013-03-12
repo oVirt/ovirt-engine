@@ -28,7 +28,6 @@ import com.google.gwt.user.client.ui.Widget;
 public class ChangeQuotaView extends Composite implements HasEditorDriver<ChangeQuotaModel>, HasElementId {
 
     interface Driver extends SimpleBeanEditorDriver<ChangeQuotaModel, ChangeQuotaView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<Widget, ChangeQuotaView> {
@@ -44,12 +43,14 @@ public class ChangeQuotaView extends Composite implements HasEditorDriver<Change
     @Ignore
     EntityModelCellTable<ListModel> listHeader;
 
-    CommonApplicationConstants constants;
+    private final Driver driver = GWT.create(Driver.class);
+
+    private final CommonApplicationConstants constants;
 
     public ChangeQuotaView(CommonApplicationConstants constants) {
         this.constants = constants;
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     void updateListHeader(ChangeQuotaModel model) {
@@ -69,7 +70,7 @@ public class ChangeQuotaView extends Composite implements HasEditorDriver<Change
 
     @Override
     public void edit(ChangeQuotaModel model) {
-        Driver.driver.edit(model);
+        driver.edit(model);
         initListerners(model);
         updateListHeader(model);
     }
@@ -95,12 +96,11 @@ public class ChangeQuotaView extends Composite implements HasEditorDriver<Change
 
     @Override
     public ChangeQuotaModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override
     public void setElementId(String elementId) {
-
     }
 
 }

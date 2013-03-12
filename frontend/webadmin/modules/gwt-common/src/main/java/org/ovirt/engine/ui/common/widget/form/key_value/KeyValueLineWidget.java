@@ -24,7 +24,6 @@ public class KeyValueLineWidget extends Composite implements HasEditorDriver<Key
     }
 
     interface Driver extends SimpleBeanEditorDriver<KeyValueLineModel, KeyValueLineWidget> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     private boolean enabled = true;
@@ -52,9 +51,11 @@ public class KeyValueLineWidget extends Composite implements HasEditorDriver<Key
     @Ignore
     PushButton minusButton;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     KeyValueLineWidget() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        Driver.driver.initialize(this);
+        driver.initialize(this);
         addStyles();
     }
 
@@ -88,12 +89,12 @@ public class KeyValueLineWidget extends Composite implements HasEditorDriver<Key
             }
         });
 
-        Driver.driver.edit(object);
+        driver.edit(object);
     }
 
     @Override
     public KeyValueLineModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     interface WidgetStyle extends CssResource {
@@ -112,9 +113,7 @@ public class KeyValueLineWidget extends Composite implements HasEditorDriver<Key
         valuesField.setEnabled(enabled);
         plusButton.setEnabled(enabled);
         minusButton.setEnabled(enabled);
-
         this.enabled = enabled;
-
     }
 
 }

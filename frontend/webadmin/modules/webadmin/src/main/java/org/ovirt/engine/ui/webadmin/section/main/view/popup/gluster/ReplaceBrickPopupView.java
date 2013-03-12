@@ -23,7 +23,6 @@ import com.google.inject.Inject;
 public class ReplaceBrickPopupView extends AbstractModelBoundPopupView<ReplaceBrickModel> implements ReplaceBrickPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<ReplaceBrickModel, ReplaceBrickPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ReplaceBrickPopupView> {
@@ -44,6 +43,8 @@ public class ReplaceBrickPopupView extends AbstractModelBoundPopupView<ReplaceBr
     @WithElementId
     EntityModelTextBoxEditor brickDirEditor;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public ReplaceBrickPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
@@ -51,7 +52,7 @@ public class ReplaceBrickPopupView extends AbstractModelBoundPopupView<ReplaceBr
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     private void initListBoxEditors() {
@@ -71,11 +72,12 @@ public class ReplaceBrickPopupView extends AbstractModelBoundPopupView<ReplaceBr
 
     @Override
     public void edit(ReplaceBrickModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
     }
 
     @Override
     public ReplaceBrickModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
+
 }

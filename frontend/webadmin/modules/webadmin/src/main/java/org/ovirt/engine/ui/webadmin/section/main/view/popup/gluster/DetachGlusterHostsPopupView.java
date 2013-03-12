@@ -25,7 +25,6 @@ import com.google.inject.Inject;
 public class DetachGlusterHostsPopupView extends AbstractModelBoundPopupView<DetachGlusterHostsModel> implements DetachGlusterHostsPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<DetachGlusterHostsModel, DetachGlusterHostsPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, DetachGlusterHostsPopupView> {
@@ -50,6 +49,8 @@ public class DetachGlusterHostsPopupView extends AbstractModelBoundPopupView<Det
     @Ignore
     Label messageLabel;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public DetachGlusterHostsPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
@@ -59,7 +60,7 @@ public class DetachGlusterHostsPopupView extends AbstractModelBoundPopupView<Det
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
         initTableColumns(constants);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     protected void initTableColumns(ApplicationConstants constants){
@@ -79,7 +80,7 @@ public class DetachGlusterHostsPopupView extends AbstractModelBoundPopupView<Det
     @Override
     public void edit(DetachGlusterHostsModel object) {
         hostsTable.edit(object.getHosts());
-        Driver.driver.edit(object);
+        driver.edit(object);
     }
 
     @Override
@@ -91,6 +92,7 @@ public class DetachGlusterHostsPopupView extends AbstractModelBoundPopupView<Det
     @Override
     public DetachGlusterHostsModel flush() {
         hostsTable.flush();
-        return Driver.driver.flush();
+        return driver.flush();
     }
+
 }

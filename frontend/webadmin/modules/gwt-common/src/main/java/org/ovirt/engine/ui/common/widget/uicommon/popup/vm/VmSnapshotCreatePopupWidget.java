@@ -22,7 +22,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<SnapshotModel> {
 
     interface Driver extends SimpleBeanEditorDriver<SnapshotModel, VmSnapshotCreatePopupWidget> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<VerticalPanel, VmSnapshotCreatePopupWidget> {
@@ -42,11 +41,13 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
     @Ignore
     FlowPanel messagePanel;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     public VmSnapshotCreatePopupWidget(CommonApplicationConstants constants) {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     void localize(CommonApplicationConstants constants) {
@@ -55,7 +56,7 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
 
     @Override
     public void edit(final SnapshotModel model) {
-        Driver.driver.edit(model);
+        driver.edit(model);
 
         model.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
@@ -70,7 +71,7 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
 
     @Override
     public SnapshotModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override

@@ -30,7 +30,6 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
     }
 
     interface Driver extends SimpleBeanEditorDriver<UserGeneralModel, SubTabUserGeneralView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     TextBoxLabel domain = new TextBoxLabel();
@@ -44,6 +43,8 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
 
     FormBuilder formBuilder;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public SubTabUserGeneralView(DetailModelProvider<UserListModel, UserGeneralModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
@@ -52,7 +53,7 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
         formPanel = new GeneralFormPanel();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        Driver.driver.initialize(this);
+        driver.initialize(this);
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 1, 3);
@@ -71,7 +72,7 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
 
     @Override
     public void setMainTabSelectedItem(DbUser selectedItem) {
-        Driver.driver.edit(getDetailModel());
+        driver.edit(getDetailModel());
 
         formBuilder.showForm(getDetailModel());
     }

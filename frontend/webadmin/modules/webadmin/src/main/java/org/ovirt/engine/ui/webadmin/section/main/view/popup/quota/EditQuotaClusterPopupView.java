@@ -64,7 +64,6 @@ public class EditQuotaClusterPopupView extends AbstractModelBoundPopupView<EditQ
     Label cpuLabel;
 
     interface Driver extends SimpleBeanEditorDriver<EditQuotaClusterModel, EditQuotaClusterPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, EditQuotaClusterPopupView> {
@@ -75,6 +74,8 @@ public class EditQuotaClusterPopupView extends AbstractModelBoundPopupView<EditQ
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public EditQuotaClusterPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
@@ -83,7 +84,7 @@ public class EditQuotaClusterPopupView extends AbstractModelBoundPopupView<EditQ
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
         addStyles();
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     private void addStyles() {
@@ -111,12 +112,12 @@ public class EditQuotaClusterPopupView extends AbstractModelBoundPopupView<EditQ
 
     @Override
     public void edit(EditQuotaClusterModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
     }
 
     @Override
     public EditQuotaClusterModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     interface WidgetStyle extends CssResource {
@@ -125,6 +126,6 @@ public class EditQuotaClusterPopupView extends AbstractModelBoundPopupView<EditQ
         String radioButtonWidth();
 
         String labelVisible();
-
     }
+
 }

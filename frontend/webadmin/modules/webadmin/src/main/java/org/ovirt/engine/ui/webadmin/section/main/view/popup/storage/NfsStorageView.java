@@ -20,7 +20,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.editor.client.Editor.Path;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -34,8 +33,6 @@ import com.google.inject.Inject;
 public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
 
     interface Driver extends SimpleBeanEditorDriver<NfsStorageModel, NfsStorageView> {
-
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<Widget, NfsStorageView> {
@@ -114,9 +111,11 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
     @UiField
     Label message;
 
-    protected static CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
-    protected static CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
-    protected static CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
+    private final Driver driver = GWT.create(Driver.class);
+
+    protected static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
+    protected static final CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
+    protected static final CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
 
     @Inject
     public NfsStorageView() {
@@ -126,7 +125,7 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
         initExpander();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         addStyles();
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     private void initExpander() {
@@ -167,7 +166,7 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
 
     @Override
     public void edit(NfsStorageModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
 
         EntityModel version = (EntityModel) object.getVersion().getSelectedItem();
         versionReadOnlyEditor.asValueBox().setValue(version != null ? version.getTitle() : null);
@@ -195,7 +194,7 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
 
     @Override
     public NfsStorageModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     interface WidgetStyle extends CssResource {
@@ -229,4 +228,5 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
 
         object.getElement().getStyle().setDisplay(value ? Style.Display.BLOCK : Style.Display.NONE);
     }
+
 }

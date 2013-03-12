@@ -42,7 +42,6 @@ import com.google.inject.Inject;
 public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInterfaceModel> implements HostInterfacePopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<HostInterfaceModel, HostInterfacePopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, HostInterfacePopupView> {
@@ -118,6 +117,8 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
     @UiField
     Style style;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public HostInterfacePopupView(EventBus eventBus, ApplicationResources resources, final ApplicationConstants constants, final ApplicationTemplates templates) {
         super(eventBus, resources);
@@ -169,12 +170,12 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
         isToSync.setLabel(constants.syncNetwork());
         commitChanges.setLabel(constants.saveNetConfigHostPopup());
 
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     @Override
     public void edit(final HostInterfaceModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
         object.getPropertyChangedEvent().addListener(new IEventListener() {
 
             @Override
@@ -235,7 +236,7 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
 
     @Override
     public HostInterfaceModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override
@@ -251,4 +252,5 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
 
         String syncInfo();
     }
+
 }

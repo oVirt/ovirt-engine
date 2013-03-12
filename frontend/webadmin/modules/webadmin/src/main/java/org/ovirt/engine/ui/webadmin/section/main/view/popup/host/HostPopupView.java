@@ -56,8 +56,6 @@ import com.google.inject.Inject;
 public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implements HostPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<HostModel, HostPopupView> {
-
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, HostPopupView> {
@@ -272,6 +270,8 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @Path(value = "consoleAddressEnabled.entity")
     EntityModelCheckBoxEditor consoleAddressEnabled;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     private final CommonApplicationTemplates applicationTemplates;
 
     private final ApplicationResources resources;
@@ -288,7 +288,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         localize(constants);
         addStyles();
 
-        Driver.driver.initialize(this);
+        driver.initialize(this);
         applyModeCustomizations();
     }
 
@@ -405,7 +405,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
 
     @Override
     public void edit(final HostModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
 
         // TODO should be handled in a more generic way
         object.getPropertyChangedEvent().addListener(new IEventListener() {
@@ -564,7 +564,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
 
     @Override
     public HostModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override

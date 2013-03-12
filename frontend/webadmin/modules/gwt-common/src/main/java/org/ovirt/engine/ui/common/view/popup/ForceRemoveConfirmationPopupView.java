@@ -30,7 +30,6 @@ public abstract class ForceRemoveConfirmationPopupView extends AbstractModelBoun
         implements ForceRemoveConfirmationPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<ConfirmationModel, ForceRemoveConfirmationPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ForceRemoveConfirmationPopupView> {
@@ -54,8 +53,10 @@ public abstract class ForceRemoveConfirmationPopupView extends AbstractModelBoun
     @Ignore
     HTML messageLabel;
 
-    protected CommonApplicationConstants constants;
-    protected CommonApplicationMessages messages;
+    private final Driver driver = GWT.create(Driver.class);
+
+    protected final CommonApplicationConstants constants;
+    protected final CommonApplicationMessages messages;
 
     @Inject
     public ForceRemoveConfirmationPopupView(EventBus eventBus,
@@ -72,14 +73,14 @@ public abstract class ForceRemoveConfirmationPopupView extends AbstractModelBoun
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
 
         updateWarning();
     }
 
     @Override
     public void edit(final ConfirmationModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
 
         // Bind "Latch.IsAvailable"
         object.getLatch().getPropertyChangedEvent().addListener(new IEventListener() {
@@ -118,7 +119,7 @@ public abstract class ForceRemoveConfirmationPopupView extends AbstractModelBoun
 
     @Override
     public ConfirmationModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
 }

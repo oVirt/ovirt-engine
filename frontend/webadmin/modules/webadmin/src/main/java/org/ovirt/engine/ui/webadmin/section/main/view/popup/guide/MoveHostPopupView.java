@@ -29,7 +29,6 @@ import com.google.inject.Inject;
 public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> implements MoveHostPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<MoveHost, MoveHostPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, MoveHostPopupView> {
@@ -50,6 +49,8 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
     @WithElementId
     ListModelListBoxEditor<Object> clusterListEditor;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public MoveHostPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
@@ -57,7 +58,7 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
         localize(constants);
         initTable(constants);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     private void localize(ApplicationConstants constants) {
@@ -107,7 +108,7 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
         if (!object.isMultiSelection())
             table.setSelectionModel(new SingleSelectionModel<EntityModel>());
 
-        Driver.driver.edit(object);
+        driver.edit(object);
         table.edit(object);
     }
 

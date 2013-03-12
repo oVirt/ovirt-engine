@@ -22,7 +22,6 @@ public class VmExportPopupView extends AbstractModelBoundPopupView<ExportVmModel
         implements VmExportPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<ExportVmModel, VmExportPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, VmExportPopupView> {
@@ -41,13 +40,15 @@ public class VmExportPopupView extends AbstractModelBoundPopupView<ExportVmModel
     @Ignore
     FlowPanel messagePanel;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public VmExportPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
         initCheckBoxes();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     void initCheckBoxes() {
@@ -71,12 +72,12 @@ public class VmExportPopupView extends AbstractModelBoundPopupView<ExportVmModel
 
     @Override
     public void edit(ExportVmModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
     }
 
     @Override
     public ExportVmModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
 }

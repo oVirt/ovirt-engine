@@ -22,7 +22,6 @@ import com.google.inject.Inject;
 public abstract class AbstractSanStorageView extends AbstractStorageView<SanStorageModelBase> implements HasValidation {
 
     interface Driver extends SimpleBeanEditorDriver<SanStorageModelBase, AbstractSanStorageView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<Widget, AbstractSanStorageView> {
@@ -34,12 +33,14 @@ public abstract class AbstractSanStorageView extends AbstractStorageView<SanStor
 
     protected static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public AbstractSanStorageView() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
         addStyles();
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     public AbstractSanStorageView(boolean multiSelection) {
@@ -57,7 +58,7 @@ public abstract class AbstractSanStorageView extends AbstractStorageView<SanStor
 
     @Override
     public void edit(final SanStorageModelBase object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
 
         initLists(object);
 
@@ -93,10 +94,11 @@ public abstract class AbstractSanStorageView extends AbstractStorageView<SanStor
 
     @Override
     public SanStorageModelBase flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override
     public void focus() {
     }
+
 }

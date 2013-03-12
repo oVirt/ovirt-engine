@@ -31,7 +31,6 @@ import com.google.inject.Inject;
 public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView implements RemoveConfirmationPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<ConfirmationModel, RemoveConfirmationPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, RemoveConfirmationPopupView> {
@@ -41,6 +40,8 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
     interface ViewIdHandler extends ElementIdHandler<RemoveConfirmationPopupView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
+
+    private final Driver driver = GWT.create(Driver.class);
 
     protected final CommonApplicationMessages messages;
     protected final CommonApplicationConstants constants;
@@ -78,7 +79,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     @Override
@@ -127,7 +128,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
 
     @Override
     public void edit(ConfirmationModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
 
         // Bind "Latch.IsAvailable"
         object.getLatch().getPropertyChangedEvent().addListener(new IEventListener() {
@@ -161,7 +162,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
 
     @Override
     public ConfirmationModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
 }

@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.storage;
 
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
@@ -28,7 +28,6 @@ import com.google.inject.Inject;
 public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDomain, StorageListModel, StorageGeneralModel> implements SubTabStorageGeneralPresenter.ViewDef, Editor<StorageGeneralModel> {
 
     interface Driver extends SimpleBeanEditorDriver<StorageGeneralModel, SubTabStorageGeneralView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<Widget, SubTabStorageGeneralView> {
@@ -62,6 +61,8 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
 
     FormBuilder formBuilder;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public SubTabStorageGeneralView(DetailModelProvider<StorageListModel, StorageGeneralModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
@@ -70,7 +71,7 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
         formPanel = new GeneralFormPanel();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        Driver.driver.initialize(this);
+        driver.initialize(this);
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 1, 6);
@@ -104,7 +105,7 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
 
     @Override
     public void setMainTabSelectedItem(StorageDomain selectedItem) {
-        Driver.driver.edit(getDetailModel());
+        driver.edit(getDetailModel());
 
         // TODO required because of editor driver errors
         // Possible reasons: lowercase getters, StorageGeneralModel.getEntity() returns Object

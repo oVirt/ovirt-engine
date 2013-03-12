@@ -23,7 +23,6 @@ import com.google.inject.Inject;
 public class DefaultConfirmationPopupView extends AbstractConfirmationPopupView implements DefaultConfirmationPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<ConfirmationModel, DefaultConfirmationPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, DefaultConfirmationPopupView> {
@@ -37,17 +36,19 @@ public class DefaultConfirmationPopupView extends AbstractConfirmationPopupView 
     @UiField
     VerticalPanel descriptionPanel;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public DefaultConfirmationPopupView(EventBus eventBus, CommonApplicationResources resources) {
         super(eventBus, resources);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     @Override
     public void edit(final ConfirmationModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
 
         object.getItemsChangedEvent().addListener(new IEventListener() {
             @SuppressWarnings("unchecked")
@@ -64,7 +65,7 @@ public class DefaultConfirmationPopupView extends AbstractConfirmationPopupView 
 
     @Override
     public ConfirmationModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
 }

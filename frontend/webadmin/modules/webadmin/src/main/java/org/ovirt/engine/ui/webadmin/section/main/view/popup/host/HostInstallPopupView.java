@@ -1,12 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Label;
-import com.google.inject.Inject;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -20,6 +13,14 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstallPopupPresenterWidget;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Label;
+import com.google.inject.Inject;
+
 /**
  * This is the dialog used to re-install a host.
  * <p/>
@@ -29,8 +30,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstal
 public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallModel> implements HostInstallPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<InstallModel, HostInstallPopupView> {
-
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, HostInstallPopupView> {
@@ -57,13 +56,15 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     @UiField
     Label message;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public HostInstallPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
         initListBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     void initListBoxEditors() {
@@ -88,12 +89,12 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
 
     @Override
     public void edit(final InstallModel model) {
-        Driver.driver.edit(model);
+        driver.edit(model);
     }
 
     @Override
     public InstallModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override

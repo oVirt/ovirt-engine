@@ -41,7 +41,6 @@ import com.google.inject.Inject;
 public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInterfaceModel> implements HostBondPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<HostBondInterfaceModel, HostBondPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, HostBondPopupView> {
@@ -114,6 +113,8 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
     @UiField
     Style style;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public HostBondPopupView(EventBus eventBus, ApplicationResources resources, final ApplicationConstants constants) {
         super(eventBus, resources);
@@ -170,12 +171,12 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
         info.setHTML(constants.changesTempHostPopup());
         commitChanges.setLabel(constants.saveNetConfigHostPopup());
 
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     @Override
     public void edit(final HostBondInterfaceModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
         if (!object.getBootProtocolAvailable()) {
             bootProtocol.asWidget().setVisible(false);
             bootProtocolLabel.setVisible(false);
@@ -237,7 +238,7 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
 
     @Override
     public HostBondInterfaceModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override

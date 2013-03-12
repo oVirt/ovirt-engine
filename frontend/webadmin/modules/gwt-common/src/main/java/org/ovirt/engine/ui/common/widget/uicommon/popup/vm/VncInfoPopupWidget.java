@@ -13,7 +13,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class VncInfoPopupWidget extends AbstractModelBoundPopupWidget<VncInfoModel> {
 
     interface Driver extends SimpleBeanEditorDriver<VncInfoModel, VncInfoPopupWidget> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<VerticalPanel, VncInfoPopupWidget> {
@@ -24,10 +23,12 @@ public class VncInfoPopupWidget extends AbstractModelBoundPopupWidget<VncInfoMod
     @Ignore
     HTML message;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     public VncInfoPopupWidget() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         addStyles();
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     void addStyles() {
@@ -35,13 +36,13 @@ public class VncInfoPopupWidget extends AbstractModelBoundPopupWidget<VncInfoMod
 
     @Override
     public void edit(final VncInfoModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
         message.setHTML((String) object.getVncMessage().getEntity());
     }
 
     @Override
     public VncInfoModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
 }

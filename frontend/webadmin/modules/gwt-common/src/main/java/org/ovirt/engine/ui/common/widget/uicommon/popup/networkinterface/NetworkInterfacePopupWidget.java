@@ -33,7 +33,6 @@ import com.google.gwt.user.client.ui.Panel;
 public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<VmInterfaceModel> {
 
     interface Driver extends SimpleBeanEditorDriver<VmInterfaceModel, NetworkInterfacePopupWidget> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<FlowPanel, NetworkInterfacePopupWidget> {
@@ -136,6 +135,8 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     @Ignore
     public Panel expanderContent;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     public NetworkInterfacePopupWidget(EventBus eventBus, CommonApplicationConstants constants) {
         initManualWidgets();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -143,7 +144,7 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
         localize(constants);
         applyStyles();
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     private void localize(CommonApplicationConstants constants) {
@@ -201,7 +202,7 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
 
     @Override
     public void edit(final VmInterfaceModel iface) {
-        Driver.driver.edit(iface);
+        driver.edit(iface);
 
         hideMacWhenNotEnabled(iface);
     }
@@ -216,7 +217,7 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
 
     @Override
     public VmInterfaceModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     private void applyStyles() {

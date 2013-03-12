@@ -22,7 +22,6 @@ import com.google.gwt.user.client.ui.Widget;
 public class InterfaceEditor extends Composite implements HasEditorDriver<NetworkInterfaceModel> {
 
     interface Driver extends SimpleBeanEditorDriver<NetworkInterfaceModel, InterfaceEditor> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<Widget, InterfaceEditor> {
@@ -61,7 +60,9 @@ public class InterfaceEditor extends Composite implements HasEditorDriver<Networ
     @Path(value = "entity.bootProtocol")
     ValueListBox<NetworkBootProtocol> protocolEditor;
 
-    private ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
+    private final Driver driver = GWT.create(Driver.class);
+
+    private static final ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
 
     public InterfaceEditor() {
         protocolEditor = new ValueListBox<NetworkBootProtocol>(new EnumRenderer<NetworkBootProtocol>());
@@ -71,17 +72,17 @@ public class InterfaceEditor extends Composite implements HasEditorDriver<Networ
         subnetLabel.setText(constants.subnetInterfaceEditor());
         gatewayLabel.setText(constants.gatewayInterfaceEditor());
         protocolLabel.setText(constants.protocolInterfaceEditor());
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     @Override
     public void edit(NetworkInterfaceModel nic) {
-        Driver.driver.edit(nic);
+        driver.edit(nic);
     }
 
     @Override
     public NetworkInterfaceModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
 }

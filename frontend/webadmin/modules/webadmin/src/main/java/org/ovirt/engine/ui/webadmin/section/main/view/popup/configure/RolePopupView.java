@@ -38,7 +38,6 @@ import com.google.inject.Inject;
 public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implements RolePopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<RoleModel, RolePopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, RolePopupView> {
@@ -81,6 +80,8 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
     @Ignore
     EntityModelCellTree<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel> tree;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     private RoleModel roleModel;
 
     @Inject
@@ -88,7 +89,7 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
         super(eventBus, resources);
         initTree();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        Driver.driver.initialize(this);
+        driver.initialize(this);
         localize(constants);
         initExpandButtons();
         initRadioButtons();
@@ -155,7 +156,7 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
     @Override
     public void edit(RoleModel object) {
         this.roleModel = object;
-        Driver.driver.edit(object);
+        driver.edit(object);
         final EntityModel adminRole = object.getIsAdminRole();
         // Listen to Properties
         object.getPropertyChangedEvent().addListener(new IEventListener() {
@@ -218,7 +219,7 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
 
     @Override
     public RoleModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     interface AssignTagTreeResources extends CellTree.Resources {

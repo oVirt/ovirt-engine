@@ -21,7 +21,6 @@ import com.google.gwt.user.client.ui.Widget;
 public class ChangeQuotaItemView extends Composite implements HasEditorDriver<ChangeQuotaItemModel>, HasElementId {
 
     interface Driver extends SimpleBeanEditorDriver<ChangeQuotaItemModel, ChangeQuotaItemView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<Widget, ChangeQuotaItemView> {
@@ -51,14 +50,16 @@ public class ChangeQuotaItemView extends Composite implements HasEditorDriver<Ch
     @Path(value = "quota.selectedItem")
     ListModelListBoxEditor<Object> quotaListEditor;
 
-    CommonApplicationConstants constants;
+    private final Driver driver = GWT.create(Driver.class);
+
+    private final CommonApplicationConstants constants;
 
     public ChangeQuotaItemView(CommonApplicationConstants constants) {
         this.constants = constants;
 
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        Driver.driver.initialize(this);
+        driver.initialize(this);
         updateStyles();
     }
 
@@ -87,7 +88,7 @@ public class ChangeQuotaItemView extends Composite implements HasEditorDriver<Ch
 
     @Override
     public void edit(final ChangeQuotaItemModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
 
         objectNameLabel.asValueBox().setValue(object.getObject().getEntity());
         currentQuotaLabel.asValueBox().setValue(object.getCurrentQuota().getEntity());
@@ -95,12 +96,11 @@ public class ChangeQuotaItemView extends Composite implements HasEditorDriver<Ch
 
     @Override
     public ChangeQuotaItemModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override
     public void setElementId(String elementId) {
-
     }
 
 }

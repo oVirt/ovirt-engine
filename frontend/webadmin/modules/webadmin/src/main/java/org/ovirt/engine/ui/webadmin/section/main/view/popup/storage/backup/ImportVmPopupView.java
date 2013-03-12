@@ -6,10 +6,10 @@ import java.util.Date;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
@@ -73,7 +73,6 @@ import com.google.inject.Inject;
 public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel> implements ImportVmPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<ImportVmModel, ImportVmPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ImportVmPopupView> {
@@ -134,6 +133,8 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
 
     protected ImageResourceColumn<Object> isObjectInSystemColumn;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     protected final ApplicationConstants constants;
 
     private final ApplicationResources resources;
@@ -152,7 +153,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
         localize(constants);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
         initTables();
         initSubTabLayoutPanel();
     }
@@ -650,7 +651,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
             appTable.edit((VmAppListModel) object.getDetailModels().get(3));
         }
 
-        Driver.driver.edit(object);
+        driver.edit(object);
     }
 
     protected void setGeneralViewSelection(Object selectedItem) {
@@ -665,7 +666,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         if (appTable != null) {
             appTable.flush();
         }
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     interface WidgetStyle extends CssResource {
@@ -675,4 +676,5 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
 
         String cellSelectBox();
     }
+
 }

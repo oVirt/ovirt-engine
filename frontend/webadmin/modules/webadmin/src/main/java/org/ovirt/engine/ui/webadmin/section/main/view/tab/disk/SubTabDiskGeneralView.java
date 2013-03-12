@@ -29,7 +29,6 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
     }
 
     interface Driver extends SimpleBeanEditorDriver<DiskGeneralModel, SubTabDiskGeneralView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     TextBoxLabel alias = new TextBoxLabel();
@@ -43,7 +42,9 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
 
     FormBuilder formBuilder;
 
-    private ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
+    private final Driver driver = GWT.create(Driver.class);
+
+    private static final ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
 
     @Inject
     public SubTabDiskGeneralView(DetailModelProvider<DiskListModel, DiskGeneralModel> modelProvider) {
@@ -53,7 +54,7 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
         formPanel = new GeneralFormPanel();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        Driver.driver.initialize(this);
+        driver.initialize(this);
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 1, 6);
@@ -78,7 +79,7 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
 
     @Override
     public void setMainTabSelectedItem(Disk selectedItem) {
-        Driver.driver.edit(getDetailModel());
+        driver.edit(getDetailModel());
         formBuilder.showForm(getDetailModel());
     }
 

@@ -28,7 +28,6 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
     }
 
     interface Driver extends SimpleBeanEditorDriver<PoolGeneralModel, SubTabPoolGeneralView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     TextBoxLabel cpuInfo = new TextBoxLabel();
@@ -59,6 +58,8 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
 
     FormBuilder formBuilder;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public SubTabPoolGeneralView(DetailModelProvider<PoolListModel, PoolGeneralModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
@@ -67,7 +68,7 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
         formPanel = new GeneralFormPanel();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        Driver.driver.initialize(this);
+        driver.initialize(this);
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 3, 6);
@@ -109,7 +110,7 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
 
     @Override
     public void setMainTabSelectedItem(VmPool selectedItem) {
-        Driver.driver.edit(getDetailModel());
+        driver.edit(getDetailModel());
 
         // TODO required because of GWT#5864
         monitorCount.setText(String.valueOf(getDetailModel().getMonitorCount()));

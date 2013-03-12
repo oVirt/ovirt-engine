@@ -15,8 +15,9 @@ import com.google.inject.Inject;
 public class EditNetworkPopupView extends AbstractNetworkPopupView<EditNetworkModel> implements EditNetworkPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<EditNetworkModel, EditNetworkPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
+
+    private final Driver driver = GWT.create(Driver.class);
 
     @Inject
     public EditNetworkPopupView(EventBus eventBus,
@@ -25,7 +26,7 @@ public class EditNetworkPopupView extends AbstractNetworkPopupView<EditNetworkMo
             ApplicationTemplates templates) {
         super(eventBus, resources, constants, templates);
         mainPanel.setHeight("290px"); //$NON-NLS-1$
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     @Override
@@ -37,7 +38,7 @@ public class EditNetworkPopupView extends AbstractNetworkPopupView<EditNetworkMo
 
     @Override
     public void edit(EditNetworkModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
     }
 
     @Override
@@ -48,7 +49,7 @@ public class EditNetworkPopupView extends AbstractNetworkPopupView<EditNetworkMo
 
     @Override
     public EditNetworkModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
 }

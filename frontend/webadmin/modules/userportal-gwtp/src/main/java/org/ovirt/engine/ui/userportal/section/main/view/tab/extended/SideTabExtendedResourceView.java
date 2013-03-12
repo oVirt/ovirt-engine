@@ -54,7 +54,6 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
     }
 
     interface Driver extends SimpleBeanEditorDriver<ResourcesModel, SideTabExtendedResourceView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewIdHandler extends ElementIdHandler<SideTabExtendedResourceView> {
@@ -152,6 +151,8 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
     @UiField(provided = true)
     RefreshPanel refreshPanel;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public SideTabExtendedResourceView(ResourcesModelProvider modelProvider,
             EventBus eventBus, ClientStorage clientStorage,
@@ -167,7 +168,7 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
         storageProgressBar = new QuotaStorageProgressBar();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        Driver.driver.initialize(this);
+        driver.initialize(this);
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize();
 
@@ -300,16 +301,17 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
     @Override
     public void edit(ResourcesModel model) {
         vmTable.edit(model);
-        Driver.driver.edit(model);
+        driver.edit(model);
         this.model = model;
     }
 
     @Override
     public ResourcesModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     interface Style extends CssResource {
         String quotaNameText();
     }
+
 }

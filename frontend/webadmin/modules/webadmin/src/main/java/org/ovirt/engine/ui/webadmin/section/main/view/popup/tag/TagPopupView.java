@@ -18,7 +18,6 @@ import com.google.inject.Inject;
 public class TagPopupView extends AbstractModelBoundPopupView<TagModel> implements TagPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<TagModel, TagPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, TagPopupView> {
@@ -33,12 +32,14 @@ public class TagPopupView extends AbstractModelBoundPopupView<TagModel> implemen
     @Path(value = "description.entity")
     EntityModelTextBoxEditor descriptionEditor;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public TagPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     void localize(ApplicationConstants constants) {
@@ -48,12 +49,12 @@ public class TagPopupView extends AbstractModelBoundPopupView<TagModel> implemen
 
     @Override
     public void edit(TagModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
     }
 
     @Override
     public TagModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override

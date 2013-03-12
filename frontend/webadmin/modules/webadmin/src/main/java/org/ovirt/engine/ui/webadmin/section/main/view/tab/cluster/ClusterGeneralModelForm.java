@@ -21,7 +21,6 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<ClusterGeneralModel> {
 
     interface Driver extends SimpleBeanEditorDriver<ClusterGeneralModel, ClusterGeneralModelForm> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     TextBoxLabel name = new TextBoxLabel();
@@ -37,11 +36,13 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
     TextBoxLabel noOfVolumesDown = new TextBoxLabel();
     TextBoxLabel compatibilityVersion = new TextBoxLabel();
 
+    private final Driver driver = GWT.create(Driver.class);
+
     public ClusterGeneralModelForm(ModelProvider<ClusterGeneralModel> modelProvider,
             final ApplicationConstants constants) {
         super(modelProvider, 3, 5);
 
-        Driver.driver.initialize(this);
+        driver.initialize(this);
 
         Condition supportsVirtService = new Condition() {
             @Override
@@ -101,6 +102,7 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
 
     @Override
     protected void doEdit(ClusterGeneralModel model) {
-        Driver.driver.edit(model);
+        driver.edit(model);
     }
+
 }

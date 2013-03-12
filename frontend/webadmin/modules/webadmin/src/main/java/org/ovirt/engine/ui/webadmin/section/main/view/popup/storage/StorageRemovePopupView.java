@@ -27,7 +27,6 @@ public class StorageRemovePopupView extends AbstractModelBoundPopupView<RemoveSt
         implements StorageRemovePopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<RemoveStorageModel, StorageRemovePopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, StorageRemovePopupView> {
@@ -54,6 +53,8 @@ public class StorageRemovePopupView extends AbstractModelBoundPopupView<RemoveSt
     @UiField
     Label message;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public StorageRemovePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
@@ -63,7 +64,7 @@ public class StorageRemovePopupView extends AbstractModelBoundPopupView<RemoveSt
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
         addStyles();
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     void initListBoxEditors() {
@@ -91,12 +92,12 @@ public class StorageRemovePopupView extends AbstractModelBoundPopupView<RemoveSt
 
     @Override
     public void edit(RemoveStorageModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
     }
 
     @Override
     public RemoveStorageModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     interface WidgetStyle extends CssResource {

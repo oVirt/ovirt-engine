@@ -16,7 +16,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class VmChangeCDPopupWidget extends AbstractModelBoundPopupWidget<AttachCdModel> {
 
     interface Driver extends SimpleBeanEditorDriver<AttachCdModel, VmChangeCDPopupWidget> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<VerticalPanel, VmChangeCDPopupWidget> {
@@ -41,11 +40,13 @@ public class VmChangeCDPopupWidget extends AbstractModelBoundPopupWidget<AttachC
     @WithElementId("isoImage")
     ListModelListBoxEditor<Object> isoImageEditor;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     public VmChangeCDPopupWidget() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         addStyles();
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     void addStyles() {
@@ -55,12 +56,12 @@ public class VmChangeCDPopupWidget extends AbstractModelBoundPopupWidget<AttachC
 
     @Override
     public void edit(AttachCdModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
     }
 
     @Override
     public AttachCdModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override

@@ -42,7 +42,6 @@ import com.google.inject.Inject;
 public class HostManagementPopupView extends AbstractModelBoundPopupView<HostManagementNetworkModel> implements HostManagementPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<HostManagementNetworkModel, HostManagementPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, HostManagementPopupView> {
@@ -122,6 +121,8 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
     @UiField
     Style style;
 
+    private final Driver driver = GWT.create(Driver.class);
+
     @Inject
     public HostManagementPopupView(EventBus eventBus, ApplicationResources resources, final ApplicationConstants constants, final ApplicationTemplates templates) {
         super(eventBus, resources);
@@ -175,13 +176,12 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
         isToSync.setLabel(constants.syncNetwork());
         commitChanges.setLabel(constants.saveNetConfigHostPopup());
 
-
-        Driver.driver.initialize(this);
+        driver.initialize(this);
     }
 
     @Override
     public void edit(final HostManagementNetworkModel object) {
-        Driver.driver.edit(object);
+        driver.edit(object);
         bootProtocol.setEnabled(NetworkBootProtocol.NONE, object.getNoneBootProtocolAvailable());
 
         object.getPropertyChangedEvent().addListener(new IEventListener() {
@@ -244,7 +244,7 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
 
     @Override
     public HostManagementNetworkModel flush() {
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     @Override
@@ -261,4 +261,5 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
         String checkCon();
         String syncInfo();
     }
+
 }

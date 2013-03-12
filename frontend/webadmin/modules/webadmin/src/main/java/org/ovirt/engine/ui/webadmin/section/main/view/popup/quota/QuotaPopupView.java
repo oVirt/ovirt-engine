@@ -30,6 +30,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.QuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NullableButtonCell;
+import org.ovirt.engine.ui.webadmin.widget.table.column.QuotaUtilizationStatusColumn;
 
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.FieldUpdater;
@@ -43,7 +44,6 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.inject.Inject;
-import org.ovirt.engine.ui.webadmin.widget.table.column.QuotaUtilizationStatusColumn;
 
 public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> implements QuotaPopupPresenterWidget.ViewDef, SliderValueChange {
 
@@ -161,7 +161,6 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     ArrayList<Guid> selectedStorageGuid = new ArrayList<Guid>();
 
     interface Driver extends SimpleBeanEditorDriver<QuotaModel, QuotaPopupView> {
-        Driver driver = GWT.create(Driver.class);
     }
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, QuotaPopupView> {
@@ -171,6 +170,8 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     interface ViewIdHandler extends ElementIdHandler<QuotaPopupView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
+
+    private final Driver driver = GWT.create(Driver.class);
 
     @Inject
     public QuotaPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants,
@@ -183,7 +184,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
         addStyles();
-        Driver.driver.initialize(this);
+        driver.initialize(this);
         initTables(constants, messages);
     }
 
@@ -435,7 +436,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
 
         quotaClusterTable.edit(object.getQuotaClusters());
         quotaStorageTable.edit(object.getQuotaStorages());
-        Driver.driver.edit(object);
+        driver.edit(object);
     }
 
     private void registerHandlers() {
@@ -498,7 +499,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     public QuotaModel flush() {
         quotaClusterTable.flush();
         quotaStorageTable.flush();
-        return Driver.driver.flush();
+        return driver.flush();
     }
 
     interface WidgetStyle extends CssResource {
@@ -524,4 +525,5 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             model.getGraceStorage().setEntity(value - 100);
         }
     }
+
 }

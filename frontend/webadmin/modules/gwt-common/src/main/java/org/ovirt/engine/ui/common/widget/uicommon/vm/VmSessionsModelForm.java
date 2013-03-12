@@ -12,17 +12,18 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 
 public class VmSessionsModelForm extends AbstractModelBoundFormWidget<VmSessionsModel> {
 
+    interface Driver extends SimpleBeanEditorDriver<VmSessionsModel, VmSessionsModelForm> {
+    }
+
+    private final Driver driver = GWT.create(Driver.class);
+
     TextBoxLabel guestUserName = new TextBoxLabel();
     TextBoxLabel consoleUserName = new TextBoxLabel();
-
-    interface Driver extends SimpleBeanEditorDriver<VmSessionsModel, VmSessionsModelForm> {
-        Driver driver = GWT.create(Driver.class);
-    }
 
     public VmSessionsModelForm(ModelProvider<VmSessionsModel> modelProvider, CommonApplicationConstants constants) {
         super(modelProvider, 2, 2);
 
-        Driver.driver.initialize(this);
+        driver.initialize(this);
 
         formBuilder.setColumnsWidth("120px", "240px", "160px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         formBuilder.addFormItem(new FormItem(constants.loggedInUserVm(), guestUserName, 0, 0));
@@ -31,7 +32,7 @@ public class VmSessionsModelForm extends AbstractModelBoundFormWidget<VmSessions
 
     @Override
     protected void doEdit(VmSessionsModel model) {
-        Driver.driver.edit(model);
+        driver.edit(model);
     }
 
 }
