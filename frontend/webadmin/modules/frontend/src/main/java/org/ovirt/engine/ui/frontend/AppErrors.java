@@ -2248,4 +2248,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("SSH Authentication failed. Please make sure password is correct.")
     String SSH_AUTHENTICATION_FAILED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Gluster service is not supported in compatibility version ${compatibilityVersion}.")
+    String GLUSTER_NOT_SUPPORTED();
 }

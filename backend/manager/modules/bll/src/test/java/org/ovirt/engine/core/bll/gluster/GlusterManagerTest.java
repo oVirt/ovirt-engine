@@ -26,6 +26,7 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.verification.VerificationMode;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -53,6 +54,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsDynamicDAO;
@@ -79,7 +81,9 @@ public class GlusterManagerTest {
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.GlusterRefreshRateLight, 5),
-            mockConfig(ConfigValues.GlusterRefreshRateHeavy, 300));
+            mockConfig(ConfigValues.GlusterRefreshRateHeavy, 300),
+            mockConfig(ConfigValues.GlusterRefreshHeavyWeight, "3.1", false),
+            mockConfig(ConfigValues.GlusterRefreshHeavyWeight, "3.2", true));
 
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
@@ -152,18 +156,17 @@ public class GlusterManagerTest {
         existingServers.add(existingServer2);
         existingServers.add(createServer(SERVER_ID_3, SERVER_NAME_3));
 
-        createCluster();
-
         existingDistVol = createDistVol(DIST_VOL_NAME, EXISTING_VOL_DIST_ID);
         existingReplVol = createReplVol();
     }
 
-    private void createCluster() {
+    private void createCluster(Version version) {
         existingCluster = new VDSGroup();
         existingCluster.setId(CLUSTER_ID);
         existingCluster.setname("cluster");
         existingCluster.setGlusterService(true);
         existingCluster.setVirtService(false);
+        existingCluster.setcompatibility_version(version);
     }
 
     private VDS createServer(Guid serverId, String hostname) {
@@ -515,6 +518,7 @@ public class GlusterManagerTest {
 
     @Test
     public void testRefreshLightWeight() throws Exception {
+        createCluster(Version.v3_2);
         setupMocks();
 
         glusterManager.refreshLightWeightData();
@@ -522,7 +526,16 @@ public class GlusterManagerTest {
     }
 
     @Test
-    public void testRefreshHeavyWeight() throws Exception {
+    public void testRefreshHeavyWeightFor31() throws Exception {
+        createCluster(Version.v3_1);
+        setupMocks();
+        glusterManager.refreshHeavyWeightData();
+        verifyMocksForHeavyWeight();
+    }
+
+    @Test
+    public void testRefreshHeavyWeightFor32() throws Exception {
+        createCluster(Version.v3_2);
         setupMocks();
         glusterManager.refreshHeavyWeightData();
         verifyMocksForHeavyWeight();
@@ -534,36 +547,42 @@ public class GlusterManagerTest {
         // all clusters fetched from db
         inOrder.verify(clusterDao, times(1)).getAll();
 
+        VerificationMode mode = times(1);
+        if (existingCluster.getcompatibility_version() == Version.v3_1) {
+            // nothing else should happen if the cluster has compatibility level 3.1
+            mode = Mockito.never();
+        }
+
         // get the UP server from cluster
-        inOrder.verify(clusterUtils, times(1)).getUpServer(CLUSTER_ID);
+        inOrder.verify(clusterUtils, mode).getUpServer(CLUSTER_ID);
 
         // get volumes of the cluster
-        inOrder.verify(volumeDao, times(1)).getByClusterId(CLUSTER_ID);
+        inOrder.verify(volumeDao, mode).getByClusterId(CLUSTER_ID);
 
         // acquire lock on the cluster
-        inOrder.verify(glusterManager, times(1)).acquireLock(CLUSTER_ID);
+        inOrder.verify(glusterManager, mode).acquireLock(CLUSTER_ID);
 
         // get volume advance details
-        inOrder.verify(glusterManager, times(1)).getVolumeAdvancedDetails(existingServer1,
+        inOrder.verify(glusterManager, mode).getVolumeAdvancedDetails(existingServer1,
                 CLUSTER_ID,
                 existingDistVol.getName());
 
         // release lock on the cluster
-        inOrder.verify(glusterManager, times(1)).releaseLock(CLUSTER_ID);
+        inOrder.verify(glusterManager, mode).releaseLock(CLUSTER_ID);
 
         // acquire lock on the cluster for repl volume
-        inOrder.verify(glusterManager, times(1)).acquireLock(CLUSTER_ID);
+        inOrder.verify(glusterManager, mode).acquireLock(CLUSTER_ID);
 
         // get volume advance details of repl volume
-        inOrder.verify(glusterManager, times(1)).getVolumeAdvancedDetails(existingServer1,
+        inOrder.verify(glusterManager, mode).getVolumeAdvancedDetails(existingServer1,
                 CLUSTER_ID,
                 existingReplVol.getName());
 
         // update brick status
-        inOrder.verify(brickDao, times(1)).updateBrickStatuses(argThat(hasBricksWithChangedStatus()));
+        inOrder.verify(brickDao, mode).updateBrickStatuses(argThat(hasBricksWithChangedStatus()));
 
         // release lock on the cluster
-        inOrder.verify(glusterManager, times(1)).releaseLock(CLUSTER_ID);
+        inOrder.verify(glusterManager, mode).releaseLock(CLUSTER_ID);
     }
 
     /**
@@ -617,7 +636,10 @@ public class GlusterManagerTest {
         volume.addAccessProtocol(AccessProtocol.NFS);
 
         GlusterBrickEntity brick =
-                new GlusterBrickEntity(NEW_VOL_ID, existingServer1.getStaticData(), "/export/testVol1", GlusterStatus.UP);
+                new GlusterBrickEntity(NEW_VOL_ID,
+                        existingServer1.getStaticData(),
+                        "/export/testVol1",
+                        GlusterStatus.UP);
         brick.setBrickOrder(0);
         volume.addBrick(brick);
 

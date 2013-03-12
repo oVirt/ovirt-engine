@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -266,6 +267,14 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
         if (result) {
             result = validateMetrics();
         }
+
+        if (getVdsGroup().supportsGlusterService()
+                && !GlusterFeatureSupported.gluster(getVdsGroup().getcompatibility_version())) {
+            addCanDoActionMessage(VdcBllMessages.GLUSTER_NOT_SUPPORTED);
+            addCanDoActionMessage(String.format("$compatibilityVersion %1$s", getVdsGroup().getcompatibility_version().getValue()));
+            result = false;
+        }
+
         if (result) {
             if (!(getVdsGroup().supportsGlusterService() || getVdsGroup().supportsVirtService())) {
                 addCanDoActionMessage(VdcBllMessages.VDS_GROUP_AT_LEAST_ONE_SERVICE_MUST_BE_ENABLED);

@@ -197,9 +197,22 @@ public class UpdateVdsGroupCommandTest {
         when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
         when(vdsGroupDAO.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
         mcr.mockConfigValue(ConfigValues.AllowClusterWithVirtGlusterEnabled, Boolean.FALSE);
+        mcr.mockConfigValue(ConfigValues.GlusterSupport, VERSION_1_1, Boolean.TRUE);
         cpuExists();
         allQueriesForVms();
         canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_ENABLING_BOTH_VIRT_AND_GLUSTER_SERVICES_NOT_ALLOWED);
+    }
+
+    @Test
+    public void vdsGroupWithVirtGlusterNotSupported() {
+        createCommandWithGlusterEnabled();
+        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
+        when(vdsGroupDAO.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
+        mcr.mockConfigValue(ConfigValues.AllowClusterWithVirtGlusterEnabled, Boolean.FALSE);
+        mcr.mockConfigValue(ConfigValues.GlusterSupport, VERSION_1_1, Boolean.FALSE);
+        cpuExists();
+        allQueriesForVms();
+        canDoActionFailedWithReason(VdcBllMessages.GLUSTER_NOT_SUPPORTED);
     }
 
     @Test
@@ -207,6 +220,7 @@ public class UpdateVdsGroupCommandTest {
         createCommandWithGlusterEnabled();
         when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
         when(vdsGroupDAO.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
+        mcr.mockConfigValue(ConfigValues.GlusterSupport, VERSION_1_1, Boolean.TRUE);
         cpuExists();
         cpuFlagsNotMissing();
         clusterHasVds();

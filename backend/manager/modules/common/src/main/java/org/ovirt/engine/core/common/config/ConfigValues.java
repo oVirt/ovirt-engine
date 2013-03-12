@@ -1340,6 +1340,14 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     GlusterFsStorageEnabled(421),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    GlusterSupport(422),
+
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    GlusterRefreshHeavyWeight(423),
+
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Auto")
     ClientConsoleModeDefault(501),

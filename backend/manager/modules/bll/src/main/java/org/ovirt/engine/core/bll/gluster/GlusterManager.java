@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.utils.ListUtils;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
@@ -787,7 +788,8 @@ public class GlusterManager {
         log.debug("Refreshing Gluster Data [heavyweight]");
 
         for (VDSGroup cluster : getClusterDao().getAll()) {
-            if (cluster.supportsGlusterService()) {
+            if (GlusterFeatureSupported.refreshHeavyWeight(cluster.getcompatibility_version())
+                    && cluster.supportsGlusterService()) {
                 try {
                     refreshClusterHeavyWeightData(cluster);
                 } catch (Exception e) {

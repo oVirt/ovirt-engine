@@ -10,7 +10,7 @@ import org.ovirt.engine.core.compat.Version;
  */
 public class FeatureSupported {
 
-    private static boolean supportedInConfig(ConfigValues feature, Version version) {
+    public static boolean supportedInConfig(ConfigValues feature, Version version) {
         return Config.<Boolean> GetValue(feature, version.getValue());
     }
 

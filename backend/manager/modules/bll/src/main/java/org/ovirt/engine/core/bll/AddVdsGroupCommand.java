@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -162,6 +163,13 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
 
         if (result) {
             result = validateMetrics();
+        }
+
+        if (getVdsGroup().supportsGlusterService()
+                && !GlusterFeatureSupported.gluster(getVdsGroup().getcompatibility_version())) {
+            addCanDoActionMessage(VdcBllMessages.GLUSTER_NOT_SUPPORTED);
+            addCanDoActionMessage(String.format("$compatibilityVersion %1$s", getVdsGroup().getcompatibility_version().getValue()));
+            result = false;
         }
 
         if(result) {
