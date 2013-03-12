@@ -1,17 +1,21 @@
 package org.ovirt.engine.core.config;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.config.validation.ConfigActionType;
+import org.ovirt.engine.core.tools.ToolConsole;
 
 /**
  * The <code>EngineConfig</code> class represents the main class of the EngineConfig tool.
  */
 public class EngineConfig {
+    // The log:
+    private static final Logger log = Logger.getLogger(EngineConfig.class);
+
+    // The console:
+    private static final ToolConsole console = ToolConsole.getInstance();
 
     public static final String CONFIG_FILE_PATH_PROPERTY = "engine-config.config.file.path";
     public static final String DEFAULT_CONFIG_PATH = "/etc/ovirt-engine/engine-config/";
-    private static final Logger log = Logger.getLogger(EngineConfig.class);
     private EngineConfigCLIParser parser;
     private EngineConfigLogic engineConfigLogic;
     private static EngineConfig instance = new EngineConfig();
@@ -45,13 +49,12 @@ public class EngineConfig {
      */
     public static void main(String... args) {
         try {
-            Logger.getRootLogger().setLevel(Level.DEBUG);
             getInstance().setParser(new EngineConfigCLIParser());
             getInstance().setUpAndExecute(args);
 
         } catch (Throwable t) {
             log.debug("Exiting with error: ", t);
-            System.err.println(t.getMessage());
+            console.writeErrorLine(t.getMessage());
             System.exit(1);
         }
     }

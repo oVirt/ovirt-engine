@@ -11,8 +11,9 @@ import org.ovirt.engine.core.config.validation.ConfigActionType;
  * not as a char that is actually part of a key/value.
  */
 public class EngineConfigCLIParser {
-
+    // The log:
     private static final Logger log = Logger.getLogger(EngineConfigCLIParser.class);
+
     private HashMap<String, String> argsMap = new HashMap<String, String>();
     private EngineConfigMap engineConfigMap = new EngineConfigMap();
 

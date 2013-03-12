@@ -3,6 +3,7 @@ package org.ovirt.engine.core.config.entity.helper;
 import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -12,14 +13,20 @@ import org.ovirt.engine.core.config.EngineConfigLogic;
 import org.ovirt.engine.core.config.db.ConfigDAO;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 import org.ovirt.engine.core.config.entity.ConfigKeyFactory;
+import org.ovirt.engine.core.tools.ToolConsole;
 import org.ovirt.engine.core.utils.crypt.EncryptionUtils;
 
 public class PasswordValueHelper implements ValueHelper {
+    // The log:
+    private static final Logger log = Logger.getLogger(PasswordValueHelper.class);
+
+    // The console:
+    private static final ToolConsole console = ToolConsole.getInstance();
+
     private static ConfigDAO configDAO;
     private static String certAlias;
     private static String keyStoreURL;
     private static String keyStorePass;
-    private static final Logger log = Logger.getLogger(PasswordValueHelper.class);
     public static final String INTERACTIVE_MODE = "Interactive";
     private EngineConfigCLIParser parser;
 
@@ -36,8 +43,11 @@ public class PasswordValueHelper implements ValueHelper {
             keyStorePass =
                 configDAO.getKey(keyFactory.generateBlankConfigKey("keystorePass", "String"))
                 .getValue();
-        } catch (Exception e) {
-            log.error(e);
+        }
+        catch (Exception exception) {
+            String msg = "Error loading private key.";
+            console.writeLine(msg);
+            log.error(exception);
         }
     }
 
@@ -64,9 +74,11 @@ public class PasswordValueHelper implements ValueHelper {
             try {
                 decrypt(value);
                 returnedValue = "Set";
-            } catch (Exception e) {
-                String msg = "Failed to decrypt the current value";
-                log.error(msg, e);
+            }
+            catch (Exception exception) {
+                String msg = "Failed to decrypt the current value.";
+                console.writeLine(msg);
+                log.error(exception);
                 throw new GeneralSecurityException(msg);
             }
         }
@@ -91,9 +103,11 @@ public class PasswordValueHelper implements ValueHelper {
                 return StringUtils.EMPTY;
             }
             returnedValue = encrypt(password);
-        } catch (Throwable e) {
-            String msg = "Failed to encrypt the current value";
-            log.error(msg, e);
+        }
+        catch (Throwable exception) {
+            String msg = "Failed to encrypt the current value.";
+            console.writeLine(msg);
+            log.error(msg, exception);
             throw new GeneralSecurityException(msg);
         }
 
@@ -105,8 +119,8 @@ public class PasswordValueHelper implements ValueHelper {
         if (StringUtils.isNotBlank(value) && value.equalsIgnoreCase(INTERACTIVE_MODE)) {
             password = EngineConfigLogic.startPasswordDialog(null);
             String passwordConfirm = EngineConfigLogic.startPasswordDialog(null, "Please reenter password");
-            if (!password.equals(passwordConfirm)) {
-                log.error("Passwords don't match");
+            if (!StringUtils.equals(password, passwordConfirm)) {
+                console.writeLine("Passwords don't match.");
                 return extractPasswordValue(value);
             }
         } else {

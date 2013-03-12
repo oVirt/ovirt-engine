@@ -14,7 +14,6 @@ import org.ovirt.engine.core.config.entity.ConfigKey;
 public class CompositePasswordValueHelper implements ValueHelper {
 
     private final PasswordValueHelper pwdValueHelper = new PasswordValueHelper();
-    private EngineConfigCLIParser parser;
 
     private static enum ReformatType {
         ENCRYPT,
@@ -78,7 +77,6 @@ public class CompositePasswordValueHelper implements ValueHelper {
 
     @Override
     public void setParser(EngineConfigCLIParser parser) {
-        this.parser = parser;
         this.pwdValueHelper.setParser(parser);
     }
 

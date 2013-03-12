@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.config.EngineConfigCLIParser;
 import org.ovirt.engine.core.config.entity.helper.CompositePasswordValueHelper;
 import org.ovirt.engine.core.config.entity.helper.PasswordValueHelper;
@@ -22,7 +21,6 @@ public class ConfigKey {
     private boolean reloadable;
     private List<String> validValues;
     private static final ArrayList<String> EMPTY_LIST = new ArrayList<String>(0);
-    private final static Logger log = Logger.getLogger(ConfigKey.class);
     private String version;
     private ValueHelper valueHelper;
 

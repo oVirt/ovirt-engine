@@ -4,11 +4,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.security.InvalidParameterException;
 import java.sql.SQLException;
-import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,16 +24,20 @@ import org.ovirt.engine.core.config.db.ConfigDaoImpl;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 import org.ovirt.engine.core.config.entity.ConfigKeyFactory;
 import org.ovirt.engine.core.config.validation.ConfigActionType;
+import org.ovirt.engine.core.tools.ToolConsole;
 
 /**
  * The <code>EngineConfigLogic</code> class is responsible for the logic of the EngineConfig tool.
  */
 public class EngineConfigLogic {
+    // The log:
+    private static final Logger log = Logger.getLogger(EngineConfigLogic.class);
+
+    // The console:
+    private static final ToolConsole console = ToolConsole.getInstance();
 
     private final static String ALTERNATE_KEY = "alternateKey";
-    private final static String DEFAULT_LOG4J_CONF_PATH = "/etc/ovirt-engine/engine-config/log4j.xml";
 
-    private final static Logger log = Logger.getLogger(EngineConfigLogic.class);
 
     private Configuration appConfig;
     private HierarchicalConfiguration keysConfig;
@@ -181,8 +184,8 @@ public class EngineConfigLogic {
         log.debug("starting user dialog.");
         String user = null;
         while (StringUtils.isBlank(user)) {
-            System.out.println("Please enter user:");
-            user = System.console().readLine();
+            console.writeLine("Please enter user: ");
+            user = console.readLine();
         }
         return user;
     }
@@ -198,12 +201,14 @@ public class EngineConfigLogic {
 
     public static String startPasswordDialog(String user, String msg) throws IOException {
         log.debug("starting password dialog.");
-        if (user == null) {
-            System.out.printf(msg);
-        } else {
-            System.out.printf("%s for %s: ",msg , user);
+        String prompt = null;
+        if (user != null) {
+            prompt = msg + " for " + user + ": ";
         }
-        return new String(System.console().readPassword());
+        else {
+            prompt = msg + ": ";
+        }
+        return new String(console.readPassword(prompt));
     }
 
     /**
@@ -214,24 +219,25 @@ public class EngineConfigLogic {
     private void printAllValuesForKey(String key) throws Exception {
         List<ConfigKey> keysForName = getConfigDAO().getKeysForName(key);
         if (keysForName.size() == 0) {
-            log.debug("printKeyValues: failed to fetch key " + key + " value: no such entry with default version.");
+            log.debug("Failed to fetch value for key \"" + key + "\", no such entry with default version.");
             throw new RuntimeException("Error fetching " + key + " value: no such entry with default version.");
         }
 
-        StringBuilder buffer = new StringBuilder();
-        boolean isPasswordKey = false;
         for (ConfigKey configKey : keysForName) {
-            buffer.append(String.format("%s: %s version: %s\n",
-                    key,
-                    configKey.getDisplayValue(),
-                    configKey.getVersion()));
-            isPasswordKey = isPasswordKey || configKey.isPasswordKey();
-        }
-        buffer.deleteCharAt(buffer.length() - 1);
-        if (isPasswordKey) {
-            System.out.print(buffer);
-        } else {
-            log.info(buffer);
+            console.write(key);
+            console.write(": ");
+            if (!configKey.isPasswordKey()) {
+                console.write(configKey.getDisplayValue());
+            }
+            else {
+                char[] value = configKey.getDisplayValue().toCharArray();
+                console.writePassword(value);
+                Arrays.fill(value, '\0');
+            }
+            console.write(" ");
+            console.write("version: ");
+            console.write(configKey.getVersion());
+            console.writeLine();
         }
     }
 
@@ -245,9 +251,9 @@ public class EngineConfigLogic {
             // TODO - move to one statement for all - time permitting;
             try {
                 printAllValuesForKey(key.getKey());
-            } catch (Exception e) {
-                log.error("Skipping " + key.getKey() + " due to an error: " + e.getMessage());
-                log.debug("details:", e);
+            }
+            catch (Exception exception) {
+                log.error("Error while retriving value for key \"" + key.getKey() + "\".", exception);
             }
         }
     }
@@ -294,10 +300,12 @@ public class EngineConfigLogic {
     }
 
     private void printKeyInFormat(ConfigKey key) {
-        log.info(MessageFormat.format("{0}: {1} (Value Type: {2})",
-                key.getKey(),
-                key.getDescription(),
-                key.getType()));
+        console.writeFormat(
+            "%s: %s (Value Type: %s)\n",
+            key.getKey(),
+            key.getDescription(),
+            key.getType()
+        );
     }
 
     /**
@@ -336,10 +344,12 @@ public class EngineConfigLogic {
                     + "'.");
         }
         if (configKey.isPasswordKey()) {
-            System.out.println(configKey.getDisplayValue());
-        } else {
-            log.info(configKey.getDisplayValue());
+            console.writePassword(configKey.getDisplayValue().toCharArray());
         }
+        else {
+            console.write(configKey.getDisplayValue());
+        }
+        console.writeLine();
     }
 
     /**
@@ -369,7 +379,7 @@ public class EngineConfigLogic {
             @Override
             public boolean handle(ConfigKey key) {
                 if (key.getKey().equals(keyName)) {
-                    log.info(key.getValueHelper().getHelpNote(key));
+                    console.writeLine(key.getValueHelper().getHelpNote(key));
                     return false;
                 }
                 return true;
@@ -377,8 +387,10 @@ public class EngineConfigLogic {
         });
 
         if (!foundKey) {
-            log.error(String.format("Cannot display help for key %1$s. The key does not exist at the configuration file of engine-config",
-                    keyName));
+            console.writeFormat(
+                "Cannot display help for key %1$s. The key does not " +
+                "exist at the configuration file of engine-config.",
+                keyName);
         }
     }
 
@@ -399,15 +411,14 @@ public class EngineConfigLogic {
         if (keys.size() == 1) {
             version = keys.get(0).getVersion();
         } else if (keys.size() > 1) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             while (true) {
-                System.out.println("Please select a version:");
+                console.writeLine("Please select a version:");
                 for (int i = 0; i < keys.size(); i++) {
-                    System.out.println(i + 1 + ". " + keys.get(i).getVersion());
+                    console.writeFormat("%d. %s\n", i + 1, keys.get(i).getVersion());
                 }
                 int index = 0;
                 try {
-                    index = Integer.valueOf(br.readLine());
+                    index = Integer.valueOf(console.readLine());
                 } catch (NumberFormatException e) {
                     continue;
                 }
