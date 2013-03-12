@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.EndedTaskInfo;
 import org.ovirt.engine.core.common.businessentities.AsyncTasks;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -158,13 +159,12 @@ public class EntityAsyncTask extends SPMAsyncTask {
                         Backend.getInstance().endAction(entityInfo.getActionType(),
                                 dbAsyncTask.getActionParameters(),
                                 new CommandContext(context));
-            } catch (RuntimeException Ex) {
-                String errorMessage =
-                        String
-                                .format("EntityAsyncTask::EndCommandAction [within thread]: EndAction for action type %1$s threw an exception",
-                                        entityInfo.getActionType());
-
-                log.error(errorMessage, Ex);
+            } catch (VdcBLLException ex) {
+                log.error(getErrorMessage(entityInfo));
+                log.error(ex.toString());
+                log.debug(ex);
+            } catch (RuntimeException ex) {
+                log.error(getErrorMessage(entityInfo), ex);
             }
         }
 
@@ -179,6 +179,11 @@ public class EntityAsyncTask extends SPMAsyncTask {
             handleEndActionResult(entityInfo, vdcReturnValue, context, isTaskGroupSuccess);
             _endActionsInProgress.decrementAndGet();
         }
+    }
+
+    private static String getErrorMessage(EntityMultiAsyncTasks entityInfo) {
+        return String.format("[within thread]: EndAction for action type %1$s threw an exception.",
+                entityInfo.getActionType());
     }
 
     private static void handleEndActionResult(EntityMultiAsyncTasks entityInfo,
