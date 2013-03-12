@@ -17,6 +17,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -1701,7 +1704,15 @@ public class VdsUpdateRunTimeInfo {
             updateInterfaceStatistics(vmToUpdate, vmStatistics);
 
             for (DiskImageDynamic imageDynamic : _runningVms.get(vmToUpdate.getId()).getVmDynamic().getDisks()) {
-                _vmDiskImageDynamicToSave.put(imageDynamic.getId(), imageDynamic);
+                Disk disk = getDbFacade().getDiskDao().get(imageDynamic.getId());
+                // We have disk_id statistics, which is good, but disk_image_dynamic table contains image_id, so we
+                // update for the AI.
+                if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                    DiskImage diskImage = (DiskImage) disk;
+                    Guid activeImageId = diskImage.getImageId();
+                    imageDynamic.setId(activeImageId);
+                    _vmDiskImageDynamicToSave.put(activeImageId, imageDynamic);
+                }
             }
         }
     }
