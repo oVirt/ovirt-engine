@@ -102,7 +102,7 @@ public class VdsDeploy implements SSHDialog.Sink {
      * update the vds object.
      * @param vdsmid unique id read from host.
      */
-    private void _setVdsmId(String vdsmid) {
+    private void setVdsmId(String vdsmid) {
         if (vdsmid == null) {
             throw new SoftError("Cannot acquire node id");
         }
@@ -162,7 +162,7 @@ public class VdsDeploy implements SSHDialog.Sink {
     /**
      * Set host to be node.
      */
-    private void _setNode() {
+    private void setNode() {
         _isNode = true;
 
         _vds.setVdsType(VDSType.oVirtNode);
@@ -181,7 +181,7 @@ public class VdsDeploy implements SSHDialog.Sink {
      * For this simple task, no need to go via command mechanism.
      * @param status new status.
      */
-    private void _setVdsStatus(VDSStatus status) {
+    private void setVdsStatus(VDSStatus status) {
         _vds.setStatus(status);
 
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
@@ -310,7 +310,7 @@ public class VdsDeploy implements SSHDialog.Sink {
                     InstallerMessages.Severity.INFO,
                     "Host is ovirt-node"
                 );
-                _setNode();
+                setNode();
             }
             return null;
         }},
@@ -367,7 +367,7 @@ public class VdsDeploy implements SSHDialog.Sink {
             return null;
         }},
         new Callable<Object>() { public Object call() throws Exception {
-            _setVdsmId((String)_parser.cliEnvironmentGet(VdsmEnv.VDSM_ID));
+            setVdsmId((String)_parser.cliEnvironmentGet(VdsmEnv.VDSM_ID));
             return null;
         }},
         new Callable<Object>() { public Object call() throws Exception {
@@ -625,7 +625,7 @@ public class VdsDeploy implements SSHDialog.Sink {
     /**
      * Execute the next termination vector entry.
      */
-    private void _nextTerminationEntry() throws Exception {
+    private void nextTerminationEntry() throws Exception {
         try {
             _terminationDialog[_terminationIndex++].call();
         }
@@ -638,7 +638,7 @@ public class VdsDeploy implements SSHDialog.Sink {
      * Dialog implementation.
      * Handle events incoming from host.
      */
-    private void _threadMain() {
+    private void threadMain() {
         try {
             boolean terminate = false;
 
@@ -698,7 +698,7 @@ public class VdsDeploy implements SSHDialog.Sink {
                         _nextCustomizationEntry();
                     }
                     else if (Queries.TERMINATION_COMMAND.equals(event.name)) {
-                        _nextTerminationEntry();
+                        nextTerminationEntry();
                     }
                     else {
                         throw new Exception(
@@ -787,7 +787,7 @@ public class VdsDeploy implements SSHDialog.Sink {
             new Runnable() {
                 @Override
                 public void run() {
-                    _threadMain();
+                    threadMain();
                 }
             },
             "VdsDeploy"
@@ -884,7 +884,7 @@ public class VdsDeploy implements SSHDialog.Sink {
     public void execute() throws Exception {
         InputStream in = null;
         try {
-            _setVdsStatus(VDSStatus.Installing);
+            setVdsStatus(VDSStatus.Installing);
 
             _dialog.setHost(_vds.getHostName());
             _dialog.connect();
@@ -932,13 +932,13 @@ public class VdsDeploy implements SSHDialog.Sink {
                 );
             }
             else if (_goingToReboot) {
-                _setVdsStatus(VDSStatus.Reboot);
+                setVdsStatus(VDSStatus.Reboot);
             }
             else if (_installIncomplete) {
-                _setVdsStatus(VDSStatus.InstallFailed);
+                setVdsStatus(VDSStatus.InstallFailed);
             }
             else {
-                _setVdsStatus(VDSStatus.NonResponsive);
+                setVdsStatus(VDSStatus.NonResponsive);
             }
         }
         catch (TimeLimitExceededException e){
@@ -951,7 +951,7 @@ public class VdsDeploy implements SSHDialog.Sink {
                 InstallerMessages.Severity.ERROR,
                 "Processing stopped due to timeout"
             );
-            _setVdsStatus(VDSStatus.InstallFailed);
+            setVdsStatus(VDSStatus.InstallFailed);
             throw e;
         }
         catch(Exception e) {
@@ -960,7 +960,7 @@ public class VdsDeploy implements SSHDialog.Sink {
                 _vds.getHostName(),
                 e
             );
-            _setVdsStatus(VDSStatus.InstallFailed);
+            setVdsStatus(VDSStatus.InstallFailed);
 
             if (_failException == null) {
                 throw e;
