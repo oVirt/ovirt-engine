@@ -20,14 +20,12 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.utils.ejb.BeanType;
-import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 
 /** A test case for {@link RemoveDiskCommandTest} */
@@ -85,17 +83,6 @@ public class RemoveDiskCommandTest {
         doReturn(null).when(cmd).getDisk();
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
                 VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
-    }
-
-    @Test
-    public void testCanDoActionFlowUnableToLock() {
-        EngineLock lock =
-                new EngineLock
-                (Collections.singletonMap(vm.getId().toString(), LockMessagesMatchUtil.VM),
-                        Collections.<String, Pair<String, String>> emptyMap());
-        lockManager.acquireLock(lock);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED);
     }
 
     @Test

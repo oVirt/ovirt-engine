@@ -23,6 +23,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 @LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> extends AddVmCommand<T> {
 
+    private String cachedDiskSharedLockMessage;
+
     public AddVmFromTemplateCommand(T parameters) {
         super(parameters);
         parameters.setDontCheckTemplateImages(true);
@@ -45,14 +47,27 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
             locks.putAll(parentLocks);
         }
         locks.put(getVmTemplateId().toString(),
-                new Pair<String, String>(LockingGroup.TEMPLATE.name(), createTemplateSharedLockMessage()));
+                new Pair<String, String>(LockingGroup.TEMPLATE.name(), getTemplateSharedLockMessage()));
+        for (DiskImage image: getImagesToCheckDestinationStorageDomains()) {
+            locks.put(image.getId().toString(),
+                    new Pair<String, String>(LockingGroup.DISK.name(), getDiskSharedLockMessage()));
+        }
         return locks;
     }
 
-    private String createTemplateSharedLockMessage() {
+    private String getTemplateSharedLockMessage() {
         return new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_IS_USED_FOR_CREATE_VM.name())
                 .append(String.format("$VmName %1$s", getVmName()))
                 .toString();
+    }
+
+    private String getDiskSharedLockMessage() {
+        if (cachedDiskSharedLockMessage == null) {
+            cachedDiskSharedLockMessage = new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_USED_FOR_CREATE_VM.name())
+            .append(String.format("$VmName %1$s", getVmName()))
+            .toString();
+        }
+        return cachedDiskSharedLockMessage;
     }
 
     @Override

@@ -1342,6 +1342,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. This template is currently in use to create VM ${VmName}.")
     String ACTION_TYPE_FAILED_TEMPLATE_IS_USED_FOR_CREATE_VM();
 
+    @DefaultStringValue("Cannot ${action} ${type}. This disk is currently in use to create VM ${VmName}.")
+    String ACTION_TYPE_FAILED_DISK_IS_USED_FOR_CREATE_VM();
+
     @DefaultStringValue("Cannot ${action} ${type}. Disk ${DiskName} is being removed.")
     String ACTION_TYPE_FAILED_DISK_IS_BEING_REMOVED();
 

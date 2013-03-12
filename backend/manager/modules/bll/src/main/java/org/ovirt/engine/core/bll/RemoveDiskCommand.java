@@ -52,13 +52,13 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
 @CustomLogFields({ @CustomLogField("DiskAlias") })
+@LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 @NonTransactiveCommandAttribute
 public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBase<T>
         implements QuotaStorageDependent {
 
     private static final long serialVersionUID = -4520874214339816607L;
     private Disk disk;
-    private Map<String, Pair<String, String>> sharedLockMap;
     private List<PermissionSubject> permsList = null;
     private List<VM> listVms;
     private String cachedDiskIsBeingRemovedLockMessage;
@@ -80,10 +80,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
         }
 
-        buildSharedLockMap();
-
-        return acquireLockInternal() &&
-                validateAllVmsForDiskAreDown() &&
+        return validateAllVmsForDiskAreDown() &&
                 canRemoveDiskBasedOnStorageTypeCheck();
     }
 
@@ -148,23 +145,6 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         }
 
         return retValue;
-    }
-
-    private void buildSharedLockMap() {
-        if (getDisk().getVmEntityType() == VmEntityType.VM) {
-            List<VM> listVms = getVmsForDiskId();
-            if (!listVms.isEmpty()) {
-                sharedLockMap = new HashMap<String, Pair<String, String>>();
-                for (VM vm : listVms) {
-                    sharedLockMap.put(vm.getId().toString(),
-                            new Pair<String, String>(LockingGroup.VM.name(), getDiskIsBeingRemovedLockMessage()));
-                }
-            }
-        } else if (getDisk().getVmEntityType() == VmEntityType.TEMPLATE) {
-            setVmTemplateIdParameter();
-            sharedLockMap = Collections.singletonMap(getVmTemplateId().toString(),
-                    new Pair<String, String>(LockingGroup.TEMPLATE.name(), getDiskIsBeingRemovedLockMessage()));
-        }
     }
 
     /**
@@ -380,7 +360,26 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
-        return sharedLockMap;
+        if (getDisk() == null) {
+            return null;
+        }
+
+        Map<String, Pair<String, String>> result = null;
+        if (getDisk().getVmEntityType() == VmEntityType.VM) {
+            List<VM> listVms = getVmsForDiskId();
+            if (!listVms.isEmpty()) {
+                result = new HashMap<String, Pair<String, String>>();
+                for (VM vm : listVms) {
+                    result.put(vm.getId().toString(),
+                            new Pair<String, String>(LockingGroup.VM.name(), getDiskIsBeingRemovedLockMessage()));
+                }
+            }
+        } else if (getDisk().getVmEntityType() == VmEntityType.TEMPLATE) {
+            setVmTemplateIdParameter();
+            result = Collections.singletonMap(getVmTemplateId().toString(),
+                    new Pair<String, String>(LockingGroup.TEMPLATE.name(), getDiskIsBeingRemovedLockMessage()));
+        }
+        return result;
     }
 
     protected Disk getDisk() {
