@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
@@ -11,39 +12,39 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
 
     private Guid id = new Guid();
     private VMStatus status = VMStatus.Down;
-    private String vm_ip;
-    private String vm_host;
-    private Integer vm_pid;
+    private String vmIp;
+    private String vmHost;
+    private Integer vmPid;
     private Date lastStartTime;
-    private String guest_cur_user_name;
-    private String console_cur_user_name;
+    private String guestCurUserName;
+    private String consoleCurUserName;
     private NGuid consoleUserId;
-    private java.util.Date guest_last_login_time;
-    private java.util.Date guest_last_logout_time;
-    private String guest_os;
-    private NGuid migrating_to_vds;
-    private NGuid run_on_vds;
+    private Date guestLastLoginTime;
+    private Date guestLastLogoutTime;
+    private String guestOs;
+    private NGuid migratingToVds;
+    private NGuid runOnVds;
     private String appList;
     private Integer display;
-    private Boolean acpi_enable;
+    private Boolean acpiEnabled;
     private SessionState session = SessionState.Unknown;
-    private String display_ip;
-    private DisplayType display_type = DisplayType.vnc;
-    private Boolean kvm_enable;
-    private Integer display_secure_port;
-    private Integer utc_diff;
-    private NGuid last_vds_run_on;
-    private String client_ip;
-    private Integer guest_requested_memory;
-    private String hibernation_vol_handle;
-    private BootSequence boot_sequence = BootSequence.C;
-    private VmExitStatus mExitStatus = VmExitStatus.Normal;
+    private String displayIp;
+    private DisplayType displayType = DisplayType.vnc;
+    private Boolean kvmEnable;
+    private Integer displaySecurePort;
+    private Integer utcDiff;
+    private NGuid lastVdsRunOn;
+    private String clientIp;
+    private Integer guestRequestedMemory;
+    private String hibernationVolHandle;
+    private BootSequence bootSequence = BootSequence.C;
+    private VmExitStatus exitStatus = VmExitStatus.Normal;
     private VmPauseStatus pauseStatus = VmPauseStatus.NONE;
     private String hash;
     private int guestAgentNicsHash;
     private String mExitMessage;
-    private java.util.ArrayList<DiskImageDynamic> mDisks;
-    private boolean mWin2kHackEnable = false;
+    private ArrayList<DiskImageDynamic> disks;
+    private boolean win2kHackEnabled = false;
 
     @Override
     public int hashCode() {
@@ -51,93 +52,93 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
         int result = 1;
         result = prime
                 * result
-                + ((acpi_enable == null) ? 0 : acpi_enable.hashCode());
+                + ((acpiEnabled == null) ? 0 : acpiEnabled.hashCode());
         result = prime * result
                 + ((appList == null) ? 0 : appList.hashCode());
         result = prime
                 * result
-                + boot_sequence.hashCode() * prime;
+                + bootSequence.hashCode() * prime;
         result = prime * result
-                + ((client_ip == null) ? 0 : client_ip.hashCode());
+                + ((clientIp == null) ? 0 : clientIp.hashCode());
         result = prime * result
                 + ((display == null) ? 0 : display.hashCode());
         result = prime * result
-                + ((display_ip == null) ? 0 : display_ip.hashCode());
+                + ((displayIp == null) ? 0 : displayIp.hashCode());
         result = prime
                 * result
-                + ((display_secure_port == null) ? 0
-                        : display_secure_port.hashCode());
+                + ((displaySecurePort == null) ? 0
+                        : displaySecurePort.hashCode());
         result = prime
                 * result
-                + display_type.hashCode() * prime;
+                + displayType.hashCode() * prime;
         result = prime
                 * result
-                + ((console_cur_user_name == null) ? 0
-                        : console_cur_user_name.hashCode());
+                + ((consoleCurUserName == null) ? 0
+                        : consoleCurUserName.hashCode());
         result = prime
                 * result
-                + ((guest_cur_user_name == null) ? 0
-                        : guest_cur_user_name.hashCode());
+                + ((guestCurUserName == null) ? 0
+                        : guestCurUserName.hashCode());
         result = prime
                 * result
                 + ((consoleUserId == null) ? 0
                        : consoleUserId.hashCode());
         result = prime
                 * result
-                + ((guest_last_login_time == null) ? 0
-                        : guest_last_login_time.hashCode());
+                + ((guestLastLoginTime == null) ? 0
+                        : guestLastLoginTime.hashCode());
         result = prime
                 * result
-                + ((guest_last_logout_time == null) ? 0
-                        : guest_last_logout_time.hashCode());
+                + ((guestLastLogoutTime == null) ? 0
+                        : guestLastLogoutTime.hashCode());
         result = prime * result
-                + ((guest_os == null) ? 0 : guest_os.hashCode());
+                + ((guestOs == null) ? 0 : guestOs.hashCode());
         result = prime
                 * result
-                + ((guest_requested_memory == null) ? 0
-                        : guest_requested_memory.hashCode());
+                + ((guestRequestedMemory == null) ? 0
+                        : guestRequestedMemory.hashCode());
         result = prime
                 * result
-                + ((hibernation_vol_handle == null) ? 0
-                        : hibernation_vol_handle.hashCode());
+                + ((hibernationVolHandle == null) ? 0
+                        : hibernationVolHandle.hashCode());
         result = prime * result
-                + ((kvm_enable == null) ? 0 : kvm_enable.hashCode());
+                + ((kvmEnable == null) ? 0 : kvmEnable.hashCode());
         result = prime
                 * result
-                + ((last_vds_run_on == null) ? 0 : last_vds_run_on
+                + ((lastVdsRunOn == null) ? 0 : lastVdsRunOn
                         .hashCode());
-        result = prime * result + ((mDisks == null) ? 0 : mDisks.hashCode());
+        result = prime * result + ((disks == null) ? 0 : disks.hashCode());
         result = prime * result
                 + ((mExitMessage == null) ? 0 : mExitMessage.hashCode());
         result = prime * result
-                + mExitStatus.hashCode() * prime;
-        result = prime * result + (mWin2kHackEnable ? 1231 : 1237);
+                + exitStatus.hashCode() * prime;
+        result = prime * result + (win2kHackEnabled ? 1231 : 1237);
         result = prime
                 * result
-                + ((migrating_to_vds == null) ? 0 : migrating_to_vds
+                + ((migratingToVds == null) ? 0 : migratingToVds
                         .hashCode());
         result = prime * result
                 + ((pauseStatus == null) ? 0 : pauseStatus.hashCode());
         result = prime * result
-                + ((run_on_vds == null) ? 0 : run_on_vds.hashCode());
+                + ((runOnVds == null) ? 0 : runOnVds.hashCode());
         result = prime * result
                 + session.hashCode() * prime;
         result = prime * result
                 + status.hashCode() * prime;
         result = prime * result
-                + ((utc_diff == null) ? 0 : utc_diff.hashCode());
+                + ((utcDiff == null) ? 0 : utcDiff.hashCode());
         result = prime * result
                 + ((id == null) ? 0 : id.hashCode());
         result = prime * result
-                + ((vm_host == null) ? 0 : vm_host.hashCode());
+                + ((vmHost == null) ? 0 : vmHost.hashCode());
         result = prime * result
-                + ((vm_ip == null) ? 0 : vm_ip.hashCode());
+                + ((vmIp == null) ? 0 : vmIp.hashCode());
         result = prime
                 * result
                 + ((lastStartTime == null) ? 0
                         : lastStartTime.hashCode());
         result = prime * result
-                + ((vm_pid == null) ? 0 : vm_pid.hashCode());
+                + ((vmPid == null) ? 0 : vmPid.hashCode());
         return result;
     }
 
@@ -154,38 +155,38 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
         }
         VmDynamic other = (VmDynamic) obj;
         return (ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(acpi_enable, other.acpi_enable)
+                && ObjectUtils.objectsEqual(acpiEnabled, other.acpiEnabled)
                 && ObjectUtils.objectsEqual(appList, other.appList)
-                && boot_sequence == other.boot_sequence
-                && ObjectUtils.objectsEqual(client_ip, other.client_ip)
+                && bootSequence == other.bootSequence
+                && ObjectUtils.objectsEqual(clientIp, other.clientIp)
                 && ObjectUtils.objectsEqual(display, other.display)
-                && ObjectUtils.objectsEqual(display_ip, other.display_ip)
-                && ObjectUtils.objectsEqual(display_secure_port, other.display_secure_port)
-                && display_type == other.display_type
-                && ObjectUtils.objectsEqual(console_cur_user_name, other.console_cur_user_name)
-                && ObjectUtils.objectsEqual(guest_cur_user_name, other.guest_cur_user_name)
+                && ObjectUtils.objectsEqual(displayIp, other.displayIp)
+                && ObjectUtils.objectsEqual(displaySecurePort, other.displaySecurePort)
+                && displayType == other.displayType
+                && ObjectUtils.objectsEqual(consoleCurUserName, other.consoleCurUserName)
+                && ObjectUtils.objectsEqual(guestCurUserName, other.guestCurUserName)
                 && ObjectUtils.objectsEqual(consoleUserId, other.consoleUserId)
-                && ObjectUtils.objectsEqual(guest_last_login_time, other.guest_last_login_time)
-                && ObjectUtils.objectsEqual(guest_last_logout_time, other.guest_last_logout_time)
-                && ObjectUtils.objectsEqual(guest_os, other.guest_os)
-                && ObjectUtils.objectsEqual(guest_requested_memory, other.guest_requested_memory)
-                && ObjectUtils.objectsEqual(hibernation_vol_handle, other.hibernation_vol_handle)
-                && ObjectUtils.objectsEqual(kvm_enable, other.kvm_enable)
-                && ObjectUtils.objectsEqual(last_vds_run_on, other.last_vds_run_on)
-                && ObjectUtils.objectsEqual(mDisks, other.mDisks)
+                && ObjectUtils.objectsEqual(guestLastLoginTime, other.guestLastLoginTime)
+                && ObjectUtils.objectsEqual(guestLastLogoutTime, other.guestLastLogoutTime)
+                && ObjectUtils.objectsEqual(guestOs, other.guestOs)
+                && ObjectUtils.objectsEqual(guestRequestedMemory, other.guestRequestedMemory)
+                && ObjectUtils.objectsEqual(hibernationVolHandle, other.hibernationVolHandle)
+                && ObjectUtils.objectsEqual(kvmEnable, other.kvmEnable)
+                && ObjectUtils.objectsEqual(lastVdsRunOn, other.lastVdsRunOn)
+                && ObjectUtils.objectsEqual(disks, other.disks)
                 && ObjectUtils.objectsEqual(mExitMessage, other.mExitMessage)
-                && mExitStatus == other.mExitStatus
-                && mWin2kHackEnable == other.mWin2kHackEnable
-                && ObjectUtils.objectsEqual(migrating_to_vds, other.migrating_to_vds)
+                && exitStatus == other.exitStatus
+                && win2kHackEnabled == other.win2kHackEnabled
+                && ObjectUtils.objectsEqual(migratingToVds, other.migratingToVds)
                 && pauseStatus == other.pauseStatus
-                && ObjectUtils.objectsEqual(run_on_vds, other.run_on_vds)
+                && ObjectUtils.objectsEqual(runOnVds, other.runOnVds)
                 && session == other.session
                 && status == other.status
-                && ObjectUtils.objectsEqual(utc_diff, other.utc_diff)
-                && ObjectUtils.objectsEqual(vm_host, other.vm_host)
-                && ObjectUtils.objectsEqual(vm_ip, other.vm_ip)
+                && ObjectUtils.objectsEqual(utcDiff, other.utcDiff)
+                && ObjectUtils.objectsEqual(vmHost, other.vmHost)
+                && ObjectUtils.objectsEqual(vmIp, other.vmIp)
                 && ObjectUtils.objectsEqual(lastStartTime, other.lastStartTime)
-                && ObjectUtils.objectsEqual(vm_pid, other.vm_pid));
+                && ObjectUtils.objectsEqual(vmPid, other.vmPid));
     }
 
     public String getExitMessage() {
@@ -197,19 +198,19 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
     }
 
     public VmExitStatus getExitStatus() {
-        return this.mExitStatus;
+        return this.exitStatus;
     }
 
     public void setExitStatus(VmExitStatus value) {
-        mExitStatus = value;
+        exitStatus = value;
     }
 
-    public java.util.ArrayList<DiskImageDynamic> getDisks() {
-        return mDisks;
+    public ArrayList<DiskImageDynamic> getDisks() {
+        return disks;
     }
 
-    public void setDisks(java.util.ArrayList<DiskImageDynamic> value) {
-        mDisks = value;
+    public void setDisks(ArrayList<DiskImageDynamic> value) {
+        disks = value;
     }
 
     public String getHash() {
@@ -229,20 +230,20 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
     }
 
     public boolean getWin2kHackEnable() {
-        return mWin2kHackEnable;
+        return win2kHackEnabled;
     }
 
     public void setWin2kHackEnable(boolean value) {
-        mWin2kHackEnable = value;
+        win2kHackEnabled = value;
     }
 
     public VmDynamic() {
-        mExitStatus = VmExitStatus.Normal;
-        mWin2kHackEnable = false;
-        acpi_enable = true;
-        kvm_enable = true;
+        exitStatus = VmExitStatus.Normal;
+        win2kHackEnabled = false;
+        acpiEnabled = true;
+        kvmEnable = true;
         session = SessionState.Unknown;
-        boot_sequence = BootSequence.C;
+        bootSequence = BootSequence.C;
     }
 
     public String getapp_list() {
@@ -254,19 +255,19 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
     }
 
     public String getConsole_current_user_name() {
-        return console_cur_user_name;
+        return consoleCurUserName;
     }
 
     public void setConsole_current_user_name(String console_cur_user_name) {
-        this.console_cur_user_name = console_cur_user_name;
+        this.consoleCurUserName = console_cur_user_name;
     }
 
     public String getguest_cur_user_name() {
-        return this.guest_cur_user_name;
+        return this.guestCurUserName;
     }
 
     public void setguest_cur_user_name(String value) {
-        this.guest_cur_user_name = value;
+        this.guestCurUserName = value;
     }
 
     public NGuid getConsoleUserId() {
@@ -278,43 +279,43 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
     }
 
     public String getguest_os() {
-        return this.guest_os;
+        return this.guestOs;
     }
 
     public void setguest_os(String value) {
-        this.guest_os = value;
+        this.guestOs = value;
     }
 
-    public java.util.Date getguest_last_login_time() {
-        return this.guest_last_login_time;
+    public Date getguest_last_login_time() {
+        return this.guestLastLoginTime;
     }
 
-    public void setguest_last_login_time(java.util.Date value) {
-        this.guest_last_login_time = value;
+    public void setguest_last_login_time(Date value) {
+        this.guestLastLoginTime = value;
     }
 
-    public java.util.Date getguest_last_logout_time() {
-        return this.guest_last_logout_time;
+    public Date getguest_last_logout_time() {
+        return this.guestLastLogoutTime;
     }
 
-    public void setguest_last_logout_time(java.util.Date value) {
-        this.guest_last_logout_time = value;
+    public void setguest_last_logout_time(Date value) {
+        this.guestLastLogoutTime = value;
     }
 
     public NGuid getmigrating_to_vds() {
-        return this.migrating_to_vds;
+        return this.migratingToVds;
     }
 
     public void setmigrating_to_vds(NGuid value) {
-        this.migrating_to_vds = value;
+        this.migratingToVds = value;
     }
 
     public NGuid getrun_on_vds() {
-        return this.run_on_vds;
+        return this.runOnVds;
     }
 
     public void setrun_on_vds(NGuid value) {
-        this.run_on_vds = value;
+        this.runOnVds = value;
     }
 
     public VMStatus getstatus() {
@@ -336,19 +337,19 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
     }
 
     public String getvm_host() {
-        return this.vm_host;
+        return this.vmHost;
     }
 
     public void setvm_host(String value) {
-        this.vm_host = value;
+        this.vmHost = value;
     }
 
     public String getvm_ip() {
-        return this.vm_ip;
+        return this.vmIp;
     }
 
     public void setvm_ip(String value) {
-        this.vm_ip = value;
+        this.vmIp = value;
     }
 
     public Date getLastStartTime() {
@@ -360,11 +361,11 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
     }
 
     public Integer getvm_pid() {
-        return this.vm_pid;
+        return this.vmPid;
     }
 
     public void setvm_pid(Integer value) {
-        this.vm_pid = value;
+        this.vmPid = value;
     }
 
     public Integer getdisplay() {
@@ -376,35 +377,35 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
     }
 
     public Boolean getacpi_enable() {
-        return this.acpi_enable;
+        return this.acpiEnabled;
     }
 
     public void setacpi_enable(Boolean value) {
-        this.acpi_enable = value;
+        this.acpiEnabled = value;
     }
 
     public String getdisplay_ip() {
-        return this.display_ip;
+        return this.displayIp;
     }
 
     public void setdisplay_ip(String value) {
-        this.display_ip = value;
+        this.displayIp = value;
     }
 
     public DisplayType getdisplay_type() {
-        return display_type;
+        return displayType;
     }
 
     public void setdisplay_type(DisplayType value) {
-        this.display_type = value;
+        this.displayType = value;
     }
 
     public Boolean getkvm_enable() {
-        return this.kvm_enable;
+        return this.kvmEnable;
     }
 
     public void setkvm_enable(Boolean value) {
-        this.kvm_enable = value;
+        this.kvmEnable = value;
     }
 
     public SessionState getsession() {
@@ -416,59 +417,59 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
     }
 
     public BootSequence getboot_sequence() {
-        return this.boot_sequence;
+        return this.bootSequence;
     }
 
     public void setboot_sequence(BootSequence value) {
-        this.boot_sequence = value;
+        this.bootSequence = value;
     }
 
     public Integer getdisplay_secure_port() {
-        return this.display_secure_port;
+        return this.displaySecurePort;
     }
 
     public void setdisplay_secure_port(Integer value) {
-        this.display_secure_port = value;
+        this.displaySecurePort = value;
     }
 
     public Integer getutc_diff() {
-        return this.utc_diff;
+        return this.utcDiff;
     }
 
     public void setutc_diff(Integer value) {
-        this.utc_diff = value;
+        this.utcDiff = value;
     }
 
     public NGuid getlast_vds_run_on() {
-        return this.last_vds_run_on;
+        return this.lastVdsRunOn;
     }
 
     public void setlast_vds_run_on(NGuid value) {
-        this.last_vds_run_on = value;
+        this.lastVdsRunOn = value;
     }
 
     public String getclient_ip() {
-        return this.client_ip;
+        return this.clientIp;
     }
 
     public void setclient_ip(String value) {
-        this.client_ip = value;
+        this.clientIp = value;
     }
 
     public Integer getguest_requested_memory() {
-        return this.guest_requested_memory;
+        return this.guestRequestedMemory;
     }
 
     public void setguest_requested_memory(Integer value) {
-        this.guest_requested_memory = value;
+        this.guestRequestedMemory = value;
     }
 
     public String gethibernation_vol_handle() {
-        return this.hibernation_vol_handle;
+        return this.hibernationVolHandle;
     }
 
     public void sethibernation_vol_handle(String value) {
-        this.hibernation_vol_handle = value;
+        this.hibernationVolHandle = value;
     }
 
     public void setPauseStatus(VmPauseStatus pauseStatus) {
