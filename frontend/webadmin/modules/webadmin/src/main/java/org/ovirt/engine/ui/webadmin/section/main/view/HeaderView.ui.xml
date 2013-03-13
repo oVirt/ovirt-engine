@@ -28,9 +28,8 @@
         .obrand_logo {
         }
 
-        .menuBar {
-            float: right;
-            padding: 10px;
+        @external obrand_menuBar;
+        .obrand_menuBar {
         }
 
         .userName {
@@ -64,6 +63,18 @@
             width: 300px;
             float: left;
         }
+
+        .feedbackImagePanel {
+            float: right;
+        }
+
+        @external obrand_feedbackImageLeft;
+        .obrand_feedbackImageLeft {
+        }
+
+        @external obrand_feedbackImageLabel;
+        .obrand_feedbackImageLabel {
+        }
     </ui:style>
 
     <g:HTMLPanel addStyleNames="{style.obrand_wrapperOuter}">
@@ -73,7 +84,11 @@
                 <g:HTML addStyleNames="{style.obrand_logo}" />
                 <g:Label ui:field="headerLabel" addStyleNames="{style.headerLabelStyle}"/>
 
-                <g:HTMLPanel addStyleNames="{style.menuBar}">
+                <g:HTMLPanel addStyleNames="{style.feedbackImagePanel}">
+                    <g:HTMLPanel addStyleNames="{style.obrand_feedbackImageLeft}" />
+                    <g:Label ui:field="feedbackImageLabel" addStyleNames="{style.obrand_feedbackImageLabel}" />
+                </g:HTMLPanel>
+                <g:HTMLPanel addStyleNames="{style.obrand_menuBar}">
                     <g:InlineLabel text="{constants.loggedInUser}:" />
                     <g:InlineLabel ui:field="userNameLabel" addStyleNames="{style.userName}" />
                     | <g:Anchor ui:field="configureLink" addStyleNames="{style.menuLink}" /> |
@@ -82,7 +97,6 @@
                     |
                     <g:Anchor ui:field="logoutLink" addStyleNames="{style.menuLink}" />
                 </g:HTMLPanel>
-
                 <div style="clear: both;" />
             </g:HTMLPanel>
 

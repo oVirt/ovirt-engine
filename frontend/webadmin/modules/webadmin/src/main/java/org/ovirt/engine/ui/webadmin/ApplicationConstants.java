@@ -3026,4 +3026,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Last")
     String lastFilter();
 
+    @DefaultStringValue("Feedback")
+    String feedbackMessage();
 }

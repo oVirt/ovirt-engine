@@ -31,6 +31,8 @@ public class DynamicMessages {
         LOGIN_HEADER_LABEL("login_header_label"), //$NON-NLS-1$
         MAIN_HEADER_LABEL("main_header_label"), //$NON-NLS-1$
         COPY_RIGHT_NOTICE("copy_right_notice"), //$NON-NLS-1$
+        FEEDBACK_URL("feedback_url"), //$NON-NLS-1$
+        FEEDBACK_MESSAGE("feedback_message"), //$NON-NLS-1$
         DOC("doc"); //$NON-NLS-1$
 
         private final String value;
@@ -226,6 +228,26 @@ public class DynamicMessages {
      */
     public final String copyRightNotice() {
         return getString(DynamicMessageKey.COPY_RIGHT_NOTICE);
+    }
+
+    /**
+     * Get the feedback URL using the {@code Dictionary} in the host page. With a fall back to the standard GWT
+     * Constant.
+     *
+     * @return The copy right notice string.
+     */
+    public final String feedbackUrl() {
+        return getString(DynamicMessageKey.FEEDBACK_URL);
+    }
+
+    /**
+     * Get the feedback URL using the {@code Dictionary} in the host page. With a fall back to the standard GWT
+     * Constant.
+     *
+     * @return The copy right notice string.
+     */
+    public final String feedbackMessage() {
+        return getString(DynamicMessageKey.FEEDBACK_MESSAGE);
     }
 
     /**
