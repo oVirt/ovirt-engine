@@ -82,7 +82,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
         }
 
         // Perform volume bricks on server and up server null check only when force action is false
-        if (isGlusterEnabled() && !getParameters().isForceAction()) {
+        if (returnValue && isGlusterEnabled() && !getParameters().isForceAction()) {
             if (hasVolumeBricksOnServer()) {
                 addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
                 returnValue = false;
