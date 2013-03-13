@@ -893,8 +893,7 @@ public class DiskModel extends Model
     public boolean Validate()
     {
         if ((Boolean) getIsAttachDisk().getEntity()) {
-            if (getInternalAttachableDisks().getSelectedItems() == null &&
-                getExternalAttachableDisks().getSelectedItems() == null) {
+            if (isSelectionsEmpty(getInternalAttachableDisks()) && isSelectionsEmpty(getExternalAttachableDisks())) {
                 getInvalidityReasons().add(CONSTANTS.noDisksSelected());
                 setIsValid(false);
                 return false;
@@ -936,6 +935,10 @@ public class DiskModel extends Model
 
         return getSize().getIsValid() && getStorageDomain().getIsValid() && getAlias().getIsValid()
                 && isSanStorageModelValid && getQuota().getIsValid();
+    }
+
+    private boolean isSelectionsEmpty(ListModel listModel) {
+        return listModel.getSelectedItems() == null || listModel.getSelectedItems().isEmpty();
     }
 
     private void ForceCreationWarning(ArrayList<String> usedLunsMessages) {
