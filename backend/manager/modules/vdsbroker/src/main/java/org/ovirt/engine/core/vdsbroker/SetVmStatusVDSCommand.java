@@ -31,7 +31,7 @@ public class SetVmStatusVDSCommand<P extends SetVmStatusVDSCommandParameters> ex
         }
 
         VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(parameters.getVmId());
-        vmDynamic.setstatus(status);
+        vmDynamic.setStatus(status);
         if (status.isNotRunning()) {
             ResourceManager.getInstance().RemoveAsyncRunningVm(parameters.getVmId());
             VmStatistics vmStatistics = DbFacade.getInstance().getVmStatisticsDao().get(parameters.getVmId());

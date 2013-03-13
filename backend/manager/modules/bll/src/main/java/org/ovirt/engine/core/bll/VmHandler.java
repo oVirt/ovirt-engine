@@ -156,7 +156,7 @@ public class VmHandler {
 
             @Override
             public Void runInTransaction() {
-                compensationContext.snapshotEntityStatus(vm, vm.getstatus());
+                compensationContext.snapshotEntityStatus(vm, vm.getStatus());
                 LockVm(vm.getId());
                 compensationContext.stateChanged();
                 return null;
@@ -185,7 +185,7 @@ public class VmHandler {
      */
     public static void checkStatusAndLockVm(Guid vmId) {
         VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(vmId);
-        checkStatusBeforeLock(vmDynamic.getstatus());
+        checkStatusBeforeLock(vmDynamic.getStatus());
         LockVm(vmId);
     }
 
@@ -199,7 +199,7 @@ public class VmHandler {
      */
     public static void checkStatusAndLockVm(Guid vmId, CompensationContext compensationContext) {
         VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(vmId);
-        checkStatusBeforeLock(vmDynamic.getstatus());
+        checkStatusBeforeLock(vmDynamic.getStatus());
         LockVm(vmDynamic, compensationContext);
     }
 

@@ -108,7 +108,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     protected void executeCommand() {
         // get vm status from db to check its really down before locking
         VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(getVmId());
-        if (vmDynamic.getstatus() != VMStatus.Down) {
+        if (vmDynamic.getStatus() != VMStatus.Down) {
             throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
         }
 

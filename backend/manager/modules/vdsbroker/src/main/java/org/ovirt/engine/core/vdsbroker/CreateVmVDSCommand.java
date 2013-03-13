@@ -123,18 +123,18 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
         VmDynamic vmDynamicFromDb = DbFacade.getInstance().getVmDynamicDao().get(guid);
         if (ResourceManager.getInstance().IsVmDuringInitiating(getParameters().getVm().getId())) {
             log.infoFormat("Vm Running failed - vm {0}:{1} already running", guid, vmName);
-            getVDSReturnValue().setReturnValue(vmDynamicFromDb.getstatus());
+            getVDSReturnValue().setReturnValue(vmDynamicFromDb.getStatus());
             return false;
         } else {
-            VMStatus vmStatus = vmDynamicFromDb.getstatus();
+            VMStatus vmStatus = vmDynamicFromDb.getStatus();
 
             if (vmStatus == VMStatus.ImageLocked) {
                 log.infoFormat("Vm Running failed - vm {0}:{1} - cannot run vm when image is locked", guid, vmName);
                 return false;
             }
-            if (vmDynamicFromDb.getstatus() != VMStatus.Down && vmDynamicFromDb.getstatus() != VMStatus.Suspended) {
+            if (vmDynamicFromDb.getStatus() != VMStatus.Down && vmDynamicFromDb.getStatus() != VMStatus.Suspended) {
                 log.infoFormat("Vm Running failed - vm {0}:{1} already running, status {2}", guid, vmName, vmStatus);
-                getVDSReturnValue().setReturnValue(vmDynamicFromDb.getstatus());
+                getVDSReturnValue().setReturnValue(vmDynamicFromDb.getStatus());
                 return false;
             }
 

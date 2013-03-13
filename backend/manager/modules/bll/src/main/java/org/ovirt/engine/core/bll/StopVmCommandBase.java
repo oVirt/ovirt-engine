@@ -66,12 +66,12 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
     }
 
     protected void Destroy() {
-        if (getVm().getStatus() == VMStatus.MigratingFrom && getVm().getmigrating_to_vds() != null) {
+        if (getVm().getStatus() == VMStatus.MigratingFrom && getVm().getMigratingToVds() != null) {
             Backend.getInstance()
                     .getResourceManager()
                     .RunVdsCommand(
                             VDSCommandType.DestroyVm,
-                            new DestroyVmVDSCommandParameters(new Guid(getVm().getmigrating_to_vds().toString()),
+                            new DestroyVmVDSCommandParameters(new Guid(getVm().getMigratingToVds().toString()),
                                     getVmId(), true, false, 0));
         }
 

@@ -473,8 +473,8 @@ public class VdsUpdateRunTimeInfo {
                 ResourceManager
                         .getInstance()
                         .getEventListener()
-                        .processOnVmPoweringUp(_vds.getId(), runningVm.getId(), runningVm.getdisplay_ip(),
-                                runningVm.getdisplay());
+                        .processOnVmPoweringUp(_vds.getId(), runningVm.getId(), runningVm.getDisplayIp(),
+                                runningVm.getDisplay());
             }
 
             // process all vms that went down
@@ -994,7 +994,7 @@ public class VdsUpdateRunTimeInfo {
             List<VmGuestAgentInterface> vmGuestAgentInterfaces,
             int guestAgentNicHash) {
         vmDynamic.setGuestAgentNicsHash(guestAgentNicHash);
-        vmDynamic.setvm_ip(extractVmIpsFromGuestAgentInterfaces(vmGuestAgentInterfaces));
+        vmDynamic.setVmIp(extractVmIpsFromGuestAgentInterfaces(vmGuestAgentInterfaces));
     }
 
     private String extractVmIpsFromGuestAgentInterfaces(List<VmGuestAgentInterface> nics) {
@@ -1219,8 +1219,8 @@ public class VdsUpdateRunTimeInfo {
                 VM vmToUpdate = _vmDict.get(runningVm.getId());
 
                 if (vmToUpdate == null
-                        || (vmToUpdate.getStatus() != runningVm.getstatus() && !(vmToUpdate.getStatus() == VMStatus.SavingState && runningVm
-                                .getstatus() == VMStatus.Up))) {
+                        || (vmToUpdate.getStatus() != runningVm.getStatus() && !(vmToUpdate.getStatus() == VMStatus.SavingState && runningVm
+                                .getStatus() == VMStatus.Up))) {
                     GetVmStatsVDSCommand<GetVmStatsVDSCommandParameters> command =
                             new GetVmStatsVDSCommand<GetVmStatsVDSCommandParameters>(new GetVmStatsVDSCommandParameters(
                                     _vds, runningVm.getId()));
@@ -1247,7 +1247,7 @@ public class VdsUpdateRunTimeInfo {
     private void proceedDownVms() {
         for (VmInternalData vmInternalData : _runningVms.values()) {
             VmDynamic vm = vmInternalData.getVmDynamic();
-            if (vm.getstatus() != VMStatus.Down) {
+            if (vm.getStatus() != VMStatus.Down) {
                 continue;
             }
 
@@ -1291,7 +1291,7 @@ public class VdsUpdateRunTimeInfo {
             // Vm failed to run - try to rerun it on other Vds
             if (cacheVm != null) {
                 if (ResourceManager.getInstance().IsVmInAsyncRunningList(vmDynamic.getId())) {
-                    log.infoFormat("Running on vds during rerun failed vm: {0}", vmDynamic.getrun_on_vds());
+                    log.infoFormat("Running on vds during rerun failed vm: {0}", vmDynamic.getRunOnVds());
                     _vmsToRerun.add(vmDynamic.getId());
                 } else if (cacheVm.isAutoStartup()) {
                     _autoVmsToRun.add(vmDynamic.getId());
@@ -1344,10 +1344,10 @@ public class VdsUpdateRunTimeInfo {
             // if a VM that was a source host in migration process is now down with normal
             // exit status that's OK, otherwise..
             if (vmDynamic != null && vmDynamic.getExitStatus() != VmExitStatus.Normal) {
-                if (curVm.getmigrating_to_vds() != null) {
+                if (curVm.getMigratingToVds() != null) {
                     DestroyVmVDSCommand<DestroyVmVDSCommandParameters> destroyCmd =
                             new DestroyVmVDSCommand<DestroyVmVDSCommandParameters>
-                            (new DestroyVmVDSCommandParameters(new Guid(curVm.getmigrating_to_vds().toString()),
+                            (new DestroyVmVDSCommandParameters(new Guid(curVm.getMigratingToVds().toString()),
                                     curVm.getId(),
                                     true,
                                     false,
@@ -1355,10 +1355,10 @@ public class VdsUpdateRunTimeInfo {
                     destroyCmd.execute();
                     if (destroyCmd.getVDSReturnValue().getSucceeded()) {
                         log.infoFormat("Stopped migrating vm: {0} on vds: {1}", curVm.getName(),
-                                curVm.getmigrating_to_vds());
+                                curVm.getMigratingToVds());
                     } else {
                         log.infoFormat("Could not stop migrating vm: {0} on vds: {1}, Error: {2}", curVm.getName(),
-                                curVm.getmigrating_to_vds(), destroyCmd.getVDSReturnValue().getExceptionString());
+                                curVm.getMigratingToVds(), destroyCmd.getVDSReturnValue().getExceptionString());
                     }
                 }
                 // set vm status to down if source vm crushed
@@ -1392,22 +1392,22 @@ public class VdsUpdateRunTimeInfo {
             VM vmToUpdate = _vmDict.get(runningVm.getId());
 
             // if not migrating here and not down
-            if (!inMigrationTo(runningVm, vmToUpdate) && runningVm.getstatus() != VMStatus.Down) {
+            if (!inMigrationTo(runningVm, vmToUpdate) && runningVm.getStatus() != VMStatus.Down) {
                 if (vmToUpdate != null) {
                     if (_vmDict.containsKey(vmToUpdate.getId())
-                            && !StringUtils.equals(runningVm.getclient_ip(), vmToUpdate.getClientIp())) {
+                            && !StringUtils.equals(runningVm.getClientIp(), vmToUpdate.getClientIp())) {
                         _vmsClientIpChanged.put(vmToUpdate, runningVm);
                     }
                 }
                 if (vmToUpdate != null) {
                     logVmStatusTransition(vmToUpdate, runningVm);
                     // open spice for dedicated VMs
-                    if (vmToUpdate.getStatus() != VMStatus.Up && runningVm.getstatus() == VMStatus.Up
+                    if (vmToUpdate.getStatus() != VMStatus.Up && runningVm.getStatus() == VMStatus.Up
                             || vmToUpdate.getStatus() != VMStatus.PoweringUp
-                            && runningVm.getstatus() == VMStatus.PoweringUp) {
+                            && runningVm.getStatus() == VMStatus.PoweringUp) {
                         // Vm moved to powering Up or up status - launch spice
                         // if no current client ip already connected.
-                        if (runningVm.getdisplay() != null) {
+                        if (runningVm.getDisplay() != null) {
                             _poweringUpVms.add(runningVm);
                         } else {
                             log.error("UpdateRepository - runningVm.display is null, cannot start spice for it");
@@ -1416,13 +1416,13 @@ public class VdsUpdateRunTimeInfo {
 
                     // Generate an event for those machines that transition from "PoweringDown" to
                     // "Up" as this means that the power down operation failed:
-                    if (vmToUpdate.getStatus() == VMStatus.PoweringDown && runningVm.getstatus() == VMStatus.Up) {
+                    if (vmToUpdate.getStatus() == VMStatus.PoweringDown && runningVm.getStatus() == VMStatus.Up) {
                         AuditLogableBase logable = new AuditLogableBase(_vds.getId(), vmToUpdate.getId());
                         auditLog(logable, AuditLogType.VM_POWER_DOWN_FAILED);
                     }
 
                     if (vmToUpdate.getStatus() != VMStatus.Up && vmToUpdate.getStatus() != VMStatus.MigratingFrom
-                            && runningVm.getstatus() == VMStatus.Up) {
+                            && runningVm.getStatus() == VMStatus.Up) {
                         // Vm moved to Up status - remove its record from Async
                         // running handling
                         if (log.isDebugEnabled()) {
@@ -1435,12 +1435,12 @@ public class VdsUpdateRunTimeInfo {
                     afterMigrationFrom(runningVm, vmToUpdate);
 
                     if (vmToUpdate.getStatus() != VMStatus.NotResponding
-                            && runningVm.getstatus() == VMStatus.NotResponding) {
+                            && runningVm.getStatus() == VMStatus.NotResponding) {
                         AuditLogableBase logable = new AuditLogableBase(_vds.getId(), vmToUpdate.getId());
                         auditLog(logable, AuditLogType.VM_NOT_RESPONDING);
                     }
                     // check if vm is suspended and remove it from async list
-                    else if (runningVm.getstatus() == VMStatus.Paused) {
+                    else if (runningVm.getStatus() == VMStatus.Paused) {
                         _vmsToRemoveFromAsync.add(vmToUpdate.getId());
                         if (vmToUpdate.getStatus() != VMStatus.Paused) {
                             // check exit message to determine wht the vm has
@@ -1466,7 +1466,7 @@ public class VdsUpdateRunTimeInfo {
 
                     }
                 }
-                if (vmToUpdate != null || runningVm.getstatus() != VMStatus.MigratingFrom) {
+                if (vmToUpdate != null || runningVm.getStatus() != VMStatus.MigratingFrom) {
                     RefObject<VM> tempRefObj = new RefObject<VM>(vmToUpdate);
                     boolean updateSucceed = updateVmRunTimeInfo(tempRefObj, runningVm);
                     vmToUpdate = tempRefObj.argvalue;
@@ -1484,12 +1484,12 @@ public class VdsUpdateRunTimeInfo {
                     }
                 }
             } else {
-                if (runningVm.getstatus() == VMStatus.MigratingTo && vmToUpdate != null) {
+                if (runningVm.getStatus() == VMStatus.MigratingTo && vmToUpdate != null) {
                     running.add(vmToUpdate);
                 }
 
                 VmDynamic vmDynamic = getDbFacade().getVmDynamicDao().get(runningVm.getId());
-                if (vmDynamic == null || vmDynamic.getstatus() != VMStatus.Unknown) {
+                if (vmDynamic == null || vmDynamic.getStatus() != VMStatus.Unknown) {
                     _vmDynamicToSave.remove(runningVm.getId());
                 }
             }
@@ -1499,12 +1499,12 @@ public class VdsUpdateRunTimeInfo {
     }
 
     private static void logVmStatusTransition(VM vmToUpdate, VmDynamic runningVm) {
-        if (vmToUpdate.getStatus() != runningVm.getstatus()) {
+        if (vmToUpdate.getStatus() != runningVm.getStatus()) {
             log.infoFormat("VM {0} {1} moved from {2} --> {3}",
                     vmToUpdate.getName(),
                     vmToUpdate.getId(),
                     vmToUpdate.getStatus().name(),
-                    runningVm.getstatus().name());
+                    runningVm.getStatus().name());
         }
     }
 
@@ -1520,7 +1520,7 @@ public class VdsUpdateRunTimeInfo {
             boolean isInMigration = false;
             if (vmToRemove.getStatus() == VMStatus.MigratingFrom) {
                 isInMigration = true;
-                vmToRemove.setRunOnVds(vmToRemove.getmigrating_to_vds());
+                vmToRemove.setRunOnVds(vmToRemove.getMigratingToVds());
                 log.infoFormat("Setting VM {0} {1} to status unknown", vmToRemove.getName(), vmToRemove.getId());
                 ResourceManager.getInstance().InternalSetVmStatus(vmToRemove, VMStatus.Unknown);
                 addVmDynamicToList(vmToRemove.getDynamicData());
@@ -1556,22 +1556,22 @@ public class VdsUpdateRunTimeInfo {
 
     private boolean inMigrationTo(VmDynamic runningVm, VM vmToUpdate) {
         boolean returnValue = false;
-        if (runningVm.getstatus() == VMStatus.MigratingTo) {
+        if (runningVm.getStatus() == VMStatus.MigratingTo) {
             // in migration
             log.infoFormat(
                     "RefreshVmList vm id '{0}' is migrating to vds '{1}' ignoring it in the refresh until migration is done",
                     runningVm.getId(),
                     _vds.getName());
             returnValue = true;
-        } else if ((vmToUpdate == null && runningVm.getstatus() != VMStatus.MigratingFrom)) {
+        } else if ((vmToUpdate == null && runningVm.getStatus() != VMStatus.MigratingFrom)) {
             // check if the vm exists on another vds
             VmDynamic vmDynamic = getDbFacade().getVmDynamicDao().get(runningVm.getId());
-            if (vmDynamic != null && vmDynamic.getrun_on_vds() != null
-                    && !vmDynamic.getrun_on_vds().equals(_vds.getId()) && runningVm.getstatus() != VMStatus.Up) {
+            if (vmDynamic != null && vmDynamic.getRunOnVds() != null
+                    && !vmDynamic.getRunOnVds().equals(_vds.getId()) && runningVm.getStatus() != VMStatus.Up) {
                 log.infoFormat(
                         "RefreshVmList vm id '{0}' status = {1} on vds {2} ignoring it in the refresh until migration is done",
                         runningVm.getId(),
-                        runningVm.getstatus(),
+                        runningVm.getStatus(),
                         _vds.getName());
                 returnValue = true;
             }
@@ -1581,7 +1581,7 @@ public class VdsUpdateRunTimeInfo {
 
     private void afterMigrationFrom(VmDynamic runningVm, VM vmToUpdate) {
         VMStatus oldVmStatus = vmToUpdate.getStatus();
-        VMStatus currentVmStatus = runningVm.getstatus();
+        VMStatus currentVmStatus = runningVm.getStatus();
 
         // if the VM's status on source host was MigratingFrom and now the VM is running and its status
         // is not MigratingFrom, it means the migration failed
@@ -1649,7 +1649,7 @@ public class VdsUpdateRunTimeInfo {
                         .getAllForVm(vmToUpdate.argvalue.getId()));
 
                 _vmDict.put(vmToUpdate.argvalue.getId(), vmToUpdate.argvalue);
-                if (vmNewDynamicData.getstatus() == VMStatus.Up) {
+                if (vmNewDynamicData.getStatus() == VMStatus.Up) {
                     if (!_succededToRunVms.contains(vmToUpdate.argvalue.getId())) {
                         _succededToRunVms.add(vmToUpdate.argvalue.getId());
                     }
@@ -1661,22 +1661,22 @@ public class VdsUpdateRunTimeInfo {
             List<String> props = ObjectIdentityChecker.GetChangedFields(
                     vmToUpdate.argvalue.getDynamicData(), vmNewDynamicData);
             // dont check fields:
-            props.remove("vm_host");
-            props.remove("run_on_vds");
+            props.remove("vmHost");
+            props.remove("runOnVds");
             props.remove("disks");
-            props.remove("boot_sequence");
-            props.remove("last_vds_run_on");
-            props.remove("hibernation_vol_handle");
+            props.remove("bootSequence");
+            props.remove("lastVdsRunOn");
+            props.remove("hibernationVolHandle");
             props.remove("exitMessage");
             props.remove("lastStartTime");
             props.remove("consoleUserId");
-            props.remove("console_cur_user_name");
-            if (vmNewDynamicData.getstatus() != VMStatus.Up) {
-                props.remove("app_list");
-                vmNewDynamicData.setapp_list(vmToUpdate.argvalue.getAppList());
+            props.remove("consoleCurrentUserName");
+            if (vmNewDynamicData.getStatus() != VMStatus.Up) {
+                props.remove("appList");
+                vmNewDynamicData.setAppList(vmToUpdate.argvalue.getAppList());
             } else if (props.contains("status")
-                    && vmToUpdate.argvalue.getDynamicData().getstatus() == VMStatus.SavingState) {
-                vmNewDynamicData.setstatus(VMStatus.SavingState);
+                    && vmToUpdate.argvalue.getDynamicData().getStatus() == VMStatus.SavingState) {
+                vmNewDynamicData.setStatus(VMStatus.SavingState);
                 props.remove("status");
             }
             // if anything else changed

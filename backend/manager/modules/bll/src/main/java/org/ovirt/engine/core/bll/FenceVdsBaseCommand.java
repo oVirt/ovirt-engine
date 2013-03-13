@@ -412,18 +412,18 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     protected void DestroyVmOnDestination(VM vm) {
         if (vm.getStatus() == VMStatus.MigratingFrom) {
             try {
-                if (vm.getmigrating_to_vds() != null) {
+                if (vm.getMigratingToVds() != null) {
                     Backend.getInstance()
                             .getResourceManager()
                             .RunVdsCommand(
                                     VDSCommandType.DestroyVm,
-                                    new DestroyVmVDSCommandParameters(new Guid(vm.getmigrating_to_vds().toString()), vm
+                                    new DestroyVmVDSCommandParameters(new Guid(vm.getMigratingToVds().toString()), vm
                                             .getId(), true, false, 0));
-                    log.infoFormat("Stopped migrating vm: {0} on vds: {1}", vm.getName(), vm.getmigrating_to_vds());
+                    log.infoFormat("Stopped migrating vm: {0} on vds: {1}", vm.getName(), vm.getMigratingToVds());
                 }
             } catch (RuntimeException ex) {
                 log.infoFormat("Could not stop migrating vm: {0} on vds: {1}, Error: {2}", vm.getName(),
-                        vm.getmigrating_to_vds(), ex.getMessage());
+                        vm.getMigratingToVds(), ex.getMessage());
                 // intentionally ignored
             }
         }

@@ -52,8 +52,8 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_guid", vm.getId())
                 .addValue("console_user_id", vm.getConsoleUserId())
-                .addValue("guest_cur_user_name", vm.getguest_cur_user_name())
-                .addValue("console_cur_user_name", vm.getConsole_current_user_name());
+                .addValue("guest_cur_user_name", vm.getGuestCurrentUserName())
+                .addValue("console_cur_user_name", vm.getConsoleCurrentUserName());
 
         Map<String, Object> results = getCallsHandler().executeModification("UpdateConsoleUserWithOptimisticLocking", parameterSource);
 
@@ -73,37 +73,37 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
     @Override
     protected MapSqlParameterSource createFullParametersMapper(VmDynamic vm) {
         return createIdParameterMapper(vm.getId())
-                .addValue("app_list", vm.getapp_list())
-                .addValue("guest_cur_user_name", vm.getguest_cur_user_name())
-                .addValue("console_cur_user_name", vm.getConsole_current_user_name())
+                .addValue("app_list", vm.getAppList())
+                .addValue("guest_cur_user_name", vm.getGuestCurrentUserName())
+                .addValue("console_cur_user_name", vm.getConsoleCurrentUserName())
                 .addValue("console_user_id", vm.getConsoleUserId())
                 .addValue("guest_last_login_time",
-                        vm.getguest_last_login_time())
+                        vm.getGuestLastLoginTime())
                 .addValue("guest_last_logout_time",
-                        vm.getguest_last_logout_time())
-                .addValue("guest_os", vm.getguest_os())
-                .addValue("migrating_to_vds", vm.getmigrating_to_vds())
-                .addValue("run_on_vds", vm.getrun_on_vds())
-                .addValue("status", vm.getstatus())
-                .addValue("vm_host", vm.getvm_host())
-                .addValue("vm_ip", vm.getvm_ip())
+                        vm.getGuestLastLogoutTime())
+                .addValue("guest_os", vm.getGuestOs())
+                .addValue("migrating_to_vds", vm.getMigratingToVds())
+                .addValue("run_on_vds", vm.getRunOnVds())
+                .addValue("status", vm.getStatus())
+                .addValue("vm_host", vm.getVmHost())
+                .addValue("vm_ip", vm.getVmIp())
                 .addValue("last_start_time", vm.getLastStartTime())
-                .addValue("vm_pid", vm.getvm_pid())
-                .addValue("display", vm.getdisplay())
-                .addValue("acpi_enable", vm.getacpi_enable())
-                .addValue("session", vm.getsession())
-                .addValue("display_ip", vm.getdisplay_ip())
-                .addValue("display_type", vm.getdisplay_type())
-                .addValue("kvm_enable", vm.getkvm_enable())
-                .addValue("boot_sequence", vm.getboot_sequence())
-                .addValue("display_secure_port", vm.getdisplay_secure_port())
-                .addValue("utc_diff", vm.getutc_diff())
-                .addValue("last_vds_run_on", vm.getlast_vds_run_on())
-                .addValue("client_ip", vm.getclient_ip())
+                .addValue("vm_pid", vm.getVmPid())
+                .addValue("display", vm.getDisplay())
+                .addValue("acpi_enable", vm.getAcpiEnable())
+                .addValue("session", vm.getSession())
+                .addValue("display_ip", vm.getDisplayIp())
+                .addValue("display_type", vm.getDisplayType())
+                .addValue("kvm_enable", vm.getKvmEnable())
+                .addValue("boot_sequence", vm.getBootSequence())
+                .addValue("display_secure_port", vm.getDisplaySecurePort())
+                .addValue("utc_diff", vm.getUtcDiff())
+                .addValue("last_vds_run_on", vm.getLastVdsRunOn())
+                .addValue("client_ip", vm.getClientIp())
                 .addValue("guest_requested_memory",
-                        vm.getguest_requested_memory())
+                        vm.getGuestRequestedMemory())
                 .addValue("hibernation_vol_handle",
-                        vm.gethibernation_vol_handle())
+                        vm.getHibernationVolHandle())
                 .addValue("exit_status", vm.getExitStatus().getValue())
                 .addValue("pause_status", vm.getPauseStatus().getValue())
                 .addValue("exit_message", vm.getExitMessage())
@@ -118,47 +118,47 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
             public VmDynamic mapRow(ResultSet rs, int rowNum)
                     throws SQLException {
                 VmDynamic entity = new VmDynamic();
-                entity.setapp_list(rs.getString("app_list"));
-                entity.setguest_cur_user_name(rs
+                entity.setAppList(rs.getString("app_list"));
+                entity.setGuestCurrentUserName(rs
                         .getString("guest_cur_user_name"));
-                entity.setConsole_current_user_name(rs
+                entity.setConsoleCurrentUserName(rs
                         .getString("console_cur_user_name"));
                 entity.setConsoleUserId(NGuid.createGuidFromString(rs.getString("console_user_id")));
-                entity.setguest_last_login_time(DbFacadeUtils.fromDate(rs
+                entity.setGuestLastLoginTime(DbFacadeUtils.fromDate(rs
                         .getTimestamp("guest_last_login_time")));
-                entity.setguest_last_logout_time(DbFacadeUtils.fromDate(rs
+                entity.setGuestLastLogoutTime(DbFacadeUtils.fromDate(rs
                         .getTimestamp("guest_last_logout_time")));
-                entity.setguest_os(rs.getString("guest_os"));
-                entity.setmigrating_to_vds(NGuid.createGuidFromString(rs
+                entity.setGuestOs(rs.getString("guest_os"));
+                entity.setMigratingToVds(NGuid.createGuidFromString(rs
                         .getString("migrating_to_vds")));
-                entity.setrun_on_vds(NGuid.createGuidFromString(rs
+                entity.setRunOnVds(NGuid.createGuidFromString(rs
                         .getString("run_on_vds")));
-                entity.setstatus(VMStatus.forValue(rs.getInt("status")));
+                entity.setStatus(VMStatus.forValue(rs.getInt("status")));
                 entity.setId(Guid.createGuidFromString(rs
                         .getString("vm_guid")));
-                entity.setvm_host(rs.getString("vm_host"));
-                entity.setvm_ip(rs.getString("vm_ip"));
+                entity.setVmHost(rs.getString("vm_host"));
+                entity.setVmIp(rs.getString("vm_ip"));
                 entity.setLastStartTime(DbFacadeUtils.fromDate(rs
                         .getTimestamp("last_start_time")));
-                entity.setvm_pid((Integer) rs.getObject("vm_pid"));
-                entity.setdisplay((Integer) rs.getObject("display"));
-                entity.setacpi_enable((Boolean) rs.getObject("acpi_enable"));
-                entity.setsession(SessionState.forValue(rs.getInt("session")));
-                entity.setdisplay_ip(rs.getString("display_ip"));
-                entity.setdisplay_type(DisplayType.forValue(rs
+                entity.setVmPid((Integer) rs.getObject("vm_pid"));
+                entity.setDisplay((Integer) rs.getObject("display"));
+                entity.setAcpiEnable((Boolean) rs.getObject("acpi_enable"));
+                entity.setSession(SessionState.forValue(rs.getInt("session")));
+                entity.setDisplayIp(rs.getString("display_ip"));
+                entity.setDisplayType(DisplayType.forValue(rs
                         .getInt("display_type")));
-                entity.setkvm_enable((Boolean) rs.getObject("kvm_enable"));
-                entity.setboot_sequence(BootSequence.forValue(rs
+                entity.setKvmEnable((Boolean) rs.getObject("kvm_enable"));
+                entity.setBootSequence(BootSequence.forValue(rs
                         .getInt("boot_sequence")));
-                entity.setdisplay_secure_port((Integer) rs
+                entity.setDisplaySecurePort((Integer) rs
                         .getObject("display_secure_port"));
-                entity.setutc_diff((Integer) rs.getObject("utc_diff"));
-                entity.setlast_vds_run_on(NGuid.createGuidFromString(rs
+                entity.setUtcDiff((Integer) rs.getObject("utc_diff"));
+                entity.setLastVdsRunOn(NGuid.createGuidFromString(rs
                         .getString("last_vds_run_on")));
-                entity.setclient_ip(rs.getString("client_ip"));
-                entity.setguest_requested_memory((Integer) rs
+                entity.setClientIp(rs.getString("client_ip"));
+                entity.setGuestRequestedMemory((Integer) rs
                         .getObject("guest_requested_memory"));
-                entity.sethibernation_vol_handle(rs
+                entity.setHibernationVolHandle(rs
                         .getString("hibernation_vol_handle"));
                 VmExitStatus exitStatus = VmExitStatus.forValue(rs
                         .getInt("exit_status"));

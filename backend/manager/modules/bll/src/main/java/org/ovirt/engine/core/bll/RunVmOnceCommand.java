@@ -74,7 +74,7 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         ExecutionContext executionContext = getExecutionContext();
         executionContext.setShouldEndJob(true);
         boolean success =
-                getParameters().getRunAndPause() && getVmDynamicDao().get(getVmId()).getstatus() == VMStatus.Paused;
+                getParameters().getRunAndPause() && getVmDynamicDao().get(getVmId()).getStatus() == VMStatus.Paused;
         ExecutionHandler.endJob(executionContext, success);
     }
 

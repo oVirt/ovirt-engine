@@ -103,7 +103,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             return false;
         }
 
-        switch (getVmDynamicDao().get(getParameters().getVmId()).getstatus()) {
+        switch (getVmDynamicDao().get(getParameters().getVmId()).getStatus()) {
         case Up:
         case Down:
         case ImageLocked:

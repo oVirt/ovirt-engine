@@ -73,7 +73,7 @@ public class VdsBrokerObjectsBuilder {
             }
         }
         if (xmlRpcStruct.contains(VdsProperties.status)) {
-            vmdynamic.setstatus(convertToVmStatus((String) xmlRpcStruct.getItem(VdsProperties.status)));
+            vmdynamic.setStatus(convertToVmStatus((String) xmlRpcStruct.getItem(VdsProperties.status)));
         }
         return vmdynamic;
     }
@@ -115,39 +115,39 @@ public class VdsBrokerObjectsBuilder {
         if (xmlRpcStruct.contains(VdsProperties.session)) {
             String session = (String) xmlRpcStruct.getItem(VdsProperties.session);
             try {
-                vm.setsession(SessionState.valueOf(session));
+                vm.setSession(SessionState.valueOf(session));
             } catch (Exception e) {
                 log.errorFormat("vm session value illegal : {0}", session);
             }
         }
         if (xmlRpcStruct.contains(VdsProperties.kvmEnable)) {
-            vm.setkvm_enable(Boolean.parseBoolean((String) xmlRpcStruct.getItem(VdsProperties.kvmEnable)));
+            vm.setKvmEnable(Boolean.parseBoolean((String) xmlRpcStruct.getItem(VdsProperties.kvmEnable)));
         }
         if (xmlRpcStruct.contains(VdsProperties.acpiEnable)) {
-            vm.setacpi_enable(Boolean.parseBoolean((String) xmlRpcStruct.getItem(VdsProperties.acpiEnable)));
+            vm.setAcpiEnable(Boolean.parseBoolean((String) xmlRpcStruct.getItem(VdsProperties.acpiEnable)));
         }
         if (xmlRpcStruct.contains(VdsProperties.win2kHackEnable)) {
             vm.setWin2kHackEnable(Boolean.parseBoolean((String) xmlRpcStruct.getItem(VdsProperties.win2kHackEnable)));
         }
         if (xmlRpcStruct.contains(VdsProperties.status)) {
-            vm.setstatus(convertToVmStatus((String) xmlRpcStruct.getItem(VdsProperties.status)));
+            vm.setStatus(convertToVmStatus((String) xmlRpcStruct.getItem(VdsProperties.status)));
         }
         if (xmlRpcStruct.contains(VdsProperties.display_port)) {
             try {
-                vm.setdisplay(Integer.parseInt(xmlRpcStruct.getItem(VdsProperties.display_port).toString()));
+                vm.setDisplay(Integer.parseInt(xmlRpcStruct.getItem(VdsProperties.display_port).toString()));
             } catch (NumberFormatException e) {
                 log.errorFormat("vm display_port value illegal : {0}", xmlRpcStruct.getItem(VdsProperties.display_port));
             }
         } else if (xmlRpcStruct.contains(VdsProperties.display)) {
             try {
-                vm.setdisplay(VNC_START_PORT + Integer.parseInt(xmlRpcStruct.getItem(VdsProperties.display).toString()));
+                vm.setDisplay(VNC_START_PORT + Integer.parseInt(xmlRpcStruct.getItem(VdsProperties.display).toString()));
             } catch (NumberFormatException e) {
                 log.errorFormat("vm display value illegal : {0}", xmlRpcStruct.getItem(VdsProperties.display));
             }
         }
         if (xmlRpcStruct.contains(VdsProperties.display_secure_port)) {
             try {
-                vm.setdisplay_secure_port(Integer.parseInt(xmlRpcStruct.getItem(VdsProperties.display_secure_port)
+                vm.setDisplaySecurePort(Integer.parseInt(xmlRpcStruct.getItem(VdsProperties.display_secure_port)
                         .toString()));
             } catch (NumberFormatException e) {
                 log.errorFormat("vm display_secure_port value illegal : {0}",
@@ -157,14 +157,14 @@ public class VdsBrokerObjectsBuilder {
         if (xmlRpcStruct.contains((VdsProperties.displayType))) {
             String displayType = xmlRpcStruct.getItem(VdsProperties.displayType).toString();
             try {
-                vm.setdisplay_type(DisplayType.valueOf(displayType));
+                vm.setDisplayType(DisplayType.valueOf(displayType));
 
             } catch (Exception e2) {
                 log.errorFormat("vm display type value illegal : {0}", displayType);
             }
         }
         if (xmlRpcStruct.contains((VdsProperties.displayIp))) {
-            vm.setdisplay_ip((String) xmlRpcStruct.getItem(VdsProperties.displayIp));
+            vm.setDisplayIp((String) xmlRpcStruct.getItem(VdsProperties.displayIp));
         }
 
         if (xmlRpcStruct.contains((VdsProperties.utc_diff))) {
@@ -173,7 +173,7 @@ public class VdsBrokerObjectsBuilder {
                 utc_diff = utc_diff.substring(1);
             }
             try {
-                vm.setutc_diff(Integer.parseInt(utc_diff));
+                vm.setUtcDiff(Integer.parseInt(utc_diff));
             } catch (NumberFormatException e) {
                 log.errorFormat("vm offset (utc_diff) value illegal : {0}", utc_diff);
             }
@@ -196,20 +196,20 @@ public class VdsBrokerObjectsBuilder {
         }
 
         // ------------- vm internal agent data
-        vm.setguest_last_login_time(AssignDateTImeFromEpoch(xmlRpcStruct, VdsProperties.guest_last_login_time));
-        vm.setvm_host(AssignStringValue(xmlRpcStruct, VdsProperties.vm_host));
+        vm.setGuestLastLoginTime(AssignDateTImeFromEpoch(xmlRpcStruct, VdsProperties.guest_last_login_time));
+        vm.setVmHost(AssignStringValue(xmlRpcStruct, VdsProperties.vm_host));
 
         String guestUserName = AssignStringValue(xmlRpcStruct, VdsProperties.guest_cur_user_name);
-        vm.setguest_cur_user_name(guestUserName);
+        vm.setGuestCurrentUserName(guestUserName);
 
         initAppsList(xmlRpcStruct, vm);
-        vm.setguest_os(AssignStringValue(xmlRpcStruct, VdsProperties.guest_os));
-        vm.setvm_ip(AssignStringValue(xmlRpcStruct, VdsProperties.VM_IP));
-        if (vm.getvm_ip() != null) {
-            if (vm.getvm_ip().startsWith("127.0.")) {
-                vm.setvm_ip(null);
+        vm.setGuestOs(AssignStringValue(xmlRpcStruct, VdsProperties.guest_os));
+        vm.setVmIp(AssignStringValue(xmlRpcStruct, VdsProperties.VM_IP));
+        if (vm.getVmIp() != null) {
+            if (vm.getVmIp().startsWith("127.0.")) {
+                vm.setVmIp(null);
             } else {
-                vm.setvm_ip(vm.getvm_ip().trim());
+                vm.setVmIp(vm.getVmIp().trim());
             }
         }
 
@@ -226,11 +226,11 @@ public class VdsBrokerObjectsBuilder {
         if (xmlRpcStruct.contains(VdsProperties.monitorResponse)) {
             int response = Integer.parseInt(xmlRpcStruct.getItem(VdsProperties.monitorResponse).toString());
             if (response < 0) {
-                vm.setstatus(VMStatus.NotResponding);
+                vm.setStatus(VMStatus.NotResponding);
             }
         }
         if (xmlRpcStruct.contains(VdsProperties.clientIp)) {
-            vm.setclient_ip(xmlRpcStruct.getItem(VdsProperties.clientIp).toString());
+            vm.setClientIp(xmlRpcStruct.getItem(VdsProperties.clientIp).toString());
         }
 
         VmPauseStatus pauseStatus = VmPauseStatus.NONE;
@@ -854,9 +854,9 @@ public class VdsBrokerObjectsBuilder {
                     }
                     builder.append(appString);
                 }
-                vm.setapp_list(builder.toString());
+                vm.setAppList(builder.toString());
             } else {
-                vm.setapp_list("");
+                vm.setAppList("");
             }
         }
     }

@@ -229,7 +229,7 @@ public class RestoreAllSnapshotCommandTest {
     private VmDynamic getVmDynamic() {
         VmDynamic vmDynamic = new VmDynamic();
         vmDynamic.setId(vmId);
-        vmDynamic.setstatus(VMStatus.Down);
+        vmDynamic.setStatus(VMStatus.Down);
         return vmDynamic;
     }
 }

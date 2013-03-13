@@ -143,7 +143,7 @@ public final class Cloner
         // TODO: Guid/NGuid is an object, but code should treat it as immutable, and not change it's uuid directly.
         // (quick skim of code shows this should be safe with current code)
         vm.setLastVdsRunOn(instance.getLastVdsRunOn());
-        vm.setMigratingToVds(instance.getmigrating_to_vds());
+        vm.setMigratingToVds(instance.getMigratingToVds());
         vm.setMigrationSupport(instance.getMigrationSupport());
         vm.setNiceLevel(instance.getNiceLevel());
         vm.setUseHostCpuFlags(instance.isUseHostCpuFlags());

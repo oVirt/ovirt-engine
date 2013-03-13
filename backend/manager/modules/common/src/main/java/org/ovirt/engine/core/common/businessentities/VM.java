@@ -376,25 +376,25 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     private String vmPoolName;
 
     public VMStatus getStatus() {
-        return this.vmDynamic.getstatus();
+        return this.vmDynamic.getStatus();
     }
 
     public void setStatus(VMStatus value) {
-        this.vmDynamic.setstatus(value);
+        this.vmDynamic.setStatus(value);
     }
 
     public String getVmIp() {
-        return this.vmDynamic.getvm_ip();
+        return this.vmDynamic.getVmIp();
     }
 
     public void setVmIp(String value) {
-        this.vmDynamic.setvm_ip(value);
+        this.vmDynamic.setVmIp(value);
     }
 
     public String getVmHost() {
-        String vmHost = this.vmDynamic.getvm_host();
+        String vmHost = this.vmDynamic.getVmHost();
         if (!StringHelper.isNullOrEmpty(this.getVmIp())) {
-            this.vmDynamic.setvm_host(getVmIp());
+            this.vmDynamic.setVmHost(getVmIp());
         } else {
             String vmDomain = getVmDomain();
 
@@ -403,25 +403,25 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
             // vmHost and vmDomain.
             if (StringHelper.isNullOrEmpty(vmHost)) {
                 vmHost = StringHelper.isNullOrEmpty(vmDomain) ? getName() : getName() + "." + vmDomain;
-                this.vmDynamic.setvm_host(vmHost);
+                this.vmDynamic.setVmHost(vmHost);
             } else if (!StringHelper.isNullOrEmpty(vmDomain) && !vmHost.endsWith(vmDomain)) {
-                this.vmDynamic.setvm_host(vmHost + "." + vmDomain);
+                this.vmDynamic.setVmHost(vmHost + "." + vmDomain);
             }
         }
 
-        return this.vmDynamic.getvm_host();
+        return this.vmDynamic.getVmHost();
     }
 
     public void setVmHost(String value) {
-        this.vmDynamic.setvm_host(value);
+        this.vmDynamic.setVmHost(value);
     }
 
     public Integer getVmPid() {
-        return this.vmDynamic.getvm_pid();
+        return this.vmDynamic.getVmPid();
     }
 
     public void setVmPid(Integer value) {
-        this.vmDynamic.setvm_pid(value);
+        this.vmDynamic.setVmPid(value);
     }
 
     public Date getLastStartTime() {
@@ -433,27 +433,27 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     }
 
     public String getConsoleCurentUserName() {
-        return this.vmDynamic.getConsole_current_user_name();
+        return this.vmDynamic.getConsoleCurrentUserName();
     }
 
     public void setConsoleCurrentUserName(String value) {
-        this.vmDynamic.setConsole_current_user_name(value);
+        this.vmDynamic.setConsoleCurrentUserName(value);
     }
 
     public String getGuestCurentUserName() {
-        return this.vmDynamic.getguest_cur_user_name();
+        return this.vmDynamic.getGuestCurrentUserName();
     }
 
     public void setGuestCurrentUserName(String value) {
-        this.vmDynamic.setguest_cur_user_name(value);
+        this.vmDynamic.setGuestCurrentUserName(value);
     }
 
     public Date getGuestLastLoginTime() {
-        return this.vmDynamic.getguest_last_login_time();
+        return this.vmDynamic.getGuestLastLoginTime();
     }
 
     public void setGuestLastLoginTime(Date value) {
-        this.vmDynamic.setguest_last_login_time(value);
+        this.vmDynamic.setGuestLastLoginTime(value);
     }
 
     public NGuid getConsoleUserId() {
@@ -465,107 +465,107 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     }
 
     public Date getGuestLastLogoutTime() {
-        return this.vmDynamic.getguest_last_logout_time();
+        return this.vmDynamic.getGuestLastLogoutTime();
     }
 
     public void setGuestLastLogoutTime(Date value) {
-        this.vmDynamic.setguest_last_logout_time(value);
+        this.vmDynamic.setGuestLastLogoutTime(value);
     }
 
     public String getGuestOs() {
-        return this.vmDynamic.getguest_os();
+        return this.vmDynamic.getGuestOs();
     }
 
     public void setGuestOs(String value) {
-        this.vmDynamic.setguest_os(value);
+        this.vmDynamic.setGuestOs(value);
     }
 
     public NGuid getRunOnVds() {
-        return this.vmDynamic.getrun_on_vds();
+        return this.vmDynamic.getRunOnVds();
     }
 
     public void setRunOnVds(NGuid value) {
-        this.vmDynamic.setrun_on_vds(value);
+        this.vmDynamic.setRunOnVds(value);
     }
 
-    public NGuid getmigrating_to_vds() {
-        return this.vmDynamic.getmigrating_to_vds();
+    public NGuid getMigratingToVds() {
+        return this.vmDynamic.getMigratingToVds();
     }
 
     public void setMigratingToVds(NGuid value) {
-        this.vmDynamic.setmigrating_to_vds(value);
+        this.vmDynamic.setMigratingToVds(value);
     }
 
     public String getAppList() {
-        return this.vmDynamic.getapp_list();
+        return this.vmDynamic.getAppList();
     }
 
     public void setAppList(String value) {
-        this.vmDynamic.setapp_list(value);
+        this.vmDynamic.setAppList(value);
     }
 
     public Integer getDisplay() {
-        return this.vmDynamic.getdisplay();
+        return this.vmDynamic.getDisplay();
     }
 
     public void setDisplay(Integer value) {
-        this.vmDynamic.setdisplay(value);
+        this.vmDynamic.setDisplay(value);
     }
 
     public Boolean getAcpiEnable() {
-        return this.vmDynamic.getacpi_enable();
+        return this.vmDynamic.getAcpiEnable();
     }
 
     public void setAcpiEnable(Boolean value) {
-        this.vmDynamic.setacpi_enable(value);
+        this.vmDynamic.setAcpiEnable(value);
     }
 
     public String getDisplayIp() {
-        return this.vmDynamic.getdisplay_ip();
+        return this.vmDynamic.getDisplayIp();
     }
 
     public void setDisplayIp(String value) {
-        this.vmDynamic.setdisplay_ip(value);
+        this.vmDynamic.setDisplayIp(value);
     }
 
     public DisplayType getDisplayType() {
-        return this.vmDynamic.getdisplay_type();
+        return this.vmDynamic.getDisplayType();
     }
 
     public void setDisplayType(DisplayType value) {
-        this.vmDynamic.setdisplay_type(value);
+        this.vmDynamic.setDisplayType(value);
     }
 
     public Boolean getKvmEnable() {
-        return this.vmDynamic.getkvm_enable();
+        return this.vmDynamic.getKvmEnable();
     }
 
     public void setKvmEnable(Boolean value) {
-        this.vmDynamic.setkvm_enable(value);
+        this.vmDynamic.setKvmEnable(value);
     }
 
     public SessionState getSession() {
-        return this.vmDynamic.getsession();
+        return this.vmDynamic.getSession();
     }
 
     public void setSession(SessionState value) {
-        this.vmDynamic.setsession(value);
+        this.vmDynamic.setSession(value);
     }
 
     public BootSequence getBootSequence() {
-        return this.vmDynamic.getboot_sequence();
+        return this.vmDynamic.getBootSequence();
     }
 
     public void setBootSequence(BootSequence value) {
-        this.vmDynamic.setboot_sequence(value);
+        this.vmDynamic.setBootSequence(value);
     }
 
     public Integer getDisplaySecurePort() {
-        return this.vmDynamic.getdisplay_secure_port();
+        return this.vmDynamic.getDisplaySecurePort();
     }
 
     public void setDisplaySecurePort(Integer value) {
-        this.vmDynamic.setdisplay_secure_port(value);
+        this.vmDynamic.setDisplaySecurePort(value);
     }
 
     public VmExitStatus getExitStatus() {
@@ -585,35 +585,35 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     }
 
     public Integer getUtcDiff() {
-        return this.vmDynamic.getutc_diff();
+        return this.vmDynamic.getUtcDiff();
     }
 
     public void setUtcDiff(Integer value) {
-        this.vmDynamic.setutc_diff(value);
+        this.vmDynamic.setUtcDiff(value);
     }
 
     public NGuid getLastVdsRunOn() {
-        return this.vmDynamic.getlast_vds_run_on();
+        return this.vmDynamic.getLastVdsRunOn();
     }
 
     public void setLastVdsRunOn(NGuid value) {
-        this.vmDynamic.setlast_vds_run_on(value);
+        this.vmDynamic.setLastVdsRunOn(value);
     }
 
     public String getClientIp() {
-        return this.vmDynamic.getclient_ip();
+        return this.vmDynamic.getClientIp();
     }
 
     public void setClientIp(String value) {
-        this.vmDynamic.setclient_ip(value);
+        this.vmDynamic.setClientIp(value);
     }
 
     public Integer getGuestRequestedMemory() {
-        return this.vmDynamic.getguest_requested_memory();
+        return this.vmDynamic.getGuestRequestedMemory();
     }
 
     public void setGuestRequestedMemory(Integer value) {
-        this.vmDynamic.setguest_requested_memory(value);
+        this.vmDynamic.setGuestRequestedMemory(value);
     }
 
     public String getHash() {
@@ -887,11 +887,11 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     }
 
     public String getHibernationVolHandle() {
-        return this.vmDynamic.gethibernation_vol_handle();
+        return this.vmDynamic.getHibernationVolHandle();
     }
 
     public void setHibernationVolHandle(String value) {
-        this.vmDynamic.sethibernation_vol_handle(value);
+        this.vmDynamic.setHibernationVolHandle(value);
     }
 
     public void setExportDate(Date value) {
@@ -1138,29 +1138,29 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
      * @param vdsName
      */
     public void updateRunTimeDynamicData(VmDynamic vm, Guid vdsId, String vdsName) {
-        setStatus(vm.getstatus());
+        setStatus(vm.getStatus());
         setRunOnVds(vdsId);
         setRunOnVdsName(vdsName);
-        setDisplay(vm.getdisplay());
-        setDisplaySecurePort(vm.getdisplay_secure_port());
-        setVmHost(vm.getvm_host());
-        setVmIp(vm.getvm_ip());
+        setDisplay(vm.getDisplay());
+        setDisplaySecurePort(vm.getDisplaySecurePort());
+        setVmHost(vm.getVmHost());
+        setVmIp(vm.getVmIp());
 
         // if (!string.IsNullOrEmpty(vm.app_list))
         // {
-        setAppList(vm.getapp_list());
+        setAppList(vm.getAppList());
         // }
-        setGuestOs(vm.getguest_os());
-        setDisplayType(vm.getdisplay_type());
-        setDisplayIp(vm.getdisplay_ip());
-        setKvmEnable(vm.getkvm_enable());
-        setAcpiEnable(vm.getacpi_enable());
-        setGuestCurrentUserName(vm.getguest_cur_user_name());
+        setGuestOs(vm.getGuestOs());
+        setDisplayType(vm.getDisplayType());
+        setDisplayIp(vm.getDisplayIp());
+        setKvmEnable(vm.getKvmEnable());
+        setAcpiEnable(vm.getAcpiEnable());
+        setGuestCurrentUserName(vm.getGuestCurrentUserName());
         setWin2kHackEnable(vm.getWin2kHackEnable());
-        setUtcDiff(vm.getutc_diff());
+        setUtcDiff(vm.getUtcDiff());
         setExitStatus(vm.getExitStatus());
         setExitMessage(vm.getExitMessage());
-        setClientIp(vm.getclient_ip());
+        setClientIp(vm.getClientIp());
         setVmPauseStatus(vm.getPauseStatus());
 
         // TODO: check what to do with update disk data

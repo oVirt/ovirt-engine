@@ -947,10 +947,10 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     private void addVmDynamic() {
         VmDynamic tempVar = new VmDynamic();
         tempVar.setId(getVmId());
-        tempVar.setstatus(VMStatus.ImageLocked);
-        tempVar.setvm_host("");
-        tempVar.setvm_ip("");
-        tempVar.setapp_list(getParameters().getVm().getDynamicData().getapp_list());
+        tempVar.setStatus(VMStatus.ImageLocked);
+        tempVar.setVmHost("");
+        tempVar.setVmIp("");
+        tempVar.setAppList(getParameters().getVm().getDynamicData().getAppList());
         getVmDynamicDAO().save(tempVar);
         getCompensationContext().snapshotNewEntity(tempVar);
     }

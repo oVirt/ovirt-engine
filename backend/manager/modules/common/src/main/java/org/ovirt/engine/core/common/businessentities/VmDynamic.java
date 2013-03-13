@@ -246,27 +246,27 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
         bootSequence = BootSequence.C;
     }
 
-    public String getapp_list() {
+    public String getAppList() {
         return this.appList;
     }
 
-    public void setapp_list(String value) {
+    public void setAppList(String value) {
         this.appList = value;
     }
 
-    public String getConsole_current_user_name() {
+    public String getConsoleCurrentUserName() {
         return consoleCurUserName;
     }
 
-    public void setConsole_current_user_name(String console_cur_user_name) {
-        this.consoleCurUserName = console_cur_user_name;
+    public void setConsoleCurrentUserName(String consoleCurUserName) {
+        this.consoleCurUserName = consoleCurUserName;
     }
 
-    public String getguest_cur_user_name() {
+    public String getGuestCurrentUserName() {
         return this.guestCurUserName;
     }
 
-    public void setguest_cur_user_name(String value) {
+    public void setGuestCurrentUserName(String value) {
         this.guestCurUserName = value;
     }
 
@@ -278,51 +278,51 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
         this.consoleUserId = value;
     }
 
-    public String getguest_os() {
+    public String getGuestOs() {
         return this.guestOs;
     }
 
-    public void setguest_os(String value) {
+    public void setGuestOs(String value) {
         this.guestOs = value;
     }
 
-    public Date getguest_last_login_time() {
+    public Date getGuestLastLoginTime() {
         return this.guestLastLoginTime;
     }
 
-    public void setguest_last_login_time(Date value) {
+    public void setGuestLastLoginTime(Date value) {
         this.guestLastLoginTime = value;
     }
 
-    public Date getguest_last_logout_time() {
+    public Date getGuestLastLogoutTime() {
         return this.guestLastLogoutTime;
     }
 
-    public void setguest_last_logout_time(Date value) {
+    public void setGuestLastLogoutTime(Date value) {
         this.guestLastLogoutTime = value;
     }
 
-    public NGuid getmigrating_to_vds() {
+    public NGuid getMigratingToVds() {
         return this.migratingToVds;
     }
 
-    public void setmigrating_to_vds(NGuid value) {
+    public void setMigratingToVds(NGuid value) {
         this.migratingToVds = value;
     }
 
-    public NGuid getrun_on_vds() {
+    public NGuid getRunOnVds() {
         return this.runOnVds;
     }
 
-    public void setrun_on_vds(NGuid value) {
+    public void setRunOnVds(NGuid value) {
         this.runOnVds = value;
     }
 
-    public VMStatus getstatus() {
+    public VMStatus getStatus() {
         return this.status;
     }
 
-    public void setstatus(VMStatus value) {
+    public void setStatus(VMStatus value) {
         this.status = value;
     }
 
@@ -336,19 +336,19 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
         this.id = value;
     }
 
-    public String getvm_host() {
+    public String getVmHost() {
         return this.vmHost;
     }
 
-    public void setvm_host(String value) {
+    public void setVmHost(String value) {
         this.vmHost = value;
     }
 
-    public String getvm_ip() {
+    public String getVmIp() {
         return this.vmIp;
     }
 
-    public void setvm_ip(String value) {
+    public void setVmIp(String value) {
         this.vmIp = value;
     }
 
@@ -360,115 +360,115 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
         this.lastStartTime = value;
     }
 
-    public Integer getvm_pid() {
+    public Integer getVmPid() {
         return this.vmPid;
     }
 
-    public void setvm_pid(Integer value) {
+    public void setVmPid(Integer value) {
         this.vmPid = value;
     }
 
-    public Integer getdisplay() {
+    public Integer getDisplay() {
         return this.display;
     }
 
-    public void setdisplay(Integer value) {
+    public void setDisplay(Integer value) {
         this.display = value;
     }
 
-    public Boolean getacpi_enable() {
+    public Boolean getAcpiEnable() {
         return this.acpiEnabled;
     }
 
-    public void setacpi_enable(Boolean value) {
+    public void setAcpiEnable(Boolean value) {
         this.acpiEnabled = value;
     }
 
-    public String getdisplay_ip() {
+    public String getDisplayIp() {
         return this.displayIp;
     }
 
-    public void setdisplay_ip(String value) {
+    public void setDisplayIp(String value) {
         this.displayIp = value;
     }
 
-    public DisplayType getdisplay_type() {
+    public DisplayType getDisplayType() {
         return displayType;
     }
 
-    public void setdisplay_type(DisplayType value) {
+    public void setDisplayType(DisplayType value) {
         this.displayType = value;
     }
 
-    public Boolean getkvm_enable() {
+    public Boolean getKvmEnable() {
         return this.kvmEnable;
     }
 
-    public void setkvm_enable(Boolean value) {
+    public void setKvmEnable(Boolean value) {
         this.kvmEnable = value;
     }
 
-    public SessionState getsession() {
+    public SessionState getSession() {
         return this.session;
     }
 
-    public void setsession(SessionState value) {
+    public void setSession(SessionState value) {
         this.session = value;
     }
 
-    public BootSequence getboot_sequence() {
+    public BootSequence getBootSequence() {
         return this.bootSequence;
     }
 
-    public void setboot_sequence(BootSequence value) {
+    public void setBootSequence(BootSequence value) {
         this.bootSequence = value;
     }
 
-    public Integer getdisplay_secure_port() {
+    public Integer getDisplaySecurePort() {
         return this.displaySecurePort;
     }
 
-    public void setdisplay_secure_port(Integer value) {
+    public void setDisplaySecurePort(Integer value) {
         this.displaySecurePort = value;
     }
 
-    public Integer getutc_diff() {
+    public Integer getUtcDiff() {
         return this.utcDiff;
     }
 
-    public void setutc_diff(Integer value) {
+    public void setUtcDiff(Integer value) {
         this.utcDiff = value;
     }
 
-    public NGuid getlast_vds_run_on() {
+    public NGuid getLastVdsRunOn() {
         return this.lastVdsRunOn;
     }
 
-    public void setlast_vds_run_on(NGuid value) {
+    public void setLastVdsRunOn(NGuid value) {
         this.lastVdsRunOn = value;
     }
 
-    public String getclient_ip() {
+    public String getClientIp() {
         return this.clientIp;
     }
 
-    public void setclient_ip(String value) {
+    public void setClientIp(String value) {
         this.clientIp = value;
     }
 
-    public Integer getguest_requested_memory() {
+    public Integer getGuestRequestedMemory() {
         return this.guestRequestedMemory;
     }
 
-    public void setguest_requested_memory(Integer value) {
+    public void setGuestRequestedMemory(Integer value) {
         this.guestRequestedMemory = value;
     }
 
-    public String gethibernation_vol_handle() {
+    public String getHibernationVolHandle() {
         return this.hibernationVolHandle;
     }
 
-    public void sethibernation_vol_handle(String value) {
+    public void setHibernationVolHandle(String value) {
         this.hibernationVolHandle = value;
     }
 

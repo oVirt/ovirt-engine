@@ -42,9 +42,9 @@ public class VmMapperTest extends
         statistics.setcpu_user(new Double(10L));
         statistics.setcpu_sys(new Double(20L));
         VmDynamic dynamic = new VmDynamic();
-        dynamic.setstatus(VMStatus.Up);
-        dynamic.setboot_sequence(to.getDefaultBootSequence());
-        dynamic.setdisplay_type(to.getDefaultDisplayType());
+        dynamic.setStatus(VMStatus.Up);
+        dynamic.setBootSequence(to.getDefaultBootSequence());
+        dynamic.setDisplayType(to.getDefaultDisplayType());
         org.ovirt.engine.core.common.businessentities.VM ret =
                 new org.ovirt.engine.core.common.businessentities.VM(to,
                         dynamic,
@@ -119,8 +119,8 @@ public class VmMapperTest extends
     public void testGustIp() {
         org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
         VmDynamic vmDynamic = new VmDynamic();
-        vmDynamic.setstatus(VMStatus.Up);
-        vmDynamic.setvm_ip("2.2.2.2");
+        vmDynamic.setStatus(VMStatus.Up);
+        vmDynamic.setVmIp("2.2.2.2");
         vm.setDynamicData(vmDynamic);
 
         VM map = VmMapper.map(vm, null);
@@ -132,8 +132,8 @@ public class VmMapperTest extends
     public void testGustIps() {
         org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
         VmDynamic vmDynamic = new VmDynamic();
-        vmDynamic.setstatus(VMStatus.Up);
-        vmDynamic.setvm_ip("2.2.2.2 2.2.2.3 2.2.2.4");
+        vmDynamic.setStatus(VMStatus.Up);
+        vmDynamic.setVmIp("2.2.2.2 2.2.2.3 2.2.2.4");
         vm.setDynamicData(vmDynamic);
 
         VM map = VmMapper.map(vm, null);

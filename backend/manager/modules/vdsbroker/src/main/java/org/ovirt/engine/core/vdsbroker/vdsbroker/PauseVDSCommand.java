@@ -11,6 +11,6 @@ public class PauseVDSCommand<P extends PauseVDSCommandParameters> extends VmRetu
     protected void ExecuteVdsBrokerCommand() {
         mVmReturn = getBroker().pause(mVmId.toString());
         ProceedProxyReturnValue();
-        setReturnValue(VdsBrokerObjectsBuilder.buildVMDynamicData(mVmReturn.mVm).getstatus());
+        setReturnValue(VdsBrokerObjectsBuilder.buildVMDynamicData(mVmReturn.mVm).getStatus());
     }
 }

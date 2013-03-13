@@ -28,7 +28,7 @@ public class VmDynamicDAOTest extends BaseDAOTestCase {
         super.setUp();
         dao = dbFacade.getVmDynamicDao();
         existingVm = dao.get(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355"));
-        existingVm.setstatus(VMStatus.Up);
+        existingVm.setStatus(VMStatus.Up);
 
         newVmDynamic = new VmDynamic();
     }
@@ -43,7 +43,7 @@ public class VmDynamicDAOTest extends BaseDAOTestCase {
         assertFalse(result.isEmpty());
         assertEquals(DYNAMIC_RUNNING_COUNT, result.size());
         for (VmDynamic vmdynamic : result) {
-            assertEquals(VDS_STATIC_ID, vmdynamic.getrun_on_vds());
+            assertEquals(VDS_STATIC_ID, vmdynamic.getRunOnVds());
         }
     }
 
@@ -53,8 +53,8 @@ public class VmDynamicDAOTest extends BaseDAOTestCase {
     @Test
     public void testUpdateStatus() {
         VmDynamic before = dao.get(existingVm.getId());
-        before.setstatus(VMStatus.Down);
-        dao.updateStatus(before.getId(), before.getstatus());
+        before.setStatus(VMStatus.Down);
+        dao.updateStatus(before.getId(), before.getStatus());
         VmDynamic after = dao.get(existingVm.getId());
         assertEquals(before, after);
     }
@@ -106,7 +106,7 @@ public class VmDynamicDAOTest extends BaseDAOTestCase {
     public void testUpdate() {
         VmDynamic before = dao.get(existingVm.getId());
 
-        before.setvm_host("farkle.redhat.com");
+        before.setVmHost("farkle.redhat.com");
         dao.update(before);
 
         VmDynamic after = dao.get(existingVm.getId());
@@ -117,8 +117,8 @@ public class VmDynamicDAOTest extends BaseDAOTestCase {
     @Test
     public void testUpdateAll() throws Exception {
         VmDynamic existingVm2 = dao.get(Guid.createGuidFromString("77296e00-0cad-4e5a-9299-008a7b6f4356"));
-        existingVm.setstatus(VMStatus.Down);
-        existingVm2.setvm_ip("111");
+        existingVm.setStatus(VMStatus.Down);
+        existingVm2.setVmIp("111");
 
         dao.updateAll(Arrays.asList(new VmDynamic[] { existingVm, existingVm2 }));
 

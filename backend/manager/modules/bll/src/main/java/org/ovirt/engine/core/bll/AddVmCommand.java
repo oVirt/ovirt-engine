@@ -611,10 +611,10 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     void addVmDynamic() {
         VmDynamic tempVar = new VmDynamic();
         tempVar.setId(getVmId());
-        tempVar.setstatus(VMStatus.Down);
-        tempVar.setvm_host("");
-        tempVar.setvm_ip("");
-        tempVar.setdisplay_type(getParameters().getVmStaticData().getDefaultDisplayType());
+        tempVar.setStatus(VMStatus.Down);
+        tempVar.setVmHost("");
+        tempVar.setVmIp("");
+        tempVar.setDisplayType(getParameters().getVmStaticData().getDefaultDisplayType());
         VmDynamic vmDynamic = tempVar;
         DbFacade.getInstance().getVmDynamicDao().save(vmDynamic);
         getCompensationContext().snapshotNewEntity(vmDynamic);
