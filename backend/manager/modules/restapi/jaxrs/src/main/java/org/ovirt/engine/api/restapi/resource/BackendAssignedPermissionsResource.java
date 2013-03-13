@@ -154,10 +154,17 @@ public class BackendAssignedPermissionsResource
 
     public Map<Guid, DbUser> getUsers() {
         HashMap<Guid, DbUser> users = new HashMap<Guid, DbUser>();
-        for (DbUser user : asCollection(DbUser.class, getEntity(List.class, SearchType.DBUser, "users:"))) {
+        for (DbUser user : lookupUsers()) {
             users.put(user.getuser_id(), user);
         }
         return users;
+    }
+
+    private List<DbUser> lookupUsers() {
+        if (isFiltered()) {
+            return getBackendCollection(DbUser.class, VdcQueryType.GetAllDbUsers, new VdcQueryParametersBase());
+        }
+        return asCollection(DbUser.class, getEntity(List.class, SearchType.DBUser, "users:"));
     }
 
     /**
