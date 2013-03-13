@@ -154,6 +154,16 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         this.clusterServiceModel = clusterServiceModel;
     }
 
+    private ClusterVmListModel clusterVmListModel;
+
+    public ClusterVmListModel getClusterVmListModel() {
+        return clusterVmListModel;
+    }
+
+    public void setClusterVmListModel(ClusterVmListModel clusterVmListModel) {
+        this.clusterVmListModel = clusterVmListModel;
+    }
+
     public ClusterListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().clustersTitle());
@@ -210,6 +220,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     {
         super.InitDetailModels();
 
+        setClusterVmListModel(new ClusterVmListModel());
         setClusterServiceModel(new ClusterServiceModel());
 
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
@@ -217,7 +228,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         list.add(clusterGeneralModel);
         list.add(new ClusterNetworkListModel());
         list.add(new ClusterHostListModel());
-        list.add(new ClusterVmListModel());
+        list.add(getClusterVmListModel());
         list.add(getClusterServiceModel());
         list.add(new PermissionListModel());
         setDetailModels(list);
@@ -227,6 +238,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     protected void UpdateDetailsAvailability() {
         super.UpdateDetailsAvailability();
         VDSGroup vdsGroup = (VDSGroup) getSelectedItem();
+        getClusterVmListModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsVirtService());
         getClusterServiceModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsGlusterService()
                 && Version.v3_2.compareTo(vdsGroup.getcompatibility_version()) <= 0);
     }
