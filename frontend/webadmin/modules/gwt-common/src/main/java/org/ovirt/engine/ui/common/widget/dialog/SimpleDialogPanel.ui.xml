@@ -22,14 +22,8 @@
 			left: 5px;
 		}
 
-		.headerCenterPanel {
-			position: absolute;
-			background: url(images/dialog_header_background_repetitive.png) repeat-x;
-			height: 27px;
-			line-height: 27px;
-			width: auto;
-			left: 32px;
-			right: 123px;
+        @external obrand_headerCenterPanel;
+		.obrand_headerCenterPanel {
 		}
 
 		.headerTitle {
@@ -102,14 +96,22 @@
 		    cursor: pointer;
 		    z-index: 1;
 		}
+
+        @external obrand_dialogHeaderImage;
+        .obrand_dialogHeaderImage {
+        }
+
+        @external obrand_dialogLogoImage;
+        .obrand_dialogLogoImage {
+        }
 	</ui:style>
 
 	<g:FlowPanel>
 		<g:FlowPanel addStyleNames="{style.header}">
 			<g:SimplePanel ui:field="logoPanel" addStyleNames="{style.headerLeftPanel}">
-				<g:Image resource='{resources.dialogLogoBlankImage}' />
+				<g:Image styleName='obrand_dialogLogoImage' url="clear.cache.gif" />
 			</g:SimplePanel>
-			<g:FlowPanel addStyleNames="{style.headerCenterPanel}">
+			<g:FlowPanel addStyleNames="{style.obrand_headerCenterPanel}">
 				<g:FlowPanel ui:field="headerContainerPanel">
 					<g:SimplePanel ui:field="headerTitlePanel" addStyleNames="{style.headerTitle}" />
 					<g:PushButton ui:field="helpIconButton" addStyleNames="{style.helpIconButton}" visible="false">
@@ -121,7 +123,7 @@
 			</g:FlowPanel>
 			<g:SimplePanel addStyleNames="{style.headerRightPanel}">
 				<g:FlowPanel>
-					<g:Image resource='{resources.dialogHeaderImage}' />
+					<g:Image styleName='obrand_dialogHeaderImage' url="clear.cache.gif" />
 					<g:PushButton ui:field='closeIconButton' addStyleNames="{style.closeIconButton}">
 						<g:upFace image='{resources.dialogIconClose}' />
 						<g:downFace image='{resources.dialogIconCloseDown}' />

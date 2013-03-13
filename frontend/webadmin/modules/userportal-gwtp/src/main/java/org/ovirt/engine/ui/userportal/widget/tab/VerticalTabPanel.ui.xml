@@ -8,10 +8,10 @@
 			padding: 15px 0;
 		}
 		
-		.content {
+		@external obrand_content;
+		.obrand_content {
 			overflow: hidden;
 			padding: 5px;
-			border: 2px solid #719823;
 			border-radius: 3px;
 		}
 	</ui:style>
@@ -23,7 +23,7 @@
 		<g:center>
 			<g:LayoutPanel>
 				<g:layer left="0px" right="10px" top="0px" bottom="40px">
-					<g:SimpleLayoutPanel addStyleNames="{style.content}" ui:field="tabContentContainer"/>
+					<g:SimpleLayoutPanel addStyleNames="{style.obrand_content}" ui:field="tabContentContainer"/>
 				</g:layer>
 			</g:LayoutPanel>
 		</g:center>

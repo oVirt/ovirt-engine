@@ -3,9 +3,16 @@
 
 	<display-name>oVirt WebAdmin UI</display-name>
 
+    <!-- Filters -->
+    <filter-mapping>
+      <filter-name>LocaleFilter</filter-name>
+      <url-pattern>/webadmin/*</url-pattern>
+    </filter-mapping>
+
 	<filter-mapping>
 		<filter-name>GwtCachingFilter</filter-name>
 		<url-pattern>/webadmin/*</url-pattern>
+		<url-pattern>/theme/*</url-pattern>
 	</filter-mapping>
 
 	<servlet-mapping>
@@ -23,6 +30,10 @@
 		<url-pattern>/webadmin/plugin/*</url-pattern>
 	</servlet-mapping>
 
+    <servlet-mapping>
+        <servlet-name>BrandingServlet</servlet-name>
+        <url-pattern>/theme/*</url-pattern>
+    </servlet-mapping>
 	<!-- Default page to serve -->
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

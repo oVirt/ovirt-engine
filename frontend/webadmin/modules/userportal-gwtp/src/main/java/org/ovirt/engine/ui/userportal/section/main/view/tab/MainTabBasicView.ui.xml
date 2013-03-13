@@ -15,17 +15,15 @@
 			height: 100%;
 		}
 
-		.borderPanelStyle {
+        @external obrand_borderPanelStyle;
+		.obrand_borderPanelStyle {
 			border-style: solid;
 			border-width: 2px;
-			border-color: #719823;
-	
 			margin-left: 10px;
 			margin-top: 10px;
 			margin-right: 10px;
 			margin-bottom: 10px;
 			min-width: 500px;
-		
 			border-radius: 3px;
 		}
 		
@@ -58,7 +56,7 @@
 
 	</ui:style>
 
-	<g:DockLayoutPanel addStyleNames="{style.borderPanelStyle}">
+	<g:DockLayoutPanel addStyleNames="{style.obrand_borderPanelStyle}">
 		<g:north size='20' addStyleNames="{style.refreshPanelWrapper}">
 			<g:SimplePanel width="100%">
 				<r:RefreshPanel ui:field="refreshPanel" addStyleNames="{style.refreshPanel}" />

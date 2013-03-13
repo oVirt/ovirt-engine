@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.main.AbstractHeaderPresenterWidget;
 import org.ovirt.engine.ui.common.widget.tab.AbstractHeadlessTabPanel.TabWidgetHandler;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationDynamicConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.ConfigurePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.WebAdminConfigurator;
 
@@ -39,7 +39,7 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
             SearchPanelPresenterWidget searchPanel,
             AboutPopupPresenterWidget aboutPopup,
             ConfigurePopupPresenterWidget configurePopup,
-            ApplicationConstants constants) {
+            ApplicationDynamicConstants constants) {
         super(eventBus, view, user,
                 WebAdminConfigurator.DOCUMENTATION_GUIDE_PATH, constants.engineWebAdminDoc());
         this.searchPanel = searchPanel;

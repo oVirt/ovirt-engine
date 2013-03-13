@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
-import org.ovirt.engine.core.utils.ServletUtils;
+import org.ovirt.engine.core.utils.servlet.ServletUtils;
 
 /**
  * This is a very simple servlet that receives a mime type and a file name as

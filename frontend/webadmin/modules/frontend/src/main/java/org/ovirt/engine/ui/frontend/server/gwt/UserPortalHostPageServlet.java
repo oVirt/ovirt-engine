@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.frontend.server.gwt;
 
+import org.ovirt.engine.ui.frontend.server.gwt.branding.BrandingTheme.ApplicationType;
+
 /**
  * UserPortal GWT application host page servlet.
  */
@@ -17,4 +19,8 @@ public class UserPortalHostPageServlet extends GwtDynamicHostPageServlet {
         return true;
     }
 
+    @Override
+    public ApplicationType getApplicationType() {
+        return ApplicationType.USER_PORTAL;
+    }
 }

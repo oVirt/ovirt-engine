@@ -16,33 +16,6 @@
 
 @external generalDialogComment;
 
-.gwt-DialogBox .dialogTopLeft {
-	background: url(images/dialog/panel_edge_TL.png) no-repeat;
-}
-.gwt-DialogBox .dialogTopCenter {
-	background: url(images/dialog/panel_edge_T.png);
-}
-.gwt-DialogBox .dialogTopRight {
-	background: url(images/dialog/panel_edge_TR.png) no-repeat;
-}
-
-.gwt-DialogBox .dialogBottomLeft {
-	background: url(images/dialog/panel_edge_BL.png);
-}
-.gwt-DialogBox .dialogBottomCenter {
-	background: url(images/dialog/panel_edge_B.png);
-}
-.gwt-DialogBox .dialogBottomRight {
-	background: url(images/dialog/panel_edge_BR.png);
-}
-
-.gwt-DialogBox .dialogMiddleLeft {
-	background: url(images/dialog/panel_edge_L.png);
-}
-.gwt-DialogBox .dialogMiddleRight {
-	background: url(images/dialog/panel_edge_R.png);
-}
-
 .gwt-DialogBox .dialogTopLeft,
 .gwt-DialogBox .dialogTopRight {
 	width: 14px;

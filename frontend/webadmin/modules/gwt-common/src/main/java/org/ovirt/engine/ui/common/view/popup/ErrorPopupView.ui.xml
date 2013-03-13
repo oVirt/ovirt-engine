@@ -10,6 +10,10 @@
 			height: 270px;
 			overflow: auto;
 		}
+
+        @external obrand_dialogLogoErrorImage;
+        .obrand_dialogLogoErrorImage {
+        }
 	</ui:style>
 
 	<d:SimpleDialogPanel width="500px" height="400px">
@@ -18,7 +22,7 @@
 		</d:header>
 
 		<d:logo>
-			<g:Image resource='{resources.dialogLogoErrorImage}' />
+			<g:Image styleName='obrand_dialogLogoErrorImage' url="clear.cache.gif" />
 		</d:logo>
 
 		<d:content>

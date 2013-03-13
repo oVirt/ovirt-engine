@@ -1,0 +1,79 @@
+@import url("ovirt_common.css");
+
+/* MainTabBasicView.ui.xml:
+Change the border of the main screen */
+.obrand_borderPanelStyle {
+    border-color: #719823;
+}
+
+/* UserPortalMainTab.ui.xml:
+These classes allow you to change the tab color at the top of the user portal
+main screen. */
+.obrand_mainTab .obrand_activeMiddle {
+    border: 1px solid #ffffff;
+    background-color: #ffffff;
+    font-size: 12.5px;
+    color: #719823;
+}
+
+.obrand_mainTab .obrand_inactiveMiddle {
+    border: 1px solid #a8db42;
+    background-color: #719823;
+}
+
+.obrand_mainTab .obrand_activeMiddleLink {
+    color: #719823;
+}
+
+/* VerticalTiab.ui.xml:
+These classes allow you to change the colors of the tabs on the left of the screen with
+regards to the extended view. */
+.obrand_verticalTab .obrand_activeMiddle {
+    background-color: #719823;
+}
+
+.obrand_verticalTab .obrand_inactiveMiddleLink {
+    color: #719823;
+}
+
+/* User portal HeaderView.ui.xml:
+These classes allow you to change the color and logo at the 
+top of the user portal. */
+.obrand_wrapper {
+    height: 74px;
+    margin: 0 0 16px 16px;
+}
+
+.obrand_logo {
+    float: left;
+    background-image: url(images/user_portal_logo.gif);
+    background-repeat: no-repeat;
+    background-position: left bottom;
+    height: 74px;
+    width: 131px;
+}
+
+.obrand_barOuter {
+    background-image: url(images/bg_head.gif);
+    background-repeat: repeat-x;
+    height: 74px;
+    width: 100%;
+}
+
+/* VerticalTabPanel.ui.xml:
+This class works together with obrand_vertical tab to change the
+colors of the side tab in the extended view */
+.obrand_content {
+    border: 2px solid #719823;
+}
+
+/* SideTabWithDetailsView:
+This class allows you to change the colors of menu bar in the extended view */
+.obrand_mainBarPanel {
+    padding-top: 7px;
+    height: 24px;
+    border-bottom: 2px solid #719823;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+

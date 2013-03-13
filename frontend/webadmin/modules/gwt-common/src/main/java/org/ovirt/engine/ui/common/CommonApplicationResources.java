@@ -87,18 +87,6 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("images/dialog/progress.gif")
     ImageResource dialogProgressImage();
 
-    @Source("images/dialog/dialog_header_image.png")
-    ImageResource dialogHeaderImage();
-
-    @Source("images/dialog/blank.png")
-    ImageResource dialogLogoBlankImage();
-
-    @Source("images/dialog/error.png")
-    ImageResource dialogLogoErrorImage();
-
-    @Source("images/dialog/warning.png")
-    ImageResource dialogLogoWarningImage();
-
     @Source("images/dialog/guide.png")
     ImageResource dialogLogoGuideImage();
 

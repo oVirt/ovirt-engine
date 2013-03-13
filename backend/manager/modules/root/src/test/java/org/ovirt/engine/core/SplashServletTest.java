@@ -1,6 +1,5 @@
 package org.ovirt.engine.core;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -10,20 +9,16 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.utils.servlet.LocaleFilter;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SplashServletTest {
@@ -38,56 +33,32 @@ public class SplashServletTest {
     @Mock
     RequestDispatcher mockDispatcher;
 
-    @Mock
-    ServletConfig mockConfig;
-
-    @Mock
-    ServletContext mockContext;
-
-    @Captor
-    ArgumentCaptor<Cookie> cookieCaptor;
-
     final List<String> localeKeys = createLocaleKeys();
 
     @Before
     public void setUp() throws Exception {
-        when(mockConfig.getServletContext()).thenReturn(mockContext);
-        when(mockContext.getContextPath()).thenReturn(""); // Root webapp context path
         testServlet = new SplashServlet();
-        testServlet.init(mockConfig);
     }
 
     @Test
     public void testDoGetHttpServletRequestHttpServletResponseNoDispatcher() throws IOException, ServletException {
-        Cookie responseCookie = new Cookie(LocaleFilter.LOCALE, Locale.JAPANESE.toString());
-        responseCookie.setSecure(false); //Doesn't have to be secure.
-        responseCookie.setMaxAge(Integer.MAX_VALUE); //Doesn't expire.
         when(mockRequest.getAttribute(LocaleFilter.LOCALE)).thenReturn(Locale.JAPANESE);
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockRequest).setAttribute("localeKeys", localeKeys);
-        verify(mockResponse).addCookie(cookieCaptor.capture());
         //Make sure the content type contains UTF-8 so the characters display properly.
         verify(mockResponse).setContentType("text/html;charset=UTF-8");
-        assertEquals("Cookie names should match", cookieCaptor.getValue().getName(), responseCookie.getName());
-        assertEquals("Cookie values should match", cookieCaptor.getValue().getValue(), responseCookie.getValue());
     }
 
     @Test
     public void testDoGetHttpServletRequestHttpServletResponseWithDispatcher() throws IOException, ServletException {
-        Cookie responseCookie = new Cookie(LocaleFilter.LOCALE, Locale.JAPANESE.toString());
-        responseCookie.setSecure(false); //Doesn't have to be secure.
-        responseCookie.setMaxAge(Integer.MAX_VALUE); //Doesn't expire.
         when(mockRequest.getAttribute(LocaleFilter.LOCALE)).thenReturn(Locale.JAPANESE);
         when(mockRequest.getRequestDispatcher("/WEB-INF/ovirt-engine.jsp")).thenReturn(mockDispatcher);
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockRequest).setAttribute("localeKeys", localeKeys);
-        verify(mockResponse).addCookie(cookieCaptor.capture());
         //Make sure the content type contains UTF-8 so the characters display properly.
         verify(mockResponse).setContentType("text/html;charset=UTF-8");
         //Make sure the include is called on the dispatcher.
         verify(mockDispatcher).include(mockRequest, mockResponse);
-        assertEquals("Cookie names should match", cookieCaptor.getValue().getName(), responseCookie.getName());
-        assertEquals("Cookie values should match", cookieCaptor.getValue().getValue(), responseCookie.getValue());
     }
 
     private List<String> createLocaleKeys() {

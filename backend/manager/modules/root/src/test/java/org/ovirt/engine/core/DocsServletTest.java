@@ -31,7 +31,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.utils.ServletUtils;
+import org.ovirt.engine.core.utils.servlet.ServletUtils;
 
 /**
  * Unit tests for the {@code DocsServlet} class.

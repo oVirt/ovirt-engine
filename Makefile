@@ -466,6 +466,15 @@ install_misc:
 	# USB filter:
 	install -m 644 packaging/etc/usbfilter.txt $(DESTDIR)$(PKG_SYSCONF_DIR)
 
+	# branding
+	( cd packaging/branding && find ovirt.brand -type f ) | while read f; do \
+		install -dm 755 "$$(dirname "$(DESTDIR)$(DATA_DIR)/branding/$$f")"; \
+		install -m 644 "packaging/branding/$$f" "$(DESTDIR)$(DATA_DIR)/branding/$$f"; \
+	done
+	install -dm 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding"
+	-rm -f "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding/00-ovirt.brand"
+	ln -s "$(DATA_DIR)/branding/ovirt.brand" "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding/00-ovirt.brand"
+
 	# Create a version file
 	echo $(DISPLAY_VERSION) > $(DESTDIR)$(DATA_DIR)/conf/version
 

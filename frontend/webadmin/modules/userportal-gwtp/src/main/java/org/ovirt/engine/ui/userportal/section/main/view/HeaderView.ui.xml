@@ -3,96 +3,92 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
 <ui:with field='constants' type='org.ovirt.engine.ui.userportal.ApplicationConstants' />
+<ui:with field='dynamicConstants' type='org.ovirt.engine.ui.userportal.ApplicationDynamicConstants' />
 
-	<ui:style>
-		.wrapper {
-			height: 74px;
-			margin: 0 0 16px 16px;
-		}
-		
-		.logo {
-			float: left;
-			background-image: url(images/user_portal_logo.gif);
-			background-repeat: no-repeat;
-			background-position: left bottom;
-			width: 131px;
-			height: 74px;
-		}
-		
-		.barOuter {
-			background-image: url(images/bg_head.gif);
-			background-repeat: repeat-x;
-			height: 74px;
-			width: 100%;
-		}
-		
-		.barInner {
-			height: 60px;
-			padding-top: 14px;
-			color: white;
-			font-size: 13px;
-		}
-		
-		.menuTitle {
-			font-family: Verdana,sans-serif;
-			font-size: 14px;
-			font-weight: bold;
-			text-decoration: underline;
-			position: relative;
-			left: 10px;
-			top: 10px;
-		}
-		
-		.menu {
-			position: relative;
-			left: 10px;
-			top: 5px;
-		}
-		
-		.userName {
-			font-weight: bold;
-		}
-		
-		a.menuLink {
-			color: white;
-		}
-		
-		.mainTabs {
-			position: absolute;
-			bottom: 0;
-			right: 0;
-			margin-right: 16px;
-			margin-bottom: 16px;
-		}
-	</ui:style>
+    <ui:style>
+        @external obrand_wrapper;
+        .obrand_wrapper {
+        }
 
-	<g:HTMLPanel addStyleNames="{style.wrapper}">
-		<g:HTML addStyleNames="{style.logo}" />
+        @external obrand_logo;
+        .obrand_logo {
+        }
 
-		<g:SimplePanel addStyleNames="{style.barOuter}">
-			<g:VerticalPanel addStyleNames="{style.barInner}">
-				<g:InlineLabel addStyleNames="{style.menuTitle}" text="{constants.mainHeaderLabel}" />
-				<g:FlowPanel>
-					<g:HTMLPanel addStyleNames="{style.menu}">
-						<g:InlineLabel text="{constants.loggedInUser}:" />
-						<g:InlineLabel ui:field="userNameLabel" addStyleNames="{style.userName}" />
-						|
-						<g:Anchor ui:field="logoutLink" addStyleNames="{style.menuLink}" />
-						|
-						<g:Anchor ui:field="guideLink" addStyleNames="{style.menuLink}" />
-						|
-						<g:Anchor ui:field="aboutLink" addStyleNames="{style.menuLink}" />
-					</g:HTMLPanel>
+        @external obrand_barOuter;
+        .obrand_barOuter {
+        }
 
-					<g:HTMLPanel ui:field="mainTabBarPanel" addStyleNames="{style.mainTabs}">
-						<g:FlowPanel ui:field="mainTabContainer" />
-						<div style="clear: both;" />
-					</g:HTMLPanel>
-				</g:FlowPanel>
-			</g:VerticalPanel>
-		</g:SimplePanel>
+        .barInner {
+            height: 60px;
+            padding-top: 14px;
+            color: white;
+            font-size: 13px;
+        }
 
-		<div style="clear: both;" />
-	</g:HTMLPanel>
+        .menuTitle {
+            font-family: Verdana,sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: underline;
+            position: relative;
+            left: 10px;
+            top: 10px;
+        }
+
+        .menu {
+            position: relative;
+            left: 10px;
+            top: 5px;
+        }
+
+        .userName {
+            font-weight: bold;
+        }
+
+        a.menuLink {
+            color: white;
+        }
+
+        .mainTabs {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            margin-right: 16px;
+            margin-bottom: 16px;
+        }
+
+        @external obrand_mainTabsBackground;
+        .obrand_mainTabsBackground {
+        }
+    </ui:style>
+
+    <g:HTMLPanel addStyleNames="{style.obrand_wrapper}">
+        <g:HTML addStyleNames="{style.obrand_logo}" />
+        <g:HTML addStyleNames="{style.obrand_mainTabsBackground}" />
+        <g:SimplePanel addStyleNames="{style.obrand_barOuter}">
+            <g:VerticalPanel addStyleNames="{style.barInner}">
+                <g:InlineLabel addStyleNames="{style.menuTitle}" text="{dynamicConstants.mainHeaderLabel}" />
+                <g:FlowPanel>
+                    <g:HTMLPanel addStyleNames="{style.menu}">
+                        <g:InlineLabel text="{constants.loggedInUser}:" />
+                        <g:InlineLabel ui:field="userNameLabel" addStyleNames="{style.userName}" />
+                        |
+                        <g:Anchor ui:field="logoutLink" addStyleNames="{style.menuLink}" />
+                        |
+                        <g:Anchor ui:field="guideLink" addStyleNames="{style.menuLink}" />
+                        |
+                        <g:Anchor ui:field="aboutLink" addStyleNames="{style.menuLink}" />
+                    </g:HTMLPanel>
+
+                    <g:HTMLPanel ui:field="mainTabBarPanel" addStyleNames="{style.mainTabs}">
+                        <g:FlowPanel ui:field="mainTabContainer" />
+                        <div style="clear: both;" />
+                    </g:HTMLPanel>
+                </g:FlowPanel>
+            </g:VerticalPanel>
+        </g:SimplePanel>
+
+        <div style="clear: both;" />
+    </g:HTMLPanel>
 
 </ui:UiBinder>

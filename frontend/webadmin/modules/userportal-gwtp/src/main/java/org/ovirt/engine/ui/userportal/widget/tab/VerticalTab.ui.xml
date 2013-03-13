@@ -2,97 +2,101 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
-	<ui:style type="org.ovirt.engine.ui.common.widget.tab.AbstractTab.Style">
-		.tab {
-			height: 25px;
-			font-family: Arial, sans-serif;
-			line-height: 25px;
-		}
-		
-		.tabHolder {
-		}
-		
-		.tabHolder:last-of-type {
-			border-bottom: solid 1px #d5d5d5;
-		}
-		
-		.middle {
-			padding: 0 5px;
-		}
-		
-		.activeMiddle {
-			background-color: #719823;
-		}
-		
-		.inactiveMiddle {
-		}
-		
-		.middleLink {
-			font-weight: bold;
-			display: inline-block;
-			width: 100%;
-		}
-		
-		.activeMiddleLink {
-			color: white;
-		}
-		
-		.inactiveMiddleLink {
-			color: #719823;
-		}
-		
-		.anchor {
-			text-decoration: none;
-			border-style: none;
-		}
+    <ui:style type="org.ovirt.engine.ui.common.widget.tab.AbstractTab.Style">
+        .tab {
+            height: 25px;
+            font-family: Arial, sans-serif;
+            line-height: 25px;
+        }
 
-		a.anchor, a.anchor:visited, a.anchor:hover {
-			color: transparent;
-		}
+        @external obrand_verticalTab;
+        .obrand_verticalTab {
+        }
 
-		.upperPaddingPanel {
-			height: 4px;
-			border-top: solid 1px #d5d5d5;
-			background-color: #f1f1f1;
-		}
-		
-		.activeLeft {
-		}
-		
-		.inactiveLeft {
-		}
-		
-		.activeRight {
-		}
-		
-		.inactiveRight {
-		}
-		
-		.activeArrow {
-		}
-		
-		.inactiveArrow {
-		}
-		
-		.alignLeft {
-		}
-		
-		.alignRight {
-		}
-	</ui:style>
+        .tabHolder {
+        }
 
-	<g:FlowPanel addStyleNames="{style.tabHolder}">
-		<g:SimplePanel addStyleNames="{style.upperPaddingPanel}" />
-		<g:HTMLPanel ui:field="tabContainer" addStyleNames="{style.tab}">
-			<a href="" ui:field="hyperlink" class="{style.anchor}">
-				<div ui:field="leftElement" />
-				<div ui:field="rightElement" />
-				<div ui:field="middleElement" class="{style.middle} {style.inactiveMiddle}">
-					<g:Label ui:field="hyperlinkLabel" addStyleNames="{style.middleLink} {style.inactiveMiddleLink}"/>
-				</div>
-				<div ui:field="arrowElement" />
-			</a>
-		</g:HTMLPanel>
-	</g:FlowPanel>
+        .tabHolder:last-of-type {
+            border-bottom: solid 1px #d5d5d5;
+        }
+
+        .middle {
+            padding: 0 5px;
+        }
+
+        @external obrand_activeMiddle;
+        .obrand_activeMiddle {
+        }
+
+        .obrand_inactiveMiddle {
+        }
+
+        .middleLink {
+            font-weight: bold;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .obrand_activeMiddleLink {
+            color: white;
+        }
+
+        @external obrand_inactiveMiddleLink;
+        .obrand_inactiveMiddleLink {
+        }
+
+        .anchor {
+            text-decoration: none;
+            border-style: none;
+        }
+
+        a.anchor, a.anchor:visited, a.anchor:hover {
+            color: transparent;
+        }
+
+        .upperPaddingPanel {
+            height: 4px;
+            border-top: solid 1px #d5d5d5;
+            background-color: #f1f1f1;
+        }
+
+        .activeLeft {
+        }
+
+        .inactiveLeft {
+        }
+
+        .activeRight {
+        }
+
+        .inactiveRight {
+        }
+
+        .activeArrow {
+        }
+
+        .inactiveArrow {
+        }
+
+        .alignLeft {
+        }
+
+        .alignRight {
+        }
+    </ui:style>
+
+    <g:FlowPanel addStyleNames="{style.tabHolder}">
+        <g:SimplePanel addStyleNames="{style.upperPaddingPanel}" />
+        <g:HTMLPanel ui:field="tabContainer" addStyleNames="{style.tab} {style.obrand_verticalTab}">
+            <a href="" ui:field="hyperlink" class="{style.anchor}">
+                <div ui:field="leftElement" />
+                <div ui:field="rightElement" />
+                <div ui:field="middleElement" class="{style.middle} {style.obrand_inactiveMiddle}">
+                    <g:Label ui:field="hyperlinkLabel" addStyleNames="{style.middleLink} {style.obrand_inactiveMiddleLink}"/>
+                </div>
+                <div ui:field="arrowElement" />
+            </a>
+        </g:HTMLPanel>
+    </g:FlowPanel>
 
 </ui:UiBinder>

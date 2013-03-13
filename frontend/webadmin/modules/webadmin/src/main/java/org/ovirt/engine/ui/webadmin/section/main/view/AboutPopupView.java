@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationDynamicConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AboutPopupPresenterWidget;
 
@@ -36,16 +37,19 @@ public class AboutPopupView extends AbstractPopupView<SimpleDialogPanel> impleme
     Label copyrightNotice;
 
     @Inject
-    public AboutPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
+    public AboutPopupView(EventBus eventBus, ApplicationResources resources,
+            ApplicationConstants constants,
+            ApplicationDynamicConstants dynamicConstants) {
         super(eventBus, resources);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants);
+        localize(constants, dynamicConstants);
     }
 
-    void localize(ApplicationConstants constants) {
+    void localize(ApplicationConstants constants,
+            ApplicationDynamicConstants dynamicConstants) {
         titleLabel.setText(constants.aboutPopupCaption());
         closeButton.setText(constants.closeButtonLabel());
-        copyrightNotice.setText(constants.copyRightNotice());
+        copyrightNotice.setText(dynamicConstants.copyRightNotice());
     }
 
     @Override

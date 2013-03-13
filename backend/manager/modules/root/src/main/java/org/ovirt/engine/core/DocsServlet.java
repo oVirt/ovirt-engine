@@ -14,7 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.utils.LocaleUtils;
-import org.ovirt.engine.core.utils.ServletUtils;
+import org.ovirt.engine.core.utils.servlet.LocaleFilter;
+import org.ovirt.engine.core.utils.servlet.ServletUtils;
 
 /**
  * This class serves locale dependent documents. It takes the current selected locale

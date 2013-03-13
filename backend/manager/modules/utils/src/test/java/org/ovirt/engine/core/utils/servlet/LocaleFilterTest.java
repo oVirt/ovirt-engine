@@ -1,7 +1,9 @@
-package org.ovirt.engine.core;
+package org.ovirt.engine.core.utils.servlet;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.times;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,6 +11,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.FilterChain;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -30,9 +33,13 @@ public class LocaleFilterTest {
     HttpServletResponse mockResponse;
     @Mock
     FilterChain mockChain;
+    @Mock
+    ServletContext mockServletContext;
 
     @Before
     public void setUp() throws Exception {
+        when(mockRequest.getServletContext()).thenReturn(mockServletContext);
+        when(mockServletContext.getContextPath()).thenReturn("");
         testFilter = new LocaleFilter();
     }
 
@@ -43,6 +50,9 @@ public class LocaleFilterTest {
         testFilter.doFilter(mockRequest, mockResponse, mockChain);
         verify(mockChain).doFilter(mockRequest, mockResponse);
         verify(mockRequest).setAttribute(LocaleFilter.LOCALE, testLocale);
+        Cookie cookie = new Cookie(LocaleFilter.LOCALE, testLocale.toString());
+        cookie.setMaxAge(Integer.MAX_VALUE); //Doesn't expire.
+        verify(mockResponse, times(1)).addCookie((Cookie) any());
     }
 
     @Test
@@ -54,6 +64,7 @@ public class LocaleFilterTest {
         testFilter.doFilter(mockRequest, mockResponse, mockChain);
         verify(mockChain).doFilter(mockRequest, mockResponse);
         verify(mockRequest).setAttribute(LocaleFilter.LOCALE, testLocale);
+        verify(mockResponse, times(1)).addCookie((Cookie) any());
     }
 
     @Test
@@ -64,6 +75,7 @@ public class LocaleFilterTest {
         testFilter.doFilter(mockRequest, mockResponse, mockChain);
         verify(mockChain).doFilter(mockRequest, mockResponse);
         verify(mockRequest).setAttribute(LocaleFilter.LOCALE, testLocale);
+        verify(mockResponse, times(1)).addCookie((Cookie) any());
     }
 
     @Test
@@ -73,6 +85,7 @@ public class LocaleFilterTest {
         verify(mockChain).doFilter(mockRequest, mockResponse);
         //Verify that it defaulted to the US locale
         verify(mockRequest).setAttribute(LocaleFilter.LOCALE, Locale.US);
+        verify(mockResponse, times(1)).addCookie((Cookie) any());
     }
 
     @Test
@@ -85,6 +98,7 @@ public class LocaleFilterTest {
         verify(mockChain).doFilter(mockRequest, mockResponse);
         //Verify that it defaulted to the US locale
         verify(mockRequest).setAttribute(LocaleFilter.LOCALE, Locale.US);
+        verify(mockResponse, times(1)).addCookie((Cookie) any());
     }
 
     @Test
@@ -93,6 +107,7 @@ public class LocaleFilterTest {
         testFilter.doFilter(mockRequest, mockResponse, mockChain);
         verify(mockChain).doFilter(mockRequest, mockResponse);
         verify(mockRequest).setAttribute(LocaleFilter.LOCALE, Locale.JAPANESE);
+        verify(mockResponse, times(1)).addCookie((Cookie) any());
     }
 
     @Test

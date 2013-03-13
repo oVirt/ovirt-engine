@@ -3,7 +3,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog">
 
-	<ui:with field='constants' type='org.ovirt.engine.ui.userportal.ApplicationConstants' />
+	<ui:with field='dynamicConstants' type='org.ovirt.engine.ui.userportal.ApplicationDynamicConstants' />
 
 	<ui:style>
 		.content {
@@ -24,7 +24,7 @@
 				<g:HorizontalPanel horizontalAlignment="ALIGN_CENTER" width="100%">
 					<g:HTMLPanel>
 						<div>
-							<g:InlineLabel text="{constants.ovirtVersionAbout}"/>
+							<g:InlineLabel text="{dynamicConstants.ovirtVersionAbout}"/>
 							<g:InlineLabel ui:field="versionLabel" />
 						</div>
 						<div>

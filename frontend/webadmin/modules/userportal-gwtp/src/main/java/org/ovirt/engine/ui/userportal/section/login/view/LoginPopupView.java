@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalLoginModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
+import org.ovirt.engine.ui.userportal.ApplicationDynamicConstants;
 import org.ovirt.engine.ui.userportal.ApplicationMessages;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.section.login.presenter.LoginPopupPresenterWidget;
@@ -99,7 +100,8 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
             ClientAgentType clientAgentType,
             ApplicationResources resources,
             ApplicationConstants constants,
-            ApplicationMessages messages) {
+            ApplicationMessages messages,
+            ApplicationDynamicConstants dynamicConstants) {
         super(eventBus, resources, clientAgentType);
 
         // We need this code because resetAndFocus is called when userNameEditor is Disabled
@@ -117,7 +119,7 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
         connectAutomatically = new EntityModelCheckBoxEditor(Align.RIGHT);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         asWidget().setGlassEnabled(false);
-        localize(constants);
+        localize(constants, dynamicConstants);
         addStyles();
 
         errorMessagePanel.setVisible(false);
@@ -127,8 +129,9 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
         driver.initialize(this);
     }
 
-    void localize(ApplicationConstants constants) {
-        headerLabel.setText(constants.loginHeaderLabel());
+    void localize(ApplicationConstants constants,
+            ApplicationDynamicConstants dynamicConstants) {
+        headerLabel.setText(dynamicConstants.loginHeaderLabel());
         userNameLabel.setText(constants.loginFormUserNameLabel());
         passwordLabel.setText(constants.loginFormPasswordLabel());
         domainLabel.setText(constants.loginFormDomainLabel());

@@ -1,0 +1,32 @@
+/* GWT common control styling */
+
+/* GWT dialogbox:
+These classes allow you to change the border of the popup windows and login
+screen */
+.gwt-DialogBox .dialogTopLeft {
+        background: url(images/dialog/panel_edge_TL.png) no-repeat !important;
+}
+.gwt-DialogBox .dialogTopCenter {
+        background: url(images/dialog/panel_edge_T.png) !important;
+}
+.gwt-DialogBox .dialogTopRight {
+        background: url(images/dialog/panel_edge_TR.png) no-repeat !important;
+}
+
+.gwt-DialogBox .dialogBottomLeft {
+        background: url(images/dialog/panel_edge_BL.png) !important;
+}
+.gwt-DialogBox .dialogBottomCenter {
+        background: url(images/dialog/panel_edge_B.png) !important;
+}
+.gwt-DialogBox .dialogBottomRight {
+        background: url(images/dialog/panel_edge_BR.png) !important;
+}
+
+.gwt-DialogBox .dialogMiddleLeft {
+        background: url(images/dialog/panel_edge_L.png) !important;
+}
+.gwt-DialogBox .dialogMiddleRight {
+        background: url(images/dialog/panel_edge_R.png) !important;
+}
+

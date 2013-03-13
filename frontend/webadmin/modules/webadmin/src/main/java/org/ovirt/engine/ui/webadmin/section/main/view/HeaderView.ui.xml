@@ -4,106 +4,98 @@
 
 <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
-	<ui:style src='../../../defines.css'>
-		.wrapperOuter {
-			background-image: url(images/header_background_repetitive.png);
-			background-repeat: repeat-x;
-		}
-		
-		.wrapperInner {
-			background-image: url(images/header_background.png);
-			background-repeat: no-repeat;
-			background-position: left;
-		}
-		
-		.upperPanel {
-			height: 35px;
-			color: white;
-			overflow: hidden;
-		}
-		
-		.lowerPanel {
-			height: 70px;
-			overflow: visible;
-		}
-		
-		.logo {
-			float: left;
-			background-image: url(images/logo.png);
-			background-repeat: no-repeat;
-			background-position: mainSectionLogoBackgroundPosition;
-			width: 255px;
-			height: mainSectionLogoHeight;
-		}
-		
-		.menuBar {
-			float: right;
-			padding: 10px;
-		}
-		
-		.userName {
-			font-weight: bold;
-		}
-		
-		a.menuLink {
-			color: white;
-		}
-		
-		.searchPanel {
-			width: 100%;
-			float: left;
-		}
-		
-		.mainTabBar {
-			position: absolute;
-			bottom: 0;
-			left: 250px;
-			height: 28px;
-		}
+    <ui:style>
+        @external obrand_wrapperOuter;
+        .obrand_wrapperOuter {
+        }
 
-		.mainTabContainer {
-			min-width: 800px;
-		}
-		
-		.headerLabelStyle {
-			font-weight: bold;
-			color: white;
-			line-height: 35px;
-			width: 300px;
-			float: left;
-		}
-	</ui:style>
+        @external obrand_wrapperInner;
+        .obrand_wrapperInner {
+        }
 
-	<g:HTMLPanel addStyleNames="{style.wrapperOuter}">
-		<g:HTMLPanel addStyleNames="{style.wrapperInner}">
+        .upperPanel {
+            height: 35px;
+            color: white;
+            overflow: hidden;
+        }
 
-			<g:HTMLPanel addStyleNames="{style.upperPanel}">
-				<g:HTML addStyleNames="{style.logo}" />
-				<g:Label ui:field="headerLabel" addStyleNames="{style.headerLabelStyle}"/>
+        .lowerPanel {
+            height: 70px;
+            overflow: visible;
+        }
 
-				<g:HTMLPanel addStyleNames="{style.menuBar}">
-					<g:InlineLabel text="{constants.loggedInUser}:" />
-					<g:InlineLabel ui:field="userNameLabel" addStyleNames="{style.userName}" />
-					| <g:Anchor ui:field="configureLink" addStyleNames="{style.menuLink}" /> |
-					<g:Anchor ui:field="guideLink" addStyleNames="{style.menuLink}" /> |
-					<g:Anchor ui:field="aboutLink" addStyleNames="{style.menuLink}" />
-					|
-					<g:Anchor ui:field="logoutLink" addStyleNames="{style.menuLink}" />
-				</g:HTMLPanel>
+        @external obrand_logo;
+        .obrand_logo {
+        }
 
-				<div style="clear: both;" />
-			</g:HTMLPanel>
+        .menuBar {
+            float: right;
+            padding: 10px;
+        }
 
-			<g:HTMLPanel addStyleNames="{style.lowerPanel}">
-				<g:SimplePanel ui:field="searchPanelContainer" addStyleNames="{style.searchPanel}" />
+        .userName {
+            font-weight: bold;
+        }
 
-				<g:HTMLPanel ui:field="mainTabBarPanel" addStyleNames="{style.mainTabBar}">
-					<g:FlowPanel ui:field="mainTabContainer" addStyleNames="{style.mainTabContainer}"/>
-					<div style="clear: both;" />
-				</g:HTMLPanel>
-			</g:HTMLPanel>
+        a.menuLink {
+            color: white;
+        }
 
-		</g:HTMLPanel>
-	</g:HTMLPanel>
+        .searchPanel {
+            width: 100%;
+            float: left;
+        }
+
+        .mainTabBar {
+            position: absolute;
+            bottom: 0;
+            left: 250px;
+            height: 28px;
+        }
+
+        .mainTabContainer {
+            min-width: 800px;
+        }
+
+        .headerLabelStyle {
+            font-weight: bold;
+            color: white;
+            line-height: 35px;
+            width: 300px;
+            float: left;
+        }
+    </ui:style>
+
+    <g:HTMLPanel addStyleNames="{style.obrand_wrapperOuter}">
+        <g:HTMLPanel addStyleNames="{style.obrand_wrapperInner}">
+
+            <g:HTMLPanel addStyleNames="{style.upperPanel}">
+                <g:HTML addStyleNames="{style.obrand_logo}" />
+                <g:Label ui:field="headerLabel" addStyleNames="{style.headerLabelStyle}"/>
+
+                <g:HTMLPanel addStyleNames="{style.menuBar}">
+                    <g:InlineLabel text="{constants.loggedInUser}:" />
+                    <g:InlineLabel ui:field="userNameLabel" addStyleNames="{style.userName}" />
+                    | <g:Anchor ui:field="configureLink" addStyleNames="{style.menuLink}" /> |
+                    <g:Anchor ui:field="guideLink" addStyleNames="{style.menuLink}" /> |
+                    <g:Anchor ui:field="aboutLink" addStyleNames="{style.menuLink}" />
+                    |
+                    <g:Anchor ui:field="logoutLink" addStyleNames="{style.menuLink}" />
+                </g:HTMLPanel>
+
+                <div style="clear: both;" />
+            </g:HTMLPanel>
+
+            <g:HTMLPanel addStyleNames="{style.lowerPanel}">
+                <g:SimplePanel ui:field="searchPanelContainer" addStyleNames="{style.searchPanel}" />
+
+                <g:HTMLPanel ui:field="mainTabBarPanel" addStyleNames="{style.mainTabBar}">
+                    <g:FlowPanel ui:field="mainTabContainer" addStyleNames="{style.mainTabContainer}"/>
+                    <div style="clear: both;" />
+                </g:HTMLPanel>
+            </g:HTMLPanel>
+
+        </g:HTMLPanel>
+    </g:HTMLPanel>
 
 </ui:UiBinder>

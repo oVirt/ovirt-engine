@@ -2,118 +2,118 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
-	<ui:style type="org.ovirt.engine.ui.common.widget.tab.AbstractTab.Style">
-		.tab {
-			text-align: center;
-			overflow: visible;
-			font-family: Arial,sans-serif;
-			line-height: 19px;
-		}
+    <ui:style type="org.ovirt.engine.ui.common.widget.tab.AbstractTab.Style">
+        .tab {
+            text-align: center;
+            overflow: visible;
+            font-family: Arial,sans-serif;
+            line-height: 19px;
+        }
 
-		.left {
-		}
+        @external obrand_mainTab;
+        .obrand_mainTab {
+        }
 
-		.activeLeft {
-		}
+        .left {
+        }
 
-		.inactiveLeft {
-		}
+        .activeLeft {
+        }
 
-		.right {
-		}
+        .inactiveLeft {
+        }
 
-		.activeRight {
-		}
+        .right {
+        }
 
-		.inactiveRight {
-		}
+        .activeRight {
+        }
 
-		.middle {
-			background-repeat: repeat-x;
-			height: 21px;
-			width: 85px;
-			margin-left: 0px;
-			margin-right: 5px;
-			padding-left: 5px;
-			padding-right: 5px;
-			border-bottom-width: 0px;
-			border-top-left-radius: 9px;
-			border-top-right-radius: 9px;
-			border-bottom-right-radius: 0px;
-			border-bottom-left-radius: 0px;
-		}
+        .inactiveRight {
+        }
 
-		.activeMiddle {
-		    border: 1px solid #ffffff;
-			background-color: #ffffff;
-			font-size: 12.5px;
-			color: #719823;
-		}
+        .middle {
+            background-repeat: repeat-x;
+            height: 21px;
+            width: 85px;
+            margin-left: 0px;
+            margin-right: 5px;
+            padding-left: 5px;
+            padding-right: 5px;
+            border-bottom-width: 0px;
+            border-top-left-radius: 9px;
+            border-top-right-radius: 9px;
+            border-bottom-right-radius: 0px;
+            border-bottom-left-radius: 0px;
+        }
 
-		.inactiveMiddle {
-			border: 1px solid #a8db42;
-			background-color: #719823;
-		}
+        @external obrand_activeMiddle;
+        .obrand_activeMiddle {
+        }
 
-		.middleLink {
-			font-size: 12.5px;
-			font-family: Arial,sans-serif;
-			display: inline-block;
-			width: 100%;
-		}
+        @external obrand_inactiveMiddle;
+        .obrand_inactiveMiddle {
+        }
 
-		.activeMiddleLink {
-			color: #719823;
-		}
+        .middleLink {
+            font-size: 12.5px;
+            font-family: Arial,sans-serif;
+            display: inline-block;
+            width: 100%;
+        }
 
-		.inactiveMiddleLink {
-		    font-family: Arial,sans-serif;
-			color: #ffe0e0;
-		}
+        @external obrand_activeMiddleLink;
+        .obrand_activeMiddleLink {
+        }
 
-		.tab:hover .inactiveMiddleLink {
-			color: #ffffff;
-		}
+        .obrand_inactiveMiddleLink {
+            font-family: Arial,sans-serif;
+            color: #ffe0e0;
+        }
 
-		.anchor {
-			text-decoration: none;
-			border-style: none;
-		}
+        .tab:hover .inactiveMiddleLink {
+            color: #ffffff;
+        }
 
-		a.anchor, a.anchor:visited, a.anchor:hover {
-			color: transparent;
-		}
+        .anchor {
+            text-decoration: none;
+            border-style: none;
+        }
 
-		.arrow {
-		}
+        a.anchor, a.anchor:visited, a.anchor:hover {
+            color: transparent;
+        }
 
-		.activeArrow {
-			display: none;
-		}
+        .arrow {
+        }
 
-		.inactiveArrow {
-			display: none;
-		}
+        .activeArrow {
+            display: none;
+        }
 
-		.alignLeft {
-			float: left;
-		}
+        .inactiveArrow {
+            display: none;
+        }
 
-		.alignRight {
-			float: right;
-		}
-	</ui:style>
+        .alignLeft {
+            float: left;
+        }
 
-	<g:HTMLPanel ui:field="tabContainer" addStyleNames="{style.tab} {style.alignLeft}">
-		<a href="" ui:field="hyperlink" class="{style.anchor}">
-			<div ui:field="leftElement" class="{style.left} {style.inactiveLeft}" />
-			<div ui:field="rightElement" class="{style.right} {style.inactiveRight}" />
-			<div ui:field="middleElement" class="{style.middle} {style.inactiveMiddle}">
-				<g:Label ui:field="hyperlinkLabel" addStyleNames="{style.middleLink} {style.inactiveMiddleLink}"/>
-			</div>
-			<div ui:field="arrowElement" class="{style.arrow} {style.inactiveArrow}" />
-			<div style="clear: both;" />
-		</a>
-	</g:HTMLPanel>
+        .alignRight {
+            float: right;
+        }
+    </ui:style>
+
+    <g:HTMLPanel ui:field="tabContainer" addStyleNames="{style.tab} {style.alignLeft} {style.obrand_mainTab}">
+        <a href="" ui:field="hyperlink" class="{style.anchor}">
+        <div ui:field="leftElement" class="{style.left} {style.inactiveLeft}" />
+        <div ui:field="rightElement" class="{style.right} {style.inactiveRight}" />
+        <div ui:field="middleElement" class="{style.middle} {style.obrand_inactiveMiddle}">
+            <g:Label ui:field="hyperlinkLabel" addStyleNames="{style.middleLink} {style.obrand_inactiveMiddleLink}"/>
+        </div>
+        <div ui:field="arrowElement" class="{style.arrow} {style.inactiveArrow}" />
+        <div style="clear: both;" />
+    </a>
+    </g:HTMLPanel>
 
 </ui:UiBinder>

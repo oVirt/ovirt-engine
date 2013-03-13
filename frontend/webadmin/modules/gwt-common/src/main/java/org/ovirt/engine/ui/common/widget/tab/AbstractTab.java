@@ -37,13 +37,13 @@ public abstract class AbstractTab extends Composite implements TabDefinition {
 
         String inactiveRight();
 
-        String activeMiddle();
+        String obrand_activeMiddle();
 
-        String inactiveMiddle();
+        String obrand_inactiveMiddle();
 
-        String activeMiddleLink();
+        String obrand_activeMiddleLink();
 
-        String inactiveMiddleLink();
+        String obrand_inactiveMiddleLink();
 
         String activeArrow();
 
@@ -96,8 +96,8 @@ public abstract class AbstractTab extends Composite implements TabDefinition {
     public void activate() {
         leftElement.replaceClassName(style.inactiveLeft(), style.activeLeft());
         rightElement.replaceClassName(style.inactiveRight(), style.activeRight());
-        middleElement.replaceClassName(style.inactiveMiddle(), style.activeMiddle());
-        hyperlinkLabel.getElement().replaceClassName(style.inactiveMiddleLink(), style.activeMiddleLink());
+        middleElement.replaceClassName(style.obrand_inactiveMiddle(), style.obrand_activeMiddle());
+        hyperlinkLabel.getElement().replaceClassName(style.obrand_inactiveMiddleLink(), style.obrand_activeMiddleLink());
         arrowElement.replaceClassName(style.inactiveArrow(), style.activeArrow());
     }
 
@@ -105,8 +105,8 @@ public abstract class AbstractTab extends Composite implements TabDefinition {
     public void deactivate() {
         leftElement.replaceClassName(style.activeLeft(), style.inactiveLeft());
         rightElement.replaceClassName(style.activeRight(), style.inactiveRight());
-        middleElement.replaceClassName(style.activeMiddle(), style.inactiveMiddle());
-        hyperlinkLabel.getElement().replaceClassName(style.activeMiddleLink(), style.inactiveMiddleLink());
+        middleElement.replaceClassName(style.obrand_activeMiddle(), style.obrand_inactiveMiddle());
+        hyperlinkLabel.getElement().replaceClassName(style.obrand_activeMiddleLink(), style.obrand_inactiveMiddleLink());
         arrowElement.replaceClassName(style.activeArrow(), style.inactiveArrow());
     }
 

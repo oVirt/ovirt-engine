@@ -9,12 +9,12 @@ import java.util.ResourceBundle;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.ovirt.engine.core.utils.servlet.LocaleFilter;
 
 /**
  * This Servlet serves the splash page to allow users to select either web admin or user portal.
@@ -47,27 +47,11 @@ public class SplashServlet extends HttpServlet {
         Locale userLocale = (Locale) request.getAttribute(LocaleFilter.LOCALE);
         log.info("Detected Locale: " + userLocale.toLanguageTag());
         request.setAttribute(LOCALE_KEYS, getLocaleKeys());
-        setCookie(response, userLocale);
         RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/ovirt-engine.jsp");
         response.setContentType("text/html;charset=UTF-8");
         if (dispatcher != null) {
             dispatcher.include(request, response);
         }
-    }
-
-    /**
-     * Add the {@code Locale} cookie to the response.
-     * @param response The {@code HttpServletResponse}
-     * @param userLocale The {@code Locale} to put in the cookie.
-     */
-    private void setCookie(final HttpServletResponse response, final Locale userLocale) {
-        // Detected locale doesn't match the default locale, set a cookie.
-        Cookie cookie = new Cookie(LocaleFilter.LOCALE, userLocale.toString());
-        // Scope this cookie to the (root) application context URL
-        cookie.setPath("/" + getServletContext().getContextPath());
-        // This cookie never expires
-        cookie.setMaxAge(Integer.MAX_VALUE);
-        response.addCookie(cookie);
     }
 
     /**

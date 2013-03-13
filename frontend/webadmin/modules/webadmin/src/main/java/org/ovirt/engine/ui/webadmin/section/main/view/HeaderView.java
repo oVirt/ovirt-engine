@@ -4,6 +4,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.AbstractSingleSlotView;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationDynamicConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.HeaderPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -69,7 +70,8 @@ public class HeaderView extends AbstractSingleSlotView implements HeaderPresente
     FlowPanel mainTabContainer;
 
     @Inject
-    public HeaderView(ApplicationConstants constants) {
+    public HeaderView(ApplicationConstants constants,
+            ApplicationDynamicConstants dynamicConstants) {
         this.configureLink = new Anchor(constants.configureLinkLabel());
         this.logoutLink = new Anchor(constants.logoutLinkLabel());
         this.aboutLink = new Anchor(constants.aboutLinkLabel());
@@ -80,10 +82,10 @@ public class HeaderView extends AbstractSingleSlotView implements HeaderPresente
 
         // Ensure proper main tab bar position
         setMainTabBarOffset(mainTabBarInitialOffset);
-        localize(constants);
+        localize(dynamicConstants);
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize(ApplicationDynamicConstants constants) {
         headerLabel.setText(constants.mainHeaderLabel());
     }
 

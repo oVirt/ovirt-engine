@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalLoginModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.userportal.ApplicationConstants;
+import org.ovirt.engine.ui.userportal.ApplicationDynamicConstants;
 import org.ovirt.engine.ui.userportal.auth.CurrentUserRole;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
 import org.ovirt.engine.ui.userportal.utils.ConnectAutomaticallyManager;
@@ -40,7 +40,7 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
             LockInteractionManager lockInteractionManager,
             ConnectAutomaticallyManager connectAutomaticallyManager,
             CurrentUserRole userRole,
-            ApplicationConstants constants,
+            ApplicationDynamicConstants constants,
             ClientAgentType clientAgentType) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener,
                 user, eventBus, loginModelProvider, lockInteractionManager);

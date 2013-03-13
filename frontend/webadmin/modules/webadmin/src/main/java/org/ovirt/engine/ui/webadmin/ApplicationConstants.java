@@ -2004,14 +2004,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("VDSM Version -")
     String vdsmVerAbout();
 
-    @DefaultStringValue("oVirt Engine Hypervisor Hosts:")
-    String ovirtHypHostAbout();
-
     @DefaultStringValue("[No Hosts]")
     String noHostsAbout();
-
-    @DefaultStringValue("oVirt Engine for Servers and Desktops:")
-    String ovirtServersAndDesktopsAbout();
 
     // Event footer
     @DefaultStringValue("Last Message:")

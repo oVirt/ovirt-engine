@@ -1,0 +1,89 @@
+ovirt-engine Branding
+=====================
+
+OUTLINE
+-------
+
+ovirt-engine supports pluggable branding that may effect the user interface
+themes and selected strings. There may be several branding packages
+installed in specific order, each package overrides the previous ones
+for the resources it defines.
+
+PACKAGE FORMAT
+--------------
+
+branding.properties
+    This is the main properties file that defines where the branding
+    resources can be found. Resources are relative to branding.properties.
+
+    user_portal_css - Css to inject into user portal (required, can be empty).
+    web_admin_css - Css to inject into web admin (required, can be empty).
+    messages - Standard java message bundle (required).
+    version - The version of the branding in the package. Only versions
+      that match the one defined in the engine will be loaded (required,
+      theme will not load without it).
+
+The current branding version as defined by engine is 1.
+
+CSS INJECTION
+-------------
+
+CSS are injected in the same order of how the branding packages are declared,
+this way the last css's styles are defined in the correct order.
+
+The oVirt UI is broken up into three distinct modules at this point.
+ * User Portal
+ * Web Admin
+ * Common widgets
+
+Each of those modules contain some widgets that we can style using CSS
+clases. Refer to EXAMPLE to see a listing of available classes categorized
+by what widget is being styled.
+
+EXAMPLE
+-------
+
+If you look in packaging/branding/ovirt.brand you will see a functional
+example branding theme which just happens to be the default oVirt theme.
+You will notice the following files:
+
+1. branding.properties, This is the main properties file defining
+   the branding properties.
+2. user_portal.css, The user portal style sheet file.
+3. web_admin.css, The web admin style sheet file.
+4. messages.properties, A java message bundle in many different locales.
+
+Note that images are background images instead of image tags so we can use
+style sheets to replace them.
+
+As you can see the example branding theme references images from the images
+directory. There is no rule that images have to exist in an images directory
+but we highly suggest you organize your images in some way to make it easier
+to maintain them.
+
+INSTALLATION
+------------
+
+Branding packages location is ${engine_syconfdir}/branding/*.brand. Usually
+located at /etc/ovirt-engine/branding, within each package resides in its
+own directory.
+
+The branding directory is treated as a standard conf.d, in which directories
+are sorted by name, each package is read by order and overrides
+the previous ones.
+
+Since the default oVirt theme is required for consistent look & feel, make
+sure to install this theme either via README.developer or simply by creating
+symlink from packaging/branding/ovirt.brand to /etc/ovirt-engine/branding/ovirt.brand
+
+MAINTENANCE
+-----------
+
+To expose CSS class defined in ui.xml template via <ui:style> element:
+1. rename the given class to use obrand_ prefix and mark it as @external,
+   for example: @external obrand_myClass; .obrand_myClass { ..cssRules.. }
+2. move CSS rules out of ui.xml template into corresponding CSS file under
+   packaging/branding/ovirt.brand directory
+3. when styling <g:Image> or other widgets that work with ImageResource,
+   specify url="clear.cache.gif" to avoid broken images
+

@@ -1,4 +1,4 @@
-package org.ovirt.engine.core;
+package org.ovirt.engine.core.utils.servlet;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -6,12 +6,13 @@ import java.util.Locale;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.utils.LocaleUtils;
@@ -25,7 +26,6 @@ import org.ovirt.engine.core.utils.LocaleUtils;
  *   <li>If no headers, then default to the US locale</li>
  * </ol>
  */
-@WebFilter(filterName = "LocaleFilter")
 public class LocaleFilter implements Filter {
     /**
      * The logger.
@@ -37,11 +37,33 @@ public class LocaleFilter implements Filter {
      */
     public static final String LOCALE = "locale";
 
+    /**
+     * The default locale.
+     */
+    public static final Locale DEFAULT_LOCALE = Locale.US;
+
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response,
             final FilterChain chain) throws IOException, ServletException {
-        request.setAttribute(LOCALE, determineLocale((HttpServletRequest) request));
+        Locale locale = determineLocale((HttpServletRequest) request);
+        request.setAttribute(LOCALE, locale);
         chain.doFilter(request, response);
+        setCookie((HttpServletResponse) response, request.getServletContext(), locale);
+    }
+
+    /**
+     * Add the {@code Locale} cookie to the response.
+     * @param response The {@code HttpServletResponse}
+     * @param servletContext The {@code ServletContext} to get the request path from.
+     * @param userLocale The {@code Locale} to put in the cookie.
+     */
+    private void setCookie(final HttpServletResponse response, final ServletContext servletContext,
+            final Locale userLocale) {
+        // Detected locale doesn't match the default locale, set a cookie.
+        Cookie cookie = new Cookie(LocaleFilter.LOCALE, userLocale.toString());
+        cookie.setPath(servletContext.getContextPath());
+        cookie.setMaxAge(Integer.MAX_VALUE); // Doesn't expire.
+        response.addCookie(cookie);
     }
 
     /**
@@ -56,18 +78,18 @@ public class LocaleFilter implements Filter {
      * @return The determined {@code Locale}
      */
     private Locale determineLocale(final HttpServletRequest request) {
-        //Step 1.
+        // Step 1.
         Locale locale = LocaleUtils.getLocaleFromString(request.getParameter(LOCALE));
-        //Step 2.
-        if (locale == null) { //No locale parameter.
+        // Step 2.
+        if (locale == null) { // No locale parameter.
             locale = getLocaleFromCookies(request.getCookies());
         }
-        //Step 3.
-        if (locale == null) { //No selected locale in cookies.
+        // Step 3.
+        if (locale == null) { // No selected locale in cookies.
             locale = request.getLocale();
         }
-        //Step 4.
-        if (locale == null) { //No accept headers.
+        // Step 4.
+        if (locale == null) { // No accept headers.
             locale = Locale.US;
         }
         log.debug("Filter determined locale to be: " + locale.toLanguageTag());
@@ -94,11 +116,11 @@ public class LocaleFilter implements Filter {
 
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
-        //Do nothing
+        // Do nothing
     }
 
     @Override
     public void destroy() {
-        //Do nothing
+        // Do nothing
     }
 }

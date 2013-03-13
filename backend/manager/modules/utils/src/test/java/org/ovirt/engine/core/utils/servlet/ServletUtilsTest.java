@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.utils;
+package org.ovirt.engine.core.utils.servlet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -28,7 +28,7 @@ import org.junit.Test;
 public class ServletUtilsTest {
 
     /**
-     * Test method for {@link org.ovirt.engine.core.ServletUtils#canReadFile(java.io.File)}.
+     * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#canReadFile(java.io.File)}.
      */
     @Ignore("Fails when run as root")
     @Test
@@ -45,7 +45,7 @@ public class ServletUtilsTest {
     }
 
     /**
-     * Test method for {@link org.ovirt.engine.core.ServletUtils#writeFileToStream(java.io.OutputStream, java.io.File)}.
+     * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#writeFileToStream(java.io.OutputStream, java.io.File)}.
      */
     @Test
     public void testWriteFileToStream() {
@@ -62,7 +62,7 @@ public class ServletUtilsTest {
     }
 
     /**
-     * Test method for {@link org.ovirt.engine.core.ServletUtils#writeFileToStream(java.io.OutputStream, java.io.File)}.
+     * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#writeFileToStream(java.io.OutputStream, java.io.File)}.
      */
     @Test
     public void testWriteFileToStream_0SizeFile() throws Exception {
@@ -80,7 +80,7 @@ public class ServletUtilsTest {
     }
 
     /**
-     * Test method for {@link org.ovirt.engine.core.ServletUtils#writeFileToStream(java.io.OutputStream, java.io.File)}.
+     * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#writeFileToStream(java.io.OutputStream, java.io.File)}.
      */
     @Test
     public void testWriteFileToStream_IOException() {
@@ -95,7 +95,7 @@ public class ServletUtilsTest {
     }
 
     /**
-     * Test method for {@link org.ovirt.engine.core.ServletUtils#getFileSize(java.io.File)}.
+     * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#getFileSize(java.io.File)}.
      */
     @Test
     public void testGetFileSize() {
@@ -106,7 +106,7 @@ public class ServletUtilsTest {
     }
 
     /**
-     * Test method for {@link org.ovirt.engine.core.ServletUtils#isSane(java.lang.String)}.
+     * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#isSane(java.lang.String)}.
      */
     @Test
     public void testIsSane() {
@@ -122,7 +122,7 @@ public class ServletUtilsTest {
     }
 
     /**
-     * Test method for {@link org.ovirt.engine.core.ServletUtils#makeFileFromSanePath(java.lang.String, java.io.File)}.
+     * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#makeFileFromSanePath(java.lang.String, java.io.File)}.
      */
     @Test
     public void testGetFileFromString_NullPath() {
@@ -132,7 +132,7 @@ public class ServletUtilsTest {
     }
 
     /**
-     * Test method for {@link org.ovirt.engine.core.ServletUtils#makeFileFromSanePath(java.lang.String, java.io.File)}.
+     * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#makeFileFromSanePath(java.lang.String, java.io.File)}.
      */
     @Test
     public void testGetFileFromString_Happy() {
@@ -142,7 +142,7 @@ public class ServletUtilsTest {
     }
 
     /**
-     * Test method for {@link org.ovirt.engine.core.ServletUtils#makeFileFromSanePath(java.lang.String, java.io.File)}.
+     * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#makeFileFromSanePath(java.lang.String, java.io.File)}.
      */
     @Test
     public void testGetFileFrom_InsanePath() {
@@ -152,7 +152,7 @@ public class ServletUtilsTest {
     }
 
     /**
-     * Test method for {@link org.ovirt.engine.core.ServletUtils#sendFile(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String)}.
+     * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#sendFile(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String)}.
      * @throws IOException
      */
     @Test
@@ -167,7 +167,7 @@ public class ServletUtilsTest {
     }
 
     /**
-     * Test method for {@link org.ovirt.engine.core.ServletUtils#sendFile(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String)}.
+     * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#sendFile(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String)}.
      * @throws IOException
      */
     @Test
@@ -187,7 +187,7 @@ public class ServletUtilsTest {
     }
 
     /**
-     * Test method for {@link org.ovirt.engine.core.ServletUtils#sendFile(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String)}.
+     * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#sendFile(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String)}.
      * @throws IOException
      */
     @Test

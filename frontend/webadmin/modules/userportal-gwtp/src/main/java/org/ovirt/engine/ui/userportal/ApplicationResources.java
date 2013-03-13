@@ -5,18 +5,6 @@ import org.ovirt.engine.ui.common.CommonApplicationResources;
 import com.google.gwt.resources.client.ImageResource;
 
 public interface ApplicationResources extends CommonApplicationResources {
-
-    // Login popup resources
-
-    @Source("images/login/login_page_header_image.png")
-    ImageResource loginPopupHeaderImage();
-
-    @Source("images/login/login_page_header_logo.png")
-    ImageResource loginPopupHeaderLogoImage();
-
-    @Source("images/login/login_page_header_title.png")
-    ImageResource loginPopupHeaderTitleImage();
-
     // Basic icons
 
     @Source("images/general/tvlayout_disabled_mask.png")

@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationDynamicConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.login.presenter.LoginPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.system.InternalConfiguration;
@@ -96,6 +97,7 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
             ClientAgentType clientAgentType,
             ApplicationResources resources,
             ApplicationConstants constants,
+            ApplicationDynamicConstants dynamicConstants,
             InternalConfiguration intConf) {
         super(eventBus, resources, clientAgentType);
 
@@ -113,7 +115,7 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         asWidget().setGlassEnabled(false);
-        localize(constants);
+        localize(constants, dynamicConstants);
         addStyles();
 
         errorMessagePanel.setVisible(false);
@@ -128,8 +130,9 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
         }
     }
 
-    private void localize(ApplicationConstants constants) {
-        headerLabel.setText(constants.loginHeaderLabel());
+    private void localize(ApplicationConstants constants,
+            ApplicationDynamicConstants dynamicConstants) {
+        headerLabel.setText(dynamicConstants.loginHeaderLabel());
         userNameLabel.setText(constants.loginFormUserNameLabel());
         passwordLabel.setText(constants.loginFormPasswordLabel());
         domainLabel.setText(constants.loginFormDomainLabel());

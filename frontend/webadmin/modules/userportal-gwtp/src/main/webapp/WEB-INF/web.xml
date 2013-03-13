@@ -1,43 +1,55 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
 
-	<display-name>oVirt UserPortal UI</display-name>
+    <display-name>oVirt UserPortal UI</display-name>
 
-	<filter-mapping>
-		<filter-name>GwtCachingFilter</filter-name>
-		<url-pattern>/org.ovirt.engine.ui.userportal.UserPortal/*</url-pattern>
-	</filter-mapping>
+    <!-- Filters -->
+    <filter-mapping>
+        <filter-name>LocaleFilter</filter-name>
+        <url-pattern>/org.ovirt.engine.ui.userportal.UserPortal/*</url-pattern>
+    </filter-mapping>
 
-	<servlet-mapping>
-		<servlet-name>UserPortalHostPageServlet</servlet-name>
-		<url-pattern>/org.ovirt.engine.ui.userportal.UserPortal/UserPortal.html</url-pattern>
-	</servlet-mapping>
+    <filter-mapping>
+        <filter-name>GwtCachingFilter</filter-name>
+        <url-pattern>/org.ovirt.engine.ui.userportal.UserPortal/*</url-pattern>
+        <url-pattern>/theme/*</url-pattern>
+    </filter-mapping>
 
-	<servlet-mapping>
-		<servlet-name>GenericApiServlet</servlet-name>
-		<url-pattern>/org.ovirt.engine.ui.userportal.UserPortal/GenericApiGWTService</url-pattern>
-	</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UserPortalHostPageServlet</servlet-name>
+        <url-pattern>/org.ovirt.engine.ui.userportal.UserPortal/UserPortal.html</url-pattern>
+    </servlet-mapping>
 
-	<!-- Default page to serve -->
-	<welcome-file-list>
-		<welcome-file>index.html</welcome-file>
-	</welcome-file-list>
+    <servlet-mapping>
+        <servlet-name>GenericApiServlet</servlet-name>
+        <url-pattern>/org.ovirt.engine.ui.userportal.UserPortal/GenericApiGWTService</url-pattern>
+    </servlet-mapping>
 
-	<!-- Error page to present -->
-	<error-page>
-		<error-code>404</error-code>
-		<location>/404.html</location>
-	</error-page>
+    <servlet-mapping>
+        <servlet-name>BrandingServlet</servlet-name>
+        <url-pattern>/theme/*</url-pattern>
+    </servlet-mapping>
 
-	<!-- Confidentiality -->
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>everything</web-resource-name>
-			<url-pattern>/*</url-pattern>
-		</web-resource-collection>
-		<user-data-constraint>
-			<transport-guarantee>NONE</transport-guarantee>
-		</user-data-constraint>
-	</security-constraint>
+    <!-- Default page to serve -->
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+
+    <!-- Error page to present -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/404.html</location>
+    </error-page>
+
+    <!-- Confidentiality -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>everything</web-resource-name>
+            <url-pattern>/*</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
 
 </web-app>

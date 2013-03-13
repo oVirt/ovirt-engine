@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.ovirt.engine.core.utils.ServletUtils;
+import org.ovirt.engine.core.utils.servlet.ServletUtils;
 
 /**
  * Serves UI plugin static resources from local file system, relative to

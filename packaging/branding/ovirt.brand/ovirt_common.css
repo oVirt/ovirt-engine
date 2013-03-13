@@ -1,0 +1,89 @@
+@import url("gwt_common.css");
+
+/* LoginPopupView.ui.xml:
+These classes allow you to modify the border and header of the
+login window. This is common between the user portal and webadmin
+interface */
+.obrand_loginPopupHeaderLogoImage {
+
+    background-image: url(images/login/login_page_header_logo.png);
+    width: 83px;
+    height: 44px;
+    border: 0px;
+    display: block;
+}
+
+.obrand_loginPopupHeaderCenter {
+    background: url(images/login_header_background_repetitive.png) repeat-x;
+    width: 248px;
+    height: 44px;
+    text-align: left;
+    padding-left: 6px;
+    padding-top: 14px;
+}
+
+.obrand_loginPopupHeaderImage {
+    background: url(images/login/login_page_header_image.png);
+    width: 133px;
+    height: 44px;
+    border: 0px;
+    display: block;
+}
+
+/* SimpleDialogPanel:
+These classes allow you to modify the header of all the popup windows
+in the user portal and web admin. The border is defined in gwt-common.css */
+.obrand_dialogHeaderImage {
+    background-image: url(images/dialog/dialog_header_image.png);
+    width: 118px;
+    height: 27px;
+    border: 0px;
+    display: block;
+}
+
+.obrand_dialogLogoImage {
+    background-image: url(images/dialog/blank.png);
+    width: 27px;
+    height: 27px;
+    border: 0px;
+    display: block;
+}
+
+.obrand_headerCenterPanel {
+    position: absolute;
+    background: url(images/dialog_header_background_repetitive.png) repeat-x;
+    height: 27px;
+    line-height: 27px;
+    width: auto;
+    left: 32px;
+    right: 123px;
+}
+
+/* ErrorPopupView.ui.xml:
+This class allows you to change the error icon on the error popup window. */
+.obrand_dialogLogoErrorImage {
+    backgroud-image: url(images/dialog/error.png);
+    width: 27px;
+    height: 27px;
+    border: 0px;
+}
+
+/* DialogTab.ui.xml:
+This class allows you to change the active tab on the left of some of the
+popup windows, for instance for creating a new VM */
+.obrand_active {
+    background-color: #82AA32;
+    color: white;
+    font-weight: bold;
+    border: 1px solid #345B7A;
+}
+
+/* VmDiskPopupWidget.ui.xml */
+.obrand_topPanel {
+	background-color: #688B21;
+}
+
+.obrand_diskTypePanel {
+	background-color: #82AA32;
+}
+

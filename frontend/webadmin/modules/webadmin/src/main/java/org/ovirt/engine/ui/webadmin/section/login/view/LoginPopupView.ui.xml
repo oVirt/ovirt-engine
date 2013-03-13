@@ -96,24 +96,27 @@
 			left: 5px;
 		}
 
-		.loginPopupHeaderCenter {
-			background: url(images/login_header_background_repetitive.png) repeat-x;
-			width: 248px;
-			height: 44px;
-			text-align: left;
-			padding-left: 6px;
-			padding-top: 14px;
+        @external obrand_loginPopupHeaderLogoImage;
+        .obrand_loginPopupHeaderLogoImage {
+        }
+
+        @external obrand_loginPopupHeaderCenter;
+		.obrand_loginPopupHeaderCenter {
 		}
+
+        @external obrand_loginPopupHeaderImage;
+        .obrand_loginPopupHeaderImage {
+        }
 	</ui:style>
 
 	<d:SimplePopupPanel ui:field="popup" width="480px">
 		<d:header>
 			<g:HorizontalPanel styleName="{loginPopupStyle.loginPopupHeader}">
-				<g:Image resource='{resources.loginPopupHeaderLogoImage}' />
-				<g:HTMLPanel styleName="{loginPopupStyle.loginPopupHeaderCenter}">
+				<g:Image styleName="obrand_loginPopupHeaderLogoImage" url="clear.cache.gif" />
+				<g:HTMLPanel styleName="{loginPopupStyle.obrand_loginPopupHeaderCenter}">
 					<g:Label ui:field="headerLabel" addStyleNames="{style.headerLabelStyle}"/>
 				</g:HTMLPanel>
-				<g:Image resource='{resources.loginPopupHeaderImage}' />
+				<g:Image styleName="obrand_loginPopupHeaderImage" url="clear.cache.gif" />
 			</g:HorizontalPanel>
 		</d:header>
 

@@ -5,23 +5,20 @@
 	<ui:style type="org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab.Style">
 		.tab {
 			padding: 5px;
-			cursor: pointer;			
+			cursor: pointer;
 		}
-		
-		.active {
-			background-color: #82AA32;
-			color: white;
-			font-weight: bold;
-			border: 1px solid #345B7A;
+
+        @external obrand_active;
+		.obrand_active {
 		}
-		
+
 		.inactive {
 			background-color: #F3F3F3;
 			color: black;
 			font-weight: normal;
 			border: 1px solid #E5E5E5;
 		}
-		
+
 		.inactive:hover {
 			background-color: #D3D3D3;
 		}

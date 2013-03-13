@@ -29,7 +29,7 @@ public class DialogTab extends AbstractValidatedWidget implements HasClickHandle
     }
 
     interface Style extends CssResource {
-        String active();
+        String obrand_active();
 
         String inactive();
     }
@@ -57,7 +57,7 @@ public class DialogTab extends AbstractValidatedWidget implements HasClickHandle
 
     @Override
     public void markAsValid() {
-        tabContainer.getElement().addClassName(isActive ? style.active() : style.inactive());
+        tabContainer.getElement().addClassName(isActive ? style.obrand_active() : style.inactive());
     }
 
     @Override
@@ -91,12 +91,12 @@ public class DialogTab extends AbstractValidatedWidget implements HasClickHandle
 
     public void activate() {
         isActive = true;
-        tabContainer.getElement().replaceClassName(style.inactive(), style.active());
+        tabContainer.getElement().replaceClassName(style.inactive(), style.obrand_active());
     }
 
     public void deactivate() {
         isActive = false;
-        tabContainer.getElement().replaceClassName(style.active(), style.inactive());
+        tabContainer.getElement().replaceClassName(style.obrand_active(), style.inactive());
     }
 
     public void setTabLabelStyle(String styleName) {

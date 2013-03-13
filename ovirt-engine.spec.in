@@ -570,6 +570,12 @@ fi
 %{engine_data}/services/config.py*
 %{engine_data}/services/service.py*
 
+# branding
+%dir %{engine_etc}/branding
+%dir %{engine_data}/branding
+%{engine_etc}/branding/00-ovirt.brand
+%{engine_data}/branding/ovirt.brand
+
 # Jar files used by all the components:
 %dir %{engine_java}
 %{engine_java}/common.jar

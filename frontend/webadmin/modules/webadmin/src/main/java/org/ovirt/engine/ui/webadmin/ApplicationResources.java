@@ -94,16 +94,6 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/Lock.png")
     ImageResource lockImage();
 
-    /* Login popup resources */
-    @Source("images/login/login_page_header_image.png")
-    ImageResource loginPopupHeaderImage();
-
-    @Source("images/login/login_page_header_logo.png")
-    ImageResource loginPopupHeaderLogoImage();
-
-    @Source("images/login/login_page_header_title.png")
-    ImageResource loginPopupHeaderTitleImage();
-
     @Source("images/logo.png")
     ImageResource logoImage();
 

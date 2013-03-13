@@ -4,7 +4,7 @@ import com.google.gwt.resources.client.CssResource;
 
 public interface SideTabWithDetailsViewStyle extends CssResource {
 
-    String mainBarPanel();
+    String obrand_mainBarPanel();
 
     String mainContentPanel();
 

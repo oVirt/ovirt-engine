@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.utils;
+package org.ovirt.engine.core.utils.servlet;
 
 import java.io.File;
 import java.io.FileInputStream;

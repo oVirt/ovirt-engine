@@ -18,6 +18,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +38,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.frontend.server.gwt.branding.BrandingManager;
+import org.ovirt.engine.ui.frontend.server.gwt.branding.BrandingTheme;
 
 public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamicHostPageServlet> {
 
@@ -53,6 +56,9 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
 
     @Mock
     private BackendLocal mockBackend;
+
+    @Mock
+    private BrandingManager mockBrandingManager;
 
     @Mock
     private VdcUser mockUser;
@@ -76,12 +82,15 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
 
     @Before
     public void setUp() throws NoSuchAlgorithmException {
-        when(mockRequest.getAttribute(GwtDynamicHostPageServlet.ATTR_SELECTOR_SCRIPT)).thenReturn(SELECTOR_SCRIPT);
+        when(mockRequest.getAttribute(GwtDynamicHostPageServlet.
+                MD5Attributes.ATTR_SELECTOR_SCRIPT.getKey())).
+                thenReturn(SELECTOR_SCRIPT);
         when(mockRequest.getSession()).thenReturn(mockSession);
         when(mockSession.getId()).thenReturn("sessionId"); //$NON-NLS-1$
         when(mockUser.getUserId()).thenReturn(new Guid());
         when(mockUser.getUserName()).thenReturn("admin"); //$NON-NLS-1$
         when(mockUser.getDomainControler()).thenReturn("internal"); //$NON-NLS-1$
+        when(mockBrandingManager.getBrandingThemes()).thenReturn(new ArrayList<BrandingTheme>());
         stubGetUserBySessionIdQuery();
         stubGetConfigurationValuePublicQuery();
         setUpTestServlet();
@@ -91,6 +100,7 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
         testServlet = getTestServletSpy();
         testServlet.setBackend(mockBackend);
         testServlet.init();
+        testServlet.setBrandingManager(mockBrandingManager);
         doReturn(mockDigest).when(testServlet).createMd5Digest();
     }
 
@@ -101,19 +111,32 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
         doReturn(null).when(testServlet).getLoggedInUser(anyString());
         doReturn(mockDigest).when(testServlet).getMd5Digest(any(HttpServletRequest.class));
         testServlet.doGet(mockRequest, mockResponse);
-        verify(mockRequest).setAttribute(eq(GwtDynamicHostPageServlet.ATTR_SELECTOR_SCRIPT), anyString());
-        verify(mockRequest, never()).setAttribute(eq(GwtDynamicHostPageServlet.ATTR_USER_INFO), any(ObjectNode.class));
+        verify(mockRequest).setAttribute(eq(GwtDynamicHostPageServlet.MD5Attributes.ATTR_SELECTOR_SCRIPT.getKey()),
+                anyString());
+        verify(mockRequest, never()).setAttribute(eq(GwtDynamicHostPageServlet.MD5Attributes.ATTR_USER_INFO.getKey()),
+                any(ObjectNode.class));
+        verify(mockRequest).setAttribute(GwtDynamicHostPageServlet.MD5Attributes.ATTR_STYLES.getKey(),
+                new ArrayList<BrandingTheme>());
+        verify(mockRequest).setAttribute(GwtDynamicHostPageServlet.MD5Attributes.ATTR_MESSAGES.getKey(),
+                null); //$NON-NLS-1$
     }
 
     @Test
     public void testDoGet_WithUserInfoObject() throws IOException, ServletException, NoSuchAlgorithmException {
         String userInfo = "{ \"foo\": \"bar\" }"; //$NON-NLS-1$
         when(mockUserInfoObject.toString()).thenReturn(userInfo);
-        when(mockRequest.getAttribute(GwtDynamicHostPageServlet.ATTR_USER_INFO)).thenReturn(mockUserInfoObject);
+        when(mockRequest.getAttribute(GwtDynamicHostPageServlet.MD5Attributes.ATTR_USER_INFO.getKey())).
+            thenReturn(mockUserInfoObject);
         doReturn(mockDigest).when(testServlet).getMd5Digest(any(HttpServletRequest.class));
         testServlet.doGet(mockRequest, mockResponse);
-        verify(mockRequest).setAttribute(eq(GwtDynamicHostPageServlet.ATTR_SELECTOR_SCRIPT), anyString());
-        verify(mockRequest).setAttribute(eq(GwtDynamicHostPageServlet.ATTR_USER_INFO), any(ObjectNode.class));
+        verify(mockRequest).setAttribute(eq(GwtDynamicHostPageServlet.MD5Attributes.ATTR_SELECTOR_SCRIPT.getKey()),
+                anyString());
+        verify(mockRequest).setAttribute(eq(GwtDynamicHostPageServlet.MD5Attributes.ATTR_USER_INFO.getKey()),
+                any(ObjectNode.class));
+        verify(mockRequest).setAttribute(GwtDynamicHostPageServlet.MD5Attributes.ATTR_STYLES.getKey(),
+                new ArrayList<BrandingTheme>());
+        verify(mockRequest).setAttribute(GwtDynamicHostPageServlet.MD5Attributes.ATTR_MESSAGES.getKey(),
+                null); //$NON-NLS-1$
     }
 
     @Test
@@ -189,7 +212,9 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
     public void testGetMd5Digest_WithUserInfoObject() throws NoSuchAlgorithmException {
         String userInfo = "{ \"foo\": \"bar\" }"; //$NON-NLS-1$
         when(mockUserInfoObject.toString()).thenReturn(userInfo);
-        when(mockRequest.getAttribute(GwtDynamicHostPageServlet.ATTR_USER_INFO)).thenReturn(mockUserInfoObject);
+        when(mockRequest.getAttribute(GwtDynamicHostPageServlet.
+                MD5Attributes.ATTR_USER_INFO.getKey())).
+                thenReturn(mockUserInfoObject);
         MessageDigest result = testServlet.getMd5Digest(mockRequest);
         assertEquals(result, mockDigest);
         verify(mockDigest, atLeast(2)).update(byteArrayCaptor.capture());

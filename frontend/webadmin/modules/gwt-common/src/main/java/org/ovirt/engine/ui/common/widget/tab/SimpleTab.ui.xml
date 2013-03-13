@@ -4,7 +4,7 @@
 
 	<ui:style type="org.ovirt.engine.ui.common.widget.tab.AbstractTab.Style">
 		.tab {
-			height: 28px;			
+			height: 28px;
 			min-width: 80px;
 			text-align: center;
 			overflow: visible;
@@ -42,19 +42,19 @@
 
 		.middle {
 			background-repeat: repeat-x;
-			height: 28px;			
+			height: 28px;
 			margin-left: 5px;
 			margin-right: 5px;
 			padding-left: 5px;
 			padding-right: 5px;
 		}
 
-		.activeMiddle {
+		.obrand_activeMiddle {
 			background-image: url(images/tab_middle_selected.png);
 			font-size: 12.5px;
 		}
 
-		.inactiveMiddle {
+		.obrand_inactiveMiddle {
 			background-image: url(images/main_tab_middle.png);
 		}
 
@@ -64,11 +64,11 @@
 			font-family: Arial,sans-serif;
 		}
 
-		.activeMiddleLink {
+		.obrand_activeMiddleLink {
 			color: #3f5674;
 		}
 
-		.inactiveMiddleLink {
+		.obrand_inactiveMiddleLink {
 			color: #666666;
 		}
 
@@ -101,11 +101,11 @@
 		.inactiveArrow {
 			display: none;
 		}
-		
+
 		.alignLeft {
 			float: left;
 		}
-		
+
 		.alignRight {
 			float: right;
 		}
@@ -115,8 +115,8 @@
 		<a href="" ui:field="hyperlink" class="{style.anchor}">
 			<div ui:field="leftElement" class="{style.left} {style.inactiveLeft}" />
 			<div ui:field="rightElement" class="{style.right} {style.inactiveRight}" />
-			<div ui:field="middleElement" class="{style.middle} {style.inactiveMiddle}">
-				<g:Label ui:field="hyperlinkLabel" addStyleNames="{style.middleLink} {style.inactiveMiddleLink}"/>
+			<div ui:field="middleElement" class="{style.middle} {style.obrand_inactiveMiddle}">
+				<g:Label ui:field="hyperlinkLabel" addStyleNames="{style.middleLink} {style.obrand_inactiveMiddleLink}"/>
 			</div>
 			<div ui:field="arrowElement" class="{style.arrow} {style.inactiveArrow}" />
 			<div style="clear: both;" />

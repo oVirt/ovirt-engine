@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.system.ErrorPopupManagerImpl;
 import org.ovirt.engine.ui.common.system.LockInteractionManager;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
+import org.ovirt.engine.ui.common.utils.DynamicConstants;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 
 import com.google.gwt.event.shared.EventBus;
@@ -45,11 +46,13 @@ public abstract class BaseSystemModule extends AbstractGinModule {
             Class<? extends CommonApplicationConstants> constants,
             Class<? extends CommonApplicationMessages> messages,
             Class<? extends CommonApplicationResources> resources,
-            Class<? extends CommonApplicationTemplates> templates) {
+            Class<? extends CommonApplicationTemplates> templates,
+            Class<? extends DynamicConstants> dynamicConstants) {
         bind(CommonApplicationConstants.class).to(constants).in(Singleton.class);
         bind(CommonApplicationMessages.class).to(messages).in(Singleton.class);
         bind(CommonApplicationResources.class).to(resources).in(Singleton.class);
         bind(CommonApplicationTemplates.class).to(templates).in(Singleton.class);
+        bind(DynamicConstants.class).to(dynamicConstants).in(Singleton.class);
     }
 
 }

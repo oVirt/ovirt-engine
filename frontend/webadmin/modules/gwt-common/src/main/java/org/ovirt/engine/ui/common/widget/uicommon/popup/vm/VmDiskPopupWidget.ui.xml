@@ -4,7 +4,7 @@
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
 
 	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
-	
+
 	<ui:style>
 		.container {
 			width: 100%;
@@ -17,8 +17,8 @@
 			margin-top: 10px;
 		}
 
-		.topPanel {
-			background-color: #688B21;
+        @external obrand_topPanel;
+		.obrand_topPanel {
 			height: 36px;
 			width: 100%;
 			padding-top: 4px;
@@ -27,8 +27,8 @@
 			font-weight: bold;
 		}
 
-		.diskTypePanel {
-			background-color: #82AA32;
+        @external obrand_diskTypePanel;
+		.obrand_diskTypePanel {
 			height: 36px;
 			width: 100%;
 			padding-top: 6px;
@@ -77,10 +77,10 @@
 	</ui:style>
 
 	<g:FlowPanel addStyleNames="{style.container}">
-		<g:HorizontalPanel ui:field="topPanel" addStyleNames="{style.topPanel}">
+		<g:HorizontalPanel ui:field="topPanel" addStyleNames="{style.obrand_topPanel}">
 			<e:EntityModelCheckBoxEditor ui:field="attachEditor" />
 		</g:HorizontalPanel>
-		<g:HorizontalPanel ui:field="diskTypePanel" addStyleNames="{style.diskTypePanel}">
+		<g:HorizontalPanel ui:field="diskTypePanel" addStyleNames="{style.obrand_diskTypePanel}">
 			<g:RadioButton ui:field="internalDiskRadioButton" ui:name="disktype" ui:text="{constants.internalDisk}" addStyleNames="{style.diskTypeRadioButton}"/>
 			<g:RadioButton ui:field="externalDiskRadioButton" ui:name="disktype" ui:text="{constants.externalDisk}" addStyleNames="{style.diskTypeRadioButton}"/>
 		</g:HorizontalPanel>

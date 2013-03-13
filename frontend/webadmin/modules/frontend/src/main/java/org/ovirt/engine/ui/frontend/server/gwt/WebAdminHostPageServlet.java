@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.ui.frontend.server.gwt.branding.BrandingTheme.ApplicationType;
 import org.ovirt.engine.ui.frontend.server.gwt.plugin.PluginData;
 import org.ovirt.engine.ui.frontend.server.gwt.plugin.PluginDataManager;
 
@@ -39,12 +40,18 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
     }
 
     @Override
+    public ApplicationType getApplicationType() {
+        return ApplicationType.WEBADMIN;
+    }
+
+    @Override
     protected boolean filterQueries() {
         return false;
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
+        ServletException {
         // Set attribute for applicationMode object
         Integer applicationMode = getApplicationMode(request.getSession().getId());
         request.setAttribute(ATTR_APPLICATION_MODE, getApplicationModeObject(applicationMode));
