@@ -268,7 +268,7 @@ public class VdsUpdateRunTimeInfo {
         Integer minAvailableThreshold = Config.GetValue(ConfigValues.LogPhysicalMemoryThresholdInMB);
         Integer maxUsedPercentageThreshold = Config.GetValue(ConfigValues.LogMaxPhysicalMemoryUsedThresholdInPercentage);
 
-        if (stat.getmem_available() == null) {
+        if (stat.getmem_available() == null || stat.getusage_mem_percent() == null) {
             return;
         }
 
