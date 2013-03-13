@@ -74,8 +74,15 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
                 getVdsGroupDAO().get(getNetworkCluster().getClusterId()).getcompatibility_version();
         NetworkClusterValidator validator =
                 new NetworkClusterValidator(getNetworkCluster(), clusterVersion);
-        return (!NetworkUtils.isManagementNetwork(getNetwork()) || validate(validator.managementNetworkAttachment(getNetworkName())))
-                && validate(validator.migrationPropertySupported(getNetworkName()));
+        return (!NetworkUtils.isManagementNetwork(getNetwork())
+                || validate(validator.managementNetworkAttachment(getNetworkName())))
+                && validate(validator.migrationPropertySupported(getNetworkName()))
+                && (getNetwork().getProvidedBy() == null || validateExternalNetwork(validator));
+    }
+
+    private boolean validateExternalNetwork(NetworkClusterValidator validator) {
+        return validate(validator.externalNetworkNotDisplay(getNetworkName()))
+                && validate(validator.externalNetworkNotRequired(getNetworkName()));
     }
 
     private ValidationResult networkClusterAttachmentExists() {

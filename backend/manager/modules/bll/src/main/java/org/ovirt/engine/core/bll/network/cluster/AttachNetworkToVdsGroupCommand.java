@@ -20,6 +20,8 @@ import org.ovirt.engine.core.utils.NetworkUtils;
 public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupParameter> extends
         VdsGroupCommandBase<T> {
 
+    private Network persistedNetwork;
+
     public AttachNetworkToVdsGroupCommand(T parameters) {
         super(parameters);
         setVdsGroupId(parameters.getVdsGroupId());
@@ -71,17 +73,32 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     private boolean validateAttachment() {
         NetworkClusterValidator validator =
                 new NetworkClusterValidator(getNetworkCluster(), getVdsGroup().getcompatibility_version());
-        return (!NetworkUtils.isManagementNetwork(getNetwork()) || validate(validator.managementNetworkAttachment(getNetworkName())))
-                && validate(validator.migrationPropertySupported(getNetworkName()));
+        return (!NetworkUtils.isManagementNetwork(getNetwork())
+                || validate(validator.managementNetworkAttachment(getNetworkName())))
+                && validate(validator.migrationPropertySupported(getNetworkName()))
+                && (getPersistedNetwork().getProvidedBy() == null
+                || validateExternalNetwork(validator));
+    }
+
+    private boolean validateExternalNetwork(NetworkClusterValidator validator) {
+        return validate(validator.externalNetworkNotDisplay(getNetworkName()))
+                && validate(validator.externalNetworkNotRequired(getNetworkName()));
     }
 
     private boolean logicalNetworkExists() {
-        if (getNetworkDAO().get(getNetworkCluster().getNetworkId()) != null) {
+        if (getPersistedNetwork() != null) {
             return true;
         }
 
         addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS);
         return false;
+    }
+
+    private Network getPersistedNetwork() {
+        if (persistedNetwork == null) {
+            persistedNetwork = getNetworkDAO().get(getNetworkCluster().getNetworkId());
+        }
+        return persistedNetwork;
     }
 
     private boolean changesAreClusterCompatible() {
