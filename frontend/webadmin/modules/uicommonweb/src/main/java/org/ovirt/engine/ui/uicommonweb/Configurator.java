@@ -18,6 +18,8 @@ import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.i18n.client.LocaleInfo;
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
 
 /**
  * Provides configuration values for client side.
@@ -377,6 +379,45 @@ public abstract class Configurator {
     public Version parseVersion(String versionStr) {
         return new Version(versionStr.replace(',', '.').replace("\n", "")); //$NON-NLS-1$ //$NON-NLS-2$
     }
+
+    // This code is copy-pasted from ConsoleUtils. The ConsoleUtils with lots of other
+    // console related logic is being extracted to common code. As soon as this
+    // effort will be finished, this code will have to be deleted and the corresponding
+    // logic will have to be called.
+    // TODO tjelinek: as soon as the console extraction will be done, get rid of this code
+    public boolean isCtrlAltDeleteEnabled() {
+        if (!clientOsType().equalsIgnoreCase("Windows")) { //$NON-NLS-1$
+            return true;
+        }
+
+        float ntVersion = extractNtVersion(getUserAgentString());
+
+        // For Windows 7 and Windows Server 2008 R2 it is NT 6.1
+        // For Windows 8 and Windows Server 2012 it is NT 6.2
+        // The passing of ctrl+alt+del is enabled only on windows older
+        // than Windows 7, so NT less than 6.1
+        if (ntVersion >= 6.1f) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private float extractNtVersion(String userAgentType) {
+        RegExp pattern = RegExp.compile(".*windows nt (\\d+\\.\\d+).*"); //$NON-NLS-1$
+        MatchResult matcher = pattern.exec(userAgentType.toLowerCase());
+        boolean matchFound = (matcher != null);
+        if (matchFound) {
+            return Float.parseFloat(matcher.getGroup(1));
+        }
+
+        return -1;
+    }
+
+    public native String getUserAgentString() /*-{
+    var userAgent = navigator.userAgent;
+    return userAgent;
+    }-*/;
 
     protected abstract Event getSpiceVersionFileFetchedEvent();
 

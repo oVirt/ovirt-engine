@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.HibernateVmParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
@@ -143,6 +144,13 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             // If it is not windows or SPICE guest agent is not installed, make sure the WAN options are disabled.
             if (!getEntity().getVmOs().isWindows() || !getEntity().getHasSpiceDriver()) {
                 getspice().setWanOptionsEnabled(false);
+            }
+
+            // make sure to not send the ctrl+alt+delete and TaskMgrExecution if not supported
+            Configurator configurator = (Configurator) TypeResolver.getInstance().Resolve(Configurator.class);
+            if (!configurator.isCtrlAltDeleteEnabled()) {
+                getspice().setSendCtrlAltDelete(false);
+                getspice().setNoTaskMgrExecution(false);
             }
 
             UICommand setVmTicketCommand = new UICommand("setVmCommand", new BaseCommandTarget() { //$NON-NLS-1$

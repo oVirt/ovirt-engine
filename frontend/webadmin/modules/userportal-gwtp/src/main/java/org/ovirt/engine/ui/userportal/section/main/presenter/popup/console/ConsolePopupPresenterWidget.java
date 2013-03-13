@@ -188,9 +188,6 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         boolean ctrlAltDelEnabled = consoleUtils.isCtrlAltDelEnabled();
         getView().setCtrlAltDelEnabled(ctrlAltDelEnabled, constants.ctrlAltDeletIsNotSupportedOnWindows());
-        if (!ctrlAltDelEnabled && spice != null) {
-            spice.setSendCtrlAltDelete(false);
-        }
     }
 
     @Override
