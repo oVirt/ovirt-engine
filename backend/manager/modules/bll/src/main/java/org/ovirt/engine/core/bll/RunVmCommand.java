@@ -265,7 +265,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     else {
                         statelessVmTreatment();
                     }
-                } else if (!getParameters().getIsInternal() && !_isRerun
+                } else if (!isInternalExecution() && !_isRerun
                         && getVm().getStatus() != VMStatus.Suspended
                         && statelessSnapshotExistsForVm()
                         && !isVMPartOfManualPool()) {
@@ -460,7 +460,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             }
             if (mResume) {
                 return getSucceeded() ? AuditLogType.USER_RESUME_VM : AuditLogType.USER_FAILED_RESUME_VM;
-            } else if (getParameters() != null && getParameters().getIsInternal()) {
+            } else if (isInternalExecution()) {
                 return getSucceeded() ?
                         (statelessSnapshotExistsForVm() ? AuditLogType.VDS_INITIATED_RUN_VM_AS_STATELESS
                                 : AuditLogType.VDS_INITIATED_RUN_VM) :
@@ -662,11 +662,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     protected boolean canDoAction() {
-        // setting the RunVmParams Internal flag according to the command Internal flag.
-        // we can not use only the command Internal flag and remove this flag from RunVmParams
-        // since canRunVm is static and can not call non-static method isInternalExecution
-        getParameters().setIsInternal(isInternalExecution());
-
         VM vm = getVm();
 
         if (vm == null) {
@@ -685,7 +680,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                         vmDisks,
                         getParameters().getBootSequence(),
                         getStoragePool(),
-                        getParameters().getIsInternal(),
+                        isInternalExecution(),
                         getParameters().getDiskPath(),
                         getParameters().getFloppyPath(),
                         getParameters().getRunAsStateless(),
@@ -743,8 +738,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             Job job = JobRepositoryFactory.getJobRepository().getJobWithSteps(step.getJobId());
             Step executingStep = job.getDirectStep(StepEnum.EXECUTING);
             // We would like to to set the run stateless step as substep of executing step
-            getParameters().setIsInternal(true);
-            // The iternal command should be monitored for tasks
+            setInternalExecution(true);
+            // The internal command should be monitored for tasks
             runStatelessVmCtx.setMonitored(true);
             Step runStatelessStep =
                     ExecutionHandler.addSubStep(getExecutionContext(),

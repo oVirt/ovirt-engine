@@ -19,7 +19,6 @@ public class RunVmParams extends VmOperationParameterBase {
     private String privateFloppyPath;
     private String privateClientIp;
     private VdcUser privateRequestingUser;
-    private boolean _internal;
     private Guid _destinationVdsId;
     private boolean privateReinitialize;
     private Boolean privateRunAsStateless;
@@ -36,7 +35,6 @@ public class RunVmParams extends VmOperationParameterBase {
             Boolean runAndPause, Boolean useVnc, boolean acpiEnable, boolean win2kHackEnable,
             String clientIp, boolean runAsStateless) {
         super(vmId);
-        _internal = false;
         _bootSequence = bootSequence;
         _diskPath = diskPath;
         _kvmEnable = kvmEnable;
@@ -50,7 +48,6 @@ public class RunVmParams extends VmOperationParameterBase {
 
     public RunVmParams(Guid vmId) {
         super(vmId);
-        _internal = false;
         _diskPath = "";
         _kvmEnable = true;
         _acpiEnable = true;
@@ -63,7 +60,6 @@ public class RunVmParams extends VmOperationParameterBase {
 
     public RunVmParams(Guid vmId, boolean isInternal) {
         this(vmId);
-        _internal = isInternal;
     }
 
     public Guid getDestinationVdsId() {
@@ -72,14 +68,6 @@ public class RunVmParams extends VmOperationParameterBase {
 
     public void setDestinationVdsId(Guid value) {
         _destinationVdsId = value;
-    }
-
-    public boolean getIsInternal() {
-        return _internal;
-    }
-
-    public void setIsInternal(boolean value) {
-        _internal = value;
     }
 
     public BootSequence getBootSequence() {
