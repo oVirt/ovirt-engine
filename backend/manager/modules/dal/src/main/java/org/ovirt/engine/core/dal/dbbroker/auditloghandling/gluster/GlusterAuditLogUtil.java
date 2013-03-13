@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -34,43 +33,23 @@ public class GlusterAuditLogUtil {
         logAuditMessage(null, null, server, logType, Collections.<String, String> emptyMap());
     }
 
-    @SuppressWarnings("serial")
     public void logAuditMessage(final Guid clusterId,
             final GlusterVolumeEntity volume,
             final VDS server,
             final AuditLogType logType,
             final Map<String, String> customValues) {
-        AuditLogDirector.log(new AuditLogableBase() {
-            @Override
-            protected VDS getVds() {
-                return server;
-            }
 
-            @Override
-            public Guid getVdsGroupId() {
-                return clusterId;
-            }
+        AuditLogableBase logable = new AuditLogableBase();
+        logable.setVds(server);
+        logable.setGlusterVolume(volume);
+        logable.setVdsGroupId(clusterId == null ? Guid.Empty : clusterId);
 
-            @Override
-            public VDSGroup getVdsGroup() {
-                setVdsGroupId(clusterId);
-                return super.getVdsGroup();
+        if (customValues != null) {
+            for (String key : customValues.keySet()) {
+                logable.addCustomValue(key, customValues.get(key));
             }
+        }
 
-            @Override
-            protected GlusterVolumeEntity getGlusterVolume() {
-                return volume;
-            }
-
-            @Override
-            public AuditLogType getAuditLogTypeValue() {
-                return logType;
-            }
-
-            @Override
-            public Map<String, String> getCustomValues() {
-                return customValues;
-            }
-        });
+        AuditLogDirector.log(logable, logType);
     }
 }

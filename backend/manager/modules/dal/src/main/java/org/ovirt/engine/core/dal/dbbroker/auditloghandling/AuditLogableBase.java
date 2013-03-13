@@ -335,9 +335,10 @@ public class AuditLogableBase extends TimeoutBase {
         return mVds;
     }
 
-    protected void setVds(final VDS value) {
+    public void setVds(final VDS value) {
         mVds = value;
         mVdsName = null;
+        mVdsId = (value == null) ? Guid.Empty : value.getId();
     }
 
     public VM getVm() {
@@ -489,7 +490,7 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     public NGuid getGlusterVolumeId() {
-        return glusterVolumeId;
+        return glusterVolumeId != null ? glusterVolumeId : Guid.Empty;
     }
 
     public void setGlusterVolumeId(NGuid value) {
@@ -505,6 +506,11 @@ public class AuditLogableBase extends TimeoutBase {
 
     public void setGlusterVolumeName(String value) {
         glusterVolumeName = value;
+    }
+
+    public void setGlusterVolume(GlusterVolumeEntity glusterVolume) {
+        this.glusterVolume = glusterVolume;
+        glusterVolumeId = (glusterVolume == null) ? Guid.Empty : glusterVolume.getId();
     }
 
     protected GlusterVolumeEntity getGlusterVolume() {
