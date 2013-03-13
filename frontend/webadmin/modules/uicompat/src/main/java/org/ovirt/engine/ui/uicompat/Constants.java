@@ -304,9 +304,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Import Virtual Machine(s)")
     String importVirtualMachinesTitle();
 
-    @DefaultStringValue("About oVirt Engine")
-    String aboutOVirtEngineTitle();
-
     @DefaultStringValue("Configure")
     String ConfigureTitle();
 

@@ -11,7 +11,6 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.common.AboutModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -62,18 +61,6 @@ public class LoginModel extends Model
     public void setLoginCommand(UICommand value)
     {
         privateLoginCommand = value;
-    }
-
-    private UICommand privateAboutCommand;
-
-    public UICommand getAboutCommand()
-    {
-        return privateAboutCommand;
-    }
-
-    private void setAboutCommand(UICommand value)
-    {
-        privateAboutCommand = value;
     }
 
     private ListModel privateDomain;
@@ -160,10 +147,6 @@ public class LoginModel extends Model
         setLoginCommand(tempVar);
         getCommands().add(tempVar);
 
-        UICommand tempVar2 = new UICommand("About", this); //$NON-NLS-1$
-        tempVar2.setIsExecutionAllowed(false);
-        setAboutCommand(tempVar2);
-
         setDomain(new ListModel());
         getDomain().setIsChangable(false);
         setUserName(new EntityModel());
@@ -199,7 +182,6 @@ public class LoginModel extends Model
                     // If this happens to be executed before the AutoLogin() is executed,
                     // it is not a problem, as the AutoLogin() will disable the screen by itself.
                     loginModel.getLoginCommand().setIsExecutionAllowed(true);
-                    loginModel.getAboutCommand().setIsExecutionAllowed(true);
                     loginModel.getUserName().setIsChangable(true);
                     loginModel.getPassword().setIsChangable(true);
                     loginModel.getDomain().setIsChangable(true);
@@ -348,28 +330,10 @@ public class LoginModel extends Model
         {
             Login();
         }
-        else if (command == getAboutCommand())
-        {
-            About();
-        }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
         }
-    }
-
-    public void About()
-    {
-        AboutModel model = new AboutModel();
-        setWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().aboutOVirtEngineTitle());
-        model.setHashName("about_rhev_manager"); //$NON-NLS-1$
-
-        UICommand tempVar = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
-        tempVar.setIsDefault(true);
-        tempVar.setIsCancel(true);
-        model.getCommands().add(tempVar);
     }
 
     public void Cancel()

@@ -22,7 +22,6 @@ import org.ovirt.engine.ui.uicommonweb.models.autocomplete.SearchSuggestModel;
 import org.ovirt.engine.ui.uicommonweb.models.bookmarks.BookmarkEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.bookmarks.BookmarkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
-import org.ovirt.engine.ui.uicommonweb.models.common.AboutModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.SystemPermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui.RoleListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
@@ -88,18 +87,6 @@ public class CommonModel extends ListModel
     private void setConfigureCommand(UICommand value)
     {
         privateConfigureCommand = value;
-    }
-
-    private UICommand privateAboutCommand;
-
-    public UICommand getAboutCommand()
-    {
-        return privateAboutCommand;
-    }
-
-    private void setAboutCommand(UICommand value)
-    {
-        privateAboutCommand = value;
     }
 
     private UICommand privateSignOutCommand;
@@ -384,7 +371,6 @@ public class CommonModel extends ListModel
         UICommand tempVar = new UICommand("Search", this); //$NON-NLS-1$
         tempVar.setIsDefault(true);
         setSearchCommand(tempVar);
-        setAboutCommand(new UICommand("About", this)); //$NON-NLS-1$
         setSignOutCommand(new UICommand("SignOut", this)); //$NON-NLS-1$
         setConfigureCommand(new UICommand("Configure", this)); //$NON-NLS-1$
         setClearSearchStringCommand(new UICommand("ClearSearchString", this)); //$NON-NLS-1$
@@ -701,25 +687,6 @@ public class CommonModel extends ListModel
         getSearchCommand().Execute();
     }
 
-    public void About()
-    {
-        if (getWindow() != null)
-        {
-            return;
-        }
-
-        AboutModel model = new AboutModel();
-        setWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().aboutOVirtEngineTitle());
-        model.setHashName("about_rhev_manager"); //$NON-NLS-1$
-
-        UICommand tempVar = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
-        tempVar.setIsDefault(true);
-        tempVar.setIsCancel(true);
-        model.getCommands().add(tempVar);
-    }
-
     public void SignOut()
     {
         // Stop search on all list models.
@@ -969,10 +936,6 @@ public class CommonModel extends ListModel
         if (command == getSearchCommand())
         {
             Search();
-        }
-        else if (command == getAboutCommand())
-        {
-            About();
         }
         else if (command == getSignOutCommand())
         {
