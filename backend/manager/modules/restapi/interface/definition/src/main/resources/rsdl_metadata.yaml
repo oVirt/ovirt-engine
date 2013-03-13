@@ -1595,7 +1595,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.root_password: 'xs:string'} 
+        optionalArguments: {action.root_password: 'xs:string', action.image: 'xs:string'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
