@@ -10,10 +10,10 @@ public enum VmInterfaceType {
      * @deprecated
      */
     @Deprecated
-    rtl8139_pv(0, "Dual mode rtl8139, Red Hat VirtIO", 1000),
+    rtl8139_pv(0, "Dual mode rtl8139, VirtIO", 1000),
     rtl8139(1, "rtl8139", 100),
     e1000(2, "e1000", 1000),
-    pv(3, "Red Hat VirtIO", 1000);
+    pv(3, "VirtIO", 1000);
 
     private int value;
     private String description;
