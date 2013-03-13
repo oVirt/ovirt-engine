@@ -27,6 +27,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -627,18 +628,19 @@ public class ExecutionHandler {
      */
     public static VdcReturnValueBase evaluateCorrelationId(VdcActionParametersBase parameters) {
         VdcReturnValueBase returnValue = null;
-        if (parameters != null) {
-            String correlationId = parameters.getCorrelationId();
+        String correlationId = parameters.getCorrelationId();
+        if (StringUtils.isEmpty(correlationId)) {
+            correlationId = ThreadLocalParamsContainer.getCorrelationId();
             if (StringUtils.isEmpty(correlationId)) {
                 parameters.setCorrelationId(LoggedUtils.getObjectId(parameters));
-            } else {
-                List<String> messages = ValidationUtils.validateInputs(validationGroups, parameters);
-                if (!messages.isEmpty()) {
-                    VdcReturnValueBase returnErrorValue = new VdcReturnValueBase();
-                    returnErrorValue.setCanDoAction(false);
-                    returnErrorValue.getCanDoActionMessages().addAll(messages);
-                    return returnErrorValue;
-                }
+            }
+        } else {
+            List<String> messages = ValidationUtils.validateInputs(validationGroups, parameters);
+            if (!messages.isEmpty()) {
+                VdcReturnValueBase returnErrorValue = new VdcReturnValueBase();
+                returnErrorValue.setCanDoAction(false);
+                returnErrorValue.getCanDoActionMessages().addAll(messages);
+                return returnErrorValue;
             }
         }
         return returnValue;
