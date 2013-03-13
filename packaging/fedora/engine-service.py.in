@@ -200,25 +200,27 @@ def loadConfig():
 
     # Get the id of the engine user:
     global engineUid
-    engineUser = engineConfig.getString("ENGINE_USER")
-    if engineUser:
-        try:
-            engineUid = pwd.getpwnam(engineUser).pw_uid
-        except:
-            raise Exception("The engine user \"%s\" doesn't exist." % engineUser)
+    if os.geteuid() == 0:
+        engineUser = engineConfig.getString("ENGINE_USER")
+        if engineUser:
+            try:
+                engineUid = pwd.getpwnam(engineUser).pw_uid
+            except:
+                raise Exception("The engine user \"%s\" doesn't exist." % engineUser)
     else:
-        engineUid = os.getuid()
+        engineUid = os.geteuid()
 
     # Get id of the engine group:
     global engineGid
-    engineGroup = engineConfig.getString("ENGINE_GROUP")
-    if engineGroup:
-        try:
-            engineGid = grp.getgrnam(engineGroup).gr_gid
-        except:
-            raise Exception("The engine group \"%s\" doesn't exist." % engineGroup)
+    if os.geteuid() == 0:
+        engineGroup = engineConfig.getString("ENGINE_GROUP")
+        if engineGroup:
+            try:
+                engineGid = grp.getgrnam(engineGroup).gr_gid
+            except:
+                raise Exception("The engine group \"%s\" doesn't exist." % engineGroup)
     else:
-        engineGid = os.getgid()
+        engineGid = os.getegid()
 
     # Java home directory:
     global javaHomeDir
