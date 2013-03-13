@@ -36,6 +36,7 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -60,6 +61,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private Map<String, Pair<String, String>> sharedLockMap;
     private List<PermissionSubject> permsList = null;
     private List<VM> listVms;
+    private String cachedDiskIsBeingRemovedLockMessage;
 
     public RemoveDiskCommand(T parameters) {
         super(parameters);
@@ -154,12 +156,14 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             if (!listVms.isEmpty()) {
                 sharedLockMap = new HashMap<String, Pair<String, String>>();
                 for (VM vm : listVms) {
-                    sharedLockMap.put(vm.getId().toString(), LockMessagesMatchUtil.VM);
+                    sharedLockMap.put(vm.getId().toString(),
+                            new Pair<String, String>(LockingGroup.VM.name(), getDiskIsBeingRemovedLockMessage()));
                 }
             }
         } else if (getDisk().getVmEntityType() == VmEntityType.TEMPLATE) {
             setVmTemplateIdParameter();
-            sharedLockMap = Collections.singletonMap(getVmTemplateId().toString(), LockMessagesMatchUtil.TEMPLATE);
+            sharedLockMap = Collections.singletonMap(getVmTemplateId().toString(),
+                    new Pair<String, String>(LockingGroup.TEMPLATE.name(), getDiskIsBeingRemovedLockMessage()));
         }
     }
 
@@ -289,9 +293,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             VdcReturnValueBase vdcReturnValue =
                             Backend.getInstance().runInternalAction(VdcActionType.RemoveImage,
                                     p,
-                                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
-            // Setting lock to null because the lock is released in the child command (RemoveImage)
-            setLock(null);
+                                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
             if (vdcReturnValue.getSucceeded()) {
                 getReturnValue().getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
                 setSucceeded(vdcReturnValue.getSucceeded());
@@ -363,7 +365,17 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return Collections.singletonMap(getParameters().getEntityId().toString(), LockMessagesMatchUtil.DISK);
+        return Collections.singletonMap(getParameters().getEntityId().toString(),
+                new Pair<String, String>(LockingGroup.DISK.name(), getDiskIsBeingRemovedLockMessage()));
+    }
+
+    private String getDiskIsBeingRemovedLockMessage() {
+        if (cachedDiskIsBeingRemovedLockMessage == null) {
+            cachedDiskIsBeingRemovedLockMessage = new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_BEING_REMOVED.name())
+            .append(String.format("$DiskName %1$s", getDiskAlias()))
+            .toString();
+        }
+        return cachedDiskIsBeingRemovedLockMessage;
     }
 
     @Override
