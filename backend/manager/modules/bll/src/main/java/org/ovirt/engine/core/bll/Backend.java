@@ -329,8 +329,7 @@ public class Backend implements BackendInternal {
         VdcReturnValueBase returnValue = null;
 
         // Evaluate and set the correlationId on the parameters, fails on invalid correlation id
-        boolean hasCorrelationId =
-                parameters == null ? false : StringUtils.isNotEmpty(parameters.getCorrelationId());
+        boolean hasCorrelationId = StringUtils.isNotEmpty(parameters.getCorrelationId());
         returnValue = ExecutionHandler.evaluateCorrelationId(parameters);
         if (returnValue != null) {
             log.warnFormat("CanDoAction of action {0} failed. Reasons: {1}", actionType,
