@@ -2837,6 +2837,19 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="entry_point" type="EntryPoint"/>
+
+  <xs:complexType name="EntryPoint">
+    <xs:complexContent>
+      <xs:extension base="DetailedLink">
+        <xs:sequence>
+          <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="rsdl" type="RSDL"/>
 
   <xs:complexType name="RSDL">
@@ -2844,6 +2857,7 @@
        <xs:element name="description" type="xs:string" minOccurs="0"/>
        <xs:element type="Version" name="version" minOccurs="0" maxOccurs="1" />
        <xs:element ref="schema" minOccurs="0" maxOccurs="1" />
+       <xs:element type="EntryPoint" name="api" minOccurs="0"/>
        <xs:element type="DetailedLinks" name="links" minOccurs="0"/>
      </xs:sequence>
      <xs:attribute name="href" type="xs:string"/>
