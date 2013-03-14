@@ -118,6 +118,32 @@ public class ChallengerTest extends Assert {
     }
 
     @Test
+    public void testValidSessionTtl() {
+        HttpSession httpSession = new TestHttpSession(sessionId, false);
+        doReturn(httpSession).when(challenger).getCurrentSession(anyBoolean());
+        challenger.setValidator(new ConstValidator(true, sessionId));
+        ResourceMethod resource = control.createMock(ResourceMethod.class);
+        ServerResponse response =
+                challenger.preProcess(setUpRequestExpectations(
+                        null, true, true, String.valueOf(5)), resource);
+        assertNull(response);
+        control.verify();
+    }
+
+    @Test
+    public void testNotValidSessionTtl() {
+        HttpSession httpSession = new TestHttpSession(sessionId, false);
+        doReturn(httpSession).when(challenger).getCurrentSession(anyBoolean());
+        challenger.setValidator(new ConstValidator(true, sessionId));
+        ResourceMethod resource = control.createMock(ResourceMethod.class);
+        ServerResponse response =
+                challenger.preProcess(setUpRequestExpectations(
+                        null, true, true, "bad-ttl"), resource);
+        assertNull(response);
+        control.verify();
+    }
+
+    @Test
     public void testValidateSessionFalseOnWrongEngineSessionId() {
         HttpSession httpSession = new TestHttpSession(sessionId, false);
         doReturn(httpSession).when(challenger).getCurrentSession(anyBoolean());
@@ -156,6 +182,10 @@ public class ChallengerTest extends Assert {
     }
 
     private HttpRequest setUpRequestExpectations(String credentials, boolean valid, boolean preferHeader) {
+        return setUpRequestExpectations(credentials, valid, preferHeader, null);
+    }
+
+    private HttpRequest setUpRequestExpectations(String credentials, boolean valid, boolean preferHeader, String ttl) {
         Scheme authorizer = control.createMock(Scheme.class);
         challenger.setScheme(authorizer);
         Current current = control.createMock(Current.class);
@@ -180,6 +210,11 @@ public class ChallengerTest extends Assert {
                 current.set(challenger);
                 EasyMock.expectLastCall();
             }
+        }
+        if (ttl != null) {
+            List<String> preferHeaders = new ArrayList<String>();
+            preferHeaders.add(ttl);
+            expect(headers.getRequestHeader(SessionUtils.SESSION_TTL_HEADER_FIELD)).andReturn(preferHeaders);
         }
         control.replay();
         return request;

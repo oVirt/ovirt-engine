@@ -43,6 +43,7 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.Body;
 import org.ovirt.engine.api.model.DetailedLink;
 import org.ovirt.engine.api.model.DetailedLinks;
+import org.ovirt.engine.api.model.EntryPoint;
 import org.ovirt.engine.api.model.Header;
 import org.ovirt.engine.api.model.Headers;
 import org.ovirt.engine.api.model.HttpMethod;
@@ -67,12 +68,13 @@ public class RsdlBuilder {
     private static final String COLLECTION_PARAMETER_RSDL = "collection";
     private static final String COLLECTION_PARAMETER_YAML = "--COLLECTION";
     private RSDL rsdl;
-    private String entryPoint;
+    private String entryPointPath;
     private BackendApiResource apiResource;
     private Map<String, Action> parametersMetaData;
     private String rel;
     private String href;
     private Schema schema;
+    private EntryPoint entryPoint;
     private String description;
 
     private static final String ACTION = "Action";
@@ -88,7 +90,7 @@ public class RsdlBuilder {
 
     public RsdlBuilder(BackendApiResource apiResource) {
         this.apiResource = apiResource;
-        this.entryPoint = apiResource.getUriInfo().getBaseUri().getPath();
+        this.entryPointPath = apiResource.getUriInfo().getBaseUri().getPath();
         this.parametersMetaData = loadParametersMetaData();
     }
 
@@ -138,6 +140,7 @@ public class RsdlBuilder {
             rsdl.setHref(getHref());
             rsdl.setDescription(getDescription());
             rsdl.setSchema(getSchema());
+            rsdl.setApi(getEntryPoint());
         } catch (Exception e) {
             e.printStackTrace();
             LOG.error("RSDL generation failure.", e);
@@ -160,6 +163,11 @@ public class RsdlBuilder {
         return this;
     }
 
+    public RsdlBuilder entryPoint(EntryPoint entryPoint) {
+        this.entryPoint = entryPoint;
+        return this;
+    }
+
     public RsdlBuilder description(String description) {
         this.description = description;
         return this;
@@ -175,6 +183,10 @@ public class RsdlBuilder {
 
     public Schema getSchema() {
         return schema;
+    }
+
+    public EntryPoint getEntryPoint() {
+        return entryPoint;
     }
 
     public String getDescription() {
@@ -228,7 +240,7 @@ public class RsdlBuilder {
         List<Class<?>> classes = ReflectionHelper.getClasses(RESOURCES_PACKAGE);
         for (String path : apiResource.getRels()) {
             Class<?> resource = findResource(path, classes);
-            String prefix = entryPoint.endsWith("/") ? entryPoint + path : entryPoint + "/" + path;
+            String prefix = entryPointPath.endsWith("/") ? entryPointPath + path : entryPointPath + "/" + path;
             results.addAll(describe(resource, prefix, new HashMap<String, Type>()));
         }
         return results;

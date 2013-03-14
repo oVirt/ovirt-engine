@@ -34,11 +34,18 @@ import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
 
 import org.ovirt.engine.api.common.invocation.Current;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 @Provider
 @ServerInterceptor
 @Precedence("SECURITY")
 public class Challenger implements PreProcessInterceptor {
+
+    private static final int SECONDS_IN_MINUTE = 60;
+    protected static final Log LOG = LogFactory.getLog(Challenger.class);
+    private static final String SESSION_TTL_EXTRACT_ERROR =
+            "%1$s header content extraction has failed because of bad number format: %2$s";
 
     private String realm;
     private Scheme scheme;
@@ -83,6 +90,7 @@ public class Challenger implements PreProcessInterceptor {
         HttpHeaders headers = request.getHttpHeaders();
         boolean preferPersistentAuth = checkPersistentAuthentication(headers);
         boolean hasAuthorizationHeader = checkAuthorizationHeader(headers);
+        Integer customHttpSessionTtl = getCustomHttpSessionTtl(headers);
 
         // Will create a new one if it is the first session, and we want to persist sessions
         // (and then the "isNew" test below will return true)
@@ -101,6 +109,16 @@ public class Challenger implements PreProcessInterceptor {
 
             // Authenticate the session
             successful = executeBasicAuthentication(headers, httpSession, preferPersistentAuth);
+
+            // Specifies the time, between client requests before the servlet
+            // container will invalidate this session. An interval value of zero
+            // or less indicates that the session should never timeout.
+            if (successful && preferPersistentAuth) {
+                if (httpSession != null && customHttpSessionTtl != null) {
+                    httpSession.setMaxInactiveInterval(
+                            customHttpSessionTtl.intValue() * SECONDS_IN_MINUTE);
+                }
+            }
         }
 
         if (!successful) {
@@ -111,6 +129,35 @@ public class Challenger implements PreProcessInterceptor {
             }
         }
         return response;
+    }
+
+    /**
+     * Extracts the SESSION_TTL_HEADER
+     *
+     * @param headers
+     *            HTTP headers
+     *
+     * @return SESSION_TTL_HEADER or null
+     */
+    private Integer getCustomHttpSessionTtl(HttpHeaders headers) {
+        Integer ttl = null;
+
+        List<String> sessionTtlFields = SessionUtils.getHeaderField(
+                headers,
+                SessionUtils.SESSION_TTL_HEADER_FIELD);
+
+        if (sessionTtlFields != null && !sessionTtlFields.isEmpty()) {
+            try {
+                return Integer.valueOf(sessionTtlFields.get(0));
+            } catch (NumberFormatException e) {
+                LOG.error(String.format(
+                        SESSION_TTL_EXTRACT_ERROR,
+                        SessionUtils.SESSION_TTL_HEADER_FIELD,
+                        sessionTtlFields.get(0)));
+            }
+        }
+
+        return ttl;
     }
 
     /*
