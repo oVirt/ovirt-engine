@@ -4,10 +4,10 @@
 
     <!-- Log levels:DEBUG,INFO,WARN,ERROR,FATAL -->
     <appender name="FILE" class="org.apache.log4j.RollingFileAppender">
-        <param name="File" value="/var/log/ovirt-engine/notifier/notifier.log" />
+        <param name="File" value="@ENGINE_LOG@/engine-manage-domains.log" />
         <param name="Append" value="true" />
-        <param name="MaxFileSize" value="10000KB" />
-        <param name="MaxBackupIndex" value="5" />
+        <param name="MaxFileSize" value="1500KB" />
+        <param name="MaxBackupIndex" value="1" />
 
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d %-5p [%c] %m%n" />
@@ -24,15 +24,15 @@
         </layout>
     </appender>
 
+    <category name="org.ovirt.engine.core.utils.kerberos">
+        <priority value="INFO"/>
+    </category>
+
     <root>
-        <priority value="ERROR" />
+        <priority value="INFO" />
         <!-- appender-ref ref="CONSOLE" /-->
         <appender-ref ref="FILE" />
     </root>
-
-    <logger name="org.ovirt.engine.core">
-        <level value="INFO"/>
-    </logger>
 
 </log4j:configuration>
 

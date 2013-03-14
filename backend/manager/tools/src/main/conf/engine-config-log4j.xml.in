@@ -2,9 +2,8 @@
 
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
 
-    <!-- Log levels:DEBUG,INFO,WARN,ERROR,FATAL -->
     <appender name="FILE" class="org.apache.log4j.RollingFileAppender">
-        <param name="File" value="/var/log/ovirt-engine/engine-manage-domains.log" />
+        <param name="File" value="@ENGINE_LOG@/engine-config.log" />
         <param name="Append" value="true" />
         <param name="MaxFileSize" value="1500KB" />
         <param name="MaxBackupIndex" value="1" />
@@ -16,23 +15,31 @@
         </layout>
     </appender>
 
+
     <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
-        <param name="Target" value="System.out" />
+        <!-- errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/> -->
+        <param name="Target" value="System.out"/>
         <layout class="org.apache.log4j.PatternLayout">
             <!-- The default pattern: Date Priority [Category] Message\n -->
-            <param name="ConversionPattern" value="%d %-5p [%c] (%t) %m%n" />
         </layout>
     </appender>
 
-    <category name="org.ovirt.engine.core.utils.kerberos">
-        <priority value="INFO"/>
-    </category>
+    <logger name="org.ovirt.engine.core.config">
+        <level value="INFO"/>
+    </logger>
+
+    <logger name="org.apache.commons.configuration.ConfigurationUtils">
+        <level value="INFO"/>
+    </logger>
+
+    <logger name="org.ovirt.engine.core.utils.crypt">
+        <level value="FATAL"/>
+    </logger>
 
     <root>
-        <priority value="INFO" />
-        <!-- appender-ref ref="CONSOLE" /-->
-        <appender-ref ref="FILE" />
+        <priority value="INFO"/>
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="CONSOLE"/>
     </root>
 
 </log4j:configuration>
-

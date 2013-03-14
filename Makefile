@@ -118,6 +118,9 @@ ARTIFACTS = \
 GENERATED = \
 	backend/manager/conf/engine.conf.defaults \
 	backend/manager/tools/src/main/shell/engine-prolog.sh \
+	backend/manager/tools/src/main/conf/engine-config-log4j.xml \
+	backend/manager/tools/src/main/conf/engine-manage-domains-log4j.xml \
+	backend/manager/tools/src/main/conf/engine-notifier-log4j.xml \
 	packaging/fedora/engine-service.py \
 	packaging/fedora/spec/ovirt-engine.spec \
 	$(NULL)
