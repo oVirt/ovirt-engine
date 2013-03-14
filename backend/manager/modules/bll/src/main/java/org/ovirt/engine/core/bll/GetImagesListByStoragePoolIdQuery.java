@@ -4,20 +4,19 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.queries.GetAllImagesListByStoragePoolIdParameters;
+import org.ovirt.engine.core.common.queries.GetImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
  * This query retrieves repo files for a storage pool.
  * Note that there are no permissions on non-data storage domains, so this query is filtered according to the permissions of the storage pool
  */
-public abstract class AbstractGetAllImagesListByStoragePoolIdQuery<P extends GetAllImagesListByStoragePoolIdParameters> extends AbstractGetAllImagesListQuery<P> {
+public class GetImagesListByStoragePoolIdQuery<P extends GetImagesListByStoragePoolIdParameters> extends GetImagesListQueryBase<P> {
 
-    public AbstractGetAllImagesListByStoragePoolIdQuery(P parameters) {
+    public GetImagesListByStoragePoolIdQuery(P parameters) {
         super(parameters);
     }
 
-    @Override
     protected Guid getStorageDomainId() {
         if (doesUserHavePermissionsOnStoragePool()) {
             return getDbFacade().getStorageDomainDao().getIsoStorageDomainIdForPool(getStoragePoolId());
@@ -29,7 +28,7 @@ public abstract class AbstractGetAllImagesListByStoragePoolIdQuery<P extends Get
     protected List<RepoFileMetaData> getUserRequestForStorageDomainRepoFileList() {
         return IsoDomainListSyncronizer.getInstance().getUserRequestForStoragePoolAndDomainRepoFileList
                 (getStoragePoolId(), getStorageDomainId(),
-                        getFileTypeExtension(),
+                        getParameters().getFileTypeExtension(),
                         getParameters().getForceRefresh());
     }
 

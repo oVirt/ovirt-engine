@@ -7,7 +7,8 @@ public enum FileTypeExtension {
     Unknown(0),
     ISO(1),
     Floppy(2),
-    All(3);
+    Disk(3),
+    All(4);
 
     private int intValue;
     private static Map<Integer, FileTypeExtension> mappings;

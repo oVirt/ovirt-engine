@@ -1029,7 +1029,7 @@ public class UnitVmModel extends Model {
         Frontend.getQueryCompleteEvent().addListener(this);
 
         Frontend.Subscribe(new VdcQueryType[] { VdcQueryType.GetStorageDomainsByStoragePoolId,
-                VdcQueryType.GetAllIsoImagesListByStoragePoolId, VdcQueryType.GetTimeZones,
+                VdcQueryType.GetImagesListByStoragePoolId, VdcQueryType.GetTimeZones,
                 VdcQueryType.GetDefualtTimeZone, VdcQueryType.GetStoragePoolsByClusterService,
                 VdcQueryType.GetDomainList, VdcQueryType.GetConfigurationValue,
                 VdcQueryType.GetVdsGroupsByStoragePoolId, VdcQueryType.GetVmTemplatesByStoragePoolId,

@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.FileTypeExtension;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
@@ -23,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.common.queries.GetAllImagesListByStoragePoolIdParameters;
+import org.ovirt.engine.core.common.queries.GetImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -298,11 +299,11 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                         AsyncDataProvider.getDefaultConfigurationVersion()));
 
                 if (isoDomain != null) {
-                    queryTypeList.add(VdcQueryType.GetAllIsoImagesListByStoragePoolId);
+                    queryTypeList.add(VdcQueryType.GetImagesListByStoragePoolId);
 
-                    GetAllImagesListByStoragePoolIdParameters getIsoPamams =
-                            new GetAllImagesListByStoragePoolIdParameters(vm.getStoragePoolId());
-                    parametersList.add(getIsoPamams);
+                    GetImagesListByStoragePoolIdParameters getIsoParams =
+                            new GetImagesListByStoragePoolIdParameters(vm.getStoragePoolId(), FileTypeExtension.ISO);
+                    parametersList.add(getIsoParams);
                 }
 
                 Frontend.RunMultipleQueries(queryTypeList, parametersList, thisSpiceConsoleModel);

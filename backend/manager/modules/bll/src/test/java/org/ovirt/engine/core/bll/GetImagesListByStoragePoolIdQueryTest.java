@@ -18,27 +18,27 @@ import org.junit.runners.Parameterized.Parameters;
 import org.ovirt.engine.core.common.businessentities.FileTypeExtension;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.queries.GetAllImagesListByStoragePoolIdParameters;
+import org.ovirt.engine.core.common.queries.GetImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 
 @RunWith(Parameterized.class)
-public class GetAllImagesListByStoragePoolIdQueryTest
-        extends AbstractUserQueryTest<GetAllImagesListByStoragePoolIdParameters, AbstractGetAllImagesListByStoragePoolIdQuery<? extends GetAllImagesListByStoragePoolIdParameters>> {
+public class GetImagesListByStoragePoolIdQueryTest
+        extends AbstractUserQueryTest<GetImagesListByStoragePoolIdParameters, GetImagesListByStoragePoolIdQuery<? extends GetImagesListByStoragePoolIdParameters>> {
 
-    private Class<? extends AbstractGetAllImagesListByStoragePoolIdQuery<GetAllImagesListByStoragePoolIdParameters>> queryClass;
+    private Class<? extends GetImagesListByStoragePoolIdQuery<GetImagesListByStoragePoolIdParameters>> queryClass;
     private FileTypeExtension expectedType;
     private Guid storageDomainId;
 
     @Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]
-        { { GetAllIsoImagesListByStoragePoolIdQuery.class, FileTypeExtension.ISO },
-                { GetAllFloppyImagesListByStoragePoolIdQuery.class, FileTypeExtension.Floppy } });
+        { { GetImagesListByStoragePoolIdQuery.class, FileTypeExtension.ISO },
+                { GetImagesListByStoragePoolIdQuery.class, FileTypeExtension.Floppy } });
     }
 
-    public GetAllImagesListByStoragePoolIdQueryTest(Class<? extends AbstractGetAllImagesListByStoragePoolIdQuery<GetAllImagesListByStoragePoolIdParameters>> queryClass,
+    public GetImagesListByStoragePoolIdQueryTest(Class<? extends GetImagesListByStoragePoolIdQuery<GetImagesListByStoragePoolIdParameters>> queryClass,
             FileTypeExtension expectedType) {
         this.queryClass = queryClass;
         this.expectedType = expectedType;
@@ -54,6 +54,7 @@ public class GetAllImagesListByStoragePoolIdQueryTest
     protected void setUpMockQueryParameters() {
         super.setUpMockQueryParameters();
         when(getQueryParameters().getStoragePoolId()).thenReturn(Guid.NewGuid());
+        when(getQueryParameters().getFileTypeExtension()).thenReturn(expectedType);
     }
 
     @Override
@@ -65,13 +66,8 @@ public class GetAllImagesListByStoragePoolIdQueryTest
     }
 
     @Override
-    protected Class<? extends AbstractGetAllImagesListByStoragePoolIdQuery<? extends GetAllImagesListByStoragePoolIdParameters>> getQueryType() {
+    protected Class<? extends GetImagesListByStoragePoolIdQuery<? extends GetImagesListByStoragePoolIdParameters>> getQueryType() {
         return queryClass;
-    }
-
-    @Test
-    public void testFileTypeExtension() {
-        assertEquals("Query fetch wrong type of extension", expectedType, getQuery().getFileTypeExtension());
     }
 
     @Test

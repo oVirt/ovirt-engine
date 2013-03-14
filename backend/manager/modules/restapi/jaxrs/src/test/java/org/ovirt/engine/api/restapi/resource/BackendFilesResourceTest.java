@@ -15,7 +15,7 @@ import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 
-import org.ovirt.engine.core.common.queries.GetAllIsoImagesListParameters;
+import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -90,8 +90,8 @@ public class BackendFilesResourceTest
         locales.add(CLIENT_LOCALE);
 
         Throwable t = new RuntimeException(FAILURE);
-        setUpEntityQueryExpectations(VdcQueryType.GetAllImagesList,
-                GetAllIsoImagesListParameters.class,
+        setUpEntityQueryExpectations(VdcQueryType.GetImagesList,
+                GetImagesListParameters.class,
                 new String[] { "StorageDomainId" },
                 new Object[] { GUIDS[0] },
                 setUpFiles(),
@@ -115,8 +115,8 @@ public class BackendFilesResourceTest
         UriInfo uriInfo = setUpUriExpectations(null);
 
         Throwable t = new RuntimeException(FAILURE);
-        setUpEntityQueryExpectations(VdcQueryType.GetAllImagesList,
-                GetAllIsoImagesListParameters.class,
+        setUpEntityQueryExpectations(VdcQueryType.GetImagesList,
+                GetImagesListParameters.class,
                 new String[] { "StorageDomainId" },
                 new Object[] { GUIDS[0] },
                 setUpFiles(),
@@ -147,8 +147,8 @@ public class BackendFilesResourceTest
     @Override
     public void testListFailure() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
-        setUpEntityQueryExpectations(VdcQueryType.GetAllImagesList,
-                GetAllIsoImagesListParameters.class,
+        setUpEntityQueryExpectations(VdcQueryType.GetImagesList,
+                GetImagesListParameters.class,
                 new String[] { "StorageDomainId" },
                 new Object[] { GUIDS[0] },
                 setUpFiles(),
@@ -184,8 +184,8 @@ public class BackendFilesResourceTest
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         assert(query.equals(""));
 
-        setUpEntityQueryExpectations(VdcQueryType.GetAllImagesList,
-                                     GetAllIsoImagesListParameters.class,
+        setUpEntityQueryExpectations(VdcQueryType.GetImagesList,
+                                     GetImagesListParameters.class,
                                      new String[] { "StorageDomainId" },
                                      new Object[] { GUIDS[0] },
                                      setUpFiles(),

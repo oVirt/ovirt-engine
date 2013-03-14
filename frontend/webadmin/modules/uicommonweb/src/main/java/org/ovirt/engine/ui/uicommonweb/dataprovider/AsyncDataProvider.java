@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.FileTypeExtension;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -58,7 +59,7 @@ import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllAttachableDisks;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
-import org.ovirt.engine.core.common.queries.GetAllImagesListByStoragePoolIdParameters;
+import org.ovirt.engine.core.common.queries.GetImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
 import org.ovirt.engine.core.common.queries.GetAllVdsByStoragePoolParameters;
 import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByVmIdParameters;
@@ -259,9 +260,9 @@ public final class AsyncDataProvider {
             }
         };
 
-        GetAllImagesListByStoragePoolIdParameters parameters =
-                new GetAllImagesListByStoragePoolIdParameters(storagePoolId);
-        Frontend.RunQuery(VdcQueryType.GetAllIsoImagesListByStoragePoolId, parameters, aQuery);
+        GetImagesListByStoragePoolIdParameters parameters =
+                new GetImagesListByStoragePoolIdParameters(storagePoolId, FileTypeExtension.ISO);
+        Frontend.RunQuery(VdcQueryType.GetImagesListByStoragePoolId, parameters, aQuery);
     }
 
     public static void GetFloppyImageList(AsyncQuery aQuery, Guid storagePoolId) {
@@ -285,8 +286,8 @@ public final class AsyncDataProvider {
             }
         };
 
-        Frontend.RunQuery(VdcQueryType.GetAllFloppyImagesListByStoragePoolId,
-                new GetAllImagesListByStoragePoolIdParameters(storagePoolId),
+        Frontend.RunQuery(VdcQueryType.GetImagesListByStoragePoolId,
+                new GetImagesListByStoragePoolIdParameters(storagePoolId, FileTypeExtension.Floppy),
                 aQuery);
     }
 

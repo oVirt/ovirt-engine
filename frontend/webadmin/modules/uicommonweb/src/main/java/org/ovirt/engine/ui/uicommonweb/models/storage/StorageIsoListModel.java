@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
+import org.ovirt.engine.core.common.businessentities.FileTypeExtension;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.queries.GetAllIsoImagesListParameters;
+import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -144,18 +145,22 @@ public class StorageIsoListModel extends SearchableListModel implements IFronten
 
         StorageDomain storageDomain = (StorageDomain) getEntity();
 
-        GetAllIsoImagesListParameters tempVar = new GetAllIsoImagesListParameters();
-        tempVar.setStorageDomainId(storageDomain.getId());
-        tempVar.setForceRefresh(true);
-        tempVar.setRefresh(getIsQueryFirstTime());
-        GetAllIsoImagesListParameters parameters = tempVar;
+        GetImagesListParameters isoListParams = new GetImagesListParameters(
+                storageDomain.getId(), FileTypeExtension.ISO);
+        isoListParams.setForceRefresh(true);
+        isoListParams.setRefresh(getIsQueryFirstTime());
+
+        GetImagesListParameters floppyListParams = new GetImagesListParameters(
+                storageDomain.getId(), FileTypeExtension.Floppy);
+        floppyListParams.setForceRefresh(true);
+        floppyListParams.setRefresh(getIsQueryFirstTime());
 
         StartProgress(null);
 
         Frontend.RunMultipleQueries(new ArrayList<VdcQueryType>(Arrays.asList(new VdcQueryType[] {
-                VdcQueryType.GetAllIsoImagesList, VdcQueryType.GetAllFloppyImagesList })),
+                VdcQueryType.GetImagesList, VdcQueryType.GetImagesList })),
                 new ArrayList<VdcQueryParametersBase>(Arrays.asList(new VdcQueryParametersBase[] {
-                        parameters, parameters })),
+                        isoListParams, floppyListParams })),
                 this);
     }
 
