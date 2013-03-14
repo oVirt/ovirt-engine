@@ -15,6 +15,6 @@ public class VdsDeployTest {
 
     @Test
     public void getEngineSSHPublicKey() {
-        Assert.assertNotNull(VdsDeploy.getEngineSSHPublicKey());
+        Assert.assertNotNull(VdsDeploy._getEngineSSHPublicKey());
     }
 }

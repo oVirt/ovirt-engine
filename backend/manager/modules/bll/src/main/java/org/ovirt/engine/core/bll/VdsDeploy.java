@@ -197,7 +197,7 @@ public class VdsDeploy implements SSHDialog.Sink {
      * Return the engine ssh public key to install on host.
      * @return ssh public key.
      */
-    protected static String getEngineSSHPublicKey() {
+    protected static String _getEngineSSHPublicKey() {
         final String keystoreFile = Config.<String>GetValue(ConfigValues.keystoreUrl);
         final String alias = Config.<String>GetValue(ConfigValues.CertAlias);
         final char[] password = Config.<String>GetValue(ConfigValues.keystorePass).toCharArray();
@@ -210,8 +210,14 @@ public class VdsDeploy implements SSHDialog.Sink {
 
             final Certificate cert = ks.getCertificate(alias);
             if (cert == null) {
-                log.info("Alias with name '"+alias+"' not found in "+keystoreFile);
-                log.info("aliases: " + StringUtils.join(EnumerationUtils.toList(ks.aliases()), ','));
+                log.info(
+                    String.format(
+                        "Alias with name '%1$s' not found in '%2$s', aliases: %3$s",
+                        alias,
+                        keystoreFile,
+                        StringUtils.join(EnumerationUtils.toList(ks.aliases()), ',')
+                    )
+                );
                 throw new KeyStoreException(
                     String.format(
                         "Failed to find certificate store '%1$s' using alias '%2$s'",
@@ -343,7 +349,7 @@ public class VdsDeploy implements SSHDialog.Sink {
         new Callable<Object>() { public Object call() throws Exception {
             _parser.cliEnvironmentSet(
                 NetEnv.SSH_KEY,
-                getEngineSSHPublicKey().replace("\n", "")
+                _getEngineSSHPublicKey().replace("\n", "")
             );
             return null;
         }},
