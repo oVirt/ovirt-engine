@@ -16,7 +16,7 @@ public class GetImagesListQuery<P extends GetImagesListParameters> extends GetIm
     protected List<RepoFileMetaData> getUserRequestForStorageDomainRepoFileList() {
         return IsoDomainListSyncronizer.getInstance().getUserRequestForStorageDomainRepoFileList
                 (getStorageDomainId(),
-                        getParameters().getFileTypeExtension(),
+                        getParameters().getImageType(),
                         getParameters().getForceRefresh());
     }
 

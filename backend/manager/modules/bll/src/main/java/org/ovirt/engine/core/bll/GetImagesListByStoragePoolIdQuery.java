@@ -28,7 +28,7 @@ public class GetImagesListByStoragePoolIdQuery<P extends GetImagesListByStorageP
     protected List<RepoFileMetaData> getUserRequestForStorageDomainRepoFileList() {
         return IsoDomainListSyncronizer.getInstance().getUserRequestForStoragePoolAndDomainRepoFileList
                 (getStoragePoolId(), getStorageDomainId(),
-                        getParameters().getFileTypeExtension(),
+                        getParameters().getImageType(),
                         getParameters().getForceRefresh());
     }
 

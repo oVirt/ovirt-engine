@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.FileTypeExtension;
+import org.ovirt.engine.core.common.businessentities.ImageType;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -36,7 +36,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
         // Fetch the file from cache table
         List<RepoFileMetaData> listOfRepoFiles = repoFileMetaDataDao
                 .getRepoListForStorageDomain(FixturesTool.STORAGE_DOAMIN_NFS_ISO,
-                        FileTypeExtension.ISO);
+                        ImageType.ISO);
         assertNotNull(listOfRepoFiles);
         assertSame(listOfRepoFiles.isEmpty(), true);
 
@@ -45,7 +45,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
 
         listOfRepoFiles = repoFileMetaDataDao
                 .getRepoListForStorageDomain(FixturesTool.STORAGE_DOAMIN_NFS_ISO,
-                        FileTypeExtension.ISO);
+                        ImageType.ISO);
         assertSame(listOfRepoFiles.isEmpty(), false);
     }
 
@@ -57,14 +57,14 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
         // Should get one iso file
         List<RepoFileMetaData> listOfRepoFiles = repoFileMetaDataDao
                 .getRepoListForStorageDomain(FixturesTool.SHARED_ISO_STORAGE_DOAMIN_FOR_SP2_AND_SP3,
-                        FileTypeExtension.ISO);
+                        ImageType.ISO);
 
         assertNotNull(listOfRepoFiles);
         assertNotSame(true, listOfRepoFiles.isEmpty());
 
         // Remove the file from cache table
         repoFileMetaDataDao.removeRepoDomainFileList(FixturesTool.SHARED_ISO_STORAGE_DOAMIN_FOR_SP2_AND_SP3,
-                FileTypeExtension.ISO);
+                ImageType.ISO);
         listOfRepoFiles = getActiveIsoDomain();
 
         assertNotNull(listOfRepoFiles);
@@ -79,7 +79,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
         // Should get one iso file
         List<RepoFileMetaData> listOfRepoFiles = repoFileMetaDataDao
                 .getRepoListForStorageDomain(FixturesTool.SHARED_ISO_STORAGE_DOAMIN_FOR_SP2_AND_SP3,
-                        FileTypeExtension.ISO);
+                        ImageType.ISO);
 
         assertNotNull(listOfRepoFiles);
         assertNotSame(true, listOfRepoFiles.isEmpty());
@@ -129,8 +129,8 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
                         StorageDomainStatus.Active,
                         VDSStatus.Up);
 
-        List<FileTypeExtension> SharedStorageDomainFileType = new ArrayList<FileTypeExtension>();
-        List<FileTypeExtension> EmptyStorageDomainFileType = new ArrayList<FileTypeExtension>();
+        List<ImageType> SharedStorageDomainFileType = new ArrayList<ImageType>();
+        List<ImageType> EmptyStorageDomainFileType = new ArrayList<ImageType>();
         for (RepoFileMetaData fileMD : listOfAllIsoFiles) {
             Guid repoDomainId = fileMD.getRepoDomainId();
             if (repoDomainId.equals(FixturesTool.SHARED_ISO_STORAGE_DOAMIN_FOR_SP2_AND_SP3)) {
@@ -145,13 +145,13 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
         // Start the check
         // the shared storage domain, should have three types of files.
         assertEquals(SharedStorageDomainFileType.size(), 3);
-        assertEquals(SharedStorageDomainFileType.contains(FileTypeExtension.Unknown), true);
-        assertEquals(SharedStorageDomainFileType.contains(FileTypeExtension.ISO), true);
-        assertEquals(SharedStorageDomainFileType.contains(FileTypeExtension.Floppy), true);
+        assertEquals(SharedStorageDomainFileType.contains(ImageType.Unknown), true);
+        assertEquals(SharedStorageDomainFileType.contains(ImageType.ISO), true);
+        assertEquals(SharedStorageDomainFileType.contains(ImageType.Floppy), true);
 
         // The empty storage domain, should not have files, but should be fetched, since we want to refresh it.
         assertEquals(EmptyStorageDomainFileType.size(), 1);
-        assertEquals(EmptyStorageDomainFileType.contains(FileTypeExtension.Unknown), true);
+        assertEquals(EmptyStorageDomainFileType.contains(ImageType.Unknown), true);
     }
 
     /**
@@ -169,7 +169,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
         List<RepoFileMetaData> listOfFloppyFiles =
                 repoFileMetaDataDao
                         .getRepoListForStorageDomain(FixturesTool.SHARED_ISO_STORAGE_DOAMIN_FOR_SP2_AND_SP3,
-                                FileTypeExtension.Floppy);
+                                ImageType.Floppy);
 
         long minLastRefreshed = new Long("9999999999999").longValue();
         for (RepoFileMetaData fileMD : listOfFloppyFiles) {
@@ -182,7 +182,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
         // Check if fetched the oldest file when fetching all repository files.
         boolean isValid = true;
         for (RepoFileMetaData fileMetaData : listOfIsoFiles) {
-            if (fileMetaData.getFileType() == FileTypeExtension.Floppy) {
+            if (fileMetaData.getFileType() == ImageType.Floppy) {
                 if (fileMetaData.getLastRefreshed() > minLastRefreshed) {
                     isValid = false;
                 }
@@ -201,7 +201,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
 
         List<RepoFileMetaData> listOfRepoFiles = repoFileMetaDataDao
                 .getRepoListForStorageDomain(FixturesTool.STORAGE_DOAMIN_NFS_ISO,
-                        FileTypeExtension.ISO);
+                        ImageType.ISO);
 
         assertNotNull(listOfRepoFiles);
         assertSame(true, !listOfRepoFiles.isEmpty());
@@ -242,7 +242,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
                 + newRepoFileMap.getRepoFileName());
 
         // Remove the file from cache table
-        repoFileMetaDataDao.removeRepoDomainFileList(FixturesTool.STORAGE_DOAMIN_NFS_ISO, FileTypeExtension.ISO);
+        repoFileMetaDataDao.removeRepoDomainFileList(FixturesTool.STORAGE_DOAMIN_NFS_ISO, ImageType.ISO);
 
         // Add the new updated file into the cache table.
         repoFileMetaDataDao.addRepoFileMap(newRepoFileMap);
@@ -292,7 +292,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
         Guid falseGuid = new Guid("11111111-1111-1111-1111-111111111111");
         List<RepoFileMetaData> listOfRepoFiles = repoFileMetaDataDao
                 .getRepoListForStorageDomain(falseGuid,
-                        FileTypeExtension.ISO);
+                        ImageType.ISO);
 
         assertNotNull(listOfRepoFiles);
         assertSame(true, listOfRepoFiles.isEmpty());
@@ -300,7 +300,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
 
     private static RepoFileMetaData getNewIsoRepoFile() {
         RepoFileMetaData newRepoFileMap = new RepoFileMetaData();
-        newRepoFileMap.setFileType(FileTypeExtension.ISO);
+        newRepoFileMap.setFileType(ImageType.ISO);
         newRepoFileMap.setRepoFileName("isoDomain.iso");
         newRepoFileMap.setLastRefreshed(System.currentTimeMillis());
         newRepoFileMap.setSize(0);
@@ -312,7 +312,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
     private List<RepoFileMetaData> getActiveIsoDomain() {
         return repoFileMetaDataDao
                 .getRepoListForStorageDomain(FixturesTool.SHARED_ISO_STORAGE_DOAMIN_FOR_SP2_AND_SP3,
-                        FileTypeExtension.ISO);
+                        ImageType.ISO);
     }
 
 }

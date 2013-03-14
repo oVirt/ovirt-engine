@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.queries;
 
-import org.ovirt.engine.core.common.businessentities.FileTypeExtension;
+import org.ovirt.engine.core.common.businessentities.ImageType;
 import org.ovirt.engine.core.compat.Guid;
 
 
@@ -14,8 +14,8 @@ public class GetImagesListParameters extends GetImagesListParametersBase {
         setStorageDomainId(storageDomainId);
     }
 
-    public GetImagesListParameters(Guid storageDomainId, FileTypeExtension fileTypeExt) {
-        super(fileTypeExt);
+    public GetImagesListParameters(Guid storageDomainId, ImageType imageType) {
+        super(imageType);
         setStorageDomainId(storageDomainId);
     }
 

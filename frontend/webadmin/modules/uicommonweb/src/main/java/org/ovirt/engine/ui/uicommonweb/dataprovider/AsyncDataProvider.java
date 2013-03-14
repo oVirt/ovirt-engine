@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.FileTypeExtension;
+import org.ovirt.engine.core.common.businessentities.ImageType;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -261,7 +261,7 @@ public final class AsyncDataProvider {
         };
 
         GetImagesListByStoragePoolIdParameters parameters =
-                new GetImagesListByStoragePoolIdParameters(storagePoolId, FileTypeExtension.ISO);
+                new GetImagesListByStoragePoolIdParameters(storagePoolId, ImageType.ISO);
         Frontend.RunQuery(VdcQueryType.GetImagesListByStoragePoolId, parameters, aQuery);
     }
 
@@ -287,7 +287,7 @@ public final class AsyncDataProvider {
         };
 
         Frontend.RunQuery(VdcQueryType.GetImagesListByStoragePoolId,
-                new GetImagesListByStoragePoolIdParameters(storagePoolId, FileTypeExtension.Floppy),
+                new GetImagesListByStoragePoolIdParameters(storagePoolId, ImageType.Floppy),
                 aQuery);
     }
 

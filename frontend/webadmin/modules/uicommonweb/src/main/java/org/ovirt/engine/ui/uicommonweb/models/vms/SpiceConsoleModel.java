@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.FileTypeExtension;
+import org.ovirt.engine.core.common.businessentities.ImageType;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
@@ -302,7 +302,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                     queryTypeList.add(VdcQueryType.GetImagesListByStoragePoolId);
 
                     GetImagesListByStoragePoolIdParameters getIsoParams =
-                            new GetImagesListByStoragePoolIdParameters(vm.getStoragePoolId(), FileTypeExtension.ISO);
+                            new GetImagesListByStoragePoolIdParameters(vm.getStoragePoolId(), ImageType.ISO);
                     parametersList.add(getIsoParams);
                 }
 

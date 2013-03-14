@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.FileTypeExtension;
+import org.ovirt.engine.core.common.businessentities.ImageType;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -328,7 +328,7 @@ public class VmRunHandler {
             boolean retValForIso = false;
             VdcQueryReturnValue ret =
                     getBackend().runInternalQuery(VdcQueryType.GetImagesList,
-                            new GetImagesListParameters(storageDomainId, FileTypeExtension.ISO));
+                            new GetImagesListParameters(storageDomainId, ImageType.ISO));
             if (ret != null && ret.getReturnValue() != null && ret.getSucceeded()) {
                 List<RepoFileMetaData> repoFileNameList = (List<RepoFileMetaData>) ret.getReturnValue();
                 if (repoFileNameList != null) {
@@ -350,7 +350,7 @@ public class VmRunHandler {
             boolean retValForFloppy = false;
             VdcQueryReturnValue ret =
                     getBackend().runInternalQuery(VdcQueryType.GetImagesList,
-                            new GetImagesListParameters(storageDomainId, FileTypeExtension.Floppy));
+                            new GetImagesListParameters(storageDomainId, ImageType.Floppy));
             if (ret != null && ret.getReturnValue() != null && ret.getSucceeded()) {
                 List<RepoFileMetaData> repoFileNameList = (List<RepoFileMetaData>) ret.getReturnValue();
                 if (repoFileNameList != null) {

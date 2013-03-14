@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.FileTypeExtension;
+import org.ovirt.engine.core.common.businessentities.ImageType;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -23,7 +23,7 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 public class RepoFileMetaDataDAODbFacadeImpl extends BaseDAODbFacade implements RepoFileMetaDataDAO {
 
     @Override
-    public void removeRepoDomainFileList(Guid id, FileTypeExtension filetype) {
+    public void removeRepoDomainFileList(Guid id, ImageType filetype) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("repo_domain_id", id).addValue("file_type", filetype.getValue());
 
@@ -48,7 +48,7 @@ public class RepoFileMetaDataDAODbFacadeImpl extends BaseDAODbFacade implements 
      */
     @Override
     public List<RepoFileMetaData> getRepoListForStorageDomainAndStoragePool(Guid storagePoolId, Guid storageDomainId,
-            FileTypeExtension fileType) {
+            ImageType fileType) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("storage_pool_id",
                 storagePoolId);
         parameterSource.addValue("storage_domain_id", storageDomainId);
@@ -65,7 +65,7 @@ public class RepoFileMetaDataDAODbFacadeImpl extends BaseDAODbFacade implements 
      */
     @Override
     public List<RepoFileMetaData> getRepoListForStorageDomain(Guid storageDomainId,
-            FileTypeExtension fileType) {
+            ImageType fileType) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("storage_domain_id",
                 storageDomainId);
         parameterSource.addValue("file_type", fileType.getValue());
@@ -101,7 +101,7 @@ public class RepoFileMetaDataDAODbFacadeImpl extends BaseDAODbFacade implements 
             RepoFileMetaData entity = new RepoFileMetaData();
             entity.setRepoDomainId(Guid.createGuidFromString(rs.getString("storage_domain_id")));
             entity.setLastRefreshed(rs.getLong("last_refreshed"));
-            entity.setFileType(FileTypeExtension.forValue(rs.getInt("file_type")));
+            entity.setFileType(ImageType.forValue(rs.getInt("file_type")));
             return entity;
         }
     }

@@ -33,7 +33,7 @@ import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
-import org.ovirt.engine.core.common.businessentities.FileTypeExtension;
+import org.ovirt.engine.core.common.businessentities.ImageType;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -601,7 +601,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             // Fetch cached Iso files from active Iso domain.
             List<RepoFileMetaData> repoFilesMap =
                     IsoDomainListSyncronizer.getInstance().getCachedIsoListByDomainId(isoDomain.getId(),
-                            FileTypeExtension.ISO);
+                            ImageType.ISO);
             Version bestClusterVer = null;
             int bestToolVer = 0;
             for (RepoFileMetaData map : repoFilesMap) {

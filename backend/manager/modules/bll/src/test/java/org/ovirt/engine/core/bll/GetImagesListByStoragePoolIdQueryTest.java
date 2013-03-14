@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.ovirt.engine.core.common.businessentities.FileTypeExtension;
+import org.ovirt.engine.core.common.businessentities.ImageType;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetImagesListByStoragePoolIdParameters;
@@ -28,18 +28,18 @@ public class GetImagesListByStoragePoolIdQueryTest
         extends AbstractUserQueryTest<GetImagesListByStoragePoolIdParameters, GetImagesListByStoragePoolIdQuery<? extends GetImagesListByStoragePoolIdParameters>> {
 
     private Class<? extends GetImagesListByStoragePoolIdQuery<GetImagesListByStoragePoolIdParameters>> queryClass;
-    private FileTypeExtension expectedType;
+    private ImageType expectedType;
     private Guid storageDomainId;
 
     @Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]
-        { { GetImagesListByStoragePoolIdQuery.class, FileTypeExtension.ISO },
-                { GetImagesListByStoragePoolIdQuery.class, FileTypeExtension.Floppy } });
+        { { GetImagesListByStoragePoolIdQuery.class, ImageType.ISO },
+                { GetImagesListByStoragePoolIdQuery.class, ImageType.Floppy } });
     }
 
     public GetImagesListByStoragePoolIdQueryTest(Class<? extends GetImagesListByStoragePoolIdQuery<GetImagesListByStoragePoolIdParameters>> queryClass,
-            FileTypeExtension expectedType) {
+            ImageType expectedType) {
         this.queryClass = queryClass;
         this.expectedType = expectedType;
     }
@@ -54,7 +54,7 @@ public class GetImagesListByStoragePoolIdQueryTest
     protected void setUpMockQueryParameters() {
         super.setUpMockQueryParameters();
         when(getQueryParameters().getStoragePoolId()).thenReturn(Guid.NewGuid());
-        when(getQueryParameters().getFileTypeExtension()).thenReturn(expectedType);
+        when(getQueryParameters().getImageType()).thenReturn(expectedType);
     }
 
     @Override

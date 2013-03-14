@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.ovirt.engine.core.common.businessentities.FileTypeExtension;
+import org.ovirt.engine.core.common.businessentities.ImageType;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
@@ -146,12 +146,12 @@ public class StorageIsoListModel extends SearchableListModel implements IFronten
         StorageDomain storageDomain = (StorageDomain) getEntity();
 
         GetImagesListParameters isoListParams = new GetImagesListParameters(
-                storageDomain.getId(), FileTypeExtension.ISO);
+                storageDomain.getId(), ImageType.ISO);
         isoListParams.setForceRefresh(true);
         isoListParams.setRefresh(getIsQueryFirstTime());
 
         GetImagesListParameters floppyListParams = new GetImagesListParameters(
-                storageDomain.getId(), FileTypeExtension.Floppy);
+                storageDomain.getId(), ImageType.Floppy);
         floppyListParams.setForceRefresh(true);
         floppyListParams.setRefresh(getIsQueryFirstTime());
 

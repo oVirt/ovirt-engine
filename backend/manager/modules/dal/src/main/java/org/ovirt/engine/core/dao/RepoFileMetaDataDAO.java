@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.dao;
 
 import java.util.List;
-import org.ovirt.engine.core.common.businessentities.FileTypeExtension;
+import org.ovirt.engine.core.common.businessentities.ImageType;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -21,7 +21,7 @@ public interface RepoFileMetaDataDAO extends DAO {
      * @param id - The domain id.
      * @param filetype - The file Extension, which should be removed.
      */
-    void removeRepoDomainFileList(Guid id, FileTypeExtension filetype);
+    void removeRepoDomainFileList(Guid id, ImageType filetype);
 
     /**
      * Add repository file to cache table.
@@ -35,14 +35,14 @@ public interface RepoFileMetaDataDAO extends DAO {
      * no repository found, will return an empty list.
      */
     public List<RepoFileMetaData> getRepoListForStorageDomainAndStoragePool(Guid storagePoolId, Guid storageDomainId,
-            FileTypeExtension fileType);
+            ImageType fileType);
 
     /**
      * Returns a list of repository files with specific file extension from storage domain id.<BR/>
      * If no repository found, will return an empty list.
      */
     public List<RepoFileMetaData> getRepoListForStorageDomain(Guid storageDomainId,
-            FileTypeExtension fileType);
+            ImageType fileType);
 
     /**
      * Returns list of the oldest last refreshed repository files,
