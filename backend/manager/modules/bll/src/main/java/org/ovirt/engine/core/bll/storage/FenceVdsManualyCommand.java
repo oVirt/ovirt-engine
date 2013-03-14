@@ -8,13 +8,14 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.SpmStatusResult;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -22,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.FenceSpmStorageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ResetIrsVDSCommandParameters;
@@ -94,6 +95,13 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         setVdsName(_problematicVds.getName());
         if (_problematicVds.getSpmStatus() == VdsSpmStatus.SPM) {
             result = ActivateDataCenter();
+            if (getVdsDAO().getAllForStoragePool(getStoragePool().getId()).size() == 1) {
+                //reset SPM flag fot this Host
+                storage_pool sp = getStoragePool();
+                sp.setspm_vds_id(null);
+                getStoragePoolDAO().update(sp);
+                result = true;
+            }
         }
         if ((getParameters()).getClearVMs() && result) {
             VdsActionParameters tempVar = new VdsActionParameters(_problematicVds.getId());
