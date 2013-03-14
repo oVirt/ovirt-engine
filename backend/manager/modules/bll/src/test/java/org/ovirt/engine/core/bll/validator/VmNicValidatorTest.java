@@ -1,8 +1,14 @@
 package org.ovirt.engine.core.bll.validator;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.both;
+import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
+import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
+import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.replacements;
 
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -44,86 +50,88 @@ public class VmNicValidatorTest {
 
     @Test
     public void unlinkedWhenUnlinkingNotSupported() throws Exception {
-        unlinkingTest(new ValidationResult(VdcBllMessages.UNLINKING_IS_NOT_SUPPORTED, CLUSTER_VERSION_REPLACEMENT),
+        unlinkingTest(both(failsWith(VdcBllMessages.UNLINKING_IS_NOT_SUPPORTED))
+                .and(replacements(hasItem(CLUSTER_VERSION_REPLACEMENT))),
                 false,
                 false);
     }
 
     @Test
     public void linkedWhenUnlinkingNotSupported() throws Exception {
-        unlinkingTest(ValidationResult.VALID, false, true);
+        unlinkingTest(isValid(), false, true);
     }
 
     @Test
     public void unlinkedWhenUnlinkingSupported() throws Exception {
-        unlinkingTest(ValidationResult.VALID, true, false);
+        unlinkingTest(isValid(), true, false);
     }
 
     @Test
     public void linkedWhenUnlinkingSupported() throws Exception {
-        unlinkingTest(ValidationResult.VALID, true, true);
+        unlinkingTest(isValid(), true, true);
     }
 
     @Test
     public void nullNetworkNameWhenUnlinkingNotSupported() throws Exception {
-        networkNameTest(new ValidationResult(VdcBllMessages.NULL_NETWORK_IS_NOT_SUPPORTED, CLUSTER_VERSION_REPLACEMENT),
+        networkNameTest(both(failsWith(VdcBllMessages.NULL_NETWORK_IS_NOT_SUPPORTED))
+                .and(replacements(hasItem(CLUSTER_VERSION_REPLACEMENT))),
                 false,
                 null);
     }
 
     @Test
     public void validNetworkNameWhenUnlinkingNotSupported() throws Exception {
-        networkNameTest(ValidationResult.VALID, false, "net");
+        networkNameTest(isValid(), false, "net");
     }
 
     @Test
     public void nullNetworkNameWhenUnlinkingSupported() throws Exception {
-        networkNameTest(ValidationResult.VALID, true, null);
+        networkNameTest(isValid(), true, null);
     }
 
     @Test
     public void validNetworkNameWhenUnlinkingSupported() throws Exception {
-        networkNameTest(ValidationResult.VALID, true, "net");
+        networkNameTest(isValid(), true, "net");
     }
 
     @Test
     public void validNetworkWhenPortMirroring() throws Exception {
-        portMirroringTest(ValidationResult.VALID, "net", true);
+        portMirroringTest(isValid(), "net", true);
     }
 
     @Test
     public void nullNetworkWhenPortMirroring() throws Exception {
-        portMirroringTest(new ValidationResult(VdcBllMessages.PORT_MIRRORING_REQUIRES_NETWORK), null, true);
+        portMirroringTest(failsWith(VdcBllMessages.PORT_MIRRORING_REQUIRES_NETWORK), null, true);
     }
 
     @Test
     public void validNetworkWhenNoPortMirroring() throws Exception {
-        portMirroringTest(ValidationResult.VALID, "net", false);
+        portMirroringTest(isValid(), "net", false);
     }
 
     @Test
     public void nullNetworkWhenNoPortMirroring() throws Exception {
-        portMirroringTest(ValidationResult.VALID, null, false);
+        portMirroringTest(isValid(), null, false);
     }
 
-    private void unlinkingTest(ValidationResult expected, boolean networkLinkingSupported, boolean nicLinked) {
+    private void unlinkingTest(Matcher<ValidationResult> matcher, boolean networkLinkingSupported, boolean nicLinked) {
         mockConfigRule.mockConfigValue(ConfigValues.NetworkLinkingSupported, version, networkLinkingSupported);
         when(nic.isLinked()).thenReturn(nicLinked);
 
-        assertEquals(expected, validator.linkedCorrectly());
+        assertThat(validator.linkedCorrectly(), matcher);
     }
 
-    private void networkNameTest(ValidationResult expected, boolean networkLinkingSupported, String networkName) {
+    private void networkNameTest(Matcher<ValidationResult> matcher, boolean networkLinkingSupported, String networkName) {
         mockConfigRule.mockConfigValue(ConfigValues.NetworkLinkingSupported, version, networkLinkingSupported);
         when(nic.getNetworkName()).thenReturn(networkName);
 
-        assertEquals(expected, validator.networkNameValid());
+        assertThat(validator.networkNameValid(), matcher);
     }
 
-    private void portMirroringTest(ValidationResult expected, String networkName, boolean portMirroring) {
+    private void portMirroringTest(Matcher<ValidationResult> matcher, String networkName, boolean portMirroring) {
         when(nic.getNetworkName()).thenReturn(networkName);
         when(nic.isPortMirroring()).thenReturn(portMirroring);
 
-        assertEquals(expected, validator.networkProvidedForPortMirroring());
+        assertThat(validator.networkProvidedForPortMirroring(), matcher);
     }
 }
