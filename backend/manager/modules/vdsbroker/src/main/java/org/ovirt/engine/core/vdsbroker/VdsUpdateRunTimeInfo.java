@@ -52,6 +52,7 @@ import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetVmStatsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -1520,12 +1521,7 @@ public class VdsUpdateRunTimeInfo {
             boolean isInMigration = false;
             if (vmToRemove.getStatus() == VMStatus.MigratingFrom) {
                 isInMigration = true;
-                vmToRemove.setRunOnVds(vmToRemove.getMigratingToVds());
-                log.infoFormat("Setting VM {0} {1} to status unknown", vmToRemove.getName(), vmToRemove.getId());
-                ResourceManager.getInstance().InternalSetVmStatus(vmToRemove, VMStatus.Unknown);
-                addVmDynamicToList(vmToRemove.getDynamicData());
-                addVmStatisticsToList(vmToRemove.getStatisticsData());
-                addVmInterfaceStatisticsToList(vmToRemove.getInterfaces());
+                handOverVM(vmToRemove);
             } else {
                 clearVm(vmToRemove,
                         VmExitStatus.Error,
@@ -1552,6 +1548,33 @@ public class VdsUpdateRunTimeInfo {
                 _autoVmsToRun.add(vmGuid);
             }
         }
+    }
+
+    private void handOverVM(VM vmToRemove) {
+        NGuid destinationHostId = vmToRemove.getMigratingToVds();
+
+        // when the destination VDS is NonResponsive put the VM to Uknown like the rest of its VMs, else MigratingTo
+        VMStatus newVmStatus =
+                (VDSStatus.NonResponsive == getDbFacade().getVdsDao().get(destinationHostId).getStatus())
+                        ? VMStatus.Unknown
+                        : VMStatus.MigratingTo;
+
+        // handing over the VM to the DST by marking it running on it. it will now be its SRC host.
+        vmToRemove.setRunOnVds(destinationHostId);
+
+        log.infoFormat("Handing over VM {0} {1} to Host {2}. Setting VM to status {3}",
+                vmToRemove.getName(),
+                vmToRemove.getId(),
+                destinationHostId,
+                newVmStatus);
+
+        // if the DST host goes unresponsive it will take care all MigratingTo and unknown VMs
+        ResourceManager.getInstance().InternalSetVmStatus(vmToRemove, newVmStatus);
+
+        // save the VM state
+        addVmDynamicToList(vmToRemove.getDynamicData());
+        addVmStatisticsToList(vmToRemove.getStatisticsData());
+        addVmInterfaceStatisticsToList(vmToRemove.getInterfaces());
     }
 
     private boolean inMigrationTo(VmDynamic runningVm, VM vmToUpdate) {

@@ -280,6 +280,14 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
                 .addValue("vm_pool_id", vmPoolId));
     }
 
+    @Override
+    public List<VM> getAllMigratingToHost(Guid vdsId) {
+        return getCallsHandler().executeReadList("GetVmsMigratingToVds",
+                VMRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("vds_id", vdsId));
+    }
+
     static final class VMRowMapper implements RowMapper<VM> {
         public static final VMRowMapper instance = new VMRowMapper();
 
@@ -433,4 +441,5 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             return entity;
         }
     }
+
 }
