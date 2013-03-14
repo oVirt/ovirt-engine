@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.clusters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
@@ -29,7 +28,6 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.ClusterNewNetworkModel;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
@@ -75,15 +73,6 @@ public class ClusterNetworkListModel extends SearchableListModel
     }
 
     private final Network displayNetwork = null;
-
-    private final Comparator<ClusterNetworkModel> networkComparator =
-            new Comparator<ClusterNetworkModel>() {
-                @Override
-                public int compare(ClusterNetworkModel o1, ClusterNetworkModel o2) {
-                    // management first
-                    return o1.isManagement() ? -1 : o1.getNetworkName().compareTo(o2.getNetworkName());
-                }
-            };
 
     @Override
     public VDSGroup getEntity()
@@ -142,14 +131,7 @@ public class ClusterNetworkListModel extends SearchableListModel
             {
                 SearchableListModel searchableListModel = (SearchableListModel) model;
                 ArrayList<Network> newItems = (ArrayList<Network>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                Collections.sort(newItems, new Comparator<Network>() {
-                    @Override
-                    public int compare(Network o1, Network o2) {
-                        // management first
-                        return HostInterfaceListModel.ENGINE_NETWORK_NAME.equals(o1.getName()) ? -1
-                                : o1.getName().compareTo(o2.getName());
-                    }
-                });
+                Collections.sort(newItems, new Linq.NetworkComparator());
                 searchableListModel.setItems(newItems);
             }
         };
@@ -222,7 +204,7 @@ public class ClusterNetworkListModel extends SearchableListModel
             networkList.add(networkManageModel);
         }
 
-        Collections.sort(networkList, networkComparator);
+        Collections.sort(networkList, new Linq.ClusterNetworkModelComparator());
 
         ClusterNetworkManageModel listModel = new ClusterNetworkManageModel();
         listModel.setItems(networkList);

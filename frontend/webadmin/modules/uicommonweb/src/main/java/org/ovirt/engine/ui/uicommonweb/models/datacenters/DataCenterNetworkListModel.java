@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -120,8 +122,10 @@ public class DataCenterNetworkListModel extends SearchableListModel
             @Override
             public void OnSuccess(Object model, Object ReturnValue)
             {
+                ArrayList<Network> newItems = (ArrayList<Network>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                Collections.sort(newItems, new Linq.NetworkComparator());
                 SearchableListModel searchableListModel = (SearchableListModel) model;
-                searchableListModel.setItems((ArrayList<Network>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                searchableListModel.setItems(newItems);
             }
         };
 

@@ -42,6 +42,8 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDomainModel;
@@ -1290,4 +1292,39 @@ public final class Linq
         }
 
     }
+
+    public final static class NetworkComparator implements Comparator<Network> {
+
+        private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+
+        @Override
+        public int compare(Network net1, Network net2) {
+            // management first
+            if (net1.getName().equals(HostInterfaceListModel.ENGINE_NETWORK_NAME)) {
+                return -1;
+            } else if (net2.getName().equals(HostInterfaceListModel.ENGINE_NETWORK_NAME)) {
+                return 1;
+            }
+
+            return lexoNumeric.compare(net1.getName(), net2.getName());
+        }
+    }
+
+    public final static class ClusterNetworkModelComparator implements Comparator<ClusterNetworkModel> {
+
+        private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+
+        @Override
+        public int compare(ClusterNetworkModel model1, ClusterNetworkModel model2) {
+            // management first
+            if (model1.isManagement()) {
+                return -1;
+            } else if (model2.isManagement()) {
+                return 1;
+            }
+
+            return lexoNumeric.compare(model1.getNetworkName(), model2.getNetworkName());
+        }
+    }
+
 }
