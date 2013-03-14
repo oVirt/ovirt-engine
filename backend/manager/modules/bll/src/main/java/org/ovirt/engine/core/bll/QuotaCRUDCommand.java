@@ -58,7 +58,7 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
 
         // Check if there is no quota with the same name that already exists.
         if ((quotaByName != null) && (!quotaByName.getId().equals(quota.getId()))) {
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_NAME_ALREADY_EXISTS.toString());
+            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED.toString());
             return false;
         }
         return true;

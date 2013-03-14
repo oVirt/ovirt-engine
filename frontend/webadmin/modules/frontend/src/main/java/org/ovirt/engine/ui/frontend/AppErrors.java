@@ -211,9 +211,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Invalid Host Id.")
     String VDS_INVALID_SERVER_ID();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Host with the same name already exists.")
-    String VDS_TRY_CREATE_WITH_EXISTING_PARAMS();
-
     @DefaultStringValue("Cannot ${action} ${type}. Host name cannot be empty.")
     String VDS_EMPTY_NAME();
 
@@ -310,9 +307,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot remove Directory Group. Detach Directory Group from VM first.")
     String DIRECTORY_GROUP_CANNOT_REMOVE_DIRECTORY_GROUP_ATTACHED_TO_VM();
 
-    @DefaultStringValue("A Computer with the same name already exists.")
-    String DIRECTORY_COMPUTER_WITH_THE_SAME_NAME_ALREADY_EXITS();
-
     @DefaultStringValue("VM not found")
     String VM_NOT_FOUND();
 
@@ -408,9 +402,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. VM doesn't exist.")
     String ACTION_TYPE_FAILED_VM_NOT_EXIST();
-
-    @DefaultStringValue("Cannot ${action} ${type}. VM with the same name already exists.")
-    String ACTION_TYPE_FAILED_VM_ALREADY_EXIST();
 
     @DefaultStringValue("Cannot ${action} ${type}. A highly available VM cannot be pinned to a specific Host")
     String ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_PINNED_TO_HOST();
@@ -510,9 +501,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. One of the Template Images already exists.")
     String ACTION_TYPE_FAILED_IMAGE_ALREADY_EXISTS();
-
-    @DefaultStringValue("Cannot ${action} ${type}. A Template with the same name already exists.")
-    String ACTION_TYPE_FAILED_TEMPLATE_NAME_ALREADY_EXISTS();
 
     @DefaultStringValue("Cannot ${action} ${type}. A Template with the same identifier already exists.")
     String ACTION_TYPE_FAILED_TEMPLATE_GUID_ALREADY_EXISTS();
@@ -832,9 +820,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Login failed (Authentication Failed).\n- Please verify that the correct authentication method is used in your system.")
     String USER_FAILED_TO_AUTHENTICATION_WRONG_AUTHENTICATION_METHOD();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Template name already exists.")
-    String VMT_CANNOT_CREATE_DUPLICATE_NAME();
-
     @DefaultStringValue("Cannot ${action} ${type}. Cluster ID is not valid.")
     String VMT_CLUSTER_IS_NOT_VALID();
 
@@ -871,9 +856,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Legacy USB support is not available on Linux VMs.")
     String USB_LEGACY_NOT_SUPPORTED_ON_LINUX_VMS();
 
-    @DefaultStringValue("Cannot ${action} VM-Pool. VM-Pool with the same name already exists. ")
-    String VM_POOL_CANNOT_CREATE_DUPLICATE_NAME();
-
     @DefaultStringValue("VM-Pool must be based on  non-blank Template.")
     String VM_POOL_CANNOT_CREATE_FROM_BLANK_TEMPLATE();
 
@@ -903,9 +885,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot remove Role, invalid Role id.")
     String ERROR_CANNOT_REMOVE_ROLE_INVALID_ROLE_ID();
-
-    @DefaultStringValue("Cannot ${action} Role. Role with the same name already exists.")
-    String ERROR_CANNOT_UPDATE_ROLE_NAME();
 
     @DefaultStringValue("Cannot ${action} Role. Changing Role ID is not allowed.")
     String ERROR_CANNOT_UPDATE_ROLE_ID();
@@ -1275,9 +1254,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Actions list cannot be empty.")
     String ACTION_LIST_CANNOT_BE_EMPTY();
-
-    @DefaultStringValue("Cannot ${action} ${type}. A Bookmark with the same name already exists.")
-    String ACTION_TYPE_FAILED_BOOKMARK_NAME_ALREADY_EXISTS();
 
     @DefaultStringValue("Cannot ${action} ${type}. Bookmark ID is not valid.")
     String ACTION_TYPE_FAILED_BOOKMARK_INVALID_ID();
@@ -1807,9 +1783,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Quota limitation must be configured specific or general.")
     String ACTION_TYPE_FAILED_QUOTA_LIMIT_IS_NOT_SPECIFIC_OR_GENERAL();
-
-    @DefaultStringValue("Cannot ${action} ${type}. Quota with same name already exists.")
-    String ACTION_TYPE_FAILED_QUOTA_NAME_ALREADY_EXISTS();
 
     @DefaultStringValue("Cannot ${action} ${type}. The prefix DefaultQuota is reserved for the default quota.")
     String ACTION_TYPE_FAILED_QUOTA_NAME_RESERVED_FOR_DEFAULT();

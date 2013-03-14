@@ -194,7 +194,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         if (pool != null
                 && (getActionType() == VdcActionType.AddVmPoolWithVms || !pool.getVmPoolId().equals(
                         getParameters().getVmPoolId()))) {
-            addCanDoActionMessage(VdcBllMessages.VM_POOL_CANNOT_CREATE_DUPLICATE_NAME);
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             return false;
         }
         setStoragePoolId(grp.getStoragePoolId().getValue());

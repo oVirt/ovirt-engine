@@ -51,7 +51,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             if (VdsHandler.IsUpdateValid(getParameters().getVdsStaticData(), _oldVds.getStaticData(),
                     _oldVds.getStatus())) {
                 if ("".equals(getParameters().getVdsStaticData().getName())) {
-                    addCanDoActionMessage(VdcBllMessages.VDS_TRY_CREATE_WITH_EXISTING_PARAMS);
+                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                 }
                 String vdsName = getParameters().getvds().getName();
                 String hostName = getParameters().getvds().getHostName();
@@ -72,7 +72,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                 else if (!StringUtils.equalsIgnoreCase(_oldVds.getName(), getParameters().getVdsStaticData()
                         .getName())
                         && getVdsDAO().getAllWithName(vdsName).size() != 0) {
-                    addCanDoActionMessage(VdcBllMessages.VDS_TRY_CREATE_WITH_EXISTING_PARAMS);
+                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                 } else if (!StringUtils.equalsIgnoreCase(_oldVds.getHostName(), getParameters().getVdsStaticData()
                         .getHostName())
                         && getVdsDAO().getAllForHostname(hostName).size() != 0) {

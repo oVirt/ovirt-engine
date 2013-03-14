@@ -8,8 +8,8 @@ import org.ovirt.engine.core.bll.adbroker.AdActionType;
 import org.ovirt.engine.core.bll.adbroker.LdapCreateComputerAccountParameters;
 import org.ovirt.engine.core.bll.adbroker.LdapFactory;
 import org.ovirt.engine.core.bll.adbroker.LdapIsComputerWithSameNameExistsParameters;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.CreateComputerAccountParameters;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -53,14 +53,15 @@ public class CreateComputerAccountCommand<T extends CreateComputerAccountParamet
                                             getComputerName()))
                             .getReturnValue()).booleanValue();
             if (returnValue) {
-                addCanDoActionMessage(VdcBllMessages.DIRECTORY_COMPUTER_WITH_THE_SAME_NAME_ALREADY_EXITS);
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             }
         } else {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CREATE);
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__COMPUTER_ACCOUNT);
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
 
         }
+
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CREATE);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__COMPUTER_ACCOUNT);
         return !returnValue;
     }
 

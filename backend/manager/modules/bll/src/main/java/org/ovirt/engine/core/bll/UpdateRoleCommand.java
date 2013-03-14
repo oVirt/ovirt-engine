@@ -31,7 +31,7 @@ public class UpdateRoleCommand<T extends RolesOperationsParameters> extends Role
                 addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
             } else if (!StringUtils.equals(getRole().getname(), oldRole.getname())
                     && getRoleDao().getByName(getRole().getname()) != null) {
-                addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_UPDATE_ROLE_NAME);
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                 returnValue = false;
             } // changing role type isn't allowed
             else if (getRole().getType() != oldRole.getType()) {

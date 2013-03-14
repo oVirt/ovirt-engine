@@ -120,7 +120,7 @@ public class UpdateVmCommandTest {
         mockSameNameQuery(true);
 
         assertFalse("canDoAction should have failed with vm name already in use.", command.canDoAction());
-        assertCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_ALREADY_EXIST);
+        assertCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
     }
 
     @Test

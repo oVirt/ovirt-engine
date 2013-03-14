@@ -55,7 +55,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             }
             if (!StringUtils.equals(mOldTemplate.getName(), getVmTemplate().getName())
                     && isVmTemlateWithSameNameExist(getVmTemplateName())) {
-                addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_CREATE_DUPLICATE_NAME);
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             } else {
                 if (getVdsGroup() == null) {
                     addCanDoActionMessage(VdcBllMessages.VMT_CLUSTER_IS_NOT_VALID);

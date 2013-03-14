@@ -16,7 +16,7 @@ public class AddBookmarkCommand<T extends BookmarksOperationParameters> extends 
                 .getByName(getBookmark().getbookmark_name()) != null) {
             AddErrorMessages(
                     VdcBllMessages.VAR__ACTION__ADD,
-                    VdcBllMessages.ACTION_TYPE_FAILED_BOOKMARK_NAME_ALREADY_EXISTS);
+                    VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             return false;
         }
 

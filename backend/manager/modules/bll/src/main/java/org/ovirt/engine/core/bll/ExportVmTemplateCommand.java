@@ -104,7 +104,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
             retVal = !ExportVmCommand.CheckTemplateInStorageDomain(getVmTemplate().getstorage_pool_id().getValue(),
                     getParameters().getStorageDomainId(), getVmTemplateId());
             if (!retVal) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NAME_ALREADY_EXISTS);
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             }
         }
         return retVal;

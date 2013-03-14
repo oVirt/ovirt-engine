@@ -187,7 +187,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                             new IsVmWithSameNameExistParameters(vmFromParams.getName()))
                     .getReturnValue();
             if (exists) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_ALREADY_EXIST);
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                 return false;
             }
         }

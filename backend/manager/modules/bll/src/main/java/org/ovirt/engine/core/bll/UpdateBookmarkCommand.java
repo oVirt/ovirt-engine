@@ -29,7 +29,7 @@ public class UpdateBookmarkCommand<T extends BookmarksOperationParameters>
                     updated.getbookmark_id()))) {
                 AddErrorMessages(
                         VdcBllMessages.VAR__ACTION__UPDATE,
-                        VdcBllMessages.ACTION_TYPE_FAILED_BOOKMARK_NAME_ALREADY_EXISTS);
+                        VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             } else {
                 result = true;
             }
