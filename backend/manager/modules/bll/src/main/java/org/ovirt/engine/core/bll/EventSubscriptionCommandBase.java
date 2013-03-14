@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.EventNotificationMethods;
@@ -17,6 +18,16 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
         AdminOperationCommandBase<T> {
     protected EventSubscriptionCommandBase(T parameters) {
         super(parameters);
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+        }
+        jobProperties.put("address", getParameters().getEventSubscriber().getmethod_address());
+        jobProperties.put("eventtype", getParameters().getEventSubscriber().getevent_up_name());
+        return jobProperties;
     }
 
     /**
