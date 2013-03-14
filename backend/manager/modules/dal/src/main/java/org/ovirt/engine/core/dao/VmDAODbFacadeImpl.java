@@ -29,6 +29,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.utils.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
  * <code>VmDAODbFacadeImpl</code> provides a concrete implementation of {@link VmDAO}. The functionality is code
@@ -280,7 +281,15 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
                 .addValue("vm_pool_id", vmPoolId));
     }
 
-    static final class VMRowMapper implements RowMapper<VM> {
+    @Override
+    public List<VM> getAllMigratingToHost(Guid vdsId) {
+        return getCallsHandler().executeReadList("GetVmsMigratingToVds",
+                VMRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("vds_id", vdsId));
+    }
+
+    static final class VMRowMapper implements ParameterizedRowMapper<VM> {
         public static final VMRowMapper instance = new VMRowMapper();
 
         @Override
@@ -433,4 +442,5 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             return entity;
         }
     }
+
 }

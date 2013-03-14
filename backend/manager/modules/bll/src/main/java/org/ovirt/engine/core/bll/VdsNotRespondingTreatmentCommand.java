@@ -113,6 +113,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
     }
 
     private void MoveVMsToUnknown() {
+        getVmList().addAll(getVmDAO().getAllMigratingToHost(getVdsId()));
         for (VM vm : getVmList()) {
             DestroyVmOnDestination(vm);
             Backend.getInstance()

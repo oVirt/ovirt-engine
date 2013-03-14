@@ -1015,11 +1015,12 @@ public class VdsUpdateRunTimeInfo {
      * Handle changes in all VM devices
      */
     private void handleVmDeviceChange() {
-        // Go over all the vms and detemine which ones require updating
+        // Go over all the vms and determine which ones require updating
+        // Update only running VMs
         List<String> vmsToUpdateFromVds = new ArrayList<String>();
         for (VmInternalData vmInternalData : _runningVms.values()) {
             VmDynamic vmDynamic = vmInternalData.getVmDynamic();
-            if (vmDynamic != null) {
+            if (vmDynamic != null && vmDynamic.getStatus() != VMStatus.MigratingTo) {
                 VM vm = _vmDict.get(vmDynamic.getId());
                 if (vm != null) {
                     String dbHash = vm.getHash();
@@ -1859,4 +1860,5 @@ public class VdsUpdateRunTimeInfo {
     public DbFacade getDbFacade() {
         return DbFacade.getInstance();
     }
+
 }
