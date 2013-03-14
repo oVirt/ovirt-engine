@@ -60,9 +60,6 @@ public class OvfVmWriter extends OvfWriter {
         _writer.WriteStartElement("DefaultDisplayType");
         _writer.WriteRaw(String.valueOf(_vm.getDefaultDisplayType().getValue()));
         _writer.WriteEndElement();
-        _writer.WriteStartElement("MinAllocatedMem");
-        _writer.WriteRaw(String.valueOf(_vm.getMinAllocatedMem()));
-        _writer.WriteEndElement();
         OvfLogEventHandler<VmStatic> handler = new VMStaticOvfLogHandler(_vm.getStaticData());
         // Gets a map that its keys are aliases to fields that should be OVF
         // logged.

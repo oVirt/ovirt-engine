@@ -431,6 +431,13 @@ public abstract class OvfReader implements IOvfBuilder {
             }
         }
 
+        node = content.SelectSingleNode("MinAllocatedMem");
+        if (node != null) {
+            if (StringUtils.isNotEmpty(node.InnerText)) {
+                vmBase.setMinAllocatedMem(Integer.parseInt(node.InnerText));
+            }
+        }
+
         readGeneralData(content);
     }
 

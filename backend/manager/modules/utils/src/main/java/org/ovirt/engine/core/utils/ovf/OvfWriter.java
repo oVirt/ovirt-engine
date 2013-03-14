@@ -246,6 +246,10 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.WriteRaw(vmBase.getVncKeyboardLayout());
             _writer.WriteEndElement();
         }
+
+        _writer.WriteStartElement("MinAllocatedMem");
+        _writer.WriteRaw(String.valueOf(vmBase.getMinAllocatedMem()));
+        _writer.WriteEndElement();
     }
 
     protected abstract void WriteAppList();

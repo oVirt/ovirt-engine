@@ -207,13 +207,6 @@ public class OvfVmReader extends OvfReader {
                 _vm.setAppList(_images.get(0).getAppList());
             }
         }
-
-        node = content.SelectSingleNode("MinAllocatedMem");
-        if (node != null) {
-            if (StringUtils.isNotEmpty(node.InnerText)) {
-                _vm.setMinAllocatedMem(Integer.parseInt(node.InnerText));
-            }
-        }
     }
 
     @Override
