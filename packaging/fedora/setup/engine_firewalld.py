@@ -1,5 +1,4 @@
 from firewall.client import FirewallClient
-from firewall.errors import *
 
 def getActiveZones():
     fw = FirewallClient()

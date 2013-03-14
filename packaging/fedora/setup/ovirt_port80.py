@@ -3,13 +3,10 @@
 import common_utils as utils
 import basedefs
 import output_messages
-import libxml2
 import random
 import shutil
-import sys
 import logging
 import os
-import re
 import traceback
 
 # Globals

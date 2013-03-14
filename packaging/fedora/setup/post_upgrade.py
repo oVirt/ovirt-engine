@@ -8,7 +8,6 @@
 import common_utils as utils
 import logging
 import traceback
-import basedefs
 
 MSG_ERR_UPDATE_PRODUCT_VERSION="Error updating product version"
 
