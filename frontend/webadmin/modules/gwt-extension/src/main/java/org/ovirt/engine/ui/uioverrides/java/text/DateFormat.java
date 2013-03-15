@@ -24,5 +24,14 @@ public class DateFormat {
      * Constant for default style pattern.  Its value is MEDIUM.
      */
     public static final int DEFAULT = MEDIUM;
-    
+
+    public String format(java.util.Date date) {
+        // No-op, don't use this method in client code
+        return null;
+    }
+
+    public void setTimeZone(java.util.TimeZone zone) {
+        // No-op, don't use this method in client code
+    }
+
 }
