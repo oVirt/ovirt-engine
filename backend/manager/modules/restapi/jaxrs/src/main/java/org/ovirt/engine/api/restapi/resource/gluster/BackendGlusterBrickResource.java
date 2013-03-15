@@ -81,30 +81,7 @@ public class BackendGlusterBrickResource
 
     @Override
     protected GlusterBrick doPopulate(GlusterBrick model, GlusterBrickEntity entity) {
-        return populateAdvancedDetails(model,entity);
-    }
-
-    private GlusterBrick populateAdvancedDetails(GlusterBrick model, GlusterBrickEntity entity) {
-
-        GlusterVolumeEntity volumeEntity = getEntity(GlusterVolumeEntity.class,
-                                                     VdcQueryType.GetGlusterVolumeById,
-                                                     new IdQueryParameters(entity.getVolumeId()),
-                                                     null,
-                                                     true);
-
-        GlusterVolumeAdvancedDetails detailsEntity = getEntity(GlusterVolumeAdvancedDetails.class,
-                                                VdcQueryType.GetGlusterVolumeAdvancedDetails,
-                                                new GlusterVolumeAdvancedDetailsParameters(volumeEntity.getClusterId(),
-                                                                                           volumeEntity.getId(),
-                                                                                           entity.getId(),true),
-                                                null,
-                                                true);
-
-        model = getMapper(GlusterVolumeAdvancedDetails.class, GlusterBrick.class)
-                                                        .map(detailsEntity, model);
-
-        return model;
-
+        return parent.populateAdvancedDetails(model,entity);
     }
 
     @Override

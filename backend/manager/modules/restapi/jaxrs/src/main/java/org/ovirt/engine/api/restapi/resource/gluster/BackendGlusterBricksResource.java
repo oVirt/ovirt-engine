@@ -176,7 +176,7 @@ public class BackendGlusterBricksResource
         return populateAdvancedDetails(model, entity);
     }
 
-    private GlusterBrick populateAdvancedDetails(GlusterBrick model, GlusterBrickEntity entity) {
+    protected GlusterBrick populateAdvancedDetails(GlusterBrick model, GlusterBrickEntity entity) {
 
         GlusterVolumeEntity volumeEntity = getEntity(GlusterVolumeEntity.class,
                                                      VdcQueryType.GetGlusterVolumeById,
