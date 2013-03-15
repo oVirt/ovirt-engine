@@ -1415,6 +1415,13 @@ SELECT       DISTINCT id, user_id
 FROM         internal_permissions_view
 JOIN         user_flat_groups ON granted_id = ad_element_id;
 
+-- Direct permissions assigned to user
+CREATE OR REPLACE VIEW user_object_permissions_view AS
+ SELECT DISTINCT permissions.object_id AS entity_id, user_flat_groups.user_id
+   FROM permissions
+   JOIN roles ON permissions.role_id = roles.id
+   JOIN user_flat_groups ON user_flat_groups.granted_id = permissions.ad_element_id
+   WHERE permissions.ad_element_id != getGlobalIds('everyone');
 
 CREATE OR REPLACE VIEW vm_device_view
 AS

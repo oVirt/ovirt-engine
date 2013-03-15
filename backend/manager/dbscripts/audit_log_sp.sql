@@ -115,30 +115,35 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+-- Returns the events for which the user has direct permissions on
+-- If the user has permissions only on a VM, the user will see only events for this VM
+-- If the user has permissions on a cluster, he will see events from the cluster, the hosts and the VMS in the cluster
+-- because each event has the cluster id of the entity that generates the event and we check to see if the user has
+-- permissions on the cluster using the column vds_group_id. Same holds true for data center
 Create or replace FUNCTION GetAllFromAuditLog(v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF audit_log
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
-      FROM audit_log
+      FROM audit_log a
       WHERE NOT deleted AND
      (NOT v_is_filtered OR EXISTS (SELECT 1
-                                        FROM   user_vm_permissions_view
-                                        WHERE  user_id = v_user_id AND entity_id = vm_id)
-                               OR EXISTS (SELECT 1
-                                        FROM user_vm_template_permissions_view
-                                        WHERE user_id = v_user_id AND entity_id = vm_template_id)
-                               OR EXISTS (SELECT 1
-                                        FROM user_vds_permissions_view
-                                        WHERE user_id = v_user_id AND entity_id = vds_id)
-                               OR EXISTS (SELECT 1
-                                        FROM user_storage_pool_permissions_view
-                                        WHERE user_id = v_user_id AND entity_id = storage_pool_id)
-                               OR EXISTS (SELECT 1
-                                        FROM user_storage_domain_permissions_view
-                                        WHERE user_id = v_user_id AND entity_id = storage_domain_id)
-                               OR EXISTS (SELECT 1
-                                        FROM user_vds_groups_permissions_view
-                                        WHERE user_id = v_user_id AND entity_id = vds_group_id)
+                                   FROM   user_vm_permissions_view pv, user_object_permissions_view dpv
+                                   WHERE  pv.user_id = v_user_id AND pv.entity_id = a.vm_id AND pv.entity_id = dpv.entity_id)
+                        OR EXISTS (SELECT 1
+                                   FROM user_vm_template_permissions_view pv, user_object_permissions_view dpv
+                                   WHERE pv.user_id = v_user_id AND pv.entity_id = a.vm_template_id AND pv.entity_id = dpv.entity_id)
+                        OR EXISTS (SELECT 1
+                                   FROM user_vds_permissions_view pv, user_object_permissions_view dpv
+                                   WHERE pv.user_id = v_user_id AND pv.entity_id = a.vds_id AND pv.entity_id = dpv.entity_id)
+                        OR EXISTS (SELECT 1
+                                   FROM user_storage_pool_permissions_view pv, user_object_permissions_view dpv
+                                   WHERE pv.user_id = v_user_id AND pv.entity_id = a.storage_pool_id AND pv.entity_id = dpv.entity_id)
+                        OR EXISTS (SELECT 1
+                                   FROM user_storage_domain_permissions_view pv, user_object_permissions_view dpv
+                                   WHERE pv.user_id = v_user_id AND pv.entity_id = a.storage_domain_id AND pv.entity_id = dpv.entity_id)
+                        OR EXISTS (SELECT 1
+                                   FROM user_vds_groups_permissions_view pv, user_object_permissions_view dpv
+                                   WHERE pv.user_id = v_user_id AND pv.entity_id = a.vds_group_id AND pv.entity_id = dpv.entity_id)
      );
 END; $procedure$
 LANGUAGE plpgsql;
