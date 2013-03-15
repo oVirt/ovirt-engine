@@ -5,7 +5,7 @@
 
 	<filter-mapping>
 		<filter-name>GwtCachingFilter</filter-name>
-		<url-pattern>/UserPortal/*</url-pattern>
+		<url-pattern>/org.ovirt.engine.ui.userportal.UserPortal/*</url-pattern>
 	</filter-mapping>
 
 	<servlet-mapping>
