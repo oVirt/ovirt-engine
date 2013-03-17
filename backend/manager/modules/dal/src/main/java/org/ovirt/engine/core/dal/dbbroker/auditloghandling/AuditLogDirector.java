@@ -846,6 +846,8 @@ public final class AuditLogDirector {
                     tempVar.setGlusterVolumeId(auditLogable.getGlusterVolumeId());
                     tempVar.setGlusterVolumeName(auditLogable.getGlusterVolumeName());
                     tempVar.setExternal(auditLogable.isExternal());
+                    tempVar.setQuotaId(auditLogable.getQuotaIdForLog());
+                    tempVar.setQuotaName(auditLogable.getQuotaNameForLog());
                     auditLog = tempVar;
                 }
             } else {

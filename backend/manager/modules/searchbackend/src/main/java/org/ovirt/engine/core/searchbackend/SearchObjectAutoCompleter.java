@@ -127,6 +127,9 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         // audit - gluster volume
         addJoin(SearchObjects.GLUSTER_VOLUME_OBJ_NAME, "id", SearchObjects.AUDIT_OBJ_NAME, "gluster_volume_id");
 
+        //quota - audit
+        addJoin(SearchObjects.AUDIT_OBJ_NAME, "quota_id", SearchObjects.QUOTA_OBJ_NAME, "quota_id");
+
         // data center - network
         addJoin(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME, "id", SearchObjects.NETWORK_OBJ_NAME, "storage_pool_id");
 

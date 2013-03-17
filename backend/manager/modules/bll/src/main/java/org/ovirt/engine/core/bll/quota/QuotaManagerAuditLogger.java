@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.quota;
 
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
@@ -12,15 +13,19 @@ public class QuotaManagerAuditLogger {
 
     protected void addCustomValuesStorage(AuditLogableBase auditLogableBase,
             String quotaName,
+            Guid quotaId,
             double storageUsagePercentage,
             double storageRequestedPercentage) {
         auditLogableBase.addCustomValue("QuotaName", quotaName);
         auditLogableBase.addCustomValue("CurrentStorage", percentageFormatter.format(storageUsagePercentage));
         auditLogableBase.addCustomValue("Requested", percentageFormatter.format(storageRequestedPercentage));
+        auditLogableBase.setQuotaNameForLog(quotaName);
+        auditLogableBase.setQuotaIdForLog(quotaId);
     }
 
     protected void addCustomValuesVdsGroup(AuditLogableBase auditLogableBase,
             String quotaName,
+            Guid quotaId,
             double cpuCurrentPercentage,
             double cpuRequestPercentage,
             double memCurrentPercentage,
@@ -48,6 +53,8 @@ public class QuotaManagerAuditLogger {
 
         auditLogableBase.addCustomValue("Utilization", currentUtilization.toString());
         auditLogableBase.addCustomValue("Requested", request.toString());
+        auditLogableBase.setQuotaNameForLog(quotaName);
+        auditLogableBase.setQuotaIdForLog(quotaId);
     }
 
     public void auditLog(AuditLogType auditLogType, AuditLogableBase auditLogable) {

@@ -273,6 +273,7 @@ public class QuotaManager {
             log.setFirst(AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_THRESHOLD);
             quotaManagerAuditLogger.addCustomValuesStorage(log.getSecond(),
                     quota.getQuotaName(),
+                    quota.getId(),
                     storageUsagePercentage + storageRequestPercentage,
                     storageRequestPercentage);
             requestIsApproved = true;
@@ -280,6 +281,7 @@ public class QuotaManager {
             log.setFirst(AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_LIMIT);
             quotaManagerAuditLogger.addCustomValuesStorage(log.getSecond(),
                     quota.getQuotaName(),
+                    quota.getId(),
                     storageUsagePercentage + storageRequestPercentage,
                     storageRequestPercentage);
             requestIsApproved = true;
@@ -287,6 +289,7 @@ public class QuotaManager {
             log.setFirst(AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_GRACE_LIMIT);
             quotaManagerAuditLogger.addCustomValuesStorage(log.getSecond(),
                     quota.getQuotaName(),
+                    quota.getId(),
                     storageUsagePercentage,
                     storageRequestPercentage);
             if (QuotaEnforcementTypeEnum.HARD_ENFORCEMENT == quotaEnforcementTypeEnum) {
@@ -295,6 +298,10 @@ public class QuotaManager {
             } else {
                 requestIsApproved = true;
             }
+        }
+
+        if (!requestIsApproved) {
+            log.getSecond().setQuotaIdForLog(quota.getId());
         }
         return requestIsApproved;
     }
@@ -337,6 +344,7 @@ public class QuotaManager {
             auditLogPair.setFirst(AuditLogType.USER_EXCEEDED_QUOTA_VDS_GROUP_THRESHOLD);
             quotaManagerAuditLogger.addCustomValuesVdsGroup(auditLogPair.getSecond(),
                     quota.getQuotaName(),
+                    quota.getId(),
                     vcpuCurrentPercentage + vcpuToAddPercentage,
                     vcpuToAddPercentage,
                     memCurrentPercentage + memToAddPercentage,
@@ -350,6 +358,7 @@ public class QuotaManager {
             auditLogPair.setFirst(AuditLogType.USER_EXCEEDED_QUOTA_VDS_GROUP_LIMIT);
             quotaManagerAuditLogger.addCustomValuesVdsGroup(auditLogPair.getSecond(),
                     quota.getQuotaName(),
+                    quota.getId(),
                     vcpuCurrentPercentage + vcpuToAddPercentage,
                     vcpuToAddPercentage,
                     memCurrentPercentage + memToAddPercentage,
@@ -361,6 +370,7 @@ public class QuotaManager {
             auditLogPair.setFirst(AuditLogType.USER_EXCEEDED_QUOTA_VDS_GROUP_GRACE_LIMIT); // passed the grace
             quotaManagerAuditLogger.addCustomValuesVdsGroup(auditLogPair.getSecond(),
                     quota.getQuotaName(),
+                    quota.getId(),
                     vcpuCurrentPercentage,
                     vcpuToAddPercentage,
                     memCurrentPercentage,
@@ -377,6 +387,8 @@ public class QuotaManager {
         // cache
         if(requestIsApproved) {
             cacheNewValues(quotaVdsGroup, newMemory, newVcpu);
+        } else {
+            auditLogPair.getSecond().setQuotaIdForLog(quota.getId());
         }
         return requestIsApproved;
     }

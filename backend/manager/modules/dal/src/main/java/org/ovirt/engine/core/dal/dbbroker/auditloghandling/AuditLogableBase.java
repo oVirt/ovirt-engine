@@ -77,6 +77,8 @@ public class AuditLogableBase extends TimeoutBase {
     private String storagePoolType;
     private String compatibilityVersion;
     private String quotaEnforcementType;
+    private Guid quotaIdForLog;
+    private String quotaNameForLog;
 
     public AuditLogableBase() {
     }
@@ -672,4 +674,19 @@ public class AuditLogableBase extends TimeoutBase {
 
     private static final Log log = LogFactory.getLog(AuditLogableBase.class);
 
+    public Guid getQuotaIdForLog() {
+        return quotaIdForLog;
+    }
+
+    public void setQuotaIdForLog(Guid quotaIdForLog) {
+        this.quotaIdForLog = quotaIdForLog;
+    }
+
+    public String getQuotaNameForLog() {
+        return quotaNameForLog;
+    }
+
+    public void setQuotaNameForLog(String quotaNameForLog) {
+        this.quotaNameForLog = quotaNameForLog;
+    }
 }
