@@ -67,4 +67,12 @@ public class VdcBLLException extends ApplicationException implements java.io.Ser
 
     public VdcBLLException() {
     }
+
+    @Override
+    public String getMessage() {
+        return String.format(super.getMessage() + " (Failed with VDSM error %1$s and code %2$s)",
+                privateVdsError.getCode(),
+                privateVdsError.getCode().getValue());
+    }
+
 }
