@@ -1,23 +1,24 @@
 package org.ovirt.engine.core.dao;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
-
 import org.ovirt.engine.core.common.EventNotificationMethods;
 import org.ovirt.engine.core.common.businessentities.EventMap;
-import org.ovirt.engine.core.common.businessentities.event_notification_hist;
 import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
+import org.ovirt.engine.core.common.businessentities.event_notification_hist;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.compat.Guid;
 
 public class EventDAOTest extends BaseDAOTestCase {
     private static final int FREE_AUDIT_LOG_ID = 44295;
     private static final int EVENT_MAP_COUNT = 1;
-    private static final int NOTIFICATION_METHOD_COUNT = 3;
     private EventDAO dao;
     private Guid existingSubscriber;
     private Guid newSubscriber;
@@ -83,15 +84,6 @@ public class EventDAOTest extends BaseDAOTestCase {
             assertEquals(existingSubscriber,
                     subscription.getsubscriber_id());
         }
-    }
-
-    @Test
-    public void testGetAllEventNotificationMethods() {
-        List<EventNotificationMethod> result = dao.getAllEventNotificationMethods();
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(NOTIFICATION_METHOD_COUNT, result.size());
     }
 
     @Test

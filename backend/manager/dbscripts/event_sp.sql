@@ -58,24 +58,6 @@ LANGUAGE plpgsql;
 
 
 ----------------------------------------------------------------
--- [event_notification_methods] Table
---
-
-
-Create or replace FUNCTION GetAllFromevent_notification_methods()
-RETURNS SETOF event_notification_methods
-   AS $procedure$
-BEGIN
-   RETURN QUERY SELECT *
-   FROM event_notification_methods;
-
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-
-----------------------------------------------------------------
 -- [event_subscriber] Table
 --
 

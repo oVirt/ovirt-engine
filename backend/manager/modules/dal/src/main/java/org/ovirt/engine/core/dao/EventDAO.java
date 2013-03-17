@@ -29,13 +29,6 @@ public interface EventDAO extends DAO {
      */
     List<event_subscriber> getAllForSubscriber(Guid id);
 
-    /**
-     * Retrieves the list of all event notification methods.
-     *
-     * @return the event notificationet methods
-     */
-    List<EventNotificationMethod> getAllEventNotificationMethods();
-
     List<EventNotificationMethod> getEventNotificationMethodsById(int method_id);
 
     List<EventNotificationMethod> getEventNotificationMethodsByType(String method_type);
