@@ -1,3 +1,4 @@
+#!/bin/bash
 ###############################################################################################################
 # The purpose of this utility is to find inconsistent data that violates FK, display it and enable to remove it
 # Only support may access this utility with care
@@ -18,7 +19,6 @@
 #  psql:/tmp/tmp.8p8BXKVObk:1: NOTICE:  Fixing weather (city)  ... (2 records)
 ###############################################################################################################
 
-#!/bin/bash
 #include db general functions
 pushd $(dirname ${0})>/dev/null
 source ./common.sh
