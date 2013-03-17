@@ -134,8 +134,6 @@ public interface VdsServerConnector {
 
     public Map<String, Object> discoverSendTargets(Map<String, String> args);
 
-    public Map<String, Object> getSessionList();
-
     public Map<String, Object> spmStart(String spUUID,
             int prevID,
             String prevLVER,

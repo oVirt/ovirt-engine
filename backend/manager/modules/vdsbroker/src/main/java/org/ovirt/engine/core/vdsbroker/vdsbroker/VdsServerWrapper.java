@@ -749,18 +749,6 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public SessionsListReturnForXmlRpc getSessionList() {
-        try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.getSessionList();
-            SessionsListReturnForXmlRpc wrapper = new SessionsListReturnForXmlRpc(xmlRpcReturnValue);
-            return wrapper;
-        } catch (UndeclaredThrowableException ute) {
-            throw new XmlRpcRunTimeException(ute);
-        }
-
-    }
-
-    @Override
     public OneUuidReturnForXmlRpc spmStart(String spUUID, int prevID, String prevLVER, int recoveryMode,
             String SCSIFencing, int maxHostId, String storagePoolFormatType) {
         try {

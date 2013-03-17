@@ -149,8 +149,6 @@ public interface IVdsServer {
 
     IQNListReturnForXmlRpc discoverSendTargets(Map<String, String> args);
 
-    SessionsListReturnForXmlRpc getSessionList();
-
     OneUuidReturnForXmlRpc spmStart(String spUUID,
             int prevID,
             String prevLVER,
