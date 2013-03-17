@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-
 import java.util.List;
+
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.compat.Guid;
 
 public class ConnectStorageServerVDSCommandParameters extends GetStorageConnectionsListVDSCommandParameters {
     private StorageType privateStorageType = StorageType.forValue(0);

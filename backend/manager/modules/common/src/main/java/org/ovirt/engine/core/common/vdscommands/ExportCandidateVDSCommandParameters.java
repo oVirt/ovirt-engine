@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import org.ovirt.engine.core.compat.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.ovirt.engine.core.compat.Guid;
 
 public class ExportCandidateVDSCommandParameters extends StorageDomainIdParametersBase {
     private Guid privateVmGUID = new Guid();
@@ -13,13 +16,13 @@ public class ExportCandidateVDSCommandParameters extends StorageDomainIdParamete
         privateVmGUID = value;
     }
 
-    private java.util.HashMap<String, java.util.ArrayList<Guid>> privateListOfImages;
+    private HashMap<String, ArrayList<Guid>> privateListOfImages;
 
-    public java.util.HashMap<String, java.util.ArrayList<Guid>> getListOfImages() {
+    public HashMap<String, ArrayList<Guid>> getListOfImages() {
         return privateListOfImages;
     }
 
-    private void setListOfImages(java.util.HashMap<String, java.util.ArrayList<Guid>> value) {
+    private void setListOfImages(HashMap<String, ArrayList<Guid>> value) {
         privateListOfImages = value;
     }
 
@@ -43,13 +46,13 @@ public class ExportCandidateVDSCommandParameters extends StorageDomainIdParamete
         privateVmTemplateGUID = value;
     }
 
-    private java.util.HashMap<String, Guid> privateVmTemplateImageGUIDs;
+    private HashMap<String, Guid> privateVmTemplateImageGUIDs;
 
-    public java.util.HashMap<String, Guid> getVmTemplateImageGUIDs() {
+    public HashMap<String, Guid> getVmTemplateImageGUIDs() {
         return privateVmTemplateImageGUIDs;
     }
 
-    private void setVmTemplateImageGUIDs(java.util.HashMap<String, Guid> value) {
+    private void setVmTemplateImageGUIDs(HashMap<String, Guid> value) {
         privateVmTemplateImageGUIDs = value;
     }
 
@@ -94,8 +97,8 @@ public class ExportCandidateVDSCommandParameters extends StorageDomainIdParamete
     }
 
     public ExportCandidateVDSCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid vmGUID,
-            java.util.HashMap<String, java.util.ArrayList<Guid>> listOfImages, String vmMeta, Guid vmTemplateGUID,
-            java.util.HashMap<String, Guid> vmTemplateImageGUIDs, String vmTemplateMeta, String path, boolean collapse,
+            HashMap<String, ArrayList<Guid>> listOfImages, String vmMeta, Guid vmTemplateGUID,
+            HashMap<String, Guid> vmTemplateImageGUIDs, String vmTemplateMeta, String path, boolean collapse,
             boolean force) {
         super(storagePoolId);
         setStorageDomainId(storageDomainId);

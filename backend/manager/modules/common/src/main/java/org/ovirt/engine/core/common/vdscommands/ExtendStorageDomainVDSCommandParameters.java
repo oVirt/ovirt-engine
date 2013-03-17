@@ -1,23 +1,25 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import org.ovirt.engine.core.compat.*;
+import java.util.ArrayList;
+
+import org.ovirt.engine.core.compat.Guid;
 
 public class ExtendStorageDomainVDSCommandParameters extends ActivateStorageDomainVDSCommandParameters {
     public ExtendStorageDomainVDSCommandParameters(Guid storagePoolId, Guid storageDomainId,
-            java.util.ArrayList<String> deviceList, boolean force, boolean supportForceExtendVG) {
+            ArrayList<String> deviceList, boolean force, boolean supportForceExtendVG) {
         super(storagePoolId, storageDomainId);
         setDeviceList(deviceList);
         setForce(force);
         setSupportForceExtendVG(supportForceExtendVG);
     }
 
-    private java.util.ArrayList<String> privateDeviceList;
+    private ArrayList<String> privateDeviceList;
 
-    public java.util.ArrayList<String> getDeviceList() {
+    public ArrayList<String> getDeviceList() {
         return privateDeviceList;
     }
 
-    private void setDeviceList(java.util.ArrayList<String> value) {
+    private void setDeviceList(ArrayList<String> value) {
         privateDeviceList = value;
     }
 

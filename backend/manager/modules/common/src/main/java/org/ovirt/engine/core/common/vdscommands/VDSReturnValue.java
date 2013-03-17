@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import org.ovirt.engine.core.common.asynctasks.*;
-import org.ovirt.engine.core.common.errors.*;
+import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
+import org.ovirt.engine.core.common.errors.VDSError;
 
 public class VDSReturnValue {
     private boolean _succeeded;

@@ -1,17 +1,18 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import org.ovirt.engine.core.compat.*;
-
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.KeyValuePairCompat;
 
 public class UpdateVMVDSCommandParameters extends StorageDomainIdParametersBase {
     public UpdateVMVDSCommandParameters(Guid storagePoolId,
             Map<Guid, KeyValuePairCompat<String, List<Guid>>> infoDictionary) {
         super(storagePoolId);
         setInfoDictionary((infoDictionary != null) ? infoDictionary
-                : new java.util.HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>());
+                : new HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>());
     }
 
     private Map<Guid, KeyValuePairCompat<String, List<Guid>>> privateInfoDictionary;

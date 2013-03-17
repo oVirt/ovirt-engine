@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.Guid;
 
 public class GetImageDomainsListVDSCommandParameters extends IrsBaseVDSCommandParameters {
     public GetImageDomainsListVDSCommandParameters(Guid storagePoolId, Guid imageGroupId) {

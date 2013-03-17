@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.compat.Guid;
 
 public class SetVmStatusVDSCommandParameters extends VDSParametersBase {
     private Guid _vmId = new Guid();

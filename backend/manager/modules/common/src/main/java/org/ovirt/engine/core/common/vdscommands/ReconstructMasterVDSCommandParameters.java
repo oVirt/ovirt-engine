@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-
 import java.util.List;
+
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
+import org.ovirt.engine.core.compat.Guid;
 
 public class ReconstructMasterVDSCommandParameters extends VdsIdVDSCommandParametersBase {
     private int privateVdsSpmId;

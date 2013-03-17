@@ -1,10 +1,12 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.compat.Guid;
 
 public class DestroyImageVDSCommandParameters extends AllStorageAndImageIdVDSCommandParametersBase {
     public DestroyImageVDSCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid imageGroupId,
-            java.util.ArrayList<Guid> imageList, boolean postZero, boolean force, String compatibilityVersion) {
+            ArrayList<Guid> imageList, boolean postZero, boolean force, String compatibilityVersion) {
         super(storagePoolId, storageDomainId, imageGroupId, Guid.Empty);
         setPostZero(postZero);
         setImageList(imageList);
@@ -12,13 +14,13 @@ public class DestroyImageVDSCommandParameters extends AllStorageAndImageIdVDSCom
         setCompatibilityVersion(compatibilityVersion);
     }
 
-    private java.util.ArrayList<Guid> privateImageList;
+    private ArrayList<Guid> privateImageList;
 
-    public java.util.ArrayList<Guid> getImageList() {
+    public ArrayList<Guid> getImageList() {
         return privateImageList;
     }
 
-    private void setImageList(java.util.ArrayList<Guid> value) {
+    private void setImageList(ArrayList<Guid> value) {
         privateImageList = value;
     }
 

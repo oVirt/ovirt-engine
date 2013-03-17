@@ -1,16 +1,18 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import org.ovirt.engine.core.compat.*;
+import java.util.ArrayList;
+
+import org.ovirt.engine.core.compat.Guid;
 
 public class GetVmsInfoVDSCommandParameters extends StorageDomainIdParametersBase {
 
-    private java.util.ArrayList<Guid> privateVmIdList;
+    private ArrayList<Guid> privateVmIdList;
 
-    public java.util.ArrayList<Guid> getVmIdList() {
+    public ArrayList<Guid> getVmIdList() {
         return privateVmIdList;
     }
 
-    public void setVmIdList(java.util.ArrayList<Guid> value) {
+    public void setVmIdList(ArrayList<Guid> value) {
         privateVmIdList = value;
     }
 

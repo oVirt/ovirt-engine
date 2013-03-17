@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.Guid;
 
 public class ExtendVolumeVDSCommandParameters extends AllStorageAndImageIdVDSCommandParametersBase {
     private int _newSize;
