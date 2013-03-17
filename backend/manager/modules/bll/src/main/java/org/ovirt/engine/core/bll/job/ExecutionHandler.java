@@ -632,8 +632,9 @@ public class ExecutionHandler {
         if (StringUtils.isEmpty(correlationId)) {
             correlationId = ThreadLocalParamsContainer.getCorrelationId();
             if (StringUtils.isEmpty(correlationId)) {
-                parameters.setCorrelationId(LoggedUtils.getObjectId(parameters));
+                correlationId = LoggedUtils.getObjectId(parameters);
             }
+            parameters.setCorrelationId(correlationId);
         } else {
             List<String> messages = ValidationUtils.validateInputs(validationGroups, parameters);
             if (!messages.isEmpty()) {
