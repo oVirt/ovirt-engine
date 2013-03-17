@@ -170,18 +170,4 @@ public interface StorageDomainDAO extends DAO, SearchDAO<StorageDomain>, AutoRec
      * @return the list of storage domains (empty if no storage matches the criteria)
      */
     List<StorageDomain> getPermittedStorageDomainsByStoragePool(Guid userId, ActionGroup actionGroup, Guid storagePoolId);
-
-    /**
-     * Retrieves storage domain of a given storage ID having a user permissions for a specific action.
-     *
-     * @param userId
-     *            The user ID
-     * @param actionGroup
-     *            The action group ID
-     * @param storageDomainId
-     *            The storage domain ID
-     * @return the storage domain (null if storage doesn't match the criteria)
-     */
-    StorageDomain getPermittedStorageDomainsById(Guid userId, ActionGroup actionGroup, Guid storageDomainId);
-
 }

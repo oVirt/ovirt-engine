@@ -10,10 +10,10 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.utils.RandomUtils;
@@ -383,15 +383,6 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
                         EXISTING_STORAGE_POOL_ID);
         assertNotNull(result);
         assertTrue(result.isEmpty());
-    }
-
-    @Test
-    public void testGetPermittedStorageDomainsById() {
-        StorageDomain result = dao.getPermittedStorageDomainsById(EXISTING_USER_ID,
-                        ActionGroup.CONFIGURE_VM_STORAGE,
-                        existingDomain.getId());
-        assertNotNull(result);
-        assertEquals(result.getId(), existingDomain.getId());
     }
 
     /**

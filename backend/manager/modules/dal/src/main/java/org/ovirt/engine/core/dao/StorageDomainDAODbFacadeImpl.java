@@ -5,12 +5,12 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.springframework.jdbc.core.RowMapper;
@@ -176,16 +176,6 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
                         .addValue("user_id", userId)
                         .addValue("action_group_id", actionGroup.getId())
                         .addValue("storage_pool_id", storagePoolId));
-    }
-
-    @Override
-    public StorageDomain getPermittedStorageDomainsById(Guid userId, ActionGroup actionGroup, Guid storageDomainId) {
-        return getCallsHandler().executeRead("Getstorage_domain_by_id_with_permitted_action",
-                StorageDomainRowMapper.instance,
-                getCustomMapSqlParameterSource()
-                        .addValue("user_id", userId)
-                        .addValue("action_group_id", actionGroup.getId())
-                        .addValue("storage_id", storageDomainId));
     }
 
     /**

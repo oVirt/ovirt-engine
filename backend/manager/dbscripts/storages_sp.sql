@@ -445,18 +445,6 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION Getstorage_domain_by_id_with_permitted_action (v_user_id UUID, v_action_group_id integer, v_storage_id UUID)
-RETURNS SETOF storage_domains
-   AS $procedure$
-BEGIN
-   RETURN QUERY SELECT *
-   FROM storage_domains
-   WHERE id = v_storage_id
-   AND (SELECT get_entity_permissions(v_user_id, v_action_group_id, id, 11)) IS NOT NULL;
-
-END; $procedure$
-LANGUAGE plpgsql;
-
 Create or replace FUNCTION Getstorage_domains_By_id_and_by_storage_pool_id(v_id UUID,
 	v_storage_pool_id UUID ) RETURNS SETOF storage_domains
    AS $procedure$
