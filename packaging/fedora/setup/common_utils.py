@@ -854,12 +854,18 @@ def backupDB(db, backup_file, env, user, host="localhost", port="5432"):
 
     # Run backup
     cmd = [
-        os.path.join(".", basedefs.FILE_DB_BACKUP_SCRIPT),
-        "-u", user,
-        "-s", host,
-        "-p", port,
-        "-d", db,
-        "-f", backup_file,
+        basedefs.EXEC_PGDUMP,
+        '-C',
+        '-E',
+        'UTF8',
+        '--disable-dollar-quoting',
+        '--disable-triggers',
+        '--format=p',
+        '-U', user,
+        '-h', host,
+        '-p', port,
+        '-f', backup_file,
+        db,
     ]
     execCmd(cmdList=cmd, cwd=basedefs.DIR_DB_SCRIPTS, failOnError=True, msg=output_messages.ERR_DB_BACKUP, envDict=env)
     logging.debug("%s DB Backup completed successfully", db)
