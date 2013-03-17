@@ -150,14 +150,6 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     @Override
     protected void executeCommand() {
-        VmTemplateHandler.lockVmTemplateInTransaction(getVmTemplateId(), getCompensationContext());
-        freeLock();
-        if (!getTemplateDisks().isEmpty()) {
-            moveOrCopyAllImageGroups();
-        } else {
-            endVmTemplateRelatedOps();
-        }
-        setSucceeded(true);
     }
 
     protected void moveOrCopyAllImageGroups() {
@@ -239,7 +231,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         setSucceeded(true);
     }
 
-    private void endVmTemplateRelatedOps() {
+    protected final void endVmTemplateRelatedOps() {
         if (getVmTemplate() != null) {
             VmDeviceUtils.setVmDevices(getVmTemplate());
             incrementDbGeneration();

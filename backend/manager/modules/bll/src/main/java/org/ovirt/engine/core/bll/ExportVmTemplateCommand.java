@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
@@ -25,8 +26,10 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
-@LockIdNameAttribute
+@LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends MoveOrCopyTemplateCommand<T> {
+
+    private String cachedTemplateIsBeingExportedMessage;
 
     public ExportVmTemplateCommand(T parameters) {
         super(parameters);
@@ -78,7 +81,35 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return Collections.singletonMap(getVmTemplateId().toString(), LockMessagesMatchUtil.TEMPLATE);
+        return Collections.singletonMap(getVmTemplateId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.REMOTE_TEMPLATE, getTemplateIsBeingExportedMessage()));
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getSharedLocks() {
+        return Collections.singletonMap(getVmTemplateId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, getTemplateIsBeingExportedMessage()));
+    }
+
+    @Override
+    protected void executeCommand() {
+        if (!getTemplateDisks().isEmpty()) {
+            moveOrCopyAllImageGroups();
+        } else {
+            endVmTemplateRelatedOps();
+        }
+        setSucceeded(true);
+    }
+
+    private String getTemplateIsBeingExportedMessage() {
+        if (cachedTemplateIsBeingExportedMessage == null) {
+            StringBuilder builder = new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_EXPORTED.name());
+            if (getVmTemplate() != null) {
+                builder.append(String.format("$TemplateName %1$s", getVmTemplate().getName()));
+            }
+            cachedTemplateIsBeingExportedMessage = builder.toString();
+        }
+        return cachedTemplateIsBeingExportedMessage;
     }
 
     @Override
