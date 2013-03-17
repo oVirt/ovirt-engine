@@ -59,28 +59,6 @@ public class VdsStaticDAOTest extends BaseDAOTestCase {
     }
 
     /**
-     * Ensures null is returned when the name is invalid.
-     */
-    @Test
-    public void testGetByVdsNameWithInvalidName() {
-        VdsStatic result = dao.getByVdsName("farkle");
-
-        assertNull(result);
-    }
-
-    /**
-     * Ensures that retrieving by name works.
-     */
-    @Test
-    public void testGetByVdsName() {
-        VdsStatic result = dao.getByVdsName(existingVds.getName());
-
-        assertNotNull(result);
-        assertEquals(existingVds.getName(), result.getName());
-    }
-
-
-    /**
      * Ensures all the right VdsStatic instances are returned.
      */
     @Test

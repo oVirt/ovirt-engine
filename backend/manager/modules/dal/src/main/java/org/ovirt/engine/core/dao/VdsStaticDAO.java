@@ -12,15 +12,6 @@ import org.ovirt.engine.core.compat.Guid;
  */
 public interface VdsStaticDAO extends GenericDao<VdsStatic, Guid> {
     /**
-     * Finds the instance with the specified name.
-     *
-     * @param name
-     *            the name
-     * @return the instance
-     */
-    VdsStatic getByVdsName(String name);
-
-    /**
      * Retrieves the instance for the given host name.
      *
      * @param hostname

@@ -28,14 +28,6 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
     }
 
     @Override
-    public VdsStatic getByVdsName(String name) {
-        return getCallsHandler().executeRead("GetVdsStaticByVdsName",
-                VdsStaticRowMapper.instance,
-                getCustomMapSqlParameterSource()
-                        .addValue("vds_name", name));
-    }
-
-    @Override
     public VdsStatic getByHostName(String host) {
         return getCallsHandler().executeRead("GetVdsStaticByHostName",
                 VdsStaticRowMapper.instance,
