@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RolesOperationsParameters;
 import org.ovirt.engine.core.common.businessentities.Role;
-import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
 public class UpdateRoleCommand<T extends RolesOperationsParameters> extends RolesOperationCommandBase<T> {
 

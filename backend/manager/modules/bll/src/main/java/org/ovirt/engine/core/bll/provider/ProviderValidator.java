@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.provider;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 

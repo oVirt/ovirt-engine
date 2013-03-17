@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
 public class UpdateWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParameters> {
 

@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
-import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
 /**
  * A test case for the {@link RolesCommandBase} class.

@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.text.MessageFormat;
 import java.util.List;
 
-import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
 /**
  * Utilities for testing the {@link CommandBase#canDoAction()} command's behavior.

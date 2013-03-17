@@ -235,19 +235,37 @@ public abstract class AbstractBackendBaseTest extends Assert {
     protected UriInfo setUpActionExpectations(VdcActionType task,
             Class<? extends VdcActionParametersBase> clz, String[] names, Object[] values,
             boolean canDo, boolean success) {
-        return setUpActionExpectations(task, clz, names, values, canDo, success, null, true);
+        return setUpActionExpectations(task, clz, names, values, canDo, success, null, true, CANT_DO);
+    }
+
+    protected UriInfo setUpActionExpectations(VdcActionType task,
+            Class<? extends VdcActionParametersBase> clz, String[] names, Object[] values,
+            boolean canDo, boolean success, String errorMessage) {
+        return setUpActionExpectations(task, clz, names, values, canDo, success, null, true, errorMessage);
+    }
+
+    protected UriInfo setUpActionExpectations(VdcActionType task,
+            Class<? extends VdcActionParametersBase> clz, String[] names, Object[] values,
+            boolean canDo, boolean success, boolean reply, String errorMessage) {
+        return setUpActionExpectations(task, clz, names, values, canDo, success, null, reply, errorMessage);
     }
 
     protected UriInfo setUpActionExpectations(VdcActionType task,
             Class<? extends VdcActionParametersBase> clz, String[] names, Object[] values,
             boolean canDo, boolean success, boolean reply) {
-        return setUpActionExpectations(task, clz, names, values, canDo, success, null, reply);
+        return setUpActionExpectations(task, clz, names, values, canDo, success, null, reply, CANT_DO);
     }
 
     protected UriInfo setUpActionExpectations(VdcActionType task,
             Class<? extends VdcActionParametersBase> clz, String[] names, Object[] values,
             boolean canDo, boolean success, Object taskReturn, boolean replay) {
-        return setUpActionExpectations(task, clz, names, values, canDo, success, taskReturn, null, replay);
+        return setUpActionExpectations(task, clz, names, values, canDo, success, taskReturn, null, replay, CANT_DO);
+    }
+
+    protected UriInfo setUpActionExpectations(VdcActionType task,
+            Class<? extends VdcActionParametersBase> clz, String[] names, Object[] values,
+            boolean canDo, boolean success, Object taskReturn, boolean replay, String errorMessage) {
+        return setUpActionExpectations(task, clz, names, values, canDo, success, taskReturn, null, replay, errorMessage);
     }
 
     protected UriInfo setUpActionExpectations(VdcActionType task,
@@ -271,7 +289,34 @@ public abstract class AbstractBackendBaseTest extends Assert {
                 null,
                 null,
                 baseUri,
-                replay);
+                replay,
+                CANT_DO);
+    }
+
+    protected UriInfo setUpActionExpectations(VdcActionType task,
+            Class<? extends VdcActionParametersBase> clz,
+            String[] names,
+            Object[] values,
+            boolean canDo,
+            boolean success,
+            Object taskReturn,
+            String baseUri,
+            boolean replay,
+            String errorMessage) {
+        return setUpActionExpectations(task,
+                clz,
+                names,
+                values,
+                canDo,
+                success,
+                taskReturn,
+                null,
+                null,
+                null,
+                null,
+                baseUri,
+                replay,
+                errorMessage);
     }
 
     protected UriInfo setUpActionExpectations(VdcActionType task,
@@ -287,6 +332,37 @@ public abstract class AbstractBackendBaseTest extends Assert {
             JobExecutionStatus jobStatus,
             String baseUri,
             boolean replay) {
+        return setUpActionExpectations(task,
+                clz,
+                names,
+                values,
+                canDo,
+                success,
+                taskReturn,
+                asyncTasks,
+                asyncStatuses,
+                jobId,
+                jobStatus,
+                baseUri,
+                replay,
+                CANT_DO);
+
+    }
+
+    protected UriInfo setUpActionExpectations(VdcActionType task,
+            Class<? extends VdcActionParametersBase> clz,
+            String[] names,
+            Object[] values,
+            boolean canDo,
+            boolean success,
+            Object taskReturn,
+            ArrayList<Guid> asyncTasks,
+            ArrayList<AsyncTaskStatus> asyncStatuses,
+            Guid jobId,
+            JobExecutionStatus jobStatus,
+            String baseUri,
+            boolean replay,
+            String errorMessage) {
         VdcReturnValueBase result = control.createMock(VdcReturnValueBase.class);
         expect(result.getCanDoAction()).andReturn(canDo).anyTimes();
         if (canDo) {
@@ -300,8 +376,8 @@ public abstract class AbstractBackendBaseTest extends Assert {
                 setUpL10nExpectations(asList(FAILURE));
             }
         } else {
-            expect(result.getCanDoActionMessages()).andReturn(asList(CANT_DO)).anyTimes();
-            setUpL10nExpectations(asList(CANT_DO));
+            expect(result.getCanDoActionMessages()).andReturn(asList(errorMessage)).anyTimes();
+            setUpL10nExpectations(asList(errorMessage));
         }
         expect(backend.RunAction(eq(task), eqActionParams(clz, addSession(names), addSession(values)))).andReturn(result);
 
@@ -380,6 +456,10 @@ public abstract class AbstractBackendBaseTest extends Assert {
 
     protected void verifyFault(WebApplicationException wae, String detail) {
         verifyFault(wae, BACKEND_FAILED_SERVER_LOCALE, asList(mockl10n(detail)).toString(), BAD_REQUEST);
+    }
+
+    protected void verifyFault(WebApplicationException wae, String detail, int status) {
+        verifyFault(wae, BACKEND_FAILED_SERVER_LOCALE, asList(mockl10n(detail)).toString(), status);
     }
 
     protected void verifyFault(WebApplicationException wae, String reason, String detail, int status) {

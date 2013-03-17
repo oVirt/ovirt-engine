@@ -6,7 +6,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.action.RemoveExternalEventParameters;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class RemoveExternalEventCommand <T extends RemoveExternalEventParameters> extends ExternalEventCommandBase<T> {
@@ -28,7 +28,7 @@ public class RemoveExternalEventCommand <T extends RemoveExternalEventParameters
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLEGAL_ORIGIN);
         }
         if (event.getseverity() == AuditLogSeverity.ALERT) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLRGAL_OPERATION);
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLEGAL_OPERATION);
         }
 
         return true;

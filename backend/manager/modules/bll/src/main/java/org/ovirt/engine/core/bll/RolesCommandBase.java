@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.action.RolesParameterBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.RoleGroupMap;
 import org.ovirt.engine.core.common.businessentities.Role;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public abstract class RolesCommandBase<T extends RolesParameterBase> extends CommandBase<T> {
     private Role _role;

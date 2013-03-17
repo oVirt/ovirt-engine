@@ -6,7 +6,7 @@ import org.hamcrest.Matcher;
 import org.junit.internal.matchers.TypeSafeMatcher;
 import org.junit.matchers.JUnitMatchers;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
 /**
  * Useful matchers to use when testing {@link ValidationResult}s, using the

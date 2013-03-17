@@ -12,9 +12,9 @@ import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> extends

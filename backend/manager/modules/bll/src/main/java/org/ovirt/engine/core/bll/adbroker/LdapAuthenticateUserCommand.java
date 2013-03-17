@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.adbroker;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.LdapUser;
-import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;

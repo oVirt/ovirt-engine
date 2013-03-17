@@ -15,6 +15,7 @@ import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Version;
+import org.ovirt.engine.api.restapi.util.ErrorMessageHelper;
 import org.ovirt.engine.api.restapi.util.SessionHelper;
 import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -52,7 +53,7 @@ public class BackendResource extends BaseBackendResource {
             VdcQueryReturnValue result = runQuery(VdcQueryType.Search,
                                                           new SearchParameters(constraint, searchType));
             if (!result.getSucceeded()) {
-                throw new BackendFailureException(localize(result.getExceptionString()));
+                backendFailure(result.getExceptionString());
             }
 
             T entity;
@@ -99,7 +100,7 @@ public class BackendResource extends BaseBackendResource {
         VdcQueryReturnValue result = runQuery(query, queryParams);
         if (!result.getSucceeded() || result.getReturnValue() == null) {
             if (result.getExceptionString() != null) {
-                throw new BackendFailureException(localize(result.getExceptionString()));
+                backendFailure(result.getExceptionString());
             } else {
                 throw new EntityNotFoundException(identifier);
             }
@@ -111,7 +112,7 @@ public class BackendResource extends BaseBackendResource {
         try {
             VdcQueryReturnValue result = runQuery(query, queryParams);
             if (!result.getSucceeded()) {
-                throw new BackendFailureException(localize(result.getExceptionString()));
+                backendFailure(result.getExceptionString());
             }
             List<T> results = asCollection(clz, result.getReturnValue());
             if (results!=null && getMaxResults()!=NO_LIMIT && getMaxResults()<results.size()) {
@@ -225,9 +226,9 @@ public class BackendResource extends BaseBackendResource {
         setCorrelationId(params);
         VdcReturnValueBase result = backend.RunAction(task, sessionize(params));
         if (result != null && !result.getCanDoAction()) {
-            throw new BackendFailureException(localize(result.getCanDoActionMessages()));
+            backendFailure(result.getCanDoActionMessages());
         } else if (result != null && !result.getSucceeded()) {
-            throw new BackendFailureException(localize(result.getExecuteFailedMessages()));
+            backendFailure(result.getExecuteFailedMessages());
         }
         assert (result != null);
         return result;
@@ -401,5 +402,13 @@ public class BackendResource extends BaseBackendResource {
                 }
             }
         }
+    }
+
+    protected void backendFailure(String msg) throws BackendFailureException {
+        throw new BackendFailureException(localize(msg), ErrorMessageHelper.getErrorStatus(msg));
+    }
+
+    protected void backendFailure(List<String> messages) throws BackendFailureException {
+        throw new BackendFailureException(localize(messages), ErrorMessageHelper.getErrorStatus(messages));
     }
 }

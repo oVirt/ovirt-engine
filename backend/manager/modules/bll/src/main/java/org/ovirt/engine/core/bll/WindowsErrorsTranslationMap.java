@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
 public class WindowsErrorsTranslationMap {
     private static Map<Integer,VdcBllMessages> errorCodes = new HashMap<Integer,VdcBllMessages>();

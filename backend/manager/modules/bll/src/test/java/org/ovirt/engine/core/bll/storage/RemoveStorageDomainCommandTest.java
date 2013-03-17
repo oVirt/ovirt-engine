@@ -9,8 +9,8 @@ import static org.ovirt.engine.core.bll.CommandAssertUtils.checkMessages;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 

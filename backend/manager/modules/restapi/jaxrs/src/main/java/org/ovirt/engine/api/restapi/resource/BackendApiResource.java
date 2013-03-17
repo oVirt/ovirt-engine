@@ -28,6 +28,7 @@ import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
 import org.ovirt.engine.api.common.util.FileUtils;
@@ -57,6 +58,7 @@ import org.ovirt.engine.api.restapi.rsdl.GeneralMetadataBuilder;
 import org.ovirt.engine.api.restapi.rsdl.RsdlBuilder;
 import org.ovirt.engine.api.restapi.rsdl.SchemaBuilder;
 import org.ovirt.engine.api.restapi.types.DateMapper;
+import org.ovirt.engine.api.restapi.util.ErrorMessageHelper;
 import org.ovirt.engine.api.restapi.util.VersionHelper;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -396,12 +398,15 @@ public class BackendApiResource
 
             if (!result.getSucceeded() || result.getReturnValue() == null) {
                 String failure;
+                Status status;
                 if (result.getExceptionString() != null) {
                     failure = localize(result.getExceptionString());
+                    status = ErrorMessageHelper.getErrorStatus(result.getExceptionString());
                 } else {
                     failure = SYSTEM_STATS_ERROR;
+                    status = Status.INTERNAL_SERVER_ERROR;
                 }
-                throw new BackendFailureException(failure);
+                throw new BackendFailureException(failure, status);
             }
 
             return asStatisticsMap(result.getReturnValue());

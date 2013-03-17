@@ -5,8 +5,8 @@ import java.util.Set;
 
 import javax.naming.AuthenticationException;
 
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.queries.gluster.GlusterServersQueryParameters;
-import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.utils.gluster.GlusterUtil;

@@ -8,7 +8,7 @@ import org.ovirt.engine.core.bll.adbroker.LdapReturnValueBase;
 import org.ovirt.engine.core.bll.adbroker.LdapUserPasswordBaseParameters;
 import org.ovirt.engine.core.bll.adbroker.UserAuthenticationResult;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
-import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
 @NonTransactiveCommandAttribute
 public class LoginUserCommand<T extends LoginUserParameters> extends LoginBaseCommand<T> {

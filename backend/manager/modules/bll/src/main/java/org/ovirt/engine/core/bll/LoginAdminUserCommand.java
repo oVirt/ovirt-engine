@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.action.LoginUserParameters;
-import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
 @NonTransactiveCommandAttribute
 public class LoginAdminUserCommand<T extends LoginUserParameters> extends LoginUserCommand<T> {

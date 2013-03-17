@@ -11,8 +11,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
-import org.ovirt.engine.core.dal.VdcBllMessages;
-
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 @RunWith(MockitoJUnitRunner.class)
 public class DisableGlusterHookCommandTest extends GlusterHookCommandTest<DisableGlusterHookCommand<GlusterHookParameters>> {
 

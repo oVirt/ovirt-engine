@@ -7,7 +7,7 @@ import static org.mockito.Mockito.spy;
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
 public class AddVmPoolWithVmsCommandTest extends CommonVmPoolWithVmsCommandTestAbstract {
 

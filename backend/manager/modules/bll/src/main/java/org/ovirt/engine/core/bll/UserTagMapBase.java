@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public abstract class UserTagMapBase<T extends AttachEntityToTagParameters> extends TagsCommandBase<T> {
     protected java.util.ArrayList<Guid> getUserList() {

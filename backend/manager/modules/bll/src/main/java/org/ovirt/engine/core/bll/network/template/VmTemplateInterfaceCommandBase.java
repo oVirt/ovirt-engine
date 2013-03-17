@@ -8,8 +8,8 @@ import org.ovirt.engine.core.bll.VmTemplateCommand;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInterfaceParameters>
         extends VmTemplateCommand<T> {

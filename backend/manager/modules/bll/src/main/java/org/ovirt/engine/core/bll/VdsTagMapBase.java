@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.action.AttachVdsToTagParameters;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public abstract class VdsTagMapBase<T extends AttachVdsToTagParameters> extends TagsCommandBase<T> {
     protected java.util.ArrayList<Guid> getVdsList() {

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.ws.rs.core.Response.Status;
+
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.same;
 import static org.easymock.EasyMock.expect;
@@ -90,7 +92,7 @@ public class BackendStatisticsResourceTest extends AbstractBackendCollectionReso
         } else  if (failure instanceof String) {
             IExpectationSetters<VDS> expectation = expect(query.resolve(eq(GUIDS[1])));
             String detail = mockl10n((String)failure);
-            expectation.andThrow(new BaseBackendResource.BackendFailureException(detail));
+            expectation.andThrow(new BaseBackendResource.BackendFailureException(detail, Status.CONFLICT));
         } else  if (failure instanceof Exception) {
             IExpectationSetters<VDS> expectation = expect(query.resolve(eq(GUIDS[1])));
             expectation.andThrow((Exception) failure).anyTimes();

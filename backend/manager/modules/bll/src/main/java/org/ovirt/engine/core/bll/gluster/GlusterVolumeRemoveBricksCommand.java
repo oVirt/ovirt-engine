@@ -10,11 +10,11 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksPara
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.gluster.RemoveBrick;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeRemoveBricksVDSParameters;
-import org.ovirt.engine.core.dal.VdcBllMessages;
 
 /**
  * BLL command to Remove Bricks from Gluster volume

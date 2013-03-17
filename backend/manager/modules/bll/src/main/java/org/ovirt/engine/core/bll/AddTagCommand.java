@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.businessentities.tags;
-import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class AddTagCommand<T extends TagsOperationParameters> extends TagsCommandOperationBase<T> {

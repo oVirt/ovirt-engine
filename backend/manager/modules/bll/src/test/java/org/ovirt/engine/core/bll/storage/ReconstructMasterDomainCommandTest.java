@@ -7,7 +7,7 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
 public class ReconstructMasterDomainCommandTest {
 

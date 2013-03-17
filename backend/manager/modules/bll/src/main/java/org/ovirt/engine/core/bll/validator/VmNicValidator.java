@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll.validator;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.VdcBllMessages;
 
 /**
  * A class that can validate a {@link VmNetworkInterface} is valid from certain aspects.

@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VmLogonVDSCommandParameters;
-import org.ovirt.engine.core.dal.VdcBllMessages;
 
 @InternalCommandAttribute
 public class VmLogonCommand<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> {

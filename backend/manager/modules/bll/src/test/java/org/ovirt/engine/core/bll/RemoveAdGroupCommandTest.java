@@ -8,8 +8,8 @@ import static org.mockito.Mockito.spy;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.AdElementParametersBase;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class RemoveAdGroupCommandTest {
 

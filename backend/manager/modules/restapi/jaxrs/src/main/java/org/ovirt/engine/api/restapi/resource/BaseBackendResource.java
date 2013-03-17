@@ -132,9 +132,15 @@ public class BaseBackendResource {
     protected static class BackendFailureException extends Exception {
 
         private static final long serialVersionUID = 2244591834711331403L;
+        private Response.Status httpStatus;
 
-        public BackendFailureException(String failure) {
+        public BackendFailureException(String failure, Response.Status httpStatus) {
             super(failure);
+            this.httpStatus = httpStatus;
+        }
+
+        public Response.Status getHttpStatus() {
+            return httpStatus;
         }
     }
 
@@ -148,7 +154,7 @@ public class BaseBackendResource {
         private String identifier;
 
         public EntityNotFoundException(String identifier) {
-            super(localize(Messages.ENTITY_NOT_FOUND_TEMPLATE, identifier));
+            super(localize(Messages.ENTITY_NOT_FOUND_TEMPLATE, identifier), Response.Status.NOT_FOUND);
             this.identifier = identifier;
         }
 
@@ -217,7 +223,9 @@ public class BaseBackendResource {
             throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).build());
         } else if ((e instanceof BackendFailureException) && (!StringUtils.isEmpty(e.getMessage()))) {
             LOG.errorFormat(localize(Messages.BACKEND_FAILED_TEMPLATE), e.getMessage(), null);
-            throw new WebFaultException(null, e.getMessage(), Response.Status.BAD_REQUEST);
+            BackendFailureException e2 = (BackendFailureException) e;
+            throw new WebFaultException(null, e.getMessage(), e2.getHttpStatus() != null ? e2.getHttpStatus()
+                    : Response.Status.BAD_REQUEST);
         } else if (e instanceof WebFaultException) {
             WebFaultException e2 = (WebFaultException) e;
             LOG.errorFormat(localize(Messages.BACKEND_FAILED_TEMPLATE), detail(e2), e2);
