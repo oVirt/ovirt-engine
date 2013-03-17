@@ -59,7 +59,6 @@ public enum VDSCommandType {
     UpdateVdsDynamicData("org.ovirt.engine.core.vdsbroker"),
     CollectVdsNetworkData("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     GetVmsInfo("org.ovirt.engine.core.vdsbroker.irsbroker"),
-    GetVmsList("org.ovirt.engine.core.vdsbroker.irsbroker"),
     HSMGetStorageDomainInfo("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     HSMGetStorageDomainsList("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     CreateImage("org.ovirt.engine.core.vdsbroker.irsbroker"),
