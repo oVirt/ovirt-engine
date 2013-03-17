@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
-
 public class Bond extends VdsNetworkInterface {
 
     private static final long serialVersionUID = 268337006285648461L;
@@ -16,6 +15,10 @@ public class Bond extends VdsNetworkInterface {
         setBondType(bondType);
     }
 
+    public Bond(String name) {
+        this();
+        setName(name);
+    }
 
     @Override
     public String toString() {
