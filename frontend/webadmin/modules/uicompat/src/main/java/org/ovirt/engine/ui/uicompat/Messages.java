@@ -243,6 +243,15 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("{0} (from Storage Domain {1})")
     String templateDiskDescription(String diskAlias, String storageDomainName);
 
+    @DefaultMessage("Virtual Machine must have at least one network interface defined to boot from network.")
+    String interfaceIsRequiredToBootFromNetwork();
+
+    @DefaultMessage("Virtual Machine must have at least one bootable disk defined to boot from hard disk.")
+    String bootableDiskIsRequiredToBootFromDisk();
+
+    @DefaultMessage("Diskless Virtual Machine cannot run in stateless mode")
+    String disklessVmCannotRunAsStateless();
+
     // Vnic
     @DefaultMessage("Hot Plug is not supported on cluster version {0}")
     String hotPlugNotSupported(String clusterVersion);

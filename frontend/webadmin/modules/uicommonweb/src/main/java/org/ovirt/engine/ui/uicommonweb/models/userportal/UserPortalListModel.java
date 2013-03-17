@@ -818,7 +818,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                             ((RunOnceModel) userPortalListModel.getWindow()).getBootSequence();
                     bootSequenceModel.getNetworkOption().setIsChangable(false);
                     bootSequenceModel.getNetworkOption()
-                            .setChangeProhibitionReason("Virtual Machine must have at least one network interface defined to boot from network."); //$NON-NLS-1$
+                            .setChangeProhibitionReason(ConstantsManager.getInstance().getMessages().interfaceIsRequiredToBootFromNetwork());
                 }
             }
         };
@@ -840,7 +840,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
                 if (vmDisks.isEmpty()) {
                     runOnceModel.getRunAsStateless().setIsChangable(false);
-                    runOnceModel.getRunAsStateless().setChangeProhibitionReason("Diskless Virtual Machine cannot run in stateless mode"); //$NON-NLS-1$
+                    runOnceModel.getRunAsStateless()
+                           .setChangeProhibitionReason(ConstantsManager.getInstance().getMessages().disklessVmCannotRunAsStateless());
                     runOnceModel.getRunAsStateless().setEntity(false);
                 }
 
@@ -857,7 +858,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                     BootSequenceModel bootSequenceModel = runOnceModel.getBootSequence();
                     bootSequenceModel.getHardDiskOption().setIsChangable(false);
                     bootSequenceModel.getHardDiskOption()
-                            .setChangeProhibitionReason("Virtual Machine must have at least one bootable disk defined to boot from hard disk."); //$NON-NLS-1$
+                            .setChangeProhibitionReason(ConstantsManager.getInstance().getMessages().bootableDiskIsRequiredToBootFromDisk());
                 }
             }
         };
