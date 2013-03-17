@@ -346,7 +346,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getParameters().getEntityId().toString(),
-                new Pair<String, String>(LockingGroup.DISK.name(), getDiskIsBeingRemovedLockMessage()));
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, getDiskIsBeingRemovedLockMessage()));
     }
 
     private String getDiskIsBeingRemovedLockMessage() {
@@ -371,13 +371,13 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                 result = new HashMap<String, Pair<String, String>>();
                 for (VM vm : listVms) {
                     result.put(vm.getId().toString(),
-                            new Pair<String, String>(LockingGroup.VM.name(), getDiskIsBeingRemovedLockMessage()));
+                            LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, getDiskIsBeingRemovedLockMessage()));
                 }
             }
         } else if (getDisk().getVmEntityType() == VmEntityType.TEMPLATE) {
             setVmTemplateIdParameter();
             result = Collections.singletonMap(getVmTemplateId().toString(),
-                    new Pair<String, String>(LockingGroup.TEMPLATE.name(), getDiskIsBeingRemovedLockMessage()));
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, getDiskIsBeingRemovedLockMessage()));
         }
         return result;
     }

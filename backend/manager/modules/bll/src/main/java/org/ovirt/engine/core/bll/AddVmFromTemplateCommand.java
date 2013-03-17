@@ -47,10 +47,10 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
             locks.putAll(parentLocks);
         }
         locks.put(getVmTemplateId().toString(),
-                new Pair<String, String>(LockingGroup.TEMPLATE.name(), getTemplateSharedLockMessage()));
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, getTemplateSharedLockMessage()));
         for (DiskImage image: getImagesToCheckDestinationStorageDomains()) {
             locks.put(image.getId().toString(),
-                    new Pair<String, String>(LockingGroup.DISK.name(), getDiskSharedLockMessage()));
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, getDiskSharedLockMessage()));
         }
         return locks;
     }

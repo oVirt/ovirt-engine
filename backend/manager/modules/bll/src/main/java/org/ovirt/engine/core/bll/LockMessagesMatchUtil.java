@@ -6,31 +6,53 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class LockMessagesMatchUtil {
 
-    public static final Pair<String, String> POOL = new Pair<String, String>(LockingGroup.POOL.name(),
-            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.name());
-    public static final Pair<String, String> VDS = new Pair<String, String>(LockingGroup.VDS.name(),
-            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.name());
-    public static final Pair<String, String> VDS_FENCE = new Pair<String, String>(LockingGroup.VDS_FENCE.name(),
-            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.name());
-    public static final Pair<String, String> VM = new Pair<String, String>(LockingGroup.VM.name(),
-            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.name());
-    public static final Pair<String, String> TEMPLATE = new Pair<String, String>(LockingGroup.TEMPLATE.name(),
-            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.name());
-    public static final Pair<String, String> DISK = new Pair<String, String>(LockingGroup.DISK.name(),
-            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.name());
-    public static final Pair<String, String> VM_DISK_BOOT = new Pair<String, String>(LockingGroup.VM_DISK_BOOT.name(),
-            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.name());
-    public static final Pair<String, String> VM_NAME = new Pair<String, String>(LockingGroup.VM_NAME.name(),
-            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.name());
-    public static final Pair<String, String> STORAGE = new Pair<String, String>(LockingGroup.STORAGE.name(),
-            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.name());
-    public static final Pair<String, String> REGISTER_VDS = new Pair<String, String>(LockingGroup.REGISTER_VDS.name(),
-            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.name());
-    public static final Pair<String, String> VM_SNAPSHOTS = new Pair<String, String>(LockingGroup.VM_SNAPSHOTS.name(),
-            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.name());
-    public static final Pair<String, String> GLUSTER = new Pair<String, String>(LockingGroup.GLUSTER.name(),
-            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.name());
-    public static final Pair<String, String> USER_VM_POOL = new Pair<String, String>(LockingGroup.USER_VM_POOL.name(),
-            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.name());
+    public static final Pair<String, String> POOL         = makeLockingPair(LockingGroup.POOL);
+    public static final Pair<String, String> VDS          = makeLockingPair(LockingGroup.VDS);
+    public static final Pair<String, String> VDS_FENCE    = makeLockingPair(LockingGroup.VDS_FENCE);
+    public static final Pair<String, String> VM           = makeLockingPair(LockingGroup.VM);
+    public static final Pair<String, String> TEMPLATE     = makeLockingPair(LockingGroup.TEMPLATE);
+    public static final Pair<String, String> DISK         = makeLockingPair(LockingGroup.DISK);
+    public static final Pair<String, String> VM_DISK_BOOT = makeLockingPair(LockingGroup.VM_DISK_BOOT);
+    public static final Pair<String, String> VM_NAME      = makeLockingPair(LockingGroup.VM_NAME);
+    public static final Pair<String, String> STORAGE      = makeLockingPair(LockingGroup.STORAGE);
+    public static final Pair<String, String> REGISTER_VDS = makeLockingPair(LockingGroup.REGISTER_VDS);
+    public static final Pair<String, String> VM_SNAPSHOTS = makeLockingPair(LockingGroup.VM_SNAPSHOTS);
+    public static final Pair<String, String> GLUSTER      = makeLockingPair(LockingGroup.GLUSTER);
+    public static final Pair<String, String> USER_VM_POOL = makeLockingPair(LockingGroup.USER_VM_POOL);
 
+    /**
+     * Helper factory method that creates a pair of locking group and error message
+     * that would be displayed when lock cannot be acquired
+     *
+     * @param group locking group
+     * @param message message to be shown when the lock cannot be acquired
+     * @return {@link Pair} of the given locking group and error message as Strings
+     */
+    public static Pair<String, String> makeLockingPair(LockingGroup group, VdcBllMessages message) {
+        return makeLockingPair(group, message.name());
+    }
+
+    /**
+     * Helper factory method that creates a pair of locking group and error message
+     * that would be displayed when lock cannot be acquired
+     *
+     * @param group locking group
+     * @param message message to be shown when the lock cannot be acquired
+     * @return {@link Pair} of the given locking group and error message as Strings
+     */
+    public static Pair<String, String> makeLockingPair(LockingGroup group, String message) {
+        return new Pair<String, String>(group.name(), message);
+    }
+
+    /**
+     * Factory method that returns a pair of the given locking group and the default
+     * error message to display when the lock cannot be acquired
+     *
+     * @param group locking group
+     * @return {@link Pair} of the given locking group and default cannot-acquire-lock can-do message
+     * @see {@link LockMessagesMatchUtil#makeLockingPair(LockingGroup, VdcBllMessages)}
+     */
+    private static Pair<String, String> makeLockingPair(LockingGroup group) {
+        return makeLockingPair(group, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED);
+    }
 }
