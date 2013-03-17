@@ -25,7 +25,7 @@ source ./common.sh
 set_defaults
 
 usage() {
-    printf "Usage: ${ME} [-h] [-s server] [-p PORT]] [-d DATABASE] [-u USERNAME] [-l LOGFILE]  [-t taskId] [-c commandId] [-z] [-R] [-C] [-J] [-q] [-v]\n"
+    printf "Usage: ${ME} [-h] [-s server] [-p PORT]] [-d DATABASE] [-u USERNAME] [-l LOGFILE]  [-t taskId] [-c commandId] [-z] [-R] [-C] [-J] [-A] [-q] [-v]\n"
     printf "\n"
     printf "\t-s SERVERNAME - The database servername for the database  (def. ${SERVERNAME})\n"
     printf "\t-p PORT       - The database port for the database        (def. ${PORT})\n"
@@ -38,6 +38,7 @@ usage() {
     printf "\t-R            - Removes all Zombie tasks.\n"
     printf "\t-C            - Clear related compensation entries.\n"
     printf "\t-J            - Clear related Job Steps.\n"
+    printf "\t-A            - Clear all Job Steps and compensation entries.\n"
     printf "\t-q            - Quite mode, do not prompt for confirmation.\n"
     printf "\t-v            - Turn on verbosity                         (WARNING: lots of output)\n"
     printf "\t-h            - This help text.\n"
@@ -62,10 +63,11 @@ ZOMBIES_ONLY=false
 CLEAR_ALL=false
 CLEAR_COMPENSATION=false
 CLEAR_JOB_STEPS=false
+CLEAR_JOB_STEPS_AND_COMPENSATION=false
 QUITE_MODE=false
 FIELDS="task_id,task_type,status,started_at,result,action_type as command_type,command_id,step_id,storage_pool_id as DC"
 
-while getopts hs:d:u:p:l:t:c:zRCJqv option; do
+while getopts hs:d:u:p:l:t:c:zRCJAqv option; do
     case $option in
         s) SERVERNAME=$OPTARG;;
         p) PORT=$OPTARG;;
@@ -78,6 +80,7 @@ while getopts hs:d:u:p:l:t:c:zRCJqv option; do
         R) CLEAR_ALL=true;;
         C) CLEAR_COMPENSATION=true;;
         J) CLEAR_JOB_STEPS=true;;
+        A) CLEAR_JOB_STEPS_AND_COMPENSATION=true;;
         q) QUITE_MODE=true;;
         v) VERBOSE=true;;
         h) ret=0 && usage;;
@@ -187,38 +190,48 @@ if [ "${TASK_ID}" != "" -o "${COMMAND_ID}" != "" -o  "${CLEAR_ALL}" = "true" -o 
     elif [ "${CLEAR_ALL}" = "true" ]; then
         if [ "${ZOMBIES_ONLY}" = "true" ]; then
             CMD2="SELECT DeleteAsyncTasksZombies();"
-            if [ "${CLEAR_COMPENSATION}" = "true" ]; then
-                CMD1="${CMD1}SELECT DeleteEntitySnapshotZombies();"
-                if [ "${CLEAR_JOB_STEPS}" = "true" ]; then
-                    caution "This will remove all Zombie Tasks in async_tasks table, its related Job Steps and Compensation data!!!"
-                    CMD1="${CMD1}SELECT DeleteJobStepsZombies();"
-                else
-                    caution "This will remove all Zombie Tasks in async_tasks table and its related Compensation data!!!"
-                fi
+            if [ "${CLEAR_JOB_STEPS_AND_COMPENSATION}" = "true" ]; then
+                caution "This will remove all Zombie Tasks in async_tasks table, and all Job Steps and Compensation data!!!"
+                CMD1="SELECT DeleteAllJobs(); SELECT DeleteAllEntitySnapshot();"
             else
-                if [ "${CLEAR_JOB_STEPS}" = "true" ]; then
-                    caution "This will remove all Zombie Tasks in async_tasks table and its related Job Steps!!!"
-                    CMD1="${CMD1}SELECT DeleteJobStepsZombies();"
+                if [ "${CLEAR_COMPENSATION}" = "true" ]; then
+                    CMD1="${CMD1}SELECT DeleteEntitySnapshotZombies();"
+                    if [ "${CLEAR_JOB_STEPS}" = "true" ]; then
+                        caution "This will remove all Zombie Tasks in async_tasks table, its related Job Steps and Compensation data!!!"
+                        CMD1="${CMD1}SELECT DeleteJobStepsZombies();"
+                    else
+                        caution "This will remove all Zombie Tasks in async_tasks table and its related Compensation data!!!"
+                    fi
                 else
-                    caution "This will remove all Zombie Tasks in async_tasks table!!!"
+                    if [ "${CLEAR_JOB_STEPS}" = "true" ]; then
+                        caution "This will remove all Zombie Tasks in async_tasks table and its related Job Steps!!!"
+                        CMD1="${CMD1}SELECT DeleteJobStepsZombies();"
+                    else
+                        caution "This will remove all Zombie Tasks in async_tasks table!!!"
+                    fi
                 fi
             fi
         else
             CMD2="TRUNCATE TABLE async_tasks cascade;"
-            if [ "${CLEAR_COMPENSATION}" = "true" ]; then
-                CMD1="TRUNCATE TABLE business_entity_snapshot cascade;"
-                if [ "${CLEAR_JOB_STEPS}" = "true" ]; then
-                    caution "This will remove all Tasks in async_tasks table, its related Job Steps and Compensation data!!!"
-                    CMD1="${CMD1}TRUNCATE TABLE step cascade;"
-                else
-                    caution "This will remove all async_tasks table content and its related Compensation data!!!"
-                fi
+            if [ "${CLEAR_JOB_STEPS_AND_COMPENSATION}" = "true" ]; then
+                caution "This will remove all Tasks in async_tasks table, and all Job Steps and Compensation data!!!"
+                CMD1="SELECT DeleteAllJobs(); SELECT DeleteAllEntitySnapshot();"
             else
-                if [ "${CLEAR_JOB_STEPS}" = "true" ]; then
-                    caution "This will remove all Tasks in async_tasks table and its related Job Steps!!!"
-                    CMD1="${CMD1}TRUNCATE TABLE step cascade;"
+                if [ "${CLEAR_COMPENSATION}" = "true" ]; then
+                    CMD1="TRUNCATE TABLE business_entity_snapshot cascade;"
+                    if [ "${CLEAR_JOB_STEPS}" = "true" ]; then
+                        caution "This will remove all Tasks in async_tasks table, its related Job Steps and Compensation data!!!"
+                        CMD1="${CMD1}TRUNCATE TABLE step cascade;"
+                    else
+                        caution "This will remove all async_tasks table content and its related Compensation data!!!"
+                    fi
                 else
-                    caution "This will remove all async_tasks table content!!!"
+                    if [ "${CLEAR_JOB_STEPS}" = "true" ]; then
+                        caution "This will remove all Tasks in async_tasks table and its related Job Steps!!!"
+                        CMD1="${CMD1}TRUNCATE TABLE step cascade;"
+                    else
+                        caution "This will remove all async_tasks table content!!!"
+                    fi
                 fi
             fi
         fi

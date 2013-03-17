@@ -104,3 +104,17 @@ BEGIN
     DELETE FROM step WHERE step_id IN (SELECT step_id FROM GetAsyncTasksZombies());
 END; $procedure$
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION DeleteAllJobs() RETURNS VOID
+   AS $procedure$
+BEGIN
+    DELETE FROM job;
+END; $procedure$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION DeleteAllEntitySnapshot() RETURNS VOID
+   AS $procedure$
+BEGIN
+    DELETE FROM business_entity_snapshot;
+END; $procedure$
+LANGUAGE plpgsql;
