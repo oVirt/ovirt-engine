@@ -12,7 +12,6 @@ import java.util.List;
 import org.apache.commons.lang.NotImplementedException;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -83,18 +82,6 @@ public class DiskImageDAOTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
 
         assertNotNull(result);
         assertEquals(ANCESTOR_IMAGE_ID, result.getImageId());
-    }
-
-    @Test
-    public void testGetAllForQuotaId() {
-        List<DiskImage> disks = dao.getAllForQuotaId(FixturesTool.QUOTA_GENERAL);
-        assertEquals("VM should have five disks", 5, disks.size());
-        for (DiskImage disk : disks) {
-            assertEquals("Wrong quota enforcement type",
-                    QuotaEnforcementTypeEnum.DISABLED,
-                    disk.getQuotaEnforcementType());
-            assertFalse("Qutoa should not be default", disk.isQuotaDefault());
-        }
     }
 
     @Test

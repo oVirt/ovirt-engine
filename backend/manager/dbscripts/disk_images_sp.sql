@@ -101,17 +101,6 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetImagesByQuotaId(v_quota_id UUID)
-RETURNS SETOF images_storage_domain_view
-   AS $procedure$
-BEGIN
-      RETURN QUERY SELECT *
-      FROM images_storage_domain_view
-      WHERE quota_id = v_quota_id;
-
-END; $procedure$
-LANGUAGE plpgsql;
-
 Create or replace FUNCTION GetSnapshotsByVmSnapshotId(v_vm_snapshot_id UUID)
 RETURNS SETOF images_storage_domain_view
    AS $procedure$

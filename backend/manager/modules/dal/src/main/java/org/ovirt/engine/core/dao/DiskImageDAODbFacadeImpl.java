@@ -42,14 +42,6 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
     }
 
     @Override
-    public List<DiskImage> getAllForQuotaId(Guid quotaId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("quota_id", quotaId);
-
-        return getCallsHandler().executeReadList("GetImagesByQuotaId", DiskImageRowMapper.instance, parameterSource);
-    }
-
-    @Override
     public List<DiskImage> getAllSnapshotsForParent(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("parent_guid", id);

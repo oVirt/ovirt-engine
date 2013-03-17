@@ -74,6 +74,4 @@ public interface DiskImageDAO extends ReadDao<DiskImage, Guid> {
      * @return List of images (empty if none found).
      */
     List<DiskImage> getImagesWithNoDisk(Guid vmId);
-
-    List<DiskImage> getAllForQuotaId(Guid quotaId);
 }
