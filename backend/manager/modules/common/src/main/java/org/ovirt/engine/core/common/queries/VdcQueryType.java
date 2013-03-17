@@ -60,7 +60,6 @@ public enum VdcQueryType implements Serializable {
     GetVdsGroupByVdsGroupId(VdcQueryAuthType.User), // needed when updating VM
     GetVdsGroupById(VdcQueryAuthType.User),
     GetVdsGroupByName(VdcQueryAuthType.User),
-    IsVdsGroupWithSameNameExist,
     GetVdsGroupsByStoragePoolId(VdcQueryAuthType.User),
 
     // Certificate
