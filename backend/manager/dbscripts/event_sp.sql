@@ -203,16 +203,6 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetEventNotificationMethodByType(v_method_type CHAR(10))
-RETURNS SETOF event_notification_methods
-   AS $procedure$
-BEGIN
-      RETURN QUERY SELECT *
-      from event_notification_methods
-      where method_type = v_method_type;
-END; $procedure$
-LANGUAGE plpgsql;
-
 -------------------------------------------------------------------------------------
 --- GetAllFromevent_audit_log_subscriber used to get un notified events
 -------------------------------------------------------------------------------------

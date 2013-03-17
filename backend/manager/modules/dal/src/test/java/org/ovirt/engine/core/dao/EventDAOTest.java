@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.EventNotificationMethods;
 import org.ovirt.engine.core.common.businessentities.EventMap;
 import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.event_notification_hist;
@@ -93,20 +92,6 @@ public class EventDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         assertEquals(1, result.size());
-    }
-
-    @Test
-    public void testGetEventNotificationMethodsByType() {
-        String target = "Email";
-
-        List<EventNotificationMethod> result =
-                dao.getEventNotificationMethodsByType(target);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (EventNotificationMethod method : result) {
-            assertEquals(EventNotificationMethods.EMAIL, method.getmethod_type());
-        }
     }
 
     /**

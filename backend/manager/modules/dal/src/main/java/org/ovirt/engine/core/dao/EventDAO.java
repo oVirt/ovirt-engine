@@ -31,8 +31,6 @@ public interface EventDAO extends DAO {
 
     List<EventNotificationMethod> getEventNotificationMethodsById(int method_id);
 
-    List<EventNotificationMethod> getEventNotificationMethodsByType(String method_type);
-
     /**
      * Saves the provided subscriber.
      *
