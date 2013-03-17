@@ -31,13 +31,6 @@ public interface StorageServerConnectionDAO extends DAO {
     StorageServerConnections getForIqn(String iqn);
 
     /**
-     * Retrieves all connections.
-     *
-     * @return the list of connections
-     */
-    List<StorageServerConnections> getAll();
-
-    /**
      * Retrieves all connections of Active/Unknown/InActive domains in the specified storage pool.
      *
      * @param pool

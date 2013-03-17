@@ -7,8 +7,8 @@ import java.util.List;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 
@@ -31,13 +31,6 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
         return getCallsHandler().executeRead("Getstorage_server_connectionsByIqn", mapper,
                 getCustomMapSqlParameterSource()
                         .addValue("iqn", iqn));
-    }
-
-    @Override
-    public List<StorageServerConnections> getAll() {
-        return getCallsHandler().executeReadList("GetAllFromstorage_server_connections",
-                mapper,
-                getCustomMapSqlParameterSource());
     }
 
     @Override

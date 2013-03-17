@@ -413,20 +413,6 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromstorage_server_connections()
-RETURNS SETOF storage_server_connections
-   AS $procedure$
-BEGIN
-   RETURN QUERY SELECT *
-   FROM storage_server_connections;
-
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-
-
 Create or replace FUNCTION Getstorage_server_connectionsByid(v_id VARCHAR(50))
 RETURNS SETOF storage_server_connections
    AS $procedure$
