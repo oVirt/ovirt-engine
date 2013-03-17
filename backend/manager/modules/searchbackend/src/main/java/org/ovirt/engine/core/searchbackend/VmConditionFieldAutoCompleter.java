@@ -34,6 +34,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         mVerbs.put("DATACENTER", "DATACENTER");
         mVerbs.put("TYPE", "TYPE");
         mVerbs.put("QUOTA", "QUOTA");
+        mVerbs.put("HOST", "HOST");
         // Building the autoCompletion Dict
         buildCompletions();
         mVerbs.put("_VM_ID", "_VM_ID");
@@ -59,6 +60,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         getTypeDictionary().put("DATACENTER", String.class);
         getTypeDictionary().put("TYPE", VmType.class);
         getTypeDictionary().put("QUOTA", String.class);
+        getTypeDictionary().put("HOST", String.class);
         getTypeDictionary().put("_VM_ID", UUID.class);
 
         // building the ColumnName Dict
@@ -83,6 +85,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         columnNameDict.put("DATACENTER", "storage_pool_name");
         columnNameDict.put("TYPE", "vm_type");
         columnNameDict.put("QUOTA", "quota_name");
+        columnNameDict.put("HOST", "run_on_vds_name");
         columnNameDict.put("_VM_ID", "vm_guid");
 
         // Override field names for purpose of sorting, if needed
