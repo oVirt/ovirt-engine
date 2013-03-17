@@ -99,20 +99,6 @@ public final class CpuFlagsManagerHandler {
     }
 
     /**
-     * Returns all CPU lower than the given CPU INCLUDING IT !!!
-     *
-     * @param cpuName
-     * @return
-     */
-    public static List<ServerCpu> GetAllServerCpusBelowCpu(String cpuName, Version ver) {
-        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
-        if (cpuFlagsManager != null) {
-            return cpuFlagsManager.GetAllServerCpusBelowCpu(cpuName);
-        }
-        return new ArrayList<ServerCpu>();
-    }
-
-    /**
      * Finds max server cpu by server cpu flags only
      *
      * @param flags
@@ -360,26 +346,6 @@ public final class CpuFlagsManagerHandler {
         public boolean CheckIfCpusExist(String cpuName) {
             return cpuName != null
                     && (_intelCpuByNameDictionary.containsKey(cpuName) || _amdCpuByNameDictionary.containsKey(cpuName));
-        }
-
-        /**
-         * Returns all CPU lower than the given CPU INCLUDING IT !!!
-         *
-         * @param cpuName
-         * @return
-         */
-        public List<ServerCpu> GetAllServerCpusBelowCpu(String cpuName) {
-            List<ServerCpu> result = new ArrayList<ServerCpu>();
-            if (cpuName != null) {
-                ServerCpu sc = null;
-                // find server cpu object
-                if ((sc = _intelCpuByNameDictionary.get(cpuName)) != null) {
-                    result = _intelCpuList.subList(0, _intelCpuList.indexOf(sc) + 1);
-                } else if ((sc = _amdCpuByNameDictionary.get(cpuName)) != null) {
-                    result = _amdCpuList.subList(0, _amdCpuList.indexOf(sc) + 1);
-                }
-            }
-            return result;
         }
 
         /**
