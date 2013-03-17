@@ -1348,6 +1348,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Disk ${DiskName} is being removed.")
     String ACTION_TYPE_FAILED_DISK_IS_BEING_REMOVED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Template ${TemplateName} is being removed.")
+    String ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_REMOVED();
+
     @DefaultStringValue("Bond attached to vlan, remove bonds vlan first")
     String NETWORK_BOND_HAVE_ATTACHED_VLANS();
 

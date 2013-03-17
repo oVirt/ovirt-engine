@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -32,7 +33,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
-@LockIdNameAttribute
+@LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends VmTemplateCommand<T>
         implements QuotaStorageDependent {
 
@@ -190,7 +191,6 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
     protected void executeCommand() {
         // Set VM to lock status immediately, for reducing race condition.
         VmTemplateHandler.lockVmTemplateInTransaction(getVmTemplateId(), getCompensationContext());
-        freeLock();
         // if for some reason template doesn't have images, remove it now and not in end action
         final boolean hasImages = imageTemplates.size() > 0;
         if (hasImages) {
@@ -212,7 +212,13 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getVmTemplateId().toString(),
-                LockMessagesMatchUtil.TEMPLATE);
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, getTemplateExclusiveLockMessage()));
+    }
+
+    private String getTemplateExclusiveLockMessage() {
+        return new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_REMOVED.name())
+        .append(String.format("$TemplateName %1$s", getVmTemplate().getName()))
+        .toString();
     }
 
     private void RemoveTemplateFromDb() {
