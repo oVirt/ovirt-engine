@@ -71,20 +71,6 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromevent_subscriber()
-RETURNS SETOF event_subscriber
-   AS $procedure$
-BEGIN
-   RETURN QUERY SELECT *
-   FROM event_subscriber;
-
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-
-
 Create or replace FUNCTION Getevent_subscriberBysubscriber_id(v_subscriber_id UUID)
 RETURNS SETOF event_subscriber
    AS $procedure$

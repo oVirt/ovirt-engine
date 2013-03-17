@@ -14,13 +14,6 @@ import org.ovirt.engine.core.compat.Guid;
  */
 public interface EventDAO extends DAO {
     /**
-     * Returns all event subscribers.
-     *
-     * @return the list of all event subscribers
-     */
-    List<event_subscriber> getAll();
-
-    /**
      * Retrieves all event subscriptions for the given subscriber id.
      *
      * @param id

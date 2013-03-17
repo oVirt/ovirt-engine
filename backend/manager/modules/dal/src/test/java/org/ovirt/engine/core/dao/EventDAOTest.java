@@ -47,17 +47,6 @@ public class EventDAOTest extends BaseDAOTestCase {
     }
 
     /**
-     * Ensures that retrieving all subscribers works as expected.
-     */
-    @Test
-    public void testGetAll() {
-        List<event_subscriber> result = dao.getAll();
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-    }
-
-    /**
      * Ensures an empty collection is returned when the user has no subscriptions.
      */
     @Test

@@ -61,15 +61,6 @@ public class EventDAODbFacadeImpl extends BaseDAODbFacade implements EventDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<event_subscriber> getAll() {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
-        return getCallsHandler().executeReadList("GetAllFromevent_subscriber",
-                EventSubscriberRowMapper.instance,
-                parameterSource);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
     public List<event_subscriber> getAllForSubscriber(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("subscriber_id", id);
