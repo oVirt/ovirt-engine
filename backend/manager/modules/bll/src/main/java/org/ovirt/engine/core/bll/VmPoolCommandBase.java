@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -70,41 +69,6 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
     public VmPoolCommandBase(T parameters) {
         super(parameters);
 
-    }
-
-    public static Guid getVmToAttach(NGuid poolId) {
-        Guid vmGuid = Guid.Empty;
-        vmGuid = getPrestartedVmToAttach(poolId);
-        if (vmGuid == null || Guid.Empty.equals(vmGuid)) {
-            vmGuid = getNonPrestartedVmToAttach(poolId);
-        }
-        return vmGuid;
-    }
-
-    protected static Guid getNonPrestartedVmToAttach(NGuid vmPoolId) {
-        List<VmPoolMap> vmPoolMaps = DbFacade.getInstance().getVmPoolDao()
-                .getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Down);
-        if (vmPoolMaps != null) {
-            for (VmPoolMap map : vmPoolMaps) {
-                if (canAttachNonPrestartedVmToUser(map.getvm_guid())) {
-                    return map.getvm_guid();
-                }
-            }
-        }
-        return Guid.Empty;
-    }
-
-    protected static Guid getPrestartedVmToAttach(NGuid vmPoolId) {
-        List<VmPoolMap> vmPoolMaps = DbFacade.getInstance().getVmPoolDao()
-                .getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Up);
-        if (vmPoolMaps != null) {
-            for (VmPoolMap map : vmPoolMaps) {
-                if (canAttachPrestartedVmToUser(map.getvm_guid())) {
-                    return map.getvm_guid();
-                }
-            }
-        }
-        return Guid.Empty;
     }
 
     protected static int getNumOfPrestartedVmsInPool(NGuid poolId) {

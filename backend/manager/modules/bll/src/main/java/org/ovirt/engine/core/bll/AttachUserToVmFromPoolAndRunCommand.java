@@ -16,6 +16,8 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmPoolUserParameters;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -77,6 +79,41 @@ VmPoolUserCommandBase<T> {
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_FROM_VM_POOL);
         }
         return returnValue;
+    }
+
+    private static Guid getVmToAttach(NGuid poolId) {
+        Guid vmGuid = Guid.Empty;
+        vmGuid = getPrestartedVmToAttach(poolId);
+        if (vmGuid == null || Guid.Empty.equals(vmGuid)) {
+            vmGuid = getNonPrestartedVmToAttach(poolId);
+        }
+        return vmGuid;
+    }
+
+    private static Guid getPrestartedVmToAttach(NGuid vmPoolId) {
+        List<VmPoolMap> vmPoolMaps = DbFacade.getInstance().getVmPoolDao()
+                .getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Up);
+        if (vmPoolMaps != null) {
+            for (VmPoolMap map : vmPoolMaps) {
+                if (canAttachPrestartedVmToUser(map.getvm_guid())) {
+                    return map.getvm_guid();
+                }
+            }
+        }
+        return Guid.Empty;
+    }
+
+    private static Guid getNonPrestartedVmToAttach(NGuid vmPoolId) {
+        List<VmPoolMap> vmPoolMaps = DbFacade.getInstance().getVmPoolDao()
+                .getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Down);
+        if (vmPoolMaps != null) {
+            for (VmPoolMap map : vmPoolMaps) {
+                if (canAttachNonPrestartedVmToUser(map.getvm_guid())) {
+                    return map.getvm_guid();
+                }
+            }
+        }
+        return Guid.Empty;
     }
 
     @Override

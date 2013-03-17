@@ -100,7 +100,6 @@ public enum VdcQueryType implements Serializable {
 
     // VM pools queries
     GetVmPoolById(VdcQueryAuthType.User),
-    HasFreeVmsInPool,
     GetAllVmPoolsAttachedToUser(VdcQueryAuthType.User),
     GetAllVmsAndVmPools(VdcQueryAuthType.User),
     IsVmPoolWithSameNameExists,
