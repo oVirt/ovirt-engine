@@ -42,10 +42,6 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
         Map<String, Pair<String, String>> locks = new HashMap<String, Pair<String, String>>();
-        Map<String, Pair<String, String>> parentLocks = super.getSharedLocks();
-        if (parentLocks != null) {
-            locks.putAll(parentLocks);
-        }
         locks.put(getVmTemplateId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, getTemplateSharedLockMessage()));
         for (DiskImage image: getImagesToCheckDestinationStorageDomains()) {
