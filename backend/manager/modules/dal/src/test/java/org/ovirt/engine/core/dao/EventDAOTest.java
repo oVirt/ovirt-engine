@@ -17,7 +17,6 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class EventDAOTest extends BaseDAOTestCase {
     private static final int FREE_AUDIT_LOG_ID = 44295;
-    private static final int EVENT_MAP_COUNT = 1;
     private EventDAO dao;
     private Guid existingSubscriber;
     private Guid newSubscriber;
@@ -169,14 +168,4 @@ public class EventDAOTest extends BaseDAOTestCase {
             assertEquals("TestRun", mapping.getEventUpName());
         }
     }
-
-    @Test
-    public void testGetAllEventMaps() {
-        List<EventMap> result = dao.getAllEventMaps();
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(EVENT_MAP_COUNT, result.size());
-    }
-
 }

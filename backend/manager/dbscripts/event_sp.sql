@@ -6,22 +6,6 @@
 
 
 ----------------------------------------------------------------
--- [event_map] Table
---
-
-
-Create or replace FUNCTION GetAllFromevent_map() RETURNS SETOF event_map
-   AS $procedure$
-BEGIN
-   RETURN QUERY SELECT *
-   FROM event_map;
-
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-----------------------------------------------------------------
 -- [event_notification_hist] Table
 --
 

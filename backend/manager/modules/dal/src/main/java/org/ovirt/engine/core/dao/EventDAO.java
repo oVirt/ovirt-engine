@@ -58,6 +58,4 @@ public interface EventDAO extends DAO {
     void unsubscribe(event_subscriber subscriber);
 
     List<EventMap> getEventMapByName(String event_up_name);
-
-    List<EventMap> getAllEventMaps();
 }
