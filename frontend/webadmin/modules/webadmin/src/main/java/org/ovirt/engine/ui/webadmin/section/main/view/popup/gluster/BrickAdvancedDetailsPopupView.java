@@ -239,6 +239,13 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
         clientsTable.addEntityModelColumn(new EntityModelTextColumn<GlusterClientInfo>() {
             @Override
             public String getText(GlusterClientInfo entity) {
+                return String.valueOf(entity.getClientPort());
+            }
+        }, constants.clientPortBrickAdvancedLabel());
+
+        clientsTable.addEntityModelColumn(new EntityModelTextColumn<GlusterClientInfo>() {
+            @Override
+            public String getText(GlusterClientInfo entity) {
                 return String.valueOf(entity.getBytesRead());
             }
         }, constants.bytesReadBrickAdvancedLabel());

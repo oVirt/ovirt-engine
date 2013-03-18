@@ -2392,6 +2392,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Client")
     String clientBrickAdvancedLabel();
 
+    @DefaultStringValue("Port")
+    String clientPortBrickAdvancedLabel();
+
     @DefaultStringValue("Bytes Read")
     String bytesReadBrickAdvancedLabel();
 
