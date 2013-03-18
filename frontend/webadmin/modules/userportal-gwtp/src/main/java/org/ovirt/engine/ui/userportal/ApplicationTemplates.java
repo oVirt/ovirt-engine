@@ -12,4 +12,37 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template(" ({0})")
     SafeHtml vmDescriptionCellItem(String description);
 
+
+    @Template("<table style=\"font-size:11px; background-color:#d0e4f6; border-collapse: collapse;\">\n" +
+            "          <tr style=\"background-color: #95adc2;\">\n" +
+            "                <th style=\"text-align:left; padding: 3px;\" >{0}</th>\n" +
+            "                <th style=\"padding: 3px;\">&nbsp;</th>\n" +
+            "                <th style=\"text-align:right; padding: 3px;\" >{1}</th>\n" +
+            "          </tr>\n" +
+            "          <tr style=\"background-color: #b5cadc; padding: 3px;\">\n" +
+            "                <td style=\"padding: 3px;\">{2} Usage</td>\n" +
+            "                <td style=\"text-align:right; padding: 3px; padding-left: 18px; \" >{3}%</td>\n" +
+            "                <td style=\"text-align:right; padding: 3px; padding-left: 18px; \" >{4}</td>\n" +
+            "          </tr>\n" +
+            "          <tr>\n" +
+            "                <td style=\"padding: 3px;\">{5}</td>\n" +
+            "                <td style=\"text-align:right; padding: 3px;\" >{6}%</td>\n" +
+            "                <td style=\"text-align:right; padding: 3px;\" >{7}</td>\n" +
+            "          </tr>\n" +
+            "         <tr>\n" +
+            "                <td style=\"padding: 3px;\">{8}</td>\n" +
+            "                <td style=\"text-align:right; padding: 3px;\" >{9}%</td>\n" +
+            "                <td style=\"text-align:right; padding: 3px;\" >{10}</td>\n" +
+            "          </tr>\n" +
+            "         <tr style=\"background-color: #b5cadc; \">\n" +
+            "                <td style=\"border-bottom:1px solid #95adc2; padding: 3px;\">{11}</td>\n" +
+            "                <td style=\"text-align:right; border-bottom:1px solid #95adc2; padding: 3px;\" >{12}%</td>\n" +
+            "                <td style=\"text-align:right; border-bottom:1px solid #95adc2; padding: 3px;\" >{13}</td>\n" +
+            "          </tr>\n" +
+            "        </table>\n")
+    SafeHtml quotaForUserBarToolTip(String quotaLabel, String quota,
+            String totalUsageLabel, int totalUsagePercentage, String totalUsage,
+            String usedByYouLabel, int usedByYouPercentage,String usedByYou,
+            String usedByOthersLabel, int usedByOthersPercentage, String usedByOthers,
+            String freeLabel, int freePercentage, String free);
 }

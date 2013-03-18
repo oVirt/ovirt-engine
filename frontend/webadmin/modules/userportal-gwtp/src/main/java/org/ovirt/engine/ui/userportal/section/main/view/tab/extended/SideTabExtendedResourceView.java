@@ -20,7 +20,10 @@ import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedResourcePresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.resources.ResourcesModelProvider;
+import org.ovirt.engine.ui.userportal.widget.QuotaCPUProgressBar;
+import org.ovirt.engine.ui.userportal.widget.QuotaMemoryProgressBar;
 import org.ovirt.engine.ui.userportal.widget.QuotaProgressBar;
+import org.ovirt.engine.ui.userportal.widget.QuotaStorageProgressBar;
 import org.ovirt.engine.ui.userportal.widget.ToStringEntityModelLabel;
 import org.ovirt.engine.ui.userportal.widget.resources.VmTable;
 
@@ -159,9 +162,9 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
         SimpleRefreshManager refreshManager = new SimpleRefreshManager(modelProvider, eventBus, clientStorage);
         refreshPanel = refreshManager.getRefreshPanel();
 
-        cpusProgressBar = new QuotaProgressBar(QuotaProgressBar.QuotaType.CPU);
-        memoryProgressBar = new QuotaProgressBar(QuotaProgressBar.QuotaType.MEM);
-        storageProgressBar = new QuotaProgressBar(QuotaProgressBar.QuotaType.STORAGE);
+        cpusProgressBar = new QuotaCPUProgressBar();
+        memoryProgressBar = new QuotaMemoryProgressBar();
+        storageProgressBar = new QuotaStorageProgressBar();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         Driver.driver.initialize(this);
@@ -225,15 +228,9 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
                 addQuotaToStorageQuotaList(quotaPerUserUsageEntity);
             }
 
-            cpusProgressBar.setValues(aggregatedUsage.getVcpuLimit(),
-                    aggregatedUsage.getVcpuTotalUsage() - aggregatedUsage.getVcpuUsageForUser(),
-                    aggregatedUsage.getVcpuUsageForUser());
-            memoryProgressBar.setValues(aggregatedUsage.getMemoryLimit(),
-                    aggregatedUsage.getMemoryTotalUsage() - aggregatedUsage.getMemoryUsageForUser(),
-                    aggregatedUsage.getMemoryUsageForUser());
-            storageProgressBar.setValues(aggregatedUsage.getStorageLimit(),
-                    aggregatedUsage.getStorageTotalUsage() - aggregatedUsage.getStorageUsageForUser(),
-                    aggregatedUsage.getStorageUsageForUser());
+            cpusProgressBar.setQuotaUsagePerUser(aggregatedUsage);
+            memoryProgressBar.setQuotaUsagePerUser(aggregatedUsage);
+            storageProgressBar.setQuotaUsagePerUser(aggregatedUsage);
 
             String title = constants.showQuotaDistribution() + " (" + list.size() + ")"; //$NON-NLS-1$  //$NON-NLS-2$
             vcpuExpander.setTitleWhenCollapsed(title);
@@ -243,26 +240,17 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
     }
 
     private void addQuotaToVcpuQuotaList(QuotaUsagePerUser quotaPerUserUsageEntity) {
-        QuotaProgressBar vcpuQuotaProgressBar = new QuotaProgressBar(QuotaProgressBar.QuotaType.CPU);
-        vcpuQuotaProgressBar.setValues(quotaPerUserUsageEntity.getVcpuLimit(),
-                quotaPerUserUsageEntity.getVcpuTotalUsage() - quotaPerUserUsageEntity.getVcpuUsageForUser(),
-                quotaPerUserUsageEntity.getVcpuUsageForUser());
+        QuotaProgressBar vcpuQuotaProgressBar = new QuotaCPUProgressBar(quotaPerUserUsageEntity);
         addQuotaRow(cpusQuotasList, quotaPerUserUsageEntity.getQuotaName(), vcpuQuotaProgressBar);
     }
 
     private void addQuotaToMemoryQuotaList(QuotaUsagePerUser quotaPerUserUsageEntity) {
-        QuotaProgressBar memoryQuotaProgressBar = new QuotaProgressBar(QuotaProgressBar.QuotaType.MEM);
-        memoryQuotaProgressBar.setValues(quotaPerUserUsageEntity.getMemoryLimit(),
-                quotaPerUserUsageEntity.getMemoryTotalUsage() - quotaPerUserUsageEntity.getMemoryUsageForUser(),
-                quotaPerUserUsageEntity.getMemoryUsageForUser());
+        QuotaProgressBar memoryQuotaProgressBar = new QuotaMemoryProgressBar(quotaPerUserUsageEntity);
         addQuotaRow(memoryQuotasList, quotaPerUserUsageEntity.getQuotaName(), memoryQuotaProgressBar);
     }
 
     private void addQuotaToStorageQuotaList(QuotaUsagePerUser quotaPerUserUsageEntity) {
-        QuotaProgressBar storageQuotaProgressBar = new QuotaProgressBar(QuotaProgressBar.QuotaType.STORAGE);
-        storageQuotaProgressBar.setValues(quotaPerUserUsageEntity.getStorageLimit(),
-                quotaPerUserUsageEntity.getStorageTotalUsage() - quotaPerUserUsageEntity.getStorageUsageForUser(),
-                quotaPerUserUsageEntity.getStorageUsageForUser());
+        QuotaProgressBar storageQuotaProgressBar = new QuotaStorageProgressBar(quotaPerUserUsageEntity);
         addQuotaRow(storageQuotasList, quotaPerUserUsageEntity.getQuotaName(), storageQuotaProgressBar);
     }
 

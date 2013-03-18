@@ -102,7 +102,6 @@ public class DoublePercentageProgressBar extends Composite implements IsEditor<T
             percentageLabel.setStyleName(style);
             percentageBar.setWidth(fakePercentage);
             percentageBar.setVisible(value != 0);
-            percentageBar.setTitle(percentage);
         }
     }
 

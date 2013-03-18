@@ -393,4 +393,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Virtual Machines' Disks & Snapshots ")
     String vmDisksAndSnapshots();
+
+    @DefaultStringValue("Quota")
+    String tooltipQuotaLabel();
+
+    @DefaultStringValue("Total usage")
+    String tooltipTotalUsageLabel();
 }

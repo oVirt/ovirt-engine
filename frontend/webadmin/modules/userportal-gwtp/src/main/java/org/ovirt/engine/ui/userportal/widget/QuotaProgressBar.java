@@ -1,25 +1,58 @@
 package org.ovirt.engine.ui.userportal.widget;
 
 import com.google.gwt.core.client.GWT;
-import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
+import com.google.gwt.event.dom.client.HasMouseOutHandlers;
+import com.google.gwt.event.dom.client.HasMouseOverHandlers;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.user.client.ui.DecoratedPopupPanel;
+import com.google.gwt.user.client.ui.HTML;
+import org.ovirt.engine.core.common.businessentities.QuotaUsagePerUser;
+import org.ovirt.engine.ui.common.utils.PopupUtils;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
-import org.ovirt.engine.ui.userportal.ApplicationMessages;
+import org.ovirt.engine.ui.userportal.ApplicationTemplates;
 
-public class QuotaProgressBar extends DoublePercentageProgressBar {
+public abstract class QuotaProgressBar extends DoublePercentageProgressBar implements HasMouseOutHandlers, HasMouseOverHandlers, MouseOutHandler, MouseOverHandler {
 
     public static final int UNLIMITED = -1;
-    private static final ApplicationMessages messages = GWT.create(ApplicationMessages.class);
     private static final ApplicationConstants constants = GWT.create(ApplicationConstants.class);
-    private static final DiskSizeRenderer<Number> diskSizeRenderer =
-            new DiskSizeRenderer<Number>(DiskSizeRenderer.DiskSizeUnit.GIGABYTE);
+    protected static final SafeHtml EMPTY_HTML = new SafeHtml() {
+        @Override
+        public String asString() {
+            return ""; //$NON-NLS-1$
+        }
+    };
+    private final HTML tooltip = new HTML();
+    private final DecoratedPopupPanel tooltipPanel = new DecoratedPopupPanel();
+    private final ApplicationTemplates templates = GWT.create(ApplicationTemplates.class);
 
-    private QuotaType type;
-    private static final double GIGA = 1024;
-    private static final double MB_GB_THRESHOLD = 4; // over this threshold number would be presented in GB not MB
+    protected QuotaUsagePerUser quotaUsagePerUser;
 
-    public QuotaProgressBar(QuotaType type) {
-        this.type = type;
+    public QuotaProgressBar(QuotaUsagePerUser quotaUsagePerUser) {
+        setQuotaUsagePerUser(quotaUsagePerUser);
+        initToolTip();
     }
+
+    public QuotaProgressBar() {
+        initToolTip();
+    }
+
+    private void initToolTip() {
+        tooltipPanel.setWidget(tooltip);
+        addMouseOutHandler(this);
+        addMouseOverHandler(this);
+    }
+
+    public void setQuotaUsagePerUser(QuotaUsagePerUser quotaUsagePerUser) {
+        this.quotaUsagePerUser = quotaUsagePerUser;
+        setValuesByType(quotaUsagePerUser);
+    }
+
+    protected abstract void setValuesByType(QuotaUsagePerUser quotaUsagePerUser);
 
     public void setUnlimited() {
         percentageBarA.setStyleName(style.percentageBarUnlimited());
@@ -30,39 +63,24 @@ public class QuotaProgressBar extends DoublePercentageProgressBar {
 
     }
 
-    public void setExceeded(String title) {
+    public void setExceeded() {
         percentageBarA.setStyleName(style.percentageBarExceeded());
         percentageLabelA.setStyleName(style.percentageLabel());
         percentageLabelA.setText("Exceeded"); //$NON-NLS-1$
-        percentageLabelA.setTitle(title);
         percentageBarB.setVisible(false);
     }
 
-    public void setValues(double limit, double consumedByOthers, double consumedByUser) {
+    protected void setValues(double limit, double consumedByOthers, double consumedByUser) {
 
         int othersConsumptionPercent = (int) Math.round(consumedByOthers * 100 / limit);
         int userConsumptionPercent = (int) Math.round(consumedByUser * 100 / limit);
-        double free = limit - consumedByOthers - consumedByUser;
-
-        setTitleInternal(free);
 
         if (limit == UNLIMITED) { // unlimited
             setUnlimited();
         } else if (consumedByOthers + consumedByUser == 0) { // empty
             setZeroValue();
         } else if (consumedByOthers + consumedByUser > limit) { // exceeded
-            switch (getType()) {
-            case STORAGE:
-                setExceeded(messages.exceedingStorage(othersConsumptionPercent + userConsumptionPercent - 100, -free));
-                break;
-            case CPU:
-                setExceeded(messages.exceedingCpus(othersConsumptionPercent + userConsumptionPercent - 100, (int) -free));
-                break;
-            case MEM:
-                String freeMem = free < (-MB_GB_THRESHOLD * GIGA) ? diskSizeRenderer.render(-free/GIGA) : (int) -free + "MB"; //$NON-NLS-1$
-                setExceeded(messages.exceedingMem(othersConsumptionPercent + userConsumptionPercent - 100, freeMem));
-                break;
-            }
+            setExceeded();
         } else {
             percentageBarA.setStyleName(style.percentageBarA());
             percentageLabelA.setStyleName(style.percentageLabelBlack());
@@ -73,34 +91,47 @@ public class QuotaProgressBar extends DoublePercentageProgressBar {
         }
     }
 
-    private void setTitleInternal(double free) {
-        switch (getType()) {
-            case STORAGE:
-                String freeStorage = free == 0 ? "0" : diskSizeRenderer.render(free); //$NON-NLS-1$
-                setTitle(constants.freeStorage() + freeStorage);
-                break;
-            case CPU:
-                setTitle(messages.quotaFreeCpus((int) free));
-                break;
-            case MEM:
-                String freeMem = free > (MB_GB_THRESHOLD * GIGA) ? diskSizeRenderer.render(free/GIGA) : (int) free + "MB"; //$NON-NLS-1$
-                setTitle(constants.freeMemory() + freeMem);
-                break;
+    @Override
+    public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
+        return addDomHandler(handler, MouseOutEvent.getType());
+    }
+
+    @Override
+    public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
+        return addDomHandler(handler, MouseOverEvent.getType());
+    }
+
+    @Override
+    public void onMouseOut(MouseOutEvent event) {
+        tooltipPanel.hide(true);
+    }
+
+    @Override
+    public void onMouseOver(MouseOverEvent event) {
+        SafeHtml tooltipHtml = getTooltip();
+        if (!"".equals(tooltipHtml.asString())) { //$NON-NLS-1$
+            tooltip.setHTML(tooltipHtml);
+            PopupUtils.adjustPopupLocationToFitScreenAndShow(tooltipPanel, event.getClientX(), event.getClientY() + 20);
         }
     }
 
-    public QuotaType getType() {
-        return type;
+    protected abstract SafeHtml getTooltip();
+
+    protected SafeHtml templateWithLabels(String quota,
+            int totalUsagePercentage, String totalUsage,
+            int usedByYouPercentage, String usedByYou,
+            int usedByOthersPercentage, String usedByOthers,
+            int freePercentage, String free) {
+        return templates.quotaForUserBarToolTip(constants.tooltipQuotaLabel(), quota,
+                constants.tooltipTotalUsageLabel(), totalUsagePercentage, totalUsage,
+                constants.youUseQuota(), usedByYouPercentage, usedByYou,
+                constants.othersUseQuota(), usedByOthersPercentage, usedByOthers,
+                constants.freeQuota(), freePercentage, free);
     }
 
-    public void setType(QuotaType type) {
-        this.type = type;
+    @Override
+    protected void onDetach() {
+        super.onDetach();
+        tooltipPanel.hide(true);
     }
-
-    public static enum QuotaType {
-        STORAGE,
-        CPU,
-        MEM
-    }
-
 }
