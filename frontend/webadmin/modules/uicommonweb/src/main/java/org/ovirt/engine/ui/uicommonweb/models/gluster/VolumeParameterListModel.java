@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -95,6 +96,8 @@ public class VolumeParameterListModel extends SearchableListModel {
     {
         getEditParameterCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1);
         getResetParameterCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1);
+        getResetAllParameterCommand().setIsExecutionAllowed(getItems() != null
+                && ((List<GlusterVolumeOptionEntity>) getItems()).size() > 0);
     }
 
     private void addParameter() {
