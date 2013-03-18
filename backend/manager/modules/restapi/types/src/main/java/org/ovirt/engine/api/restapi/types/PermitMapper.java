@@ -15,7 +15,7 @@ public class PermitMapper {
                ? template
                : model.getId() != null
                  ? ActionGroup.forValue(Integer.valueOf(model.getId()))
-                 : ActionGroup.valueOf(model.getName());
+                 : ActionGroup.valueOf(model.getName().toUpperCase());
     }
 
     @Mapping(from = String.class, to = ActionGroup.class)
