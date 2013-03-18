@@ -96,15 +96,29 @@ FILE_JBOSS_KEYSTORE="%s/keys/jboss.p12"%(DIR_OVIRT_PKI)
 FILE_APACHE_PRIVATE_KEY="%s/keys/apache.key.nopass"%(DIR_OVIRT_PKI)
 FILE_SSH_PRIVATE_KEY="%s/keys/engine_id_rsa"%(DIR_OVIRT_PKI)
 FILE_YUM_VERSION_LOCK="/etc/yum/pluginconf.d/versionlock.list"
-FILE_ISOUPLOADER_CONF="/etc/ovirt-engine/isouploader.conf"
-FILE_LOGCOLLECTOR_CONF="/etc/ovirt-engine/logcollector.conf"
 FILE_PSQL_CONF="/var/lib/pgsql/data/postgresql.conf"
 FILE_OVIRT_HTTPD_CONF_TEMPLATE="%s/conf/ovirt-engine-proxy.conf.in" % DIR_ENGINE
 FILE_OVIRT_HTTPD_CONF="/etc/httpd/conf.d/ovirt-engine.conf"
 FILE_HTTPD_SSL_CONFIG="/etc/httpd/conf.d/ssl.conf"
 FILE_HTTPD_CONF="/etc/httpd/conf/httpd.conf"
-FILE_IMAGE_UPLOADER_CONF="/etc/ovirt-engine/imageuploader.conf"
 FILE_ENGINE_VERSION = "%s/version" % DIR_CONFIG
+
+
+TOOLS_CONFIG = [
+    {
+        "dir": "/etc/ovirt-engine/isouploader.conf.d",
+        "section": "ISOUploader",
+    },
+    {
+        "dir": "/etc/ovirt-engine/imageuploader.conf.d",
+        "section": "ImageUploader",
+    },
+    {
+        "dir": "/etc/ovirt-engine/logcollector.conf.d",
+        "section": "LogCollector",
+    },
+]
+
 
 # Previous versions of the engine used these files to store the
 # configuration:

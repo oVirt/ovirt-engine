@@ -2008,21 +2008,24 @@ def _editToolsConfFile():
     """
     add the user & host:secrue_port values to logcollector.conf and isouploader.conf
     """
-    for confFile in [basedefs.FILE_LOGCOLLECTOR_CONF, basedefs.FILE_ISOUPLOADER_CONF, basedefs.FILE_IMAGE_UPLOADER_CONF]:
-        if os.path.isfile(confFile):
-            logging.debug("Editing %s" % confFile)
-            fileHandler = utils.TextConfigFileHandler(confFile)
-            fileHandler.open()
-
-            logging.debug("Adding host & secure port")
-            fileHandler.editParam("engine", "%s:%s" % (controller.CONF["HOST_FQDN"], controller.CONF["HTTPS_PORT"]))
-
-            logging.debug("Adding username")
-            fileHandler.editParam("user", "%s@%s" % (basedefs.INTERNAL_ADMIN, basedefs.INTERNAL_DOMAIN))
-
-            fileHandler.close()
-        else:
-            logging.debug("Could not find %s" % confFile)
+    for entry in basedefs.TOOLS_CONFIG:
+        conf = os.path.join(entry['dir'], "50-engine-setup.conf")
+        if not os.path.exists(os.path.dirname(conf)):
+            os.mkdir(os.path.dirname(conf))
+        with open(conf, "w") as f:
+            f.write(
+                (
+                    "[{section}]\n"
+                    "engine={fqdn}:{port}\n"
+                    "user={user}@{domain}\n"
+                ).format(
+                    section=entry['section'],
+                    fqdn=controller.CONF["HOST_FQDN"],
+                    port=controller.CONF["HTTPS_PORT"],
+                    user=basedefs.INTERNAL_ADMIN,
+                    domain=basedefs.INTERNAL_DOMAIN,
+                )
+            )
 
 def _summaryParamsToLog():
     if len(controller.CONF) > 0:

@@ -158,9 +158,9 @@ Requires: %{name}-dbscripts = %{version}-%{release}
 Requires: %{name}-webadmin-portal = %{version}-%{release}
 
 # Require other tool packages:
-Requires: ovirt-iso-uploader
-Requires: ovirt-image-uploader
-Requires: ovirt-log-collector
+Requires: ovirt-iso-uploader >= 3.3.0
+Requires: ovirt-image-uploader >= 3.3.0
+Requires: ovirt-log-collector >= 3.3.0
 
 # Make sure that obsolete subpackages are removed:
 Obsoletes: %{name}-genericapi
