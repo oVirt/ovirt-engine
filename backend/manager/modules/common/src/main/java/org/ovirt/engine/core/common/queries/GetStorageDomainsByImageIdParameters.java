@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.common.queries;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.Guid;
 
-public class GetImageByImageIdParameters extends VdcQueryParametersBase {
+public class GetStorageDomainsByImageIdParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = 8163118634744815433L;
 
-    public GetImageByImageIdParameters(Guid imageId) {
+    public GetStorageDomainsByImageIdParameters(Guid imageId) {
         _imageId = imageId;
     }
 
@@ -15,6 +15,6 @@ public class GetImageByImageIdParameters extends VdcQueryParametersBase {
         return _imageId;
     }
 
-    public GetImageByImageIdParameters() {
+    public GetStorageDomainsByImageIdParameters() {
     }
 }

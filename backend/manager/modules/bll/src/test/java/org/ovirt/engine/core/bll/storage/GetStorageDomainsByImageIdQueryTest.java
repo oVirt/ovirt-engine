@@ -12,12 +12,12 @@ import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.queries.GetImageByImageIdParameters;
+import org.ovirt.engine.core.common.queries.GetStorageDomainsByImageIdParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 
 /** A test case for the {@link GetStorageDomainsByImageIdQuery} class. */
-public class GetStorageDomainsByImageIdQueryTest extends AbstractQueryTest<GetImageByImageIdParameters, GetStorageDomainsByImageIdQuery<GetImageByImageIdParameters>> {
+public class GetStorageDomainsByImageIdQueryTest extends AbstractQueryTest<GetStorageDomainsByImageIdParameters, GetStorageDomainsByImageIdQuery<GetStorageDomainsByImageIdParameters>> {
 
     @Test
     public void testExecuteQueryCommandWithEmptyList() {
@@ -32,7 +32,7 @@ public class GetStorageDomainsByImageIdQueryTest extends AbstractQueryTest<GetIm
         when(storageDomainDAOMock.getAllStorageDomainsByImageId(imageId)).thenReturn(expected);
 
         // Run the query
-        GetStorageDomainsByImageIdQuery<GetImageByImageIdParameters> query = getQuery();
+        GetStorageDomainsByImageIdQuery<GetStorageDomainsByImageIdParameters> query = getQuery();
         query.executeQueryCommand();
 
         // Assert the result
@@ -79,7 +79,7 @@ public class GetStorageDomainsByImageIdQueryTest extends AbstractQueryTest<GetIm
         when(storageDomainDAOMock.getAllStorageDomainsByImageId(imageId)).thenReturn(expected);
 
         // Run the query
-        GetStorageDomainsByImageIdQuery<GetImageByImageIdParameters> query = getQuery();
+        GetStorageDomainsByImageIdQuery<GetStorageDomainsByImageIdParameters> query = getQuery();
         query.executeQueryCommand();
 
         // Assert the result
