@@ -855,7 +855,7 @@ public class VolumeBrickListModel extends SearchableListModel {
 
         UICommand command = new UICommand("Cancel", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().close());
-        command.setIsDefault(true);
+        command.setIsCancel(true);
         brickModel.getCommands().add(command);
     }
 
