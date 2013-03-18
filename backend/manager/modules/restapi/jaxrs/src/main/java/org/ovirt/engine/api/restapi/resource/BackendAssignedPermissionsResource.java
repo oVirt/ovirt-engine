@@ -174,11 +174,11 @@ public class BackendAssignedPermissionsResource
      */
     public Permission map(permissions entity, DbUser user) {
         Permission template = new Permission();
-        if (entity.getad_element_id() != null && user != null) {
+        if (entity.getad_element_id() != null) {
             if (isUser(user)) {
                 template.setUser(new User());
                 template.getUser().setId(entity.getad_element_id().toString());
-            } else if (entity.getad_element_id() != null) {
+            } else {
                 template.setGroup(new Group());
                 template.getGroup().setId(entity.getad_element_id().toString());
             }
@@ -186,8 +186,9 @@ public class BackendAssignedPermissionsResource
         return map(entity, template);
     }
 
+    //REVISIT: fix once BE can distinguish between the user and group
     private static boolean isUser(DbUser user) {
-        return !user.getIsGroup();
+        return user != null && !user.getIsGroup();
     }
 
     /**

@@ -83,10 +83,10 @@ public class BackendEntityAssignedPermissionsResourceTest
         UriInfo uriInfo = setUpUriExpectations(null);
 
         setUpGetEntityExpectations(VdcQueryType.GetDbUserByUserId,
-                                    GetDbUserByUserIdParameters.class,
-                                    new String[] {"UserId"},
-                                    new Object[] {GUIDS[1]},
-                                    getUserByIdx(1));
+                GetDbUserByUserIdParameters.class,
+                new String[] { "UserId" },
+                new Object[] { GUIDS[1] },
+                getUserByIdx(1));
         setUpQueryExpectations("");
 
         collection.setUriInfo(uriInfo);
@@ -106,8 +106,13 @@ public class BackendEntityAssignedPermissionsResourceTest
     @Override
     protected void verifyModel(Permission model, int index) {
         super.verifyModel(model, index);
-        assertTrue(model.isSetUser());
-        assertEquals(GUIDS[1].toString(), model.getUser().getId());
+        if (index == 0) {
+            assertTrue(model.isSetUser());
+            assertEquals(GUIDS[1].toString(), model.getUser().getId());
+        } else {
+            assertTrue(model.isSetGroup());
+            assertEquals(GUIDS[1].toString(), model.getGroup().getId());
+        }
     }
 }
 
