@@ -13,11 +13,9 @@ import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
-import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
-import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -33,9 +31,6 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -59,13 +54,13 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.UserPortalPermissionList
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolInterfaceListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.BootSequenceModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewTemplateVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RunOnceModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalExistingVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalNewVmModelBehavior;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalRunOnceModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalVmEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalVmSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
@@ -695,57 +690,11 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         VM vm = (VM) selectedItem.getEntity();
 
-        RunOnceModel model = new RunOnceModel();
+        RunOnceModel model = new UserPortalRunOnceModel(vm,
+                getCustomPropertiesKeysList().get(vm.getVdsGroupCompatibilityVersion()));
         setWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().runVirtualMachinesTitle());
-        model.setHashName("run_virtual_machine"); //$NON-NLS-1$
-        model.getAttachIso().setEntity(false);
-        model.getAttachFloppy().setEntity(false);
-        model.getRunAsStateless().setEntity(vm.isStateless());
-        model.getRunAndPause().setEntity(vm.isRunAndPause());
-        model.setHwAcceleration(true);
-        // disable Host tab
-        model.setIsHostTabVisible(false);
-        // disable Custom properties sheet
-        model.setIsCustomPropertiesSheetVisible(false);
 
-        fillIsoList(vm);
-        fillFloppyImages(vm);
-
-        // passing Kernel parameters
-        model.getKernel_parameters().setEntity(vm.getKernelParams());
-        model.getKernel_path().setEntity(vm.getKernelUrl());
-        model.getInitrd_path().setEntity(vm.getInitrdUrl());
-
-        model.getCustomProperties().setEntity(vm.getCustomProperties());
-
-        model.setIsLinuxOS(AsyncDataProvider.IsLinuxOsType(vm.getVmOs()));
-
-        model.getIsLinuxOptionsAvailable().setEntity(model.getIsLinuxOS());
-        model.setIsWindowsOS(AsyncDataProvider.IsWindowsOsType(vm.getVmOs()));
-        model.getIsVmFirstRun().setEntity(!vm.isInitialized());
-        model.getSysPrepDomainName().setSelectedItem(vm.getVmDomain());
-
-        // Update Domain list
-        AsyncDataProvider.GetDomainList(new AsyncQuery(model,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue1) {
-
-                        RunOnceModel runOnceModel = (RunOnceModel) target;
-                        List<String> domains = (List<String>) returnValue1;
-                        String oldDomain = (String) runOnceModel.getSysPrepDomainName().getSelectedItem();
-                        if (oldDomain != null && !oldDomain.equals("") && !domains.contains(oldDomain)) //$NON-NLS-1$
-                        {
-                            domains.add(0, oldDomain);
-                        }
-                        runOnceModel.getSysPrepDomainName().setItems(domains);
-                        runOnceModel.getSysPrepDomainName().setSelectedItem((oldDomain != null) ? oldDomain
-                                : Linq.FirstOrDefault(domains));
-
-                    }
-                }),
-                true);
+        model.init();
 
         // Display protocols.
         EntityModel tempVar = new EntityModel();
@@ -758,23 +707,12 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         tempVar2.setEntity(DisplayType.qxl);
         EntityModel qxlProtocol = tempVar2;
 
-        boolean isVncSelected = vm.getDefaultDisplayType() == DisplayType.vnc;
-        model.getDisplayConsole_Vnc_IsSelected().setEntity(isVncSelected);
-        model.getDisplayConsole_Spice_IsSelected().setEntity(!isVncSelected);
-
         ArrayList<EntityModel> items = new ArrayList<EntityModel>();
         items.add(vncProtocol);
         items.add(qxlProtocol);
         model.getDisplayProtocol().setItems(items);
         model.getDisplayProtocol().setSelectedItem(vm.getDefaultDisplayType() == DisplayType.vnc ? vncProtocol
                 : qxlProtocol);
-
-        model.setCustomPropertiesKeysList(getCustomPropertiesKeysList()
-                .get(vm.getVdsGroupCompatibilityVersion()));
-
-        // Boot sequence.
-        setIsBootFromNetworkAllowedForVm(vm);
-        setIsBootFromHardDiskAllowedForVm(vm);
 
         UICommand tempVar3 = new UICommand("OnRunOnce", this); //$NON-NLS-1$
         tempVar3.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -786,137 +724,6 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         model.getCommands().add(tempVar4);
     }
 
-    private void setIsBootFromNetworkAllowedForVm(VM vm) {
-        AsyncQuery _asyncQuery2 = new AsyncQuery();
-        _asyncQuery2.setModel(this);
-
-        _asyncQuery2.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object model3, Object ReturnValue)
-            {
-                UserPortalListModel userPortalListModel = (UserPortalListModel) model3;
-                boolean hasNics =
-                        ((ArrayList<VmNetworkInterface>) ((VdcQueryReturnValue) ReturnValue).getReturnValue()).size() > 0;
-
-                if (!hasNics)
-                {
-                    BootSequenceModel bootSequenceModel =
-                            ((RunOnceModel) userPortalListModel.getWindow()).getBootSequence();
-                    bootSequenceModel.getNetworkOption().setIsChangable(false);
-                    bootSequenceModel.getNetworkOption()
-                            .setChangeProhibitionReason(ConstantsManager.getInstance().getMessages().interfaceIsRequiredToBootFromNetwork());
-                }
-            }
-        };
-
-        Frontend.RunQuery(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(vm.getId()), _asyncQuery2);
-    }
-
-    private void setIsBootFromHardDiskAllowedForVm(VM vm) {
-        AsyncQuery vmDisksQuery = new AsyncQuery();
-        vmDisksQuery.setModel(this);
-
-        vmDisksQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object model, Object returnValue)
-            {
-                UserPortalListModel userPortalListModel = (UserPortalListModel) model;
-                ArrayList<Disk> vmDisks = (ArrayList<Disk>) ((VdcQueryReturnValue) returnValue).getReturnValue();
-                RunOnceModel runOnceModel = (RunOnceModel) userPortalListModel.getWindow();
-
-                if (vmDisks.isEmpty()) {
-                    runOnceModel.getRunAsStateless().setIsChangable(false);
-                    runOnceModel.getRunAsStateless()
-                           .setChangeProhibitionReason(ConstantsManager.getInstance().getMessages().disklessVmCannotRunAsStateless());
-                    runOnceModel.getRunAsStateless().setEntity(false);
-                }
-
-                boolean hasBootableDisk = false;
-                for (Disk disk : vmDisks) {
-                    if (disk.isBoot()) {
-                        hasBootableDisk = true;
-                        break;
-                    }
-                }
-
-                if (!hasBootableDisk)
-                {
-                    BootSequenceModel bootSequenceModel = runOnceModel.getBootSequence();
-                    bootSequenceModel.getHardDiskOption().setIsChangable(false);
-                    bootSequenceModel.getHardDiskOption()
-                            .setChangeProhibitionReason(ConstantsManager.getInstance().getMessages().bootableDiskIsRequiredToBootFromDisk());
-                }
-            }
-        };
-
-        Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(vm.getId()), vmDisksQuery);
-    }
-
-    protected void fillIsoList(VM vm) {
-        AsyncQuery getIsoImagesQuery = new AsyncQuery();
-        getIsoImagesQuery.setModel(this);
-
-        getIsoImagesQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object model1, Object result)
-            {
-                UserPortalListModel userPortalListModel = (UserPortalListModel) model1;
-                RunOnceModel runOnceModel = (RunOnceModel) userPortalListModel.getWindow();
-                List<String> images = (List<String>) result;
-                runOnceModel.getIsoImage().setItems(images);
-
-                if (runOnceModel.getIsoImage().getIsChangable()
-                        && runOnceModel.getIsoImage().getSelectedItem() == null)
-                {
-                    runOnceModel.getIsoImage().setSelectedItem(Linq.FirstOrDefault(images));
-                }
-            }
-        };
-
-        AsyncDataProvider.GetIrsImageList(getIsoImagesQuery, vm.getStoragePoolId());
-    }
-
-    protected void fillFloppyImages(VM vm) {
-        AsyncQuery getFloppyQuery = new AsyncQuery();
-        getFloppyQuery.setModel(this);
-
-        getFloppyQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object model2, Object result)
-            {
-                UserPortalListModel userPortalListModel = (UserPortalListModel) model2;
-                UserPortalItemModel userPortalItemModel =
-                        (UserPortalItemModel) userPortalListModel.getSelectedItem();
-                RunOnceModel runOnceModel = (RunOnceModel) userPortalListModel.getWindow();
-                VM selectedVM = (VM) userPortalItemModel.getEntity();
-                List<String> images = (List<String>) result;
-
-                if (AsyncDataProvider.IsWindowsOsType(selectedVM.getVmOs()))
-                {
-                    // Add a pseudo floppy disk image used for Windows' sysprep.
-                    if (!selectedVM.isInitialized())
-                    {
-                        images.add(0, "[sysprep]"); //$NON-NLS-1$
-                        runOnceModel.getAttachFloppy().setEntity(true);
-                    }
-                    else
-                    {
-                        images.add("[sysprep]"); //$NON-NLS-1$
-                    }
-                }
-                runOnceModel.getFloppyImage().setItems(images);
-
-                if (runOnceModel.getFloppyImage().getIsChangable()
-                        && runOnceModel.getFloppyImage().getSelectedItem() == null)
-                {
-                    runOnceModel.getFloppyImage().setSelectedItem(Linq.FirstOrDefault(images));
-                }
-            }
-        };
-
-        AsyncDataProvider.GetFloppyImageList(getFloppyQuery, vm.getStoragePoolId());
-    }
-
     private void OnRunOnce()
     {
         UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
@@ -926,8 +733,6 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             return;
         }
 
-        VM vm = (VM) selectedItem.getEntity();
-
         RunOnceModel model = (RunOnceModel) getWindow();
 
         if (!model.Validate())
@@ -936,60 +741,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         }
 
         getWindow().StartProgress(null);
-        BootSequenceModel bootSequenceModel = model.getBootSequence();
 
-        RunVmOnceParams tempVar = new RunVmOnceParams();
-        tempVar.setVmId(vm.getId());
-        tempVar.setBootSequence(bootSequenceModel.getSequence());
-        tempVar.setDiskPath((Boolean) model.getAttachIso().getEntity() ? (String) model.getIsoImage().getSelectedItem()
-                : ""); //$NON-NLS-1$
-        tempVar.setFloppyPath(model.getFloppyImagePath());
-        tempVar.setKvmEnable(model.getHwAcceleration());
-        tempVar.setRunAndPause((Boolean) model.getRunAndPause().getEntity());
-        tempVar.setAcpiEnable(true);
-        tempVar.setRunAsStateless((Boolean) model.getRunAsStateless().getEntity());
-        tempVar.setRunAndPause((Boolean) model.getRunAndPause().getEntity());
-        tempVar.setReinitialize(model.getReinitialize());
-        tempVar.setCustomProperties((String) model.getCustomProperties().getEntity());
-        RunVmOnceParams param = tempVar;
-
-        // kernel params
-        if (model.getKernel_path().getEntity() != null)
-        {
-            param.setkernel_url((String) model.getKernel_path().getEntity());
-        }
-        if (model.getKernel_parameters().getEntity() != null)
-        {
-            param.setkernel_params((String) model.getKernel_parameters().getEntity());
-        }
-        if (model.getInitrd_path().getEntity() != null)
-        {
-            param.setinitrd_url((String) model.getInitrd_path().getEntity());
-        }
-
-        // Sysprep params
-        if (model.getSysPrepDomainName().getSelectedItem() != null)
-        {
-            param.setSysPrepDomainName((String) model.getSysPrepDomainName().getSelectedItem());
-        }
-        if (model.getSysPrepUserName().getEntity() != null)
-        {
-            param.setSysPrepUserName((String) model.getSysPrepUserName().getEntity());
-        }
-        if (model.getSysPrepPassword().getEntity() != null)
-        {
-            param.setSysPrepPassword((String) model.getSysPrepPassword().getEntity());
-        }
-
-        EntityModel displayProtocolSelectedItem = (EntityModel) model.getDisplayProtocol().getSelectedItem();
-        param.setUseVnc((DisplayType) displayProtocolSelectedItem.getEntity() == DisplayType.vnc);
-        if ((Boolean) model.getDisplayConsole_Vnc_IsSelected().getEntity()
-                || (Boolean) model.getDisplayConsole_Spice_IsSelected().getEntity())
-        {
-            param.setUseVnc((Boolean) model.getDisplayConsole_Vnc_IsSelected().getEntity());
-        }
-
-        Frontend.RunAction(VdcActionType.RunVmOnce, param,
+        Frontend.RunAction(VdcActionType.RunVmOnce, model.createRunVmOnceParams(),
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendActionAsyncResult result) {

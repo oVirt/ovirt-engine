@@ -1,8 +1,23 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import org.ovirt.engine.core.common.action.RunVmOnceParams;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -17,8 +32,12 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class RunOnceModel extends Model
+public abstract class RunOnceModel extends Model
 {
+    /** The VM that is about to run */
+    protected final VM vm;
+    /** Custom properties for the running */
+    protected final ArrayList<String> customPropertiesKeysList;
 
     private EntityModel privateAttachFloppy;
 
@@ -419,8 +438,11 @@ public class RunOnceModel extends Model
         privateCustomPropertiesKeysList = value;
     }
 
-    public RunOnceModel()
+    public RunOnceModel(VM vm, ArrayList<String> customPropertiesKeysList)
     {
+        this.vm = vm;
+        this.customPropertiesKeysList = customPropertiesKeysList;
+
         setAttachFloppy(new EntityModel());
         getAttachFloppy().getEntityChangedEvent().addListener(this);
         setFloppyImage(new ListModel());
@@ -483,6 +505,226 @@ public class RunOnceModel extends Model
         setIsHostTabVisible(true);
 
         setIsCustomPropertiesSheetVisible(true);
+    }
+
+    public void init() {
+        setTitle(ConstantsManager.getInstance().getConstants().runVirtualMachinesTitle());
+        setHashName("run_virtual_machine"); //$NON-NLS-1$
+        getAttachIso().setEntity(false);
+        getAttachFloppy().setEntity(false);
+        getRunAsStateless().setEntity(vm.isStateless());
+        getRunAndPause().setEntity(vm.isRunAndPause());
+        setHwAcceleration(true);
+
+        // passing Kernel parameters
+        getKernel_parameters().setEntity(vm.getKernelParams());
+        getKernel_path().setEntity(vm.getKernelUrl());
+        getInitrd_path().setEntity(vm.getInitrdUrl());
+
+        setIsLinuxOS(AsyncDataProvider.IsLinuxOsType(vm.getVmOs()));
+        getIsLinuxOptionsAvailable().setEntity(getIsLinuxOS());
+        setIsWindowsOS(AsyncDataProvider.IsWindowsOsType(vm.getVmOs()));
+        getIsVmFirstRun().setEntity(!vm.isInitialized());
+        getSysPrepDomainName().setSelectedItem(vm.getVmDomain());
+
+        setCustomPropertiesKeysList(customPropertiesKeysList);
+
+        updateDomainList();
+        updateIsoList();
+        updateDisplayProtocols();
+        updateFloppyImages();
+
+        // Boot sequence.
+        setIsBootFromNetworkAllowedForVm();
+        setIsBootFromHardDiskAllowedForVm();
+    }
+
+    public RunVmOnceParams createRunVmOnceParams() {
+        RunVmOnceParams params = new RunVmOnceParams();
+        params.setVmId(vm.getId());
+        params.setBootSequence(getBootSequence().getSequence());
+        params.setDiskPath((Boolean) getAttachIso().getEntity() ? (String) getIsoImage().getSelectedItem()
+                : ""); //$NON-NLS-1$
+        params.setFloppyPath(getFloppyImagePath());
+        params.setKvmEnable(getHwAcceleration());
+        params.setRunAndPause((Boolean) getRunAndPause().getEntity());
+        params.setAcpiEnable(true);
+        params.setRunAsStateless((Boolean) getRunAsStateless().getEntity());
+        params.setReinitialize(getReinitialize());
+        params.setCustomProperties((String) getCustomProperties().getEntity());
+
+        // kernel params
+        if (getKernel_path().getEntity() != null)
+        {
+            params.setkernel_url((String) getKernel_path().getEntity());
+        }
+        if (getKernel_parameters().getEntity() != null)
+        {
+            params.setkernel_params((String) getKernel_parameters().getEntity());
+        }
+        if (getInitrd_path().getEntity() != null)
+        {
+            params.setinitrd_url((String) getInitrd_path().getEntity());
+        }
+
+        // Sysprep params
+        if (getSysPrepUserName().getEntity() != null)
+        {
+            params.setSysPrepUserName((String) getSysPrepUserName().getEntity());
+        }
+        if (getSysPrepPassword().getEntity() != null)
+        {
+            params.setSysPrepPassword((String) getSysPrepPassword().getEntity());
+        }
+
+        EntityModel displayProtocolSelectedItem = (EntityModel) getDisplayProtocol().getSelectedItem();
+        params.setUseVnc((DisplayType) displayProtocolSelectedItem.getEntity() == DisplayType.vnc);
+        if ((Boolean) getDisplayConsole_Vnc_IsSelected().getEntity()
+                || (Boolean) getDisplayConsole_Spice_IsSelected().getEntity())
+        {
+            params.setUseVnc((Boolean) getDisplayConsole_Vnc_IsSelected().getEntity());
+        }
+
+        return params;
+    }
+
+    protected void updateFloppyImages() {
+        AsyncDataProvider.GetFloppyImageList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                 @Override
+                 public void OnSuccess(Object model, Object returnValue) {
+                     VM selectedVM = (VM) vm;
+                     List<String> images = (List<String>) returnValue;
+
+                     if (AsyncDataProvider.IsWindowsOsType(selectedVM.getVmOs()))
+                     {
+                         // Add a pseudo floppy disk image used for Windows' sysprep.
+                         if (!selectedVM.isInitialized())
+                         {
+                             images.add(0, "[sysprep]"); //$NON-NLS-1$
+                             getAttachFloppy().setEntity(true);
+                         }
+                         else
+                         {
+                             images.add("[sysprep]"); //$NON-NLS-1$
+                         }
+                     }
+                     getFloppyImage().setItems(images);
+
+                     if (getFloppyImage().getIsChangable()
+                             && getFloppyImage().getSelectedItem() == null)
+                     {
+                         getFloppyImage().setSelectedItem(Linq.FirstOrDefault(images));
+                     }
+                 }
+             }),
+             vm.getStoragePoolId());
+    }
+
+    private void setIsBootFromHardDiskAllowedForVm() {
+        Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(vm.getId()),
+                new AsyncQuery(this, new INewAsyncCallback() {
+
+                 @Override
+                 public void OnSuccess(Object model, Object returnValue) {
+                     ArrayList<Disk> vmDisks = (ArrayList<Disk>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+
+                     if (vmDisks.isEmpty()) {
+                         getRunAsStateless().setIsChangable(false);
+                         getRunAsStateless()
+                                .setChangeProhibitionReason(ConstantsManager.getInstance()
+                                        .getMessages()
+                                        .disklessVmCannotRunAsStateless());
+                         getRunAsStateless().setEntity(false);
+                     }
+
+                     if (!isDisksContainBootableDisk(vmDisks))
+                     {
+                         BootSequenceModel bootSequenceModel = getBootSequence();
+                         bootSequenceModel.getHardDiskOption().setIsChangable(false);
+                         bootSequenceModel.getHardDiskOption()
+                                 .setChangeProhibitionReason(ConstantsManager.getInstance()
+                                         .getMessages()
+                                         .bootableDiskIsRequiredToBootFromDisk());
+                     }
+                 }
+             }));
+    }
+
+    private boolean isDisksContainBootableDisk(List<Disk> disks) {
+        for (Disk disk : disks) {
+            if (disk.isBoot()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void setIsBootFromNetworkAllowedForVm() {
+        Frontend.RunQuery(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(vm.getId()),
+                new AsyncQuery(this, new INewAsyncCallback() {
+
+                 @Override
+                 public void OnSuccess(Object model, Object returnValue) {
+                     boolean hasNics =
+                             ((ArrayList<VmNetworkInterface>) ((VdcQueryReturnValue) returnValue).getReturnValue()).size() > 0;
+
+                     if (!hasNics)
+                     {
+                         BootSequenceModel bootSequenceModel = getBootSequence();
+                         bootSequenceModel.getNetworkOption().setIsChangable(false);
+                         bootSequenceModel.getNetworkOption()
+                                 .setChangeProhibitionReason(ConstantsManager.getInstance()
+                                         .getMessages()
+                                         .interfaceIsRequiredToBootFromNetwork());
+                     }
+                 }
+             }));
+    }
+
+    private void updateDisplayProtocols() {
+        boolean isVncSelected = vm.getDefaultDisplayType() == DisplayType.vnc;
+        getDisplayConsole_Vnc_IsSelected().setEntity(isVncSelected);
+        getDisplayConsole_Spice_IsSelected().setEntity(!isVncSelected);
+    }
+
+    private void updateIsoList() {
+        AsyncDataProvider.GetIrsImageList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                 @Override
+                 public void OnSuccess(Object model, Object returnValue) {
+                     List<String> images = (List<String>) returnValue;
+                     getIsoImage().setItems(images);
+
+                     if (getIsoImage().getIsChangable()
+                             && getIsoImage().getSelectedItem() == null)
+                     {
+                         getIsoImage().setSelectedItem(Linq.FirstOrDefault(images));
+                     }
+
+                 }
+             }),
+             vm.getStoragePoolId());
+    }
+
+    private void updateDomainList() {
+        // Update Domain list
+        AsyncDataProvider.GetDomainList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                List<String> domains = (List<String>) returnValue;
+                String oldDomain = (String) getSysPrepDomainName().getSelectedItem();
+                if (oldDomain != null && !oldDomain.equals("") && !domains.contains(oldDomain)) { //$NON-NLS-1$
+                    domains.add(0, oldDomain);
+                }
+                getSysPrepDomainName().setItems(domains);
+                String selectedDomain = (oldDomain != null) ? oldDomain : Linq.FirstOrDefault(domains);
+                if (!StringHelper.stringsEqual(selectedDomain, "")) { //$NON-NLS-1$
+                    getSysPrepDomainName().setSelectedItem(selectedDomain);
+                }
+            }
+        }), true);
     }
 
     @Override
