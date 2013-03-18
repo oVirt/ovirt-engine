@@ -10,8 +10,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ActionVersionMap;
 import org.ovirt.engine.core.compat.Guid;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
  * <code>ActionGroupDAODbFacadeImpl</code> provides a concrete implementation of {@link ActionGroupDAO}.
@@ -86,7 +86,7 @@ public class ActionGroupDAODbFacadeImpl extends BaseDAODbFacade implements Actio
 
     }
 
-    private static class ActionVersionMapMapper implements ParameterizedRowMapper<ActionVersionMap> {
+    private static class ActionVersionMapMapper implements RowMapper<ActionVersionMap> {
         public static final ActionVersionMapMapper instance = new ActionVersionMapMapper();
 
         @Override
@@ -99,7 +99,7 @@ public class ActionGroupDAODbFacadeImpl extends BaseDAODbFacade implements Actio
         }
     }
 
-    private static class ActionGroupMapper implements ParameterizedRowMapper<ActionGroup> {
+    private static class ActionGroupMapper implements RowMapper<ActionGroup> {
         public static final ActionGroupMapper instance = new ActionGroupMapper();
 
         @Override

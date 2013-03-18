@@ -9,8 +9,8 @@ import java.util.Map;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
  * Implements the CRUD operations for job_subject_entity, a satellite table of Job.
@@ -77,7 +77,7 @@ public class JobSubjectEntityDaoFacadeImpl extends BaseDAODbFacade implements Jo
         }
     }
 
-    private static class JobSubjectEntityRowMapper implements ParameterizedRowMapper<JobSubjectEntity> {
+    private static class JobSubjectEntityRowMapper implements RowMapper<JobSubjectEntity> {
 
         @Override
         public JobSubjectEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -88,7 +88,7 @@ public class JobSubjectEntityDaoFacadeImpl extends BaseDAODbFacade implements Jo
         }
     }
 
-    private static class JobIdRowMapper implements ParameterizedRowMapper<Guid> {
+    private static class JobIdRowMapper implements RowMapper<Guid> {
 
         @Override
         public Guid mapRow(ResultSet rs, int rowNum) throws SQLException {

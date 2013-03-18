@@ -23,8 +23,8 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectSerializer;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
  * <code>AsyncTaskDAODbFacadeImpl</code> provides an implementation of {@link AsyncTaskDAO} using code refactored from
@@ -34,7 +34,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
     private static final Guid[] EMPTY_GUIDS_ARRAY = new Guid[0];
     private static final Log log = LogFactory.getLog(AsyncTaskDAODbFacadeImpl.class);
 
-    private static class IdRowMapper implements ParameterizedRowMapper<Guid> {
+    private static class IdRowMapper implements RowMapper<Guid> {
         public static final IdRowMapper instance = new IdRowMapper();
 
         @Override
@@ -44,7 +44,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
 
     }
 
-    private static class AsyncTaskRowMapper implements ParameterizedRowMapper<AsyncTasks> {
+    private static class AsyncTaskRowMapper implements RowMapper<AsyncTasks> {
         public static final AsyncTaskRowMapper instance = new AsyncTaskRowMapper();
 
         @Override

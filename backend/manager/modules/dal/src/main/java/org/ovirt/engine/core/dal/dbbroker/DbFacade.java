@@ -109,9 +109,9 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
 public class DbFacade {
@@ -296,7 +296,7 @@ public class DbFacade {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("entity", entity).addValue(
                 "status", status);
 
-        ParameterizedRowMapper<Integer> mapper = new ParameterizedRowMapper<Integer>() {
+        RowMapper<Integer> mapper = new RowMapper<Integer>() {
             @Override
             public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return rs.getInt("val");
@@ -311,7 +311,7 @@ public class DbFacade {
 
     @SuppressWarnings("unchecked")
     public List<Guid> getOrderedVmGuidsForRunMultipleActions(List<Guid> guids) {
-        ParameterizedRowMapper<Guid> mapper = new ParameterizedRowMapper<Guid>() {
+        RowMapper<Guid> mapper = new RowMapper<Guid>() {
             @Override
             public Guid mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return Guid.createGuidFromString(rs.getString("vm_guid"));

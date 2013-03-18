@@ -9,13 +9,13 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDAODbFacade;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class NetworkClusterDaoDbFacadeImpl extends BaseDAODbFacade implements NetworkClusterDao {
 
-    private static final ParameterizedRowMapper<NetworkCluster> mapper =
-            new ParameterizedRowMapper<NetworkCluster>() {
+    private static final RowMapper<NetworkCluster> mapper =
+            new RowMapper<NetworkCluster>() {
                 @Override
                 public NetworkCluster mapRow(ResultSet rs, int rowNum)
                         throws SQLException {

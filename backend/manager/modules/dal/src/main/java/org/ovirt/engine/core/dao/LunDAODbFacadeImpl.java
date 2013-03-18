@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.compat.NGuid;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
  * <code>LunDAODbFacadeImpl</code> provides a concrete implementation of {@link LunDAO}. The original code was
@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
  */
 public class LunDAODbFacadeImpl extends BaseDAODbFacade implements LunDAO {
 
-    protected static final ParameterizedRowMapper<LUNs> MAPPER = new ParameterizedRowMapper<LUNs>() {
+    protected static final RowMapper<LUNs> MAPPER = new RowMapper<LUNs>() {
         @Override
         public LUNs mapRow(ResultSet rs, int rowNum) throws SQLException {
             LUNs entity = new LUNs();

@@ -5,8 +5,8 @@ import java.text.MessageFormat;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
  * Implementation for the {@link ReadDao} which provides a default implementation for all the methods which only
@@ -93,5 +93,5 @@ public abstract class DefaultReadDaoDbFacade<T extends BusinessEntity<ID>, ID ex
      *
      * @return A row mapper which can map results to an entity.
      */
-    protected abstract ParameterizedRowMapper<T> createEntityRowMapper();
+    protected abstract RowMapper<T> createEntityRowMapper();
 }

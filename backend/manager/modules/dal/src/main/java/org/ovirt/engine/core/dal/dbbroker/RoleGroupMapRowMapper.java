@@ -6,9 +6,9 @@ import java.sql.SQLException;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.RoleGroupMap;
 import org.ovirt.engine.core.compat.Guid;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.springframework.jdbc.core.RowMapper;
 
-public class RoleGroupMapRowMapper implements ParameterizedRowMapper<RoleGroupMap> {
+public class RoleGroupMapRowMapper implements RowMapper<RoleGroupMap> {
     public static final RoleGroupMapRowMapper instance = new RoleGroupMapRowMapper();
 
     @Override

@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dao.VmDAODbFacadeImpl.VMRowMapper;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
@@ -115,7 +115,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
     public VmPoolMap getVmPoolMapByVmGuid(Guid vmId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_guid", vmId);
 
-        ParameterizedRowMapper<VmPoolMap> mapper = new ParameterizedRowMapper<VmPoolMap>() {
+        RowMapper<VmPoolMap> mapper = new RowMapper<VmPoolMap>() {
             @Override
             public VmPoolMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 VmPoolMap entity = new VmPoolMap();
@@ -140,7 +140,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
     public List<VmPoolMap> getVmPoolsMapByVmPoolId(NGuid vmPoolId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_pool_id", vmPoolId);
 
-        ParameterizedRowMapper<VmPoolMap> mapper = new ParameterizedRowMapper<VmPoolMap>() {
+        RowMapper<VmPoolMap> mapper = new RowMapper<VmPoolMap>() {
             @Override
             public VmPoolMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 VmPoolMap entity = new VmPoolMap();
@@ -159,7 +159,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
                 getCustomMapSqlParameterSource().addValue("vm_pool_id", vmPoolId).addValue("status",
                         vmStatus.getValue());
 
-        ParameterizedRowMapper<VmPoolMap> mapper = new ParameterizedRowMapper<VmPoolMap>() {
+        RowMapper<VmPoolMap> mapper = new RowMapper<VmPoolMap>() {
             @Override
             public VmPoolMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 VmPoolMap entity = new VmPoolMap();
@@ -173,7 +173,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
                 parameterSource);
     }
 
-    private static final class VmPoolFullRowMapper implements ParameterizedRowMapper<VmPool> {
+    private static final class VmPoolFullRowMapper implements RowMapper<VmPool> {
         public final static VmPoolFullRowMapper instance = new VmPoolFullRowMapper();
 
         @Override
@@ -197,7 +197,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
         }
     }
 
-    private static final class VmPoolNonFullRowMapper implements ParameterizedRowMapper<VmPool> {
+    private static final class VmPoolNonFullRowMapper implements RowMapper<VmPool> {
         public final static VmPoolNonFullRowMapper instance = new VmPoolNonFullRowMapper();
 
         @Override

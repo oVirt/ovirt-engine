@@ -3,12 +3,12 @@ package org.ovirt.engine.core.dal.dbbroker;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.Role;
+import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.compat.Guid;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.springframework.jdbc.core.RowMapper;
 
-public class RolesRowMapper implements ParameterizedRowMapper<Role> {
+public class RolesRowMapper implements RowMapper<Role> {
 
     public static final RolesRowMapper instance = new RolesRowMapper();
 

@@ -9,13 +9,13 @@ import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.springframework.jdbc.core.RowMapper;
 
 /**
  * The common basic rowmapper for properties in VmBase.
  *  @param <T> a subclass of VmBase.
  */
-public abstract class AbstractVmRowMapper<T extends VmBase> implements ParameterizedRowMapper<T> {
+public abstract class AbstractVmRowMapper<T extends VmBase> implements RowMapper<T> {
 
     protected final void map(final ResultSet rs, final T entity) throws SQLException {
         entity.setOs(VmOsType.forValue(rs.getInt("os")));

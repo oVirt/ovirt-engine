@@ -7,8 +7,8 @@ import java.util.List;
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.compat.Guid;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class VmStatisticsDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<VmStatistics, Guid>
         implements VmStatisticsDAO {
@@ -45,8 +45,8 @@ public class VmStatisticsDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
     }
 
     @Override
-    protected ParameterizedRowMapper<VmStatistics> createEntityRowMapper() {
-        return new ParameterizedRowMapper<VmStatistics>() {
+    protected RowMapper<VmStatistics> createEntityRowMapper() {
+        return new RowMapper<VmStatistics>() {
             @Override
             public VmStatistics mapRow(ResultSet rs, int rowNum)
                     throws SQLException {

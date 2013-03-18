@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDAODbFacadeImpl.DiskImageRowMapper;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 public class DiskDaoDbFacadeImpl extends BaseDAODbFacade implements DiskDao {
@@ -69,7 +69,7 @@ public class DiskDaoDbFacadeImpl extends BaseDAODbFacade implements DiskDao {
         return new SimpleJdbcTemplate(jdbcTemplate).query(query, DiskRowMapper.instance);
     }
 
-    private static class DiskRowMapper implements ParameterizedRowMapper<Disk> {
+    private static class DiskRowMapper implements RowMapper<Disk> {
 
         public static DiskRowMapper instance = new DiskRowMapper();
 

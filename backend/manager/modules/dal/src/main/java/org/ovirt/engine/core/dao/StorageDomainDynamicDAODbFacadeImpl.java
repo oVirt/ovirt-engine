@@ -6,12 +6,12 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.compat.Guid;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class StorageDomainDynamicDAODbFacadeImpl extends BaseDAODbFacade implements StorageDomainDynamicDAO{
 
-    private static final class StorageDomainDynamicRowMapper implements ParameterizedRowMapper<StorageDomainDynamic> {
+    private static final class StorageDomainDynamicRowMapper implements RowMapper<StorageDomainDynamic> {
         public static final StorageDomainDynamicRowMapper instance = new StorageDomainDynamicRowMapper();
 
         @Override

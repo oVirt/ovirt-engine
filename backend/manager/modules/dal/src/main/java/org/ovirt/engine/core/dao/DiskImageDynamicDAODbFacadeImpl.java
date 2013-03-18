@@ -5,8 +5,8 @@ import java.sql.SQLException;
 
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.compat.Guid;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
  * JDBC template based implementation of DiskImageDynamicDAO
@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 public class DiskImageDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<DiskImageDynamic, Guid>
         implements DiskImageDynamicDAO {
 
-    private static final class DiskImageDynamicRowMapper implements ParameterizedRowMapper<DiskImageDynamic> {
+    private static final class DiskImageDynamicRowMapper implements RowMapper<DiskImageDynamic> {
         public static final DiskImageDynamicRowMapper instance = new DiskImageDynamicRowMapper();
 
         @Override
@@ -61,7 +61,7 @@ public class DiskImageDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbF
     }
 
     @Override
-    protected ParameterizedRowMapper<DiskImageDynamic> createEntityRowMapper() {
+    protected RowMapper<DiskImageDynamic> createEntityRowMapper() {
         return DiskImageDynamicRowMapper.instance;
     }
 }

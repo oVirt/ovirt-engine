@@ -7,8 +7,8 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.LdapRefStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
  * <code>AdGrupDAODbFacadeImpl</code> provides a concrete implementation of {@link AdGroupDAO} based on code from
@@ -68,7 +68,7 @@ public class AdGroupDAODbFacadeImpl extends BaseDAODbFacade implements AdGroupDA
         getCallsHandler().executeModification("Deletead_groups", parameterSource);
     }
 
-    private static final class ADGroupRowMapper implements ParameterizedRowMapper<LdapGroup> {
+    private static final class ADGroupRowMapper implements RowMapper<LdapGroup> {
         public static final ADGroupRowMapper instance = new ADGroupRowMapper();
 
         @Override

@@ -85,7 +85,7 @@ There are four parts to each Java method:
 
  2) The row mapper:
 
-        ParameterizedRowMapper<VDS> mapper = new ParameterizedRowMapper<VDS>() {
+        RowMapper<VDS> mapper = new RowMapper<VDS>() {
             public VDS mapRow(ResultSet rs, int rowNum) throws SQLException {
                 VDS entity = new VDS();
                 entity.setvds_id(rs.getInt("vds_id"));

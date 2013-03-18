@@ -11,8 +11,8 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.SerializationFactory;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
 public class VmDeviceDAODbFacadeImpl extends
@@ -52,7 +52,7 @@ public class VmDeviceDAODbFacadeImpl extends
     }
 
     @Override
-    protected ParameterizedRowMapper<VmDevice> createEntityRowMapper() {
+    protected RowMapper<VmDevice> createEntityRowMapper() {
         return vmDeviceRowMapper;
     }
 
@@ -121,7 +121,7 @@ public class VmDeviceDAODbFacadeImpl extends
 
     }
 
-    private static class VmDeviceRowMapper implements ParameterizedRowMapper<VmDevice> {
+    private static class VmDeviceRowMapper implements RowMapper<VmDevice> {
 
         @SuppressWarnings("unchecked")
         @Override

@@ -12,8 +12,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
@@ -156,8 +156,8 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
         return parameterSource;
     }
 
-    private final static class VdsGroupRowMapper implements ParameterizedRowMapper<VDSGroup> {
-        public static final ParameterizedRowMapper<VDSGroup> instance = new VdsGroupRowMapper();
+    private final static class VdsGroupRowMapper implements RowMapper<VDSGroup> {
+        public static final RowMapper<VDSGroup> instance = new VdsGroupRowMapper();
 
         @Override
         public VDSGroup mapRow(ResultSet rs, int rowNum)

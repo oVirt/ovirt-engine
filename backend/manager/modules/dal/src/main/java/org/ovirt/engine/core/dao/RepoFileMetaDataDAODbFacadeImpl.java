@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
  * <code>StorageDomainDAODbFacadeImpl</code> provides an implementation of {@link StorageDomainDAO} based on code from
@@ -93,7 +93,7 @@ public class RepoFileMetaDataDAODbFacadeImpl extends BaseDAODbFacade implements 
                 parameterSource);
     }
 
-    private static class ThinRepoFileMetaDataMapper implements ParameterizedRowMapper<RepoFileMetaData> {
+    private static class ThinRepoFileMetaDataMapper implements RowMapper<RepoFileMetaData> {
         public static final ThinRepoFileMetaDataMapper instance = new ThinRepoFileMetaDataMapper();
 
         @Override
@@ -106,7 +106,7 @@ public class RepoFileMetaDataDAODbFacadeImpl extends BaseDAODbFacade implements 
         }
     }
 
-    private static class RepoFileMetaDataMapper implements ParameterizedRowMapper<RepoFileMetaData> {
+    private static class RepoFileMetaDataMapper implements RowMapper<RepoFileMetaData> {
         public static final RepoFileMetaDataMapper instance = new RepoFileMetaDataMapper();
 
         @Override
@@ -121,7 +121,7 @@ public class RepoFileMetaDataDAODbFacadeImpl extends BaseDAODbFacade implements 
         }
     }
 
-    private static class StorageDomainRepoFileMetaDataMapper implements ParameterizedRowMapper<RepoFileMetaData> {
+    private static class StorageDomainRepoFileMetaDataMapper implements RowMapper<RepoFileMetaData> {
         public static final StorageDomainRepoFileMetaDataMapper instance = new StorageDomainRepoFileMetaDataMapper();
 
         @Override

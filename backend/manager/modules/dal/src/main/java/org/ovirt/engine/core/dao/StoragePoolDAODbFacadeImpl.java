@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
@@ -24,7 +24,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 @SuppressWarnings("synthetic-access")
 public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements StoragePoolDAO {
 
-    private static final class StoragePoolRawMapper implements ParameterizedRowMapper<storage_pool> {
+    private static final class StoragePoolRawMapper implements RowMapper<storage_pool> {
         @Override
         public storage_pool mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
@@ -47,7 +47,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
         }
     }
 
-    private static final ParameterizedRowMapper<storage_pool> mapper = new StoragePoolRawMapper();
+    private static final RowMapper<storage_pool> mapper = new StoragePoolRawMapper();
 
     private static StorageFormatType getStorageFormatTypeForPool(ResultSet rs) throws SQLException {
         return StorageFormatType.forValue(rs.getString("storage_pool_format_type"));

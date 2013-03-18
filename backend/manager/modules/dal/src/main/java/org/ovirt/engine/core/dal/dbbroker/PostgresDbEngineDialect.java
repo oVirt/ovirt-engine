@@ -17,7 +17,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.jdbc.core.simple.SimpleJdbcCallOperations;
 
@@ -137,7 +136,7 @@ public class PostgresDbEngineDialect implements DbEngineDialect {
          */
         @SuppressWarnings("rawtypes")
         @Override
-        public SimpleJdbcCall returningResultSet(String parameterName, ParameterizedRowMapper rowMapper) {
+        public SimpleJdbcCall returningResultSet(String parameterName, RowMapper rowMapper) {
             this.returnedMapKey = parameterName;
             this.rowMapper = rowMapper;
             return this;

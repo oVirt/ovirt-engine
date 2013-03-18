@@ -10,12 +10,12 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class StoragePoolIsoMapDAODbFacadeImpl extends BaseDAODbFacade implements StoragePoolIsoMapDAO {
 
-    private static final class StoragePoolIsoMapRowMapper implements ParameterizedRowMapper<StoragePoolIsoMap> {
+    private static final class StoragePoolIsoMapRowMapper implements RowMapper<StoragePoolIsoMap> {
         public static final StoragePoolIsoMapRowMapper instance = new StoragePoolIsoMapRowMapper();
 
         @Override

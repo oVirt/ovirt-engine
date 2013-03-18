@@ -28,7 +28,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.utils.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
@@ -275,7 +275,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
                 .addValue("vm_pool_id", vmPoolId));
     }
 
-    static final class VMRowMapper implements ParameterizedRowMapper<VM> {
+    static final class VMRowMapper implements RowMapper<VM> {
         public static final VMRowMapper instance = new VMRowMapper();
 
         @Override
@@ -415,7 +415,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
         private boolean isPlugged;
     }
 
-    private static final class VMWithPlugInfoRowMapper implements ParameterizedRowMapper<VMWithPlugInfo> {
+    private static final class VMWithPlugInfoRowMapper implements RowMapper<VMWithPlugInfo> {
         public static final VMWithPlugInfoRowMapper instance = new VMWithPlugInfoRowMapper();
 
         @Override

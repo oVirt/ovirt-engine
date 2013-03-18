@@ -7,8 +7,8 @@ import java.util.List;
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.compat.Guid;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 
 /**
@@ -19,7 +19,7 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
  */
 public class VdsStatisticsDAODbFacadeImpl extends BaseDAODbFacade implements VdsStatisticsDAO {
 
-    private static final class VdsStatisticsRowMapper implements ParameterizedRowMapper<VdsStatistics> {
+    private static final class VdsStatisticsRowMapper implements RowMapper<VdsStatistics> {
         public static final VdsStatisticsRowMapper instance = new VdsStatisticsRowMapper();
 
         @Override

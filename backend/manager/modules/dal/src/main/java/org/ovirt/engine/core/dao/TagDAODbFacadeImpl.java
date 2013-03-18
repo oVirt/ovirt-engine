@@ -13,15 +13,15 @@ import org.ovirt.engine.core.common.businessentities.TagsVmPoolMap;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
  * <code>TagDAODbFacadeImpl</code> provides an implementation of {@link TagDAO} that uses code refactored from the
  * {@link org.ovirt.engine.core.dal.dbbroker.DbFacade} class.
  */
 public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
-    private static class TagRowMapper implements ParameterizedRowMapper<tags> {
+    private static class TagRowMapper implements RowMapper<tags> {
         public static final TagRowMapper instance = new TagRowMapper();
 
         @Override
@@ -226,7 +226,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("group_id", group)
                 .addValue("tag_id", tag);
 
-        ParameterizedRowMapper<TagsUserGroupMap> mapper = new ParameterizedRowMapper<TagsUserGroupMap>() {
+        RowMapper<TagsUserGroupMap> mapper = new RowMapper<TagsUserGroupMap>() {
             @Override
             public TagsUserGroupMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 TagsUserGroupMap entity = new TagsUserGroupMap();
@@ -263,7 +263,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("tag_id", tagId).addValue(
                 "user_id", userId);
 
-        ParameterizedRowMapper<TagsUserMap> mapper = new ParameterizedRowMapper<TagsUserMap>() {
+        RowMapper<TagsUserMap> mapper = new RowMapper<TagsUserMap>() {
             @Override
             public TagsUserMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 TagsUserMap entity = new TagsUserMap();
@@ -300,7 +300,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("tag_id", tagId).addValue(
                 "vds_id", vdsId);
 
-        ParameterizedRowMapper<TagsVdsMap> mapper = new ParameterizedRowMapper<TagsVdsMap>() {
+        RowMapper<TagsVdsMap> mapper = new RowMapper<TagsVdsMap>() {
             @Override
             public TagsVdsMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 TagsVdsMap entity = new TagsVdsMap();
@@ -337,7 +337,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("tag_id", tagId).addValue(
                 "vm_id", vmId);
 
-        ParameterizedRowMapper<TagsVmMap> mapper = new ParameterizedRowMapper<TagsVmMap>() {
+        RowMapper<TagsVmMap> mapper = new RowMapper<TagsVmMap>() {
             @Override
             public TagsVmMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 TagsVmMap entity = new TagsVmMap();
@@ -386,7 +386,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
     public List<TagsVmMap> getTagVmMapByVmIdAndDefaultTag(Guid vmid) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_id", vmid);
 
-        ParameterizedRowMapper<TagsVmMap> mapper = new ParameterizedRowMapper<TagsVmMap>() {
+        RowMapper<TagsVmMap> mapper = new RowMapper<TagsVmMap>() {
             @Override
             public TagsVmMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 TagsVmMap entity = new TagsVmMap();
@@ -408,7 +408,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("groupId", adGroupId)
                 .addValue("vm_pool_id", vmPoolId);
 
-        ParameterizedRowMapper<TagsVmMap> mapper = new ParameterizedRowMapper<TagsVmMap>() {
+        RowMapper<TagsVmMap> mapper = new RowMapper<TagsVmMap>() {
             @Override
             public TagsVmMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 TagsVmMap entity = new TagsVmMap();
@@ -431,7 +431,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("ad_id", adElementId)
                 .addValue("vm_pool_id", vmPoolId);
 
-        ParameterizedRowMapper<TagsVmPoolMap> mapper = new ParameterizedRowMapper<TagsVmPoolMap>() {
+        RowMapper<TagsVmPoolMap> mapper = new RowMapper<TagsVmPoolMap>() {
             @Override
             public TagsVmPoolMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 TagsVmPoolMap entity = new TagsVmPoolMap();

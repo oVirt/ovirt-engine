@@ -7,9 +7,9 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.ovirt.engine.core.dao.BaseDAODbFacade;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
 public class SimpleJdbcCallsHandler {
@@ -53,7 +53,7 @@ public class SimpleJdbcCallsHandler {
     }
 
     public <T> T executeRead(final String procedureName,
-            final ParameterizedRowMapper<T> mapper,
+            final RowMapper<T> mapper,
             final MapSqlParameterSource parameterSource) {
         List<T> results = executeReadList(procedureName, mapper, parameterSource);
         return results.isEmpty() ? null : results.get(0);
@@ -61,7 +61,7 @@ public class SimpleJdbcCallsHandler {
 
     @SuppressWarnings("unchecked")
     public <T> List<T> executeReadList(final String procedureName,
-            final ParameterizedRowMapper<T> mapper,
+            final RowMapper<T> mapper,
             final MapSqlParameterSource parameterSource) {
         Map<String, Object> resultsMap = executeReadAndReturnMap(procedureName, mapper, parameterSource);
         List<?> resultList = (List<?>) (resultsMap
@@ -70,7 +70,7 @@ public class SimpleJdbcCallsHandler {
     }
 
     public <T> Map<String, Object> executeReadAndReturnMap(final String procedureName,
-            final ParameterizedRowMapper<T> mapper,
+            final RowMapper<T> mapper,
             final MapSqlParameterSource parameterSource) {
         Map<String, Object> resultsMap =
                 executeImpl(procedureName, parameterSource, createCallForRead(procedureName, mapper, parameterSource));
@@ -78,7 +78,7 @@ public class SimpleJdbcCallsHandler {
     }
 
     private CallCreator createCallForRead(final String procedureName,
-            final ParameterizedRowMapper<?> mapper,
+            final RowMapper<?> mapper,
             final MapSqlParameterSource parameterSource) {
         return new CallCreator() {
                 @Override

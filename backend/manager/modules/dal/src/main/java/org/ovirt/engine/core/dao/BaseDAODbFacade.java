@@ -9,7 +9,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbEngineDialect;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.SimpleJdbcCallsHandler;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.springframework.jdbc.core.RowMapper;
 
 public abstract class BaseDAODbFacade {
 
@@ -38,8 +38,8 @@ public abstract class BaseDAODbFacade {
      * @return A generic boolean result mapper which always takes the boolean result, regardless of how it's column is
      *         called.
      */
-    protected ParameterizedRowMapper<Boolean> createBooleanMapper() {
-        return new ParameterizedRowMapper<Boolean>() {
+    protected RowMapper<Boolean> createBooleanMapper() {
+        return new RowMapper<Boolean>() {
 
             @Override
             public Boolean mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -52,8 +52,8 @@ public abstract class BaseDAODbFacade {
      * @return A generic {@link Guid} result mapper which always takes the {@link Guid} result, regardless of how it's
      *         column is called.
      */
-    protected ParameterizedRowMapper<Guid> createGuidMapper() {
-        return new ParameterizedRowMapper<Guid>() {
+    protected RowMapper<Guid> createGuidMapper() {
+        return new RowMapper<Guid>() {
 
             @Override
             public Guid mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -62,25 +62,25 @@ public abstract class BaseDAODbFacade {
         };
     }
 
-    private static ParameterizedRowMapper<Long> longRowMapper = new ParameterizedRowMapper<Long>() {
+    private static RowMapper<Long> longRowMapper = new RowMapper<Long>() {
         @Override
         public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
             return rs.getLong(1);
         };
     };
 
-    protected ParameterizedRowMapper<Long> getLongMapper() {
+    protected RowMapper<Long> getLongMapper() {
         return longRowMapper;
     }
 
-    private static ParameterizedRowMapper<Integer> integerRowMapper = new ParameterizedRowMapper<Integer>() {
+    private static RowMapper<Integer> integerRowMapper = new RowMapper<Integer>() {
         @Override
         public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
             return rs.getInt(1);
         };
     };
 
-    protected ParameterizedRowMapper<Integer> getIntegerMapper() {
+    protected RowMapper<Integer> getIntegerMapper() {
         return integerRowMapper;
     }
 

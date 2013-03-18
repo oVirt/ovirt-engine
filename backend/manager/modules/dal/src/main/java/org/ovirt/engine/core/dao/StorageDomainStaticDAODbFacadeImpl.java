@@ -10,8 +10,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Guid;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacade<StorageDomainStatic, Guid> implements StorageDomainStaticDAO {
 
@@ -64,7 +64,7 @@ public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacad
         MapSqlParameterSource parameterSource = getStoragePoolIdParameterSource(pool)
                 .addValue("status", status.getValue());
 
-        ParameterizedRowMapper<Guid> mapper = new ParameterizedRowMapper<Guid>() {
+        RowMapper<Guid> mapper = new RowMapper<Guid>() {
             @Override
             public Guid mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return Guid.createGuidFromString(rs.getString("storage_id"));
@@ -95,11 +95,11 @@ public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacad
     }
 
     @Override
-    protected ParameterizedRowMapper<StorageDomainStatic> createEntityRowMapper() {
+    protected RowMapper<StorageDomainStatic> createEntityRowMapper() {
         return StorageDomainStaticRowMapper.instance;
     }
 
-    private static final class StorageDomainStaticRowMapper implements ParameterizedRowMapper<StorageDomainStatic> {
+    private static final class StorageDomainStaticRowMapper implements RowMapper<StorageDomainStatic> {
         public static final StorageDomainStaticRowMapper instance = new StorageDomainStaticRowMapper();
 
         @Override

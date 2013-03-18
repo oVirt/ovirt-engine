@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesStat
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
  * <code>VdsDAODbFacadeImpl</code> provides an implementation of {@link VdsDAO} that uses previously written code from
@@ -23,7 +23,7 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
  */
 public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDynamicDAO {
 
-    private static final class VdcDynamicRowMapper implements ParameterizedRowMapper<VdsDynamic> {
+    private static final class VdcDynamicRowMapper implements RowMapper<VdsDynamic> {
         public static final VdcDynamicRowMapper instance = new VdcDynamicRowMapper();
 
         @Override

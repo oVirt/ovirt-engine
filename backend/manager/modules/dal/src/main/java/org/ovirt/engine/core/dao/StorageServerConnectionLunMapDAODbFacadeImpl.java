@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connecti
 import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map_id;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
  * <code>StorageServerConnectionLunMapDAODbFacadeImpl</code> provides an implementation of {@link LUN_storage_server_connection_map}
@@ -22,7 +22,7 @@ public class StorageServerConnectionLunMapDAODbFacadeImpl extends BaseDAODbFacad
         StorageServerConnectionLunMapDAO {
 
     private static final class StorageServerConnectionLunMapRowMapper
-            implements ParameterizedRowMapper<LUN_storage_server_connection_map> {
+            implements RowMapper<LUN_storage_server_connection_map> {
         public static final StorageServerConnectionLunMapRowMapper instance =
                 new StorageServerConnectionLunMapRowMapper();
 

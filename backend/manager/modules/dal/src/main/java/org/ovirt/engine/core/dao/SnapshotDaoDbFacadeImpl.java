@@ -10,14 +10,14 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class SnapshotDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Snapshot, Guid> implements SnapshotDao {
 
-    private static final ParameterizedRowMapper<Snapshot> ROW_MAPPER = new SnapshotRowMapper();
+    private static final RowMapper<Snapshot> ROW_MAPPER = new SnapshotRowMapper();
 
-    private static final ParameterizedRowMapper<Snapshot> NO_CONFIG_ROW_MAPPER =
+    private static final RowMapper<Snapshot> NO_CONFIG_ROW_MAPPER =
             new SnapshotRowMapperWithConfigurationAvailable();
 
     public SnapshotDaoDbFacadeImpl() {
@@ -42,7 +42,7 @@ public class SnapshotDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Snapshot,
     }
 
     @Override
-    protected ParameterizedRowMapper<Snapshot> createEntityRowMapper() {
+    protected RowMapper<Snapshot> createEntityRowMapper() {
         return ROW_MAPPER;
     }
 
@@ -141,7 +141,7 @@ public class SnapshotDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Snapshot,
                 parameterSource);
     }
 
-    private static class SnapshotRowMapper implements ParameterizedRowMapper<Snapshot> {
+    private static class SnapshotRowMapper implements RowMapper<Snapshot> {
 
         @Override
         public Snapshot mapRow(ResultSet rs, int rowNum) throws SQLException {

@@ -8,8 +8,8 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.compat.Guid;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class VmGuestAgentInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements VmGuestAgentInterfaceDao{
 
@@ -54,7 +54,7 @@ public class VmGuestAgentInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implem
         return StringUtils.join(ipAddresses, DELIMITER);
     }
 
-    protected final static class VmGuestAgentInterfaceRowMapper implements ParameterizedRowMapper<VmGuestAgentInterface> {
+    protected final static class VmGuestAgentInterfaceRowMapper implements RowMapper<VmGuestAgentInterface> {
         public static final VmGuestAgentInterfaceRowMapper instance = new VmGuestAgentInterfaceRowMapper();
 
         @Override

@@ -7,8 +7,8 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
  * <code>BookmarkDAODbFacadeImpl</code> provides a concrete implementation of <code>BookmarkDAO</code> that uses
@@ -17,7 +17,7 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
  *
  */
 public class BookmarkDAODbFacadeImpl extends BaseDAODbFacade implements BookmarkDAO {
-    private static class BookmarkRowMapper implements ParameterizedRowMapper<Bookmark> {
+    private static class BookmarkRowMapper implements RowMapper<Bookmark> {
         public static final BookmarkRowMapper instance = new BookmarkRowMapper();
 
         @Override

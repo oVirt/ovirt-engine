@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
@@ -23,9 +23,9 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 public class GlusterHooksDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<GlusterHookEntity, Guid> implements
         GlusterHooksDao {
 
-    private static final ParameterizedRowMapper<GlusterHookEntity> glusterHookRowMapper = new GlusterHookRowMapper();
+    private static final RowMapper<GlusterHookEntity> glusterHookRowMapper = new GlusterHookRowMapper();
 
-    private static final ParameterizedRowMapper<GlusterServerHook> glusterServerHookRowMapper =
+    private static final RowMapper<GlusterServerHook> glusterServerHookRowMapper =
             new GlusterServerHookRowMapper();
 
     public GlusterHooksDaoDbFacadeImpl() {
@@ -196,7 +196,7 @@ public class GlusterHooksDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
                 createIdParameterMapper(id));
     }
 
-    private static final class GlusterHookRowMapper implements ParameterizedRowMapper<GlusterHookEntity> {
+    private static final class GlusterHookRowMapper implements RowMapper<GlusterHookEntity> {
         @Override
         public GlusterHookEntity mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
@@ -215,7 +215,7 @@ public class GlusterHooksDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
         }
     }
 
-    private static final class GlusterServerHookRowMapper implements ParameterizedRowMapper<GlusterServerHook> {
+    private static final class GlusterServerHookRowMapper implements RowMapper<GlusterServerHook> {
         @Override
         public GlusterServerHook mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
@@ -230,7 +230,7 @@ public class GlusterHooksDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
     }
 
     @Override
-    protected ParameterizedRowMapper<GlusterHookEntity> createEntityRowMapper() {
+    protected RowMapper<GlusterHookEntity> createEntityRowMapper() {
         return glusterHookRowMapper;
     }
 

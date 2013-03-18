@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
@@ -126,7 +126,7 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
     /**
      * Row mapper to map a returned row to a {@link StorageDomain} object.
      */
-    private static final class StorageDomainRowMapper implements ParameterizedRowMapper<StorageDomain> {
+    private static final class StorageDomainRowMapper implements RowMapper<StorageDomain> {
         // single instance
         public static final StorageDomainRowMapper instance = new StorageDomainRowMapper();
 

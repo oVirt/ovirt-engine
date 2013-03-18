@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
@@ -27,9 +27,9 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<GlusterVolumeEntity, Guid> implements
         GlusterVolumeDao {
 
-    private static final ParameterizedRowMapper<GlusterVolumeEntity> volumeRowMapper = new GlusterVolumeRowMapper();
-    private static final ParameterizedRowMapper<AccessProtocol> accessProtocolRowMapper = new AccessProtocolRowMapper();
-    private static final ParameterizedRowMapper<TransportType> transportTypeRowMapper = new TransportTypeRowMapper();
+    private static final RowMapper<GlusterVolumeEntity> volumeRowMapper = new GlusterVolumeRowMapper();
+    private static final RowMapper<AccessProtocol> accessProtocolRowMapper = new AccessProtocolRowMapper();
+    private static final RowMapper<TransportType> transportTypeRowMapper = new TransportTypeRowMapper();
 
     public GlusterVolumeDaoDbFacadeImpl() {
         super("GlusterVolume");
@@ -287,7 +287,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
         }
     }
 
-    private static final class GlusterVolumeRowMapper implements ParameterizedRowMapper<GlusterVolumeEntity> {
+    private static final class GlusterVolumeRowMapper implements RowMapper<GlusterVolumeEntity> {
         @Override
         public GlusterVolumeEntity mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
@@ -305,7 +305,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
         }
     }
 
-    private static final class AccessProtocolRowMapper implements ParameterizedRowMapper<AccessProtocol> {
+    private static final class AccessProtocolRowMapper implements RowMapper<AccessProtocol> {
         @Override
         public AccessProtocol mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
@@ -313,7 +313,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
         }
     }
 
-    private static final class TransportTypeRowMapper implements ParameterizedRowMapper<TransportType> {
+    private static final class TransportTypeRowMapper implements RowMapper<TransportType> {
         @Override
         public TransportType mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
@@ -370,7 +370,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
     }
 
     @Override
-    protected ParameterizedRowMapper<GlusterVolumeEntity> createEntityRowMapper() {
+    protected RowMapper<GlusterVolumeEntity> createEntityRowMapper() {
         return volumeRowMapper;
     }
 

@@ -8,8 +8,8 @@ import java.sql.SQLException;
 import java.util.List;
 import org.apache.commons.collections.KeyValue;
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.SnapshotType;
 import org.ovirt.engine.core.compat.Guid;
@@ -20,7 +20,7 @@ import org.ovirt.engine.core.compat.Guid;
  */
 public class BusinessEntitySnapshotDAODbFacadeImpl extends BaseDAODbFacade implements BusinessEntitySnapshotDAO {
 
-    private static class BusinessEntitySnapshotMapper implements ParameterizedRowMapper<BusinessEntitySnapshot> {
+    private static class BusinessEntitySnapshotMapper implements RowMapper<BusinessEntitySnapshot> {
 
         @Override
         public BusinessEntitySnapshot mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -38,7 +38,7 @@ public class BusinessEntitySnapshotDAODbFacadeImpl extends BaseDAODbFacade imple
         }
     }
 
-    private static class BusinessEntitySnapshotIdMapper implements ParameterizedRowMapper<KeyValue> {
+    private static class BusinessEntitySnapshotIdMapper implements RowMapper<KeyValue> {
 
         @Override
         public DefaultKeyValue mapRow(ResultSet rs, int rowNum) throws SQLException {

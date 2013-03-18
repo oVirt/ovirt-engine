@@ -9,11 +9,11 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class GlusterOptionDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<GlusterVolumeOptionEntity, Guid> implements GlusterOptionDao {
-    private static final ParameterizedRowMapper<GlusterVolumeOptionEntity> optionRowMapper = new VolumeOptionRowMapper();
+    private static final RowMapper<GlusterVolumeOptionEntity> optionRowMapper = new VolumeOptionRowMapper();
 
     public GlusterOptionDaoDbFacadeImpl() {
         super("GlusterOption");
@@ -65,7 +65,7 @@ public class GlusterOptionDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
                 .addValue("option_val", option.getValue());
     }
 
-    private static final class VolumeOptionRowMapper implements ParameterizedRowMapper<GlusterVolumeOptionEntity> {
+    private static final class VolumeOptionRowMapper implements RowMapper<GlusterVolumeOptionEntity> {
         @Override
         public GlusterVolumeOptionEntity mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
@@ -89,7 +89,7 @@ public class GlusterOptionDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
     }
 
     @Override
-    protected ParameterizedRowMapper<GlusterVolumeOptionEntity> createEntityRowMapper() {
+    protected RowMapper<GlusterVolumeOptionEntity> createEntityRowMapper() {
         return optionRowMapper;
     }
 }

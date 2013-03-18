@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class JobDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Job, Guid> implements JobDao {
 
@@ -45,7 +45,7 @@ public class JobDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Job, Guid> imp
     }
 
     @Override
-    protected ParameterizedRowMapper<Job> createEntityRowMapper() {
+    protected RowMapper<Job> createEntityRowMapper() {
         return jobRowMapper;
     }
 
@@ -108,7 +108,7 @@ public class JobDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Job, Guid> imp
         return getCallsHandler().executeRead("CheckIfJobHasTasks", createBooleanMapper(), parameterSource);
     }
 
-    private static class JobRowMapper implements ParameterizedRowMapper<Job> {
+    private static class JobRowMapper implements RowMapper<Job> {
 
         @Override
         public Job mapRow(ResultSet rs, int rowNum) throws SQLException {

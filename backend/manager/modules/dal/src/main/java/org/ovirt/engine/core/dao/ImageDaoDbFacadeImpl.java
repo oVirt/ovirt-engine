@@ -10,8 +10,8 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class ImageDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Image, Guid> implements ImageDao {
 
@@ -58,11 +58,11 @@ public class ImageDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Image, Guid>
     }
 
     @Override
-    protected ParameterizedRowMapper<Image> createEntityRowMapper() {
+    protected RowMapper<Image> createEntityRowMapper() {
         return ImageRowMapper.instance;
     }
 
-    private static class ImageRowMapper implements ParameterizedRowMapper<Image> {
+    private static class ImageRowMapper implements RowMapper<Image> {
 
         public static ImageRowMapper instance = new ImageRowMapper();
 

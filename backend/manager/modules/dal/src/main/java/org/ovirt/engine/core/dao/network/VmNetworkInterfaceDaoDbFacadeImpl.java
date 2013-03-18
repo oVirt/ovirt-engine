@@ -10,15 +10,15 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dao.BaseDAODbFacade;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class VmNetworkInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements VmNetworkInterfaceDao {
 
     private static final int MAC_COLUMN_POSITION = 1;
 
-    protected final ParameterizedRowMapper<VmNetworkInterface> mapper =
-            new ParameterizedRowMapper<VmNetworkInterface>() {
+    protected final RowMapper<VmNetworkInterface> mapper =
+            new RowMapper<VmNetworkInterface>() {
                 @Override
                 public VmNetworkInterface mapRow(ResultSet rs, int rowNum)
                         throws SQLException {
@@ -45,7 +45,7 @@ public class VmNetworkInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implement
                 }
             };
 
-    protected final ParameterizedRowMapper<String> macMapper = new ParameterizedRowMapper<String>() {
+    protected final RowMapper<String> macMapper = new RowMapper<String>() {
 
         @Override
         public String mapRow(ResultSet rs, int rowNum) throws SQLException {

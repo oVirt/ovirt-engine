@@ -6,13 +6,13 @@ import java.sql.SQLException;
 import org.ovirt.engine.core.common.businessentities.DiskLunMap;
 import org.ovirt.engine.core.common.businessentities.DiskLunMapId;
 import org.ovirt.engine.core.compat.Guid;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class DiskLunMapDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<DiskLunMap, DiskLunMapId>
         implements DiskLunMapDao {
 
-    private static final class DiskLunMapRowMapper implements ParameterizedRowMapper<DiskLunMap> {
+    private static final class DiskLunMapRowMapper implements RowMapper<DiskLunMap> {
         public static final DiskLunMapRowMapper instance = new DiskLunMapRowMapper();
 
         @Override
@@ -46,7 +46,7 @@ public class DiskLunMapDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<DiskLun
     }
 
     @Override
-    protected ParameterizedRowMapper<DiskLunMap> createEntityRowMapper() {
+    protected RowMapper<DiskLunMap> createEntityRowMapper() {
         return DiskLunMapRowMapper.instance;
     }
 

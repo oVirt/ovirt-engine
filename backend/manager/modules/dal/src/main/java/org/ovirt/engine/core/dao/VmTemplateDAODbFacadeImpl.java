@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.AbstractVmRowMapper;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
@@ -261,7 +261,7 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
         private boolean isPlugged;
     }
 
-    private static final class VMTemplateWithPlugInfoRowMapper implements ParameterizedRowMapper<VMTemplateWithPlugInfo> {
+    private static final class VMTemplateWithPlugInfoRowMapper implements RowMapper<VMTemplateWithPlugInfo> {
         public static final VMTemplateWithPlugInfoRowMapper instance = new VMTemplateWithPlugInfoRowMapper();
 
         @Override

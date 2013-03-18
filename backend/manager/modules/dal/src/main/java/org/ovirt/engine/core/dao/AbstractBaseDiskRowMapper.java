@@ -8,9 +8,9 @@ import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.compat.Guid;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.springframework.jdbc.core.RowMapper;
 
-public abstract class AbstractBaseDiskRowMapper<T extends BaseDisk> implements ParameterizedRowMapper<T> {
+public abstract class AbstractBaseDiskRowMapper<T extends BaseDisk> implements RowMapper<T> {
 
     @Override
     public T mapRow(ResultSet rs, int rowNum) throws SQLException {

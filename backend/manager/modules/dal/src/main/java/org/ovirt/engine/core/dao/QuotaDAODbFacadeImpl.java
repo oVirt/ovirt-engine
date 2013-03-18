@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.compat.Guid;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
@@ -186,7 +186,7 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
         return quotaEntity;
     }
 
-    private static ParameterizedRowMapper<Long> longMapper = new ParameterizedRowMapper<Long>() {
+    private static RowMapper<Long> longMapper = new RowMapper<Long>() {
         @Override
         public Long mapRow(ResultSet resultSet, int i) throws SQLException {
             return (Long) resultSet.getObject(1);
@@ -354,8 +354,8 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
     /**
      * Return initialized entity with quota Vds group result set.
      */
-    private ParameterizedRowMapper<QuotaVdsGroup> getVdsGroupQuotaResultSet() {
-        ParameterizedRowMapper<QuotaVdsGroup> mapperQuotaLimitation = new ParameterizedRowMapper<QuotaVdsGroup>() {
+    private RowMapper<QuotaVdsGroup> getVdsGroupQuotaResultSet() {
+        RowMapper<QuotaVdsGroup> mapperQuotaLimitation = new RowMapper<QuotaVdsGroup>() {
             @Override
             public QuotaVdsGroup mapRow(ResultSet rs, int rowNum)
                     throws SQLException {
@@ -378,8 +378,8 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
     /**
      * Returns initialized entity with quota Storage result set.
      */
-    private ParameterizedRowMapper<QuotaStorage> getQuotaStorageResultSet() {
-        ParameterizedRowMapper<QuotaStorage> mapperQuotaLimitation = new ParameterizedRowMapper<QuotaStorage>() {
+    private RowMapper<QuotaStorage> getQuotaStorageResultSet() {
+        RowMapper<QuotaStorage> mapperQuotaLimitation = new RowMapper<QuotaStorage>() {
             @Override
             public QuotaStorage mapRow(ResultSet rs, int rowNum)
                     throws SQLException {
@@ -399,8 +399,8 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
     /**
      * Returns initialized entity with quota result set.
      */
-    private ParameterizedRowMapper<Quota> getQuotaFromResultSet() {
-        ParameterizedRowMapper<Quota> mapper = new ParameterizedRowMapper<Quota>() {
+    private RowMapper<Quota> getQuotaFromResultSet() {
+        RowMapper<Quota> mapper = new RowMapper<Quota>() {
             @Override
             public Quota mapRow(ResultSet rs, int rowNum)
                     throws SQLException {
@@ -438,8 +438,8 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
     /**
      * Returns initialized entity with quota meta data result set.
      */
-    private ParameterizedRowMapper<Quota> getQuotaMetaDataFromResultSet() {
-        ParameterizedRowMapper<Quota> mapper = new ParameterizedRowMapper<Quota>() {
+    private RowMapper<Quota> getQuotaMetaDataFromResultSet() {
+        RowMapper<Quota> mapper = new RowMapper<Quota>() {
             @Override
             public Quota mapRow(ResultSet rs, int rowNum)
                     throws SQLException {

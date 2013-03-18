@@ -15,8 +15,8 @@ import org.ovirt.engine.core.common.businessentities.network.Vlan;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dao.BaseDAODbFacade;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements InterfaceDao {
 
@@ -181,8 +181,8 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                 getCustomMapSqlParameterSource().addValue("vds_interface_id", id));
     }
 
-    private static final ParameterizedRowMapper<VdsNetworkInterface> vdsNetworkInterfaceRowMapper =
-            new ParameterizedRowMapper<VdsNetworkInterface>() {
+    private static final RowMapper<VdsNetworkInterface> vdsNetworkInterfaceRowMapper =
+            new RowMapper<VdsNetworkInterface>() {
                 @Override
                 public VdsNetworkInterface mapRow(ResultSet rs, int rowNum)
                         throws SQLException {

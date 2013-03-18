@@ -17,8 +17,8 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
@@ -196,7 +196,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
                 parameterSource);
     }
 
-    static final class VdsRowMapper implements ParameterizedRowMapper<VDS> {
+    static final class VdsRowMapper implements RowMapper<VDS> {
         // single instance
         public final static VdsRowMapper instance = new VdsRowMapper();
 

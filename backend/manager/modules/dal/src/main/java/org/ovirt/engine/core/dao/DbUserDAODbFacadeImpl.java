@@ -7,8 +7,8 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
@@ -18,7 +18,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
  *
  */
 public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO {
-    private static class DbUserRowMapper implements ParameterizedRowMapper<DbUser> {
+    private static class DbUserRowMapper implements RowMapper<DbUser> {
         public static final DbUserRowMapper instance = new DbUserRowMapper();
 
         @Override

@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class VmNetworkStatisticsDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<VmNetworkStatistics, Guid>
         implements VmNetworkStatisticsDao {
@@ -42,8 +42,8 @@ public class VmNetworkStatisticsDaoDbFacadeImpl extends MassOperationsGenericDao
     }
 
     @Override
-    protected ParameterizedRowMapper<VmNetworkStatistics> createEntityRowMapper() {
-        return new ParameterizedRowMapper<VmNetworkStatistics>() {
+    protected RowMapper<VmNetworkStatistics> createEntityRowMapper() {
+        return new RowMapper<VmNetworkStatistics>() {
             @Override
             public VmNetworkStatistics mapRow(ResultSet rs, int rowNum)
                     throws SQLException {

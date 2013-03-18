@@ -11,14 +11,14 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<GlusterBrickEntity, Guid> implements GlusterBrickDao {
     // The brick row mapper can't be static as its' type (GlusterBrickRowMapper) is a non-static inner class
     // There will still be a single instance of it, as the DAO itself will be instantiated only once
-    private final ParameterizedRowMapper<GlusterBrickEntity> brickRowMapper = new GlusterBrickRowMapper();
+    private final RowMapper<GlusterBrickEntity> brickRowMapper = new GlusterBrickRowMapper();
 
     public GlusterBrickDaoDbFacadeImpl() {
         super("GlusterBrick");
@@ -102,7 +102,7 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
     /**
      * This is not a static class since it invokes a non-static method (getHostNameOfServer) of the parent class.
      */
-    private final class GlusterBrickRowMapper implements ParameterizedRowMapper<GlusterBrickEntity> {
+    private final class GlusterBrickRowMapper implements RowMapper<GlusterBrickEntity> {
         @Override
         public GlusterBrickEntity mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
@@ -156,7 +156,7 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
     }
 
     @Override
-    protected ParameterizedRowMapper<GlusterBrickEntity> createEntityRowMapper() {
+    protected RowMapper<GlusterBrickEntity> createEntityRowMapper() {
         return brickRowMapper;
     }
 }

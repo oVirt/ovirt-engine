@@ -12,8 +12,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.AbstractVmRowMapper;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStaticDAO {
 
@@ -135,7 +135,7 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
 
     @Override
     public List<String> getAllNamesPinnedToHost(Guid host) {
-        ParameterizedRowMapper<String> mapper = new ParameterizedRowMapper<String>() {
+        RowMapper<String> mapper = new RowMapper<String>() {
 
             @Override
             public String mapRow(ResultSet rs, int rowNum) throws SQLException {

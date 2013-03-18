@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.businessentities.EventMap;
 import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.compat.Guid;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
  * <code>EventSubscriberDAODbFacadeImpl</code> provides an implementation of {@link EventSubscriberDAO} that uses the
@@ -18,7 +18,7 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
  */
 public class EventDAODbFacadeImpl extends BaseDAODbFacade implements EventDAO {
 
-    private static final class EventSubscriberRowMapper implements ParameterizedRowMapper<event_subscriber> {
+    private static final class EventSubscriberRowMapper implements RowMapper<event_subscriber> {
         public static final EventSubscriberRowMapper instance = new EventSubscriberRowMapper();
 
         @Override
@@ -35,7 +35,7 @@ public class EventDAODbFacadeImpl extends BaseDAODbFacade implements EventDAO {
         }
     }
 
-    private static final class EventNotificationMethodRowMapper implements ParameterizedRowMapper<EventNotificationMethod> {
+    private static final class EventNotificationMethodRowMapper implements RowMapper<EventNotificationMethod> {
         public static final EventNotificationMethodRowMapper instance = new EventNotificationMethodRowMapper();
 
         @Override
@@ -47,7 +47,7 @@ public class EventDAODbFacadeImpl extends BaseDAODbFacade implements EventDAO {
         }
     }
 
-    private static final class EventMapRowMapper implements ParameterizedRowMapper<EventMap> {
+    private static final class EventMapRowMapper implements RowMapper<EventMap> {
         public static final EventMapRowMapper instance = new EventMapRowMapper();
 
         @Override

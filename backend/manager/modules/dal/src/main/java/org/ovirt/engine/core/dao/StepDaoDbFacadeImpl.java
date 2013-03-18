@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class StepDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Step, Guid> implements StepDao {
 
@@ -52,7 +52,7 @@ public class StepDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Step, Guid> i
     }
 
     @Override
-    protected ParameterizedRowMapper<Step> createEntityRowMapper() {
+    protected RowMapper<Step> createEntityRowMapper() {
         return stepRowMapper;
     }
 
@@ -79,7 +79,7 @@ public class StepDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Step, Guid> i
 
     }
 
-    private static class StepRowMapper implements ParameterizedRowMapper<Step> {
+    private static class StepRowMapper implements RowMapper<Step> {
 
         @Override
         public Step mapRow(ResultSet rs, int rowNum) throws SQLException {

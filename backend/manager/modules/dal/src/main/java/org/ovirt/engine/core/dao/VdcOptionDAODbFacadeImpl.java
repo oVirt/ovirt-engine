@@ -5,8 +5,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VdcOption;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
  * <code>VdcOptionDAODbFacadeImpl</code> provides a concrete implementation of {@link VdcOptionDAO} using code
@@ -16,7 +16,7 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
  */
 public class VdcOptionDAODbFacadeImpl extends BaseDAODbFacade implements VdcOptionDAO {
 
-    private static final class VdcOptionRowMapper implements ParameterizedRowMapper<VdcOption> {
+    private static final class VdcOptionRowMapper implements RowMapper<VdcOption> {
         public static final VdcOptionRowMapper instance = new VdcOptionRowMapper();
 
         @Override

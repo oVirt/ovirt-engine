@@ -3,8 +3,9 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -119,8 +120,8 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
                 .addValue("nfs_retrans", connection.getNfsRetrans());
     }
 
-    private static final ParameterizedRowMapper<StorageServerConnections> mapper =
-            new ParameterizedRowMapper<StorageServerConnections>() {
+    private static final RowMapper<StorageServerConnections> mapper =
+            new RowMapper<StorageServerConnections>() {
                 @Override
                 public StorageServerConnections mapRow(ResultSet rs, int rowNum)
                         throws SQLException {

@@ -7,8 +7,8 @@ import java.util.List;
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.compat.Guid;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
  * <code>VdsSpmIdMapDAODbFacadeImpl</code> provides an implementation of {@link VdsSpmIdMapDAO} that uses previously written code from
@@ -77,7 +77,7 @@ public class VdsSpmIdMapDAODbFacadeImpl extends BaseDAODbFacade implements VdsSp
         throw new NotImplementedException();
     }
 
-    private static final class VdsSpmIdMapRowMapper implements ParameterizedRowMapper<vds_spm_id_map> {
+    private static final class VdsSpmIdMapRowMapper implements RowMapper<vds_spm_id_map> {
         public static final VdsSpmIdMapRowMapper instance = new VdsSpmIdMapRowMapper();
 
         @Override

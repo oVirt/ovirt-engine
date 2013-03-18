@@ -16,8 +16,8 @@ import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<VmDynamic, Guid>
         implements VmDynamicDAO {
@@ -33,7 +33,7 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vds_id", id);
 
-        ParameterizedRowMapper<VmDynamic> mapper = createEntityRowMapper();
+        RowMapper<VmDynamic> mapper = createEntityRowMapper();
 
         return getCallsHandler().executeReadList("GetVmsDynamicRunningOnVds", mapper, parameterSource);
     }
@@ -112,8 +112,8 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
     }
 
     @Override
-    protected ParameterizedRowMapper<VmDynamic> createEntityRowMapper() {
-        return new ParameterizedRowMapper<VmDynamic>() {
+    protected RowMapper<VmDynamic> createEntityRowMapper() {
+        return new RowMapper<VmDynamic>() {
             @Override
             public VmDynamic mapRow(ResultSet rs, int rowNum)
                     throws SQLException {

@@ -8,7 +8,7 @@ import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.ImageStorageDomainMapId;
 import org.ovirt.engine.core.compat.Guid;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.springframework.jdbc.core.RowMapper;
 
 public class ImageStorageDomainMapDaoDbFacadeImpl extends BaseDAODbFacade implements ImageStorageDomainMapDao {
 
@@ -66,8 +66,8 @@ public class ImageStorageDomainMapDaoDbFacadeImpl extends BaseDAODbFacade implem
         throw new UnsupportedOperationException();
     }
 
-    private static final ParameterizedRowMapper<image_storage_domain_map> IMAGE_STORAGE_DOMAIN_MAP_MAPPER =
-            new ParameterizedRowMapper<image_storage_domain_map>() {
+    private static final RowMapper<image_storage_domain_map> IMAGE_STORAGE_DOMAIN_MAP_MAPPER =
+            new RowMapper<image_storage_domain_map>() {
 
                 @Override
                 public image_storage_domain_map mapRow(ResultSet rs, int rowNum) throws SQLException {

@@ -15,8 +15,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
@@ -197,7 +197,7 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
         return dbResults.get(resultKey) != null ? ((Integer) dbResults.get(resultKey)).intValue() : 0;
     }
 
-    private static class AuditLogRowMapper implements ParameterizedRowMapper<AuditLog> {
+    private static class AuditLogRowMapper implements RowMapper<AuditLog> {
 
         @Override
         public AuditLog mapRow(ResultSet rs, int rowNum)

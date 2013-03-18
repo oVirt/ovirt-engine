@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
 /**
@@ -119,7 +119,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
         throw new NotImplementedException();
     }
 
-    private final static class VdsStaticRowMapper implements ParameterizedRowMapper<VdsStatic> {
+    private final static class VdsStaticRowMapper implements RowMapper<VdsStatic> {
         public static final VdsStaticRowMapper instance = new VdsStaticRowMapper();
 
         @Override

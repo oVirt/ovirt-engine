@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DefaultGenericDaoDbFacade;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, Guid> implements NetworkDao {
 
@@ -106,12 +106,12 @@ public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
     }
 
     @Override
-    protected ParameterizedRowMapper<Network> createEntityRowMapper() {
+    protected RowMapper<Network> createEntityRowMapper() {
         return NetworkRowMapper.instance;
     }
 
     private static final class NetworkClusterRowMapper extends NetworkRowMapper
-            implements ParameterizedRowMapper<Network> {
+            implements RowMapper<Network> {
         public final static NetworkClusterRowMapper INSTANCE = new NetworkClusterRowMapper();
 
         @Override
@@ -127,7 +127,7 @@ public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
         }
     }
 
-    abstract static class NetworkRowMapperBase<T extends Network> implements ParameterizedRowMapper<T> {
+    abstract static class NetworkRowMapperBase<T extends Network> implements RowMapper<T> {
         public final static NetworkRowMapper instance = new NetworkRowMapper();
 
         @Override

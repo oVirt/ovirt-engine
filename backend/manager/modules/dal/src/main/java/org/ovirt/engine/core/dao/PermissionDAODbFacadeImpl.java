@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.compat.Guid;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
  * <code>PermissionsDAODbFacadeImpl</code> provides a concrete implementation of {@link PermissionDAO} using code from
@@ -190,7 +190,7 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
         throw new NotImplementedException();
     }
 
-    private static class PermissionRowMapper implements ParameterizedRowMapper<permissions> {
+    private static class PermissionRowMapper implements RowMapper<permissions> {
         public static final PermissionRowMapper instance = new PermissionRowMapper();
 
         @Override
