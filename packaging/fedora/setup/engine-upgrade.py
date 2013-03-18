@@ -39,7 +39,7 @@ BACKUP_FILE = "ovirt-engine_db_backup"
 LOG_PATH = "/var/log/ovirt-engine"
 
 # ASYNC TASKS AND COMPLETIONS QUERIES
-ASYNC_TASKS_QUERY = "select * from fn_db_get_async_tasks();"
+ASYNC_TASKS_QUERY = "select dc_name, spm_host_name from fn_db_get_async_tasks();"
 COMPENSATIONS_QUERY = "select command_type, entity_type from business_entity_snapshot;"
 
 ETL_SERVICE="/etc/init.d/ovirt-engine-etl"
@@ -850,44 +850,47 @@ def deployDbAsyncTasks(dbName=basedefs.DB_NAME):
 
 def getRunningTasks(dbName=basedefs.DB_NAME):
     # Get async tasks:
-    runningTasks, rc = utils.execRemoteSqlCommand(
-                                       userName=SERVER_ADMIN,
-                                       dbHost=SERVER_NAME,
-                                       dbPort=SERVER_PORT,
-                                       dbName=dbName,
-                                       sqlQuery=ASYNC_TASKS_QUERY,
-                                       failOnError=True,
-                                       errMsg="Can't get async tasks list",
-                                   )
+    runningTasks, rc = utils.parseRemoteSqlCommand(
+        userName=SERVER_ADMIN,
+        dbHost=SERVER_NAME,
+        dbPort=SERVER_PORT,
+        dbName=dbName,
+        sqlQuery=ASYNC_TASKS_QUERY,
+        failOnError=True,
+        errMsg="Can't get async tasks list",
+    )
 
     # We only want to return anything if there are really async tasks records
-    if runningTasks and "RECORD" in runningTasks:
-        return runningTasks
-    else:
-        return ""
+    # Which means we have more than 1 line (headers)
+    return '\n'.join(
+        [
+            '{dc_name:30} {spm_host_name:30}'.format(**entry)
+            for entry in runningTasks
+        ]
+    )
+
 
 def getCompensations(dbName=basedefs.DB_NAME):
     """
     Get compensations.
     Returns an empty string if there are no compensations.
     """
-    compensations, rc = utils.execRemoteSqlCommand(
-                                       userName=SERVER_ADMIN,
-                                       dbHost=SERVER_NAME,
-                                       dbPort=SERVER_PORT,
-                                       dbName=dbName,
-                                       sqlQuery=COMPENSATIONS_QUERY,
-                                       failOnError=True,
-                                       errMsg="Can't get compensations list",
-                                    )
+    compensations, rc = utils.parseRemoteSqlCommand(
+        userName=SERVER_ADMIN,
+        dbHost=SERVER_NAME,
+        dbPort=SERVER_PORT,
+        dbName=dbName,
+        sqlQuery=COMPENSATIONS_QUERY,
+        failOnError=True,
+        errMsg="Can't get compensations list",
+    )
 
-    # We only want to return anything if there are really compensations records
-    if not compensations or \
-       (compensations and len(compensations.split("\n")) <= 5):
-        # An empty set has 5 rows: column names, -+- , "0 rows", 2 empty lines
-        return ""
-    else:
-        return compensations
+    return '\n'.join(
+        [
+            '{command_type:30} {entity_type:30}'.format(**entry)
+            for entry in compensations
+        ]
+    )
 
 
 def checkRunningTasks(dbName=basedefs.DB_NAME, service=basedefs.ENGINE_SERVICE_NAME):
