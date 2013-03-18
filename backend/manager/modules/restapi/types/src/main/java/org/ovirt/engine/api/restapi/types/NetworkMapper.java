@@ -58,6 +58,7 @@ public class NetworkMapper {
                 networkUsages.add(NetworkUsage.fromValue(usage));
             }
             entity.getCluster().setDisplay(networkUsages.contains(NetworkUsage.DISPLAY));
+            entity.getCluster().setMigration(networkUsages.contains(NetworkUsage.MIGRATION));
             entity.setVmNetwork(networkUsages.contains(NetworkUsage.VM));
         }
         if (model.isSetMtu()) {
@@ -102,8 +103,13 @@ public class NetworkMapper {
         if (entity.isVmNetwork()) {
             model.getUsages().getUsages().add(NetworkUsage.VM.value());
         }
-        if (entity.getCluster() != null && entity.getCluster().isDisplay()) {
-            model.getUsages().getUsages().add(NetworkUsage.DISPLAY.value());
+        if (entity.getCluster() != null) {
+            if (entity.getCluster().isDisplay()) {
+                model.getUsages().getUsages().add(NetworkUsage.DISPLAY.value());
+            }
+            if (entity.getCluster().isMigration()) {
+                model.getUsages().getUsages().add(NetworkUsage.MIGRATION.value());
+            }
         }
         if (entity.getCluster() != null) {
             if (entity.getCluster().getStatus() != null) {

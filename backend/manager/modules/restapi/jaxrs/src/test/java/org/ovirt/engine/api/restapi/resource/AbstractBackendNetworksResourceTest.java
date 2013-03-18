@@ -48,17 +48,34 @@ public abstract class AbstractBackendNetworksResourceTest<R extends AbstractBack
         return entities;
     }
 
-    protected org.ovirt.engine.core.common.businessentities.network.Network getEntity(int index, boolean isDisplay, boolean isRequired) {
-        return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.network.Network.class), isDisplay, isRequired, index);
+    protected org.ovirt.engine.core.common.businessentities.network.Network getEntity(int index,
+            boolean isDisplay,
+            boolean isMigration,
+            boolean isRequired) {
+        return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.network.Network.class),
+                isDisplay,
+                isMigration,
+                isRequired,
+                index);
     }
 
+    @Override
     protected org.ovirt.engine.core.common.businessentities.network.Network getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.network.Network.class), false, false, index);
+        return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.network.Network.class),
+                false,
+                false,
+                false,
+                index);
     }
 
-    static org.ovirt.engine.core.common.businessentities.network.Network setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.network.Network entity, boolean isDisplay, boolean isRequired, int index) {
+    static org.ovirt.engine.core.common.businessentities.network.Network setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.network.Network entity,
+            boolean isDisplay,
+            boolean isMigration,
+            boolean isRequired,
+            int index) {
         NetworkCluster networkCluster = new NetworkCluster();
         networkCluster.setDisplay(isDisplay);
+        networkCluster.setMigration(isMigration);
         networkCluster.setRequired(isRequired);
         expect(entity.getCluster()).andReturn(networkCluster).anyTimes();
         return setUpEntityExpectations(entity, index);

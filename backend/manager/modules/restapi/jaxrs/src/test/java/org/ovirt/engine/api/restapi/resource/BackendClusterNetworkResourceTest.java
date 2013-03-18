@@ -57,7 +57,7 @@ public class BackendClusterNetworkResourceTest
     @Test
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(1, false, false);
+        setUpEntityQueryExpectations(1, false, false, false);
         control.replay();
 
         verifyModel(resource.get(), 1);
@@ -65,8 +65,8 @@ public class BackendClusterNetworkResourceTest
 
     @Test
     public void testUpdate() throws Exception {
-        setUpEntityQueryExpectations(1, false, false);
-        setUpEntityQueryExpectations(1, true, true);
+        setUpEntityQueryExpectations(1, false, false, false);
+        setUpEntityQueryExpectations(1, true, true, true);
         setUpVDSGroupExpectations(GUIDS[1]);
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateNetworkOnCluster,
                                            NetworkClusterParameters.class,
@@ -102,18 +102,20 @@ public class BackendClusterNetworkResourceTest
         assertTrue(model.isSetUsages());
         assertNotNull(model.getUsages().getUsages());
         assertTrue(model.getUsages().getUsages().contains(NetworkUsage.DISPLAY.value()));
+        assertTrue(model.getUsages().getUsages().contains(NetworkUsage.MIGRATION.value()));
         assertTrue(model.isSetRequired());
         assertEquals(model.isRequired(), true);
    }
 
 
-    protected void setUpEntityQueryExpectations(int times, boolean isDisplay, boolean isRequired) throws Exception {
+    protected void setUpEntityQueryExpectations(int times, boolean isDisplay, boolean isMigration, boolean isRequired)
+            throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetAllNetworksByClusterId,
                                          IdQueryParameters.class,
                                          new String[] { "Id" },
                                          new Object[] { CLUSTER_ID },
-                                         getEntityList(isDisplay, isRequired));
+                                         getEntityList(isDisplay, isMigration, isRequired));
         }
     }
 }

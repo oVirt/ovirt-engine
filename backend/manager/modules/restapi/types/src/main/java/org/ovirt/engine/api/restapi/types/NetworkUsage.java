@@ -2,7 +2,8 @@ package org.ovirt.engine.api.restapi.types;
 
 public enum NetworkUsage {
     DISPLAY,
-    VM;
+    VM,
+    MIGRATION;
 
     public String value() {
         return name().toLowerCase();
