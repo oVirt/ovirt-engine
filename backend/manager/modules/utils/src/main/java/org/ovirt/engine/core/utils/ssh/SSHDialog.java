@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.SequenceInputStream;
+import java.nio.charset.Charset;
 import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.Arrays;
@@ -322,7 +323,7 @@ public class SSHDialog {
                             "SSH stderr during command %1$s:'%2$s': stderr: %3$s",
                             _client.getDisplayHost(),
                             command,
-                            new String(stderr.toByteArray(), "UTF-8")
+                            new String(stderr.toByteArray(), Charset.forName("UTF-8"))
                         )
                     );
                 }

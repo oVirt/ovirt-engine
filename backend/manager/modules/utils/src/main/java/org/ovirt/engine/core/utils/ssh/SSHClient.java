@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.nio.charset.Charset;
 import java.net.SocketAddress;
 import java.security.DigestInputStream;
 import java.security.DigestOutputStream;
@@ -621,7 +622,7 @@ public class SSHClient {
                 throw new IllegalStateException("Cannot stop SSH stream thread");
             }
 
-            _validateDigest(localDigest, new String(remoteDigest.toByteArray(), "UTF-8").trim());
+            _validateDigest(localDigest, new String(remoteDigest.toByteArray(), Charset.forName("UTF-8")).trim());
         }
         catch(Exception e) {
             log.debug("Send failed", e);
@@ -720,7 +721,7 @@ public class SSHClient {
                 throw new IllegalStateException("Cannot stop SSH stream thread");
             }
 
-            _validateDigest(localDigest, new String(remoteDigest.toByteArray(), "UTF-8").trim());
+            _validateDigest(localDigest, new String(remoteDigest.toByteArray(), Charset.forName("UTF-8")).trim());
         }
         catch(Exception e) {
             log.debug("Receive failed", e);
