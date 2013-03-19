@@ -7,7 +7,6 @@ import java.util.Map;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
-import org.ovirt.engine.core.compat.StringHelper;
 
 
 public class VmPayload implements Serializable {
@@ -23,12 +22,6 @@ public class VmPayload implements Serializable {
         this.type = VmDeviceType.CDROM;
         this.fileName = SpecParamsPayload;
         this.content = "";
-    }
-
-    public VmPayload(VmDeviceType type, String fileName, String content) {
-        this.type = type;
-        this.fileName = (StringHelper.isNullOrEmpty(fileName)) ? SpecParamsPayload : fileName;
-        this.content = (StringHelper.isNullOrEmpty(content)) ? "" : content;
     }
 
     public VmPayload(VmDeviceType type, Map<String, Object> specParams) {
