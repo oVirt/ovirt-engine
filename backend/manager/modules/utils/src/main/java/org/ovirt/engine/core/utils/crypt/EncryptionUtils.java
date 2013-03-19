@@ -167,7 +167,7 @@ public class EncryptionUtils {
             EncryptUtilParams params = new EncryptUtilParams(keyMaterial, algorithm);
             cipher = Cipher.getInstance(params.algorithm);
             cipher.init(Cipher.ENCRYPT_MODE, params.secretKey);
-            encoding = cipher.doFinal(secret.getBytes());
+            encoding = cipher.doFinal(secret.getBytes("UTF-8"));
         } catch (Exception e) {
             log.error("Error in encrypting the secret", e);
         }
@@ -200,10 +200,11 @@ public class EncryptionUtils {
             Cipher cipher = Cipher.getInstance(params.algorithm);
             cipher.init(Cipher.DECRYPT_MODE, params.secretKey);
             decode = cipher.doFinal(encoding);
+            return decode != null ? new String(decode, "UTF-8") : null;
         } catch (Exception e) {
             log.error("Error in decrypting the secret", e);
+            return null;
         }
-        return decode != null ? new String(decode) : null;
     }
 
     /**
@@ -216,7 +217,7 @@ public class EncryptionUtils {
         private String algorithm = null;
         private SecretKeySpec secretKey = null;
 
-        public EncryptUtilParams(String keyMaterial, String algorithm) {
+        public EncryptUtilParams(String keyMaterial, String algorithm) throws UnsupportedEncodingException {
             if (algorithm == null || "".equals(algorithm)) {
                 this.algorithm = "Blowfish";
             } else {
@@ -224,7 +225,7 @@ public class EncryptionUtils {
             }
 
             if (keyMaterial == null || "".equals(keyMaterial)) {
-                secretKey = new SecretKeySpec("jaas is the way".getBytes(), this.algorithm);
+                secretKey = new SecretKeySpec("jaas is the way".getBytes("UTF-8"), this.algorithm);
             } else {
                 secretKey = new SecretKeySpec(keyMaterial.getBytes(), this.algorithm);
             }
