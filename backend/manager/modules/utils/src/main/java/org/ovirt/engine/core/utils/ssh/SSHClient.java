@@ -111,7 +111,7 @@ public class SSHClient {
      * Destructor.
      */
     @Override
-    public void finalize() {
+    protected void finalize() {
         disconnect();
     }
 

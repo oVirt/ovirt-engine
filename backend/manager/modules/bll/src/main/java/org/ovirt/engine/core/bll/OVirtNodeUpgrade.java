@@ -115,7 +115,7 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink {
      * Destructor.
      */
     @Override
-    public void finalize() {
+    protected void finalize() {
         close();
     }
 

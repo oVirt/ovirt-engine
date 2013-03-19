@@ -814,7 +814,7 @@ public class VdsDeploy implements SSHDialog.Sink {
      * Destructor.
      */
     @Override
-    public void finalize() {
+    protected void finalize() {
         close();
     }
 

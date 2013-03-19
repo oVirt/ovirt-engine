@@ -102,7 +102,7 @@ public class SSHDialog {
      * Destructor.
      */
     @Override
-    public void finalize() {
+    protected void finalize() {
         disconnect();
     }
 
