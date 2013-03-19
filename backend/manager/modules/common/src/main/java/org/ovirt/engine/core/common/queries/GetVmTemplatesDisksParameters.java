@@ -1,14 +1,19 @@
 package org.ovirt.engine.core.common.queries;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.Guid;
 
-public class GetVmTemplatesDisksParameters extends GetVmsByVmTemplateGuidParameters {
-    private static final long serialVersionUID = -4340274643795202346L;
+public class GetVmTemplatesDisksParameters extends VdcQueryParametersBase {
+    private static final long serialVersionUID = 4859370588871811757L;
+    private Guid id = new Guid();
 
     public GetVmTemplatesDisksParameters(Guid vmTemplateId) {
-        super(vmTemplateId);
+        id = vmTemplateId;
     }
 
     public GetVmTemplatesDisksParameters() {
+    }
+
+    public Guid getId() {
+        return id;
     }
 }
