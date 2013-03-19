@@ -15,6 +15,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.Interceptors;
 
@@ -60,6 +61,7 @@ import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.Injector;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.DateTime;
@@ -103,6 +105,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private DateTime _startedAt;
     private static boolean firstInitialization = true;
     private String poolMonitoringJobId;
+    @Inject Injector injector;
 
     public static BackendInternal getInstance() {
         return EjbUtils.findBean(BeanType.BACKEND, BeanProxyType.LOCAL);

@@ -18,6 +18,7 @@
     <extension module="org.jboss.as.threads"/>
     <extension module="org.jboss.as.transactions"/>
     <extension module="org.jboss.as.web"/>
+    <extension module="org.jboss.as.weld"/>
   </extensions>
 
   <system-properties>
@@ -327,6 +328,7 @@
       </virtual-server>
     </subsystem>
 
+    <subsystem xmlns="urn:jboss:domain:weld:1.0"/>
   </profile>
 
   <interfaces>

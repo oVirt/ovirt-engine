@@ -10,6 +10,11 @@
     <module name="javax.api"/>
     <module name="javax.servlet.api"/>
     <module name="javax.validation.api"/>
+    <module name="javax.annotation.api"/>
+    <module name="javax.ejb.api"/>
+    <module name="javax.enterprise.api"/>
+    <module name="javax.inject.api"/>
+    <module name="javax.interceptor.api"/>
     <module name="org.codehaus.jackson.jackson-core-asl"/>
     <module name="org.codehaus.jackson.jackson-mapper-asl"/>
     <module name="org.hibernate.validator"/>

@@ -1,0 +1,15 @@
+<jboss-deployment-structure>
+  <deployment>
+    <dependencies>
+      <module name="javax.annotation.api"/>
+      <module name="javax.enterprise.api"/>
+      <module name="javax.inject.api"/>
+      <module name="javax.interceptor.api"/>
+      <module name="org.ovirt.engine.core.common" export="true" meta-inf="import"/>
+      <module name="org.ovirt.engine.core.utils" export="true" meta-inf="import"/>
+      <module name="org.ovirt.engine.core.dal" export="true" meta-inf="import"/>
+      <module name="org.ovirt.engine.core.aaa" export="true" meta-inf="import"/>
+      <module name="org.ovirt.engine.extensions.builtin" export="true" meta-inf="import"/>
+    </dependencies>
+  </deployment>
+</jboss-deployment-structure>
