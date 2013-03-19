@@ -188,9 +188,13 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         }
 
         if (getNetworkName() != null) {
+            Network network = getNetworkFromDb(vm.getVdsGroupId());
+
             // check that the network exists in current cluster
-            if (getNetworkFromDb(vm.getVdsGroupId()) == null) {
+            if (network == null) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
+                return false;
+            } else if (!validate(nicValidator.portMirroringNotSetIfExternalNetwork(network))) {
                 return false;
             }
         }

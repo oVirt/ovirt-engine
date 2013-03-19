@@ -149,6 +149,8 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NOT_A_VM_NETWORK);
                 addCanDoActionMessage(String.format("$networks %1$s", interfaceNetwork.getName()));
                 return false;
+            } else if (!validate(nicValidator.portMirroringNotSetIfExternalNetwork(interfaceNetwork))) {
+                return false;
             }
         }
 

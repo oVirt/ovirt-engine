@@ -1291,6 +1291,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. External network cannot be set as required in the cluster.")
     String ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_REQUIRED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. External network cannot be used when port mirroring is set.")
+    String ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_PORT_MIRRORED();
+
     @DefaultStringValue("Cannot ${action} ${type}. The management network '${NetworkName}' must be required, please change the network to be required and try again.")
     String ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_REQUIRED();
 

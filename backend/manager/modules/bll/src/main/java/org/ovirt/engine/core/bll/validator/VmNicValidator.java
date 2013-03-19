@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Version;
@@ -71,4 +72,9 @@ public class VmNicValidator {
         return true;
     }
 
+    public ValidationResult portMirroringNotSetIfExternalNetwork(Network network) {
+        return !nic.isPortMirroring() || network.getProvidedBy() == null
+                ? ValidationResult.VALID
+                : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_PORT_MIRRORED);
+    }
 }

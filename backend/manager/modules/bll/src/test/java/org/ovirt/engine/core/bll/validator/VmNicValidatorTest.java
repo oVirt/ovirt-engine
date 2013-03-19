@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.validator;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.both;
 import static org.junit.matchers.JUnitMatchers.hasItem;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
@@ -16,6 +17,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -112,6 +115,41 @@ public class VmNicValidatorTest {
     @Test
     public void nullNetworkWhenNoPortMirroring() throws Exception {
         portMirroringTest(isValid(), null, false);
+    }
+
+    @Test
+    public void externalNetworkPortMirroring() throws Exception {
+        externalNetworkPortMirroringTest(true,
+                true,
+                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_PORT_MIRRORED));
+    }
+
+    @Test
+    public void externalNetworkNotPortMirroring() throws Exception {
+        externalNetworkPortMirroringTest(true, false, isValid());
+    }
+
+    @Test
+    public void internalNetworkPortMirroring() throws Exception {
+        externalNetworkPortMirroringTest(false, true, isValid());
+    }
+
+    @Test
+    public void internalNetworkNotPortMirroring() throws Exception {
+        externalNetworkPortMirroringTest(false, false, isValid());
+    }
+
+    private void externalNetworkPortMirroringTest(boolean externalNetwork,
+            boolean portMirroring,
+            Matcher<ValidationResult> matcher) {
+        Network network = mock(Network.class);
+        if (externalNetwork) {
+            when(network.getProvidedBy()).thenReturn(mock(ProviderNetwork.class));
+        }
+
+        when(nic.isPortMirroring()).thenReturn(portMirroring);
+
+        assertThat(validator.portMirroringNotSetIfExternalNetwork(network), matcher);
     }
 
     private void unlinkingTest(Matcher<ValidationResult> matcher, boolean networkLinkingSupported, boolean nicLinked) {
