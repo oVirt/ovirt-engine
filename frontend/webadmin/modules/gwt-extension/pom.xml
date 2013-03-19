@@ -11,7 +11,6 @@
   <name>Extensions for GWT</name>
   <properties>
     <sourceDir>${project.basedir}/src/main/java</sourceDir>
-    <gwt-plugin.extraJvmArgs>-Xms1024M -Xmx1024M -XX:PermSize=256M -XX:MaxPermSize=256M</gwt-plugin.extraJvmArgs>
   </properties>
   <dependencies>
     <dependency>
