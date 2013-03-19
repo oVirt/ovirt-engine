@@ -14,12 +14,12 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForVdsGroupParameters;
@@ -141,10 +141,17 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     }
 
-    private final List<Iterable<Entry<String, String>>> cachedTimeZones = Arrays.asList(null, null);
+    private final Map<TimezoneType, Iterable<Entry<String, String>>> cachedTimeZones = new HashMap<VmModelBehaviorBase.TimezoneType, Iterable<Entry<String,String>>>();
 
-    final int windowsTimezones = 0;
-    final int generalTimezones = 1;
+    private enum TimezoneType {
+        WINDOWS_TIMEZONE,
+        GENERAL_TIMEZONE;
+
+        static TimezoneType getTimezoneByOs(boolean windows) {
+            return windows ? WINDOWS_TIMEZONE : GENERAL_TIMEZONE;
+        }
+    }
+
     private boolean lastIsWinOS = false;
     private String winTimezoneString;
     private String generalTimezonesString;
@@ -155,9 +162,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     protected void updateTimeZone(final String selectedTimeZone)
     {
-        final int index = getModel().getIsWindowsOS() ? windowsTimezones : generalTimezones;
+        final TimezoneType timezoneType = TimezoneType.getTimezoneByOs(getModel().getIsWindowsOS());
 
-        if (cachedTimeZones.get(index) == null)
+        if (cachedTimeZones.get(timezoneType) == null)
         {
             AsyncDataProvider.GetTimeZoneList(new AsyncQuery(this,
                     new INewAsyncCallback() {
@@ -165,7 +172,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         public void OnSuccess(Object target, Object returnValue) {
 
                             VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
-                            cachedTimeZones.set(index, ((HashMap<String, String>) returnValue).entrySet());
+                            HashMap<String, String> timeZones = (HashMap<String, String>) returnValue;
+                            cachedTimeZones.put(timezoneType, timeZones.entrySet());
                             behavior.PostUpdateTimeZone(selectedTimeZone);
 
                         }
@@ -177,7 +185,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
     }
 
-    public void PostUpdateTimeZone(String selectedTimeZone)
+    private void PostUpdateTimeZone(String selectedTimeZone)
     {
         if (getModel().getIsWindowsOS() != lastIsWinOS) {
             lastIsWinOS = getModel().getIsWindowsOS();
@@ -198,12 +206,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 }
             }
         }
-        final int index = getModel().getIsWindowsOS() ? windowsTimezones : generalTimezones;
-        getModel().getTimeZone().setItems(cachedTimeZones.get(index));
+        final TimezoneType timezoneType = TimezoneType.getTimezoneByOs(getModel().getIsWindowsOS());
+        getModel().getTimeZone().setItems(cachedTimeZones.get(timezoneType));
 
         // If there was some time zone selected before, try select it again.
         Entry<String, String> selectedTimeZoneEntry =
-                getTimezoneEntryByKey(selectedTimeZone, cachedTimeZones.get(index));
+                getTimezoneEntryByKey(selectedTimeZone, cachedTimeZones.get(timezoneType));
         Object selectedItem =
                 selectedTimeZoneEntry != null ? selectedTimeZoneEntry : getModel().getTimeZone().getSelectedItem();
         String oldTimeZoneKey = selectedItem == null ? null : ((Map.Entry<String, String>) selectedItem).getKey();
@@ -211,12 +219,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         if (oldTimeZoneKey != null)
         {
             getModel().getTimeZone()
-                    .setSelectedItem(Linq.FirstOrDefault(cachedTimeZones.get(index),
+                    .setSelectedItem(Linq.FirstOrDefault(cachedTimeZones.get(timezoneType),
                             new Linq.TimeZonePredicate(oldTimeZoneKey)));
         }
         else
         {
-            getModel().getTimeZone().setSelectedItem(Linq.FirstOrDefault(cachedTimeZones.get(index)));
+            getModel().getTimeZone().setSelectedItem(Linq.FirstOrDefault(cachedTimeZones.get(timezoneType)));
         }
     }
 
