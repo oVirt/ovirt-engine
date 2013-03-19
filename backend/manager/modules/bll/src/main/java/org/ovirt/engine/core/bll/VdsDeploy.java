@@ -75,7 +75,7 @@ public class VdsDeploy implements SSHDialog.Sink {
     private static final String BOOTSTRAP_CUSTOM_ENVIRONMENT_PLACE_HOLDER = "@ENVIRONMENT@";
 
     private static final Log log = LogFactory.getLog(VdsDeploy.class);
-    private static CachedTar s_deployPackage;
+    private static volatile CachedTar s_deployPackage;
 
     private SSHDialog.Control _control;
     private Thread _thread;
