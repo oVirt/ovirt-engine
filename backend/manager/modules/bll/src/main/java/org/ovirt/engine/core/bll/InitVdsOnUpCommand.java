@@ -98,7 +98,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         FenceExecutor executor = new FenceExecutor(getVds(), FenceActionType.Status);
         // check first if we have any VDS to act as the proxy for fence
         // actions.
-        if (getVds().getpm_enabled() && executor.FindVdsToFence()) {
+        if (getVds().getpm_enabled() && executor.findProxyHost()) {
             VDSReturnValue returnValue = executor.Fence();
             _fenceSucceeded = returnValue.getSucceeded();
             _fenceStatusReturnValue = (FenceStatusReturnValue) returnValue.getReturnValue();

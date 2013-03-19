@@ -25,7 +25,7 @@ public class GetVdsFenceStatusQuery<P extends VdsIdParametersBase> extends Fence
         setVdsName(vds.getName());
         FenceExecutor executor = new FenceExecutor(vds, FenceActionType.Status);
         VDSReturnValue returnValue = null;
-        if (executor.FindVdsToFence()) {
+        if (executor.findProxyHost()) {
             returnValue = executor.Fence(FenceAgentOrder.Primary);
             if (returnValue.getReturnValue() != null) {
                 if (returnValue.getSucceeded()) {

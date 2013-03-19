@@ -120,7 +120,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                 if (secondsLeftToNextPmOp <= 0) {
                     // try to get vds status
                     executor = createExecutorForProxyCheck();
-                    if (executor.FindVdsToFence()) {
+                    if (executor.findProxyHost()) {
                         if (!(retValue = executor.checkProxyHostConnectionToHost())) {
                             addCanDoActionMessage(VdcBllMessages.VDS_FAILED_FENCE_VIA_PROXY_CONNECTION);
                         }
@@ -185,7 +185,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
      */
     private void handleSingleAgent(VDSStatus lastStatus, VDSReturnValue vdsReturnValue) {
         executor = new FenceExecutor(getVds(), getParameters().getAction());
-        if (executor.FindVdsToFence()) {
+        if (executor.findProxyHost()) {
             vdsReturnValue = executor.Fence();
             setFenceSucceeded(vdsReturnValue.getSucceeded());
             if (getFenceSucceeded()) {
@@ -208,7 +208,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
      */
     private void handleMultipleSequentialAgents(VDSStatus lastStatus, VDSReturnValue vdsReturnValue) {
         executor = new FenceExecutor(getVds(), getParameters().getAction());
-        if (executor.FindVdsToFence()) {
+        if (executor.findProxyHost()) {
             vdsReturnValue = executor.Fence(FenceAgentOrder.Primary);
             setFenceSucceeded(vdsReturnValue.getSucceeded());
             if (getFenceSucceeded()) {
@@ -495,7 +495,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         ThreadUtils.sleep(SLEEP_BEFORE_FIRST_ATTEMPT);
         while (!statusReached && i <= getRerties()) {
             log.infoFormat("Attempt {0} to get vds {1} status", i, vdsName);
-            if (executor.FindVdsToFence()) {
+            if (executor.findProxyHost()) {
                 VDSReturnValue returnValue = executor.Fence(order);
                 if (returnValue != null && returnValue.getReturnValue() != null) {
                     FenceStatusReturnValue value = (FenceStatusReturnValue) returnValue.getReturnValue();

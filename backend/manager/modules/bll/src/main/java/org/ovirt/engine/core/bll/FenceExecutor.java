@@ -46,7 +46,7 @@ public class FenceExecutor {
         _action = actionType;
     }
 
-    public boolean FindVdsToFence() {
+    public boolean findProxyHost() {
         PMProxyOptions proxyOption=null;
         final Guid NO_VDS = Guid.Empty;
         int count = 0;

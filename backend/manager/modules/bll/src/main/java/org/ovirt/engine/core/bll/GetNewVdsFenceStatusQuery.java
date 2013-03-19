@@ -39,7 +39,7 @@ public class GetNewVdsFenceStatusQuery<P extends GetNewVdsFenceStatusParameters>
         }
         VDS vds = tempVar;
         FenceExecutor executor = new FenceExecutor(vds, FenceActionType.Status);
-        if (executor.FindVdsToFence()) {
+        if (executor.findProxyHost()) {
             VDSReturnValue returnValue = executor.Fence(getParameters().getOrder());
             if (returnValue.getReturnValue() != null) {
                 getQueryReturnValue().setReturnValue(returnValue.getReturnValue());
