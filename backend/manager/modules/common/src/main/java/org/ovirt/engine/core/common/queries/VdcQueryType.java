@@ -201,7 +201,6 @@ public enum VdcQueryType implements Serializable {
     GetStorageDomainsByImageId,
     GetStorageServerConnections,
     GetVgList,
-    GetVGInfo,
     GetDeviceList,
     DiscoverSendTargets,
     GetStorageSessionsList,
