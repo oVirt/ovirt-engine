@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -170,12 +171,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                     new INewAsyncCallback() {
                         @Override
                         public void OnSuccess(Object target, Object returnValue) {
-
                             VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
-                            HashMap<String, String> timeZones = (HashMap<String, String>) returnValue;
-                            cachedTimeZones.put(timezoneType, timeZones.entrySet());
+                            Map<String, String> timezones = (Map<String, String>) returnValue;
+                            // empty entry for default timezone
+                            timezones.put(null, ""); //$NON-NLS-1$
+                            cachedTimeZones.put(timezoneType, timezones.entrySet());
                             behavior.PostUpdateTimeZone(selectedTimeZone);
-
                         }
                     }, getModel().getHash()));
         }
@@ -212,29 +213,16 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         // If there was some time zone selected before, try select it again.
         Entry<String, String> selectedTimeZoneEntry =
                 getTimezoneEntryByKey(selectedTimeZone, cachedTimeZones.get(timezoneType));
-        Object selectedItem =
-                selectedTimeZoneEntry != null ? selectedTimeZoneEntry : getModel().getTimeZone().getSelectedItem();
-        String oldTimeZoneKey = selectedItem == null ? null : ((Map.Entry<String, String>) selectedItem).getKey();
+        Map.Entry<String, String> selectedItem = selectedTimeZoneEntry != null ?
+                selectedTimeZoneEntry : (Map.Entry<String, String>) getModel().getTimeZone().getSelectedItem();
 
-        if (oldTimeZoneKey != null)
-        {
-            getModel().getTimeZone()
-                    .setSelectedItem(Linq.FirstOrDefault(cachedTimeZones.get(timezoneType),
-                            new Linq.TimeZonePredicate(oldTimeZoneKey)));
-        }
-        else
-        {
-            getModel().getTimeZone().setSelectedItem(Linq.FirstOrDefault(cachedTimeZones.get(timezoneType)));
-        }
+        getModel().getTimeZone().setSelectedItem(selectedItem == null ? null :
+            Linq.FirstOrDefault(cachedTimeZones.get(timezoneType), new Linq.TimeZonePredicate(selectedItem.getKey())));
     }
 
     private Entry<String, String> getTimezoneEntryByKey(String key, Iterable<Entry<String, String>> timeZones) {
-        if (key == null) {
-            return null;
-        }
-
         for (Entry<String, String> entry : timeZones) {
-            if (key.equals(entry.getKey())) {
+            if (StringHelper.stringsEqual(key, entry.getKey())) {
                 return entry;
             }
         }

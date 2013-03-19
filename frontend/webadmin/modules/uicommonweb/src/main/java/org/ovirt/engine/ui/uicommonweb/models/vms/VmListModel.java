@@ -2415,13 +2415,11 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         getcurrentVm().setCpuPinning((String) model.getCpuPinning()
                 .getEntity());
 
-        VDS defaultHost = (VDS) model.getDefaultHost().getSelectedItem();
-        if ((Boolean) model.getIsAutoAssign().getEntity())
-        {
+        if ((Boolean) model.getIsAutoAssign().getEntity()) {
             getcurrentVm().setDedicatedVmForVds(null);
         }
-        else
-        {
+        else {
+            VDS defaultHost = (VDS) model.getDefaultHost().getSelectedItem();
             getcurrentVm().setDedicatedVmForVds(defaultHost.getId());
         }
 
