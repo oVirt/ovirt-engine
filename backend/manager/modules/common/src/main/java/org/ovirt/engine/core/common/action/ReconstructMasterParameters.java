@@ -6,6 +6,7 @@ public class ReconstructMasterParameters extends StorageDomainPoolParametersBase
     private static final long serialVersionUID = -640521915810322901L;
 
     private Guid privateNewMasterDomainId = Guid.Empty;
+    private boolean canChooseInactiveDomainAsMaster;
 
     public ReconstructMasterParameters() {
     }
@@ -15,15 +16,23 @@ public class ReconstructMasterParameters extends StorageDomainPoolParametersBase
         setInactive(isInactive);
     }
 
-    public ReconstructMasterParameters(Guid storagePoolId, Guid storageDomainId, Guid vdsId, boolean isInactive) {
+    public ReconstructMasterParameters(Guid storagePoolId, Guid storageDomainId, boolean isInactive, boolean canChooseInactiveDomainAsMaster) {
         super(storageDomainId, storagePoolId);
         setInactive(isInactive);
-        setVdsId(vdsId);
+        setCanChooseInactiveDomainAsMaster(canChooseInactiveDomainAsMaster);
     }
 
     public ReconstructMasterParameters(Guid storagePoolId, Guid newMasterDomainId) {
         this(storagePoolId, Guid.Empty, false);
         this.privateNewMasterDomainId = newMasterDomainId;
+    }
+
+    public boolean isCanChooseInactiveDomainAsMaster() {
+        return canChooseInactiveDomainAsMaster;
+    }
+
+    public void setCanChooseInactiveDomainAsMaster(boolean canChooseInactiveDomainAsMaster) {
+        this.canChooseInactiveDomainAsMaster = canChooseInactiveDomainAsMaster;
     }
 
     public Guid getNewMasterDomainId() {

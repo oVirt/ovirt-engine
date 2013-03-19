@@ -447,7 +447,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
                             return ResourceManager.getInstance()
                                     .getEventListener()
-                                    .masterDomainNotOperational(masterDomainId, storagePoolId);
+                                    .masterDomainNotOperational(masterDomainId, storagePoolId, false);
 
                         }
                     });
@@ -1335,7 +1335,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     log.warnFormat("Domain {0} was reported by all hosts in status UP as problematic. Not moving the domain to NonOperational because it is being reconstructed now.",
                             domainIdTuple);
                     result = ResourceManager.getInstance()
-                            .getEventListener().masterDomainNotOperational(domainId, _storagePoolId);
+                            .getEventListener().masterDomainNotOperational(domainId, _storagePoolId, false);
                 }
             }
 
@@ -1630,7 +1630,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         public EventResult call() {
                             return ResourceManager.getInstance()
                                     .getEventListener().masterDomainNotOperational(
-                                            masterDomainId, getParameters().getStoragePoolId());
+                                            masterDomainId, getParameters().getStoragePoolId(), true);
                         }
                     });
         } else {

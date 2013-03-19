@@ -82,8 +82,8 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public EventResult masterDomainNotOperational(Guid storageDomainId, Guid storagePoolId) {
-        VdcActionParametersBase parameters = new ReconstructMasterParameters(storagePoolId, storageDomainId, true);
+    public EventResult masterDomainNotOperational(Guid storageDomainId, Guid storagePoolId, boolean isReconstructToInactiveDomains) {
+        VdcActionParametersBase parameters = new ReconstructMasterParameters(storagePoolId, storageDomainId, true, isReconstructToInactiveDomains);
         boolean isSucceeded = Backend.getInstance().runInternalAction(VdcActionType.ReconstructMasterDomain,
                 parameters,
                 ExecutionHandler.createInternalJobContext()).getSucceeded();

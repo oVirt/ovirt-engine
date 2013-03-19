@@ -47,6 +47,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
     public ReconstructMasterDomainCommand(T parameters) {
         super(parameters);
         _newMasterStorageDomainId = parameters.getNewMasterDomainId();
+        canChooseInactiveDomainAsMaster = parameters.isCanChooseInactiveDomainAsMaster();
     }
 
     @Override

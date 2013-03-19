@@ -268,12 +268,11 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     /**
-     *  The new master must  be a data domain which is in Active status and not
-     * reported by any vdsm as problematic. In case that all domains reported as problematic a first Active data domain
-     * will be returned
+     *  The new master is a data domain which is preferred to be in Active/Unknown status, if selectInactiveWhenNoActiveUnknownDomains
+     * is set to True, an Inactive domain will be returned in case that no domain in Active/Unknown status was found.
      * @return an elected master domain or null
      */
-    protected StorageDomain electNewMaster(boolean duringReconstruct) {
+    protected StorageDomain electNewMaster(boolean duringReconstruct, boolean selectInactiveWhenNoActiveUnknownDomains) {
         StorageDomain newMaster = null;
         if (getStoragePool() != null) {
             List<StorageDomain> storageDomains = getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
@@ -283,15 +282,30 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
                 for (StorageDomain dbStorageDomain : storageDomains) {
                     if ((storageDomain == null || (duringReconstruct || !dbStorageDomain.getId()
                             .equals(storageDomain.getId())))
-                            && (dbStorageDomain.getStatus() == StorageDomainStatus.Active || dbStorageDomain.getStatus() == StorageDomainStatus.Unknown)
                             && dbStorageDomain.getStorageDomainType() == StorageDomainType.Data) {
-                        newMaster = dbStorageDomain;
-                        break;
+                        if (dbStorageDomain.getStatus() == StorageDomainStatus.Active
+                                || dbStorageDomain.getStatus() == StorageDomainStatus.Unknown) {
+                            newMaster = dbStorageDomain;
+                            break;
+                        } else if (selectInactiveWhenNoActiveUnknownDomains && newMaster == null
+                                && dbStorageDomain.getStatus() == StorageDomainStatus.InActive) {
+                            // if the found domain is inactive, we don't break to continue and look for
+                            // active/unknown domain.
+                            newMaster = dbStorageDomain;
+                        }
                     }
                 }
             }
         }
         return newMaster;
+    }
+
+    /**
+     * returns new master domain which is in Active/Unknown status
+     * @return an elected master domain or null
+     */
+    protected StorageDomain electNewMaster(boolean duringReconstruct) {
+        return electNewMaster(duringReconstruct, false);
     }
 
     @Override

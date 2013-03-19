@@ -21,7 +21,7 @@ public interface IVdsEventListener {
 
     EventResult storageDomainNotOperational(Guid storageDomainId, Guid storagePoolId); // BLL
 
-    EventResult masterDomainNotOperational(Guid storageDomainId, Guid storagePoolId); // BLL
+    EventResult masterDomainNotOperational(Guid storageDomainId, Guid storagePoolId, boolean isReconstructToInactiveDomains); // BLL
 
     /**
      * Temoporary patch. Vitaly todo: fix it

@@ -40,11 +40,12 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
     protected Guid _newMasterStorageDomainId = Guid.Empty;
     private StorageDomain _newMaster;
     protected boolean _isLastMaster;
+    protected boolean canChooseInactiveDomainAsMaster;
     private VDS spm;
 
     protected StorageDomain getNewMaster(boolean duringReconstruct) {
         if (_newMaster == null && Guid.Empty.equals(_newMasterStorageDomainId)) {
-            _newMaster = electNewMaster(duringReconstruct);
+            _newMaster = electNewMaster(duringReconstruct, canChooseInactiveDomainAsMaster);
         } else if (_newMaster == null) {
             _newMaster = getStorageDomainDAO().get(_newMasterStorageDomainId);
         }
