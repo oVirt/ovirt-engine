@@ -521,7 +521,7 @@ public class SSHClient {
                 );
             }
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             log.debug("Execute failed", e);
             throw e;
         }
