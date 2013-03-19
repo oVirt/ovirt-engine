@@ -71,6 +71,9 @@ public enum AuditLogType {
     // Host time drift Alert
     VDS_TIME_DRIFT_ALERT(604, AuditLogTimeInterval.MINUTE.getValue() * 60),
 
+    // Proxy host selection
+    PROXY_HOST_SELECTION(605),
+
     // -- IRS Log types --
     IRS_FAILURE(22, AuditLogTimeInterval.HOUR.getValue() * 12),
     IRS_DISK_SPACE_LOW(26, AuditLogTimeInterval.HOUR.getValue() * 12),

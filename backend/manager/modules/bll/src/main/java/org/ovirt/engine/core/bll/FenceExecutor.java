@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
@@ -19,6 +20,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.log.Log;
@@ -123,13 +126,20 @@ public class FenceExecutor {
                     _vds.getName());
         }
         else {
-            log.infoFormat("Using Host {0} from {1} as proxy to execute {2} command on Host {3}" ,
-                    proxyHost.getName(),
-                    proxyOption.name(),
-                    _action.name(),
-                    _vds.getName());
+            logProxySelection(proxyHost.getName(), proxyOption.name(), _action.name());
         }
         return !NO_VDS.equals(proxyHostId);
+    }
+
+    private void logProxySelection(String proxy, String origin, String command) {
+        AuditLogableBase logable = new AuditLogableBase();
+        logable.addCustomValue("Proxy", proxy);
+        logable.addCustomValue("Origin", origin);
+        logable.addCustomValue("Command", command);
+        logable.setVdsId(_vds.getId());
+        AuditLogDirector.log(logable, AuditLogType.PROXY_HOST_SELECTION);
+        log.infoFormat("Using Host {0} from {1} as proxy to execute {2} command on Host {3}",
+                proxy, origin, command, _vds.getName());
     }
 
     public VDSReturnValue Fence() {
