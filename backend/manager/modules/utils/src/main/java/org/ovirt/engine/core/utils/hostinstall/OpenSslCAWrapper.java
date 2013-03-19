@@ -54,7 +54,7 @@ public class OpenSslCAWrapper {
         }
     }
 
-    public static String SignCertificateRequest(
+    public static String signCertificateRequest(
         String request,
         String label,
         String hostname
@@ -86,7 +86,7 @@ public class OpenSslCAWrapper {
         }
 
         if (
-            !new OpenSslCAWrapper().SignCertificateRequest(
+            !new OpenSslCAWrapper().signCertificateRequest(
                 reqFileName,
                 hostname,
                 Config.<Integer> GetValue(ConfigValues.VdsCertificateValidityInYears) * 365,
@@ -99,13 +99,13 @@ public class OpenSslCAWrapper {
         return FileUtil.readAllText(new File(pkicertdir, certFileName).getPath());
     }
 
-    public final boolean SignCertificateRequest(
+    public final boolean signCertificateRequest(
         String requestFileName,
         String hostname,
         int days,
         String signedCertificateFileName
     ) {
-        log.debug("Entered SignCertificateRequest");
+        log.debug("Entered signCertificateRequest");
         boolean returnValue = true;
         String signRequestBatch = Config.resolveSignScriptPath();
         if (new File(signRequestBatch).exists()) {
@@ -120,7 +120,7 @@ public class OpenSslCAWrapper {
             log.error(String.format("Sign certificate request file '%s' not found", signRequestBatch));
             returnValue = false;
         }
-        log.debug("End of SignCertificateRequest");
+        log.debug("End of signCertificateRequest");
         return returnValue;
     }
 

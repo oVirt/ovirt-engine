@@ -755,7 +755,7 @@ public class VdsDeploy implements SSHDialog.Sink {
                             InstallerMessages.Severity.INFO,
                             "Enrolling certificate"
                         );
-                        _certificate = OpenSslCAWrapper.SignCertificateRequest(
+                        _certificate = OpenSslCAWrapper.signCertificateRequest(
                             StringUtils.join(event.value, "\n"),
                             _vds.getHostName(),
                             _vds.getHostName()

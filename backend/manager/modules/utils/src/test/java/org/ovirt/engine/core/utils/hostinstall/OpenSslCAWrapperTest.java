@@ -100,6 +100,6 @@
 //    }
 //
 //    private boolean execSignCertificateRequest() {
-//        return openSslWrapper.SignCertificateRequest(null, 0, null);
+//        return openSslWrapper.signCertificateRequest(null, 0, null);
 //    }
 //}
