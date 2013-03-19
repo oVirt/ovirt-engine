@@ -103,6 +103,7 @@ fi
 # Run!
 exec "${JAVA_HOME}/bin/java" \
   -Dlog4j.configuration="file:${ENGINE_ETC}/engine-config/log4j.xml" \
+  -Djboss.modules.write-indexes=false \
   -jar "${JBOSS_HOME}/jboss-modules.jar" \
   -dependencies org.ovirt.engine.core.tools \
   -class org.ovirt.engine.core.config.EngineConfig \

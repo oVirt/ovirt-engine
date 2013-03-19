@@ -29,6 +29,7 @@ fi
 
 exec "${JAVA_HOME}/bin/java" \
   -jar "${JBOSS_HOME}/jboss-modules.jar" \
+  -Djboss.modules.write-indexes=false \
   -dependencies org.picketbox \
   -class org.picketbox.datasource.security.SecureIdentityLoginModule \
   "$@"

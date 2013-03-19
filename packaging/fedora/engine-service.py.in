@@ -536,6 +536,7 @@ def startEngine():
         "-Dlogging.configuration=file://%s" % jbossBootLoggingFile,
         "-Dorg.jboss.resolver.warning=true",
         "-Djboss.modules.system.pkgs=org.jboss.byteman",
+        "-Djboss.modules.write-indexes=false",
         "-Djboss.server.default.config=engine-service",
         "-Djboss.home.dir=%s" % jbossHomeDir,
         "-Djboss.server.base.dir=%s" % engineUsrDir,
