@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.text.SimpleDateFormat;
@@ -73,7 +74,7 @@ public class OpenSslCAWrapper {
                     reqFileName
                 )
             );
-            os.write(request.getBytes("UTF-8"));
+            os.write(request.getBytes(Charset.forName("UTF-8")));
         }
         finally {
             if (os != null) {
@@ -140,7 +141,7 @@ public class OpenSslCAWrapper {
         try {
             log.debug("Running Sign Certificate request script");
             Process process = getRuntime().exec(command_array);
-            stdOutput = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
+            stdOutput = new BufferedReader(new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")));
             stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             int exitCode = 0;
             boolean completed = false;
