@@ -15,7 +15,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
  * <code>QuotaDAODbFacadeImpl</code> implements the calling to quota stored procedures (@see QuotaDAO).
@@ -571,7 +570,7 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
 
     @Override
     public List<Quota> getAllWithQuery(String query) {
-        return new SimpleJdbcTemplate(jdbcTemplate).query(query, getQuotaMetaDataFromResultSet());
+        return jdbcTemplate.query(query, getQuotaMetaDataFromResultSet());
     }
 
     @Override

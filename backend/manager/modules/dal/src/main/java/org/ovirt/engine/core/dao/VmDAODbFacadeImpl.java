@@ -29,7 +29,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.utils.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
  * <code>VmDAODbFacadeImpl</code> provides a concrete implementation of {@link VmDAO}. The functionality is code
@@ -143,7 +142,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
 
     @Override
     public List<VM> getAllUsingQuery(String query) {
-        return new SimpleJdbcTemplate(jdbcTemplate).query(query, VMRowMapper.instance);
+        return jdbcTemplate.query(query, VMRowMapper.instance);
     }
 
     @Override

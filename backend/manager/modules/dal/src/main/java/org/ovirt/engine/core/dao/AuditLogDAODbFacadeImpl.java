@@ -18,7 +18,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
  * <code>AuditLogDAODbFacadeImpl</code> provides a concrete implementation of {@link AuditLogDAO}. It uses code
@@ -56,7 +55,7 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
 
     @Override
     public List<AuditLog> getAllWithQuery(String query) {
-        return new SimpleJdbcTemplate(jdbcTemplate).query(query, auditLogRowMapper);
+        return jdbcTemplate.query(query, auditLogRowMapper);
     }
 
     @Override

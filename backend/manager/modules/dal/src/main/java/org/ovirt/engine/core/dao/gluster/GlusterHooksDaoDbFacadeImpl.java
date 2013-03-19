@@ -15,7 +15,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
  * Implementation of the DB Facade for Gluster Hooks.
@@ -96,9 +95,8 @@ public class GlusterHooksDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public List<GlusterHookEntity> getAllWithQuery(String query) {
-        List<GlusterHookEntity> glusterHooks = new SimpleJdbcTemplate(jdbcTemplate).query(query, glusterHookRowMapper);
+        List<GlusterHookEntity> glusterHooks = jdbcTemplate.query(query, glusterHookRowMapper);
         return glusterHooks;
     }
 

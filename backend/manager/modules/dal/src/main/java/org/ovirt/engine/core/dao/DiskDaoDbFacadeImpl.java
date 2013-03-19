@@ -11,7 +11,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDAODbFacadeImpl.DiskImageRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 public class DiskDaoDbFacadeImpl extends BaseDAODbFacade implements DiskDao {
 
@@ -66,7 +65,7 @@ public class DiskDaoDbFacadeImpl extends BaseDAODbFacade implements DiskDao {
 
     @Override
     public List<Disk> getAllWithQuery(String query) {
-        return new SimpleJdbcTemplate(jdbcTemplate).query(query, DiskRowMapper.instance);
+        return jdbcTemplate.query(query, DiskRowMapper.instance);
     }
 
     private static class DiskRowMapper implements RowMapper<Disk> {

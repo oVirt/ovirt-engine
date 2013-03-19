@@ -19,7 +19,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
  * Implementation of the DB Facade for Gluster Volumes.
@@ -129,7 +128,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
 
     @Override
     public List<GlusterVolumeEntity> getAllWithQuery(String query) {
-        List<GlusterVolumeEntity> volumes = new SimpleJdbcTemplate(jdbcTemplate).query(query, volumeRowMapper);
+        List<GlusterVolumeEntity> volumes = jdbcTemplate.query(query, volumeRowMapper);
         fetchRelatedEntities(volumes);
         return volumes;
     }

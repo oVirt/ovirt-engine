@@ -14,7 +14,6 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dao.VmDAODbFacadeImpl.VMRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
  * <code>VmPoolDAODbFacadeImpl</code> provides an implementation of {@link VmPoolDAO} based on implementation code from
@@ -67,7 +66,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
 
     @Override
     public List<VmPool> getAllWithQuery(String query) {
-        return new SimpleJdbcTemplate(jdbcTemplate).query(query, VmPoolFullRowMapper.instance);
+        return jdbcTemplate.query(query, VmPoolFullRowMapper.instance);
     }
 
     @Override

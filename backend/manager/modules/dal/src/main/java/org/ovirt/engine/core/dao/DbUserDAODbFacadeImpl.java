@@ -10,7 +10,6 @@ import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
  * <code>DBUserDAODbFacadeImpl</code> provides an implementation of {@link DbUserDAO} with the previously developed
@@ -92,7 +91,7 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
 
     @Override
     public List<DbUser> getAllWithQuery(String query) {
-        return new SimpleJdbcTemplate(jdbcTemplate).query(query, DbUserRowMapper.instance);
+        return jdbcTemplate.query(query, DbUserRowMapper.instance);
     }
 
     @Override

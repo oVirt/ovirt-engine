@@ -13,7 +13,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<GlusterBrickEntity, Guid> implements GlusterBrickDao {
     // The brick row mapper can't be static as its' type (GlusterBrickRowMapper) is a non-static inner class
@@ -123,7 +122,7 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
         }
 
         private String getHostNameOfServer(Guid serverId) {
-            return new SimpleJdbcTemplate(jdbcTemplate).queryForObject("select host_name from vds_static where vds_id = ?",
+            return jdbcTemplate.queryForObject("select host_name from vds_static where vds_id = ?",
                     String.class,
                     serverId.getUuid());
         }

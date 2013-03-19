@@ -15,7 +15,6 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
  * <code>StoragePoolDAODbFacadeImpl</code> provides a concrete implementation of {@link StoragePoolDAO} based on code
@@ -124,7 +123,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
 
     @Override
     public List<storage_pool> getAllWithQuery(String query) {
-        return new SimpleJdbcTemplate(jdbcTemplate).query(query, mapper);
+        return jdbcTemplate.query(query, mapper);
     }
 
     @Override

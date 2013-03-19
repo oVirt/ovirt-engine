@@ -8,13 +8,12 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.BaseDAODbFacade;
 import org.ovirt.engine.core.dao.network.NetworkDaoDbFacadeImpl.NetworkRowMapperBase;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 public class NetworkViewDaoDbFacadeImpl extends BaseDAODbFacade implements NetworkViewDao {
 
     @Override
     public List<NetworkView> getAllWithQuery(String query) {
-        return new SimpleJdbcTemplate(jdbcTemplate).query(query, NetworkViewRowMapper.instance);
+        return jdbcTemplate.query(query, NetworkViewRowMapper.instance);
     }
 
     private static class NetworkViewRowMapper extends NetworkRowMapperBase<NetworkView> {
