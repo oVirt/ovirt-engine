@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.FixturesTool;
 
 public class NetworkDaoTest extends BaseDAOTestCase {
     private NetworkDao dao;
@@ -258,6 +259,20 @@ public class NetworkDaoTest extends BaseDAOTestCase {
         assertGetAllForClusterResult(result);
         for (Network net : result) {
             assertEquals(datacenter, net.getDataCenterId());
+        }
+    }
+
+    /**
+     * Ensures the right set of networks are returned for the given provider.
+     */
+    @Test
+    public void testGetAllForProvider() {
+        List<Network> result = dao.getAllForProvider(FixturesTool.PROVIDER_ID);
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        for (Network network : result) {
+            assertEquals(FixturesTool.PROVIDER_ID, network.getProvidedBy().getProviderId());
         }
     }
 

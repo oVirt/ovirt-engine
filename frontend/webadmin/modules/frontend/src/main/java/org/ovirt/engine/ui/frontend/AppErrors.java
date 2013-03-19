@@ -1273,6 +1273,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The provider doesn't exist in the system.")
     String ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Several external networks (${NETWORK_NAMES_COUNTER}) are being used by virtual machines and/or templates:\n${NETWORK_NAMES}\n - Please resolve the external networks usage first and try again.")
+    String ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED();
+
     @DefaultStringValue("Cannot ${action} ${type}. The external network already exists as '${NetworkName}' in the data center.")
     String ACTION_TYPE_FAILED_EXTERNAL_NETWORK_ALREADY_EXISTS();
 

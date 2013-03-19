@@ -93,4 +93,13 @@ public interface NetworkDao extends GenericDao<Network, Guid> {
      * @return the list of networks
      */
     List<Network> getAllForCluster(Guid id, Guid userID, boolean isFiltered);
+
+    /**
+     * Retrieves all networks for the given provider.
+     *
+     * @param id
+     *            the provider's ID
+     * @return the list of networks
+     */
+    List<Network> getAllForProvider(Guid id);
 }

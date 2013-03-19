@@ -226,6 +226,20 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetAllNetworksByNetworkProviderId(v_id UUID)
+RETURNS SETOF network
+AS $procedure$
+BEGIN
+    RETURN QUERY
+    SELECT *
+    FROM   network
+    WHERE  provider_network_provider_id = v_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
 Create or replace FUNCTION GetAllNetworkViewsByNetworkProviderId(v_id UUID)
 RETURNS SETOF network_view
 AS $procedure$
