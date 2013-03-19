@@ -366,8 +366,10 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                 /**
                  * looping foreach VDS found with similar hostnames and change to each one to available hostname
                  */
-                if (vdsByUniqueId == null
-                        || (vdsByUniqueId != null && !vds_byHostName.getId().equals(vdsByUniqueId.getId()))) {
+                if (
+                    vdsByUniqueId == null ||
+                    !vds_byHostName.getId().equals(vdsByUniqueId.getId())
+                ) {
                     boolean unique = false;
                     String try_host_name = "";
                     for (int i = lastIteratedIndex; i <= 100; i++, lastIteratedIndex = i) {
