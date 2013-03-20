@@ -1321,10 +1321,10 @@ FROM       vm_static
 INNER JOIN internal_permissions_view ON object_id = vm_static.vm_guid AND object_type_id = 2 AND role_type = 2
 -- Or the user has permissions on the data center containing the template
 UNION ALL
-SELECT     vmt_guid, ad_element_id
+SELECT     vm_guid, ad_element_id
 FROM       vm_static
 INNER JOIN vds_groups ON vds_groups.vds_group_id = vm_static.vds_group_id
-INNER JOIN internal_permissions_view ON object_id = storage_pool_id AND object_type_id = 14 AND allows_viewing_children AND role_type = 2
+INNER JOIN internal_permissions_view ON object_id = storage_pool_id AND object_type_id = 14 AND allows_viewing_children AND role_type = 2 AND vm_static.entity_type::text = 'TEMPLATE'::text
 -- Or the user has permissions on system
 UNION ALL
 SELECT     vm_guid, ad_element_id
