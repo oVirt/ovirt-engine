@@ -11,7 +11,6 @@ import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
@@ -73,7 +72,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     }
 
     private void updateQuotaCache() {
-        if(wasQuotaEnforcementDisabled()){
+        if(wasQuotaEnforcementChanged()){
             getQuotaManager().removeStoragePoolFromCache(getStoragePool().getId());
         }
     }
@@ -81,9 +80,8 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     /**
      * Checks whether part of the update was disabling quota enforcement on the Data Center
      */
-    private boolean wasQuotaEnforcementDisabled() {
-        return _oldStoragePool.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED
-                && getStoragePool().getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED;
+    private boolean wasQuotaEnforcementChanged() {
+        return _oldStoragePool.getQuotaEnforcementType() != getStoragePool().getQuotaEnforcementType();
     }
 
     private void updateStoragePoolFormatType() {

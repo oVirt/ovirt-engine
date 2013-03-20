@@ -735,7 +735,7 @@ public class QuotaManager {
         }
 
         if (!storageDomainInQuota) {
-            parameters.getCanDoActionMessages().add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
+            parameters.getCanDoActionMessages().add(VdcBllMessages.ACTION_TYPE_FAILED_NO_QUOTA_SET_FOR_DOMAIN.toString());
             log.errorFormat("Quota storage parameters from command: {0}. Storage domain does not match quota",
                     parameters.getAuditLogable().getClass().getName());
             return false;
