@@ -1791,8 +1791,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             }
 
             // In userportal 'Extended View': Set 'CanConnectAutomatically' to true if there's one and only one up VM.
-            setCanConnectAutomatically(GetUpVms(items).size() == 1
-                    && GetUpVms(items).get(0).getDefaultConsoleModel().getConnectCommand().getIsExecutionAllowed());
+            setCanConnectAutomatically(GetUpVms(items).size() == 1);
 
             setItems(items);
 
