@@ -28,8 +28,8 @@ if [ ! "$#" -eq 1 ]; then
 fi
 
 exec "${JAVA_HOME}/bin/java" \
-  -jar "${JBOSS_HOME}/jboss-modules.jar" \
   -Djboss.modules.write-indexes=false \
+  -jar "${JBOSS_HOME}/jboss-modules.jar" \
   -dependencies org.picketbox \
   -class org.picketbox.datasource.security.SecureIdentityLoginModule \
   "$@"
