@@ -110,6 +110,7 @@
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.ovirt.engine.core</groupId>
