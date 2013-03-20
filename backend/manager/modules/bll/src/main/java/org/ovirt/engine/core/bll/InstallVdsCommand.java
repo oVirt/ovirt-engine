@@ -20,7 +20,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsCommand<T> {
 
     private static Log log = LogFactory.getLog(InstallVdsCommand.class);
-    private static final String GENERIC_ERROR = "Please refer to enging.log on engine and log files under /tmp on host for further details.";
+    private static final String GENERIC_ERROR = "Please refer to engine.log and log files under /var/log/ovirt-engine/host-deploy/ on the engine for further details.";
     protected String _failureMessage = null;
 
     public InstallVdsCommand(T parameters) {
