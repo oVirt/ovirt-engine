@@ -945,6 +945,7 @@ def getFirewalls():
 
     return firewalls
 
+
 def _configFirewall():
     # Create Sample configuration files
     _createIptablesConfig()
@@ -959,9 +960,24 @@ def _configFirewall():
         _configureIptables()
     else:
         # Inform user how he can configure firewall
-        controller.MESSAGES.append(output_messages.INFO_IPTABLES_PORTS % (controller.CONF["HTTP_PORT"], controller.CONF["HTTPS_PORT"]))
-        controller.MESSAGES.append(output_messages.INFO_IPTABLES_FILE % (basedefs.FILE_IPTABLES_EXAMPLE))
-        controller.MESSAGES.append(output_messages.INFO_FIREWALLD_INSTRUCTIONS)
+        firewalls = getFirewalls()
+        if 'iptables' in firewalls:
+            controller.MESSAGES.append(
+                output_messages.INFO_IPTABLES_PORTS % (
+                    controller.CONF["HTTP_PORT"],
+                    controller.CONF["HTTPS_PORT"],
+                )
+            )
+            controller.MESSAGES.append(
+                output_messages.INFO_IPTABLES_FILE % (
+                    basedefs.FILE_IPTABLES_EXAMPLE,
+                )
+            )
+        if 'Firewalld' in firewalls:
+            controller.MESSAGES.append(
+                output_messages.INFO_FIREWALLD_INSTRUCTIONS
+            )
+
 
 def _createFirewalldConfig():
     logging.debug("Creating firewalld configuration")
