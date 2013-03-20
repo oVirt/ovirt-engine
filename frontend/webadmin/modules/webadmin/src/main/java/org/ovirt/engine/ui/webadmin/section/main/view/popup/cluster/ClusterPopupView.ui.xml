@@ -214,7 +214,7 @@
 														   addStyleNames="{style.geryPanel}" />
 										</g:HorizontalPanel>
 									</g:FlowPanel>
-									<g:HorizontalPanel ui:field="timeHorizontalPanel" width="70px" height="20px">
+									<g:HorizontalPanel ui:field="timeHorizontalPanel" height="20px">
 										<g:Label ui:field="forTimeLabel" addStyleNames="{style.labelStyle}"/>
 										<e:EntityModelTextBoxEditor ui:field="overCommitTimeEditor" width="40px" height="20px" addStyleNames="{style.timeTextBoxEditorWidget}"/>
 										<g:Label ui:field="minTimeLabel" addStyleNames="{style.labelStyle}"/>
