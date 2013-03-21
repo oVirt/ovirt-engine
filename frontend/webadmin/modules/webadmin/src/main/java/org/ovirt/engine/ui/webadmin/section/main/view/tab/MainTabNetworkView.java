@@ -1,5 +1,10 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -15,6 +20,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkRoleColumnHelper;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -88,46 +94,38 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
                     @Override
                     public SafeHtml getValue(NetworkView networkView) {
 
-                        String images = ""; //$NON-NLS-1$
+                        List<SafeHtml> images = new LinkedList<SafeHtml>();
 
                         if (ENGINE_NETWORK_NAME.equals(networkView.getName())) {
 
-                            images = images.concat(mgmtImage.asString());
+                            images.add(mgmtImage);
                         } else {
-                            images = images.concat(emptyImage.asString());
+                            images.add(emptyImage);
                         }
 
                         if (networkView.isVmNetwork()) {
 
-                            images = images.concat(vmImage.asString());
+                            images.add(vmImage);
                         } else {
-                            images = images.concat(emptyImage.asString());
+                            images.add(emptyImage);
                         }
 
-                        return templates.image(SafeHtmlUtils.fromTrustedString(images));
+                        return NetworkRoleColumnHelper.getValue(images);
                     }
 
                     @Override
                     public SafeHtml getTooltip(NetworkView networkView) {
-                        String tooltip = ""; //$NON-NLS-1$
+                        Map<SafeHtml, String> imagesToText = new LinkedHashMap<SafeHtml, String>();
                         if (ENGINE_NETWORK_NAME.equals(networkView.getName())) {
-                            tooltip =
-                                    tooltip.concat(templates.imageTextSetupNetwork(mgmtImage,
-                                            constants.managementItemInfo()).asString());
+                            imagesToText.put(mgmtImage, constants.managementItemInfo());
                         }
 
                         if (networkView.isVmNetwork()) {
-                            if (!"".equals(tooltip)) //$NON-NLS-1$
-                            {
-                                tooltip = tooltip.concat("<BR>"); //$NON-NLS-1$
-                            }
-                            tooltip =
-                                    tooltip.concat(templates.imageTextSetupNetwork(vmImage, constants.vmItemInfo())
-                                            .asString());
+                            imagesToText.put(vmImage, constants.vmItemInfo());
 
                         }
 
-                        return SafeHtmlUtils.fromTrustedString(tooltip);
+                        return NetworkRoleColumnHelper.getTooltip(imagesToText);
                     }
                 };
 

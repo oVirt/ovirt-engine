@@ -1,6 +1,9 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 
-import javax.inject.Inject;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -19,12 +22,14 @@ import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkRoleColumnHelper;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkStatusColumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.inject.Inject;
 
 public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, Network, ClusterListModel, ClusterNetworkListModel>
         implements SubTabClusterNetworkPresenter.ViewDef {
@@ -77,46 +82,42 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
                     @Override
                     public SafeHtml getValue(Network network) {
 
-                        String images = ""; //$NON-NLS-1$
+                        List<SafeHtml> images = new LinkedList<SafeHtml>();
 
-                        if (network.getCluster() != null && network.getCluster().isDisplay()) {
+                        if (network.getCluster() != null)
+                        {
+                            if (network.getCluster().isDisplay()) {
 
-                            images = images.concat(displayImage.asString());
-                        } else {
-                            images = images.concat(emptyImage.asString());
+                                images.add(displayImage);
+                            } else {
+                                images.add(emptyImage);
+                            }
+
+                            if (network.getCluster().isMigration()) {
+                                images.add(migrationImage);
+                            } else {
+                                images.add(emptyImage);
+                            }
                         }
 
-                        if (network.getCluster() != null && network.getCluster().isMigration()) {
-                            images = images.concat(migrationImage.asString());
-                        } else {
-                            images = images.concat(emptyImage.asString());
-                        }
-
-                        return templates.image(SafeHtmlUtils.fromTrustedString(images));
+                        return NetworkRoleColumnHelper.getValue(images);
                     }
 
                     @Override
                     public SafeHtml getTooltip(Network network) {
-                        String tooltip = ""; //$NON-NLS-1$
-                        if (network.getCluster() != null && network.getCluster().isDisplay()) {
-                            tooltip =
-                                    tooltip.concat(templates.imageTextSetupNetwork(displayImage,
-                                            constants.displayItemInfo()).asString());
-                        }
-
-                        if (network.getCluster() != null && network.getCluster().isMigration()) {
-                            if (!"".equals(tooltip)) //$NON-NLS-1$
-                            {
-                                tooltip = tooltip.concat("<BR>"); //$NON-NLS-1$
+                        Map<SafeHtml, String> imagesToText = new LinkedHashMap<SafeHtml, String>();
+                        if (network.getCluster() != null)
+                        {
+                            if (network.getCluster().isDisplay()) {
+                                imagesToText.put(displayImage, constants.displayItemInfo());
                             }
-                            tooltip =
-                                    tooltip.concat(templates.imageTextSetupNetwork(migrationImage,
-                                            constants.migrationItemInfo())
-                                            .asString());
 
+                            if (network.getCluster().isMigration()) {
+                                imagesToText.put(migrationImage, constants.migrationItemInfo());
+
+                            }
                         }
-
-                        return SafeHtmlUtils.fromTrustedString(tooltip);
+                        return NetworkRoleColumnHelper.getTooltip(imagesToText);
                     }
                 };
 

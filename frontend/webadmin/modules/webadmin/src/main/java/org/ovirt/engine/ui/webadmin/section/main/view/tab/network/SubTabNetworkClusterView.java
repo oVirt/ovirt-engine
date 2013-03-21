@@ -1,6 +1,9 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.network;
 
-import javax.inject.Inject;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -20,10 +23,12 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNet
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkClusterStatusColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkRoleColumnHelper;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.inject.Inject;
 
 
 public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkView, PairQueryable<VDSGroup, NetworkCluster>, NetworkListModel, NetworkClusterListModel>
@@ -108,43 +113,39 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
 
                     @Override
                     public SafeHtml getValue(PairQueryable<VDSGroup, NetworkCluster> object) {
-                        String images = ""; //$NON-NLS-1$
+                        List<SafeHtml> images = new LinkedList<SafeHtml>();
 
                         if (object.getSecond() != null) {
                             if (object.getSecond().isDisplay()) {
-                                images = images.concat(displayImage.asString());
+                                images.add(displayImage);
                             } else {
-                                images = images.concat(emptyImage.asString());
+                                images.add(emptyImage);
 
                             }
                             if (object.getSecond().isMigration()) {
-                                images = images.concat(migrationImage.asString());
+                                images.add(migrationImage);
                             } else {
-                                images = images.concat(emptyImage.asString());
+                                images.add(emptyImage);
 
                             }
                         }
-                        return templates.image(SafeHtmlUtils.fromTrustedString(images));
+                        return NetworkRoleColumnHelper.getValue(images);
                     }
 
                     @Override
                     public SafeHtml getTooltip(PairQueryable<VDSGroup, NetworkCluster> object) {
-                        String tooltip = ""; //$NON-NLS-1$
-                        if (object.getSecond() != null && object.getSecond().isDisplay()) {
-                            tooltip = tooltip.concat(templates.imageTextSetupNetwork(displayImage,
-                                    constants.displayItemInfo()).asString());
-                        }
-
-                        if (object.getSecond() != null && object.getSecond().isMigration()) {
-                            if (!"".equals(tooltip)) //$NON-NLS-1$
-                            {
-                                tooltip = tooltip.concat("<BR>"); //$NON-NLS-1$
+                        Map<SafeHtml, String> imagesToText = new LinkedHashMap<SafeHtml, String>();
+                        if (object.getSecond() != null) {
+                            if (object.getSecond().isDisplay()) {
+                                imagesToText.put(displayImage, constants.displayItemInfo());
                             }
-                            tooltip = tooltip.concat(templates.imageTextSetupNetwork(migrationImage,
-                                    constants.migrationItemInfo()).asString());
+
+                            if (object.getSecond().isMigration()) {
+                                imagesToText.put(migrationImage, constants.migrationItemInfo());
+                            }
                         }
 
-                        return SafeHtmlUtils.fromTrustedString(tooltip);
+                        return NetworkRoleColumnHelper.getTooltip(imagesToText);
                     }
                 };
 
