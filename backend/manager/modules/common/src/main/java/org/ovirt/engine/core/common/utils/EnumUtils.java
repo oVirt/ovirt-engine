@@ -31,7 +31,10 @@ public class EnumUtils {
             for (E e : universe) {
                 map.put(e.name().toUpperCase(), e);
             }
-            cacheEnumValuesInCapitalLetters.putIfAbsent(c, map);
+            Map<String, E> ret = cacheEnumValuesInCapitalLetters.putIfAbsent(c, map);
+            if (ret != null) {
+                map = ret;
+            }
         }
 
         E result = map.get(name.toUpperCase());
