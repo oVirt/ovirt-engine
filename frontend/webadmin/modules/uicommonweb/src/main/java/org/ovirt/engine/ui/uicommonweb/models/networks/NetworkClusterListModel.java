@@ -88,7 +88,7 @@ public class NetworkClusterListModel extends SearchableListModel
 
         ClusterNetworkManageModel listModel = new ClusterNetworkManageModel() {
             @Override
-            public boolean isMultiDisplay() {
+            public boolean isMultiCluster() {
                 return true;
             }
         };
@@ -125,7 +125,8 @@ public class NetworkClusterListModel extends SearchableListModel
             // Attachment wasn't changed- check if needs update
             if (wasAttached && !needsDetach) {
                 if ((manageModel.isRequired() != item.getSecond().isRequired())
-                        || (manageModel.isDisplayNetwork() != item.getSecond().isDisplay())) {
+                        || (manageModel.isDisplayNetwork() != item.getSecond().isDisplay())
+                        || (manageModel.isMigrationNetwork() != item.getSecond().isMigration())) {
                     needsUpdate = true;
                 }
             }

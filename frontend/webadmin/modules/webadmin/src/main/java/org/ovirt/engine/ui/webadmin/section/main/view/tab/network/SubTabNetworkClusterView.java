@@ -32,14 +32,20 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
     private final ApplicationConstants constants;
     private final ApplicationTemplates templates;
 
-    private final SafeHtml dispalyImage;
+    private final SafeHtml displayImage;
+    private final SafeHtml migrationImage;
+    private final SafeHtml emptyImage;
 
     @Inject
     public SubTabNetworkClusterView(SearchableDetailModelProvider<PairQueryable<VDSGroup, NetworkCluster>, NetworkListModel, NetworkClusterListModel> modelProvider, ApplicationConstants constants, ApplicationTemplates templates, ApplicationResources resources) {
         super(modelProvider);
         this.constants = constants;
         this.templates = templates;
-        dispalyImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkMonitor()).getHTML());
+        displayImage =
+                SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkMonitor()).getHTML());
+        migrationImage =
+                SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.migrationNetwork()).getHTML());
+        emptyImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkEmpty()).getHTML());
         initTable();
         initWidget(getTable());
     }
@@ -97,29 +103,50 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
         };
         getTable().addColumn(netRequiredColumn, constants.requiredNetCluster(), "120px"); //$NON-NLS-1$
 
-        SafeHtmlWithSafeHtmlTooltipColumn<PairQueryable<VDSGroup, NetworkCluster>> netRoleColumn = new SafeHtmlWithSafeHtmlTooltipColumn<PairQueryable<VDSGroup, NetworkCluster>>(){
+        SafeHtmlWithSafeHtmlTooltipColumn<PairQueryable<VDSGroup, NetworkCluster>> netRoleColumn =
+                new SafeHtmlWithSafeHtmlTooltipColumn<PairQueryable<VDSGroup, NetworkCluster>>() {
 
-            @Override
-            public SafeHtml getValue(PairQueryable<VDSGroup, NetworkCluster> object) {
-                if (object.getSecond() != null){
-                    if (object.getSecond().isDisplay()){
-                        return templates.image(dispalyImage);
+                    @Override
+                    public SafeHtml getValue(PairQueryable<VDSGroup, NetworkCluster> object) {
+                        String images = ""; //$NON-NLS-1$
+
+                        if (object.getSecond() != null) {
+                            if (object.getSecond().isDisplay()) {
+                                images = images.concat(displayImage.asString());
+                            } else {
+                                images = images.concat(emptyImage.asString());
+
+                            }
+                            if (object.getSecond().isMigration()) {
+                                images = images.concat(migrationImage.asString());
+                            } else {
+                                images = images.concat(emptyImage.asString());
+
+                            }
+                        }
+                        return templates.image(SafeHtmlUtils.fromTrustedString(images));
                     }
-                    return null;
-                }
 
-                return templates.image(SafeHtmlUtils.fromTrustedString("")); //$NON-NLS-1$
-            }
+                    @Override
+                    public SafeHtml getTooltip(PairQueryable<VDSGroup, NetworkCluster> object) {
+                        String tooltip = ""; //$NON-NLS-1$
+                        if (object.getSecond() != null && object.getSecond().isDisplay()) {
+                            tooltip = tooltip.concat(templates.imageTextSetupNetwork(displayImage,
+                                    constants.displayItemInfo()).asString());
+                        }
 
-            @Override
-            public SafeHtml getTooltip(PairQueryable<VDSGroup, NetworkCluster> object) {
-                if (object.getSecond() != null && object.getSecond().isDisplay()){
-                    return (templates.imageTextSetupNetwork(dispalyImage, constants.displayItemInfo()));
-                }
+                        if (object.getSecond() != null && object.getSecond().isMigration()) {
+                            if (!"".equals(tooltip)) //$NON-NLS-1$
+                            {
+                                tooltip = tooltip.concat("<BR>"); //$NON-NLS-1$
+                            }
+                            tooltip = tooltip.concat(templates.imageTextSetupNetwork(migrationImage,
+                                    constants.migrationItemInfo()).asString());
+                        }
 
-                return SafeHtmlUtils.fromTrustedString(""); //$NON-NLS-1$
-            }
-        };
+                        return SafeHtmlUtils.fromTrustedString(tooltip);
+                    }
+                };
 
         getTable().addColumn(netRoleColumn, constants.roleNetCluster(), "120px"); //$NON-NLS-1$
 

@@ -66,6 +66,10 @@ public class ClusterNetworkModel extends EntityModel {
         return getEntity().isVmNetwork();
     }
 
+    public boolean isMigrationNetwork() {
+        return getEntity().getCluster().isMigration();
+    }
+
     public void setAttached(boolean attached) {
         this.attached = attached;
     }
@@ -84,6 +88,10 @@ public class ClusterNetworkModel extends EntityModel {
 
     public void setVmNetwork(boolean vmNetwork) {
         getEntity().setVmNetwork(vmNetwork);
+    }
+
+    public void setMigrationNetwork(boolean migrationNetwork) {
+        getEntity().getCluster().setMigration(migrationNetwork);
     }
 
 }

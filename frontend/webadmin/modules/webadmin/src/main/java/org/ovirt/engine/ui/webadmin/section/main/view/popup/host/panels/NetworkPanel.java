@@ -37,18 +37,22 @@ public class NetworkPanel extends NetworkItemPanel {
         Image mgmtNetworkImage;
         Image vmImage;
         Image monitorImage;
+        Image migrationImage;
         Image notSyncImage;
 
         if (!network.isManaged()) {
             monitorImage = null;
             mgmtNetworkImage = null;
             vmImage = null;
+            migrationImage = null;
             notSyncImage = null;
         } else {
             monitorImage = network.getEntity().getCluster().isDisplay() ?
                     new Image(resources.networkMonitor()) : null;
             mgmtNetworkImage = network.isManagement() ? new Image(resources.mgmtNetwork()) : null;
             vmImage = network.getEntity().isVmNetwork() ? new Image(resources.networkVm()) : null;
+            migrationImage = network.getEntity().getCluster().isMigration() ?
+                    new Image(resources.migrationNetwork()) : null;
             notSyncImage = !network.isInSync() ? new Image(resources.networkNotSyncImage()) : null;
 
             if (network.isManagement()) {
@@ -63,12 +67,16 @@ public class NetworkPanel extends NetworkItemPanel {
                 monitorImage.setStylePrimaryName(style.networkImageBorder());
             }
 
+            if (network.getEntity().getCluster().isMigration()) {
+                migrationImage.setStylePrimaryName(style.networkImageBorder());
+            }
+
             if (!network.isInSync()) {
                 notSyncImage.setStylePrimaryName(style.networkImageBorder());
             }
         }
 
-        Grid rowPanel = new Grid(1, 8);
+        Grid rowPanel = new Grid(1, 9);
         rowPanel.setCellSpacing(3);
         rowPanel.setWidth("100%"); //$NON-NLS-1$
         rowPanel.setHeight("100%"); //$NON-NLS-1$
@@ -90,7 +98,8 @@ public class NetworkPanel extends NetworkItemPanel {
         rowPanel.setWidget(0, 4, mgmtNetworkImage);
         rowPanel.setWidget(0, 5, monitorImage);
         rowPanel.setWidget(0, 6, vmImage);
-        rowPanel.setWidget(0, 7, notSyncImage);
+        rowPanel.setWidget(0, 7, migrationImage);
+        rowPanel.setWidget(0, 8, notSyncImage);
         return rowPanel;
     }
 

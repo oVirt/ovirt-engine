@@ -242,7 +242,8 @@ public class ClusterNetworkListModel extends SearchableListModel
                 Network clusterNetwork = existingClusterNetworks.get(existingClusterNetworks.indexOf(network));
 
                 if ((networkModel.isRequired() != clusterNetwork.getCluster().isRequired())
-                        || (networkModel.isDisplayNetwork() != clusterNetwork.getCluster().isDisplay())) {
+                        || (networkModel.isDisplayNetwork() != clusterNetwork.getCluster().isDisplay())
+                        || (networkModel.isMigrationNetwork() != clusterNetwork.getCluster().isMigration())) {
                     needsUpdate = true;
                 }
             }

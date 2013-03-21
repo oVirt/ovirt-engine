@@ -284,6 +284,9 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/network/network_vm.png")
     ImageResource networkVm();
 
+    @Source("images/network/migration_network.png")
+    ImageResource migrationNetwork();
+
     @Source("images/network/empty.png")
     ImageResource networkEmpty();
 

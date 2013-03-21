@@ -1608,6 +1608,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Display Network")
     String displayNetwork();
 
+    @DefaultStringValue("Migration Network")
+    String migrationNetwork();
+
     @DefaultStringValue("Role")
     String roleNetwork();
 
@@ -2117,6 +2120,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Display")
     String displayItemInfo();
+
+    @DefaultStringValue("Migration")
+    String migrationItemInfo();
 
     @DefaultStringValue("Unmanaged Network")
     String unmanagedNetworkItemInfo();

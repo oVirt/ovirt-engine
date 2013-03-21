@@ -31,6 +31,9 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
     SafeHtml vmImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkVm()).getHTML());
     SafeHtml monitorImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkMonitor())
             .getHTML());
+    SafeHtml migrationImage =
+            SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.migrationNetwork())
+                    .getHTML());
     SafeHtml unknownImage =
             SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.questionMarkImage()).getHTML());
     SafeHtml notInSyncImage =
@@ -86,9 +89,15 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
             }
         }
 
-        boolean isDisplay = entity.getCluster() != null ? entity.getCluster().isDisplay() : false;
+        boolean isDisplay = false;
+        boolean isMigration = false;
+
+        if (entity.getCluster() != null) {
+            isDisplay = entity.getCluster().isDisplay();
+            isMigration = entity.getCluster().isMigration();
+        }
         // Usages
-        if (networkModel.isManagement() || isDisplay || entity.isVmNetwork()) {
+        if (networkModel.isManagement() || isDisplay || entity.isVmNetwork() || isMigration) {
 
             addRow(SafeHtmlUtils.fromString(constants.usageItemInfo() + ":")); //$NON-NLS-1$
             if (networkModel.isManagement()) {
@@ -101,6 +110,10 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
 
             if (entity.isVmNetwork()) {
                 addRow(templates.imageTextSetupNetworkUsage(vmImage, constants.vmItemInfo()));
+            }
+
+            if (isMigration) {
+                addRow(templates.imageTextSetupNetworkUsage(migrationImage, constants.migrationItemInfo()));
             }
 
         }
