@@ -592,9 +592,6 @@ select fn_db_update_config_value('VdsRefreshRate','3','general');
 select fn_db_update_config_value('VmGracefulShutdownMessage','System Administrator has initiated shutdown of this Virtual Machine. Virtual Machine is shutting down.','general');
 select fn_db_update_config_value('DisconnectPoolOnReconstruct','0,2,3','general');
 select fn_db_update_config_value('SupportBridgesReportByVDSM','false','3.1');
-select fn_db_update_config_value('SpiceSecureChannels','main,inputs,cursor,playback,record,display,usbredir,smartcard', '3.1');
-select fn_db_update_config_value('SpiceSecureChannels','main,inputs,cursor,playback,record,display,usbredir,smartcard', '3.2');
-select fn_db_update_config_value('SpiceSecureChannels','main,inputs,cursor,playback,record,display,usbredir,smartcard', '3.3');
 
 
 ------------------------------------------------------------------------------------
@@ -713,7 +710,7 @@ select fn_db_delete_config_value('DiskConfigurationList','general');
 -- cluster level with the original value if exists, or the input old value
 -- and from the update version and beyond, the input value.
 ------------------------------------------------------------------------------------
-select fn_db_split_config_value('SpiceSecureChannels','smain,sinputs','main,inputs,cursor,playback,record,display,usbredir,smartcard', '3.1');
+select fn_db_split_config_value('SpiceSecureChannels','smain,sinputs','smain,sinputs,scursor,splayback,srecord,sdisplay,susbredir,ssmartcard', '3.1');
 
 ------------------------------------------------------------------------------------
 --                  Simple direct updates section

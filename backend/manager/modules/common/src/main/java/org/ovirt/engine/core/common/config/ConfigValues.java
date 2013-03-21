@@ -341,7 +341,7 @@ public enum ConfigValues {
     VmGracefulShutdownMessage(115),
     @Reloadable
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("main,inputs,cursor,playback,record,display,smartcard,usbredir")
+    @DefaultValueAttribute("smain,sinputs,scursor,splayback,srecord,sdisplay,ssmartcard,susbredir")
     SpiceSecureChannels(117),
     @Reloadable
     @TypeConverterAttribute(String.class)
