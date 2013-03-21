@@ -189,8 +189,7 @@ public class ExecutionHandler {
 
             // A monitored job is created for monitored external flows
             if (isMonitored || context.isJobRequired()) {
-                Job job = createJob(actionType, command);
-                JobRepositoryFactory.getJobRepository().saveJob(job);
+                Job job = getJob(command, actionType);
                 context.setExecutionMethod(ExecutionMethod.AsJob);
                 context.setJob(job);
                 command.setExecutionContext(context);
@@ -203,6 +202,20 @@ public class ExecutionHandler {
                     ExceptionUtils.getMessage(e),
                     e);
         }
+    }
+
+    private static Job getJob(CommandBase<?> command, VdcActionType actionType) {
+        VdcActionParametersBase params = command.getParameters();
+        Job job;
+        // if Job is external, we had already created the Job by AddExternalJobCommand, so just get it from DB
+        if (params.getJobId() != null) {
+            job = DbFacade.getInstance().getJobDao().get((Guid)params.getJobId());
+        }
+        else {
+            job = createJob(actionType, command);
+            JobRepositoryFactory.getJobRepository().saveJob(job);
+        }
+        return job;
     }
 
     /**
@@ -272,6 +285,7 @@ public class ExecutionHandler {
                 if (context.getExecutionMethod() == ExecutionMethod.AsJob && job != null) {
                     step = job.addStep(stepName, description);
                     try {
+                        step.setExternal(isExternal);
                         JobRepositoryFactory.getJobRepository().saveStep(step);
                     } catch (Exception e) {
                         log.errorFormat("Failed to save new step {0} for job {1}, {2}.", stepName.name(),
@@ -281,7 +295,7 @@ public class ExecutionHandler {
                     }
                 } else {
                     Step contextStep = context.getStep();
-
+                    step.setExternal(isExternal);
                     if (context.getExecutionMethod() == ExecutionMethod.AsStep && contextStep != null) {
                         step = addSubStep(contextStep, stepName, description);
                     }
@@ -290,7 +304,6 @@ public class ExecutionHandler {
                 log.error(e);
             }
         }
-        step.setExternal(isExternal);
         return step;
     }
 
@@ -360,6 +373,27 @@ public class ExecutionHandler {
      * @return The created instance of the step or {@code null}.
      */
     public static Step addSubStep(ExecutionContext context, Step parentStep, StepEnum newStepName, String description) {
+        return addSubStep(context, parentStep, newStepName, description, false);
+    }
+
+    /**
+     * Adds a {@link Step} entity by the provided context as a child step of a given parent step. A {@link Step} will
+     * not be created if {@code ExecutionContext.isMonitored()} returns false.
+     *
+     * @param context
+     *            The context of the execution which defines visibility and execution method.
+     * @param parentStep
+     *            The parent step which the new step will be added as its child.
+     * @param newStepName
+     *            The name of the step.
+     * @param description
+     *            A presentation name for the step. If not provided, the presentation name is resolved by the
+     *            {@code stepName}.
+     * @param isExternal
+     *        Indicates if the step is invoked by a plug-in
+     * @return
+     */
+    public static Step addSubStep(ExecutionContext context, Step parentStep, StepEnum newStepName, String description, boolean isExternal) {
         Step step = null;
 
         if (context == null || parentStep == null) {
@@ -383,12 +417,12 @@ public class ExecutionHandler {
                 }
             }
             if (step != null) {
+                step.setExternal(isExternal);
                 JobRepositoryFactory.getJobRepository().saveStep(step);
             }
         } catch (Exception e) {
             log.error(e);
         }
-
         return step;
     }
 
