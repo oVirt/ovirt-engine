@@ -42,6 +42,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmPool;
+import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -263,7 +265,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     }
                 } else if (!getParameters().getIsInternal() && !_isRerun
                         && getVm().getStatus() != VMStatus.Suspended
-                        && statelessSnapshotExistsForVm()) {
+                        && statelessSnapshotExistsForVm()
+                        && !isVMPartOfManualPool()) {
                     removeVmStatlessImages();
                 } else {
                     runVm();
@@ -896,5 +899,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 getVm().getCpuPerSocket() * getVm().getNumOfSockets(),
                 getVm().getMemSizeMb()));
         return list;
+    }
+
+    private boolean isVMPartOfManualPool() {
+        if (getVm().getVmPoolId() == null) {
+            return false;
+        }
+
+        final VmPool vmPool = getDbFacade().getVmPoolDao().get(getVm().getVmPoolId());
+        return vmPool.getVmPoolType().equals(VmPoolType.Manual);
     }
 }
