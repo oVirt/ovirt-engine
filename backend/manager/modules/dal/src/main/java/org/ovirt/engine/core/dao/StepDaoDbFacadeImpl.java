@@ -47,7 +47,8 @@ public class StepDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Step, Guid> i
                 .addValue("end_time", entity.getEndTime())
                 .addValue("correlation_id", entity.getCorrelationId())
                 .addValue("external_id", entity.getExternalSystem().getId())
-                .addValue("external_system_type", EnumUtils.nameOrNull(entity.getExternalSystem().getType()));
+                .addValue("external_system_type", EnumUtils.nameOrNull(entity.getExternalSystem().getType()))
+                .addValue("is_external", entity.isExternal());
     }
 
     @Override
@@ -95,6 +96,7 @@ public class StepDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Step, Guid> i
             step.setCorrelationId(rs.getString("correlation_id"));
             step.getExternalSystem().setId(getGuid(rs, "external_id"));
             step.getExternalSystem().setType(ExternalSystemType.safeValueOf(rs.getString("external_system_type")));
+            step.setExternal(rs.getBoolean("is_external"));
             return step;
         }
     }

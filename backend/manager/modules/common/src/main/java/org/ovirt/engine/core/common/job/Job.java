@@ -74,6 +74,16 @@ public class Job extends IVdcQueryable implements BusinessEntity<Guid> {
     private String correlationId;
 
     /**
+     * A flag defining if this Job were invoked from external plug-in
+     */
+    private boolean external = false;
+
+    /**
+     * A flag indicating if the Job is auto cleared from the table after the configured time for succeeded/failed jobs
+     */
+    private boolean autoCleared = true;
+
+    /**
      * A collection which holds the entities associated with the Job
      */
     private Map<Guid, VdcObjectType> jobSubjectEntities;
@@ -142,6 +152,22 @@ public class Job extends IVdcQueryable implements BusinessEntity<Guid> {
 
     public void setIsAsyncJob(boolean isAsyncJob) {
         this.isAsyncJob = isAsyncJob;
+    }
+
+    public boolean isExternal() {
+        return external;
+    }
+
+    public void setExternal(boolean isExternal) {
+        this.external = isExternal;
+    }
+
+    public boolean isAutoCleared() {
+        return autoCleared;
+    }
+
+    public void setAutoCleared(boolean isAutoCleared) {
+        this.autoCleared = isAutoCleared;
     }
 
     public boolean isAsyncJob() {
@@ -279,6 +305,8 @@ public class Job extends IVdcQueryable implements BusinessEntity<Guid> {
         result = prime * result + ((startTime == null) ? 0 : startTime.hashCode());
         result = prime * result + ((status == null) ? 0 : status.hashCode());
         result = prime * result + ((steps == null) ? 0 : steps.hashCode());
+        result = prime * result + (external ? 1231 : 1237);
+        result = prime * result + (autoCleared ? 1231 : 1237);
         return result;
     }
 
@@ -359,8 +387,12 @@ public class Job extends IVdcQueryable implements BusinessEntity<Guid> {
         } else if (!steps.equals(other.steps)) {
             return false;
         }
+        if (external != other.external) {
+            return false;
+        }
+        if (autoCleared != other.autoCleared) {
+            return false;
+        }
         return true;
     }
-
-
 }

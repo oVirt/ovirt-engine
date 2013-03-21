@@ -4343,6 +4343,8 @@
         <column>end_time</column>
         <column>last_update_time</column>
         <column>correlation_id</column>
+        <column>is_external</column>
+        <column>is_auto_cleared</column>
 
        <row>
             <value>54947df8-0e9e-4471-a2f9-9af509fb5889</value>
@@ -4355,6 +4357,8 @@
             <null/>
             <value>2012-01-08 10:49:24</value>
             <value>54947df8-job1</value>
+            <value>false</value>
+            <value>true</value>
        </row>
        <row>
             <value>54947df8-0e9e-4471-a2f9-9af509fb5111</value>
@@ -4367,6 +4371,8 @@
             <null/>
             <value>2012-01-01 10:49:24</value>
             <value>54947df8-job2</value>
+            <value>false</value>
+            <value>true</value>
        </row>
        <row>
             <value>54947df8-0e9e-4471-a2f9-9af509fb5222</value>
@@ -4379,6 +4385,8 @@
             <value>2012-02-08 10:11:00</value>
             <value>2012-02-08 10:11:00</value>
             <value>54947df8-job3</value>
+            <value>false</value>
+            <value>true</value>
        </row>
        <row>
             <value>54947df8-0e9e-4471-a2f9-9af509fb5333</value>
@@ -4391,6 +4399,8 @@
             <value>2012-02-08 10:11:00</value>
             <null/>
             <value>54947df8-job4</value>
+            <value>false</value>
+            <value>true</value>
        </row>
     </table>
 
@@ -4434,6 +4444,7 @@
         <column>correlation_id</column>
         <column>external_id</column>
         <column>external_system_type</column>
+        <column>is_external</column>
 
         <!-- Steps for Job 54947df8-0e9e-4471-a2f9-9af509fb5889 -->
         <row>
@@ -4449,6 +4460,7 @@
             <value>54947df8-job1</value>
             <null/>
             <null/>
+            <value>false</value>
         </row>
 
         <row>
@@ -4464,6 +4476,7 @@
             <value>54947df8-job1</value>
             <null/>
             <null/>
+            <value>false</value>
         </row>
         <row>
             <value>54947df8-0e9e-4471-a2f9-9af509fb5224</value>
@@ -4478,6 +4491,7 @@
             <value>54947df8-job1</value>
             <value>54947df8-0e9e-4471-a2f9-9af509f12345</value>
             <value>VDSM</value>
+            <value>false</value>
         </row>
         <row>
             <value>54947df8-0e9e-4471-a2f9-9af509fb5225</value>
@@ -4492,6 +4506,7 @@
             <value>54947df8-job1</value>
             <value>54947df8-0e9e-4471-a2f9-9af509f12345</value>
             <value>VDSM</value>
+            <value>false</value>
         </row>
         <row>
             <value>54947df8-0e9e-4471-a2f9-9af509fb5226</value>
@@ -4506,6 +4521,7 @@
             <value>54947df8-job1</value>
             <value>54947df8-0e9e-4471-a2f9-9af509f12345</value>
             <value>VDSM</value>
+            <value>false</value>
         </row>
         <row>
             <value>54947df8-0e9e-4471-a2f9-9af509fb5227</value>
@@ -4520,6 +4536,7 @@
             <value>54947df8-job1</value>
             <value>54947df8-0e9e-4471-a2f9-9af509f12345</value>
             <value>VDSM</value>
+            <value>false</value>
         </row>
         <row>
             <value>54947df8-0e9e-4471-a2f9-9af509fb5228</value>
@@ -4534,6 +4551,7 @@
             <value>54947df8-job1</value>
             <value>54947df8-0e9e-4471-a2f9-9af509f12345</value>
             <value>VDSM</value>
+            <value>false</value>
         </row>
         <row>
             <value>54947df8-0e9e-4471-a2f9-9af509fb5229</value>
@@ -4548,6 +4566,7 @@
             <value>54947df8-job1</value>
             <value>54947df8-0e9e-4471-a2f9-9af509f12345</value>
             <value>VDSM</value>
+            <value>false</value>
         </row>
 
         <!-- Steps for Job 54947df8-0e9e-4471-a2f9-9af509fb5111 -->
@@ -4564,6 +4583,7 @@
             <value>54947df8-job2</value>
             <null/>
             <null/>
+            <value>false</value>
         </row>
 
         <!-- Steps for Job 54947df8-0e9e-4471-a2f9-9af509fb5222 -->
@@ -4580,6 +4600,7 @@
             <value>54947df8-job3</value>
             <value>54947df8-0e9e-4471-a2f9-9af509fbabab</value>
             <value>VDSM</value>
+            <value>false</value>
         </row>
 
         <!-- Steps for Job 54947df8-0e9e-4471-a2f9-9af509fb5333 -->
@@ -4596,6 +4617,7 @@
             <value>54947df8-job4</value>
             <null/>
             <null/>
+            <value>false</value>
         </row>
     </table>
 

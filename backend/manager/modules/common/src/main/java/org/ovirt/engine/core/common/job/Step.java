@@ -70,6 +70,11 @@ public class Step extends IVdcQueryable implements BusinessEntity<Guid> {
     private String correlationId;
 
     /**
+     * A flag defining if this step were invoked from external plug-in
+     */
+    private boolean external = false;
+
+    /**
      * An external system referenced by the step (e.g. VDSM)
      */
     private ExternalSystem externalSystem = new ExternalSystem();
@@ -179,6 +184,14 @@ public class Step extends IVdcQueryable implements BusinessEntity<Guid> {
         return correlationId;
     }
 
+    public boolean isExternal() {
+        return external;
+    }
+
+    public void setExternal(boolean isExternal) {
+        this.external = isExternal;
+    }
+
     public Step addStep(StepEnum childStepType, String description) {
         Step childStep = new Step(childStepType);
         childStep.setParentStepId(id);
@@ -273,6 +286,7 @@ public class Step extends IVdcQueryable implements BusinessEntity<Guid> {
         result = prime * result + stepNumber;
         result = prime * result + ((stepType == null) ? 0 : stepType.hashCode());
         result = prime * result + ((steps == null) ? 0 : steps.hashCode());
+        result = prime * result + (external ? 1231 : 1237);
         return result;
     }
 
@@ -358,6 +372,9 @@ public class Step extends IVdcQueryable implements BusinessEntity<Guid> {
                 return false;
             }
         } else if (!steps.equals(other.steps)) {
+            return false;
+        }
+        if (external != other.external) {
             return false;
         }
         return true;

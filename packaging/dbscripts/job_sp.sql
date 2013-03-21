@@ -11,7 +11,8 @@ Create or replace FUNCTION InsertJob(
     v_start_time TIMESTAMP WITH TIME ZONE,
     v_end_time TIMESTAMP WITH TIME ZONE,
     v_last_update_time TIMESTAMP WITH TIME ZONE,
-    v_correlation_id VARCHAR(50))
+    v_correlation_id VARCHAR(50),
+    v_is_external boolean)
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -25,7 +26,8 @@ BEGIN
         start_time,
         end_time,
         last_update_time,
-        correlation_id)
+        correlation_id,
+        is_external)
     VALUES (
         v_job_id,
         v_action_type,
@@ -36,7 +38,8 @@ BEGIN
         v_start_time,
         v_end_time,
         v_last_update_time,
-        v_correlation_id);
+        v_correlation_id,
+        v_is_external);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -156,7 +159,8 @@ RETURNS VOID
 AS $procedure$
 BEGIN
     DELETE FROM job
-    WHERE end_time < v_end_time
+    WHERE is_auto_cleared
+    AND end_time < v_end_time
     AND status = any (string_to_array(v_status,',')::VARCHAR[] );
 END; $procedure$
 LANGUAGE plpgsql;
@@ -238,7 +242,8 @@ Create or replace FUNCTION InsertStep(
     v_end_time TIMESTAMP WITH TIME ZONE,
     v_correlation_id VARCHAR(50),
     v_external_id UUID,
-    v_external_system_type VARCHAR(32))
+    v_external_system_type VARCHAR(32),
+    v_is_external boolean)
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -254,7 +259,8 @@ BEGIN
         end_time,
         correlation_id,
         external_id,
-        external_system_type)
+        external_system_type,
+        is_external)
     VALUES (
         v_step_id,
         v_parent_step_id,
@@ -267,7 +273,8 @@ BEGIN
         v_end_time,
         v_correlation_id,
         v_external_id,
-        v_external_system_type);
+        v_external_system_type,
+        v_is_external);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -468,10 +475,11 @@ RETURNS VOID
 AS $procedure$
 BEGIN
     DELETE FROM job
-    WHERE (end_time < v_succeeded_end_time
+    WHERE (is_auto_cleared
+    AND ((end_time < v_succeeded_end_time
     AND    status = 'FINISHED')
     OR    (end_time < v_failed_end_time
-    AND    status IN ('FAILED', 'ABORTED', 'UNKNOWN'));
+    AND    status IN ('FAILED', 'ABORTED', 'UNKNOWN'))));
 END; $procedure$
 LANGUAGE plpgsql;
 

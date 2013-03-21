@@ -40,7 +40,9 @@ public class JobDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Job, Guid> imp
                 .addValue("start_time", entity.getStartTime())
                 .addValue("end_time", entity.getEndTime())
                 .addValue("last_update_time", entity.getLastUpdateTime())
-                .addValue("correlation_id", entity.getCorrelationId());
+                .addValue("correlation_id", entity.getCorrelationId())
+                .addValue("is_external", entity.isExternal())
+                .addValue("is_auto_cleared", entity.isAutoCleared());
     }
 
     @Override
@@ -123,7 +125,8 @@ public class JobDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Job, Guid> imp
             job.setEndTime(DbFacadeUtils.fromDate(rs.getTimestamp("end_time")));
             job.setLastUpdateTime(DbFacadeUtils.fromDate(rs.getTimestamp("last_update_time")));
             job.setCorrelationId(rs.getString("correlation_id"));
-
+            job.setExternal(rs.getBoolean("is_external"));
+            job.setAutoCleared(rs.getBoolean("is_auto_cleared"));
             return job;
         }
     }
