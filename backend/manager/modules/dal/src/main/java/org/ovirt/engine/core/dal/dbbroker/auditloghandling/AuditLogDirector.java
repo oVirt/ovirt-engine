@@ -764,6 +764,9 @@ public final class AuditLogDirector {
 
     private static void initCommonSeverities() {
         severities.put(AuditLogType.ENTITY_RENAMED, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_ADD_EXTERNAL_JOB, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_ADD_EXTERNAL_JOB_FAILED, AuditLogSeverity.ERROR);
+
     }
     private static void initDwhSeverities() {
         severities.put(AuditLogType.DWH_STOPPED, AuditLogSeverity.NORMAL);

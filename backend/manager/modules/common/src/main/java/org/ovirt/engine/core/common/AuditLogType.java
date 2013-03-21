@@ -751,7 +751,9 @@ public enum AuditLogType {
 
     //trusted service
     VDS_UNTRUSTED(10000, AuditLogTimeInterval.MINUTE.getValue()),
-    ;
+    // External tasks
+    USER_ADD_EXTERNAL_JOB(11000),
+    USER_ADD_EXTERNAL_JOB_FAILED(11001);
 
     private int intValue;
     // indicates time interval in seconds on which identical events from same instance are supressed.
