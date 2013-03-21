@@ -75,6 +75,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Change Data Center Quota Enforcement Mode")
     String changeDCQuotaEnforcementModeTitle();
 
+    @DefaultStringValue("Notice")
+    String setUnlimitedSpecificQuotaModeTitle();
+
     @DefaultStringValue("Disable CPU Thread Support")
     String disableClusterCpuThreadSupportTitle();
 
@@ -606,6 +609,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
             "Please ensure there are no VMs in this cluster making use of specific CPU settings such as CPU-pinning which may be affected by this change.\n\n" +
             "Are you sure you want to continue?")
     String youAreAboutChangeClusterCpuThreadSupportMsg();
+
+    @DefaultStringValue("You are about to set an Unlimited quota on specific resource. This is inadvisable.\nThe aggregated value of this quota will be Unlimited.\nDo you wish to proceed?")
+    String youAreAboutToCreateUnlimitedSpecificQuotaMsg();
 
     @DefaultStringValue("Name can contain only 'A-Z', 'a-z', '0-9', '_' or '-' characters.")
     String asciiNameValidationMsg();

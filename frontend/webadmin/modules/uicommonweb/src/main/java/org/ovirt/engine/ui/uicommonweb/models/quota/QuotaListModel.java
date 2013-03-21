@@ -265,7 +265,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         setConfirmWindow(null);
     }
 
-    private void onCreateQuota(boolean isClone) {
+    private void onCreateQuotaInternal(boolean isClone) {
         QuotaModel model = (QuotaModel) getWindow();
         if (!model.Validate()) {
             return;
@@ -342,6 +342,27 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                 });
 
         quota.setId(guid);
+    }
+
+    private boolean hasUnlimitedSpecificQuota() {
+        QuotaModel model = (QuotaModel) getWindow();
+        if ((Boolean)model.getSpecificClusterQuota().getEntity()) {
+            for (QuotaVdsGroup quotaVdsGroup : (ArrayList<QuotaVdsGroup>) model.getAllDataCenterClusters().getItems()) {
+                if (QuotaVdsGroup.UNLIMITED_MEM.equals(quotaVdsGroup.getMemSizeMB())
+                        || QuotaVdsGroup.UNLIMITED_VCPU.equals(quotaVdsGroup.getVirtualCpu())) {
+                    return true;
+                }
+            }
+        }
+
+        if((Boolean)model.getSpecificStorageQuota().getEntity()) {
+            for (QuotaStorage quotaStorage : (ArrayList<QuotaStorage>) model.getAllDataCenterStorages().getItems()) {
+                if (QuotaStorage.UNLIMITED.equals(quotaStorage.getStorageSizeGB())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void editQuota(boolean isClone) {
@@ -525,6 +546,35 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
     }
 
+    private void onCreateQuota() {
+        if (hasUnlimitedSpecificQuota()) {
+            ConfirmationModel confirmModel = new ConfirmationModel();
+            setConfirmWindow(confirmModel);
+            confirmModel.setTitle(ConstantsManager.getInstance()
+                    .getConstants()
+                    .changeDCQuotaEnforcementModeTitle());
+            confirmModel.setHashName("set_unlimited_specific_quota"); //$NON-NLS-1$
+            confirmModel.setMessage(ConstantsManager.getInstance()
+                    .getConstants()
+                    .youAreAboutToCreateUnlimitedSpecificQuotaMsg());
+
+            UICommand tempVar = new UICommand("OnCreateQuotaInternal", this); //$NON-NLS-1$
+            tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
+            getConfirmWindow().getCommands().add(tempVar);
+            UICommand tempVar2 = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
+            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+            tempVar2.setIsCancel(true);
+            tempVar2.setIsDefault(true);
+            getConfirmWindow().getCommands().add(tempVar2);
+        } else {
+            onCreateQuotaInternal(false);
+        }
+    }
+
+    public void cancelConfirmation() {
+        setConfirmWindow(null);
+    }
+
     public void onRemove()
     {
         ConfirmationModel model = (ConfirmationModel) getWindow();
@@ -598,7 +648,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
             editQuota(false);
         }
         else if (command.getName().equals("OnCreateQuota")) { //$NON-NLS-1$
-            onCreateQuota(false);
+            onCreateQuota();
         }
         else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
             cancel();
@@ -611,10 +661,17 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         }
         else if (command.equals(getCloneCommand())) {
             editQuota(true);
-        } else if (command.getName().equals("onCloneQuota")) { //$NON-NLS-1$
-            onCreateQuota(true);
         }
-
+        else if (command.getName().equals("onCloneQuota")) { //$NON-NLS-1$
+            onCreateQuotaInternal(true);
+        }
+        else if (command.getName().equals("OnCreateQuotaInternal")) { //$NON-NLS-1$
+            setConfirmWindow(null);
+            onCreateQuotaInternal(false);
+        }
+        else if (command.getName().equals("CancelConfirmation")) { //$NON-NLS-1$
+            cancelConfirmation();
+        }
     }
 
     private SystemTreeItemModel systemTreeSelectedItem;

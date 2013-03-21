@@ -72,6 +72,9 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                         if (!QuotaVdsGroup.UNLIMITED_MEM.equals(quotaVdsGroup.getMemSizeMB())) {
                             allocated += quotaVdsGroup.getMemSizeMB();
                             used += quotaVdsGroup.getMemSizeMBUsage();
+                        } else {
+                            allocated = QuotaVdsGroup.UNLIMITED_MEM;
+                            break;
                         }
                     }
                 }
@@ -103,6 +106,9 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                         if (!QuotaVdsGroup.UNLIMITED_MEM.equals(quotaVdsGroup.getMemSizeMB())) {
                             allocated += quotaVdsGroup.getMemSizeMB();
                             used += quotaVdsGroup.getMemSizeMBUsage();
+                        } else {
+                            allocated = QuotaVdsGroup.UNLIMITED_MEM;
+                            break;
                         }
                     }
                 }
@@ -135,6 +141,9 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                         if (!QuotaVdsGroup.UNLIMITED_VCPU.equals(quotaVdsGroup.getVirtualCpu())) {
                             allocated += quotaVdsGroup.getVirtualCpu();
                             used += quotaVdsGroup.getVirtualCpuUsage();
+                        } else {
+                            allocated = QuotaVdsGroup.UNLIMITED_VCPU;
+                            break;
                         }
                     }
                 }
@@ -166,6 +175,9 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                         if (!QuotaVdsGroup.UNLIMITED_VCPU.equals(quotaVdsGroup.getVirtualCpu())) {
                             allocated += quotaVdsGroup.getVirtualCpu();
                             used += quotaVdsGroup.getVirtualCpuUsage();
+                        } else {
+                            allocated = QuotaVdsGroup.UNLIMITED_VCPU;
+                            break;
                         }
                     }
                 }
@@ -197,6 +209,9 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                         if (!QuotaStorage.UNLIMITED.equals(quotaStorage.getStorageSizeGB())) {
                             allocated += quotaStorage.getStorageSizeGB();
                             used += quotaStorage.getStorageSizeGBUsage();
+                        } else {
+                            allocated = QuotaStorage.UNLIMITED;
+                            break;
                         }
                     }
                 }
@@ -228,6 +243,9 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                         if (!QuotaStorage.UNLIMITED.equals(quotaStorage.getStorageSizeGB())) {
                             allocated += quotaStorage.getStorageSizeGB();
                             used += quotaStorage.getStorageSizeGBUsage();
+                        } else {
+                            allocated = QuotaStorage.UNLIMITED;
+                            break;
                         }
                     }
                 }

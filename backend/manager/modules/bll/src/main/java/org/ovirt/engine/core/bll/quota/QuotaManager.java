@@ -941,7 +941,13 @@ public class QuotaManager {
                 storageUsage = quota.getGlobalQuotaStorage().getStorageSizeGBUsage();
             } else {
                 for (QuotaStorage quotaStorage : quota.getQuotaStorages()) {
-                    storageLimit += quotaStorage.getStorageSizeGB();
+                    // once storage was set unlimited it will remain so
+                    if (QuotaStorage.UNLIMITED.equals(quotaStorage.getStorageSizeGB())) {
+                        storageLimit = QuotaStorage.UNLIMITED; // Do not break because usage is still counting
+                    }
+                    if (storageLimit != QuotaStorage.UNLIMITED) {
+                        storageLimit += quotaStorage.getStorageSizeGB();
+                    }
                     storageUsage += quotaStorage.getStorageSizeGBUsage();
                 }
             }
@@ -954,9 +960,24 @@ public class QuotaManager {
                 cpuUsage = quota.getGlobalQuotaVdsGroup().getVirtualCpuUsage();
             } else {
                 for (QuotaVdsGroup quotaVdsGroup : quota.getQuotaVdsGroups()) {
-                    memLimit += quotaVdsGroup.getMemSizeMB();
+
+                    // once mem was set unlimited it will remain so
+                    if (QuotaVdsGroup.UNLIMITED_MEM.equals(quotaVdsGroup.getMemSizeMB())) {
+                        memLimit = QuotaVdsGroup.UNLIMITED_MEM; // Do not break because usage is still counting
+                    }
+                    if (memLimit != QuotaVdsGroup.UNLIMITED_MEM) {
+                        memLimit += quotaVdsGroup.getMemSizeMB();
+                    }
+
+                    // once cpu was set unlimited it will remain so
+                    if (QuotaVdsGroup.UNLIMITED_VCPU.equals(quotaVdsGroup.getVirtualCpu())) {
+                        cpuLimit = QuotaVdsGroup.UNLIMITED_VCPU; // Do not break because usage is still counting
+                    }
+                    if (cpuLimit != QuotaVdsGroup.UNLIMITED_VCPU) {
+                        cpuLimit += quotaVdsGroup.getVirtualCpu();
+                    }
+
                     memUsage += quotaVdsGroup.getMemSizeMBUsage();
-                    cpuLimit += quotaVdsGroup.getVirtualCpu();
                     cpuUsage += quotaVdsGroup.getVirtualCpuUsage();
                 }
             }
