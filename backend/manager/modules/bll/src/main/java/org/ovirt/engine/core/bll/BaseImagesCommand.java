@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
+import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -75,6 +76,11 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     @Override
     protected SnapshotDao getSnapshotDao() {
         return getDbFacade().getSnapshotDao();
+    }
+
+    @Override
+    protected DiskImageDynamicDAO getDiskImageDynamicDAO() {
+        return getDbFacade().getDiskImageDynamicDao();
     }
 
     protected void setImage(DiskImage image) {

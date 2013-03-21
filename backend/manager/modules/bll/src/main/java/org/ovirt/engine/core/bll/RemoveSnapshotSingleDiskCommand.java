@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.job.StepEnum;
+import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.MergeSnapshotsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -82,9 +83,28 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
             getDestinationDiskImage().setParentId(getDiskImage().getParentId());
             getBaseDiskDao().update(curr);
             getImageDao().update(getDestinationDiskImage().getImage());
+            updateDiskImageDynamic();
         }
 
         setSucceeded(true);
+    }
+
+    private void updateDiskImageDynamic() {
+        VDSReturnValue ret = runVdsCommand(
+                VDSCommandType.GetImageInfo,
+                new GetImageInfoVDSCommandParameters(getDestinationDiskImage().getStoragePoolId().getValue(),
+                        getDestinationDiskImage().getStorageIds().get(0),
+                        getDestinationDiskImage().getId(),
+                        getDestinationDiskImage().getImageId()));
+
+        // Update image's actual size in DB
+        DiskImage imageFromIRS = (DiskImage) ret.getReturnValue();
+        if (imageFromIRS != null) {
+            completeImageData(imageFromIRS);
+        } else {
+            log.warnFormat("Could not update DiskImage's size with ID {0}",
+                    getDestinationDiskImage().getImageId());
+        }
     }
 
     @Override
