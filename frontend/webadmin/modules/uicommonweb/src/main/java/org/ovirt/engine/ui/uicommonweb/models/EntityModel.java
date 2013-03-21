@@ -47,6 +47,18 @@ public class EntityModel extends Model
         }
     }
 
+    @Override
+    public EntityModel setIsChangable(boolean value) {
+        super.setIsChangable(value);
+        return this;
+    }
+
+    @Override
+    public EntityModel setTitle(String value) {
+        super.setTitle(value);
+        return this;
+    }
+
     public void setEntity(Object value, boolean fireEvents) {
         if (fireEvents) {
             setEntity(value);

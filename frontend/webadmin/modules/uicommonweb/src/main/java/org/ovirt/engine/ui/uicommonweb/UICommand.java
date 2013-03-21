@@ -1,11 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb;
 
+import java.util.List;
+
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ICommand;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
-import java.util.List;
 
 /**
  * Represents a command adapted to use in model-viewmodel pattern + binding.
@@ -60,9 +60,10 @@ public class UICommand extends Model implements ICommand
         return privateIsDefault;
     }
 
-    public void setIsDefault(boolean value)
+    public UICommand setIsDefault(boolean value)
     {
         privateIsDefault = value;
+        return this;
     }
 
     private boolean privateIsVisible = true;
@@ -84,9 +85,10 @@ public class UICommand extends Model implements ICommand
         return privateIsCancel;
     }
 
-    public void setIsCancel(boolean value)
+    public UICommand setIsCancel(boolean value)
     {
         privateIsCancel = value;
+        return this;
     }
 
     private String privateName;
@@ -168,5 +170,11 @@ public class UICommand extends Model implements ICommand
     public void Execute()
     {
         Execute(new Object[0]);
+    }
+
+    @Override
+    public UICommand setTitle(String value) {
+        super.setTitle(value);
+        return this;
     }
 }

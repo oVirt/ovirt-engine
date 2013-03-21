@@ -66,18 +66,6 @@ public class PermissionListModel extends SearchableListModel
         privateRemoveCommand = value;
     }
 
-    @Override
-    public Object getEntity()
-    {
-        return super.getEntity();
-    }
-
-    @Override
-    public void setEntity(Object value)
-    {
-        super.setEntity(value);
-    }
-
     public PermissionListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().permissionsTitle());

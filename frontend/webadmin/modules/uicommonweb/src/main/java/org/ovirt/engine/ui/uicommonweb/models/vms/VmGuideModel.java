@@ -42,11 +42,6 @@ public class VmGuideModel extends GuideModel
     }
 
     @Override
-    public void setEntity(Object value) {
-        super.setEntity(value);
-    }
-
-    @Override
     protected void OnEntityChanged()
     {
         super.OnEntityChanged();

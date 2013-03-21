@@ -683,8 +683,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     private void RunOnce()
     {
         UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
-        if (selectedItem == null || selectedItem.getEntity() == null)
-        {
+        if (selectedItem == null || selectedItem.getEntity() == null) {
             return;
         }
 
@@ -696,43 +695,17 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         model.init();
 
-        // Display protocols.
-        EntityModel tempVar = new EntityModel();
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().VNCTitle());
-        tempVar.setEntity(DisplayType.vnc);
-        EntityModel vncProtocol = tempVar;
+        model.getCommands().add(new UICommand("OnRunOnce", this) //$NON-NLS-1$
+           .setTitle(ConstantsManager.getInstance().getConstants().ok())
+           .setIsDefault(true));
 
-        EntityModel tempVar2 = new EntityModel();
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
-        tempVar2.setEntity(DisplayType.qxl);
-        EntityModel qxlProtocol = tempVar2;
-
-        ArrayList<EntityModel> items = new ArrayList<EntityModel>();
-        items.add(vncProtocol);
-        items.add(qxlProtocol);
-        model.getDisplayProtocol().setItems(items);
-        model.getDisplayProtocol().setSelectedItem(vm.getDefaultDisplayType() == DisplayType.vnc ? vncProtocol
-                : qxlProtocol);
-
-        UICommand tempVar3 = new UICommand("OnRunOnce", this); //$NON-NLS-1$
-        tempVar3.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar3.setIsDefault(true);
-        model.getCommands().add(tempVar3);
-        UICommand tempVar4 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar4.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar4.setIsCancel(true);
-        model.getCommands().add(tempVar4);
+        model.getCommands().add(new UICommand("Cancel", this) //$NON-NLS-1$
+           .setTitle(ConstantsManager.getInstance().getConstants().cancel())
+           .setIsCancel(true));
     }
 
     private void OnRunOnce()
     {
-        UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
-        if (selectedItem == null || selectedItem.getEntity() == null)
-        {
-            cancel();
-            return;
-        }
-
         RunOnceModel model = (RunOnceModel) getWindow();
 
         if (!model.Validate())

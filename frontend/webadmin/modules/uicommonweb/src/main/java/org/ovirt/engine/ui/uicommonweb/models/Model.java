@@ -172,13 +172,14 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         return title;
     }
 
-    public void setTitle(String value)
+    public Model setTitle(String value)
     {
         if (!StringHelper.stringsEqual(title, value))
         {
             title = value;
             OnPropertyChanged(new PropertyChangedEventArgs("Title")); //$NON-NLS-1$
         }
+        return this;
     }
 
     private boolean isValid;
@@ -260,7 +261,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         return isChangable;
     }
 
-    public void setIsChangable(boolean value)
+    public Model setIsChangable(boolean value)
     {
         if (isChangable != value)
         {
@@ -272,6 +273,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
                 privateChangeProhibitionReason = null;
             }
         }
+        return this;
     }
 
     private String privateChangeProhibitionReason;

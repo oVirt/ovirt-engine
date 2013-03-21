@@ -1282,32 +1282,13 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         setWindow(model);
         model.init();
 
-        EntityModel tempVar3 = new EntityModel();
-        tempVar3.setTitle(ConstantsManager.getInstance().getConstants().VNCTitle());
-        tempVar3.setEntity(DisplayType.vnc);
-        EntityModel vncProtocol = tempVar3;
+        model.getCommands().add(new UICommand("OnRunOnce", this) //$NON-NLS-1$
+           .setTitle(ConstantsManager.getInstance().getConstants().ok())
+           .setIsDefault(true));
 
-        EntityModel tempVar5 = new EntityModel();
-        tempVar5.setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
-        tempVar5.setEntity(DisplayType.qxl);
-        EntityModel qxlProtocol = tempVar5;
-
-        ArrayList<EntityModel> items = new ArrayList<EntityModel>();
-        items.add(vncProtocol);
-        items.add(qxlProtocol);
-        model.getDisplayProtocol().setItems(items);
-        model.getDisplayProtocol().setSelectedItem(vm.getDefaultDisplayType() == DisplayType.vnc ? vncProtocol : qxlProtocol);
-
-        UICommand tempVar = new UICommand("OnRunOnce", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
-        model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
-        model.getCommands().add(tempVar2);
-
-        model.getIsAutoAssign().setEntity(true);
+        model.getCommands().add(new UICommand("Cancel", this) //$NON-NLS-1$
+           .setTitle(ConstantsManager.getInstance().getConstants().cancel())
+           .setIsCancel(true));
     }
 
     private void OnRunOnce()

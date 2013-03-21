@@ -2175,25 +2175,28 @@ public class UnitVmModel extends Model {
 
     private class NotChangableForVmInPoolListModel extends ListModel {
         @Override
-        public void setIsChangable(boolean value) {
+        public ListModel setIsChangable(boolean value) {
             if (!isVmAttachedToPool())
                 super.setIsChangable(value);
+            return this;
         }
     }
 
     private class NotChangableForVmInPoolEntityModel extends EntityModel {
         @Override
-        public void setIsChangable(boolean value) {
+        public EntityModel setIsChangable(boolean value) {
             if (!isVmAttachedToPool())
                 super.setIsChangable(value);
+            return this;
         }
     }
 
     private class NotChangableForVmInPoolKeyValueModel extends KeyValueModel {
         @Override
-        public void setIsChangable(boolean value) {
+        public KeyValueModel setIsChangable(boolean value) {
             if (!isVmAttachedToPool())
                 super.setIsChangable(value);
+            return this;
         }
     }
 }

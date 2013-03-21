@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
@@ -461,32 +462,20 @@ public abstract class RunOnceModel extends Model
         getSysPrepDomainName().getSelectedItemChangedEvent().addListener(this);
         setSysPrepSelectedDomainName(new EntityModel());
 
-        EntityModel tempVar = new EntityModel();
-        tempVar.setIsChangable(false);
-        setSysPrepUserName(tempVar);
-        EntityModel tempVar2 = new EntityModel();
-        tempVar2.setIsChangable(false);
-        setSysPrepPassword(tempVar2);
+        setSysPrepUserName(new EntityModel().setIsChangable(false));
+        setSysPrepPassword(new EntityModel().setIsChangable(false));
 
         setIsSysprepEnabled(new EntityModel());
-        EntityModel tempVar3 = new EntityModel();
-        tempVar3.setEntity(false);
-        setIsVmFirstRun(tempVar3);
+        setIsVmFirstRun(new EntityModel(false));
         getIsVmFirstRun().getEntityChangedEvent().addListener(this);
-        EntityModel tempVar4 = new EntityModel();
-        tempVar4.setEntity(false);
-        setUseAlternateCredentials(tempVar4);
+        setUseAlternateCredentials(new EntityModel(false));
         getUseAlternateCredentials().getEntityChangedEvent().addListener(this);
 
         setCustomProperties(new EntityModel());
         setCustomPropertySheet(new KeyValueModel());
 
-        EntityModel tempVar5 = new EntityModel();
-        tempVar5.setEntity(false);
-        setRunAndPause(tempVar5);
-        EntityModel tempVar6 = new EntityModel();
-        tempVar6.setEntity(false);
-        setRunAsStateless(tempVar6);
+        setRunAndPause(new EntityModel(false));
+        setRunAsStateless(new EntityModel(false));
 
         setDisplayConsole_Spice_IsSelected(new EntityModel());
         getDisplayConsole_Spice_IsSelected().getEntityChangedEvent().addListener(this);
@@ -537,6 +526,17 @@ public abstract class RunOnceModel extends Model
         // Boot sequence.
         setIsBootFromNetworkAllowedForVm();
         setIsBootFromHardDiskAllowedForVm();
+
+        // Display protocols.
+        EntityModel vncProtocol = new EntityModel(DisplayType.vnc)
+           .setTitle(ConstantsManager.getInstance().getConstants().VNCTitle());
+
+        EntityModel qxlProtocol = new EntityModel(DisplayType.qxl)
+           .setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
+
+        getDisplayProtocol().setItems(Arrays.asList(vncProtocol, qxlProtocol));
+        getDisplayProtocol().setSelectedItem(vm.getDefaultDisplayType() == DisplayType.vnc ?
+                vncProtocol : qxlProtocol);
     }
 
     public RunVmOnceParams createRunVmOnceParams() {

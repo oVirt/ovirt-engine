@@ -42,11 +42,6 @@ public class TemplateGeneralModel extends EntityModel
         }
     }
 
-    public void setEntity(VmTemplate value)
-    {
-        super.setEntity(value);
-    }
-
     private String name;
 
     public String getName()
