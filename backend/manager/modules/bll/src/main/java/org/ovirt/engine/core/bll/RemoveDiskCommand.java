@@ -209,34 +209,36 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     }
 
     private boolean canRemoveVmImageDisk() {
-        boolean firstTime = true;
-        SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
         List<Disk> diskList = Arrays.asList(getDisk());
 
         if (!listVms.isEmpty()) {
-            storage_pool sp = getStoragePoolDAO().get(listVms.get(0).getStoragePoolId());
+            Guid storagePoolId = listVms.get(0).getStoragePoolId();
+            storage_pool sp = getStoragePoolDAO().get(storagePoolId);
             if (!validate(new StoragePoolValidator(sp).isUp())) {
+                return false;
+            }
+
+            if (!ImagesHandler.PerformImagesChecks(
+                    getReturnValue().getCanDoActionMessages(),
+                    storagePoolId,
+                    getParameters().getStorageDomainId(),
+                    false,
+                    true,
+                    false,
+                    false,
+                    false,
+                    true,
+                    diskList)) {
                 return false;
             }
         }
 
+        SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
         for (VM vm : listVms) {
             if (!validate(snapshotsValidator.vmNotDuringSnapshot(vm.getId())) ||
-                    !validate(snapshotsValidator.vmNotInPreview(vm.getId())) ||
-                    !ImagesHandler.PerformImagesChecks(
-                            getReturnValue().getCanDoActionMessages(),
-                            vm.getStoragePoolId(),
-                            getParameters().getStorageDomainId(),
-                            false,
-                            firstTime,
-                            false,
-                            false,
-                            false,
-                            firstTime,
-                            diskList)) {
+                    !validate(snapshotsValidator.vmNotInPreview(vm.getId()))) {
                 return false;
             }
-            firstTime = false;
         }
         return true;
     }
