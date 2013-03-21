@@ -261,8 +261,13 @@ public enum VdcActionType {
     AddWatchdog(1700, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.NONE),
     UpdateWatchdog(1701, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.NONE),
     RemoveWatchdog(1702, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.NONE),
-    ;
 
+
+    // External Tasks
+    AddExternalJob(1800, ActionGroup.INJECT_EXTERNAL_TASKS, false, QuotaDependency.NONE),
+    EndExternalJob(1801, ActionGroup.INJECT_EXTERNAL_TASKS, false, QuotaDependency.NONE),
+    AddExternalStep(1802, ActionGroup.INJECT_EXTERNAL_TASKS, false, QuotaDependency.NONE),
+    EndExternalStep(1803, ActionGroup.INJECT_EXTERNAL_TASKS, false, QuotaDependency.NONE);
 
     private int intValue;
     private ActionGroup actionGroup;

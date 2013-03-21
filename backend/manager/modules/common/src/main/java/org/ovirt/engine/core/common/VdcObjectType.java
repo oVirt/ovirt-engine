@@ -33,7 +33,7 @@ public enum VdcObjectType {
     GlusterHook(23, "GlusterHook"),
     PROVIDER(24, "Provider"),
     GlusterService(25, "GlusterService"),
-    ;
+    ExternalTask(26, "ExternalTask");
 
     private int value;
     private String vdcObjectTranslationVal;

@@ -111,7 +111,11 @@ public enum ActionGroup {
     LOGIN(1300, RoleType.USER, VdcObjectType.Bottom, false),
 
     // Inject external events action group
-    INJECT_EXTERNAL_EVENTS(1400, RoleType.ADMIN, VdcObjectType.Event, false);
+    INJECT_EXTERNAL_EVENTS(1400, RoleType.ADMIN, VdcObjectType.Event, false),
+
+    // Inject external tasks action group
+    INJECT_EXTERNAL_TASKS(1500, RoleType.ADMIN, VdcObjectType.ExternalTask, false);
+
 
     private int id;
     private RoleType roleType;
