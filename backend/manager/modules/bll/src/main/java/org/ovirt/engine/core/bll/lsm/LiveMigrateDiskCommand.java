@@ -35,7 +35,8 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         getParameters().setDiskAlias(getDiskAlias());
         getParameters().setImageGroupID(getImageGroupId());
         getParameters().setCommandType(getActionType());
-        getParameters().setTaskGroupSuccess(getParameters().getTaskGroupSuccess() && getVm().getStatus().isUpOrPaused());
+        getParameters().setTaskGroupSuccess(getParameters().getTaskGroupSuccess()
+                && getVm().getStatus().isRunningOrPaused());
     }
 
     /* Overridden CommandBase Methods */
