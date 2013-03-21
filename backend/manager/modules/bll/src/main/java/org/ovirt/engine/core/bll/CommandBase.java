@@ -1319,7 +1319,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return annotation == null;
     }
 
-    protected T getParameters() {
+    public T getParameters() {
         return _parameters;
     }
 
