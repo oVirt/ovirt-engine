@@ -52,8 +52,11 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         // HotPlug in the host needs to be called only if the Vm is UP
         if (hotPlugVmNicRequired(getVm().getStatus())) {
             setVdsId(getVm().getRunOnVds().getValue());
-            if (canPerformHotPlug()
-                    && (getNetworkName() != null && !networkAttachedToVds(getNetworkName(), getVdsId()))) {
+            if (!canPerformHotPlug()) {
+                return false;
+            }
+
+            if (getNetworkName() != null && !networkAttachedToVds(getNetworkName(), getVdsId())) {
                 addCanDoActionMessage(VdcBllMessages.ACTIVATE_DEACTIVATE_NETWORK_NOT_IN_VDS);
                 return false;
             }
