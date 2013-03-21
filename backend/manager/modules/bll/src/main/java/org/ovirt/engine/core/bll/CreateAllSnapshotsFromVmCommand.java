@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.vdscommands.SnapshotVDSCommandParameters;
@@ -231,9 +230,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 }
             });
         } catch (VdcBLLException e) {
-            if (e.getErrorCode() != VdcBllErrors.SNAPSHOT_FAILED) {
-                throw e;
-            }
             handleVdsLiveSnapshotFailure(e);
         }
     }
