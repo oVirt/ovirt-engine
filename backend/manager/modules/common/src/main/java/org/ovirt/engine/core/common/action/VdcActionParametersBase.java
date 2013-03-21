@@ -58,6 +58,9 @@ public class VdcActionParametersBase implements java.io.Serializable {
     @Size(min = 1, max = BusinessEntitiesDefinitions.CORRELATION_ID_SIZE, groups = PreRun.class)
     private String correlationId;
 
+    private Guid jobId;
+    private Guid stepId;
+
     public VdcActionParametersBase() {
         shouldbelogged = true;
         transctionOption = TransactionScopeOption.Required;
@@ -216,6 +219,22 @@ public class VdcActionParametersBase implements java.io.Serializable {
         this.executionIndex = executionIndex;
     }
 
+    public Guid getJobId() {
+        return jobId;
+    }
+
+    public void setJobId(Guid jobId) {
+        this.jobId = jobId;
+    }
+
+    public Guid getStepId() {
+        return stepId;
+    }
+
+    public void setStepId(Guid stepId) {
+        this.stepId = stepId;
+    }
+
     public void incrementExecutionIndex() {
         executionIndex++;
     }
@@ -238,6 +257,8 @@ public class VdcActionParametersBase implements java.io.Serializable {
         result = prime * result + ((vdsmTaskIds == null) ? 0 : vdsmTaskIds.hashCode());
         result = prime * result + ((correlationId == null) ? 0 : correlationId.hashCode());
         result = prime * result + executionIndex;
+        result = prime * result + ((jobId == null) ? 0 : jobId.hashCode());
+        result = prime * result + ((stepId == null) ? 0 : stepId.hashCode());
         return result;
     }
 
@@ -285,6 +306,17 @@ public class VdcActionParametersBase implements java.io.Serializable {
             return false;
         if (executionIndex != other.executionIndex)
             return false;
+        if (jobId == null) {
+            if (other.jobId != null)
+                return false;
+        } else if (!jobId.equals(other.jobId))
+            return false;
+        if (stepId == null) {
+            if (other.stepId != null)
+                return false;
+        } else if (!stepId.equals(other.stepId))
+            return false;
+
         return true;
     }
 
