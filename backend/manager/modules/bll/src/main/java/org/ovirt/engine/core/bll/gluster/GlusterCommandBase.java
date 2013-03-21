@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -19,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
+import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 
 /**
  * Base class for all Gluster commands
@@ -115,7 +118,34 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
         return true;
     }
 
+    protected boolean validateDuplicateBricks(List<GlusterBrickEntity> newBricks) {
+        Set<String> bricks = new HashSet<String>();
+        for (GlusterBrickEntity brick : newBricks) {
+            if (bricks.contains(brick.getQualifiedName())) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DUPLICATE_BRICKS);
+                addCanDoActionMessage(String.format("$brick %1$s", brick.getQualifiedName()));
+                return false;
+            }
+            bricks.add(brick.getQualifiedName());
+
+            GlusterBrickEntity existingBrick =
+                    getGlusterBrickDao().getBrickByServerIdAndDirectory(brick.getServerId(), brick.getBrickDirectory());
+            if (existingBrick != null) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_BRICK_ALREADY_EXISTS_IN_VOLUME);
+                addCanDoActionMessage(String.format("$brick %1$s", brick.getQualifiedName()));
+                addCanDoActionMessage(String.format("$volumeName %1$s",
+                        getGlusterVolumeDao().getById(existingBrick.getVolumeId()).getName()));
+                return false;
+            }
+        }
+        return true;
+    }
+
     public VdsStaticDAO getVdsStaticDao() {
         return getDbFacade().getVdsStaticDao();
+    }
+
+    protected GlusterBrickDao getGlusterBrickDao() {
+        return getDbFacade().getGlusterBrickDao();
     }
 }

@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterOptionDao;
 
 /**
@@ -20,10 +19,6 @@ public abstract class GlusterVolumeCommandBase<T extends GlusterVolumeParameters
     public GlusterVolumeCommandBase(T params) {
         super(params);
         setGlusterVolumeId(getParameters().getVolumeId());
-    }
-
-    protected GlusterBrickDao getGlusterBrickDao() {
-        return getDbFacade().getGlusterBrickDao();
     }
 
     protected GlusterOptionDao getGlusterOptionDao() {
@@ -51,7 +46,6 @@ public abstract class GlusterVolumeCommandBase<T extends GlusterVolumeParameters
 
         return true;
     }
-
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {

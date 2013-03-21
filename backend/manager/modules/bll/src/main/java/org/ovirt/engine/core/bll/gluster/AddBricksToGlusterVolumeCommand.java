@@ -1,9 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
@@ -62,8 +60,8 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
             }
         }
 
-        return (updateBrickServerNames(getParameters().getBricks(), true)
-                && validateBricks(getParameters().getBricks()));
+        return updateBrickServerNames(getParameters().getBricks(), true)
+                && validateDuplicateBricks(getParameters().getBricks());
     }
 
     @Override
@@ -184,29 +182,6 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
 
     private GlusterStatus getBrickStatus() {
         return getGlusterVolume().getStatus();
-    }
-
-    private boolean validateBricks(List<GlusterBrickEntity> newBricks) {
-        Set<String> bricks = new HashSet<String>();
-        for (GlusterBrickEntity brick : newBricks) {
-            if (bricks.contains(brick.getQualifiedName())) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DUPLICATE_BRICKS);
-                addCanDoActionMessage(String.format("$brick %1$s", brick.getQualifiedName()));
-                return false;
-            }
-            bricks.add(brick.getQualifiedName());
-
-            GlusterBrickEntity existingBrick =
-                    getGlusterBrickDao().getBrickByServerIdAndDirectory(brick.getServerId(), brick.getBrickDirectory());
-            if (existingBrick != null) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_BRICK_ALREADY_EXISTS_IN_VOLUME);
-                addCanDoActionMessage(String.format("$brick %1$s", brick.getQualifiedName()));
-                addCanDoActionMessage(String.format("$volumeName %1$s",
-                        getGlusterVolumeDao().getById(existingBrick.getVolumeId()).getName()));
-                return false;
-            }
-        }
-        return true;
     }
 
     @Override

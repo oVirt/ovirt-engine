@@ -302,7 +302,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
             break;
         }
 
-        return updateBrickServerNames(bricks, true);
+        return updateBrickServerNames(bricks, true) && validateDuplicateBricks(bricks);
     }
 
     private void setBrickOrder(List<GlusterBrickEntity> bricks) {

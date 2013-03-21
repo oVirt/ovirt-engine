@@ -165,4 +165,13 @@ public class CreateGlusterVolumeCommandTest {
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
                 VdcBllMessages.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
     }
+
+    @Test
+    public void canDoActionFailsWithDuplicateBricks() {
+        cmd = spy(createTestCommand(getVolume(2, true)));
+        prepareMocks(cmd);
+
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+                VdcBllMessages.ACTION_TYPE_FAILED_DUPLICATE_BRICKS);
+    }
 }
