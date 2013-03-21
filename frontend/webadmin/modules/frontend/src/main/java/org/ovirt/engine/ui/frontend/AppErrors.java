@@ -778,6 +778,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Gluster Server")
     String VAR__TYPE__GLUSTER_SERVER();
 
+    @DefaultStringValue("$type Gluster Hook")
+    String VAR__TYPE__GLUSTER_HOOK();
+
     @DefaultStringValue("Cannot ${action} ${type}. The chosen disk drive letter is already in use, please select a free one.")
     String ACTION_TYPE_FAILED_DISK_LETTER_ALREADY_IN_USE();
 
@@ -2236,9 +2239,16 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}.Only Alerts can be removed.")
     String ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLRGAL_OPERATION();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Gluster hook id is required.")
+    String ACTION_TYPE_FAILED_GLUSTER_HOOK_ID_IS_REQUIRED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Gluster hook does not exist.")
+    String ACTION_TYPE_FAILED_GLUSTER_HOOK_DOES_NOT_EXIST();
+
     @DefaultStringValue("One or more servers are already part of an existing cluster")
     String SERVER_ALREADY_EXISTS_IN_ANOTHER_CLUSTER();
 
     @DefaultStringValue("SSH Authentication failed. Please make sure password is correct.")
     String SSH_AUTHENTICATION_FAILED();
+
 }

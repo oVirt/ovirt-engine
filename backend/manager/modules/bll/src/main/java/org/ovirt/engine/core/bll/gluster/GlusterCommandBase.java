@@ -68,7 +68,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
         return getClusterUtils().getUpServer(getVdsGroupId());
     }
 
-    private ClusterUtils getClusterUtils() {
+    protected ClusterUtils getClusterUtils() {
         return ClusterUtils.getInstance();
     }
 
@@ -92,6 +92,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
         getReturnValue().getExecuteFailedMessages().addAll(errors);
         getReturnValue().getFault().setMessage(StringUtils.join(errors, SystemUtils.LINE_SEPARATOR));
     }
+
 
     protected void handleVdsError(AuditLogType errType, String error) {
         errorType = errType;

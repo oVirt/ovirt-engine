@@ -29,13 +29,15 @@ public class ClusterUtils {
      * @return One of the servers in up status
      */
     public VDS getUpServer(Guid clusterId) {
-        List<VDS> servers = getVdsDao()
-                .getAllForVdsGroupWithStatus(clusterId, VDSStatus.Up);
-
+        List<VDS> servers = getAllUpServers(clusterId);
         if (servers == null || servers.isEmpty()) {
             return null;
         }
         return RandomUtils.instance().pickRandom(servers);
+    }
+
+    public List<VDS> getAllUpServers(Guid clusterId) {
+        return getVdsDao().getAllForVdsGroupWithStatus(clusterId, VDSStatus.Up);
     }
 
     public boolean hasMultipleServers(Guid clusterId) {
@@ -46,7 +48,7 @@ public class ClusterUtils {
         return getServerCount(clusterId) > 0;
     }
 
-    private int getServerCount(Guid clusterId) {
+    public int getServerCount(Guid clusterId) {
         return getVdsDao().getAllForVdsGroup(clusterId).size();
     }
 
