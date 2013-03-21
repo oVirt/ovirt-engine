@@ -724,4 +724,17 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Mac Address is in use.")
     String MAC_ADDRESS_IS_IN_USE();
+
+    @DefaultStringValue("Gluster hook operation  failed")
+    String GlusterHookFailed();
+
+    @DefaultStringValue("Failed to enable gluster hook.")
+    String GlusterHookEnableFailed();
+
+    @DefaultStringValue("Gluster Hook already enabled.")
+    String GlusterHookAlreadyEnabled();
+
+    @DefaultStringValue("Gluster hook not found")
+    String GlusterHookNotFound();
+
 }

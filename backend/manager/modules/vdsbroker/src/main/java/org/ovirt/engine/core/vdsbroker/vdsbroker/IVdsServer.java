@@ -249,4 +249,6 @@ public interface IVdsServer {
     GlusterVolumesListReturnForXmlRpc glusterVolumesList(Guid clusterId);
 
     GlusterVolumeProfileInfoReturnForXmlRpc glusterVolumeProfileInfo(Guid clusterId, String volumeName);
+
+    StatusOnlyReturnForXmlRpc glusterHookEnable(String glusterCommand, String stage, String hookName);
 }
