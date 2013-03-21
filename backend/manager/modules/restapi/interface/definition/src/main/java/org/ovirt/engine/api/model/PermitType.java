@@ -83,6 +83,7 @@ public enum PermitType {
     CREATE_GLUSTER_VOLUME,
     MANIPULATE_GLUSTER_VOLUME,
     DELETE_GLUSTER_VOLUME,
+    MANIPULATE_GLUSTER_HOOK,
 
     // Disks action groups
     CREATE_DISK,

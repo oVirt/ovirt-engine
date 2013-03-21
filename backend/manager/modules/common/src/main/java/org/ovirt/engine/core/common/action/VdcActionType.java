@@ -239,6 +239,7 @@ public enum VdcActionType {
     StopGlusterVolumeProfile(1411, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
     RemoveGlusterServer(1412, ActionGroup.DELETE_HOST, QuotaDependency.NONE),
     AddGlusterFsStorageDomain(1413, ActionGroup.CREATE_STORAGE_DOMAIN, QuotaDependency.NONE),
+    EnableGlusterHook(1414, ActionGroup.MANIPULATE_GLUSTER_HOOK, QuotaDependency.NONE),
 
     // External events
     AddExternalEvent(1500, ActionGroup.INJECT_EXTERNAL_EVENTS, QuotaDependency.NONE),

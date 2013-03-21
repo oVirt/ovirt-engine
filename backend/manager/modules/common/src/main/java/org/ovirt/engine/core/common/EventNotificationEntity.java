@@ -10,7 +10,9 @@ public enum EventNotificationEntity {
     Storage(ApplicationMode.VirtOnly),
     Engine(ApplicationMode.AllModes),
     GlusterVolume(ApplicationMode.GlusterOnly),
+    GlusterHook(ApplicationMode.GlusterOnly),
     DWH(ApplicationMode.VirtOnly);
+
 
     private int availableInModes;
 

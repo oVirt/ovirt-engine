@@ -29,7 +29,8 @@ public enum VdcObjectType {
     Disk(19, "Disk"),
     Network(20, "Network"),
     Snapshot(21, "Snapshot"),
-    Event(22, "Event");
+    Event(22, "Event"),
+    GlusterHook(23, "GlusterHook");
 
     private int value;
     private String vdcObjectTranslationVal;

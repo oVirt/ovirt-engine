@@ -101,6 +101,8 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.GLUSTER_SERVER_REMOVED_FROM_CLI, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.GLUSTER_VOLUME_STARTED_FROM_CLI, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.GLUSTER_VOLUME_STOPPED_FROM_CLI, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.GLUSTER_HOOK_ENABLE, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.GLUSTER_HOOK_ENABLE_FAILED, AuditLogSeverity.ERROR);
     }
 
     private static void initDefaultSeverities() {
