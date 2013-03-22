@@ -409,14 +409,14 @@ public class PluginManager {
             },
 
             // TODO(vszocs) inject API functions into "pluginApi.fn" dynamically using EventBus
-            addMainTab: function(label, historyToken, contentUrl) {
+            addMainTab: function(label, historyToken, contentUrl, options) {
                 if (canDoPluginAction(this.pluginName)) {
-                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addMainTab(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(label,historyToken,contentUrl);
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addMainTab(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/TabOptions;)(label,historyToken,contentUrl,sanitizeObject(options));
                 }
             },
-            addSubTab: function(entityTypeName, label, historyToken, contentUrl) {
+            addSubTab: function(entityTypeName, label, historyToken, contentUrl, options) {
                 if (canDoPluginAction(this.pluginName)) {
-                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addSubTab(Lorg/ovirt/engine/ui/webadmin/plugin/entity/EntityType;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(getEntityType(entityTypeName),label,historyToken,contentUrl);
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addSubTab(Lorg/ovirt/engine/ui/webadmin/plugin/entity/EntityType;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/TabOptions;)(getEntityType(entityTypeName),label,historyToken,contentUrl,sanitizeObject(options));
                 }
             },
             setTabContentUrl: function(historyToken, contentUrl) {

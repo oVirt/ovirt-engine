@@ -9,6 +9,7 @@ public class DynamicTab extends SimpleTab {
 
     public DynamicTab(final DynamicTabData tabData, AbstractTabPanel tabPanel, EventBus eventBus) {
         super(tabData, tabPanel);
+        setAlign(tabData.getAlign());
 
         eventBus.addHandler(SetDynamicTabAccessibleEvent.getType(), new SetDynamicTabAccessibleHandler() {
             @Override

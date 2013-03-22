@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
+import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 
 import com.google.gwt.event.shared.GwtEvent.Type;
@@ -23,11 +24,11 @@ public class DynamicUrlContentTabProxyFactory {
     public DynamicUrlContentTabProxy create(
             Type<RequestTabsHandler> requestTabsEventType,
             Type<RevealContentHandler<?>> revealContentEventType,
-            String label, String historyToken,
-            boolean isMainTab, String contentUrl) {
+            String label, String historyToken, boolean isMainTab,
+            String contentUrl, Align align) {
         return new DynamicUrlContentTabProxy(ginjector,
                 requestTabsEventType, revealContentEventType, viewProvider,
-                label, Float.MAX_VALUE, historyToken, isMainTab, contentUrl);
+                label, Float.MAX_VALUE, historyToken, isMainTab, contentUrl, align);
     }
 
 }

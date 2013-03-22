@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.ui.common.presenter.RedrawDynamicTabContainerEvent;
 import org.ovirt.engine.ui.common.presenter.SetDynamicTabAccessibleEvent;
+import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.table.ActionTable;
 import org.ovirt.engine.ui.common.widget.table.HasActionTable;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
@@ -100,63 +101,65 @@ public class PluginUiFunctions implements HasHandlers {
     /**
      * Adds new dynamic main tab that shows contents of the given URL.
      */
-    public void addMainTab(String label, String historyToken, String contentUrl) {
+    public void addMainTab(String label, String historyToken, String contentUrl, TabOptions options) {
         addTab(MainTabPanelPresenter.TYPE_RequestTabs,
                 MainTabPanelPresenter.TYPE_SetTabContent,
-                label, historyToken, true, contentUrl);
+                label, historyToken, true, contentUrl, options);
     }
 
     /**
      * Adds new dynamic sub tab that shows contents of the given URL.
      */
-    public void addSubTab(EntityType entityType, String label, String historyToken, String contentUrl) {
+    public void addSubTab(EntityType entityType, String label, String historyToken, String contentUrl,
+            TabOptions options) {
         switch (entityType) {
         case DataCenter:
             addTab(DataCenterSubTabPanelPresenter.TYPE_RequestTabs,
                     DataCenterSubTabPanelPresenter.TYPE_SetTabContent,
-                    label, historyToken, false, contentUrl);
+                    label, historyToken, false, contentUrl, options);
             break;
         case Cluster:
             addTab(ClusterSubTabPanelPresenter.TYPE_RequestTabs,
                     ClusterSubTabPanelPresenter.TYPE_SetTabContent,
-                    label, historyToken, false, contentUrl);
+                    label, historyToken, false, contentUrl, options);
             break;
         case Host:
             addTab(HostSubTabPanelPresenter.TYPE_RequestTabs,
                     HostSubTabPanelPresenter.TYPE_SetTabContent,
-                    label, historyToken, false, contentUrl);
+                    label, historyToken, false, contentUrl, options);
             break;
         case Storage:
             addTab(StorageSubTabPanelPresenter.TYPE_RequestTabs,
                     StorageSubTabPanelPresenter.TYPE_SetTabContent,
-                    label, historyToken, false, contentUrl);
+                    label, historyToken, false, contentUrl, options);
             break;
         case Disk:
             addTab(DiskSubTabPanelPresenter.TYPE_RequestTabs,
                     DiskSubTabPanelPresenter.TYPE_SetTabContent,
-                    label, historyToken, false, contentUrl);
+                    label, historyToken, false, contentUrl, options);
             break;
         case VirtualMachine:
             addTab(VirtualMachineSubTabPanelPresenter.TYPE_RequestTabs,
                     VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent,
-                    label, historyToken, false, contentUrl);
+                    label, historyToken, false, contentUrl, options);
             break;
         case Template:
             addTab(TemplateSubTabPanelPresenter.TYPE_RequestTabs,
                     TemplateSubTabPanelPresenter.TYPE_SetTabContent,
-                    label, historyToken, false, contentUrl);
+                    label, historyToken, false, contentUrl, options);
             break;
         }
     }
 
     void addTab(Type<RequestTabsHandler> requestTabsEventType,
             Type<RevealContentHandler<?>> revealContentEventType,
-            String label, String historyToken,
-            boolean isMainTab, String contentUrl) {
+            String label, String historyToken, boolean isMainTab,
+            String contentUrl, TabOptions options) {
         // Create and bind tab presenter proxy
         dynamicUrlContentTabProxyFactory.create(
                 requestTabsEventType, revealContentEventType,
-                label, historyToken, isMainTab, contentUrl);
+                label, historyToken, isMainTab, contentUrl,
+                options.getAlignRight() ? Align.RIGHT : Align.LEFT);
 
         // Redraw the corresponding tab container
         RedrawDynamicTabContainerEvent.fire(this, requestTabsEventType);

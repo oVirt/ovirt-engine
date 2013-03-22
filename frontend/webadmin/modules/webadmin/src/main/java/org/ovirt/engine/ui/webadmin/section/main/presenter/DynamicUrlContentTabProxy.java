@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
 import org.ovirt.engine.ui.common.presenter.DynamicTabProxy;
+import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 
 import com.google.gwt.event.shared.GwtEvent.Type;
@@ -20,8 +21,8 @@ public class DynamicUrlContentTabProxy extends DynamicTabProxy<DynamicUrlContent
             Type<RevealContentHandler<?>> revealContentEventType,
             Provider<DynamicUrlContentTabPresenter.ViewDef> viewProvider,
             String label, float priority, String historyToken,
-            boolean isMainTab, String contentUrl) {
-        super(ginjector, requestTabsEventType, label, priority, historyToken);
+            boolean isMainTab, String contentUrl, Align align) {
+        super(ginjector, requestTabsEventType, label, priority, historyToken, align);
         this.revealContentEventType = revealContentEventType;
         this.viewProvider = viewProvider;
         this.isMainTab = isMainTab;

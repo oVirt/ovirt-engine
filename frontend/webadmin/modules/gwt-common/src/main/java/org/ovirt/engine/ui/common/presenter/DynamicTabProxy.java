@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.presenter;
 
 import org.ovirt.engine.ui.common.gin.BaseClientGinjector;
+import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.tab.DynamicTabData;
 
 import com.google.gwt.core.client.Scheduler;
@@ -30,10 +31,10 @@ public abstract class DynamicTabProxy<T extends DynamicTabPresenter<?, ?>> exten
 
         public WrappedProxy(PlaceManager placeManager, EventBus eventBus,
                 Provider<T> presenterProvider, Type<RequestTabsHandler> requestTabsEventType,
-                String label, float priority, String historyToken) {
+                String label, float priority, String historyToken, Align align) {
             bind(placeManager, eventBus);
             this.requestTabsEventType = requestTabsEventType;
-            this.tabData = new DynamicTabData(label, priority, historyToken);
+            this.tabData = new DynamicTabData(label, priority, historyToken, align);
             this.targetHistoryToken = historyToken;
             addRequestTabsHandler();
             this.presenter = new StandardProvider<T>(presenterProvider);
@@ -43,15 +44,14 @@ public abstract class DynamicTabProxy<T extends DynamicTabPresenter<?, ?>> exten
 
     private T presenter;
 
-    public DynamicTabProxy(BaseClientGinjector ginjector,
-            Type<RequestTabsHandler> requestTabsEventType,
-            String label, float priority, String historyToken) {
+    public DynamicTabProxy(BaseClientGinjector ginjector, Type<RequestTabsHandler> requestTabsEventType,
+            String label, float priority, String historyToken, Align align) {
         bind(ginjector.getPlaceManager(), ginjector.getEventBus());
         this.proxy = new WrappedProxy<T>(ginjector.getPlaceManager(), ginjector.getEventBus(),
-                this, requestTabsEventType, label, priority, historyToken);
+                this, requestTabsEventType, label, priority, historyToken, align);
         this.place = new PlaceWithGatekeeper(historyToken, ginjector.getDefaultGatekeeper());
 
-        // Create and bind presenter eagerly
+        // Create and bind presenter eagerly (don't wait for reveal request)
         Scheduler.get().scheduleDeferred(new ScheduledCommand() {
             @Override
             public void execute() {
