@@ -248,25 +248,25 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
         getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.addQuota()) {
             @Override
             protected UICommand resolveCommand() {
-                return getMainModel().getCreateQuotaCommand();
+                return getMainModel().getCreateCommand();
             }
         });
         getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.editQuota()) {
             @Override
             protected UICommand resolveCommand() {
-                return getMainModel().getEditQuotaCommand();
+                return getMainModel().getEditCommand();
             }
         });
         getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.copyQuota()) {
             @Override
             protected UICommand resolveCommand() {
-                return getMainModel().getCloneQuotaCommand();
+                return getMainModel().getCloneCommand();
             }
         });
         getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.removeQuota()) {
             @Override
             protected UICommand resolveCommand() {
-                return getMainModel().getRemoveQuotaCommand();
+                return getMainModel().getRemoveCommand();
             }
         });
 

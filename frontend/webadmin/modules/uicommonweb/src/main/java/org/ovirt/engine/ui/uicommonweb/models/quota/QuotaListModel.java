@@ -47,33 +47,34 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
     private static final String COPY_OF = "Copy_of_"; //$NON-NLS-1$
 
-    private UICommand createQuotaCommand;
-    private UICommand removeQuotaCommand;
-    private UICommand editQuotaCommand;
-    private UICommand cloneQuotaCommand;
+    private UICommand createCommand;
+    private UICommand removeCommand;
+    private UICommand editCommand;
+    private UICommand cloneCommand;
 
-    public UICommand getCreateQuotaCommand() {
-        return createQuotaCommand;
+    public UICommand getCreateCommand() {
+        return createCommand;
     }
 
-    public void setCreateQuotaCommand(UICommand createQuotaCommand) {
-        this.createQuotaCommand = createQuotaCommand;
+    public void setCreateCommand(UICommand createQuotaCommand) {
+        this.createCommand = createQuotaCommand;
     }
 
-    public UICommand getRemoveQuotaCommand() {
-        return removeQuotaCommand;
+    public UICommand getRemoveCommand() {
+        return removeCommand;
     }
 
-    public void setRemoveQuotaCommand(UICommand removeQuotaCommand) {
-        this.removeQuotaCommand = removeQuotaCommand;
+    public void setRemoveCommand(UICommand removeQuotaCommand) {
+        this.removeCommand = removeQuotaCommand;
     }
 
-    public UICommand getEditQuotaCommand() {
-        return editQuotaCommand;
+    @Override
+    public UICommand getEditCommand() {
+        return editCommand;
     }
 
-    public void setEditQuotaCommand(UICommand editQuotaCommand) {
-        this.editQuotaCommand = editQuotaCommand;
+    public void setEditCommand(UICommand editQuotaCommand) {
+        this.editCommand = editQuotaCommand;
     }
 
     public QuotaListModel() {
@@ -84,10 +85,10 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         setSearchObjects(new String[] { SearchObjects.QUOTA_OBJ_NAME, SearchObjects.QUOTA_PLU_OBJ_NAME });
         setAvailableInModes(ApplicationMode.VirtOnly);
 
-        setCreateQuotaCommand(new UICommand("Create", this)); //$NON-NLS-1$
-        setEditQuotaCommand(new UICommand("Edit", this)); //$NON-NLS-1$
-        setRemoveQuotaCommand(new UICommand("Remove", this)); //$NON-NLS-1$
-        setCloneQuotaCommand(new UICommand("Clone", this)); //$NON-NLS-1$
+        setCreateCommand(new UICommand("Create", this)); //$NON-NLS-1$
+        setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
+        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
+        setCloneCommand(new UICommand("Clone", this)); //$NON-NLS-1$
 
         updateActionAvailability();
 
@@ -139,9 +140,9 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         List items =
                 getSelectedItems() != null && getSelectedItem() != null ? getSelectedItems()
                         : new ArrayList();
-        getEditQuotaCommand().setIsExecutionAllowed(items.size() == 1);
-        getRemoveQuotaCommand().setIsExecutionAllowed(items.size() > 0);
-        getCloneQuotaCommand().setIsExecutionAllowed(items.size() == 1);
+        getEditCommand().setIsExecutionAllowed(items.size() == 1);
+        getRemoveCommand().setIsExecutionAllowed(items.size() > 0);
+        getCloneCommand().setIsExecutionAllowed(items.size() == 1);
     }
 
     protected void createQuota(){
@@ -590,10 +591,10 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
     @Override
     public void ExecuteCommand(UICommand command) {
         super.ExecuteCommand(command);
-        if (command.equals(getCreateQuotaCommand())) {
+        if (command.equals(getCreateCommand())) {
             createQuota();
         }
-        else if (command.equals(getEditQuotaCommand())) {
+        else if (command.equals(getEditCommand())) {
             editQuota(false);
         }
         else if (command.getName().equals("OnCreateQuota")) { //$NON-NLS-1$
@@ -602,13 +603,13 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
             cancel();
         }
-        else if (command.equals(getRemoveQuotaCommand())) {
+        else if (command.equals(getRemoveCommand())) {
             remove();
         }
         else if (command.getName().equals("OnRemove")) { //$NON-NLS-1$
             onRemove();
         }
-        else if (command.equals(getCloneQuotaCommand())) {
+        else if (command.equals(getCloneCommand())) {
             editQuota(true);
         } else if (command.getName().equals("onCloneQuota")) { //$NON-NLS-1$
             onCreateQuota(true);
@@ -646,12 +647,12 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         return searchString.trim().toLowerCase().startsWith("quota"); //$NON-NLS-1$
     }
 
-    public UICommand getCloneQuotaCommand() {
-        return cloneQuotaCommand;
+    public UICommand getCloneCommand() {
+        return cloneCommand;
     }
 
-    public void setCloneQuotaCommand(UICommand cloneQuotaCommand) {
-        this.cloneQuotaCommand = cloneQuotaCommand;
+    public void setCloneCommand(UICommand cloneQuotaCommand) {
+        this.cloneCommand = cloneQuotaCommand;
     }
 
 }

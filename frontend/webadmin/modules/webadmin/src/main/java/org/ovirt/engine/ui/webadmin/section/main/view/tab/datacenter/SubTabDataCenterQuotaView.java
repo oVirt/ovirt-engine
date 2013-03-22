@@ -52,25 +52,25 @@ public class SubTabDataCenterQuotaView extends AbstractSubTabTableView<storage_p
         getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.addQuota()) {
             @Override
             protected UICommand resolveCommand() {
-                return getDetailModel().getCreateQuotaCommand();
+                return getDetailModel().getCreateCommand();
             }
         });
         getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.editQuota()) {
             @Override
             protected UICommand resolveCommand() {
-                return getDetailModel().getEditQuotaCommand();
+                return getDetailModel().getEditCommand();
             }
         });
         getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.copyQuota()) {
             @Override
             protected UICommand resolveCommand() {
-                return getDetailModel().getCloneQuotaCommand();
+                return getDetailModel().getCloneCommand();
             }
         });
         getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.removeQuota()) {
             @Override
             protected UICommand resolveCommand() {
-                return getDetailModel().getRemoveQuotaCommand();
+                return getDetailModel().getRemoveCommand();
             }
         });
     }

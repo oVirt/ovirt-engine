@@ -189,9 +189,9 @@ public class DataCenterModule extends AbstractGinModule {
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(DataCenterQuotaListModel source,
                     UICommand lastExecutedCommand,
                     Model windowModel) {
-                if (lastExecutedCommand.equals(getModel().getCreateQuotaCommand())
-                        || lastExecutedCommand.equals(getModel().getEditQuotaCommand())
-                        || lastExecutedCommand.equals(getModel().getCloneQuotaCommand())) {
+                if (lastExecutedCommand.equals(getModel().getCreateCommand())
+                        || lastExecutedCommand.equals(getModel().getEditCommand())
+                        || lastExecutedCommand.equals(getModel().getCloneCommand())) {
                     return quotaPopupProvider.get();
                 } else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);
@@ -201,7 +201,7 @@ public class DataCenterModule extends AbstractGinModule {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(DataCenterQuotaListModel source,
                     UICommand lastExecutedCommand) {
-                if (lastExecutedCommand.equals(getModel().getRemoveQuotaCommand())) {
+                if (lastExecutedCommand.equals(getModel().getRemoveCommand())) {
                     return removeConfirmPopupProvider.get();
                 } else {
                     return super.getConfirmModelPopup(source, lastExecutedCommand);
