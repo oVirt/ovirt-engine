@@ -20,6 +20,7 @@ import org.apache.commons.collections.KeyValue;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.interceptors.ThreadLocalSessionCleanerInterceptor;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -55,7 +56,6 @@ import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.searchbackend.BaseConditionFieldAutoCompleter;
 import org.ovirt.engine.core.utils.ErrorTranslatorImpl;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
-import org.ovirt.engine.core.bll.interceptors.ThreadLocalSessionCleanerInterceptor;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
@@ -499,7 +499,6 @@ public class Backend implements BackendInternal {
     public VdcQueryReturnValue RunPublicQuery(VdcQueryType actionType, VdcQueryParametersBase parameters) {
         switch (actionType) {
         case GetDomainList:
-        case GetLicenseProperties:
         case RegisterVds:
         case CheckDBConnection:
         case ValidateSession:
