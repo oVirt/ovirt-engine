@@ -132,8 +132,6 @@ public enum VdcQueryType implements Serializable {
     GetSystemStatistics,
 
     // Bookmarks
-    GetBookmarkById,
-    GetBookmarkByName,
     GetAllBookmarks,
 
     // FieldsUpdating

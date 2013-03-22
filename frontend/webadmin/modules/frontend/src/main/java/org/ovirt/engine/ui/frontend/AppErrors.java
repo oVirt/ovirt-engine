@@ -1564,12 +1564,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Role name must not exceed 126 characters")
     String VALIDATION_ROLES_NAME_MAX();
 
-    @DefaultStringValue("Bookmark ID is required")
-    String VALIDATION_BOOKMARKS_ID_NOT_NULL();
-
-    @DefaultStringValue(" Bookmark name is required")
-    String VALIDATION_BOOKMARKS_NAME_NOT_NULL();
-
     @DefaultStringValue("Cluster name is required")
     String VALIDATION_VDS_GROUP_NAME_NOT_NULL();
 
