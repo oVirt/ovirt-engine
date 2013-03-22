@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAuditLogByIdParameters;
-import org.ovirt.engine.core.common.queries.GetEventMessagesParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendEventsResource extends
@@ -27,7 +27,7 @@ EventsResource {
     @Override
     public Events list() {
         if (isFiltered()) {
-            return mapCollection(getBackendCollection(VdcQueryType.GetAllEventMessages, new GetEventMessagesParameters()));
+            return mapCollection(getBackendCollection(VdcQueryType.GetAllEventMessages, new VdcQueryParametersBase()));
         } else {
             return mapCollection(getBackendCollection());
         }

@@ -106,7 +106,6 @@ public enum VdcQueryType implements Serializable {
     GetDbUserByUserId(VdcQueryAuthType.User),
     GetUsersByVmid,
     GetVmsByUserid,
-    GetUserMessage,
     GetUserBySessionId(VdcQueryAuthType.User),
 
     // AdGroups queries
@@ -154,12 +153,7 @@ public enum VdcQueryType implements Serializable {
     GetAvailableClusterVersionsByStoragePool,
 
     // AuditLog
-    GetVdsMessages,
-    GetVmsMessages,
-    GetUserMessages,
-    GetEventMessages,
     GetAllEventMessages(VdcQueryAuthType.User),
-    GetTemplateMessages,
     GetAllAuditLogsByVMName(VdcQueryAuthType.User),
     GetAllAuditLogsByVMTemplateName(VdcQueryAuthType.User),
     GetAuditLogById,

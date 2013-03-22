@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.List;
-import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.common.queries.*;
 
-// not in use
-public class GetAllEventMessagesQuery<P extends GetEventMessagesParameters> extends QueriesCommandBase<P> {
+import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+
+public class GetAllEventMessagesQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
     public GetAllEventMessagesQuery(P parameters) {
         super(parameters);
     }
