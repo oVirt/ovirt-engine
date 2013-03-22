@@ -91,16 +91,6 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
     }
 
     @Override
-    public List<DbUser> getAllTimeLeasedUsersForVm(int vmid) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vm_pool_id", vmid);
-
-        return getCallsHandler().executeReadList("Gettime_leasedusers_by_vm_pool_id",
-                DbUserRowMapper.instance,
-                parameterSource);
-    }
-
-    @Override
     public List<DbUser> getAllWithQuery(String query) {
         return new SimpleJdbcTemplate(jdbcTemplate).query(query, DbUserRowMapper.instance);
     }

@@ -108,11 +108,6 @@ public class DbUserDAOTest extends BaseDAOTestCase {
     }
 
     @Test
-    public void testGetAllTimeLeasedUsersForVm() {
-        // TODO this API is broken and cannot be tested
-    }
-
-    @Test
     public void testGetAll() {
         List<DbUser> result = dao.getAll();
 

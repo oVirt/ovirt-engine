@@ -40,15 +40,6 @@ public interface DbUserDAO extends DAO, SearchDAO<DbUser> {
     List<DbUser> getAllForVm(Guid id);
 
     /**
-     * Retrieves all users associated with the specified virtual machine id.
-     *
-     * @param vmid
-     *            the virtual machine id
-     * @return the list of users
-     */
-    List<DbUser> getAllTimeLeasedUsersForVm(int vmid);
-
-    /**
      * Retrieves all defined used.
      *
      * @return the collection of all users
