@@ -25,6 +25,7 @@ public class ConsoleManager {
      * message describing the problem.
      */
     public String connectToConsole(HasConsoleModel model) {
+
         ConsoleProtocol selectedProtocol = consoleUtils.determineConnectionProtocol(model);
 
         if (!consoleUtils.canShowConsole(selectedProtocol, model)) {

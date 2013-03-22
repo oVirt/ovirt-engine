@@ -65,9 +65,12 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
+import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.TagsEqualityComparer;
+import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleModelsCache;
@@ -99,6 +102,9 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTreeContext, HasConsoleModel, UserSelectedDisplayProtocolManager
 {
+
+    private final ConsoleOptionsFrontendPersister consoleOptionsPersister = (ConsoleOptionsFrontendPersister) TypeResolver.getInstance().Resolve(ConsoleOptionsFrontendPersister.class);
+
     private UICommand privateNewServerCommand;
 
     public UICommand getNewServerCommand()
@@ -805,6 +811,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
 
         ConsolePopupModel model = new ConsolePopupModel();
+        model.setConsoleContext(ConsoleContext.WA);
         model.setModel(this);
         model.setHashName("editConsole"); //$NON-NLS-1$
         setWindow(model);

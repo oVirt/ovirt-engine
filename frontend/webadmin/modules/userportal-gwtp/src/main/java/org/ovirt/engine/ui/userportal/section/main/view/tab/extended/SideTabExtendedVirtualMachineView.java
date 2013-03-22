@@ -12,7 +12,9 @@ import org.ovirt.engine.ui.common.utils.ConsoleManager;
 import org.ovirt.engine.ui.common.utils.ConsoleUtils;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
+import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
@@ -68,6 +70,7 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
     private static final VmTableResources vmTableResources = GWT.create(VmTableResources.class);
     private final MainTabBasicListItemMessagesTranslator statusTranslator;
     private final ApplicationConstants constants;
+    private final ConsoleOptionsFrontendPersister consoleOptionsPersister;
 
     @Inject
     public SideTabExtendedVirtualMachineView(UserPortalListProvider modelProvider,
@@ -78,13 +81,15 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
             ErrorPopupManager errorPopupManager,
             Provider<ConsolePopupPresenterWidget> consolePopup,
             MainTabBasicListItemMessagesTranslator translator,
-            ApplicationConstants constants) {
+            ApplicationConstants constants,
+            ConsoleOptionsFrontendPersister consoleOptionsPersister) {
         super(modelProvider, applicationResources);
         this.applicationResources = applicationResources;
         this.consoleManager = consoleManager;
         this.errorPopupManager = errorPopupManager;
         this.statusTranslator = translator;
         this.constants = constants;
+        this.consoleOptionsPersister = consoleOptionsPersister;
         applicationResources.sideTabExtendedVmStyle().ensureInjected();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(templates, consoleUtils);
@@ -192,6 +197,7 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
                 new ConsoleButtonCommand() {
                     @Override
                     public void execute(UserPortalItemModel model) {
+                        consoleOptionsPersister.loadFromLocalStorage(model, ConsoleContext.UP_EXTENDED);
                         String message =
                                 consoleManager.connectToConsole(model);
                         if (message != null) {

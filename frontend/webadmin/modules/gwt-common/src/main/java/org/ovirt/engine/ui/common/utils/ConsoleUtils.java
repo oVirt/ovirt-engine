@@ -200,6 +200,15 @@ public class ConsoleUtils {
         return false;
     }
 
+    public boolean isWanOptionsAvailable(HasConsoleModel model) {
+        boolean spiceAvailable =
+                model.getDefaultConsoleModel() instanceof SpiceConsoleModel && isSpiceAvailable();
+        boolean isWindowsVm = model.getVM().getOs().isWindows();
+        boolean spiceGuestAgentInstalled = model.getVM().getSpiceDriverVersion() != null;
+
+        return spiceAvailable && isWindowsVm && spiceGuestAgentInstalled;
+    }
+
     public native String getUserAgentString() /*-{
                                               var userAgent = navigator.userAgent;
                                               return userAgent;

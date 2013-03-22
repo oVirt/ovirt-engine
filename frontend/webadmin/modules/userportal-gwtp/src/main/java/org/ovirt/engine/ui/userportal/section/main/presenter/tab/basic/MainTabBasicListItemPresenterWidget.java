@@ -6,7 +6,9 @@ import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.utils.ConsoleManager;
 import org.ovirt.engine.ui.common.utils.ConsoleUtils;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
+import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -76,15 +78,17 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
     private UserPortalBasicListModel listModel;
 
     private IEventListener selectedItemChangeListener;
+    private final ConsoleOptionsFrontendPersister consoleOptionsPersister;
 
     @Inject
     public MainTabBasicListItemPresenterWidget(EventBus eventBus, ViewDef view,
             ConsoleUtils consoleUtils, ConsoleManager consoleManager,
-            final UserPortalBasicListProvider listModelProvider) {
+            final UserPortalBasicListProvider listModelProvider, ConsoleOptionsFrontendPersister consoleOptionsPersister) {
         super(eventBus, view);
         this.consoleUtils = consoleUtils;
         this.consoleManager = consoleManager;
         this.listModelProvider = listModelProvider;
+        this.consoleOptionsPersister = consoleOptionsPersister;
 
         registerHandler(getEventBus().addHandler(UserPortalModelInitEvent.getType(), new UserPortalModelInitHandler() {
             @Override
@@ -236,6 +240,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
 
     @Override
     public void onDoubleClick(DoubleClickEvent event) {
+        consoleOptionsPersister.loadFromLocalStorage(model, ConsoleContext.UP_BASIC);
         String res = consoleManager.connectToConsole(model);
         if (res != null) {
             getView().showErrorDialog(res);

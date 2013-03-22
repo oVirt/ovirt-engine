@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.presenter.popup;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.utils.ConsoleUtils;
+import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
@@ -76,14 +77,17 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
     private boolean wanOptionsAvailable = false;
     private ConsolePopupModel model;
     private final CommonApplicationConstants constants;
+    private final ConsoleOptionsFrontendPersister consoleOptionsPersister;
 
     @Inject
     public ConsolePopupPresenterWidget(EventBus eventBus, ViewDef view,
             ConsoleUtils consoleUtils,
-            CommonApplicationConstants constants) {
+            CommonApplicationConstants constants,
+            ConsoleOptionsFrontendPersister consoleOptionsPersister) {
         super(eventBus, view);
         this.consoleUtils = consoleUtils;
         this.constants = constants;
+        this.consoleOptionsPersister = consoleOptionsPersister;
     }
 
     @Override
@@ -93,6 +97,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         }
 
         this.model = model;
+        initModel(model);
         initView(model);
         initListeners(model);
 
@@ -100,6 +105,10 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         getView().setVmName(vmName);
 
         super.init(model);
+    }
+
+    private void initModel(ConsolePopupModel model) {
+        consoleOptionsPersister.loadFromLocalStorage(model.getModel(), model.getConsoleContext());
     }
 
     private void initListeners(final ConsolePopupModel model) {
@@ -175,10 +184,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
             }
         }
 
-        boolean isWindowsVm = model.getModel().getVM().getOs().isWindows();
-        boolean spiceGuestAgentInstalled = model.getModel().getVM().getSpiceDriverVersion() != null;
-
-        wanOptionsAvailable = isWindowsVm && spiceAvailable && spiceGuestAgentInstalled;
+        wanOptionsAvailable = consoleUtils.isWanOptionsAvailable(model.getModel());
         if (wanOptionsAvailable) {
             getView().setWanOptionsVisible(true);
         } else {
@@ -203,6 +209,9 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
             // now flush the model
             getView().flushToPrivateModel();
+
+            // store to local storage
+            consoleOptionsPersister.storeToLocalStorage(model.getModel(), model.getConsoleContext());
 
             ConsoleModelChangedEvent.fire(getEventBus(), model.getModel());
         }

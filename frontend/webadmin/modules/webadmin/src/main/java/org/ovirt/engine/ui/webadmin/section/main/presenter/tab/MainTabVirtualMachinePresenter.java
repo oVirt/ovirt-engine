@@ -9,6 +9,8 @@ import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
 import org.ovirt.engine.ui.common.utils.ConsoleManager;
 import org.ovirt.engine.ui.common.utils.ConsoleUtils;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
+import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
+import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -34,6 +36,7 @@ public class MainTabVirtualMachinePresenter extends AbstractMainTabWithDetailsPr
 
     private final ConsoleManager consoleManager;
     private final ErrorPopupManager errorPopupManager;
+    private final ConsoleOptionsFrontendPersister consoleOptionsPersister;
 
     @GenEvent
     public static class VirtualMachineSelectionChange {
@@ -52,6 +55,7 @@ public class MainTabVirtualMachinePresenter extends AbstractMainTabWithDetailsPr
          getModel().getConsoleConnectEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
+                consoleOptionsPersister.loadFromLocalStorage(getModel(), ConsoleContext.WA);
                 String errorMessage = MainTabVirtualMachinePresenter.this.consoleManager.connectToConsole(getModel());
                 if (errorMessage != null) {
                     MainTabVirtualMachinePresenter.this.errorPopupManager.show(errorMessage);
@@ -72,10 +76,12 @@ public class MainTabVirtualMachinePresenter extends AbstractMainTabWithDetailsPr
     @Inject
     public MainTabVirtualMachinePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<VM, VmListModel> modelProvider,
-            ConsoleManager consoleManager, ConsoleUtils consoleUtils, ErrorPopupManager errorPopupManager) {
+            ConsoleManager consoleManager, ConsoleUtils consoleUtils, ErrorPopupManager errorPopupManager,
+            ConsoleOptionsFrontendPersister consoleOptionsPersister) {
         super(eventBus, view, proxy, placeManager, modelProvider);
         this.consoleManager = consoleManager;
         this.errorPopupManager = errorPopupManager;
+        this.consoleOptionsPersister = consoleOptionsPersister;
     }
 
 

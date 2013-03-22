@@ -48,6 +48,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
+import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -1814,5 +1815,10 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     @Override
     protected String getListName() {
         return "UserPortalListModel"; //$NON-NLS-1$
+    }
+
+    @Override
+    protected ConsoleContext getConsoleContext() {
+        return ConsoleContext.UP_EXTENDED;
     }
 }

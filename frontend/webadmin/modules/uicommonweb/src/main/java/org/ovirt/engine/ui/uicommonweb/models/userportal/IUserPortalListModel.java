@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.HasConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleModelsCache;
@@ -121,6 +122,7 @@ public abstract class IUserPortalListModel extends ListWithDetailsModel implemen
         }
 
         ConsolePopupModel model = new ConsolePopupModel();
+        model.setConsoleContext(getConsoleContext());
         model.setModel((UserPortalItemModel) this.getSelectedItem());
         model.setHashName("editConsole"); //$NON-NLS-1$
         setWindow(model);
@@ -134,6 +136,8 @@ public abstract class IUserPortalListModel extends ListWithDetailsModel implemen
         cancelCommand.setIsCancel(true);
         model.getCommands().add(cancelCommand);
     }
+
+    protected abstract ConsoleContext getConsoleContext();
 
     protected void cancel()
     {
