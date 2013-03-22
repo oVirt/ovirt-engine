@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTService;
 
 import com.google.gwt.rpc.server.RpcServlet;
+import com.google.gwt.user.client.rpc.SerializationException;
 
 public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGWTService {
 
@@ -174,4 +175,26 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
         return session.getId();
     }
 
+    @Override
+    protected void doUnexpectedFailure (Throwable error) {
+        // If the user is using a version of the application different to what
+        // the server expects the names of the RPC serialization policy files
+        // will not match, and in that case GWT just sends the exception to the
+        // log, which is not very user or admin friendly, so we replace that
+        // with a more friendly message:
+        if (error instanceof SerializationException) {
+            error = new SerializationException(
+                "Can't find the serialization policy file. " + //$NON-NLS-1$
+                "This probably means that the user has an old " + //$NON-NLS-1$
+                "version of the application loaded in the " + //$NON-NLS-1$
+                "browser. To solve the issue the user needs " + //$NON-NLS-1$
+                "to close the browser and open it again, so " + //$NON-NLS-1$
+                "that the application is reloaded.", //$NON-NLS-1$
+                error
+            );
+        }
+
+        // Now that we replaced the message let GWT do what it uses to do:
+        super.doUnexpectedFailure(error);
+    }
 }
