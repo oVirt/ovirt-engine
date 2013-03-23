@@ -87,7 +87,7 @@ def processTemplate(template, name, subst):
     with open(template, 'r') as f:
         content = f.read()
     for k, v in subst.items():
-        content =  content.replace(k, v)
+        content =  content.replace(str(k), str(v))
     with open(name, 'w') as f:
         f.write(content)
 

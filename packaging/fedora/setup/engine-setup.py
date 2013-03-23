@@ -26,7 +26,6 @@ import tempfile
 import uuid
 from optparse import OptionParser, OptionGroup
 from setup_controller import Controller
-from Cheetah.Template import Template
 from miniyum import MiniYum
 
 # Globals
@@ -745,18 +744,13 @@ def _configureHttpdSslKeys():
         raise Exception(output_messages.ERR_EXP_UPD_HTTPD_SSL_CONFIG%(basedefs.FILE_HTTPD_SSL_CONFIG))
 
 def _redirectUrl():
-    try:
-        # Create the Apache configuration fragment from the template:
-        confTemplate = Template(file=basedefs.FILE_OVIRT_HTTPD_CONF_TEMPLATE)
-        confText = str(confTemplate)
-
-        # Save the text produced by the template:
-        fd = open(basedefs.FILE_OVIRT_HTTPD_CONF, 'w')
-        fd.write(confText)
-        fd.close()
-    except:
-        logging.error(traceback.format_exc())
-        raise Exception(output_messages.ERR_CREATE_OVIRT_HTTPD_CONF%(basedefs.FILE_OVIRT_HTTPD_CONF))
+    utils.processTemplate(
+        basedefs.FILE_OVIRT_HTTPD_CONF_TEMPLATE,
+        basedefs.FILE_OVIRT_HTTPD_CONF,
+        {
+            '@JBOSS_AJP_PORT@': basedefs.JBOSS_AJP_PORT,
+        }
+    )
 
 def _configureHttpdPort():
     try:
