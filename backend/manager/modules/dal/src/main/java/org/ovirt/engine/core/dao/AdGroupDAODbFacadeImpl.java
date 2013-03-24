@@ -42,14 +42,6 @@ public class AdGroupDAODbFacadeImpl extends BaseDAODbFacade implements AdGroupDA
     }
 
     @Override
-    public List<LdapGroup> getAllTimeLeasedForPool(int id) {
-        return getCallsHandler().executeReadList("Gettime_leasedad_groups_by_vm_pool_id",
-                ADGroupRowMapper.instance,
-                getCustomMapSqlParameterSource()
-                        .addValue("vmPoolId", id));
-    }
-
-    @Override
     public void save(LdapGroup group) {
         insertOrUpdate(group, "Insertad_groups");
     }

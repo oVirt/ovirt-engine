@@ -37,15 +37,6 @@ public interface AdGroupDAO extends DAO {
     List<LdapGroup> getAll();
 
     /**
-     * Retrieves all time leased groups for the specified pool.
-     *
-     * @param id
-     *            the pool
-     * @return the list of groups
-     */
-    List<LdapGroup> getAllTimeLeasedForPool(int id);
-
-    /**
      * Saves the supplied group.
      *
      * @param group
