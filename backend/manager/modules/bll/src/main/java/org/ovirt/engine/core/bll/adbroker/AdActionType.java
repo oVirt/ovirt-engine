@@ -8,7 +8,6 @@ public enum AdActionType {
     GetAdUserByUserId,
     GetAdUserByUserName,
     GetAdUserByUserIdList,
-    CreateComputerAccount,
     ChangeUserPassword,
     IsComputerWithTheSameNameExists;
 

@@ -127,7 +127,6 @@ public enum VdcActionType {
     RemoveUser(409, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
     RemoveAdGroup(415, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
     ChangeUserPassword(416, QuotaDependency.NONE),
-    CreateComputerAccount(417, QuotaDependency.NONE),
     LoginAdminUser(418, ActionGroup.LOGIN, false, QuotaDependency.NONE),
     AddUser(419, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
     // Tags
