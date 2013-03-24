@@ -370,69 +370,6 @@ public class SPMAsyncTask {
         }
     }
 
-    protected AsyncTaskStatus PollTask() {
-        AsyncTaskStatus returnValue = null;
-
-        try {
-            Object tempVar = Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.SPMGetTaskStatus,
-                            new SPMTaskGuidBaseVDSCommandParameters(getStoragePoolID(), getTaskID())).getReturnValue();
-            returnValue = (AsyncTaskStatus) ((tempVar instanceof AsyncTaskStatus) ? tempVar : null);
-        }
-
-        catch (RuntimeException e) {
-            log.error(
-                    String.format(
-                            "SPMAsyncTask::PollTask: Polling task '%1$s' (Parent Command %2$s, Parameters Type %3$s) threw an exception, task is still considered running.",
-                            getTaskID(),
-                            (getParameters().getDbAsyncTask().getaction_type()),
-                            getParameters().getClass().getName()),
-                    e);
-        }
-
-        if (returnValue == null) {
-            log.errorFormat(
-                    "SPMAsyncTask::PollTask: Polling task '{0}' (Parent Command {1}, Parameters Type {2}) failed, task is still considered running.",
-                    getTaskID(),
-                    (getParameters().getDbAsyncTask().getaction_type()),
-                    getParameters()
-                            .getClass().getName());
-
-            AsyncTaskStatus tempVar2 = new AsyncTaskStatus();
-            tempVar2.setStatus(AsyncTaskStatusEnum.running);
-            returnValue = tempVar2;
-        }
-
-        String formatString =
-                "SPMAsyncTask::PollTask: Polling task '{0}' (Parent Command {1}, Parameters Type {2}) returned status '{3}'{4}.";
-
-        if (returnValue.getTaskIsInUnusualState()) {
-            log.warnFormat(
-                    formatString,
-                    getTaskID(),
-                    (getParameters().getDbAsyncTask().getaction_type()),
-                    getParameters().getClass().getName(),
-                    returnValue.getStatus(),
-                    ((returnValue.getStatus() == AsyncTaskStatusEnum.finished) ? (String.format(", result '%1$s'",
-                            returnValue.getResult())) : ("")));
-        }
-
-        else {
-            log.infoFormat(
-                    formatString,
-                    getTaskID(),
-                    (getParameters().getDbAsyncTask().getaction_type()),
-                    getParameters().getClass().getName(),
-                    returnValue.getStatus(),
-                    ((returnValue.getStatus() == AsyncTaskStatusEnum.finished) ? (String.format(", result '%1$s'",
-                            returnValue.getResult())) : ("")));
-        }
-
-        return returnValue;
-    }
-
     public void stopTask() {
         stopTask(false);
     }
