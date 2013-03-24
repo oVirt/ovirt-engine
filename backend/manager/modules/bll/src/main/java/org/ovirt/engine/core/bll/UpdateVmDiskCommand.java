@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -91,7 +92,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     private void buildSharedLockMap(List<VM> vmsDiskPluggedTo) {
         sharedLockMap = new HashMap<String, Pair<String, String>>();
         for (VM vm : vmsDiskPluggedTo) {
-            sharedLockMap.put(vm.getId().toString(), LockMessagesMatchUtil.VM);
+            sharedLockMap.put(vm.getId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
     }
 
@@ -99,7 +101,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         if (newDisk.isBoot()) {
             exclusiveLockMap = new HashMap<String, Pair<String, String>>();
             for (VM vm : vmsDiskPluggedTo) {
-                exclusiveLockMap.put(vm.getId().toString(), LockMessagesMatchUtil.VM_DISK_BOOT);
+                exclusiveLockMap.put(vm.getId().toString(),
+                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_DISK_BOOT, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
             }
         }
     }

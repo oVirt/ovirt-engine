@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
@@ -38,7 +39,8 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         if (!isInternalExecution()) {
-            return Collections.singletonMap(getVdsGroupId().toString(), LockMessagesMatchUtil.GLUSTER);
+            return Collections.singletonMap(getVdsGroupId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
         return super.getExclusiveLocks();
     }

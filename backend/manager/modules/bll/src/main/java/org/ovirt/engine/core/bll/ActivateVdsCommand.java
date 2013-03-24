@@ -100,7 +100,7 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getParameters().getVdsId().toString(),
-                LockMessagesMatchUtil.VDS);
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VDS, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 
     @Override

@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcFault;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.NfsMountPointConstraint;
 import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
@@ -255,12 +256,14 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
         domains = getStorageDomainsByConnId(getParameters().getStorageServerConnection().getid());
         if (!domains.isEmpty() && domains.size() == 1) {
             setStorageDomain(domains.get(0));
-            locks.put(getStorageDomain().getId().toString(), LockMessagesMatchUtil.STORAGE);
+            locks.put(getStorageDomain().getId().toString(), LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE,
+                    VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
         // lock the path to NFS to avoid at the same time if some other user tries to:
         // add new storage domain to same path or edit another storage server connection to point to same path
         locks.put(getParameters().getStorageServerConnection().getconnection(),
-                LockMessagesMatchUtil.STORAGE_CONNECTION);
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
+                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         return locks;
     }
 

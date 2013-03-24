@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -374,7 +375,8 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
             return null;
         }
 
-        return Collections.singletonMap(getSourceVmFromDb().getId().toString(), LockMessagesMatchUtil.VM);
+        return Collections.singletonMap(getSourceVmFromDb().getId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 
 }

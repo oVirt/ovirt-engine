@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.vdscommands.SnapshotVDSCommandParameters;
@@ -351,7 +352,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return getParameters().isNeedsLocking() ?
-                Collections.singletonMap(getVmId().toString(),LockMessagesMatchUtil.VM) : null;
+                Collections.singletonMap(getVmId().toString(),
+                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED))
+                : null;
     }
 
     @Override

@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
@@ -329,7 +330,8 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
             sharedLocks = new HashMap<String, Pair<String, String>>();
             for (VDS host : poolHosts) {
-                sharedLocks.put(host.getId().toString(), LockMessagesMatchUtil.VDS);
+                sharedLocks.put(host.getId().toString(),
+                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.VDS, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
             }
 
             if (!poolHosts.isEmpty() && acquireLockInternal()) {

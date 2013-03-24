@@ -10,8 +10,10 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcFault;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -87,6 +89,7 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return Collections.singletonMap(getVds().getStoragePoolId().toString(), LockMessagesMatchUtil.REGISTER_VDS);
+        return Collections.singletonMap(getVds().getStoragePoolId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.REGISTER_VDS, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 }

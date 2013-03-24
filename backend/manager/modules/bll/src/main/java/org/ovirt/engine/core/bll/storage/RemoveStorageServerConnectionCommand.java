@@ -5,7 +5,9 @@ import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.dal.VdcBllMessages;
 
 import java.util.Collections;
 import java.util.Map;
@@ -32,7 +34,9 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-       return Collections.singletonMap(getConnection().getconnection(), LockMessagesMatchUtil.STORAGE_CONNECTION);
+        return Collections.singletonMap(getConnection().getconnection(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
+                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 
 }

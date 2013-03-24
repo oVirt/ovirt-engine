@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.NfsMountPointConstraint;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -97,8 +98,10 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        //lock the path to NFS to avoid at the same time if some other user tries to:
+        // lock the path to NFS to avoid at the same time if some other user tries to:
         // add new storage domain to same path or edit another storage server connection to point to same path
-        return Collections.singletonMap(getParameters().getStorageServerConnection().getconnection(), LockMessagesMatchUtil.STORAGE_CONNECTION);
+        return Collections.singletonMap(getParameters().getStorageServerConnection().getconnection(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
+                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 }

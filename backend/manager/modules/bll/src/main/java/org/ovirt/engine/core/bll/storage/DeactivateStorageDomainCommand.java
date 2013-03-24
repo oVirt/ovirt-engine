@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.DeactivateStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
@@ -318,9 +319,11 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         StorageDomain storageDomain = getStorageDomain();
         if (storageDomain != null) {
             Map<String, Pair<String, String>> locks = new HashMap<String, Pair<String, String>>();
-            locks.put(storageDomain.getId().toString(), LockMessagesMatchUtil.STORAGE);
+            locks.put(storageDomain.getId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
             if (storageDomain.getStorageDomainType() == StorageDomainType.Master) {
-                locks.put(storageDomain.getStoragePoolId().toString(), LockMessagesMatchUtil.POOL);
+                locks.put(storageDomain.getStoragePoolId().toString(),
+                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.POOL, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
             }
             return locks;
         }
@@ -333,7 +336,8 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         if (storageDomain != null && storageDomain.getStorageDomainType() == StorageDomainType.Data
                 && storageDomain.getStorageDomainType() != StorageDomainType.Master
                 && storageDomain.getStoragePoolId() != null) {
-            return Collections.singletonMap(storageDomain.getStoragePoolId().toString(), LockMessagesMatchUtil.POOL);
+            return Collections.singletonMap(storageDomain.getStoragePoolId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.POOL, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
         return null;
     }

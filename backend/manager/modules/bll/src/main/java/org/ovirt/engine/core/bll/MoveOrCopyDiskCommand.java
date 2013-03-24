@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -342,14 +343,16 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             } else {
                 VmTemplate vmTemplate = templates.iterator().next();
                 setVmTemplate(vmTemplate);
-                sharedLockMap = Collections.singletonMap(vmTemplate.getId().toString(), LockMessagesMatchUtil.TEMPLATE);
+                sharedLockMap = Collections.singletonMap(vmTemplate.getId().toString(),
+                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
             }
         } else {
             List<VM> vmsForDisk = getVmsForDiskId();
             if (!vmsForDisk.isEmpty()) {
                 Map<String, Pair<String, String>> lockMap = new HashMap<String, Pair<String, String>>();
                 for (VM currVm : vmsForDisk) {
-                    lockMap.put(currVm.getId().toString(), LockMessagesMatchUtil.VM);
+                    lockMap.put(currVm.getId().toString(),
+                            LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
                 }
                 lockForMove(lockMap);
             }
@@ -363,7 +366,8 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return Collections.singletonMap(getImage().getId().toString(), LockMessagesMatchUtil.DISK);
+        return Collections.singletonMap(getImage().getId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 
     @Override

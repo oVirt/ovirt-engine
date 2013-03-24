@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -177,11 +178,13 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         Map<String, Pair<String, String>> locks = new HashMap<String, Pair<String, String>>();
         if (!disk.isShareable()) {
-            locks.put(disk.getId().toString(), LockMessagesMatchUtil.DISK);
+            locks.put(disk.getId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
 
         if (disk.isBoot()) {
-            locks.put(getParameters().getVmId().toString(), LockMessagesMatchUtil.VM_DISK_BOOT);
+            locks.put(getParameters().getVmId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_DISK_BOOT, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
 
         return locks;

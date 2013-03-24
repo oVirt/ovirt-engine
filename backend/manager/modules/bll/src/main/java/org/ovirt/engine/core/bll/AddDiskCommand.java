@@ -44,6 +44,7 @@ import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -501,7 +502,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         if (getParameters().getDiskInfo().isBoot() && getParameters().getVmId() != null
                 && !Guid.Empty.equals(getParameters().getVmId())) {
-            return Collections.singletonMap(getParameters().getVmId().toString(), LockMessagesMatchUtil.VM_DISK_BOOT);
+            return Collections.singletonMap(getParameters().getVmId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_DISK_BOOT, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
         return null;
     }
@@ -509,7 +511,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
         if (getParameters().getVmId() != null && !Guid.Empty.equals(getParameters().getVmId())) {
-            return Collections.singletonMap(getParameters().getVmId().toString(), LockMessagesMatchUtil.VM);
+            return Collections.singletonMap(getParameters().getVmId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
         return null;
     }

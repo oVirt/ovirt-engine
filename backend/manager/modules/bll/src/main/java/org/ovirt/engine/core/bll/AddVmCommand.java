@@ -48,6 +48,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -755,7 +756,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         if (!StringUtils.isBlank(getParameters().getVm().getName())) {
-            return Collections.singletonMap(getParameters().getVm().getName(), LockMessagesMatchUtil.VM_NAME);
+            return Collections.singletonMap(getParameters().getVm().getName(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_NAME, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
         return null;
     }

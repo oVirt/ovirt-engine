@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -217,12 +218,14 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
 
         VDSGroup cluster = getVdsGroup();
         if (cluster == null || cluster.supportsVirtService()) {
-            locks.put(getParameters().getVdsId().toString(), LockMessagesMatchUtil.VDS);
+            locks.put(getParameters().getVdsId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VDS, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
 
         // Need to acquire lock on cluster if the host belongs to a gluster cluster
         if (cluster != null && cluster.supportsGlusterService()) {
-            locks.put(cluster.getId().toString(), LockMessagesMatchUtil.GLUSTER);
+            locks.put(cluster.getId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
 
         return locks;

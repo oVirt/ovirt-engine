@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -263,6 +264,7 @@ VmPoolUserCommandBase<T> {
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return Collections.singletonMap(getAdUserId().toString(), LockMessagesMatchUtil.USER_VM_POOL);
+        return Collections.singletonMap(getAdUserId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.USER_VM_POOL, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 }
