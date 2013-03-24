@@ -103,12 +103,9 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
         specificUserOrGroupRadio.setValue(true);
         everyoneRadio.setValue(false);
         localize(constants);
-        initDriver();
     }
 
     protected abstract void generateIds();
-
-    protected abstract void initDriver();
 
     protected abstract T doFlush();
 

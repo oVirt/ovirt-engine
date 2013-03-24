@@ -26,16 +26,12 @@ public class PermissionsPopupView extends AbstractPermissionsPopupView<AdElement
     @Inject
     public PermissionsPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources, constants);
+        driver.initialize(this);
     }
 
     @Override
     protected void generateIds() {
         ViewIdHandler.idHandler.generateAndSetIds(this);
-    }
-
-    @Override
-    protected void initDriver() {
-        driver.initialize(this);
     }
 
     @Override
