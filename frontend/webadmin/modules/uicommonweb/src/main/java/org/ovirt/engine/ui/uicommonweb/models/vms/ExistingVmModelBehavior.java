@@ -136,6 +136,8 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         getModel().getNumOfSockets().setSelectedItem(vm.getNumOfSockets());
         getModel().getNumOfSockets().setIsChangable(!vm.isRunning());
 
+        getModel().getCoresPerSocket().setIsChangable(!vm.isRunning());
+
         getModel().getKernel_parameters().setEntity(vm.getKernelParams());
         getModel().getKernel_path().setEntity(vm.getKernelUrl());
         getModel().getInitrd_path().setEntity(vm.getInitrdUrl());
