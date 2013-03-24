@@ -179,7 +179,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setDestroyCommand(new UICommand("Destroy", this)); //$NON-NLS-1$
 
-        UpdateActionAvailability();
+        updateActionAvailability();
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
@@ -371,7 +371,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         IStorageModel item = null;
         switch (storage.getStorageType()) {
             case NFS:
-                item = PrepareNfsStorageForEdit(storage);
+                item = prepareNfsStorageForEdit(storage);
                 boolean isNfsPathEditable = isNfsPathEditable(storage);
                 isStorageEditable = isStorageEditable || isNfsPathEditable;
                 //when storage is active, only SPM can perform actions on it, thus it is set above that host is not changeable.
@@ -380,19 +380,19 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 break;
 
             case FCP:
-                item = PrepareFcpStorageForEdit(storage);
+                item = prepareFcpStorageForEdit(storage);
                 break;
 
             case ISCSI:
-                item = PrepareIscsiStorageForEdit(storage);
+                item = prepareIscsiStorageForEdit(storage);
                 break;
 
             case LOCALFS:
-                item = PrepareLocalStorageForEdit(storage);
+                item = prepareLocalStorageForEdit(storage);
                 break;
 
             case POSIXFS:
-                item = PreparePosixStorageForEdit(storage);
+                item = preparePosixStorageForEdit(storage);
                 break;
 
             case GLUSTERFS:
@@ -438,7 +438,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         }
     }
 
-    private IStorageModel PrepareNfsStorageForEdit(StorageDomain storage)
+    private IStorageModel prepareNfsStorageForEdit(StorageDomain storage)
     {
         final NfsStorageModel model = new NfsStorageModel();
         model.setRole(storage.getStorageDomainType());
@@ -485,7 +485,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         return (storage.getStorageDomainType() == StorageDomainType.Data || storage.getStorageDomainType() == StorageDomainType.Master) && storage.getStatus() == StorageDomainStatus.Maintenance;
     }
 
-    private IStorageModel PrepareLocalStorageForEdit(StorageDomain storage)
+    private IStorageModel prepareLocalStorageForEdit(StorageDomain storage)
     {
         LocalStorageModel model = new LocalStorageModel();
         model.setRole(storage.getStorageDomainType());
@@ -505,7 +505,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         return model;
     }
 
-    private IStorageModel PreparePosixStorageForEdit(StorageDomain storage) {
+    private IStorageModel preparePosixStorageForEdit(StorageDomain storage) {
 
         final PosixStorageModel model = new PosixStorageModel();
         model.setRole(storage.getStorageDomainType());
@@ -528,22 +528,22 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         return model;
     }
 
-    private IStorageModel PrepareIscsiStorageForEdit(StorageDomain storage)
+    private IStorageModel prepareIscsiStorageForEdit(StorageDomain storage)
     {
         IscsiStorageModel model = new IscsiStorageModel();
         model.setRole(storage.getStorageDomainType());
 
-        PrepareSanStorageForEdit(model);
+        prepareSanStorageForEdit(model);
 
         return model;
     }
 
-    private IStorageModel PrepareFcpStorageForEdit(StorageDomain storage)
+    private IStorageModel prepareFcpStorageForEdit(StorageDomain storage)
     {
         FcpStorageModel model = new FcpStorageModel();
         model.setRole(storage.getStorageDomainType());
 
-        PrepareSanStorageForEdit(model);
+        prepareSanStorageForEdit(model);
 
         return model;
     }
@@ -571,7 +571,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         return model;
     }
 
-    private void PrepareSanStorageForEdit(final SanStorageModel model)
+    private void prepareSanStorageForEdit(final SanStorageModel model)
     {
         StorageModel storageModel = (StorageModel) getWindow();
         StorageDomain storage = (StorageDomain) getSelectedItem();
@@ -581,16 +581,16 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             storageModel.getHost().getSelectedItemChangedEvent().addListener(new IEventListener() {
                 @Override
                 public void eventRaised(Event ev, Object sender, EventArgs args) {
-                    PostPrepareSanStorageForEdit(model, true);
+                    postPrepareSanStorageForEdit(model, true);
                 }
             });
         }
         else {
-            PostPrepareSanStorageForEdit(model, false);
+            postPrepareSanStorageForEdit(model, false);
         }
     }
 
-    private void PostPrepareSanStorageForEdit(SanStorageModel model, boolean isStorageActive)
+    private void postPrepareSanStorageForEdit(SanStorageModel model, boolean isStorageActive)
     {
         StorageModel storageModel = (StorageModel) getWindow();
         StorageDomain storage = (StorageDomain) getSelectedItem();
@@ -903,15 +903,15 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         if (model.getSelectedItem() instanceof NfsStorageModel)
         {
-            SaveNfsStorage();
+            saveNfsStorage();
         }
         else if (model.getSelectedItem() instanceof LocalStorageModel)
         {
-            SaveLocalStorage();
+            saveLocalStorage();
         }
         else if (model.getSelectedItem() instanceof PosixStorageModel)
         {
-            SavePosixStorage();
+            savePosixStorage();
         }
         else if (model.getSelectedItem() instanceof GlusterStorageModel)
         {
@@ -919,11 +919,11 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         }
         else
         {
-            SaveSanStorage();
+            saveSanStorage();
         }
     }
 
-    private void SaveLocalStorage()
+    private void saveLocalStorage()
     {
         if (getWindow().getProgress() != null)
         {
@@ -935,7 +935,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         Task.Create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveLocal" }))).Run(); //$NON-NLS-1$
     }
 
-    private void  SaveNfsStorage()
+    private void saveNfsStorage()
     {
         if (getWindow().getProgress() != null)
         {
@@ -947,7 +947,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         Task.Create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveNfs" }))).Run(); //$NON-NLS-1$
     }
 
-    private void SavePosixStorage() {
+    private void savePosixStorage() {
 
         if (getWindow().getProgress() != null) {
             return;
@@ -969,7 +969,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         Task.Create(this, new ArrayList<Object>(Arrays.asList(new Object[] {"SaveGluster"}))).Run(); //$NON-NLS-1$
     }
 
-    private void SaveSanStorage()
+    private void saveSanStorage()
     {
         StorageModel storageModel = (StorageModel) getWindow();
         SanStorageModel sanStorageModel = (SanStorageModel) storageModel.getSelectedItem();
@@ -979,7 +979,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             OnSaveSanStorage();
         }
         else {
-            ForceCreationWarning(usedLunsMessages);
+            forceCreationWarning(usedLunsMessages);
         }
     }
 
@@ -998,7 +998,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         Task.Create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveSan" }))).Run(); //$NON-NLS-1$
     }
 
-    private void ForceCreationWarning(ArrayList<String> usedLunsMessages) {
+    private void forceCreationWarning(ArrayList<String> usedLunsMessages) {
         StorageModel storageModel = (StorageModel) getWindow();
         SanStorageModel sanStorageModel = (SanStorageModel) storageModel.getSelectedItem();
         sanStorageModel.setForce(true);
@@ -1038,7 +1038,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     protected void OnSelectedItemChanged()
     {
         super.OnSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -1083,7 +1083,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     protected void SelectedItemsChanged()
     {
         super.SelectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -1093,11 +1093,11 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         if (e.PropertyName.equals("storage_domain_shared_status")) //$NON-NLS-1$
         {
-            UpdateActionAvailability();
+            updateActionAvailability();
         }
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         ArrayList<StorageDomain> items =
                 getSelectedItems() != null ? Linq.<StorageDomain> Cast(getSelectedItems())
@@ -1193,7 +1193,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         }
     }
 
-    private void SavePosixStorage(TaskContext context) {
+    private void savePosixStorage(TaskContext context) {
 
         this.context = context;
 
@@ -1444,7 +1444,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             this);
     }
 
-    private void SaveNfsStorage(TaskContext context)
+
+    private void saveNfsStorage(TaskContext context)
     {
         this.context = context;
 
@@ -1516,6 +1517,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         StorageModel model = (StorageModel) getWindow();
         NfsStorageModel nfsModel = (NfsStorageModel) model.getSelectedItem();
         VDS host = (VDS) model.getHost().getSelectedItem();
+
         Guid hostId = Guid.Empty;
         Guid storagePoolId = Guid.Empty;
         if(host != null) {
@@ -1672,7 +1674,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             }, this);
     }
 
-    private void SaveLocalStorage(TaskContext context)
+    private void saveLocalStorage(TaskContext context)
     {
         this.context = context;
 
@@ -1815,7 +1817,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                         message })));
     }
 
-    private void SaveSanStorage(TaskContext context)
+    private void saveSanStorage(TaskContext context)
     {
         this.context = context;
 
@@ -2089,15 +2091,15 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         if (StringHelper.stringsEqual(key, "SaveNfs")) //$NON-NLS-1$
         {
-            SaveNfsStorage(context);
+            saveNfsStorage(context);
         }
         else if (StringHelper.stringsEqual(key, "SaveLocal")) //$NON-NLS-1$
         {
-            SaveLocalStorage(context);
+            saveLocalStorage(context);
         }
         else if (StringHelper.stringsEqual(key, "SavePosix")) //$NON-NLS-1$
         {
-            SavePosixStorage(context);
+            savePosixStorage(context);
         }
         else if (StringHelper.stringsEqual(key, "SaveGluster")) //$NON-NLS-1$
         {
@@ -2105,7 +2107,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         }
         else if (StringHelper.stringsEqual(key, "SaveSan")) //$NON-NLS-1$
         {
-            SaveSanStorage(context);
+            saveSanStorage(context);
         }
         else if (StringHelper.stringsEqual(key, "ImportNfs")) //$NON-NLS-1$
         {
@@ -2146,7 +2148,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
     private void OnSystemTreeSelectedItemChanged()
     {
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
