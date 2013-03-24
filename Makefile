@@ -272,6 +272,7 @@ install_setup:
 	install -m 644 packaging/fedora/setup/firewalld.ovirt.xml $(DESTDIR)$(SYSCONF_DIR)/firewalld/services/ovirt.xml
 	install -m 644 packaging/fedora/setup/nfs.sysconfig $(DESTDIR)$(DATA_DIR)/conf
 	install -m 644 packaging/fedora/setup/ovirt-engine-proxy.conf.in $(DESTDIR)$(DATA_DIR)/conf
+	install -m 644 packaging/fedora/setup/ovirt-engine-root-redirect.conf.in $(DESTDIR)$(DATA_DIR)/conf
 
 	# Shared python modules:
 	install -m 644 packaging/fedora/setup/nfsutils.py $(DESTDIR)$(DATA_DIR)/scripts

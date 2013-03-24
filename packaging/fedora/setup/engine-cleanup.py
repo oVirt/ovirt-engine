@@ -66,6 +66,7 @@ This utility will wipe all existing data including configuration settings, certi
 In addition, all existing DB connections will be closed." % (PROD_NAME)
 MSG_PROCEED_QUESTION = "Would you like to proceed"
 
+MSG_INFO_CLEANING_PROXY="Cleaning apache proxy configuration"
 MSG_INFO_CLEANING_NFS="Cleaning NFS Exports"
 MSG_CLEAN_NFS_EXPORTS_QUESTION="Would you like to remove %s configuration from \
 {files}" % basedefs.APP_NAME
@@ -447,6 +448,13 @@ def _printErrlMessages():
         logging.info('%s'%(msg))
         print ('%s'%(msg))
 
+def clearProxyConfig():
+
+    if os.path.exists(basedefs.FILE_OVIRT_HTTPD_CONF_ROOT):
+        os.remove(basedefs.FILE_OVIRT_HTTPD_CONF_ROOT)
+    if os.path.exists(basedefs.FILE_OVIRT_HTTPD_CONF):
+        os.remove(basedefs.FILE_OVIRT_HTTPD_CONF)
+
 def main(options):
     db = DB()
     ca = CA()
@@ -474,6 +482,10 @@ def main(options):
     # Remove CA
     if ca.exists() and options.remove_ca:
         runFunc([ca.backup, ca.remove], MSG_INFO_REMOVE_CA)
+
+    # Clear proxying
+    runFunc(clearProxyConfig, MSG_INFO_CLEANING_PROXY)
+
 
     # Stop notifierd service
     runFunc(stopNotifier, MSG_INFO_STOP_NOTIFIERD)

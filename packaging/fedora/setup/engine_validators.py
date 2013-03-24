@@ -275,6 +275,17 @@ def validateRemoteHost(param, options=[]):
     else:
         return False
 
+def validatePortsRedirection(param, options=[]):
+    """ Validate that the we are customizing apache
+    """
+    # If we perform httpd redirection, return True.
+    # If not, return False
+
+    if "OVERRIDE_HTTPD_CONFIG" in param.keys() and param["OVERRIDE_HTTPD_CONFIG"] == "yes":
+        return True
+    else:
+        return False
+
 def validateRemoteDB(param={}, options=[]):
     """ Ensure, that params provided for the remote DB are
      working, and if not, issue the correct error.

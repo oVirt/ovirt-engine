@@ -206,6 +206,10 @@
     <url-pattern>/OvirtEngineWeb/ValidateSession</url-pattern>
   </servlet-mapping>
 
+  <welcome-file-list>
+    <welcome-file>ovirt-engine.html</welcome-file>
+  </welcome-file-list>
+
   <!-- Go to the index when a page is not found (preserving the
        404 status code): -->
   <error-page>

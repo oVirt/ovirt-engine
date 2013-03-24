@@ -67,6 +67,7 @@ INFO_ERROR="ERROR"
 
 # Group descriptions
 INFO_GRP_PORTS="Ports configuration"
+INFO_GRP_REDIRECTION="Default page redirection configuration"
 INFO_GRP_ALL="General configuration parameters"
 INFO_GRP_REMOTE_DB="Remote DB parameters"
 INFO_GRP_LOCAL_DB="Local DB parameters"
@@ -117,8 +118,9 @@ The installer can override current configuration .\n\
 Alternatively you can use JBoss directly (on ports higher than 1024)\n\
 Do you wish to override current httpd configuration and restart the service?" % basedefs.APP_NAME
 
-
-
+INFO_CONF_PARAMS_OVERRIDE_HTTPD_ROOT_USAGE = "Configure the apache root redirection"
+INFO_CONF_PARAMS_OVERRIDE_HTTPD_ROOT_PROMPT = 'Setup can configure server default page to \
+launch %s. Do you wish to do so?' % basedefs.APP_NAME
 INFO_CONF_PARAMS_HTTP_PORT_USAGE="Configures HTTP service port"
 INFO_CONF_PARAMS_HTTP_PORT_PROMPT="HTTP Port"
 INFO_CONF_PARAMS_HTTPS_PORT_USAGE="Configures HTTPS service port"

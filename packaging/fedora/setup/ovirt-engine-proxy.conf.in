@@ -1,34 +1,49 @@
 #
-# Redirect all requests to the application server using the AJP
-# protocol.
+# ovirt-engine proxy
 #
-# The following parameters are recommended:
-#
-# retry=5
-#
-# This is needed to make sure that connections to the application server
-# are recovered in a short time interval (5 seconds at the moment)
-# otherwise when the application server is restarted the web server will
-# refuse to connect during 60 seconds.
-#
-# timeout=600
-#
-# This is needed to make sure that long RESTAPI requests have time to
-# finish before the web server aborts the request as the default timeout
-# (controlled by the Timeout directive in httpd.conf) is 60 seconds.
-#
+<IfModule proxy_ajp_module>
 
-<Location />
-  ProxyPass ajp://localhost:@JBOSS_AJP_PORT@/ retry=5 timeout=3600
-  <IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/javascript text/css text/html text/xml text/json application/xml application/json application/x-yaml
-  </IfModule>
-</Location>
+    <Proxy ajp://localhost:@JBOSS_AJP_PORT@>
+        # This is needed to make sure that connections to the application server
+        # are recovered in a short time interval (5 seconds at the moment)
+        # otherwise when the application server is restarted the web server will
+        # refuse to connect during 60 seconds.
+        ProxySet retry=5
 
-#
-# Remove the Expect headers from API requests (this is needed to fix a
-# problem with some API clients):
-#
-<IfModule mod_headers.c>
-  RequestHeader unset Expect early
+        # This is needed to make sure that long RESTAPI requests have time to
+        # finish before the web server aborts the request as the default timeout
+        # (controlled by the Timeout directive in httpd.conf) is 60 seconds.
+        ProxySet timeout=3600
+    </Proxy>
+
+    Redirect /ovirt-engine /ovirt-engine/
+    Redirect /ovirt-engine.html /ovirt-engine/
+
+    <Location /ovirt-engine/>
+        ProxyPass ajp://localhost:@JBOSS_AJP_PORT@/
+    </Location>
+
+    <LocationMatch ^/(UserPortal($|/)|OvirtEngineWeb($|/)|webadmin($|/)|docs($|/)|spice/|ca.crt$|engine.ssh.key.txt$|rhevm.ssh.key.txt$|ovirt-engine-style.css$)>
+        ProxyPassMatch ajp://localhost:@JBOSS_AJP_PORT@
+        <IfModule deflate_module>
+            AddOutputFilterByType DEFLATE text/javascript text/css text/html text/xml text/json application/xml application/json application/x-yaml
+        </IfModule>
+    </LocationMatch>
+
+    <Location /api>
+        ProxyPass ajp://localhost:@JBOSS_AJP_PORT@/api
+
+        #
+        # Remove the Expect headers from API requests (this is needed to fix a
+        # problem with some API clients):
+        #
+        <IfModule headers_module>
+            RequestHeader unset Expect early
+        </IfModule>
+
+        <IfModule deflate_module>
+            AddOutputFilterByType DEFLATE text/javascript text/css text/html text/xml text/json application/xml application/json application/x-yaml
+        </IfModule>
+    </Location>
+
 </IfModule>

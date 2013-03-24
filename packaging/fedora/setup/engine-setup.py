@@ -271,6 +271,20 @@ def initConfig():
                 "NEED_CONFIRM"    : False,
                 "CONDITION"       : False}]
          ,
+         "REDIRECTION": [
+            {   "CMD_OPTION"      :"override-httpd-root",
+                "USAGE"           :output_messages.INFO_CONF_PARAMS_OVERRIDE_HTTPD_ROOT_USAGE,
+                "PROMPT"          :output_messages.INFO_CONF_PARAMS_OVERRIDE_HTTPD_ROOT_PROMPT,
+                "OPTION_LIST"     :["yes","no"],
+                "VALIDATION_FUNC" :validate.validateOptions,
+                "DEFAULT_VALUE"   :"yes",
+                "MASK_INPUT"      : False,
+                "LOOSE_VALIDATION": False,
+                "CONF_NAME"       : "OVERRIDE_HTTPD_ROOT",
+                "USE_DEFAULT"     : False,
+                "NEED_CONFIRM"    : False,
+                "CONDITION"       : False},
+         ],
          "ALL_PARAMS" : [
              {  "CMD_OPTION"      :"random-passwords",
                 "USAGE"           :output_messages.INFO_CONF_PARAMS_RANDOM_PASSWORDS_USAGE,
@@ -513,6 +527,12 @@ def initConfig():
                       "PRE_CONDITION_MATCH"   : True,
                       "POST_CONDITION"        : False,
                       "POST_CONDITION_MATCH"  : True},
+                    { "GROUP_NAME"            : "REDIRECTION",
+                      "DESCRIPTION"           : output_messages.INFO_GRP_REDIRECTION,
+                      "PRE_CONDITION"         : validate.validatePortsRedirection,
+                      "PRE_CONDITION_MATCH"   : True,
+                      "POST_CONDITION"        : False,
+                      "POST_CONDITION_MATCH"  : True},
                     { "GROUP_NAME"            : "ALL_PARAMS",
                       "DESCRIPTION"           : output_messages.INFO_GRP_ALL,
                       "PRE_CONDITION"         : False,
@@ -751,6 +771,15 @@ def _redirectUrl():
             '@JBOSS_AJP_PORT@': basedefs.JBOSS_AJP_PORT,
         }
     )
+
+
+    # if redirection of root required, copy a file into the conf.d folder.
+    if controller.CONF["OVERRIDE_HTTPD_ROOT"] == "yes":
+        utils.copyFile(
+            basedefs.FILE_OVIRT_HTTPD_CONF_ROOT_TEMPLATE,
+            basedefs.FILE_OVIRT_HTTPD_CONF_ROOT,
+        )
+
 
 def _configureHttpdPort():
     try:
@@ -2238,11 +2267,18 @@ def main(configFile=None):
         utils.lockRpmVersion(miniyum, basedefs.RPM_LOCK_LIST.split())
 
         # Print info
+        enginePath = '/ovirt-engine'
+        if controller.CONF["OVERRIDE_HTTPD_ROOT"] == "yes":
+            enginePath = ''
         _addFinalInfoMsg()
         print output_messages.INFO_INSTALL_SUCCESS
         print output_messages.INFO_RHEVM_URL % (
-            "http://%s:%s" % (controller.CONF["HOST_FQDN"],
-            controller.CONF["HTTP_PORT"]))
+            "http://{fqdn}:{port}{enginePath}".format(
+                fqdn=controller.CONF["HOST_FQDN"],
+                port=controller.CONF["HTTP_PORT"],
+                enginePath=enginePath,
+            )
+        )
         _printAdditionalMessages()
 
     finally:
