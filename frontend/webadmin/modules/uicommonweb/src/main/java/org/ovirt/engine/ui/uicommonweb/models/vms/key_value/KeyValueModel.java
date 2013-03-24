@@ -139,6 +139,9 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
     }
 
     public void setKeyValueString(List<String> lines) {
+        if (lines == null) {
+            return;
+        }
         allKeyValueMap = new HashMap<String, String>();
         allRegExKeys = new HashMap<String, List<String>>();
         RegexValidation regexValidation = new RegexValidation();
@@ -258,6 +261,9 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
     @Override
     public String getEntity() {
         StringBuilder builder = new StringBuilder();
+        if (getKeyValueLines().getItems() == null) {
+            return "";
+        }
         for (KeyValueLineModel keyValueLineModel : (List<KeyValueLineModel>) getKeyValueLines().getItems()) {
             String key = (String) keyValueLineModel.getKeys().getSelectedItem();
             if (key.equals(NO_KEYS) || key.equals(SELECT_KEY)) {

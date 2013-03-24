@@ -291,32 +291,17 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         UpdateActionAvailability();
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object model, Object result)
-            {
-                UserPortalListModel userPortalListModel = (UserPortalListModel) model;
-                if (result != null)
-                {
-                    userPortalListModel.setCustomPropertiesKeysList(new HashMap<Version, ArrayList<String>>());
-                    HashMap<Version, String> dictionary = (HashMap<Version, String>) result;
-                    for (Map.Entry<Version, String> keyValuePair : dictionary.entrySet())
-                    {
-                        userPortalListModel.CustomPropertiesKeysList.put(keyValuePair.getKey(),
-                                new ArrayList<String>());
-                        for (String s : keyValuePair.getValue().split("[;]", -1)) //$NON-NLS-1$
-                        {
-                            userPortalListModel.CustomPropertiesKeysList.get(keyValuePair.getKey()).add(s);
-                        }
-                    }
-                }
-
-            }
-        };
         if (getCustomPropertiesKeysList() == null) {
-            AsyncDataProvider.GetCustomPropertiesList(_asyncQuery);
+            AsyncDataProvider.GetCustomPropertiesList(new AsyncQuery(this,
+                    new INewAsyncCallback() {
+                        @Override
+                        public void OnSuccess(Object target, Object returnValue) {
+                            UserPortalListModel model = (UserPortalListModel) target;
+                            if (returnValue != null) {
+                                model.setCustomPropertiesKeysList((HashMap<Version, ArrayList<String>>) returnValue);
+                            }
+                        }
+                    }));
         }
     }
 

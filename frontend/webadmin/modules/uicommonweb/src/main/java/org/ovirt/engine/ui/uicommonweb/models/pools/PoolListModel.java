@@ -19,11 +19,11 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetVmdataByPoolIdParameters;
@@ -74,6 +74,7 @@ public class PoolListModel extends ListWithDetailsModel
 
     private UICommand privateEditCommand;
 
+    @Override
     public UICommand getEditCommand()
     {
         return privateEditCommand;
@@ -147,21 +148,9 @@ public class PoolListModel extends ListWithDetailsModel
                     new INewAsyncCallback() {
                         @Override
                         public void OnSuccess(Object target, Object returnValue) {
-
                             PoolListModel model = (PoolListModel) target;
-                            if (returnValue != null)
-                            {
-                                model.setCustomPropertiesKeysList(new HashMap<Version, ArrayList<String>>());
-                                HashMap<Version, String> dictionary = (HashMap<Version, String>) returnValue;
-                                for (Map.Entry<Version, String> keyValuePair : dictionary.entrySet())
-                                {
-                                    model.getCustomPropertiesKeysList().put(keyValuePair.getKey(),
-                                            new ArrayList<String>());
-                                    for (String s : keyValuePair.getValue().split("[;]", -1)) //$NON-NLS-1$
-                                    {
-                                        model.getCustomPropertiesKeysList().get(keyValuePair.getKey()).add(s);
-                                    }
-                                }
+                            if (returnValue != null) {
+                                model.setCustomPropertiesKeysList((HashMap<Version, ArrayList<String>>) returnValue);
                             }
                         }
                     }));

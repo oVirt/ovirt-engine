@@ -18,8 +18,8 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -59,7 +59,6 @@ import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllAttachableDisks;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
-import org.ovirt.engine.core.common.queries.GetImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
 import org.ovirt.engine.core.common.queries.GetAllVdsByStoragePoolParameters;
 import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByVmIdParameters;
@@ -69,6 +68,7 @@ import org.ovirt.engine.core.common.queries.GetDataCentersWithPermittedActionOnC
 import org.ovirt.engine.core.common.queries.GetDomainListParameters;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
 import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParameters;
+import org.ovirt.engine.core.common.queries.GetImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
 import org.ovirt.engine.core.common.queries.GetPermittedStorageDomainsByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetStorageDomainsByConnectionParameters;
@@ -1198,7 +1198,24 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (HashMap<Version, String>) source : null;
+                Map<Version, String> map =
+                        source != null ? (HashMap<Version, String>) source : new HashMap<Version, String>();
+                Map<Version, ArrayList<String>> retMap = new HashMap<Version, ArrayList<String>>();
+
+                for (Map.Entry<Version, String> keyValuePair : map.entrySet()) {
+                    String[] split = keyValuePair.getValue().split("[;]", -1); //$NON-NLS-1$
+                    if (split.length == 1 && (split[0] == null || split[0].isEmpty())) {
+                        retMap.put(keyValuePair.getKey(),
+                                null);
+                    } else {
+                        retMap.put(keyValuePair.getKey(),
+                                new ArrayList<String>());
+                        for (String s : split) {
+                            retMap.get(keyValuePair.getKey()).add(s);
+                        }
+                    }
+                }
+                return retMap;
             }
         };
         Frontend.RunQuery(VdcQueryType.GetVmCustomProperties, new VdcQueryParametersBase(), aQuery);
