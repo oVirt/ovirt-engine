@@ -72,7 +72,6 @@ engineLogDir = None
 engineTmpDir = None
 engineUsrDir = None
 engineVarDir = None
-engineLockDir = None
 engineContentDir = None
 engineDeploymentsDir = None
 
@@ -237,7 +236,6 @@ def loadConfig():
     global engineUsrDir
     global engineVarDir
     global engineCacheDir
-    global engineLockDir
     global engineServiceDir
     global engineContentDir
     global engineDeploymentsDir
@@ -246,7 +244,6 @@ def loadConfig():
     engineTmpDir = engineConfig.getString("ENGINE_TMP")
     engineUsrDir = engineConfig.getString("ENGINE_USR")
     engineVarDir = engineConfig.getString("ENGINE_VAR")
-    engineLockDir = engineConfig.getString("ENGINE_LOCK")
     engineCacheDir = engineConfig.getString("ENGINE_CACHE")
     engineServiceDir = os.path.join(engineUsrDir, "service")
     engineContentDir = os.path.join(engineVarDir, "content")
@@ -335,7 +332,6 @@ def checkInstallation():
     checkDirectory(engineLogDir, uid=engineUid, gid=engineGid)
     checkDirectory(engineUsrDir)
     checkDirectory(engineVarDir, uid=engineUid, gid=engineGid)
-    checkDirectory(engineLockDir, uid=engineUid, gid=engineGid)
     checkDirectory(engineServiceDir)
     checkDirectory(engineContentDir, uid=engineUid, gid=engineGid)
     checkDirectory(engineDeploymentsDir, uid=engineUid, gid=engineGid)
@@ -596,7 +592,6 @@ def startEngine():
         "ENGINE_USR": engineUsrDir,
         "ENGINE_VAR": engineVarDir,
         "ENGINE_CACHE": engineCacheDir,
-        "ENGINE_LOCK": engineLockDir,
     }
 
     # Finally execute the java virtual machine:

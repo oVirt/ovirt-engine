@@ -30,7 +30,6 @@
 %global engine_state %{_localstatedir}/lib/%{engine_name}
 %global engine_log %{_localstatedir}/log/%{engine_name}
 %global engine_run %{_localstatedir}/run/%{engine_name}
-%global engine_lock %{_localstatedir}/lock/%{engine_name}
 %global engine_cache %{_localstatedir}/cache/%{engine_name}
 %global engine_tmp %{_localstatedir}/tmp/%{engine_name}
 
@@ -95,7 +94,6 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	PKG_PKI_DIR=%{engine_pki} \\\
 	PKG_JBOSS_MODULES=%{engine_jboss_modules} \\\
 	PKG_CACHE_DIR=%{engine_cache} \\\
-	PKG_LOCK_DIR=%{engine_lock} \\\
 	PKG_LOG_DIR=%{engine_log} \\\
 	PKG_TMP_DIR=%{engine_tmp} \\\
 	%{?BUILD_FLAGS:BUILD_FLAGS="%{BUILD_FLAGS}"} \\\
@@ -283,7 +281,6 @@ install -dm 755 %{buildroot}/%{engine_state}/deployments
 install -dm 755 %{buildroot}/%{engine_state}/content
 install -dm 755 %{buildroot}/%{engine_log}/{host-deploy,notifier,engine-manage-domains}
 install -dm 755 %{buildroot}/%{engine_run}/notifier
-install -dm 755 %{buildroot}/%{engine_lock}
 
 # Needed for compatibility if package is different than the directory structure
 %if "%{name}" != "%{engine_name}"
@@ -414,7 +411,6 @@ fi
 %dir %{engine_data}/scripts
 %dir %{engine_run}
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}
-%dir %attr(-, %{engine_user}, %{engine_group}) %{engine_lock}
 
 # Log rotation script:
 %{engine_data}/scripts/ovirtlogrot.sh

@@ -364,10 +364,6 @@ public class LocalConfig {
         return getFile("ENGINE_VAR");
     }
 
-    public File getLockDir() {
-        return getFile("ENGINE_LOCK");
-    }
-
     public File getCacheDir() {
         return getFile("ENGINE_CACHE");
     }
