@@ -140,11 +140,6 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
     @Override
     public void endWithFailure() {
         super.endWithFailure();
-
-        // Preventing rollback on DeleteImageGroup failure
-        if (getEnclosingCommand().getReturnValue().getSucceeded()) {
-            getEnclosingCommand().getParameters().setExecutionIndex(0);
-        }
     }
 
     @Override
@@ -164,7 +159,10 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
 
     @Override
     protected void revertTask() {
-        // No revert task - reverting is handled in the previous handler
+        // Preventing rollback on execution success
+        if (getEnclosingCommand().getReturnValue().getSucceeded()) {
+            getEnclosingCommand().getParameters().setExecutionIndex(0);
+        }
     }
 
     @Override
