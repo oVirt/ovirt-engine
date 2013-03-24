@@ -26,7 +26,6 @@ public enum VdcQueryType implements Serializable {
     GetVdsByType,
     GetVdsFenceStatus,
     GetNewVdsFenceStatus,
-    CanFenceVds,
     GetAgentFenceOptions,
     GetAgentFenceOptions2,
     GetAllChildVlanInterfaces,
