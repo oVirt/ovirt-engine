@@ -581,6 +581,7 @@
           <xs:element ref="usages" minOccurs="0"/>
           <xs:element ref="nfs_versions" minOccurs="0"/>
           <xs:element ref="pm_proxy_types" minOccurs="0"/>
+          <xs:element ref="cpu_modes" minOccurs="0"/>
 
           <!-- Gluster related -->
           <xs:element ref="gluster_volume_types" minOccurs="0"/>
@@ -878,6 +879,20 @@
         <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="IpVersions"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="cpu_modes" type="CpuModes"/>
+
+  <xs:complexType name="CpuModes">
+    <xs:sequence>
+      <xs:element name="cpu_mode" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="CpuModes"/>
           </xs:appinfo>
         </xs:annotation>
       </xs:element>

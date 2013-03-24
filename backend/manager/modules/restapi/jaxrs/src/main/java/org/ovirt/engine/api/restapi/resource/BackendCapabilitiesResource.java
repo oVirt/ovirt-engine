@@ -12,6 +12,8 @@ import org.ovirt.engine.api.model.BootProtocols;
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.CPUs;
 import org.ovirt.engine.api.model.Capabilities;
+import org.ovirt.engine.api.model.CpuMode;
+import org.ovirt.engine.api.model.CpuModes;
 import org.ovirt.engine.api.model.CreationStates;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.CustomProperties;
@@ -208,6 +210,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addPmProxyTypes(version, PmProxyType.values());
         addReportedDeviceTypes(version, ReportedDeviceType.values());
         addIpVersions(version, IpVersion.values());
+        addCpuModes(version, CpuMode.values());
 
         version.setFeatures(featuresHelper.getFeatures(v));
 
@@ -221,6 +224,15 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         LinkHelper.<VersionCaps>addLinks(getUriInfo(), version);
 
         return version;
+    }
+
+    private void addCpuModes(VersionCaps version, CpuMode[] values) {
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_2)) {
+            version.setCpuModes(new CpuModes());
+            for (CpuMode mode : values) {
+                version.getCpuModes().getCpuModes().add(mode.value());
+            }
+        }
     }
 
     private void addReportedDeviceTypes(VersionCaps version, ReportedDeviceType[] values) {
