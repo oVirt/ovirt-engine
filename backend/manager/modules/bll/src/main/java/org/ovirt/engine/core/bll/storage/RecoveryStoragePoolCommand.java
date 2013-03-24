@@ -96,7 +96,7 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<R
             ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(getParameters().getStoragePoolId(),
                     _newMasterStorageDomainId,
                     null,
-                    EventType.RECOVERY),
+                    EventType.RECOVERY, ""),
                     new Callable<EventResult>() {
                         @Override
                         public EventResult call() {

@@ -445,7 +445,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 final String logMessage) {
 
             ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(_storagePoolId,
-                    masterDomainId, null, EventType.RECONSTRUCT),
+                    masterDomainId, null, EventType.RECONSTRUCT, "Reconstruct caused by failure to execute spm command"),
                     new Callable<EventResult>() {
                         @Override
                         public EventResult call() {
@@ -1082,7 +1082,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         private void updateDomainInProblem(final Guid vdsId, final String vdsName, final Set<Guid> domainsInProblems) {
             if (domainsInProblems != null) {
                 ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(_storagePoolId,
-                        null, vdsId, EventType.DOMAINMONITORING),
+                        null, vdsId, EventType.DOMAINMONITORING, ""),
                         new Callable<EventResult>() {
                             @Override
                             public EventResult call() {
@@ -1202,7 +1202,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         @OnTimerMethodAnnotation("OnTimer")
         public void OnTimer(final Guid domainId) {
             ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventAsync(new Event(_storagePoolId,
-                    domainId, null, EventType.DOMAINFAILOVER),
+                    domainId, null, EventType.DOMAINFAILOVER, ""),
                     new Callable<EventResult>() {
                         @Override
                         public EventResult call() {
@@ -1598,7 +1598,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         if (masterDomain != null) {
             final Guid masterDomainId = masterDomain.getId();
             ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventAsync(new Event(getParameters().getStoragePoolId(),
-                    masterDomainId, null, EventType.RECONSTRUCT),
+                    masterDomainId, null, EventType.RECONSTRUCT, "IrsBrokerCommand.startReconstruct()"),
                     new Callable<EventResult>() {
                         @Override
                         public EventResult call() {

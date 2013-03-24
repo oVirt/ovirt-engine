@@ -55,8 +55,9 @@ public class EventQueueMonitor implements EventQueue {
                 // CancellationException is normal here, as we cancel future tasks when reconstruct is running
                 // This cancellation is also being reported to the log
                 // Currently ignoring that exception, writing a debug message, in case other scenario of canceling an exception will be introduced
-                log.debugFormat("CancellationException at submitEventSync, for pool {0} with details {1}",
-                        event.getStoragePoolId(), e);
+                log.debugFormat("Failed to submit event using submitEventSync (the event was cancelled)- pool {0} , exception {1}",
+                        event.getStoragePoolId(),
+                        e);
             } catch (Exception e) {
                 log.errorFormat("Failed at submitEventSync, for pool {0} with exception {1}",
                         event.getStoragePoolId(), e);

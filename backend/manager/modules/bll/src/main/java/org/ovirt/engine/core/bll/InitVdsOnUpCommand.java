@@ -198,7 +198,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         final VDS vds = getVds();
         EventResult result =
                 ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(getStoragePool().getId(),
-                        null, vds.getId(), EventType.VDSCONNECTTOPOOL),
+                        null, vds.getId(), EventType.VDSCONNECTTOPOOL,"Trying to connect host " + vds.getHostName() + " with id " + vds.getId() + " to the pool " + getStoragePool().getId()),
                         new Callable<EventResult>() {
                             @Override
                             public EventResult call() {

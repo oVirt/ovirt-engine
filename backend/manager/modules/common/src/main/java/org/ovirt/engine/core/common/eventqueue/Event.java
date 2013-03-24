@@ -8,12 +8,14 @@ public class Event {
     private Guid storagePoolId;
     private Guid domainId;
     private Guid vdsId;
+    private String description;
 
-    public Event(Guid storagePoolId, Guid domainId, Guid vdsId, EventType eventType) {
+    public Event(Guid storagePoolId, Guid domainId, Guid vdsId, EventType eventType, String description) {
         this.storagePoolId = storagePoolId;
         this.domainId = domainId;
         this.eventType = eventType;
         this.vdsId = vdsId;
+        this.description = description;
     }
 
     public Guid getStoragePoolId() {
@@ -30,6 +32,14 @@ public class Event {
 
     public void setEventType(EventType eventType) {
         this.eventType = eventType;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Guid getDomainId() {
@@ -91,6 +101,6 @@ public class Event {
     @Override
     public String toString() {
         return "Event [eventType=" + eventType + ", storagePoolId=" + storagePoolId + ", domainId=" + domainId
-                + ", vdsId=" + vdsId + "]";
+                + ", vdsId=" + vdsId + ", description=" + description + "]";
     }
 }

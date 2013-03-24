@@ -213,7 +213,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
      */
     private static void clearDomainCache(final VDS vds) {
         ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(vds.getStoragePoolId(),
-                null, vds.getId(), EventType.VDSCLEARCACHE),
+                null, vds.getId(), EventType.VDSCLEARCACHE, ""),
                 new Callable<EventResult>() {
                     @Override
                     public EventResult call() {
