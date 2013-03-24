@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -26,7 +27,6 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -128,6 +128,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     private ArrayList<StorageDomain> isoStorageDomains;
     private ArrayList<VDS> allHosts;
     private VDS localStorageHost;
+    private boolean noLocalStorageHost;
 
     public DataCenterGuideModel() {
     }
@@ -234,15 +235,17 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                             hosts = new ArrayList<VDS>();
                         }
                         dataCenterGuideModel.allHosts = hosts;
-
                         AsyncDataProvider.GetLocalStorageHost(new AsyncQuery(dataCenterGuideModel,
                                 new INewAsyncCallback() {
                                     @Override
                                     public void OnSuccess(Object target, Object returnValue) {
                                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
+                                        if (returnValue != null) {
                                         VDS localStorageHost = (VDS) returnValue;
-                                        ;
                                         dataCenterGuideModel.localStorageHost = localStorageHost;
+                                        } else {
+                                            noLocalStorageHost = true;
+                                        }
                                         dataCenterGuideModel.UpdateOptionsLocalFS();
                                     }
                                 }), dataCenterGuideModel.getEntity().getname());
@@ -454,7 +457,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     }
 
     private void UpdateOptionsLocalFS() {
-        if (clusters == null || allHosts == null || localStorageHost == null) {
+        if (clusters == null || allHosts == null || (localStorageHost == null && !noLocalStorageHost)) {
             return;
         }
 
@@ -564,6 +567,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         isoStorageDomains = null;
         allHosts = null;
         localStorageHost = null;
+        noLocalStorageHost = false;
     }
 
     private void AddLocalStorage()
