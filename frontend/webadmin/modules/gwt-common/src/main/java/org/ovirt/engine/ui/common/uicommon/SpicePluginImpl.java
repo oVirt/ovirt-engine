@@ -3,20 +3,21 @@ package org.ovirt.engine.ui.common.uicommon;
 import java.util.logging.Logger;
 
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.uicommonweb.Configurator;
+import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpicePlugin;
 
 public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
     private static Logger logger = Logger.getLogger(SpicePluginImpl.class.getName());
+    private final Configurator configurator = (Configurator) TypeResolver.getInstance().Resolve(Configurator.class);
 
     @Override
     public void Connect() {
         logger.warning("Connecting via spice..."); //$NON-NLS-1$
 
-        if ((cat.os.equalsIgnoreCase("Linux")) //$NON-NLS-1$
-                && (cat.browser.equalsIgnoreCase("Firefox"))) { //$NON-NLS-1$
+        if (configurator.isClientLinuxFirefox()) {
             connectNativelyViaXPI();
-        } else if ((cat.os.equalsIgnoreCase("Windows")) //$NON-NLS-1$
-                && (cat.browser.equalsIgnoreCase("Explorer"))) { //$NON-NLS-1$
+        } else if (configurator.isClientWindownsExplorer()) {
             connectNativelyViaActiveX();
         }
     }
@@ -189,7 +190,17 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                }-*/;
 
     @Override
-    public native boolean detectXpiPlugin() /*-{
+    public boolean detectBrowserPlugin() {
+        if (configurator.isClientLinuxFirefox()) {
+            return detectXpiPlugin();
+        } else if (configurator.isClientWindownsExplorer()) {
+            return detectActiveXPlugin();
+        }
+
+        return false;
+    }
+
+    private native boolean detectXpiPlugin() /*-{
                                             var pluginsFound = false;
                                             if (navigator.plugins && navigator.plugins.length > 0) {
                                             var daPlugins = [ "Spice" ];
@@ -211,6 +222,20 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                             }
                                             return pluginsFound;
                                             }-*/;
+
+    private native boolean detectActiveXPlugin() /*-{
+       var pluginObject = null;
+       try {
+           pluginObject = new ActiveXObject('SpiceX.OSpiceX');
+       } catch (e) {
+       }
+
+       if (pluginObject) {
+           return true;
+       } else {
+           return false;
+       }
+    }-*/;
 
     public native void connectNativelyViaActiveX() /*-{
                                                    var hostIp = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getHost()();

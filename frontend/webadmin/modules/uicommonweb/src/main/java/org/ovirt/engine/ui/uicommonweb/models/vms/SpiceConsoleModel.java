@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.HibernateVmParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
@@ -24,8 +23,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.common.queries.GetImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
+import org.ovirt.engine.core.common.queries.GetImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -37,6 +36,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
+import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.ILogger;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -62,6 +62,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
     private SpiceMenu menu;
     private ISpice privatespice;
+    private ClientConsoleMode consoleMode;
 
     public ISpice getspice() {
         return privatespice;
@@ -99,21 +100,21 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
      *
      */
     private void setSpiceImplementation() {
-        ClientConsoleMode consoleMode =
+        consoleMode =
                 ClientConsoleMode.valueOf((String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ClientConsoleModeDefault));
 
-        if (ClientConsoleMode.Native.equals(consoleMode)) { //$NON-NLS-1$
-            setspice((ISpice) TypeResolver.getInstance().Resolve(ISpiceNative.class));
-        } else if (ClientConsoleMode.Plugin.equals(consoleMode)) { //$NON-NLS-1$
-            setspice((ISpice) TypeResolver.getInstance().Resolve(ISpicePlugin.class));
-        } else {
-            ISpicePlugin pluginSpice = (ISpicePlugin) TypeResolver.getInstance().Resolve(ISpicePlugin.class);
-
-            if (pluginSpice.detectXpiPlugin()) {
-                setspice(pluginSpice);
-            } else {
+        switch (consoleMode) {
+            case Native:
                 setspice((ISpice) TypeResolver.getInstance().Resolve(ISpiceNative.class));
-            }
+                break;
+            case Plugin:
+                setspice((ISpice) TypeResolver.getInstance().Resolve(ISpicePlugin.class));
+                break;
+            default:
+                ISpicePlugin pluginSpice = (ISpicePlugin) TypeResolver.getInstance().Resolve(ISpicePlugin.class);
+                setspice(pluginSpice.detectBrowserPlugin() ? pluginSpice
+                        : (ISpice) TypeResolver.getInstance().Resolve(ISpiceNative.class));
+            break;
         }
     }
 
@@ -251,11 +252,20 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         }
     }
 
+    private boolean isSpiceSupportedByClient() {
+        if (consoleMode == ClientConsoleMode.Plugin) {
+            return getConfigurator().isClientWindownsExplorer() || getConfigurator().isClientLinuxFirefox();
+        }
+
+        // in Native and Auto mode, we support all client types
+        return true;
+    }
+
     @Override
     protected void UpdateActionAvailability() {
         super.UpdateActionAvailability();
 
-        getConnectCommand().setIsExecutionAllowed(getConfigurator().IsDisplayTypeSupported(DisplayType.qxl)
+        getConnectCommand().setIsExecutionAllowed(isSpiceSupportedByClient()
                 && !getIsConnected() && getEntity() != null && getEntity().getDisplayType() != DisplayType.vnc
                 && IsVmConnectReady());
     }
@@ -400,7 +410,6 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                         ConstantsManager.getInstance()
                                 .getMessages()
                                 .pressKeyToReleaseCursor(releaseCursorKeysTranslated))));
-
 
         // setup spice proxy - for now always the default
         String spiceProxy = (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault);

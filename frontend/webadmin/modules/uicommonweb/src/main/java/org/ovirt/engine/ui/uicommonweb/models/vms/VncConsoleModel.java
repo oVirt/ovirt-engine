@@ -101,8 +101,7 @@ public class VncConsoleModel extends ConsoleModel
     {
         super.UpdateActionAvailability();
 
-        getConnectCommand().setIsExecutionAllowed(getConfigurator().IsDisplayTypeSupported(DisplayType.vnc)
-                && getEntity() != null
+        getConnectCommand().setIsExecutionAllowed(getEntity() != null
                 && getEntity().getDisplayType() == DisplayType.vnc
                 && (getEntity().getStatus() == VMStatus.PoweringUp || getEntity().getStatus() == VMStatus.Up
                         || getEntity().getStatus() == VMStatus.RebootInProgress

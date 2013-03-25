@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb;
 
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -353,18 +352,6 @@ public abstract class Configurator {
                 updateSpice64Version();
             }
         }
-    }
-
-    public boolean IsDisplayTypeSupported(DisplayType displayType) {
-        switch (displayType) {
-        case vnc:
-            return true;
-
-        case qxl:
-            return true;
-        }
-
-        return false;
     }
 
     public boolean isClientLinuxFirefox() {
