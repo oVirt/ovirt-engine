@@ -8,6 +8,8 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.EventBus;
 
 /**
@@ -36,11 +38,18 @@ public class CommonModelManager {
         commonModel.getSignedOutEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                // Clear CommonModel reference after the user signs out
-                commonModel = null;
-
                 loginModel.resetAfterLogout();
                 user.onUserLogout();
+
+                // Clear CommonModel reference after the user signs out,
+                // use deferred command to ensure the reference is cleared
+                // only after all UiCommon-related processing is over
+                Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+                    @Override
+                    public void execute() {
+                        commonModel = null;
+                    }
+                });
             }
         });
     }

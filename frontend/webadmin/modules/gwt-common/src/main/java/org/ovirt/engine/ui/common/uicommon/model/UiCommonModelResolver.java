@@ -19,7 +19,9 @@ public abstract class UiCommonModelResolver {
     @SuppressWarnings("unchecked")
     public static <M extends SearchableListModel> M getMainListModel(
             CommonModel commonModel, Class<M> mainModelClass) {
-        assert (commonModel != null) : "CommonModel must not be null"; //$NON-NLS-1$
+        if (commonModel == null) {
+            return null;
+        }
 
         for (SearchableListModel list : commonModel.getItems()) {
             if (list != null && list.getClass().equals(mainModelClass)) {
@@ -41,9 +43,11 @@ public abstract class UiCommonModelResolver {
     @SuppressWarnings("unchecked")
     public static <M extends ListWithDetailsModel, D extends EntityModel> D getDetailListModel(
             CommonModel commonModel, Class<M> mainModelClass, Class<D> detailModelClass) {
-        assert (commonModel != null) : "CommonModel must not be null"; //$NON-NLS-1$
-
         M mainListModel = getMainListModel(commonModel, mainModelClass);
+
+        if (mainListModel == null) {
+            return null;
+        }
 
         for (EntityModel details : mainListModel.getDetailModels()) {
             if (details != null && details.getClass().equals(detailModelClass)) {
