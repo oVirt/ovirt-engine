@@ -298,7 +298,7 @@ public class ClusterGeneralModel extends EntityModel {
             parameters.setvds(host);
             parameters.setRootPassword(hostDetailModel.getPassword());
             parameters.setOverrideFirewall(false);
-
+            parameters.setRebootAfterInstallation(getEntity().supportsVirtService());
             parametersList.add(parameters);
         }
 

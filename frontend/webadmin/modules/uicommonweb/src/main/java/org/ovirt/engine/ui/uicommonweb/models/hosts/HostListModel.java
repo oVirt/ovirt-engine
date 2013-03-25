@@ -95,6 +95,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
     private UICommand privateEditCommand;
 
+    @Override
     public UICommand getEditCommand()
     {
         return privateEditCommand;
@@ -830,6 +831,8 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         CancelConfirm();
         model.StartProgress(null);
 
+        final boolean isVirt = ((VDSGroup) model.getCluster().getSelectedItem()).supportsVirtService();
+
         if (model.getIsNew())
         {
             AddVdsActionParameters parameters = new AddVdsActionParameters();
@@ -837,6 +840,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             parameters.setvds(host);
             parameters.setRootPassword((String) model.getRootPassword().getEntity());
             parameters.setOverrideFirewall((Boolean) model.getOverrideIpTables().getEntity());
+            parameters.setRebootAfterInstallation(isVirt) ;
 
             Frontend.RunAction(VdcActionType.AddVds, parameters,
                     new IFrontendActionAsyncCallback() {
@@ -858,6 +862,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             parameters.setVdsId(host.getId());
             parameters.setRootPassword(""); //$NON-NLS-1$
             parameters.setInstallVds(false);
+            parameters.setRebootAfterInstallation(isVirt) ;
 
             if (!oldClusterId.equals(newClusterId))
             {

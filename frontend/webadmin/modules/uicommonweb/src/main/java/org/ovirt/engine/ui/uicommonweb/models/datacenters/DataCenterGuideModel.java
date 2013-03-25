@@ -1633,7 +1633,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         addVdsParams.setVdsId(host.getId());
         addVdsParams.setvds(host);
         addVdsParams.setRootPassword((String) model.getRootPassword().getEntity());
-
+        addVdsParams.setRebootAfterInstallation(((VDSGroup) model.getCluster().getSelectedItem()).supportsVirtService());
         model.StartProgress(null);
 
         Frontend.RunAction(VdcActionType.AddVds, addVdsParams,

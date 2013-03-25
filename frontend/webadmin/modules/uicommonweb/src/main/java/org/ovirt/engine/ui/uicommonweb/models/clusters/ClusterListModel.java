@@ -66,6 +66,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
     private UICommand privateEditCommand;
 
+    @Override
     public UICommand getEditCommand()
     {
         return privateEditCommand;
@@ -615,8 +616,8 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             cluster.setcpu_name(((ServerCpu) model.getCPU().getSelectedItem()).getCpuName());
         }
         cluster.setmax_vds_memory_over_commit(model.getMemoryOverCommit());
-        cluster.setCountThreadsAsCores(Boolean.TRUE.equals((Boolean) model.getVersionSupportsCpuThreads().getEntity())
-                && Boolean.TRUE.equals((Boolean) model.getCountThreadsAsCores().getEntity()));
+        cluster.setCountThreadsAsCores(Boolean.TRUE.equals(model.getVersionSupportsCpuThreads().getEntity())
+                && Boolean.TRUE.equals(model.getCountThreadsAsCores().getEntity()));
         cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0); //$NON-NLS-1$
         cluster.setcompatibility_version(version);
         cluster.setMigrateOnError(model.getMigrateOnErrorOption());
@@ -814,6 +815,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             parameters.setvds(host);
             parameters.setRootPassword(hostDetailModel.getPassword());
             parameters.setOverrideFirewall(false);
+            parameters.setRebootAfterInstallation(hostsModel.getClusterModel().getEnableOvirtService().getIsSelected());
 
             parametersList.add(parameters);
         }

@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
@@ -893,7 +894,7 @@ public class HostGeneralModel extends EntityModel
     public void OnInstall()
     {
         InstallModel model = (InstallModel) getWindow();
-        boolean isOVirt = getEntity().getVdsType() == VDSType.oVirtNode;
+        final boolean isOVirt = getEntity().getVdsType() == VDSType.oVirtNode;
 
         if (!model.Validate(isOVirt))
         {
@@ -909,19 +910,31 @@ public class HostGeneralModel extends EntityModel
         param.setoVirtIsoFile(isOVirt ? ((RpmVersion) model.getOVirtISO().getSelectedItem()).getRpmName() : null);
         param.setOverrideFirewall((Boolean) model.getOverrideIpTables().getEntity());
 
-        Frontend.RunAction(
-                VdcActionType.UpdateVds,
-                param,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void Executed(FrontendActionAsyncResult result) {
-                        VdcReturnValueBase returnValue = result.getReturnValue();
-                        if (returnValue != null && returnValue.getSucceeded()) {
-                            Cancel();
+        AsyncDataProvider.GetClusterById(new AsyncQuery(param, new INewAsyncCallback() {
+
+            @Override
+            public void OnSuccess(Object model, Object returnValue) {
+                VDSGroup cluster = (VDSGroup) returnValue;
+                UpdateVdsActionParameters internalParam = (UpdateVdsActionParameters) model;
+
+                internalParam.setRebootAfterInstallation(cluster.supportsVirtService());
+                Frontend.RunAction(
+                        VdcActionType.UpdateVds,
+                        internalParam,
+                        new IFrontendActionAsyncCallback() {
+                            @Override
+                            public void Executed(FrontendActionAsyncResult result) {
+                                VdcReturnValueBase returnValue = result.getReturnValue();
+                                if (returnValue != null && returnValue.getSucceeded()) {
+                                    Cancel();
+                                }
+                            }
                         }
-                    }
-                }
-                );
+                        );
+            }
+        }), getEntity().getVdsGroupId());
+
+
     }
 
     public void Cancel()
