@@ -198,11 +198,14 @@ public class AdElementListModel extends SearchableListModel
 
     protected void populateRoles(List<Role> roles){
         Role selectedRole = null;
+        List<Role> rolesToPopulate = new ArrayList<Role>();
+
         for (Role role : roles) {
+
             if (role.getId() != null) {
              // ignore CONSUME_QUOTA_ROLE in UI
-                if (role.getId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
-                    roles.remove(role);
+                if (!role.getId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
+                    rolesToPopulate.add(role);
                 }
                 //select engine user if it exists
                 if (role.getId().equals(ApplicationGuids.engineUser.asGuid())) {
@@ -211,14 +214,14 @@ public class AdElementListModel extends SearchableListModel
             }
         }
 
-        Collections.sort(roles, new Linq.RoleNameComparer());
+        Collections.sort(rolesToPopulate, new Linq.RoleNameComparer());
 
-        getRole().setItems(roles);
+        getRole().setItems(rolesToPopulate);
         if (selectedRole != null) {
             getRole().setSelectedItem(selectedRole);
-        } else if (roles.size() > 0){
+        } else if (rolesToPopulate.size() > 0){
             //if engine user does not exist, pick the first on the list
-            getRole().setSelectedItem(roles.get(0));
+            getRole().setSelectedItem(rolesToPopulate.get(0));
         }
     }
 
