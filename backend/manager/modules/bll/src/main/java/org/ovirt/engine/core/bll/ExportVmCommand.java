@@ -95,6 +95,10 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         // load the disks of vm from database
         VmHandler.updateDisksFromDb(getVm());
 
+        if (!ImagesHandler.checkImagesIllegal(getReturnValue().getCanDoActionMessages(), getVm().getDiskList())) {
+            return false;
+        }
+
         // update vm snapshots for storage free space check
         ImagesHandler.fillImagesBySnapshots(getVm());
 

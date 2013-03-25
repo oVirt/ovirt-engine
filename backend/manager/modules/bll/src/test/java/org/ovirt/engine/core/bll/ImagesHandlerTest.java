@@ -2,15 +2,20 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.VdcBllMessages;
 
 /** A test case for {@link ImagesHandler} */
 public class ImagesHandlerTest {
@@ -60,6 +65,23 @@ public class ImagesHandlerTest {
     public void testGetDiskAliasWithDefaultNotNullAlias() {
         disk1.setDiskAlias("alias");
         assertEquals("alias", ImagesHandler.getDiskAliasWithDefault(disk1, "default"));
+    }
+
+    @Test
+    public void testCheckImagesIllegalWithIllegalDisk() {
+        disk1.setImageStatus(ImageStatus.ILLEGAL);
+        List<DiskImage> images = Arrays.asList(disk1, disk2);
+        List<String> messages = new LinkedList<String>();
+        assertFalse(ImagesHandler.checkImagesIllegal(messages, images));
+        assertTrue(messages.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_ILLEGAL.toString()));
+    }
+
+    @Test
+    public void testCheckImagesIllegalWithoutIllegalDisk() {
+        List<DiskImage> images = Arrays.asList(disk1, disk2);
+        List<String> messages = new LinkedList<String>();
+        assertTrue(ImagesHandler.checkImagesIllegal(messages, images));
+        assertTrue(messages.isEmpty());
     }
 
     @Test

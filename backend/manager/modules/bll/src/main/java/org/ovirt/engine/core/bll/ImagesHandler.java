@@ -459,7 +459,7 @@ public final class ImagesHandler {
             Guid storageDomainId,
             boolean diskSpaceCheck,
             boolean checkImagesLocked,
-            boolean checkImagesIllegal,
+            boolean checkImagesIllegalInVdsm,
             boolean checkImagesExist,
             boolean checkStorageDomain,
             boolean checkIsValid,
@@ -478,7 +478,7 @@ public final class ImagesHandler {
                                 storagePoolId,
                                 storageDomainId,
                                 diskSpaceCheck,
-                                checkImagesIllegal,
+                                checkImagesIllegalInVdsm,
                                 checkImagesExist,
                                 checkStorageDomain,
                                 images);
@@ -495,19 +495,27 @@ public final class ImagesHandler {
     }
 
     private static boolean checkImagesLocked(List<String> messages, List<DiskImage> images) {
+        return checkImagesNotInStatus(messages, images, ImageStatus.LOCKED, VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED);
+    }
+
+    public static boolean checkImagesIllegal(List<String> messages, List<DiskImage> images) {
+        return checkImagesNotInStatus(messages, images, ImageStatus.ILLEGAL, VdcBllMessages.ACTION_TYPE_FAILED_DISKS_ILLEGAL);
+    }
+
+    private static boolean checkImagesNotInStatus(List<String> messages, List<DiskImage> images, ImageStatus status, VdcBllMessages failMessage) {
         boolean returnValue = true;
-        List<String> lockedDisksAliases = new ArrayList<String>();
+        List<String> disksInStatus = new ArrayList<String>();
         for (DiskImage diskImage : images) {
-            if (diskImage.getImageStatus() == ImageStatus.LOCKED) {
-                lockedDisksAliases.add(diskImage.getDiskAlias());
+            if (diskImage.getImageStatus() == status) {
+                disksInStatus.add(diskImage.getDiskAlias());
                 returnValue = false;
             }
         }
 
-        if (lockedDisksAliases.size() > 0) {
-            ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED.toString());
+        if (disksInStatus.size() > 0) {
+            ListUtils.nullSafeAdd(messages, failMessage.toString());
             ListUtils.nullSafeAdd(messages,
-                    String.format("$%1$s %2$s", "diskAliases", StringUtils.join(lockedDisksAliases, ", ")));
+                    String.format("$%1$s %2$s", "diskAliases", StringUtils.join(disksInStatus, ", ")));
         }
 
         return returnValue;
@@ -525,7 +533,7 @@ public final class ImagesHandler {
             Guid storagePoolId,
             Guid storageDomainId,
             boolean diskSpaceCheck,
-            boolean checkImagesIllegal,
+            boolean checkImagesIllegalInVdsm,
             boolean checkImagesExist,
             boolean checkStorageDomain,
             List<DiskImage> images) {
@@ -565,8 +573,8 @@ public final class ImagesHandler {
                 ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST.toString());
             }
         }
-        if (returnValue && checkImagesIllegal) {
-            returnValue = CheckImagesLegality(messages, images, irsImages);
+        if (returnValue && checkImagesIllegalInVdsm) {
+            returnValue = checkImagesLegalityInVdsm(messages, images, irsImages);
         }
         return returnValue;
     }
@@ -616,7 +624,7 @@ public final class ImagesHandler {
         return validationResult.isValid();
     }
 
-    private static boolean CheckImagesLegality
+    private static boolean checkImagesLegalityInVdsm
             (List<String> messages, List<DiskImage> images, List<DiskImage> irsImages) {
         boolean returnValue = true;
         int i = 0;

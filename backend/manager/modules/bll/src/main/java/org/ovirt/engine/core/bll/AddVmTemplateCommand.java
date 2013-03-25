@@ -204,6 +204,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
+        if (!ImagesHandler.checkImagesIllegal(getReturnValue().getCanDoActionMessages(), mImages)) {
+            return false;
+        }
+
         for (Guid srcStorageDomainId : sourceImageDomainsImageMap.keySet()) {
             boolean checkIsValid = true;
             if (!ImagesHandler.PerformImagesChecks(

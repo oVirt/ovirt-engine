@@ -316,6 +316,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}: The following disks are locked: ${diskAliases}. Please try again in a few minutes.")
     String ACTION_TYPE_FAILED_DISKS_LOCKED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The following attached disks are in ILLEGAL status: ${diskAliases} - please remove them and try again.")
+    String ACTION_TYPE_FAILED_DISKS_ILLEGAL();
+
     @DefaultStringValue("Cannot ${action} ${type}. The following disks already exist: ${diskAliases}. Please import as a clone.")
     String ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST();
 
