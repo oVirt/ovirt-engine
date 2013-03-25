@@ -1,10 +1,8 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertFalse;
-
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -24,6 +22,7 @@ import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -32,7 +31,6 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -217,7 +215,6 @@ public class MoveOrCopyDiskCommandTest {
 
         // Spy away the storage domain checker methods
         doReturn(true).when(command).isStorageDomainSpaceWithinThresholds();
-        doReturn(true).when(command).doesStorageDomainHaveSpaceForRequest(anyLong());
 
         // Spy away the image handler methods
         doReturn(true).when(command).checkImageConfiguration(any(List.class));

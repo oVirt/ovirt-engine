@@ -24,13 +24,13 @@ import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -167,10 +167,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     protected List<DiskImage> getAllImageSnapshots() {
         return ImagesHandler.getAllImageSnapshots(getImage().getImageId(), getImage().getImageTemplateId());
-    }
-
-    protected boolean doesStorageDomainHaveSpaceForRequest(long size) {
-        return validate(new StorageDomainValidator(getStorageDomain()).isDomainHasSpaceForRequest(size));
     }
 
     protected boolean checkIfNeedToBeOverride() {
