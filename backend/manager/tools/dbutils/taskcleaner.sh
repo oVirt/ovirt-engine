@@ -25,7 +25,7 @@ source ./common.sh
 set_defaults
 
 usage() {
-    printf "Usage: ${ME} [-h] [-s server] [-p PORT]] [-d DATABASE] [-u USERNAME] [-l LOGFILE]  [-t taskId] [-c commandId] [-z] [-R] [-C] [-J] [-A] [-q] [-v]\n"
+    printf "Usage: ${ME} [-h] [-s server] [-p PORT]] [-d DATABASE] -u USERNAME [-l LOGFILE]  [-t taskId] [-c commandId] [-z] [-R] [-C] [-J] [-A] [-q] [-v]\n"
     printf "\n"
     printf "\t-s SERVERNAME - The database servername for the database  (def. ${SERVERNAME})\n"
     printf "\t-p PORT       - The database port for the database        (def. ${PORT})\n"
@@ -102,6 +102,12 @@ caution() {
         fi
     fi
 }
+
+if [[ ! -n "${USERNAME}" ]]; then
+   usage
+   exit 1
+fi
+
 
 # Install taskcleaner procedures
 psql -w -U ${USERNAME} -h ${SERVERNAME} -p ${PORT} -f ./taskcleaner_sp.sql ${DATABASE} > /dev/null
