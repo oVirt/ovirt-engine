@@ -62,6 +62,9 @@ public abstract class AbstractSpice {
     // disabled
     protected boolean smartcardEnabledOverridden = false;
 
+    // even the spice proxy is globally configured, user can choose to disable it for specific VM
+    private boolean spiceProxyEnabled;
+
     public AbstractSpice() {
         setWANDisableEffects(new ArrayList<WANDisableEffects>());
         setWanOptionsEnabled(false);
@@ -408,6 +411,14 @@ public abstract class AbstractSpice {
 
     public void setSpiceProxy(String spiceProxy) {
         this.spiceProxy = spiceProxy;
+    }
+
+    public void setSpiceProxyEnabled(boolean enabled) {
+        this.spiceProxyEnabled = enabled;
+    }
+
+    public boolean isSpiceProxyEnabled() {
+        return spiceProxyEnabled;
     }
 
 }

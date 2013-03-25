@@ -2,8 +2,10 @@ package org.ovirt.engine.ui.common.utils;
 
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.HasConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
@@ -207,6 +209,11 @@ public class ConsoleUtils {
         boolean spiceGuestAgentInstalled = model.getVM().getSpiceDriverVersion() != null;
 
         return spiceAvailable && isWindowsVm && spiceGuestAgentInstalled;
+    }
+
+    public boolean isSpiceProxyDefined() {
+        String spiceProxy = (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault);
+        return spiceProxy != null && !"".equals(spiceProxy); //$NON-NLS-1$
     }
 
     public native String getUserAgentString() /*-{

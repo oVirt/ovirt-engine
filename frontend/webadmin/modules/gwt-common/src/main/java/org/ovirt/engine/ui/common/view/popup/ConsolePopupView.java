@@ -76,6 +76,10 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
 
     @UiField(provided = true)
     @WithElementId
+    EntityModelValueCheckBoxEditor<ConsoleModel> enableSpiceProxy;
+
+    @UiField(provided = true)
+    @WithElementId
     EntityModelValueCheckBoxEditor<ConsoleModel> useLocalDrives;
 
     @UiField(provided = true)
@@ -187,6 +191,20 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         });
         openInFullScreen.setLabel(constants.openInFullScreen());
 
+        enableSpiceProxy = new EntityModelValueCheckBoxEditor<ConsoleModel>(Align.RIGHT, new SpiceRenderer() {
+
+            @Override
+            protected void updateModel(ISpice spice, boolean value) {
+                spice.setSpiceProxyEnabled(value);
+            }
+
+            @Override
+            protected boolean extractBoolean(ISpice spice) {
+                return spice.isSpiceProxyEnabled();
+            }
+        });
+        enableSpiceProxy.setLabel(constants.enableSpiceProxy());
+
         useLocalDrives =
                 new EntityModelValueCheckBoxEditor<ConsoleModel>(Align.RIGHT,
                         new ValueCheckboxRenderer<ConsoleModel>() {
@@ -233,11 +251,12 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         this.model = model;
 
         ConsoleModel defaultConsole =
-                 model.getModel().getDefaultConsoleModel();
+                model.getModel().getDefaultConsoleModel();
         editCheckBoxes(defaultConsole,
                 ctrlAltDel,
                 enableUsbAutoshare,
                 openInFullScreen,
+                enableSpiceProxy,
                 wanEnabled,
                 disableSmartcard);
 
@@ -260,6 +279,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
                 ctrlAltDel,
                 enableUsbAutoshare,
                 openInFullScreen,
+                enableSpiceProxy,
                 useLocalDrives,
                 wanEnabled,
                 disableSmartcard);
@@ -409,6 +429,14 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     @Override
     public void setDisableSmartcardVisible(boolean visible) {
         disableSmartcardPanel.setVisible(visible);
+    }
+
+    @Override
+    public void setSpiceProxyEnabled(boolean enabled, String reason) {
+        enableSpiceProxy.setEnabled(enabled);
+        if (!enabled) {
+            enableSpiceProxy.setTitle(reason);
+        }
     }
 
 }

@@ -411,9 +411,10 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                                 .getMessages()
                                 .pressKeyToReleaseCursor(releaseCursorKeysTranslated))));
 
-        // setup spice proxy - for now always the default
         String spiceProxy = (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault);
-        spiceProxy = "".equals(spiceProxy) ? null : spiceProxy; //$NON-NLS-1$
+        boolean spiceProxyGloballyConfigured = spiceProxy != null && !"".equals(spiceProxy);
+        boolean spiceProxyEnabledForThisVm = getspice().isSpiceProxyEnabled();
+        spiceProxy = spiceProxyGloballyConfigured && spiceProxyEnabledForThisVm  ? spiceProxy : null; //$NON-NLS-1$
         getspice().setSpiceProxy(spiceProxy);
 
         // If 'AdminConsole' is true, send true; otherwise, false should be sent only for VMs with SPICE driver

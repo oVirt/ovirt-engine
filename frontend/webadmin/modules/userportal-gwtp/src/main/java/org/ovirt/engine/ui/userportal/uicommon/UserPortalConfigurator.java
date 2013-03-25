@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.common.uicommon.DocumentationPathTranslator;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
+import org.ovirt.engine.ui.common.utils.ConsoleUtils;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
@@ -43,10 +44,13 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
 
     private static final ClientAgentType clientAgentType = new ClientAgentType();
 
+    private final ConsoleUtils consoleUtils;
+
     @Inject
-    public UserPortalConfigurator(UserPortalPlaceManager placeManager, EventBus eventBus) {
+    public UserPortalConfigurator(UserPortalPlaceManager placeManager, EventBus eventBus, ConsoleUtils consoleUtils) {
         super();
         this.placeManager = placeManager;
+        this.consoleUtils = consoleUtils;
         eventBus.addHandler(UiCommonInitEvent.getType(), this);
 
         // This means that it is UserPortal application.
@@ -75,6 +79,8 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
 
         updateWanColorDepthOptions(spice);
         updateWANDisableEffects(spice);
+
+        spice.setSpiceProxyEnabled(consoleUtils.isSpiceProxyDefined());
     }
 
     private void updateWANDisableEffects(final ISpice spice) {

@@ -1159,8 +1159,14 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Open in Full Screen")
     String openInFullScreen();
 
+    @DefaultStringValue("Enable SPICE Proxy")
+    String enableSpiceProxy();
+
     @DefaultStringValue("Not supported for this client OS")
     String ctrlAltDeletIsNotSupportedOnWindows();
+
+    @DefaultStringValue("No SPICE proxy defined on system level")
+    String spiceProxyCanBeEnabledOnlyWhenDefined();
 
     @DefaultStringValue("Enable WAN Options")
     String enableWanOptions();

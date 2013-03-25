@@ -23,6 +23,7 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
     private static final String SMARTCARD_ENABLED_OVERRIDDEN = "_smartcardEnabledOverridden"; //$NON-NLS-1$
     private static final String WAN_OPTIONS = "_wanOptions"; //$NON-NLS-1$
     private static final String USB_AUTOSHARE = "_usbAutoshare"; //$NON-NLS-1$
+    private static final String SPICE_PROXY_ENABLED = "_spiceProxyEnabled"; //$NON-NLS-1$
 
     // rdp options
     private static final String USE_LOCAL_DRIVES = "_useLocalDrives"; //$NON-NLS-1$
@@ -89,6 +90,7 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
         storeBool(keyMaker.make(SMARTCARD_ENABLED_OVERRIDDEN), spice.isSmartcardEnabledOverridden());
         storeBool(keyMaker.make(WAN_OPTIONS), spice.isWanOptionsEnabled());
         storeBool(keyMaker.make(USB_AUTOSHARE), spice.getUsbAutoShare());
+        storeBool(keyMaker.make(SPICE_PROXY_ENABLED), spice.isSpiceProxyEnabled());
     }
 
     protected void loadRdpData(HasConsoleModel model, KeyMaker keyMaker) {
@@ -120,6 +122,10 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
 
         if (consoleUtils.isWanOptionsAvailable(model)) {
             spice.setWanOptionsEnabled(readBool(keyMaker.make(WAN_OPTIONS)));
+        }
+
+        if (consoleUtils.isSpiceProxyDefined()) {
+            spice.setSpiceProxyEnabled(readBool(keyMaker.make(SPICE_PROXY_ENABLED)));
         }
 
         spice.setFullScreen(readBool(keyMaker.make(OPEN_IN_FULL_SCREEN)));

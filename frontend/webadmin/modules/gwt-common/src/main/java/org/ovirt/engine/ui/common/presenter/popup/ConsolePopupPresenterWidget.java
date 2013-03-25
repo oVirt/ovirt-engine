@@ -66,6 +66,8 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         void setCtrlAltDelEnabled(boolean enabled, String reason);
 
+        void setSpiceProxyEnabled(boolean enabled, String reason);
+
         void setVmName(String name);
 
         void flushToPrivateModel();
@@ -196,6 +198,9 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         boolean ctrlAltDelEnabled = consoleUtils.isCtrlAltDelEnabled();
         getView().setCtrlAltDelEnabled(ctrlAltDelEnabled, constants.ctrlAltDeletIsNotSupportedOnWindows());
+
+        boolean spiceProxyEnabled = consoleUtils.isSpiceProxyDefined();
+        getView().setSpiceProxyEnabled(spiceProxyEnabled, constants.spiceProxyCanBeEnabledOnlyWhenDefined());
     }
 
     @Override
