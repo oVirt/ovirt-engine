@@ -10,14 +10,12 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
-import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.utils.WipeAfterDeleteUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
-import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
@@ -131,6 +129,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_IS_ALREADY_IN_USE);
         }
 
+        if (getVm() != null && !(isVmNotLocked() && isVmNotInPreviewSnapshot())) {
+            return false;
+        }
+
         return true;
     }
 
@@ -151,9 +153,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                     validate(new StoragePoolValidator(sp).isUp()) &&
                     isStoragePoolMatching(vm) &&
                     performImagesChecks(vm.getStoragePoolId()) &&
-                    validate(getSnapshotValidator().vmNotDuringSnapshot(vm.getId())) &&
-                    validate(getSnapshotValidator().vmNotInPreview(vm.getId())) &&
-                    validate(new VmValidator(vm).vmNotLocked());
+                    isVmNotLocked() &&
+                    isVmNotInPreviewSnapshot();
         }
 
         return returnValue;
@@ -189,9 +190,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         return true;
     }
 
-    protected SnapshotsValidator getSnapshotValidator() {
-        return new SnapshotsValidator();
-    }
 
     /** Checks if the image's configuration is legal */
     protected boolean checkImageConfiguration() {

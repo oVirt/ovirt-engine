@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
@@ -40,8 +39,13 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
     @Override
     protected boolean canDoAction() {
         disk = getDiskDao().get(getParameters().getDiskId());
-        return isVmExist() && isVmInUpPausedDownStatus() && isDiskExist(disk) && checkCanPerformPlugUnPlugDisk()
-                && validate(getSnapshotsValidator().vmNotDuringSnapshot(getVmId()));
+
+        return
+                isVmExist() &&
+                isVmInUpPausedDownStatus() &&
+                isDiskExist(disk) &&
+                checkCanPerformPlugUnPlugDisk() &&
+                isVmNotInPreviewSnapshot();
     }
 
     private boolean checkCanPerformPlugUnPlugDisk() {
@@ -114,7 +118,4 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
         return disk.getDiskAlias();
     }
 
-    protected SnapshotsValidator getSnapshotsValidator() {
-        return new SnapshotsValidator();
-    }
 }

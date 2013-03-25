@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -97,7 +96,7 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
         }
 
-        if (isImageDisk && !validate(new SnapshotsValidator().vmNotDuringSnapshot(getVm().getId()))) {
+        if (!isVmNotInPreviewSnapshot()) {
             return false;
         }
 
@@ -199,4 +198,5 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
     public String getDiskAlias() {
         return disk.getDiskAlias();
     }
+
 }

@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.IStorageHelper;
 import org.ovirt.engine.core.bll.storage.StorageHelperBase;
 import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -215,4 +217,21 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         return jobProperties;
     }
 
+    protected SnapshotsValidator getSnapshotsValidator() {
+        return new SnapshotsValidator();
+    }
+
+    protected boolean isVmNotInPreviewSnapshot() {
+        final SnapshotsValidator snapshotsValidator = getSnapshotsValidator();
+        return
+                getVmId() != null &&
+                validate(snapshotsValidator.vmNotDuringSnapshot(getVmId())) &&
+                validate(snapshotsValidator.vmNotInPreview(getVmId()));
+    }
+
+    protected boolean isVmNotLocked() {
+        return
+                getVm() != null &&
+                validate(new VmValidator(getVm()).vmNotLocked());
+    }
 }

@@ -171,6 +171,7 @@ public class HotPlugDiskToVmCommandTest {
         SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
         doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
+        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any(Guid.class));
     }
 
     protected HotPlugDiskToVmCommand<HotPlugDiskToVmParameters> createCommand() {
