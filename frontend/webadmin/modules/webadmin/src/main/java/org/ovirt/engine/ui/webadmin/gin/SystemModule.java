@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.place.WebAdminPlaceManager;
 import org.ovirt.engine.ui.webadmin.system.ApplicationInit;
 import org.ovirt.engine.ui.webadmin.system.InternalConfiguration;
+import org.ovirt.engine.ui.webadmin.system.PostMessageDispatcher;
 
 import com.google.inject.Singleton;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
@@ -31,6 +32,7 @@ public class SystemModule extends BaseSystemModule {
         bind(PlaceManager.class).to(WebAdminPlaceManager.class).in(Singleton.class);
         bind(ApplicationInit.class).asEagerSingleton();
         bind(InternalConfiguration.class).asEagerSingleton();
+        bind(PostMessageDispatcher.class).asEagerSingleton();
     }
 
     void bindConfiguration() {

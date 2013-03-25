@@ -23,19 +23,54 @@ public class JsArrayHelper {
     }
 
     /**
+     * Creates a {@link JsArray} containing mixed values.
+     * <p>
+     * Supported value types:
+     * <ul>
+     * <li>{@link JavaScriptObject}, maps to native JS object
+     * <li>String, maps to {@code string}
+     * <li>Double, maps to {@code number}
+     * <li>Boolean, maps to {@code boolean}
+     * </ul>
+     */
+    public static JsArray<JavaScriptObject> createMixedArray(Object... values) {
+        JsArray<JavaScriptObject> array = JavaScriptObject.createArray().cast();
+        if (values != null) {
+            for (int i = 0; i < values.length; i++) {
+                Object obj = values[i];
+                if (obj instanceof JavaScriptObject) {
+                    array.push((JavaScriptObject) obj);
+                } else if (obj instanceof String) {
+                    pushString(array, (String) obj);
+                } else if (obj instanceof Double) {
+                    pushNumber(array, (Double) obj);
+                } else if (obj instanceof Boolean) {
+                    pushBoolean(array, (Boolean) obj);
+                }
+            }
+        }
+        return array;
+    }
+
+    private static native void pushString(JavaScriptObject arrayObj, String value) /*-{
+        arrayObj[arrayObj.length] = value;
+    }-*/;
+
+    private static native void pushNumber(JavaScriptObject arrayObj, Double value) /*-{
+        arrayObj[arrayObj.length] = value;
+    }-*/;
+
+    private static native void pushBoolean(JavaScriptObject arrayObj, Boolean value) /*-{
+        arrayObj[arrayObj.length] = value;
+    }-*/;
+
+    /**
      * Casts the given native array object into {@link JsArray} representation.
      * <p>
      * Returns {@code null} if {@code arrayObj} is not a native array object.
      */
     private static native JsArray<?> toGenericArray(JavaScriptObject arrayObj) /*-{
-        return (@org.ovirt.engine.ui.webadmin.plugin.jsni.JsArrayHelper::isArray(Lcom/google/gwt/core/client/JavaScriptObject;)(arrayObj)) ? arrayObj : null;
-    }-*/;
-
-    /**
-     * Returns {@code true} if the given JS object is a native array object.
-     */
-    public static native boolean isArray(JavaScriptObject obj) /*-{
-        return Object.prototype.toString.call(obj) === '[object Array]';
+        return (Object.prototype.toString.call(arrayObj) === '[object Array]') ? arrayObj : null;
     }-*/;
 
 }

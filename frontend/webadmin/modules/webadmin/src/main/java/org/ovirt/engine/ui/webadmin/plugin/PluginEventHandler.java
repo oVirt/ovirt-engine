@@ -1,8 +1,11 @@
 package org.ovirt.engine.ui.webadmin.plugin;
 
+import java.util.logging.Logger;
+
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent.UserLoginChangeHandler;
+import org.ovirt.engine.ui.webadmin.plugin.PluginManager.PluginInvocationCondition;
 import org.ovirt.engine.ui.webadmin.plugin.entity.EntityObject;
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsArrayHelper;
 import org.ovirt.engine.ui.webadmin.plugin.restapi.RestApiSessionAcquiredEvent;
@@ -21,6 +24,9 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.TemplateSelection
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.TemplateSelectionChangeEvent.TemplateSelectionChangeHandler;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VirtualMachineSelectionChangeEvent;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VirtualMachineSelectionChangeEvent.VirtualMachineSelectionChangeHandler;
+import org.ovirt.engine.ui.webadmin.system.MessageEventData;
+import org.ovirt.engine.ui.webadmin.system.MessageReceivedEvent;
+import org.ovirt.engine.ui.webadmin.system.MessageReceivedEvent.MessageReceivedHandler;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -31,6 +37,8 @@ import com.google.inject.Inject;
  * Should be bound as GIN eager singleton, created early on during application startup.
  */
 public class PluginEventHandler {
+
+    private static final Logger logger = Logger.getLogger(PluginEventHandler.class.getName());
 
     @Inject
     public PluginEventHandler(EventBus eventBus, final PluginManager manager, final CurrentUser user) {
@@ -97,6 +105,29 @@ public class PluginEventHandler {
             @Override
             public void onVirtualMachineSelectionChange(VirtualMachineSelectionChangeEvent event) {
                 manager.invokePluginsNow("VirtualMachineSelectionChange", EntityObject.arrayFrom(event.getSelectedItems())); //$NON-NLS-1$
+            }
+        });
+
+        // Cross-window messaging
+        eventBus.addHandler(MessageReceivedEvent.getType(), new MessageReceivedHandler() {
+            @Override
+            public void onMessageReceived(MessageReceivedEvent event) {
+                final MessageEventData eventData = event.getData();
+
+                manager.invokePluginsNowOrLater("MessageReceived", //$NON-NLS-1$
+                        JsArrayHelper.createMixedArray(eventData.getData(), eventData.getSourceWindow()),
+                        new PluginInvocationCondition() {
+                            @Override
+                            public boolean canInvoke(Plugin plugin) {
+                                if (eventData.originMatches(plugin.getApiOptionsObject().getAllowedMessageOrigins())) {
+                                    return true;
+                                }
+
+                                logger.info("Plugin [" + plugin.getName() //$NON-NLS-1$
+                                        + "] rejected message event for origin [" + eventData.getOrigin() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+                                return false;
+                            }
+                        });
             }
         });
     }

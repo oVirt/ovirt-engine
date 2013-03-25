@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.ovirt.engine.ui.common.auth.CurrentUser;
+import org.ovirt.engine.ui.webadmin.plugin.api.ApiOptions;
 import org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions;
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunction.ErrorHandler;
 
@@ -36,6 +37,19 @@ import com.google.inject.Inject;
  * Should be bound as GIN eager singleton, created early on during application startup.
  */
 public class PluginManager {
+
+    public interface PluginInvocationCondition {
+
+        boolean canInvoke(Plugin plugin);
+
+    }
+
+    private static final PluginInvocationCondition INVOKE_ANY_PLUGIN = new PluginInvocationCondition() {
+        @Override
+        public boolean canInvoke(Plugin plugin) {
+            return true;
+        }
+    };
 
     private static final Logger logger = Logger.getLogger(PluginManager.class.getName());
 
@@ -68,7 +82,7 @@ public class PluginManager {
     }
 
     void addPlugin(Plugin plugin) {
-        plugins.put(plugin.getMetaData().getName(), plugin);
+        plugins.put(plugin.getName(), plugin);
     }
 
     void scheduleFunctionCommand(String pluginName, Command command) {
@@ -152,7 +166,7 @@ public class PluginManager {
      */
     void loadPlugin(Plugin plugin) {
         if (plugin.isInState(PluginState.DEFINED)) {
-            logger.info("Loading plugin [" + plugin.getMetaData().getName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+            logger.info("Loading plugin [" + plugin.getName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
             Document.get().getBody().appendChild(plugin.getIFrameElement());
             plugin.markAsLoading();
         }
@@ -189,12 +203,22 @@ public class PluginManager {
     /**
      * Invokes an event handler function on all plugins which are currently {@linkplain PluginState#IN_USE in use}.
      * <p>
-     * {@code functionArgs} represents the argument list to use when calling given function (can be {@code null}).
+     * {@code functionArgs} represents the argument list to use when calling the given function (can be {@code null}).
      */
     public void invokePluginsNow(String functionName, JsArray<?> functionArgs) {
+        invokePluginsNow(functionName, functionArgs, INVOKE_ANY_PLUGIN);
+    }
+
+    /**
+     * Invokes an event handler function on all plugins which are currently {@linkplain PluginState#IN_USE in use} and
+     * meet the given condition.
+     * <p>
+     * {@code functionArgs} represents the argument list to use when calling the given function (can be {@code null}).
+     */
+    public void invokePluginsNow(String functionName, JsArray<?> functionArgs, PluginInvocationCondition condition) {
         if (canInvokePlugins) {
             for (Plugin plugin : getPlugins()) {
-                if (plugin.isInState(PluginState.IN_USE)) {
+                if (plugin.isInState(PluginState.IN_USE) && condition.canInvoke(plugin)) {
                     invokePlugin(plugin, functionName, functionArgs);
                 }
             }
@@ -203,19 +227,31 @@ public class PluginManager {
 
     /**
      * Invokes an event handler function on all plugins which are currently {@linkplain PluginState#IN_USE in use}, and
-     * schedules invocation of given function on all plugins that might be put in use later on.
+     * schedules invocation of the given function on all plugins that might be put in use later on.
      * <p>
-     * {@code functionArgs} represents the argument list to use when calling given function (can be {@code null}).
+     * {@code functionArgs} represents the argument list to use when calling the given function (can be {@code null}).
      */
-    public void invokePluginsNowOrLater(final String functionName, final JsArray<?> functionArgs) {
-        invokePluginsNow(functionName, functionArgs);
+    public void invokePluginsNowOrLater(String functionName, JsArray<?> functionArgs) {
+        invokePluginsNowOrLater(functionName, functionArgs, INVOKE_ANY_PLUGIN);
+    }
+
+    /**
+     * Invokes an event handler function on all plugins which are currently {@linkplain PluginState#IN_USE in use} and
+     * meet the given condition, and schedules invocation of the given function on all plugins that might be put in use
+     * later on.
+     * <p>
+     * {@code functionArgs} represents the argument list to use when calling the given function (can be {@code null}).
+     */
+    public void invokePluginsNowOrLater(final String functionName, final JsArray<?> functionArgs,
+            final PluginInvocationCondition condition) {
+        invokePluginsNow(functionName, functionArgs, condition);
 
         for (final Plugin plugin : getPlugins()) {
             if (!canInvokePlugins || !plugin.isInState(PluginState.IN_USE)) {
-                scheduleFunctionCommand(plugin.getMetaData().getName(), new Command() {
+                scheduleFunctionCommand(plugin.getName(), new Command() {
                     @Override
                     public void execute() {
-                        if (canInvokePlugins && plugin.isInState(PluginState.IN_USE)) {
+                        if (canInvokePlugins && plugin.isInState(PluginState.IN_USE) && condition.canInvoke(plugin)) {
                             invokePlugin(plugin, functionName, functionArgs);
                         }
                     }
@@ -238,7 +274,7 @@ public class PluginManager {
      * function call.
      */
     boolean invokePlugin(final Plugin plugin, final String functionName, JsArray<?> functionArgs) {
-        final String pluginName = plugin.getMetaData().getName();
+        final String pluginName = plugin.getName();
         logger.info("Invoking event handler function [" + functionName + "] for plugin [" + pluginName + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
         return plugin.getEventHandlerFunction(functionName).invoke(functionArgs, new ErrorHandler() {
@@ -275,19 +311,32 @@ public class PluginManager {
     /**
      * Registers an event handler object (object containing plugin event handler functions) for the given plugin.
      */
-    void registerPluginEventHandlerObject(String pluginName, JavaScriptObject pluginEventHandlerObject) {
+    void registerPluginEventHandlerObject(String pluginName, JavaScriptObject eventHandlerObject) {
         Plugin plugin = getPlugin(pluginName);
-        if (plugin == null || pluginEventHandlerObject == null) {
+        if (plugin == null || eventHandlerObject == null) {
             return;
         }
 
         // Allow plugin event handler object to be set only once
         if (plugin.getEventHandlerObject() == null) {
-            plugin.setEventHandlerObject(pluginEventHandlerObject);
+            plugin.setEventHandlerObject(eventHandlerObject);
             logger.info("Plugin [" + pluginName + "] has registered the event handler object"); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             logger.warning("Plugin [" + pluginName + "] has already registered the event handler object"); //$NON-NLS-1$ //$NON-NLS-2$
         }
+    }
+
+    /**
+     * Registers a custom API options object for the given plugin.
+     */
+    void registerPluginApiOptionsObject(String pluginName, ApiOptions apiOptionsObject) {
+        Plugin plugin = getPlugin(pluginName);
+        if (plugin == null || apiOptionsObject == null) {
+            return;
+        }
+
+        plugin.setApiOptionsObject(apiOptionsObject);
+        logger.info("Plugin [" + pluginName + "] has registered custom API options object"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -333,7 +382,7 @@ public class PluginManager {
             return;
         }
 
-        String pluginName = plugin.getMetaData().getName();
+        String pluginName = plugin.getName();
 
         // Try to invoke UiInit event handler function
         if (plugin.isInState(PluginState.READY)) {
@@ -394,8 +443,13 @@ public class PluginManager {
             },
 
             // Registers plugin event handler functions for later invocation
-            register: function(pluginEventHandlerObject) {
-                ctx.@org.ovirt.engine.ui.webadmin.plugin.PluginManager::registerPluginEventHandlerObject(Ljava/lang/String;Lcom/google/gwt/core/client/JavaScriptObject;)(this.pluginName,pluginEventHandlerObject);
+            register: function(eventHandlerObject) {
+                ctx.@org.ovirt.engine.ui.webadmin.plugin.PluginManager::registerPluginEventHandlerObject(Ljava/lang/String;Lcom/google/gwt/core/client/JavaScriptObject;)(this.pluginName,sanitizeObject(eventHandlerObject));
+            },
+
+            // Registers custom API options object associated with the plugin
+            options: function(apiOptionsObject) {
+                ctx.@org.ovirt.engine.ui.webadmin.plugin.PluginManager::registerPluginApiOptionsObject(Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/ApiOptions;)(this.pluginName,sanitizeObject(apiOptionsObject));
             },
 
             // Indicates that the plugin is ready for use

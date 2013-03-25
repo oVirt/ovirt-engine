@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.plugin;
 import java.util.Arrays;
 import java.util.List;
 
+import org.ovirt.engine.ui.webadmin.plugin.api.ApiOptions;
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunction;
 
 import com.google.gwt.core.client.JavaScriptObject;
@@ -22,6 +23,9 @@ public class Plugin {
     // The object containing plugin event handler functions
     private JavaScriptObject eventHandlerObject;
 
+    // The object containing custom plugin API options
+    private ApiOptions apiOptionsObject;
+
     public Plugin(PluginMetaData metaData, IFrameElement iframe) {
         assert metaData != null : "Plugin meta-data cannot be null"; //$NON-NLS-1$
         assert iframe != null : "Plugin iframe element cannot be null"; //$NON-NLS-1$
@@ -29,10 +33,15 @@ public class Plugin {
         this.metaData = metaData;
         this.state = PluginState.DEFINED;
         this.iframe = iframe;
+        this.apiOptionsObject = JavaScriptObject.createObject().cast();
     }
 
     public PluginMetaData getMetaData() {
         return metaData;
+    }
+
+    public String getName() {
+        return getMetaData().getName();
     }
 
     public boolean isInState(PluginState state) {
@@ -56,6 +65,14 @@ public class Plugin {
      */
     public JsFunction getEventHandlerFunction(String functionName) {
         return JsFunction.get(eventHandlerObject, functionName);
+    }
+
+    public ApiOptions getApiOptionsObject() {
+        return apiOptionsObject;
+    }
+
+    public void setApiOptionsObject(ApiOptions apiOptionsObject) {
+        this.apiOptionsObject = apiOptionsObject;
     }
 
     /**
