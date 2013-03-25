@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
@@ -95,7 +96,41 @@ public class RemoveImageCommandTest {
 
         OvfManager ovfManager = new OvfManager();
         ArrayList<DiskImage> disks = new ArrayList<DiskImage>(Arrays.asList(disk1, disk2));
-        String ovf = ovfManager.ExportVm(vm, disks);
+        String ovf = ovfManager.ExportVm(vm, disks, Version.v3_1);
+        Snapshot snap = new Snapshot();
+        snap.setVmConfiguration(ovf);
+        snap.setId(vmSnapshotId);
+
+        when(snapshotDAO.get(vmSnapshotId)).thenReturn(snap);
+        doReturn(disk2).when(cmd).getDiskImage();
+        doReturn(disk2).when(cmd).getImage();
+        doReturn(disk2.getId()).when(cmd).getImageId();
+        Snapshot actual = cmd.prepareSnapshotConfigWithoutImageSingleImage(vmSnapshotId, disk2.getImageId());
+        String actualOvf = actual.getVmConfiguration();
+
+        ArrayList<DiskImage> actualImages = new ArrayList<DiskImage>();
+        ovfManager.ImportVm(actualOvf, new VM(), actualImages, new ArrayList<VmNetworkInterface>());
+        assertEquals("Wrong number of disks", 1, actualImages.size());
+        assertEquals("Wrong disk", disk1, actualImages.get(0));
+    }
+
+    @Test
+    public void testRemoveImageFromSnapshotConfigurationBackwardCompatibility() throws OvfReaderException {
+        Guid vmId = Guid.NewGuid();
+        VM vm = new VM();
+        vm.setId(vmId);
+        vm.setStoragePoolId(Guid.NewGuid());
+        vm.setVmtName(RandomUtils.instance().nextString(10));
+        vm.setOrigin(OriginType.OVIRT);
+        vm.setDbGeneration(1L);
+        Guid vmSnapshotId = Guid.NewGuid();
+
+        DiskImage disk1 = addTestDisk(vm, vmSnapshotId);
+        DiskImage disk2 = addTestDisk(vm, vmSnapshotId);
+
+        OvfManager ovfManager = new OvfManager();
+        ArrayList<DiskImage> disks = new ArrayList<DiskImage>(Arrays.asList(disk1, disk2));
+        String ovf = ovfManager.ExportVm(vm, disks, Version.v3_0);
         Snapshot snap = new Snapshot();
         snap.setVmConfiguration(ovf);
         snap.setId(vmSnapshotId);

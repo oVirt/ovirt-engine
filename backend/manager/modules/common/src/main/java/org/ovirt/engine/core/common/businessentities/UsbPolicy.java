@@ -5,8 +5,8 @@ public enum UsbPolicy {
     DISABLED,
     ENABLED_NATIVE;
 
-    private static final String oldEnabledValue = "Enabled";
-    private static final String oldDisabledValue = "Disabled";
+    public static final String PRE_3_1_ENABLED = "Enabled";
+    public static final String PRE_3_1_DISABLED = "Disabled";
 
     public int getValue() {
         return this.ordinal();
@@ -21,9 +21,9 @@ public enum UsbPolicy {
      */
     public static UsbPolicy forStringValue(String value) {
         UsbPolicy retVal = null;
-        if (value.equalsIgnoreCase(oldEnabledValue) || value.equalsIgnoreCase(ENABLED_LEGACY.name())) {
+        if (value.equalsIgnoreCase(PRE_3_1_ENABLED) || value.equalsIgnoreCase(ENABLED_LEGACY.name())) {
             retVal = ENABLED_LEGACY;
-        } else if (value.equalsIgnoreCase(oldDisabledValue) || value.equalsIgnoreCase(DISABLED.name())) {
+        } else if (value.equalsIgnoreCase(PRE_3_1_DISABLED) || value.equalsIgnoreCase(DISABLED.name())) {
             retVal = DISABLED;
         } else if (value.equalsIgnoreCase(ENABLED_NATIVE.name())) {
             retVal = ENABLED_NATIVE;

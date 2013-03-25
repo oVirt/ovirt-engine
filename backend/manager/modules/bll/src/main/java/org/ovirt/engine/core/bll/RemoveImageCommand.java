@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -249,7 +250,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                     }
                 }
 
-                String newOvf = ovfManager.ExportVm(vmSnapshot, snapshotImages);
+                String newOvf = ovfManager.ExportVm(vmSnapshot, snapshotImages, ClusterUtils.getCompatilibilyVersion(vmSnapshot));
                 snap.setVmConfiguration(newOvf);
             }
         } catch (OvfReaderException e) {

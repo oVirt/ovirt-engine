@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -265,7 +266,7 @@ public class OvfDataUpdater {
     }
 
     protected String generateVmTemplateMetadata(VmTemplate template, List<DiskImage> allTemplateImages) {
-        return ovfManager.ExportTemplate(template, allTemplateImages);
+        return ovfManager.ExportTemplate(template, allTemplateImages, ClusterUtils.getCompatilibilyVersion(template));
     }
 
     /**
@@ -317,7 +318,7 @@ public class OvfDataUpdater {
     }
 
     protected String generateVmMetadata(VM vm, ArrayList<DiskImage> AllVmImages) {
-        return ovfManager.ExportVm(vm, AllVmImages);
+        return ovfManager.ExportVm(vm, AllVmImages, ClusterUtils.getCompatilibilyVersion(vm));
     }
 
     /**

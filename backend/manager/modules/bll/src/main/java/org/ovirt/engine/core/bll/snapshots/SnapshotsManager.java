@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -184,7 +185,7 @@ public class SnapshotsManager {
         for (DiskImage image : images) {
             image.setStorageIds(null);
         }
-        return new OvfManager().ExportVm(vm, images);
+        return new OvfManager().ExportVm(vm, images, ClusterUtils.getCompatilibilyVersion(vm));
     }
 
     /**

@@ -7,7 +7,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
-import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
@@ -17,12 +16,13 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Match;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.RegexOptions;
+import org.ovirt.engine.core.compat.Version;
 
 public class OvfVmWriter extends OvfWriter {
     private static final String EXPORT_ONLY_PREFIX = "exportonly_";
 
-    public OvfVmWriter(VM vm, List<DiskImage> images) {
-        super(vm.getStaticData(), images);
+    public OvfVmWriter(VM vm, List<DiskImage> images, Version version) {
+        super(vm.getStaticData(), images, version);
         _vm = vm;
     }
 
@@ -192,7 +192,7 @@ public class OvfVmWriter extends OvfWriter {
         for (DiskImage image : _images) {
             _writer.WriteStartElement("Item");
             _writer.WriteStartElement(RASD_URI, "Caption");
-            _writer.WriteRaw(image.getDiskAlias());
+            _writer.WriteRaw(getBackwardCompatibleDiskAlias(image.getDiskAlias()));
             _writer.WriteEndElement();
             _writer.WriteStartElement(RASD_URI, "InstanceId");
             _writer.WriteRaw(image.getImageId().toString());
@@ -292,7 +292,7 @@ public class OvfVmWriter extends OvfWriter {
         _writer.WriteRaw(OvfHardware.USB);
         _writer.WriteEndElement();
         _writer.WriteStartElement(RASD_URI, "UsbPolicy");
-        _writer.WriteRaw(vmBase.getUsbPolicy() != null ? vmBase.getUsbPolicy().toString() : UsbPolicy.DISABLED.name());
+        _writer.WriteRaw(getBackwardCompatibleUsbPolicy(vmBase.getUsbPolicy()));
         _writer.WriteEndElement();
         _writer.WriteEndElement(); // item
 

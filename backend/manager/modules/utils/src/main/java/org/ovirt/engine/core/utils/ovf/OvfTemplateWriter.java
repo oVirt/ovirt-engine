@@ -3,18 +3,18 @@ package org.ovirt.engine.core.utils.ovf;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.compat.Version;
 
 public class OvfTemplateWriter extends OvfWriter {
     protected VmTemplate _vmTemplate;
 
-    public OvfTemplateWriter(VmTemplate vmTemplate, List<DiskImage> images) {
-        super(vmTemplate, images);
+    public OvfTemplateWriter(VmTemplate vmTemplate, List<DiskImage> images, Version version) {
+        super(vmTemplate, images, version);
         _vmTemplate = vmTemplate;
     }
 
@@ -120,7 +120,7 @@ public class OvfTemplateWriter extends OvfWriter {
         for (DiskImage image : _images) {
             _writer.WriteStartElement("Item");
             _writer.WriteStartElement(RASD_URI, "Caption");
-            _writer.WriteRaw(image.getDiskAlias());
+            _writer.WriteRaw(getBackwardCompatibleDiskAlias(image.getDiskAlias()));
             _writer.WriteEndElement();
             _writer.WriteStartElement(RASD_URI, "InstanceId");
             _writer.WriteRaw(image.getImageId().toString());
@@ -214,8 +214,7 @@ public class OvfTemplateWriter extends OvfWriter {
         _writer.WriteRaw(OvfHardware.USB);
         _writer.WriteEndElement();
         _writer.WriteStartElement(RASD_URI, "UsbPolicy");
-        _writer.WriteRaw((_vmTemplate.getUsbPolicy()) != null ? _vmTemplate.getUsbPolicy().toString()
-                : UsbPolicy.DISABLED.name());
+        _writer.WriteRaw(getBackwardCompatibleUsbPolicy(_vmTemplate.getUsbPolicy()));
         _writer.WriteEndElement();
         _writer.WriteEndElement(); // item
 

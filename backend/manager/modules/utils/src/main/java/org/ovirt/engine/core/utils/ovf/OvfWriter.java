@@ -2,10 +2,13 @@ package org.ovirt.engine.core.utils.ovf;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -15,6 +18,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlTextWriter;
 
@@ -25,12 +29,20 @@ public abstract class OvfWriter implements IOvfBuilder {
     protected XmlDocument _document;
     protected VM _vm;
     protected VmBase vmBase;
+    private Version version;
+    private int diskCounter;
+    /** map disk alias to backward compatible disk alias */
+    private Map<String, String> diskAliasesMap;
 
-    public OvfWriter(VmBase vmBase, List<DiskImage> images) {
+    public OvfWriter(VmBase vmBase, List<DiskImage> images, Version version) {
         _document = new XmlDocument();
         _images = images;
         _writer = new XmlTextWriter();
         this.vmBase = vmBase;
+        this.version = version;
+        if (version.compareTo(Version.v3_1) < 0) {
+            diskAliasesMap = new HashMap<String, String>();
+        }
         WriteHeader();
     }
 
@@ -368,5 +380,36 @@ public abstract class OvfWriter implements IOvfBuilder {
     @Override
     public String getStringRepresentation() {
         return _writer.getStringXML();
+    }
+
+    protected String getBackwardCompatibleUsbPolicy(UsbPolicy usbPolicy) {
+        if (usbPolicy == null) {
+            return version.compareTo(Version.v3_1) < 0 ? UsbPolicy.PRE_3_1_DISABLED : UsbPolicy.DISABLED.name();
+        }
+
+        if (version.compareTo(Version.v3_1) < 0) {
+            switch (usbPolicy) {
+            case ENABLED_LEGACY:
+                return UsbPolicy.PRE_3_1_ENABLED;
+            default:
+                return UsbPolicy.PRE_3_1_DISABLED;
+            }
+        }
+        else {
+            return usbPolicy.toString();
+        }
+    }
+
+    protected String getBackwardCompatibleDiskAlias(String diskAlias) {
+        if (version.compareTo(Version.v3_1) >= 0) {
+            return diskAlias;
+        }
+
+        String newDiskAlias = diskAliasesMap.get(diskAlias);
+        if (newDiskAlias == null) {
+            newDiskAlias = "Drive " + (++diskCounter);
+            diskAliasesMap.put(diskAlias, newDiskAlias);
+        }
+        return newDiskAlias;
     }
 }

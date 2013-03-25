@@ -8,19 +8,20 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 
 public class OvfManager {
 
-    public String ExportVm(VM vm, ArrayList<DiskImage> images) {
-        OvfWriter ovf = new OvfVmWriter(vm, images);
+    public String ExportVm(VM vm, ArrayList<DiskImage> images, Version version) {
+        OvfWriter ovf = new OvfVmWriter(vm, images, version);
         BuildOvf(ovf);
 
         return ovf.getStringRepresentation();
     }
 
-    public String ExportTemplate(VmTemplate vmTemplate, List<DiskImage> images) {
-        OvfWriter ovf = new OvfTemplateWriter(vmTemplate, images);
+    public String ExportTemplate(VmTemplate vmTemplate, List<DiskImage> images, Version version) {
+        OvfWriter ovf = new OvfTemplateWriter(vmTemplate, images, version);
         BuildOvf(ovf);
 
         return ovf.getStringRepresentation();

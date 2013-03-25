@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
+import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -259,7 +260,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             vm.setVmtName(t.getName());
         }
         getVm().setVmtGuid(VmTemplateHandler.BlankVmTemplateId);
-        String vmMeta = ovfManager.ExportVm(vm, AllVmImages);
+        String vmMeta = ovfManager.ExportVm(vm, AllVmImages, ClusterUtils.getCompatilibilyVersion(vm));
         List<Guid> imageGroupIds = new ArrayList<Guid>();
         for(Disk disk : vm.getDiskMap().values()) {
             if(disk.getDiskStorageType() == DiskStorageType.IMAGE) {
