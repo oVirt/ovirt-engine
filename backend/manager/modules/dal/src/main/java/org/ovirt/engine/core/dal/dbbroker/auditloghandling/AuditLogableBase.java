@@ -338,7 +338,9 @@ public class AuditLogableBase extends TimeoutBase {
     public void setVds(final VDS value) {
         mVds = value;
         mVdsName = null;
-        mVdsId = (value == null) ? Guid.Empty : value.getId();
+        if (value != null) {
+            mVdsId = value.getId();
+        }
     }
 
     public VM getVm() {
