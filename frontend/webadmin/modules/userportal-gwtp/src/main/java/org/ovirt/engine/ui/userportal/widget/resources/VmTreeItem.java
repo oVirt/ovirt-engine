@@ -12,9 +12,9 @@ import com.google.gwt.user.client.ui.Widget;
  * A tree item which is bound to VM and can set up it's state according to the provided list of selected VMs
  */
 public class VmTreeItem extends TreeItem {
-    private final Guid id;
+    private Guid id;
 
-    private final VM vm;
+    private VM vm;
 
     public VmTreeItem(Widget widget, VM vm) {
         super(widget);
@@ -50,5 +50,10 @@ public class VmTreeItem extends TreeItem {
         }
 
         return id.equals(other.getId());
+    }
+
+    public void reset() {
+        this.vm = null;
+        this.id = null;
     }
 }

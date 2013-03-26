@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.editor.client.Editor;
+import com.google.gwt.editor.client.EditorVisitor;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.editor.client.impl.BaseEditorDriver;
 
@@ -25,6 +26,7 @@ public abstract class AbstractUiCommonModelEditorDriver<T extends Model, E exten
         extends BaseEditorDriver<T, E> implements SimpleBeanEditorDriver<T, E> {
 
     private IEventListener propertyChangeListener = null;
+    private EditorVisitor visitor = null;
 
     /**
      * {@inheritDoc} <BR>
@@ -51,8 +53,19 @@ public abstract class AbstractUiCommonModelEditorDriver<T extends Model, E exten
         // Register a "PropertyChangedEvent" to get Model changes
         object.getPropertyChangedEvent().addListener(propertyChangeListener);
 
+        accept(getEditorVisitor());
+    }
+
+    /**
+     * Get the {@code EditorVisitor}, creating one if it doesn't exist yet.
+     * @return THe {@code EditorVisitor}
+     */
+    protected EditorVisitor getEditorVisitor() {
         // Visit editors
-        accept(new UiCommonEditorVisitor<T>(getEventMap(), getOwnerModels()));
+        if (visitor == null) {
+            visitor = new UiCommonEditorVisitor<T>(getEventMap(), getOwnerModels());
+        }
+        return visitor;
     }
 
     @Override

@@ -105,6 +105,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
             closeHandler.removeHandler();
         }
 
+        clearTreeItems();
         vmTree.clear();
 
         for (VM vm : (Iterable<VM>) model.getItems()) {
@@ -120,6 +121,23 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
 
         updateSelection(model);
         listenOnSelectionChange();
+    }
+
+    private void clearTreeItems() {
+        int nodeCount = vmTree.getItemCount();
+        for (int i = 0; i < nodeCount; i++) {
+            clearTreeItems(vmTree.getItem(i));
+        }
+    }
+
+    private void clearTreeItems(TreeItem node) {
+        int nodeCount = node.getChildCount();
+        for (int i = 0; i < nodeCount; i++) {
+            clearTreeItems((VmTreeItem) node.getChild(i));
+        }
+        if (node instanceof VmTreeItem) {
+            ((VmTreeItem) node).reset();
+        }
     }
 
     @Override
