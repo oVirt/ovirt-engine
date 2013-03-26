@@ -109,7 +109,7 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, C
         clearButton.setLabel(constants.showAllService());
     }
 
-    protected void initTableColumns(ApplicationConstants constants) {
+    protected void initTableColumns(final ApplicationConstants constants) {
         // Table Entity Columns
         servicesTable.addEntityModelColumn(new EntityModelTextColumn<ServiceInfo>() {
             @Override
@@ -135,7 +135,12 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, C
         servicesTable.addEntityModelColumn(new EntityModelTextColumn<ServiceInfo>() {
             @Override
             public String getText(ServiceInfo entity) {
-                return String.valueOf(entity.getPort());
+                if (entity.getPort() > 0) {
+                    return String.valueOf(entity.getPort());
+                }
+                else {
+                    return constants.notAvailableLabel();
+                }
             }
         }, constants.portService());
 
