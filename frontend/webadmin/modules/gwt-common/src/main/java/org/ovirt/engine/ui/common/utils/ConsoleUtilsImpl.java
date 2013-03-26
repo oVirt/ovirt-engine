@@ -1,11 +1,8 @@
 package org.ovirt.engine.ui.common.utils;
 
-import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.Configurator;
+import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.HasConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
@@ -17,121 +14,24 @@ import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.inject.Inject;
 
-public class ConsoleUtils {
+public class ConsoleUtilsImpl implements ConsoleUtils {
 
     private Boolean spiceAvailable;
     private Boolean rdpAvailable;
 
-    private final String VNC_NOT_SUPPORTED_MESSAGE;
-    private final String BROWSER_NOT_SUPPORTED_MESSAGE;
-
-    private final ClientAgentType clientAgentType;
+    private final CommonApplicationConstants constants;
+    private final Configurator configurator;
 
     @Inject
-    public ConsoleUtils(ClientAgentType clientAgentType, CommonApplicationConstants constants) {
-        this.clientAgentType = clientAgentType;
-
-        VNC_NOT_SUPPORTED_MESSAGE = constants.vncNotSupportedMsg();
-        BROWSER_NOT_SUPPORTED_MESSAGE = constants.browserNotSupportedMsg();
+    public ConsoleUtilsImpl(Configurator configurator, CommonApplicationConstants constants) {
+        this.configurator= configurator;
+        this.constants = constants;
     }
 
-    public boolean isSpiceAvailable() {
-        if (spiceAvailable == null) {
-            spiceAvailable =
-                    clientAgentType.getBrowser().toLowerCase().contains("firefox") //$NON-NLS-1$
-                            && isLinuxClient() ||
-                            clientAgentType.getBrowser().toLowerCase().contains("explorer") //$NON-NLS-1$
-                            && isWindowsClient();
-            GWT.log("Determining if Spice console is available on current platform, result:" + spiceAvailable); //$NON-NLS-1$
-        }
-        return spiceAvailable;
-    }
-
-    private boolean isLinuxClient() {
-        return clientAgentType.getOS().toLowerCase().contains("linux"); //$NON-NLS-1$
-    }
-
-    private boolean isWindowsClient() {
-        return clientAgentType.getOS().toLowerCase().contains("windows"); //$NON-NLS-1$
-    }
-
-    public boolean isRDPAvailable() {
-        if (rdpAvailable == null) {
-            rdpAvailable =
-                    (clientAgentType.getBrowser().toLowerCase().contains("explorer") && isWindowsClient()); //$NON-NLS-1$
-            GWT.log("Determining if RDP console is available on current platform, result:" + rdpAvailable); //$NON-NLS-1$
-        }
-        return rdpAvailable;
-    }
-
-    public boolean canOpenSpiceConsole(HasConsoleModel item) {
-        if (item.isPool() || !isSpiceAvailable())
-            return false;
-
-        VM vm = item.getVM();
-
-        if (vm.getDisplayType().equals(DisplayType.qxl) &&
-                item.getDefaultConsoleModel().getConnectCommand().getIsAvailable() &&
-                item.getDefaultConsoleModel().getConnectCommand().getIsExecutionAllowed()) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public boolean canOpenRDPConsole(HasConsoleModel item) {
-        if (item.isPool() || !isRDPAvailable())
-            return false;
-
-        if (item.getAdditionalConsoleModel() != null &&
-                item.getAdditionalConsoleModel().getConnectCommand().getIsAvailable() &&
-                item.getAdditionalConsoleModel().getConnectCommand().getIsExecutionAllowed()) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public String determineProtocolMessage(HasConsoleModel item) {
-        if (item.isPool()) {
-            return ""; //$NON-NLS-1$
-        }
-
-        if (!(isRDPAvailable() || isSpiceAvailable())) {
-            return BROWSER_NOT_SUPPORTED_MESSAGE;
-        }
-
-        boolean isSpice = item.getDefaultConsoleModel() instanceof SpiceConsoleModel && isSpiceAvailable();
-        boolean isRdp = item.getAdditionalConsoleModel() != null && isRDPAvailable();
-
-        if (!isSpice && !isRdp) {
-            return VNC_NOT_SUPPORTED_MESSAGE;
-        }
-
-        return ""; //$NON-NLS-1$
-    }
-
-    public ConsoleProtocol determineConnectionProtocol(HasConsoleModel item) {
-        if (item.isPool()) {
-            return null;
-        }
-
-        ConsoleProtocol selectedProtocol = item.getSelectedProtocol();
-
-        if (item.getAdditionalConsoleModel() != null && isRDPAvailable() && selectedProtocol.equals(ConsoleProtocol.RDP)) {
-            return ConsoleProtocol.RDP;
-        } else if (item.getDefaultConsoleModel() instanceof SpiceConsoleModel && isSpiceAvailable() &&
-                selectedProtocol.equals(ConsoleProtocol.SPICE)) {
-            return ConsoleProtocol.SPICE;
-        } else if (item.getDefaultConsoleModel() instanceof VncConsoleModel) {
-            return ConsoleProtocol.VNC;
-        }
-
-        return null;
-    }
-
+    //TODO consider refactoring it to use one parameter only if possible
+    @Override
     public boolean canShowConsole(ConsoleProtocol selectedProtocol, HasConsoleModel item) {
-        if (selectedProtocol == null) {
+        if (selectedProtocol == null || item == null) {
             return false;
         }
 
@@ -140,17 +40,131 @@ public class ConsoleUtils {
         boolean isRdpAvailable =
                 (selectedProtocol.equals(ConsoleProtocol.RDP) && canOpenRDPConsole(item));
         boolean isVncAvailable =
-                (selectedProtocol.equals(ConsoleProtocol.VNC));
+                (selectedProtocol.equals(ConsoleProtocol.VNC) && canOpenVNCConsole(item));
 
         return isSpiceAvailable || isRdpAvailable || isVncAvailable;
+    }
+
+    @Override
+    public boolean canOpenRDPConsole(HasConsoleModel item) {
+        if (item.isPool() || !isRDPAvailable())
+            return false;
+
+        if (item.getAdditionalConsoleModel() != null &&
+                configurator.isClientWindowsExplorer() &&
+                item.getAdditionalConsoleModel().getConnectCommand().getIsAvailable() &&
+                item.getAdditionalConsoleModel().getConnectCommand().getIsExecutionAllowed()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean isRDPAvailable() {
+        if (rdpAvailable == null) {
+            rdpAvailable = configurator.isClientWindowsExplorer();
+            GWT.log("Determining if RDP console is available on current platform, result:" + rdpAvailable); //$NON-NLS-1$
+        }
+        return rdpAvailable;
+    }
+
+    @Override
+    public boolean canOpenSpiceConsole(HasConsoleModel item) {
+        if (item.isPool() || !isSpiceAvailable())
+            return false;
+
+        if (isSpiceAvailable() &&
+                item.getDefaultConsoleModel().getConnectCommand().getIsAvailable() &&
+                item.getDefaultConsoleModel().getConnectCommand().getIsExecutionAllowed()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean isSpiceAvailable() {
+        if (spiceAvailable == null) {
+            switch (configurator.getClientConsoleMode()) {
+            case Plugin:
+                spiceAvailable = configurator.isClientWindowsExplorer() || configurator.isClientLinuxFirefox();
+                break;
+            case Native:
+                spiceAvailable = true;
+                break;
+            case Auto:
+                spiceAvailable = true;
+                break;
+            default:
+                spiceAvailable = false;
+                break;
+            }
+            GWT.log("Determining if Spice console is available on current platform, result:" + spiceAvailable); //$NON-NLS-1$
+        }
+        return spiceAvailable;
+    }
+
+    @Override
+    public boolean canOpenVNCConsole(HasConsoleModel item) {
+        if (item.isPool())
+            return false;
+
+        if (item.getDefaultConsoleModel().getConnectCommand().getIsAvailable() &&
+            item.getDefaultConsoleModel().getConnectCommand().getIsExecutionAllowed()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public String determineProtocolMessage(HasConsoleModel item) {
+        if (item.isPool()) {
+            return ""; //$NON-NLS-1$
+        }
+
+        if (!(isRDPAvailable() || isSpiceAvailable())) {
+            return constants.browserNotSupportedMsg();
+        }
+
+        boolean isSpice = item.getDefaultConsoleModel() instanceof SpiceConsoleModel && isSpiceAvailable();
+        boolean isRdp = item.getAdditionalConsoleModel() != null && isRDPAvailable();
+
+        if (!isSpice && !isRdp) {
+            return constants.vncNotSupportedMsg();
+        }
+
+        return ""; //$NON-NLS-1$
+    }
+
+    @Override
+    public ConsoleProtocol determineConnectionProtocol(HasConsoleModel item) {
+        if (item == null || item.isPool()) {
+            return null;
+        }
+
+        ConsoleProtocol selectedProtocol = item.getUserSelectedProtocol();
+
+        if (item.getAdditionalConsoleModel() != null && isRDPAvailable() && ConsoleProtocol.RDP.equals(selectedProtocol)) {
+            return ConsoleProtocol.RDP;
+        } else if (item.getDefaultConsoleModel() instanceof SpiceConsoleModel && isSpiceAvailable() &&
+                ConsoleProtocol.SPICE.equals(selectedProtocol)) {
+            return ConsoleProtocol.SPICE;
+        } else if (item.getDefaultConsoleModel() instanceof VncConsoleModel) {
+            return ConsoleProtocol.VNC;
+        }
+
+        return null;
     }
 
     /**
      * The ctrl+alt+del is enabled for all OS except windows newer than 7
      * @return false if and only if the client OS type is Windows 7 or newer otherwise returns true
      */
+    @Override
     public boolean isCtrlAltDelEnabled() {
-        if (!isWindowsClient()) {
+        if (!configurator.isClientWindows()) {
             return true;
         }
 
@@ -181,6 +195,7 @@ public class ConsoleUtils {
     /**
      * Returns true if the smartcard is enabled for the specific VM entity (edit VM popup)
      */
+    @Override
     public boolean isSmartcardGloballyEnabled(HasConsoleModel item) {
         ConsoleModel consoleModel = item.getDefaultConsoleModel();
         if (consoleModel instanceof SpiceConsoleModel) {
@@ -193,6 +208,7 @@ public class ConsoleUtils {
     /**
      * Returns true if the smartcard is locally disabled from the edit console options popup
      */
+    @Override
     public boolean isSmartcardEnabledOverriden(HasConsoleModel item) {
         ConsoleModel consoleModel = item.getDefaultConsoleModel();
         if (consoleModel instanceof SpiceConsoleModel) {
@@ -202,6 +218,7 @@ public class ConsoleUtils {
         return false;
     }
 
+    @Override
     public boolean isWanOptionsAvailable(HasConsoleModel model) {
         boolean spiceAvailable =
                 model.getDefaultConsoleModel() instanceof SpiceConsoleModel && isSpiceAvailable();
@@ -211,12 +228,12 @@ public class ConsoleUtils {
         return spiceAvailable && isWindowsVm && spiceGuestAgentInstalled;
     }
 
+    @Override
     public boolean isSpiceProxyDefined() {
-        String spiceProxy = (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault);
-        return spiceProxy != null && !"".equals(spiceProxy); //$NON-NLS-1$
+        return configurator.isSpiceProxyDefined();
     }
 
-    public native String getUserAgentString() /*-{
+    private native String getUserAgentString() /*-{
                                               var userAgent = navigator.userAgent;
                                               return userAgent;
                                               }-*/;

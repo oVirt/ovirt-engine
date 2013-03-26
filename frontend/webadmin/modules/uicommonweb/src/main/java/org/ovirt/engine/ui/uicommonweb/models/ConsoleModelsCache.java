@@ -36,8 +36,7 @@ public class ConsoleModelsCache {
     }
 
     public void updateConsoleModelsForVm(VM vm) {
-        if (!cachedConsoleModels.containsKey(vm.getId()))
-        {
+        if (!cachedConsoleModels.containsKey(vm.getId())) {
             SpiceConsoleModel spiceConsoleModel = new SpiceConsoleModel();
             spiceConsoleModel.setParentModel(parentModel);
             spiceConsoleModel.getErrorEvent().addListener(new ConsoleModelErrorEventListener(parentModel));
@@ -60,8 +59,7 @@ public class ConsoleModelsCache {
         }
 
         ArrayList<ConsoleModel> cachedModels = cachedConsoleModels.get(vm.getId());
-        for (ConsoleModel a : cachedModels)
-        {
+        for (ConsoleModel a : cachedModels) {
             a.setEntity(null);
             a.setEntity(vm);
         }
@@ -80,7 +78,7 @@ public class ConsoleModelsCache {
 
         deselectUserSelectedProtocol(vm.getId());
 
-        boolean isWindowsExplorer = parentModel.getConfigurator().isClientWindownsExplorer();
+        boolean isWindowsExplorer = parentModel.getConfigurator().isClientWindowsExplorer();
 
         if (vmOsTypeWithoutSpiceDriverSupport.contains(vm.getOs()) && isWindowsExplorer) {
             cachedModels.get(RDP_INDEX).setUserSelected(true);
@@ -115,13 +113,16 @@ public class ConsoleModelsCache {
 
     private void setupSelectionContext(VM vm) {
         for (ConsoleModel model : cachedConsoleModels.get(vm.getId())) {
-            model.setSelectionContext(new ConsoleSelectionContext(vm.getVmOs(), vm.getDefaultDisplayType()));
+
+            DisplayType vmDisplay = vm.isRunningOrPaused() ? vm.getDisplayType() : vm.getDefaultDisplayType();
+            model.setSelectionContext(new ConsoleSelectionContext(vm.getVmOs(), vmDisplay));
         }
     }
 
     private boolean selectionContextChanged(VM vm) {
-        ConsoleSelectionContext newContext = new ConsoleSelectionContext(vm.getVmOs(), vm.getDefaultDisplayType());
-        ConsoleModel selectedConsole = resolveSelectedConsoleModel(vm.getId());
+        DisplayType vmDisplay = vm.isRunningOrPaused() ? vm.getDisplayType() : vm.getDefaultDisplayType();
+        ConsoleSelectionContext newContext = new ConsoleSelectionContext(vm.getVmOs(), vmDisplay);
+        ConsoleModel selectedConsole = resolveUserSelectedConsoleModel(vm.getId());
 
         if (selectedConsole == null) {
             return true;
@@ -130,28 +131,30 @@ public class ConsoleModelsCache {
         return !newContext.equals(selectedConsole.getSelectionContext());
     }
 
-    public ConsoleProtocol resolveSelectedProtocol(HasConsoleModel item) {
+    public ConsoleProtocol resolveUserSelectedProtocol(HasConsoleModel item) {
         if (item == null || item.getVM() == null || item.getVM().getId() == null) {
             return null;
         }
         Guid vmId = item.getVM().getId();
 
-        ConsoleModel selectedConsoleModel = resolveSelectedConsoleModel(vmId);
+        ConsoleModel selectedConsoleModel = resolveUserSelectedConsoleModel(vmId);
         return selectedConsoleModel == null ? null
                 : ConsoleProtocol.getProtocolByModel(selectedConsoleModel.getClass());
     }
 
-    public ArrayList<ConsoleModel> GetConsoleModelsByVmGuid(Guid vmGuid)
-    {
-        if (cachedConsoleModels != null && cachedConsoleModels.containsKey(vmGuid))
-        {
+    public ArrayList<ConsoleModel> getConsoleModelsByVmGuid(Guid vmGuid) {
+        if (cachedConsoleModels != null) {
             return cachedConsoleModels.get(vmGuid);
         }
 
         return null;
     }
 
-    private ConsoleModel resolveSelectedConsoleModel(Guid vmId) {
+    private ConsoleModel resolveUserSelectedConsoleModel(Guid vmId) {
+        if (!cachedConsoleModels.containsKey(vmId)) {
+            return null;
+        }
+
         for (ConsoleModel model : cachedConsoleModels.get(vmId)) {
             if (model.isUserSelected()) {
                 return model;

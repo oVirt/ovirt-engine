@@ -17,7 +17,7 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
 
         if (configurator.isClientLinuxFirefox()) {
             connectNativelyViaXPI();
-        } else if (configurator.isClientWindownsExplorer()) {
+        } else if (configurator.isClientWindowsExplorer()) {
             connectNativelyViaActiveX();
         }
     }
@@ -193,7 +193,7 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
     public boolean detectBrowserPlugin() {
         if (configurator.isClientLinuxFirefox()) {
             return detectXpiPlugin();
-        } else if (configurator.isClientWindownsExplorer()) {
+        } else if (configurator.isClientWindowsExplorer()) {
             return detectActiveXPlugin();
         }
 

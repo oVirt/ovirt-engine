@@ -316,7 +316,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
             ArrayList<Model> items = new ArrayList<Model>();
             for (Object item : all)
             {
-                UserPortalItemModel model = new UserPortalItemModel(this, this);
+                UserPortalItemModel model = new UserPortalItemModel(this, this, ConsoleContext.UP_BASIC);
                 model.setEntity(item);
                 items.add(model);
 

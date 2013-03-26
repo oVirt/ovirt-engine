@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.system;
 
 import org.ovirt.engine.ui.common.presenter.popup.ErrorPopupPresenterWidget;
+import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
@@ -11,13 +12,13 @@ import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
 /**
  * Convenience class used to reveal {@link ErrorPopupPresenterWidget} as a global popup.
  */
-public class ErrorPopupManager implements HasHandlers {
+public class ErrorPopupManagerImpl implements HasHandlers, ErrorPopupManager {
 
     private final EventBus eventBus;
     private final ErrorPopupPresenterWidget errorPopup;
 
     @Inject
-    public ErrorPopupManager(EventBus eventBus, ErrorPopupPresenterWidget errorPopup) {
+    public ErrorPopupManagerImpl(EventBus eventBus, ErrorPopupPresenterWidget errorPopup) {
         this.eventBus = eventBus;
         this.errorPopup = errorPopup;
     }
@@ -27,11 +28,13 @@ public class ErrorPopupManager implements HasHandlers {
         eventBus.fireEvent(event);
     }
 
+    @Override
     public void show(String errorMessage) {
         errorPopup.prepare(errorMessage);
         RevealRootPopupContentEvent.fire(this, errorPopup);
     }
 
+    @Override
     public void hide() {
         errorPopup.hide();
     }

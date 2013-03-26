@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.common.uicommon;
 
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
-import org.ovirt.engine.ui.common.system.ErrorPopupManager;
 import org.ovirt.engine.ui.frontend.FrontendFailureEventArgs;
+import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;

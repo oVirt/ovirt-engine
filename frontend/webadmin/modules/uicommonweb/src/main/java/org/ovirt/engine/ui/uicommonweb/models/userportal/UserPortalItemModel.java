@@ -13,10 +13,11 @@ import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.HasConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -28,7 +29,7 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
 {
 
     @Override
-    public ConsoleProtocol getSelectedProtocol() {
+    public ConsoleProtocol getUserSelectedProtocol() {
         return userSelectedDisplayProtocolManager.resolveSelectedProtocol(this);
     }
 
@@ -327,10 +328,13 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
 
     private ItemBehavior behavior;
     private final UserSelectedDisplayProtocolManager userSelectedDisplayProtocolManager;
+    private final ConsoleContext consoleContext;
 
     public UserPortalItemModel(IVmPoolResolutionService resolutionService,
-            UserSelectedDisplayProtocolManager userSelectedDisplayManager) {
+            UserSelectedDisplayProtocolManager userSelectedDisplayManager,
+            ConsoleContext consoleContext) {
         this.userSelectedDisplayProtocolManager = userSelectedDisplayManager;
+        this.consoleContext = consoleContext;
         setResolutionService(resolutionService);
 
         setRunCommand(new UICommand("Run", this)); //$NON-NLS-1$
@@ -460,5 +464,10 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
         }
 
         return null;
+    }
+
+    @Override
+    public ConsoleContext getConsoleContext() {
+        return consoleContext;
     }
 }

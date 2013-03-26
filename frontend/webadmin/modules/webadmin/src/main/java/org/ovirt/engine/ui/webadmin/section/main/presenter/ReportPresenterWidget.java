@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
-import org.ovirt.engine.ui.common.system.ErrorPopupManager;
+import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicommonweb.models.reports.ReportModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 

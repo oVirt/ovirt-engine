@@ -67,8 +67,7 @@ public class RdpConsoleModel extends ConsoleModel
 
         getConnectCommand().setIsExecutionAllowed(getEntity() != null
                 && (getEntity().getStatus() == VMStatus.Up || getEntity().getStatus() == VMStatus.PoweringDown)
-                && AsyncDataProvider.IsWindowsOsType(getEntity().getVmOs())
-                && getConfigurator().isClientWindownsExplorer());
+                && AsyncDataProvider.IsWindowsOsType(getEntity().getVmOs()));
     }
 
     @Override

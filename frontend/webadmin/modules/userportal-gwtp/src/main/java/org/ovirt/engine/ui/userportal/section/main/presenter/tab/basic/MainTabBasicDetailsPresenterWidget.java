@@ -4,10 +4,10 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.ui.common.presenter.popup.ConsoleModelChangedEvent;
 import org.ovirt.engine.ui.common.presenter.popup.ConsoleModelChangedEvent.ConsoleModelChangedHandler;
-import org.ovirt.engine.ui.common.utils.ConsoleUtils;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
-import org.ovirt.engine.ui.uicommonweb.models.HasConsoleModel;
+import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
+import org.ovirt.engine.ui.uicommonweb.models.HasConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -172,6 +172,7 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
     private boolean isEditConsoleEnabled(UserPortalItemModel item) {
         if (!item.isPool() && consoleUtils.determineConnectionProtocol(item) != null
                 && item.getStatus().equals(VMStatus.Up)) {
+
             return true;
         }
 

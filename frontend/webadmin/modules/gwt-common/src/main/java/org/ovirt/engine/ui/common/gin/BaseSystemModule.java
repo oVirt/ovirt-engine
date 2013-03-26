@@ -9,9 +9,10 @@ import org.ovirt.engine.ui.common.auth.LoggedInGatekeeper;
 import org.ovirt.engine.ui.common.system.ApplicationFocusManager;
 import org.ovirt.engine.ui.common.system.AsyncCallFailureHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
-import org.ovirt.engine.ui.common.system.ErrorPopupManager;
+import org.ovirt.engine.ui.common.system.ErrorPopupManagerImpl;
 import org.ovirt.engine.ui.common.system.LockInteractionManager;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
+import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.SimpleEventBus;
@@ -32,7 +33,7 @@ public abstract class BaseSystemModule extends AbstractGinModule {
         bind(RootPresenter.class).asEagerSingleton();
         bind(CurrentUser.class).in(Singleton.class);
         bind(LoggedInGatekeeper.class).in(Singleton.class);
-        bind(ErrorPopupManager.class).in(Singleton.class);
+        bind(ErrorPopupManager.class).to(ErrorPopupManagerImpl.class).in(Singleton.class);
         bind(AsyncCallFailureHandler.class).asEagerSingleton();
         bind(ClientAgentType.class).in(Singleton.class);
         bind(ClientStorage.class).in(Singleton.class);

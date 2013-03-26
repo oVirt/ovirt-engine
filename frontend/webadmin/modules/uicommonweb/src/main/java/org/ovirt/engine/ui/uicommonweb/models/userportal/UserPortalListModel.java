@@ -1783,7 +1783,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             ArrayList<Model> items = new ArrayList<Model>();
             for (Object item : all)
             {
-                UserPortalItemModel model = new UserPortalItemModel(this, this);
+                UserPortalItemModel model = new UserPortalItemModel(this, this, ConsoleContext.UP_EXTENDED);
                 model.setEntity(item);
                 items.add(model);
 

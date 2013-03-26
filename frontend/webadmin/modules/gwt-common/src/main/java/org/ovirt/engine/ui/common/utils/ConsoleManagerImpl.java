@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.common.utils;
 
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
+import org.ovirt.engine.ui.uicommonweb.ConsoleManager;
+import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.HasConsoleModel;
 
@@ -9,14 +11,17 @@ import com.google.inject.Inject;
 /**
  * Can connect to console, if possible. If not, returns a message describing the problem with connection to the console.
  */
-public class ConsoleManager {
+public class ConsoleManagerImpl implements ConsoleManager {
 
-    private final ConsoleUtils consoleUtils;
+    private final ConsoleUtilsImpl consoleUtils;
+    private final ConsoleOptionsFrontendPersister consoleOptionsPersister;
     private final CommonApplicationMessages messages;
 
     @Inject
-    public ConsoleManager(ConsoleUtils consoleUtils, CommonApplicationMessages messages) {
+    public ConsoleManagerImpl(ConsoleUtilsImpl consoleUtils, ConsoleOptionsFrontendPersister persister,
+            CommonApplicationMessages messages) {
         this.consoleUtils = consoleUtils;
+        this.consoleOptionsPersister = persister;
         this.messages = messages;
     }
 
@@ -24,7 +29,9 @@ public class ConsoleManager {
      * Takes a model a protocol under which to connect. When successful, returns null. When not successful, returns
      * message describing the problem.
      */
+    @Override
     public String connectToConsole(HasConsoleModel model) {
+        consoleOptionsPersister.loadFromLocalStorage(model);
 
         ConsoleProtocol selectedProtocol = consoleUtils.determineConnectionProtocol(model);
 

@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.userportal.widget.extended.vm;
 
-import org.ovirt.engine.ui.common.utils.ConsoleUtils;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
+import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 

@@ -1,11 +1,13 @@
 package org.ovirt.engine.ui.uicommonweb;
 
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel.ClientConsoleMode;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -358,8 +360,12 @@ public abstract class Configurator {
         return clientOsType().equalsIgnoreCase("Linux") && clientBrowserType().equalsIgnoreCase("Firefox"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    public boolean isClientWindownsExplorer() {
-        return clientOsType().equalsIgnoreCase("Windows") && clientBrowserType().equalsIgnoreCase("Explorer"); //$NON-NLS-1$ //$NON-NLS-2$
+    public boolean isClientWindowsExplorer() {
+        return isClientWindows() && clientBrowserType().equalsIgnoreCase("Explorer"); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    public boolean isClientWindows() {
+        return clientOsType().equalsIgnoreCase("Windows"); //$NON-NLS-1$
     }
 
     // Create a Version object from string
@@ -415,5 +421,15 @@ public abstract class Configurator {
     protected abstract String clientPlatformType();
 
     protected abstract void onUpdateDocumentationBaseURL();
+
+    public boolean isSpiceProxyDefined() {
+        String spiceProxy = (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault);
+        return spiceProxy != null && !"".equals(spiceProxy); //$NON-NLS-1$
+
+    }
+
+    public ClientConsoleMode getClientConsoleMode() {
+        return ClientConsoleMode.valueOf((String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ClientConsoleModeDefault));
+    }
 
 }

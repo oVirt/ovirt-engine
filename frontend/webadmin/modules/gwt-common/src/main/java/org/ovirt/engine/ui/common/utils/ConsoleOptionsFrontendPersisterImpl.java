@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.utils;
 
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
+import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.HasConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IRdp;
@@ -13,7 +14,7 @@ import com.google.inject.Inject;
 
 public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFrontendPersister {
 
-    private ClientStorage clientStorage;
+    private final ClientStorage clientStorage;
 
     private final ConsoleUtils consoleUtils;
 
@@ -37,13 +38,15 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
         this.consoleUtils = consoleUtils;
     }
 
-    public void storeToLocalStorage(HasConsoleModel model, ConsoleContext context) {
+    @Override
+    public void storeToLocalStorage(HasConsoleModel model) {
         if (model.isPool()) {
             // this class works only for VMs, not for pools
             return;
         }
 
-        ConsoleProtocol selectedProtocol = model.getSelectedProtocol();
+        ConsoleProtocol selectedProtocol = model.getUserSelectedProtocol();
+        ConsoleContext context = model.getConsoleContext();
         String id = model.getVM().getId().toString();
         KeyMaker keyMaker = new KeyMaker(id, context);
 
@@ -56,9 +59,11 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
         }
     }
 
-    public void loadFromLocalStorage(HasConsoleModel model, ConsoleContext context) {
+    @Override
+    public void loadFromLocalStorage(HasConsoleModel model) {
 
         String vmId = model.getVM().getId().toString();
+        ConsoleContext context = model.getConsoleContext();
 
         KeyMaker keyMaker = new KeyMaker(vmId, context);
 
@@ -151,9 +156,9 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
 
     class KeyMaker {
 
-        private String vmId;
+        private final String vmId;
 
-        private ConsoleContext context;
+        private final ConsoleContext context;
 
         public KeyMaker(String vmId, ConsoleContext context) {
             this.vmId = vmId;

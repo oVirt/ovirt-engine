@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.common.presenter.popup;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
-import org.ovirt.engine.ui.common.utils.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
+import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
@@ -110,7 +110,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
     }
 
     private void initModel(ConsolePopupModel model) {
-        consoleOptionsPersister.loadFromLocalStorage(model.getModel(), model.getConsoleContext());
+        consoleOptionsPersister.loadFromLocalStorage(model.getModel());
     }
 
     private void initListeners(final ConsolePopupModel model) {
@@ -164,7 +164,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         getView().setRdpAvailable(rdpAvailable);
         getView().setVncAvailable(vncAvailable);
 
-        ConsoleProtocol selectedProtocol = currentItem.getSelectedProtocol();
+        ConsoleProtocol selectedProtocol = currentItem.getUserSelectedProtocol();
 
         boolean rdpPreselected = ConsoleProtocol.RDP.equals(selectedProtocol);
         boolean spicePreselected = ConsoleProtocol.SPICE.equals(selectedProtocol);
@@ -216,7 +216,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
             getView().flushToPrivateModel();
 
             // store to local storage
-            consoleOptionsPersister.storeToLocalStorage(model.getModel(), model.getConsoleContext());
+            consoleOptionsPersister.storeToLocalStorage(model.getModel());
 
             ConsoleModelChangedEvent.fire(getEventBus(), model.getModel());
         }

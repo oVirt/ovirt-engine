@@ -65,12 +65,14 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
-import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
+import org.ovirt.engine.ui.uicommonweb.ConsoleManager;
+import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
+import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
+import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.TagsEqualityComparer;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleModelsCache;
@@ -90,7 +92,6 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserSelectedDisplayProt
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
@@ -102,8 +103,6 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTreeContext, HasConsoleModel, UserSelectedDisplayProtocolManager
 {
-
-    private final ConsoleOptionsFrontendPersister consoleOptionsPersister = (ConsoleOptionsFrontendPersister) TypeResolver.getInstance().Resolve(ConsoleOptionsFrontendPersister.class);
 
     private UICommand privateNewServerCommand;
 
@@ -342,20 +341,14 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         return editConsoleCommand;
     }
 
-    private final Event consoleConnectEvent = new Event(new EventDefinition("ConsoleConnectEvent", VmListModel.class)); //$NON-NLS-1$
+    public UICommand consoleConnectCommand;
 
-    public Event getConsoleConnectEvent() {
-        return consoleConnectEvent;
+    public UICommand getConsoleConnectCommand() {
+        return consoleConnectCommand;
     }
 
-    public UICommand fireConsoleConnectEventCommand;
-
-    public UICommand getFireConsoleConnectEventCommand() {
-        return fireConsoleConnectEventCommand;
-    }
-
-    public void setFireConsoleConnectEventCommand(UICommand fireConsoleConnectEvent) {
-        this.fireConsoleConnectEventCommand = fireConsoleConnectEvent;
+    public void setConsoleConnectCommand(UICommand consoleConnectCommand) {
+        this.consoleConnectCommand = consoleConnectCommand;
     }
 
     public ObservableCollection<ChangeCDModel> isoImages;
@@ -418,7 +411,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
     private final ConsoleModelsCache consoleModelsCache;
 
-    public ConsoleModelsCache getUberConsoleModel() {
+    public ConsoleModelsCache getConsoleModelsCache() {
         return consoleModelsCache;
     }
 
@@ -444,6 +437,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     }
 
     private ConsoleModel additionalConsoleModel;
+    private ConsoleUtils consoleUtils;
+    private ConsoleManager consoleManager;
+    private ErrorPopupManager errorPopupManager;
 
     public void setAdditionalConsoleModel(ConsoleModel additionalConsoleModel) {
         this.additionalConsoleModel = additionalConsoleModel;
@@ -465,6 +461,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         setAvailableInModes(ApplicationMode.VirtOnly);
 
         consoleModelsCache = new ConsoleModelsCache(this);
+        setConsoleHelpers();
 
         setNewServerCommand(new UICommand("NewServer", this)); //$NON-NLS-1$
         setNewDesktopCommand(new UICommand("NewDesktop", this)); //$NON-NLS-1$
@@ -475,7 +472,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         setStopCommand(new UICommand("Stop", this)); //$NON-NLS-1$
         setShutdownCommand(new UICommand("Shutdown", this)); //$NON-NLS-1$
         setEditConsoleCommand(new UICommand("EditConsoleCommand", this)); //$NON-NLS-1$
-        setFireConsoleConnectEventCommand(new UICommand("FireConsoleConnectEventCommand", this)); //$NON-NLS-1$
+        setConsoleConnectCommand(new UICommand("ConsoleConnectCommand", this)); //$NON-NLS-1$
         setMigrateCommand(new UICommand("Migrate", this)); //$NON-NLS-1$
         setCancelMigrateCommand(new UICommand("CancelMigration", this)); //$NON-NLS-1$
         setNewTemplateCommand(new UICommand("NewTemplate", this)); //$NON-NLS-1$
@@ -529,6 +526,12 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     public void OnSuccess(Object target, Object returnValue) {
                     }
                 }), null, null, null);
+    }
+
+    private void setConsoleHelpers() {
+        this.consoleUtils = (ConsoleUtils) TypeResolver.getInstance().Resolve(ConsoleUtils.class);
+        this.consoleManager = (ConsoleManager) TypeResolver.getInstance().Resolve(ConsoleManager.class);
+        this.errorPopupManager = (ErrorPopupManager) TypeResolver.getInstance().Resolve(ErrorPopupManager.class);
     }
 
     private void AssignTags()
@@ -738,15 +741,14 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         setItems(getAsyncResult().getData());
     }
 
-    private void UpdateConsoleModels()
+    private void updateConsoleModels()
     {
         List tempVar = getSelectedItems();
         List selectedItems = (tempVar != null) ? tempVar : new ArrayList();
         Object tempVar2 = getSelectedItem();
         VM vm = (VM) ((tempVar2 instanceof VM) ? tempVar2 : null);
 
-        if (vm == null)
-        {
+        if (vm == null) {
             setDefaultConsoleModel(null);
             setAdditionalConsoleModel(null);
             return;
@@ -2735,8 +2737,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     {
         super.OnSelectedItemChanged();
 
+        updateConsoleModels();
         UpdateActionAvailability();
-        UpdateConsoleModels();
     }
 
     @Override
@@ -2744,8 +2746,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     {
         super.SelectedItemsChanged();
 
+        updateConsoleModels();
         UpdateActionAvailability();
-        UpdateConsoleModels();
     }
 
     @Override
@@ -2760,7 +2762,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
         else if (e.PropertyName.equals("display_type")) //$NON-NLS-1$
         {
-            UpdateConsoleModels();
+            updateConsoleModels();
         }
     }
 
@@ -2783,8 +2785,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.StopVm));
         getMigrateCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.MigrateVm));
-        getEditConsoleCommand().setIsExecutionAllowed(items.size() == 1);
-        getFireConsoleConnectEventCommand().setIsExecutionAllowed(items.size() == 1);
         getCancelMigrateCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.CancelMigrateVm));
         getNewTemplateCommand().setIsExecutionAllowed(items.size() == 1
@@ -2805,6 +2805,15 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         getGuideCommand().setIsExecutionAllowed(getGuideContext() != null
                 || (getSelectedItem() != null && getSelectedItems() != null && getSelectedItems().size() == 1));
+
+
+        getConsoleConnectCommand().setIsExecutionAllowed(isConsoleCommandsExecutionAllowed());
+        getEditConsoleCommand().setIsExecutionAllowed(isConsoleCommandsExecutionAllowed());
+    }
+
+    private boolean isConsoleCommandsExecutionAllowed() {
+        ConsoleProtocol protocol = consoleUtils.determineConnectionProtocol(this);
+        return consoleUtils.canShowConsole(protocol, this);
     }
 
     /**
@@ -2852,9 +2861,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         {
             editConsole();
         }
-        else if (command == getFireConsoleConnectEventCommand())
+        else if (command == getConsoleConnectCommand())
         {
-            fireConsoleConnectEvent();
+            connectToConsole();
         }
         else if (command == getRemoveCommand())
         {
@@ -2978,8 +2987,11 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
     }
 
-    private void fireConsoleConnectEvent() {
-        consoleConnectEvent.raise(this, EventArgs.Empty);
+    private void connectToConsole() {
+        String errorMessage = consoleManager.connectToConsole(this);
+        if (errorMessage != null) {
+            errorPopupManager.show(errorMessage);
+        }
     }
 
     private SystemTreeItemModel systemTreeSelectedItem;
@@ -3013,7 +3025,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     }
 
     @Override
-    public ConsoleProtocol getSelectedProtocol() {
+    public ConsoleProtocol getUserSelectedProtocol() {
         return resolveSelectedProtocol(this);
     }
 
@@ -3034,7 +3046,12 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
     @Override
     public ConsoleProtocol resolveSelectedProtocol(HasConsoleModel item) {
-        return consoleModelsCache.resolveSelectedProtocol(item);
+        return consoleModelsCache.resolveUserSelectedProtocol(item);
+    }
+
+    @Override
+    public ConsoleContext getConsoleContext() {
+        return ConsoleContext.WA;
     }
 
 }

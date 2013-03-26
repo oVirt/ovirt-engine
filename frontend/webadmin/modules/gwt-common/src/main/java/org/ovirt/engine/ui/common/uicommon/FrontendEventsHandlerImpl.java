@@ -10,9 +10,9 @@ import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
-import org.ovirt.engine.ui.common.system.ErrorPopupManager;
 import org.ovirt.engine.ui.frontend.IFrontendEventsHandler;
 import org.ovirt.engine.ui.frontend.Message;
+import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 

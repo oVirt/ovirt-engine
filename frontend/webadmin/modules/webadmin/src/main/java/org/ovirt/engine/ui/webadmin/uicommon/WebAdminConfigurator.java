@@ -7,7 +7,6 @@ import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.common.uicommon.DocumentationPathTranslator;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
-import org.ovirt.engine.ui.common.utils.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WANDisableEffects;
@@ -33,12 +32,9 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
 
     private static final ClientAgentType clientAgentType = new ClientAgentType();
 
-    private final ConsoleUtils consoleUtils;
-
     @Inject
-    public WebAdminConfigurator(EventBus eventBus, ConsoleUtils consoleUtils) {
+    public WebAdminConfigurator(EventBus eventBus) {
         super();
-        this.consoleUtils = consoleUtils;
         eventBus.addHandler(UiCommonInitEvent.getType(), this);
 
         // This means that this is WebAdmin application.
@@ -70,7 +66,7 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
         spice.setWANDisableEffects(new ArrayList<WANDisableEffects>());
         spice.setWanOptionsEnabled(false);
 
-        spice.setSpiceProxyEnabled(consoleUtils.isSpiceProxyDefined());
+        spice.setSpiceProxyEnabled(isSpiceProxyDefined());
     }
 
     @Override

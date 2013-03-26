@@ -252,21 +252,14 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         }
     }
 
-    private boolean isSpiceSupportedByClient() {
-        if (consoleMode == ClientConsoleMode.Plugin) {
-            return getConfigurator().isClientWindownsExplorer() || getConfigurator().isClientLinuxFirefox();
-        }
 
-        // in Native and Auto mode, we support all client types
-        return true;
-    }
 
     @Override
     protected void UpdateActionAvailability() {
         super.UpdateActionAvailability();
 
-        getConnectCommand().setIsExecutionAllowed(isSpiceSupportedByClient()
-                && !getIsConnected() && getEntity() != null && getEntity().getDisplayType() != DisplayType.vnc
+        getConnectCommand().setIsExecutionAllowed(!getIsConnected() && getEntity() != null
+                && getEntity().getDisplayType() == DisplayType.qxl
                 && IsVmConnectReady());
     }
 

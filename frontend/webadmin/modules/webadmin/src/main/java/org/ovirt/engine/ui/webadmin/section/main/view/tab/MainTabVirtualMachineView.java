@@ -7,10 +7,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.common.system.ErrorPopupManager;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.utils.ConsoleManager;
-import org.ovirt.engine.ui.common.utils.ConsoleUtils;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
@@ -40,22 +37,15 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final ConsoleManager consoleManager;
     private final CommonApplicationConstants commonConstants;
-    private final ErrorPopupManager errorPopupManager;
 
     @Inject
     public MainTabVirtualMachineView(MainModelProvider<VM, VmListModel> modelProvider,
             ApplicationResources resources, ApplicationConstants constants,
-            CommonApplicationConstants commonConstants,
-            ConsoleUtils consoleUtils,
-            ConsoleManager consoleManager,
-            ErrorPopupManager errorPopupManager) {
+            CommonApplicationConstants commonConstants) {
         super(modelProvider);
 
-        this.consoleManager = consoleManager;
         this.commonConstants = commonConstants;
-        this.errorPopupManager = errorPopupManager;
 
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(resources, constants);
@@ -228,7 +218,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 resources.consoleImage(), resources.consoleDisabledImage()) {
             @Override
             protected UICommand resolveCommand() {
-                return getMainModel().getFireConsoleConnectEventCommand();
+                return getMainModel().getConsoleConnectCommand();
             }
         });
         // TODO: separator
