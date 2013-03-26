@@ -266,6 +266,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.VDS_INSTALL_IN_PROGRESS_WARNING, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.VDS_INSTALL_IN_PROGRESS_ERROR, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VDS_INITIATED_RUN_VM, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.VDS_INITIATED_RUN_VM_AS_STATELESS, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.VDS_INITIATED_RUN_VM_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VDS_FENCE_STATUS, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.VDS_FENCE_STATUS_FAILED, AuditLogSeverity.ERROR);
@@ -446,6 +447,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.VM_PAUSED_EPERM, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VM_POWER_DOWN_FAILED, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.USER_RUN_VM, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_RUN_VM_AS_STATELESS, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_FAILED_RUN_VM, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_RUN_VM_AS_STATELESS_FINISHED_FAILURE, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_RUN_VM_AS_STATELESS_WITH_DISKS_NOT_ALLOWING_SNAPSHOT,

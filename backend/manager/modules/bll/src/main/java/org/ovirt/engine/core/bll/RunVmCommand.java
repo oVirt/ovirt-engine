@@ -455,15 +455,17 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             if (mResume) {
                 return getSucceeded() ? AuditLogType.USER_RESUME_VM : AuditLogType.USER_FAILED_RESUME_VM;
             } else if (getParameters() != null && getParameters().getIsInternal()) {
-                return getSucceeded() ? AuditLogType.VDS_INITIATED_RUN_VM : AuditLogType.VDS_INITIATED_RUN_VM_FAILED;
+                return getSucceeded() ?
+                        (statelessSnapshotExistsForVm() ? AuditLogType.VDS_INITIATED_RUN_VM_AS_STATELESS : AuditLogType.VDS_INITIATED_RUN_VM) :
+                        AuditLogType.VDS_INITIATED_RUN_VM_FAILED;
             } else {
                 return getSucceeded() ?
                         (VMStatus) getActionReturnValue() == VMStatus.Up ?
                                 getParameters() != null && getParameters().getDestinationVdsId() == null
                                         && getVm().getDedicatedVmForVds() != null
                                         && !getVm().getRunOnVds().equals(getVm().getDedicatedVmForVds()) ?
-                                        AuditLogType.USER_RUN_VM_ON_NON_DEFAULT_VDS
-                                        : AuditLogType.USER_RUN_VM
+                                                AuditLogType.USER_RUN_VM_ON_NON_DEFAULT_VDS :
+                                                (statelessSnapshotExistsForVm() ? AuditLogType.USER_RUN_VM_AS_STATELESS : AuditLogType.USER_RUN_VM)
                                 : _isRerun ?
                                         AuditLogType.VDS_INITIATED_RUN_VM
                                         : getTaskIdList().size() > 0 ?
