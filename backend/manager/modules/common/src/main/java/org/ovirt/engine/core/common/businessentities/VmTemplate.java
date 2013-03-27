@@ -113,9 +113,7 @@ public class VmTemplate extends VmBase {
     }
 
     public void setstatus(VmTemplateStatus value) {
-        if (status != value) {
-            status = value;
-        }
+        status = value;
     }
 
     public String getvds_group_name() {
