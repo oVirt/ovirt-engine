@@ -15,7 +15,6 @@ import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
-import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -67,14 +66,6 @@ public class VmRunHandler {
         boolean retValue = true;
 
         List<Disk> vmDisks = getDiskDao().getAllForVm(vm.getId(), true);
-        if (retValue) {
-            ValidationResult vmNotLockedResult = new VmValidator(vm).vmNotLocked();
-            if (!vmNotLockedResult.isValid()) {
-                message.add(vmNotLockedResult.getMessage().name());
-                retValue = false;
-            }
-        }
-
         if (retValue) {
             ValidationResult vmDuringSnapshotResult =
                     snapshotsValidator.vmNotDuringSnapshot(vm.getId());

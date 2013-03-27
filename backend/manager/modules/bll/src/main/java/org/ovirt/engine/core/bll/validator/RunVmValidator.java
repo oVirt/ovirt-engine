@@ -83,6 +83,11 @@ public class RunVmValidator {
             messages.add(result.getMessage().toString());
             return false;
         }
+        result = new VmValidator(vm).vmNotLocked();
+        if (!result.isValid()) {
+            messages.add(result.getMessage().toString());
+            return false;
+        }
         return true;
     }
 

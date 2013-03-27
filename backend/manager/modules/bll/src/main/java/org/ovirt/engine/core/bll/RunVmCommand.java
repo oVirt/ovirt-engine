@@ -22,6 +22,7 @@ import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -683,6 +684,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                         validate(getRunVmValidator().validateBootSequence(vm,
                                 getParameters().getBootSequence(),
                                 vmDisks)) &&
+                        validate(getVmValidator(vm).vmNotLocked()) &&
                         canRunVm(vm) &&
                         validateNetworkInterfaces();
 
@@ -702,6 +704,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         return canDoAction;
+    }
+
+    protected VmValidator getVmValidator(VM vm) {
+        return new VmValidator(vm);
     }
 
     protected RunVmValidator getRunVmValidator() {
