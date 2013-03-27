@@ -913,9 +913,10 @@ def _changeCaPermissions():
             logging.debug("changing file permissions for %s to 0640" % item)
             os.chmod(item, 0640)
 
-    os.chown(basedefs.FILE_APACHE_KEYSTORE, utils.getUsernameId("apache"), utils.getGroupId("apache"))
+    # Update keystore permissions
+    os.chown(basedefs.FILE_APACHE_KEYSTORE, utils.getUsernameId("root"), utils.getGroupId("root"))
     os.chmod(basedefs.FILE_APACHE_KEYSTORE, 0640)
-    os.chown(basedefs.FILE_APACHE_PRIVATE_KEY, utils.getUsernameId("apache"), utils.getGroupId("apache"))
+    os.chown(basedefs.FILE_APACHE_PRIVATE_KEY, utils.getUsernameId("root"), utils.getGroupId("root"))
     os.chmod(basedefs.FILE_APACHE_PRIVATE_KEY, 0640)
 
 def _updateCaCrtTemplate():

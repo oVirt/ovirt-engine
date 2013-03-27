@@ -527,8 +527,8 @@ class CA():
                 utils.copyFile(
                     src,
                     dst,
-                    utils.getUsernameId("apache"),
-                    utils.getGroupId("apache"),
+                    utils.getUsernameId("root"),
+                    utils.getGroupId("root"),
                     0640
                 )
             except OSError:
