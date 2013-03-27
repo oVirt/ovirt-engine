@@ -237,6 +237,7 @@ public abstract class OvfReader implements IOvfBuilder {
             vmDevice.setIsReadOnly(Boolean.FALSE);
         }
         if (isManaged) {
+            vmDevice.setIsManaged(true);
             vmBase.getManagedDeviceMap().put(vmDevice.getDeviceId(), vmDevice);
         } else {
             vmBase.getUnmanagedDeviceList().add(vmDevice);
