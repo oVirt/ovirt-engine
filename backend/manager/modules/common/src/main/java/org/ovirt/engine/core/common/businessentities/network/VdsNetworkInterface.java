@@ -3,7 +3,9 @@ package org.ovirt.engine.core.common.businessentities.network;
 import java.io.Serializable;
 
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidNetworkConfiguration;
 import org.ovirt.engine.core.compat.NGuid;
@@ -41,6 +43,12 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
 
     public VdsNetworkInterface() {
         super(new VdsNetworkStatistics(), VdsInterfaceType.NONE.getValue());
+    }
+
+    @Override
+    @Size(min = 1, max = BusinessEntitiesDefinitions.HOST_NIC_NAME_LENGTH)
+    public String getName() {
+        return super.getName();
     }
 
     /**
