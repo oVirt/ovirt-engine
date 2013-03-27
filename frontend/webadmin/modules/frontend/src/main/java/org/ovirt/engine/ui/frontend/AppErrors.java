@@ -613,6 +613,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type User")
     String VAR__TYPE__USER();
 
+    @DefaultStringValue("$type Permission")
+    String VAR__TYPE__PERMISSION();
+
     @DefaultStringValue("$action run")
     String VAR__ACTION__RUN();
 

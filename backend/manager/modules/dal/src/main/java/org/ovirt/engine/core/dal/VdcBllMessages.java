@@ -23,6 +23,7 @@ public enum VdcBllMessages {
     VAR__TYPE__VM_DISK,
     VAR__TYPE__BOOKMARK,
     VAR__TYPE__VM_TICKET,
+    VAR__TYPE__PERMISSION,
 
     // Gluster types
     VAR__TYPE__GLUSTER_VOLUME,

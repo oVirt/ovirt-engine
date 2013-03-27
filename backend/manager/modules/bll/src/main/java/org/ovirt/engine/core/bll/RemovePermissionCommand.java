@@ -29,6 +29,12 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParametes> e
     }
 
     @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__PERMISSION);
+    }
+
+    @Override
     protected boolean canDoAction() {
         boolean returnValue = true;
         permissions p = getPermissionDAO().get(getParameters().getPermission().getId());
@@ -36,13 +42,11 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParametes> e
                 (p.getrole_id().equals(PredefinedRoles.SUPER_USER.getId()))) {
             addCanDoActionMessage(VdcBllMessages.USER_CANNOT_REMOVE_ADMIN_USER);
             returnValue = false;
-        }
-        if (MultiLevelAdministrationHandler.isLastSuperUserPermission(p.getrole_id())) {
+        } else if (MultiLevelAdministrationHandler.isLastSuperUserPermission(p.getrole_id())) {
             getReturnValue().getCanDoActionMessages()
                     .add(VdcBllMessages.ERROR_CANNOT_REMOVE_LAST_SUPER_USER_ROLE.toString());
             returnValue = false;
-        }
-        if (returnValue && p.getRoleType().equals(RoleType.ADMIN) && !isSystemSuperUser()) {
+        } else if (p.getRoleType().equals(RoleType.ADMIN) && !isSystemSuperUser()) {
             addCanDoActionMessage(VdcBllMessages.PERMISSION_REMOVE_FAILED_ONLY_SYSTEM_SUPER_USER_CAN_REMOVE_ADMIN_ROLES);
             returnValue = false;
         }
