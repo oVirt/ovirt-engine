@@ -212,10 +212,7 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntity<Guid>
     }
 
     public void setStatus(StorageDomainStatus status) {
-        StorageDomainStatus curStatus = getStoragePoolIsoMapData().getstatus();
-        if (curStatus == null || curStatus != status) {
-            getStoragePoolIsoMapData().setstatus(status);
-        }
+        getStoragePoolIsoMapData().setstatus(status);
     }
 
     public StorageDomainOwnerType getOwner() {
