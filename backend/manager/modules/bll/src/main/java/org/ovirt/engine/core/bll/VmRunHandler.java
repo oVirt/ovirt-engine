@@ -45,14 +45,11 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 
 /** A utility class for verifying running a vm*/
 public class VmRunHandler {
     private static final VmRunHandler instance = new VmRunHandler();
-    private static final Log log = LogFactory.getLog(VmHandler.class);
 
     public static VmRunHandler getInstance() {
         return instance;
