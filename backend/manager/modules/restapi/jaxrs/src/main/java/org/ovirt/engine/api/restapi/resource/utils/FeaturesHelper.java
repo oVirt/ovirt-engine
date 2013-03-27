@@ -50,6 +50,9 @@ public class FeaturesHelper {
             addFeatureAsyncDelete(features);
             addFeatureSessionBasedAuthentication(features);
         }
+        if (VersionUtils.greaterOrEqual(version, BackendCapabilitiesResource.VERSION_3_3)) {
+            addFeatureVmApplications(features);
+        }
         return features;
     }
 
@@ -72,6 +75,13 @@ public class FeaturesHelper {
         feature.setUrl(new Url());
         feature.getUrl().getParametersSets().add(new ParametersSet());
         feature.getUrl().getParametersSets().get(0).getParameters().add(async);
+        features.getFeature().add(feature);
+    }
+
+    private void addFeatureVmApplications(Features features) {
+        Feature feature = new Feature();
+        feature.setName("VM Applications");
+        feature.setDescription("List of Applications installed on a VM. VM Applications appear under VM: .../api/vms/xxx/applications.");
         features.getFeature().add(feature);
     }
 

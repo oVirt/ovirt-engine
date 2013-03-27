@@ -30,6 +30,7 @@ import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.api.resource.SnapshotsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
+import org.ovirt.engine.api.resource.VmApplicationsResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.api.resource.VmNicsResource;
 import org.ovirt.engine.api.resource.VmReportedDevicesResource;
@@ -157,6 +158,11 @@ public class BackendVmResource extends
     @Override
     public AssignedTagsResource getTagsResource() {
         return inject(new BackendVmTagsResource(id));
+    }
+
+    @Override
+    public VmApplicationsResource getApplicationsResource() {
+        return inject(new BackendVmApplicationsResource(guid));
     }
 
     @Override

@@ -108,6 +108,9 @@ public interface VmResource extends UpdatableResource<VM>, AsynchronouslyCreated
     @Path("cancelmigration")
     public Response cancelMigration(Action action);
 
+    @Path("applications")
+    public VmApplicationsResource getApplicationsResource();
+
     @Path("cdroms")
     public DevicesResource<CdRom, CdRoms> getCdRomsResource();
 

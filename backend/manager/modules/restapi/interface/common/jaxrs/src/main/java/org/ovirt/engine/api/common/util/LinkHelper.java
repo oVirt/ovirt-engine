@@ -28,6 +28,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.model.ActionableResource;
 import org.ovirt.engine.api.model.ActionsBuilder;
+import org.ovirt.engine.api.model.Application;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.Cluster;
@@ -131,6 +132,8 @@ import org.ovirt.engine.api.resource.TemplatesResource;
 import org.ovirt.engine.api.resource.UpdatableRoleResource;
 import org.ovirt.engine.api.resource.UserResource;
 import org.ovirt.engine.api.resource.UsersResource;
+import org.ovirt.engine.api.resource.VmApplicationResource;
+import org.ovirt.engine.api.resource.VmApplicationsResource;
 import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.api.resource.VmNicResource;
@@ -193,6 +196,9 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(DeviceResource.class, DevicesResource.class, VM.class);
         TYPES.put(CdRom.class, map);
+
+        map = new ParentToCollectionMap(VmApplicationResource.class, VmApplicationsResource.class, VM.class);
+        TYPES.put(Application.class, map);
 
         map = new ParentToCollectionMap(VmReportedDeviceResource.class, VmReportedDevicesResource.class, VM.class);
         TYPES.put(ReportedDevice.class, map);
