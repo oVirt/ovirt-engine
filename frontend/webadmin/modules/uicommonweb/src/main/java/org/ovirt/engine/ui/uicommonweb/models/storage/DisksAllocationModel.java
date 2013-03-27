@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForStorageParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -17,6 +19,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.DiskModelByAliasComparer;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
@@ -192,20 +195,23 @@ public class DisksAllocationModel extends EntityModel
         }
 
         for (DiskModel diskModel : disks) {
-            Guid diskId = ((DiskImage) diskModel.getDisk()).getId();
-            Guid storageId = null;
-            storageId = ((StorageDomain) diskModel.getStorageDomain().getSelectedItem()).getId();
-
+            StorageDomain storageDomain = (StorageDomain) diskModel.getStorageDomain().getSelectedItem();
             DiskImage diskImage = (DiskImage) diskModel.getDisk();
-            ArrayList<Guid> storageIdList = new ArrayList<Guid>();
-            storageIdList.add(storageId);
-            diskImage.setStorageIds(storageIdList);
+            diskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(storageDomain.getId())));
             diskImage.setDiskAlias((String) diskModel.getAlias().getEntity());
 
             if (diskModel.getQuota().getSelectedItem() != null) {
                 diskImage.setQuotaId(((Quota) diskModel.getQuota().getSelectedItem()).getId());
             }
-            imageToDestinationDomainMap.put(diskId, diskImage);
+
+            if (diskModel.getVolumeType().getIsAvailable()) {
+                VolumeType volumeType = (VolumeType) diskModel.getVolumeType().getSelectedItem();
+                diskImage.setVolumeType(volumeType);
+                diskImage.setvolumeFormat(AsyncDataProvider.GetDiskVolumeFormat(
+                        volumeType, storageDomain.getStorageType()));
+            }
+
+            imageToDestinationDomainMap.put(diskImage.getId(), diskImage);
         }
     }
 

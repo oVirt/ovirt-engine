@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
@@ -62,7 +61,6 @@ import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.BootSequenceModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewTemplateVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RunOnceModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
@@ -1403,36 +1401,11 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                         public void OnSuccess(Object model, Object result)
                         {
                             UserPortalListModel userPortalListModel1 = (UserPortalListModel) model;
-                            ArrayList<DiskImage> templateDisks = (ArrayList<DiskImage>) result;
-                            for (DiskImage templateDisk : templateDisks)
-                            {
-                                DiskModel disk = null;
-                                for (DiskModel a : ((UnitVmModel) userPortalListModel1.getWindow()).getDisks())
-                                {
-                                    if (templateDisk.getId().equals(a.getDisk().getId()))
-                                    {
-                                        disk = a;
-                                        break;
-                                    }
-                                }
+                            UnitVmModel unitVmModel = (UnitVmModel) userPortalListModel1.getWindow();
 
-                                if (disk != null) {
-                                    templateDisk.setVolumeType((VolumeType) disk.getVolumeType().getSelectedItem());
-                                    templateDisk.setvolumeFormat(AsyncDataProvider.GetDiskVolumeFormat((VolumeType) disk.getVolumeType()
-                                            .getSelectedItem(),
-                                            getstorageDomain().getStorageType()));
-                                }
-                            }
-
-                            HashMap<Guid, DiskImage> dict =
-                                    new HashMap<Guid, DiskImage>();
-                            for (DiskImage a : templateDisks)
-                            {
-                                dict.put(a.getId(), a);
-                            }
-
-                            AddVmFromTemplateParameters param =
-                                    new AddVmFromTemplateParameters(gettempVm(), dict, getstorageDomain().getId());
+                            AddVmFromTemplateParameters param = new AddVmFromTemplateParameters(gettempVm(),
+                                    unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap(),
+                                    Guid.Empty);
                             param.setMakeCreatorExplicitOwner(true);
 
                             ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
@@ -1454,7 +1427,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 else
                 {
                     VmManagementParametersBase param = new VmManagementParametersBase(gettempVm());
-                    param.setStorageDomainId(getstorageDomain().getId());
+                    param.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
                     param.setMakeCreatorExplicitOwner(true);
 
                     ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
