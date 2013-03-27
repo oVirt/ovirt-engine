@@ -521,9 +521,11 @@ fi
 # create files inside:
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_pki}
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_pki}/certs
-%dir %attr(-, %{engine_user}, %{engine_group}) %{engine_pki}/keys
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_pki}/private
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_pki}/requests
+
+# not owned by engine
+%dir %{engine_pki}/keys
 
 # PKI scripts:
 %{engine_pki}/*.sh
