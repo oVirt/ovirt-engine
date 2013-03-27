@@ -427,9 +427,6 @@ fi
 %config(noreplace) %{engine_etc}/engine.conf
 %dir %{engine_etc}/engine.conf.d
 
-# File containing the version number of the engine:
-%{engine_data}/conf/version
-
 # Files needed by the service:
 %config(noreplace) %{_sysconfdir}/security/limits.d/10-ovirt-engine.conf
 %{engine_data}/service
