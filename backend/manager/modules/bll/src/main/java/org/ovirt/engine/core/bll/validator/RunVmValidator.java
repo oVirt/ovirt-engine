@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmHandler;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -88,6 +89,12 @@ public class RunVmValidator {
             messages.add(result.getMessage().toString());
             return false;
         }
+        result = new SnapshotsValidator().vmNotDuringSnapshot(vm.getId());
+        if (!result.isValid()) {
+            messages.add(result.getMessage().toString());
+            return false;
+        }
+
         return true;
     }
 

@@ -51,7 +51,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
@@ -375,24 +374,6 @@ public class RunVmCommandTest {
 
         assertFalse(command.canRunVm(vm));
         assertTrue(command.getReturnValue().getCanDoActionMessages().contains("ACTION_TYPE_FAILED_VM_IS_RUNNING"));
-    }
-
-    @Test
-    public void canRunVmFailVmDuringSnapshot() {
-        final ArrayList<Disk> disks = new ArrayList<Disk>();
-        final DiskImage diskImage = createImage();
-        disks.add(diskImage);
-        initDAOMocks(disks);
-        final VM vm = new VM();
-        SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
-        when(snapshotsValidator.vmNotDuringSnapshot(vm.getId()))
-                .thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT));
-        doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
-
-        assertFalse(command.canRunVm(vm));
-        assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT.name()));
     }
 
     private void canRunStatelessVmTest(boolean autoStartUp,

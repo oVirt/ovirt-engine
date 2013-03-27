@@ -66,14 +66,6 @@ public class VmRunHandler {
         boolean retValue = true;
 
         List<Disk> vmDisks = getDiskDao().getAllForVm(vm.getId(), true);
-        if (retValue) {
-            ValidationResult vmDuringSnapshotResult =
-                    snapshotsValidator.vmNotDuringSnapshot(vm.getId());
-            if (!vmDuringSnapshotResult.isValid()) {
-                message.add(vmDuringSnapshotResult.getMessage().name());
-                retValue = false;
-            }
-        }
         List<DiskImage> vmImages = ImagesHandler.filterImageDisks(vmDisks, true, false);
         if (retValue && !vmImages.isEmpty()) {
             StoragePool sp = getStoragePoolDAO().get(vm.getStoragePoolId());

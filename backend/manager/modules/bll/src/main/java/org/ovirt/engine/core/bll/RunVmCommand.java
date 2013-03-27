@@ -685,6 +685,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                                 getParameters().getBootSequence(),
                                 vmDisks)) &&
                         validate(getVmValidator(vm).vmNotLocked()) &&
+                        validate(getSnapshotsValidator().vmNotDuringSnapshot(vm.getId())) &&
                         canRunVm(vm) &&
                         validateNetworkInterfaces();
 
