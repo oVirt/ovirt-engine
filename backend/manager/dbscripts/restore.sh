@@ -77,8 +77,13 @@ if [ $? -eq 0 ];then
          ./upgrade.sh -s ${SERVERNAME} -p ${PORT} -d ${DATABASE} -u ${USERNAME} -c
      fi
     popd>/dev/null
-    exit 0
 else
     usage
     exit 1
+fi
+
+fn_db_set_dbobjects_ownership
+if [ $? -ne 0 ]; then
+    echo "An error occurred whilst changing the ownership of objects in the database."
+    exit 2
 fi
