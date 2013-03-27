@@ -157,7 +157,8 @@ public class ChallengerTest extends Assert {
     @Test
     public void testValidateSessionFalseOnNewSession() {
         HttpSession httpSession = new TestHttpSession(sessionId, true);
-        doReturn(httpSession).when(challenger).getCurrentSession(anyBoolean());
+        doReturn(httpSession).when(challenger).getCurrentSession(true);
+        doReturn(null).when(challenger).getCurrentSession(false);
         challenger.setValidator(new ConstValidator(true, sessionId));
         ResourceMethod resource = control.createMock(ResourceMethod.class);
         ServerResponse response = challenger.preProcess(setUpRequestExpectations(null, true, false), resource);

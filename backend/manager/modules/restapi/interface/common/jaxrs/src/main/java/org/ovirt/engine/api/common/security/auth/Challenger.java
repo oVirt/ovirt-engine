@@ -92,17 +92,17 @@ public class Challenger implements PreProcessInterceptor {
         boolean hasAuthorizationHeader = checkAuthorizationHeader(headers);
         Integer customHttpSessionTtl = getCustomHttpSessionTtl(headers);
 
-        // Will create a new one if it is the first session, and we want to persist sessions
-        // (and then the "isNew" test below will return true)
-        // Otherwise, it will return null
-        httpSession = getCurrentSession(preferPersistentAuth);
+        // Get the current session
+        // For persistent auth we will create a new session if authentication
+        // is successful
+        httpSession = getCurrentSession(false);
 
         // If the session isn't new and doesn't carry authorization header, we validate it
-        if (validator != null && httpSession != null && !httpSession.isNew() && !hasAuthorizationHeader) {
+        if (validator != null && httpSession != null && !hasAuthorizationHeader) {
             successful = executeSessionValidation(httpSession, preferPersistentAuth);
         } else {
             // If the session isn't new but carries authorization header, we invalidate it first
-            if (validator != null && httpSession != null && !httpSession.isNew()) {
+            if (validator != null && httpSession != null) {
                 httpSession.invalidate();
                 httpSession = getCurrentSession(true);
             }
@@ -114,6 +114,9 @@ public class Challenger implements PreProcessInterceptor {
             // container will invalidate this session. An interval value of zero
             // or less indicates that the session should never timeout.
             if (successful && preferPersistentAuth) {
+                if (httpSession == null) {
+                    httpSession = getCurrentSession(false);
+                }
                 if (httpSession != null && customHttpSessionTtl != null) {
                     httpSession.setMaxInactiveInterval(
                             customHttpSessionTtl.intValue() * SECONDS_IN_MINUTE);
@@ -167,14 +170,15 @@ public class Challenger implements PreProcessInterceptor {
     private boolean executeBasicAuthentication(HttpHeaders headers, HttpSession httpSession, boolean preferPersistentAuth) {
         boolean successful = false;
         List<String> auth = headers.getRequestHeader(HttpHeaders.AUTHORIZATION);
-
-        String engineSessionId = SessionUtils.generateEngineSessionId();
-        SessionUtils.setEngineSessionId(httpSession, engineSessionId);
-
         if (auth != null && auth.size() != 0) {
             Principal principal = scheme.decode(headers);
+            String engineSessionId = SessionUtils.generateEngineSessionId();
             if (validator == null || validator.validate(principal, engineSessionId)) {
                 successful = true;
+                if (httpSession == null) {
+                    httpSession = getCurrentSession(true);
+                }
+                SessionUtils.setEngineSessionId(httpSession, engineSessionId);
                 updateAuthenticationProperties(preferPersistentAuth, principal);
             }
         }
