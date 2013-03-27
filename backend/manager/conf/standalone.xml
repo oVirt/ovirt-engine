@@ -27,15 +27,15 @@
         <extension module="org.jboss.as.webservices"/>
         <extension module="org.jboss.as.weld"/>
     </extensions>
-    <system-properties>
-        <property name="org.apache.coyote.http11.Http11Protocol.COMPRESSION" value="on"/>
-        <property name="org.apache.coyote.http11.Http11Protocol.COMPRESSION_MIME_TYPES" value="text/javascript,text/css,text/html,text/xml,text/json,application/x-yaml,application/xml,application/json"/>
-    </system-properties>
 
     <system-properties>
 
       <!-- Don't let quartz call home to check for updates: -->
       <property name="org.quartz.scheduler.skipUpdateCheck" value="true"/>
+
+      <!-- Enable compression for html content and REST API: -->
+      <property name="org.apache.coyote.http11.Http11Protocol.COMPRESSION" value="on"/>
+      <property name="org.apache.coyote.http11.Http11Protocol.COMPRESSION_MIME_TYPES" value="text/javascript,text/css,text/html,text/xml,text/json,application/x-yaml,application/xml,application/json"/>
 
     </system-properties>
 
