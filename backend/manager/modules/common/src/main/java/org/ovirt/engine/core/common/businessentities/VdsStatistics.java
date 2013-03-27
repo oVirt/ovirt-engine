@@ -25,10 +25,10 @@ public class VdsStatistics implements BusinessEntity<Guid> {
     private Boolean ksm_state;
 
     public VdsStatistics() {
-        this.cpu_idle = new BigDecimal(0);
-        this.cpu_load = new BigDecimal(0);
-        this.cpu_sys = new BigDecimal(0);
-        this.cpu_user = new BigDecimal(0);
+        this.cpu_idle = BigDecimal.ZERO;
+        this.cpu_load = BigDecimal.ZERO;
+        this.cpu_sys = BigDecimal.ZERO;
+        this.cpu_user = BigDecimal.ZERO;
     }
 
     public VdsStatistics(Double cpu_idle, Double cpu_load, Double cpu_sys,
