@@ -22,7 +22,9 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
+import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -458,7 +460,8 @@ public class VolumeModel extends Model {
             return false;
         }
 
-        getName().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
+        getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new LengthValidation(50),
+                new AsciiNameValidation() });
 
         setMessage(null);
         boolean validTransportTypes = true;
