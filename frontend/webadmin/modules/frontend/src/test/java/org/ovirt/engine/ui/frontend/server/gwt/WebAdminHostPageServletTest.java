@@ -45,18 +45,14 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
 
     @Before
     public void setUpMockRequest() {
-        when(mockApplicationModeObject.toString()).thenReturn(APPLICATION_MODE);
-        when(mockRequest.getAttribute(WebAdminHostPageServlet.ATTR_APPLICATION_MODE)).thenReturn(mockApplicationModeObject);
-        when(mockRequest.getAttribute(WebAdminHostPageServlet.ATTR_PLUGIN_DEFS)).thenReturn(mockPluginDefinitionsArray);
-    }
-
-    @Before
-    public void stubPluginDefinitionsArray() {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode mockPluginDef = mapper.createObjectNode();
         mockPluginDef.put("foo", "bar"); //$NON-NLS-1$ //$NON-NLS-2$
         mockPluginDefinitionsArray = mapper.createArrayNode();
         mockPluginDefinitionsArray.add(mockPluginDef);
+        when(mockApplicationModeObject.toString()).thenReturn(APPLICATION_MODE);
+        when(mockRequest.getAttribute(WebAdminHostPageServlet.ATTR_APPLICATION_MODE)).thenReturn(mockApplicationModeObject);
+        when(mockRequest.getAttribute(WebAdminHostPageServlet.ATTR_PLUGIN_DEFS)).thenReturn(mockPluginDefinitionsArray);
     }
 
     @Override
