@@ -9,6 +9,7 @@ import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -89,6 +90,9 @@ public class RunVmCommandTest {
 
     @Mock
     private BackendInternal backend;
+
+    @Mock
+    private IsoDomainListSyncronizer isoDomainListSyncronizer;
 
     private static final String ISO_PREFIX = "iso://";
     private static final String ACTIVE_ISO_PREFIX =
@@ -308,11 +312,16 @@ public class RunVmCommandTest {
     public void createCommand() {
         RunVmParams param = new RunVmParams(Guid.NewGuid());
         command = spy(new RunVmCommand<RunVmParams>(param));
-
+        mockIsoDomainListSyncronizer();
         mockVmRunHandler();
         mockSuccessfulRunVmValidator();
         mockSuccessfulSnapshotValidator();
         mockBackend();
+    }
+
+    private void mockIsoDomainListSyncronizer() {
+        doNothing().when(isoDomainListSyncronizer).init();
+        doReturn(isoDomainListSyncronizer).when(command).getIsoDomainListSyncronizer();
     }
 
     protected void mockVmRunHandler() {
@@ -322,10 +331,15 @@ public class RunVmCommandTest {
         doReturn(spDao).when(vmRunHandler).getStoragePoolDAO();
 
         doReturn(vmRunHandler).when(command).getVmRunHandler();
+
         doReturn(true).when(vmRunHandler).performStorageDomainChecks(any(VM.class),
                 anyListOf(String.class),
                 any(RunVmParams.class),
                 anyListOf(DiskImage.class));
+
+        doNothing().when(isoDomainListSyncronizer).init();
+        doReturn(isoDomainListSyncronizer).when(vmRunHandler).getIsoDomainListSyncronizer();
+
         doReturn(true).when(vmRunHandler).performImageChecksForRunningVm(
                 anyListOf(String.class),
                 anyListOf(DiskImage.class));

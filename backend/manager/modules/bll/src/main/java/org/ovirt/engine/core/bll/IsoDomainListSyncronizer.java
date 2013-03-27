@@ -15,12 +15,12 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -33,6 +33,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.RepoFileMetaDataDAO;
+import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -53,7 +54,7 @@ public class IsoDomainListSyncronizer {
     private static final Log log = LogFactory.getLog(IsoDomainListSyncronizer.class);
     private List<RepoFileMetaData> problematicRepoFileList = new ArrayList<RepoFileMetaData>();
     private static final int MIN_TO_MILLISECONDS = 60 * 1000;
-    private static final IsoDomainListSyncronizer isoDomainListSyncronizer = new IsoDomainListSyncronizer();
+    private static IsoDomainListSyncronizer isoDomainListSyncronizer;
     private static final ConcurrentMap<Object, Lock> syncDomainForFileTypeMap = new ConcurrentHashMap<Object, Lock>();
     private int isoDomainRefreshRate;
     RepoFileMetaDataDAO repoStorageDom;
@@ -74,6 +75,10 @@ public class IsoDomainListSyncronizer {
      * private constructor to initialize the quartz scheduler
      */
     private IsoDomainListSyncronizer() {
+        init();
+    }
+
+    protected void init() {
         log.info("Start initializing " + getClass().getSimpleName());
         repoStorageDom = DbFacade.getInstance().getRepoFileMetaDataDao();
         isoDomainRefreshRate = Config.<Integer> GetValue(ConfigValues.AutoRepoDomainRefreshTime) * MIN_TO_MILLISECONDS;
@@ -92,6 +97,13 @@ public class IsoDomainListSyncronizer {
      * @return Singleton instance of IsoDomainManager
      */
     public static IsoDomainListSyncronizer getInstance() {
+        if (isoDomainListSyncronizer == null) {
+            synchronized (IsoDomainListSyncronizer.class) {
+                if (isoDomainListSyncronizer == null) {
+                    isoDomainListSyncronizer = new IsoDomainListSyncronizer();
+                }
+            }
+        }
         return isoDomainListSyncronizer;
     }
 
@@ -690,5 +702,32 @@ public class IsoDomainListSyncronizer {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Checks if there is an active ISO domain in the storage pool. If so returns the Iso Guid, otherwise returns null.
+     * @param storagePoolId
+     *            The storage pool id.
+     * @return Iso Guid of active Iso, and null if not.
+     */
+    public Guid findActiveISODomain(Guid storagePoolId) {
+        Guid isoGuid = null;
+        List<StorageDomain> domains = getStorageDomainDAO().getAllForStoragePool(
+                storagePoolId);
+        for (StorageDomain domain : domains) {
+            if (domain.getStorageDomainType() == StorageDomainType.ISO) {
+                StorageDomain sd = getStorageDomainDAO().getForStoragePool(domain.getId(),
+                        storagePoolId);
+                if (sd != null && sd.getStatus() == StorageDomainStatus.Active) {
+                    isoGuid = sd.getId();
+                    break;
+                }
+            }
+        }
+        return isoGuid;
+    }
+
+    private StorageDomainDAO getStorageDomainDAO() {
+        return DbFacade.getInstance().getStorageDomainDao();
     }
 }

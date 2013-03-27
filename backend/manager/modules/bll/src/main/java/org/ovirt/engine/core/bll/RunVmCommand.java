@@ -291,7 +291,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private void attachCd() {
         Guid storagePoolId = getVm().getStoragePoolId();
 
-        boolean isIsoFound = (getVmRunHandler().findActiveISODomain(storagePoolId) != null);
+        boolean isIsoFound = (getIsoDomainListSyncronizer().findActiveISODomain(storagePoolId) != null);
         if (isIsoFound) {
             if (StringUtils.isEmpty(getVm().getCdPath())) {
                 getVm().setCdPath(getVm().getIsoPath());
@@ -307,6 +307,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             throw new VdcBLLException(VdcBllErrors.NO_ACTIVE_ISO_DOMAIN_IN_DATA_CENTER);
         }
 
+    }
+
+    protected IsoDomainListSyncronizer getIsoDomainListSyncronizer() {
+        return IsoDomainListSyncronizer.getInstance();
     }
 
     private void statelessVmTreatment() {
@@ -603,7 +607,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
             // Fetch cached Iso files from active Iso domain.
             List<RepoFileMetaData> repoFilesMap =
-                    IsoDomainListSyncronizer.getInstance().getCachedIsoListByDomainId(isoDomain.getId(),
+                    getIsoDomainListSyncronizer().getCachedIsoListByDomainId(isoDomain.getId(),
                             ImageFileType.ISO);
             Version bestClusterVer = null;
             int bestToolVer = 0;

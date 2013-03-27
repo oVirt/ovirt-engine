@@ -36,7 +36,7 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
                 addCanDoActionMessage(VdcBllMessages.VAR__ACTION__EJECT_CD);
             }
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
-        } else if ((VmRunHandler.getInstance().findActiveISODomain(getVm().getStoragePoolId()) == null)
+        } else if ((IsoDomainListSyncronizer.getInstance().findActiveISODomain(getVm().getStoragePoolId()) == null)
                 && !StringUtils.isEmpty(mCdImagePath)) {
             addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CHANGE_CD);
             addCanDoActionMessage(VdcBllMessages.VM_CANNOT_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);

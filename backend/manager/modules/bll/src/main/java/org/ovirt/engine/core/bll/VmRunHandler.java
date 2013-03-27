@@ -25,8 +25,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -87,7 +85,8 @@ public class VmRunHandler {
             // pool/ISO inactive -
             // you cannot run this VM
 
-            if (boot_sequence == BootSequence.CD && findActiveISODomain(storagePoolId) == null) {
+            if (boot_sequence == BootSequence.CD
+                    && getIsoDomainListSyncronizer().findActiveISODomain(storagePoolId) == null) {
                 message.add(VdcBllMessages.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO.toString());
                 retValue = false;
             } else {
@@ -136,7 +135,8 @@ public class VmRunHandler {
 
                     // Check if iso and floppy path exists
                     if (retValue && !vm.isAutoStartup()
-                            && !validateIsoPath(findActiveISODomain(vm.getStoragePoolId()),
+                            && !validateIsoPath(getIsoDomainListSyncronizer()
+                                    .findActiveISODomain(vm.getStoragePoolId()),
                                     runParams,
                                     message)) {
                         retValue = false;
@@ -192,6 +192,10 @@ public class VmRunHandler {
             }
         }
         return retValue;
+    }
+
+    protected IsoDomainListSyncronizer getIsoDomainListSyncronizer() {
+        return IsoDomainListSyncronizer.getInstance();
     }
 
     /**
@@ -284,30 +288,6 @@ public class VmRunHandler {
     protected boolean performImageChecksForRunningVm(List<String> message, List<DiskImage> vmDisks) {
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(vmDisks);
         return validate(diskImagesValidator.diskImagesNotLocked(), message);
-    }
-
-    /**
-     * Checks if there is an active ISO domain in the storage pool. If so returns the Iso Guid, otherwise returns null.
-     *
-     * @param storagePoolId
-     *            The storage pool id.
-     * @return Iso Guid of active Iso, and null if not.
-     */
-    public Guid findActiveISODomain(Guid storagePoolId) {
-        Guid isoGuid = null;
-        List<StorageDomain> domains = getStorageDomainDAO().getAllForStoragePool(
-                storagePoolId);
-        for (StorageDomain domain : domains) {
-            if (domain.getStorageDomainType() == StorageDomainType.ISO) {
-                StorageDomain sd = getStorageDomainDAO().getForStoragePool(domain.getId(),
-                        storagePoolId);
-                if (sd != null && sd.getStatus() == StorageDomainStatus.Active) {
-                    isoGuid = sd.getId();
-                    break;
-                }
-            }
-        }
-        return isoGuid;
     }
 
     @SuppressWarnings("unchecked")
