@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -39,14 +38,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
         return TOTAL_DISK_IMAGES + DiskLunMapDaoTest.TOTAL_DISK_LUN_MAPS;
     }
 
-    @Test
-    public void testGetAllForVm() {
-        List<Disk> result = dao.getAllForVm(FixturesTool.VM_TEMPLATE_RHEL5);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-    }
-
+    @Override
     @Test
     public void testGet() {
         Disk result = dao.get(getExistingEntityId());
@@ -108,6 +100,27 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
     }
 
     @Test
+    public void testGetPluggedForVMFilteredWithPermissions() {
+        // test user 3 - has permissions
+        List<Disk> disks = dao.getAllForVm(FixturesTool.VM_RHEL5_POOL_57, true, PRIVILEGED_USER_ID, true);
+        assertPluggedGetAllForVMResult(disks);
+    }
+
+    @Test
+    public void testGetPluggedForVMFilteredWithPermissionsNoPermissions() {
+        // test user 2 - hasn't got permissions
+        List<Disk> disks = dao.getAllForVm(FixturesTool.VM_RHEL5_POOL_57, true, UNPRIVILEGED_USER_ID, true);
+        assertTrue("VM should have no disks viewable to the user", disks.isEmpty());
+    }
+
+    @Test
+    public void testGetPluggedForVMFilteredWithPermissionsNoPermissionsAndNoFilter() {
+        // test user 2 - hasn't got permissions, but no filtering was requested
+        List<Disk> disks = dao.getAllForVm(FixturesTool.VM_RHEL5_POOL_57, true, UNPRIVILEGED_USER_ID, false);
+        assertPluggedGetAllForVMResult(disks);
+    }
+
+    @Test
     public void testGetAllForVM() {
         List<Disk> disks = dao.getAllForVm(FixturesTool.VM_RHEL5_POOL_57);
         assertFullGetAllForVMResult(disks);
@@ -162,7 +175,16 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
      *            The result to check
      */
     private static void assertFullGetAllForVMResult(List<Disk> disks) {
-        assertEquals("VM should have three disks", 3, disks.size());
+        assertEquals("VM should have three disks", 4, disks.size());
+    }
+
+    /**
+     * Asserts the result of {@link DiskImageDAO#getAllForVm(Guid)} contains the correct plugged disks.
+     * @param disks
+     *            The result to check
+     */
+    private static void assertPluggedGetAllForVMResult(List<Disk> disks) {
+        assertEquals("VM should have only one plugged disk", 1, disks.size());
     }
 
     /**

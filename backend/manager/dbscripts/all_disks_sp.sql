@@ -37,13 +37,13 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetDisksVmGuid(v_vm_guid UUID, v_user_id UUID, v_is_filtered BOOLEAN)
+Create or replace FUNCTION GetDisksVmGuid(v_vm_guid UUID, v_only_plugged BOOLEAN, v_user_id UUID, v_is_filtered BOOLEAN)
 RETURNS SETOF all_disks
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT all_disks.*
       FROM all_disks
-      LEFT JOIN vm_device on vm_device.device_id = all_disks.image_group_id
+      LEFT JOIN vm_device ON vm_device.device_id = all_disks.image_group_id AND (NOT v_only_plugged OR is_plugged)
       WHERE vm_device.vm_id = v_vm_guid
       AND (NOT v_is_filtered OR EXISTS (SELECT 1
                                         FROM   user_disk_permissions_view

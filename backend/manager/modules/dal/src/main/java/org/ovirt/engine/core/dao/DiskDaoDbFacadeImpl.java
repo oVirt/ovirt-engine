@@ -27,19 +27,32 @@ public class DiskDaoDbFacadeImpl extends BaseDAODbFacade implements DiskDao {
 
     @Override
     public List<Disk> getAllForVm(Guid id) {
-        return getAllForVm(id, null, false);
+        return getAllForVm(id, false);
+    }
+
+    @Override
+    public List<Disk> getAllForVm(Guid id, boolean onlyPluggedDisks) {
+        return getAllForVm(id, onlyPluggedDisks, null, false);
+    }
+
+    @Override
+    public List<Disk> getAllForVm(Guid id, Guid userID, boolean isFiltered) {
+        return getAllForVm(id, false, userID, isFiltered);
+    }
+
+    @Override
+    public List<Disk> getAllForVm(Guid id, boolean onlyPluggedDisks, Guid userID, boolean isFiltered) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                        .addValue("vm_guid", id)
+                        .addValue("only_plugged", onlyPluggedDisks)
+                        .addValue("user_id", userID)
+                        .addValue("is_filtered", isFiltered);
+        return getCallsHandler().executeReadList("GetDisksVmGuid", DiskRowMapper.instance, parameterSource);
     }
 
     @Override
     public List<Disk> getAll() {
         return getAll(null, false);
-    }
-
-    @Override
-    public List<Disk> getAllForVm(Guid id, Guid userID, boolean isFiltered) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vm_guid", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
-        return getCallsHandler().executeReadList("GetDisksVmGuid", DiskRowMapper.instance, parameterSource);
     }
 
     @Override

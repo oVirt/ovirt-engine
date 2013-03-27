@@ -36,17 +36,14 @@ import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -59,7 +56,6 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 
@@ -130,13 +126,6 @@ public class RunVmCommandTest {
         diskImage.setId(Guid.NewGuid());
         diskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(new Guid())));
         return diskImage;
-    }
-
-    private static VmDevice createDiskVmDevice(final DiskImage diskImage) {
-        final VmDevice vmDevice = new VmDevice();
-        vmDevice.setIsPlugged(true);
-        vmDevice.setId(new VmDeviceId(diskImage.getId(), Guid.NewGuid()));
-        return vmDevice;
     }
 
     /**
@@ -341,7 +330,7 @@ public class RunVmCommandTest {
 
     @Test
     public void canRunVmFailNodisk() {
-        initDAOMocks(Collections.<Disk> emptyList(), Collections.<VmDevice> emptyList());
+        initDAOMocks(Collections.<Disk> emptyList());
 
         final VM vm = new VM();
         doReturn(new VdsSelector(vm, new Guid(), true, new VdsFreeMemoryChecker(command))).when(command)
@@ -356,8 +345,7 @@ public class RunVmCommandTest {
         final ArrayList<Disk> disks = new ArrayList<Disk>();
         final DiskImage diskImage = createImage();
         disks.add(diskImage);
-        final VmDevice vmDevice = createDiskVmDevice(diskImage);
-        initDAOMocks(disks, Collections.singletonList(vmDevice));
+        initDAOMocks(disks);
         final VM vm = new VM();
         vm.setStatus(VMStatus.Up);
         vm.setStoragePoolId(Guid.NewGuid());
@@ -373,8 +361,7 @@ public class RunVmCommandTest {
         final ArrayList<Disk> disks = new ArrayList<Disk>();
         final DiskImage diskImage = createImage();
         disks.add(diskImage);
-        final VmDevice vmDevice = createDiskVmDevice(diskImage);
-        initDAOMocks(disks, Collections.singletonList(vmDevice));
+        initDAOMocks(disks);
         final VM vm = new VM();
         SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
         when(snapshotsValidator.vmNotDuringSnapshot(vm.getId()))
@@ -394,7 +381,6 @@ public class RunVmCommandTest {
         final ArrayList<Disk> disks = new ArrayList<Disk>();
         final DiskImage diskImage = createImage();
         disks.add(diskImage);
-        final VmDevice vmDevice = createDiskVmDevice(diskImage);
 
         final VdsSelector vdsSelector = mock(VdsSelector.class);
         when(vdsSelector.canFindVdsToRunOn(anyListOf(String.class), anyBoolean())).thenReturn(true);
@@ -403,7 +389,7 @@ public class RunVmCommandTest {
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
         vdsReturnValue.setReturnValue(false);
         when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.IsVmDuringInitiating), any(VDSParametersBase.class))).thenReturn(vdsReturnValue);
-        initDAOMocks(disks, Collections.singletonList(vmDevice));
+        initDAOMocks(disks);
 
         final VM vm = new VM();
         // set stateless and HA
@@ -464,12 +450,11 @@ public class RunVmCommandTest {
 
     /**
      * @param disks
-     * @param vmDevices
      * @param guid
      */
-    protected void initDAOMocks(final List<Disk> disks, final List<VmDevice> vmDevices) {
+    protected void initDAOMocks(final List<Disk> disks) {
         final DiskDao diskDao = mock(DiskDao.class);
-        when(diskDao.getAllForVm(Guid.Empty)).thenReturn(disks);
+        when(diskDao.getAllForVm(Guid.Empty, true)).thenReturn(disks);
         doReturn(diskDao).when(command).getDiskDao();
         doReturn(diskDao).when(vmRunHandler).getDiskDao();
 
@@ -478,13 +463,6 @@ public class RunVmCommandTest {
                 .thenReturn(new ArrayList<StorageDomain>());
         doReturn(storageDomainDAO).when(command).getStorageDomainDAO();
         doReturn(storageDomainDAO).when(vmRunHandler).getStorageDomainDAO();
-
-        final VmDeviceDAO vmDeviceDao = mock(VmDeviceDAO.class);
-        when(vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(Guid.Empty,
-                VmDeviceType.DISK.getName(),
-                VmDeviceType.DISK.getName())).thenReturn(vmDevices);
-        doReturn(vmDeviceDao).when(command).getVmDeviceDao();
-        doReturn(vmDeviceDao).when(vmRunHandler).getVmDeviceDAO();
     }
 
     private SnapshotsValidator mockSuccessfulSnapshotValidator() {

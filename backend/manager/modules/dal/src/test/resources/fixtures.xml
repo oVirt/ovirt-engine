@@ -263,6 +263,15 @@
             <value>IET</value>
             <value>VIRTUAL-DISK</value>
         </row>
+        <row>
+            <value></value>
+            <value>1IET_00180004</value>
+            <value>fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk</value>
+            <value>SOME-LUN-DISK</value>
+            <value>1</value>
+            <value>IET</value>
+            <value>VIRTUAL-DISK</value>
+        </row>
     </table>
 
     <table name="LUN_storage_server_connection_map">
@@ -2648,6 +2657,16 @@
             <value>true</value>
             <value>false</value>
         </row>
+        <row>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a40</value>
+            <value>VirtIO</value>
+            <value>4</value>
+            <value>Off</value>
+            <value>false</value>
+            <value>New Description</value>
+            <value>false</value>
+            <value>false</value>
+        </row>
     </table>
 
     <table name="disk_lun_map">
@@ -2660,6 +2679,10 @@
       <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a37</value>
             <value>1IET_00180003</value>
+      </row>
+      <row>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a40</value>
+            <value>1IET_00180004</value>
       </row>
     </table>
 
@@ -4043,6 +4066,19 @@
             <value>{}</value>
             <value>true</value>
             <value>false</value>
+            <value>false</value>
+            <value>alias</value>
+        </row>
+        <row>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a40</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>disk</value>
+            <value>disk</value>
+            <value>sample</value>
+            <value>1</value>
+            <value>{}</value>
+            <value>true</value>
+            <value>true</value>
             <value>false</value>
             <value>alias</value>
         </row>

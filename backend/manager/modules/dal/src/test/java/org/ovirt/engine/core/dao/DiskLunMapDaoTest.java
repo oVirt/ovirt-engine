@@ -15,7 +15,7 @@ public class DiskLunMapDaoTest extends BaseGenericDaoTestCase<DiskLunMapId, Disk
 
     private static final DiskLunMapId EXISTING_DISK_LUN_MAP_ID =
             new DiskLunMapId(new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a35"), "1IET_00180002");
-    protected static final int TOTAL_DISK_LUN_MAPS = 2;
+    protected static final int TOTAL_DISK_LUN_MAPS = 3;
 
     @Override
     protected DiskLunMapId generateNonExistingId() {

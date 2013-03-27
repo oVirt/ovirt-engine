@@ -221,7 +221,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
                 @Override
                 public Void runInTransaction() {
-                    List<Disk> pluggedDisks = VmRunHandler.getInstance().getPluggedDisks(getVm());
+                    List<Disk> pluggedDisks = getDiskDao().getAllForVm(getVm().getId(), true);
                     runVdsCommand(VDSCommandType.Snapshot,
                             new SnapshotVDSCommandParameters(getVm().getRunOnVds().getValue(),
                                     getVm().getId(),

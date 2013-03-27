@@ -28,14 +28,12 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.IsVmDuringInitiatingVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -44,7 +42,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 
 /** A utility class for verifying running a vm*/
@@ -83,7 +80,7 @@ public class VmRunHandler {
             Guid storagePoolId = vm.getStoragePoolId();
             // Block from running a VM with no HDD when its first boot device is
             // HD and no other boot devices are configured
-            List<Disk> vmDisks = getPluggedDisks(vm);
+            List<Disk> vmDisks = getDiskDao().getAllForVm(vm.getId(), true);
             if (boot_sequence == BootSequence.C && vmDisks.size() == 0) {
                 String messageStr = !vmDisks.isEmpty() ?
                         VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_PLUGGED_DISK.toString() :
@@ -241,7 +238,7 @@ public class VmRunHandler {
      */
     public Map<StorageDomain, Integer> mapStorageDomainsToNumOfDisks(VM vm) {
         Map<StorageDomain, Integer> map = new HashMap<StorageDomain, Integer>();
-        for (Disk disk : getPluggedDisks(vm)) {
+        for (Disk disk : getDiskDao().getAllForVm(vm.getId(), true)) {
             if (disk.isAllowSnapshot()) {
                 for (StorageDomain domain : getStorageDomainDAO().getAllStorageDomainsByImageId(((DiskImage) disk).getImageId())) {
                     map.put(domain, map.containsKey(domain) ? Integer.valueOf(map.get(domain) + 1) : Integer.valueOf(1));
@@ -262,31 +259,6 @@ public class VmRunHandler {
                 !vm.isAutoStartup() || !runParams.getIsInternal(),
                 !vm.isAutoStartup() || !runParams.getIsInternal(),
                 vmDisks);
-    }
-
-    /**
-     * The following method should return only plugged images which are attached to VM,
-     * only those images are relevant for the RunVmCommand
-     * @param vm
-     * @return
-     */
-    protected List<Disk> getPluggedDisks(VM vm) {
-        List<Disk> diskImages = getDiskDao().getAllForVm(vm.getId());
-        List<VmDevice> diskVmDevices = getVmDeviceDAO().getVmDeviceByVmIdTypeAndDevice(vm.getId(),
-                VmDeviceType.DISK.getName(),
-                VmDeviceType.DISK.getName());
-        List<Disk> result = new ArrayList<Disk>();
-        for (Disk diskImage : diskImages) {
-            for (VmDevice diskVmDevice : diskVmDevices) {
-                if (diskImage.getId().equals(diskVmDevice.getDeviceId())) {
-                    if (diskVmDevice.getIsPlugged()) {
-                        result.add(diskImage);
-                    }
-                    break;
-                }
-            }
-        }
-        return result;
     }
 
     /**
@@ -382,10 +354,6 @@ public class VmRunHandler {
 
     protected DiskDao getDiskDao() {
         return DbFacade.getInstance().getDiskDao();
-    }
-
-    protected VmDeviceDAO getVmDeviceDAO() {
-        return DbFacade.getInstance().getVmDeviceDao();
     }
 
     protected StorageDomainDAO getStorageDomainDAO() {
