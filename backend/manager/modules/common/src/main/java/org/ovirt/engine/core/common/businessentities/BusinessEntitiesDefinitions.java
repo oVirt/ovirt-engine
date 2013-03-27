@@ -38,6 +38,8 @@ public final class BusinessEntitiesDefinitions {
     public static final int NETWORK_MIN_LEGAL_PORT = 1;
     public static final int NETWORK_MAX_LEGAL_PORT = 65535;
     public static final int HOST_NIC_NAME_LENGTH = 15;
+    public static final String BOND_NAME_PREFIX = "bond";
+    public static final String BOND_NAME_PATTERN = "^" + BOND_NAME_PREFIX + "\\d+$";
 
     // Bookmark (bookmarks)
     public static final int BOOKMARK_NAME_SIZE = 40;

@@ -1447,6 +1447,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Bad format of subnet mask")
     String NETWORK_ADDR_IN_SUBNET_BAD_FORMAT();
 
+    @DefaultStringValue("Bad bond name, it must begin with the prefix 'bond' followed by a number.")
+    String NETWORK_BOND_NAME_BAD_FORMAT();
+
     @DefaultStringValue("Bad network name, network cannot start with 'bond'")
     String NETWORK_CANNOT_CONTAIN_BOND_NAME();
 
