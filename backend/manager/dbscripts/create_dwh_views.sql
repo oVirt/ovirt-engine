@@ -60,7 +60,7 @@ FROM storage_pool_iso_map;
 CREATE OR REPLACE VIEW dwh_storage_domain_history_view
 AS
 SELECT storage_domain_dynamic.id as storage_domain_id,
-       fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id, status_table.status, storage_domain_static.storage_type) AS storage_domain_status,
+       fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id, status_table.status, storage_domain_static.storage_domain_type) AS storage_domain_status,
        storage_domain_dynamic.available_disk_size as available_disk_size_gb,
        storage_domain_dynamic.used_disk_size as used_disk_size_gb
 FROM storage_domain_dynamic
