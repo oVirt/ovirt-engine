@@ -917,9 +917,9 @@ def _changeCaPermissions():
     # Update keystore permissions
     utils.chownToEngine(basedefs.FILE_JBOSS_KEYSTORE)
     os.chmod(basedefs.FILE_JBOSS_KEYSTORE, 0640)
-    os.chown(basedefs.FILE_APACHE_KEYSTORE, utils.getUsernameId("apache"), utils.getGroupId("apache"))
+    os.chown(basedefs.FILE_APACHE_KEYSTORE, utils.getUsernameId("root"), utils.getGroupId("root"))
     os.chmod(basedefs.FILE_APACHE_KEYSTORE, 0640)
-    os.chown(basedefs.FILE_APACHE_PRIVATE_KEY, utils.getUsernameId("apache"), utils.getGroupId("apache"))
+    os.chown(basedefs.FILE_APACHE_PRIVATE_KEY, utils.getUsernameId("root"), utils.getGroupId("root"))
     os.chmod(basedefs.FILE_APACHE_PRIVATE_KEY, 0640)
 
 def _updateCaCrtTemplate():
