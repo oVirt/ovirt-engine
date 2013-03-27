@@ -18,6 +18,8 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
@@ -28,6 +30,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 
@@ -192,8 +195,25 @@ public class RunVmValidator {
                 .getReturnValue()).booleanValue();
     }
 
+    public boolean validateVdsStatus(VM vm, List<String> messages) {
+        if (vm.getStatus() == VMStatus.Paused && vm.getRunOnVds() != null) {
+            VDS vds = getVdsDao().get(
+                    new Guid(vm.getRunOnVds().toString()));
+            if (vds.getStatus() != VDSStatus.Up) {
+                messages.add(VdcBllMessages.VAR__HOST_STATUS__UP.toString());
+                messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL.toString());
+                return false;
+            }
+        }
+        return true;
+    }
+
     protected BackendInternal getBackend() {
         return Backend.getInstance();
+    }
+
+    protected VdsDAO getVdsDao() {
+        return DbFacade.getInstance().getVdsDao();
     }
 
     protected VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
@@ -269,6 +289,9 @@ public class RunVmValidator {
             result = vmDuringInitialization(vm);
             if (!result.isValid()) {
                 messages.add(result.getMessage().toString());
+                return false;
+            }
+            if (!validateVdsStatus(vm, messages)) {
                 return false;
             }
         }

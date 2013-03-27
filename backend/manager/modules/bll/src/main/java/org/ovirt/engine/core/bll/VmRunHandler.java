@@ -16,13 +16,9 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
@@ -54,16 +50,6 @@ public class VmRunHandler {
         List<Disk> vmDisks = getDiskDao().getAllForVm(vm.getId(), true);
         List<DiskImage> vmImages = ImagesHandler.filterImageDisks(vmDisks, true, false);
         if (retValue && !vmImages.isEmpty()) {
-            if (vm.getStatus() == VMStatus.Paused && vm.getRunOnVds() != null) {
-                VDS vds = DbFacade.getInstance().getVdsDao().get(
-                        new Guid(vm.getRunOnVds().toString()));
-                if (vds.getStatus() != VDSStatus.Up) {
-                    retValue = false;
-                    message.add(VdcBllMessages.VAR__HOST_STATUS__UP.toString());
-                    message.add(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL.toString());
-                }
-            }
-
             boolean isStatelessVm = shouldVmRunAsStateless(runParams, vm);
 
             if (retValue && isStatelessVm && !snapshotsValidator.vmNotInPreview(vm.getId()).isValid()) {

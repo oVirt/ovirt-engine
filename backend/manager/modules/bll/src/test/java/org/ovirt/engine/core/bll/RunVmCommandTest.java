@@ -449,6 +449,7 @@ public class RunVmCommandTest {
                 Matchers.anyListOf(DiskImage.class))).thenReturn(true);
         when(runVmValidator.validateIsoPath(anyBoolean(), any(Guid.class), any(String.class), any(String.class))).thenReturn(ValidationResult.VALID);
         when(runVmValidator.vmDuringInitialization(any(VM.class))).thenReturn(ValidationResult.VALID);
+        when(runVmValidator.validateVdsStatus(any(VM.class), Matchers.anyListOf(String.class))).thenReturn(true);
         doReturn(runVmValidator).when(command).getRunVmValidator();
         return runVmValidator;
     }

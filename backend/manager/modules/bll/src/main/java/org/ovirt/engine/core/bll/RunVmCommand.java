@@ -705,7 +705,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                                 validate(getRunVmValidator().validateIsoPath(vm.isAutoStartup(), vm.getStoragePoolId(),
                                         getParameters().getDiskPath(),
                                         getParameters().getFloppyPath())) &&
-                        validate(getRunVmValidator().vmDuringInitialization(vm)))) &&
+                                validate(getRunVmValidator().vmDuringInitialization(vm)) &&
+                        getRunVmValidator().validateVdsStatus(vm, messages))) &&
                         canRunVm(vm) &&
                         validateNetworkInterfaces();
 
