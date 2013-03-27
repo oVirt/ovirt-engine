@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.ovirt.engine.core.ldap.LdapProviderType;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class Domain {
 
@@ -20,9 +18,6 @@ public class Domain {
     private String userName;
     private String password;
     private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-
-    // for this
-    private final static Log log = LogFactory.getLog(Domain.class);
 
     public Domain(String domainName) {
         name = domainName;
