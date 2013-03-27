@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
@@ -349,22 +348,6 @@ public class RunVmCommandTest {
         assertTrue(command.getReturnValue().getCanDoActionMessages().isEmpty());
     }
 
-    @Test
-    public void canRunVmFailVmRunning() {
-        final ArrayList<Disk> disks = new ArrayList<Disk>();
-        final DiskImage diskImage = createImage();
-        disks.add(diskImage);
-        initDAOMocks(disks);
-        final VM vm = new VM();
-        vm.setStatus(VMStatus.Up);
-        vm.setStoragePoolId(Guid.NewGuid());
-        doReturn(new VdsSelector(vm, new NGuid(), true, new VdsFreeMemoryChecker(command))).when(command)
-                .getVdsSelector();
-
-        assertFalse(command.canRunVm(vm));
-        assertTrue(command.getReturnValue().getCanDoActionMessages().contains("ACTION_TYPE_FAILED_VM_IS_RUNNING"));
-    }
-
     private void canRunStatelessVmTest(boolean autoStartUp,
             boolean isVmStateless,
             Boolean isStatelessParam,
@@ -465,6 +448,7 @@ public class RunVmCommandTest {
                 anyBoolean(),
                 Matchers.anyListOf(DiskImage.class))).thenReturn(true);
         when(runVmValidator.validateIsoPath(anyBoolean(), any(Guid.class), any(String.class), any(String.class))).thenReturn(ValidationResult.VALID);
+        when(runVmValidator.vmDuringInitialization(any(VM.class))).thenReturn(ValidationResult.VALID);
         doReturn(runVmValidator).when(command).getRunVmValidator();
         return runVmValidator;
     }

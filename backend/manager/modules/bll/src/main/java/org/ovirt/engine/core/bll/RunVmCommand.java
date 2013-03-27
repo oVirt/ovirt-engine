@@ -683,21 +683,29 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         List<Disk> vmDisks = getDiskDao().getAllForVm(vm.getId(), true);
         List<DiskImage> vmImages = ImagesHandler.filterImageDisks(vmDisks, true, false);
         boolean canDoAction =
-                getRunVmValidator().validateVmProperties(vm, messages) &&
+                getRunVmValidator().validateVmProperties(vm, messages)
+                        &&
                         validate(getRunVmValidator().validateBootSequence(vm,
                                 getParameters().getBootSequence(),
-                                vmDisks)) &&
-                        validate(getVmValidator(vm).vmNotLocked()) &&
-                        validate(getSnapshotsValidator().vmNotDuringSnapshot(vm.getId())) &&
+                                vmDisks))
+                        &&
+                        validate(getVmValidator(vm).vmNotLocked())
+                        &&
+                        validate(getSnapshotsValidator().vmNotDuringSnapshot(vm.getId()))
+                        &&
                         (vmImages.isEmpty() ||
                         (validate(new StoragePoolValidator(getStoragePoolDAO().get(vm.getStoragePoolId())).isUp())
                                 &&
-                        getRunVmValidator().validateStorageDomains(vm, messages, isInternalExecution(), vmImages) &&
+                                getRunVmValidator().validateStorageDomains(vm,
+                                        messages,
+                                        isInternalExecution(),
+                                        vmImages) &&
                                 getRunVmValidator().validateImagesForRunVm(messages, vmImages)
                                 &&
-                        validate(getRunVmValidator().validateIsoPath(vm.isAutoStartup(), vm.getStoragePoolId(),
-                                getParameters().getDiskPath(),
-                                getParameters().getFloppyPath())))) &&
+                                validate(getRunVmValidator().validateIsoPath(vm.isAutoStartup(), vm.getStoragePoolId(),
+                                        getParameters().getDiskPath(),
+                                        getParameters().getFloppyPath())) &&
+                        validate(getRunVmValidator().vmDuringInitialization(vm)))) &&
                         canRunVm(vm) &&
                         validateNetworkInterfaces();
 

@@ -19,9 +19,12 @@ import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.vdscommands.IsVmDuringInitiatingVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -173,7 +176,23 @@ public class RunVmValidator {
         return ValidationResult.VALID;
     }
 
-    private BackendInternal getBackend() {
+    public ValidationResult vmDuringInitialization(VM vm) {
+        boolean isVmDuringInit = isVmDuringInitiating(vm);
+        if (vm.isRunning() || vm.getStatus() == VMStatus.NotResponding || isVmDuringInit) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
+        }
+        return ValidationResult.VALID;
+    }
+
+    protected boolean isVmDuringInitiating(VM vm) {
+        return ((Boolean) getBackend()
+                .getResourceManager()
+                .RunVdsCommand(VDSCommandType.IsVmDuringInitiating,
+                        new IsVmDuringInitiatingVDSCommandParameters(vm.getId()))
+                .getReturnValue()).booleanValue();
+    }
+
+    protected BackendInternal getBackend() {
         return Backend.getInstance();
     }
 
@@ -243,6 +262,11 @@ public class RunVmValidator {
                 return false;
             }
             result = validateIsoPath(vm.isAutoStartup(), vm.getStoragePoolId(), diskPath, floppyPath);
+            if (!result.isValid()) {
+                messages.add(result.getMessage().toString());
+                return false;
+            }
+            result = vmDuringInitialization(vm);
             if (!result.isValid()) {
                 messages.add(result.getMessage().toString());
                 return false;

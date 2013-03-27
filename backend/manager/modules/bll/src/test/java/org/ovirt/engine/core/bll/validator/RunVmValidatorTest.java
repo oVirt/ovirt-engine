@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -135,6 +136,45 @@ public class RunVmValidatorTest {
         validateResult(runVmValidator.validateBootSequence(new VM(), BootSequence.N, new ArrayList<Disk>()),
                 false,
                 VdcBllMessages.VM_CANNOT_RUN_FROM_NETWORK_WITHOUT_NETWORK);
+    }
+
+    @Test
+    public void canRunVmFailVmRunning() {
+        final VM vm = new VM();
+        vm.setStatus(VMStatus.Up);
+        doReturn(false).when(runVmValidator).isVmDuringInitiating(any(VM.class));
+        validateResult(runVmValidator.vmDuringInitialization(vm),
+                false,
+                VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
+    }
+
+    @Test
+    public void canRunVmDuringInit() {
+        final VM vm = new VM();
+        doReturn(true).when(runVmValidator).isVmDuringInitiating(any(VM.class));
+        validateResult(runVmValidator.vmDuringInitialization(vm),
+                false,
+                VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
+    }
+
+    @Test
+    public void canRunVmNotResponding() {
+        final VM vm = new VM();
+        vm.setStatus(VMStatus.NotResponding);
+        doReturn(false).when(runVmValidator).isVmDuringInitiating(any(VM.class));
+        validateResult(runVmValidator.vmDuringInitialization(vm),
+                false,
+                VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
+    }
+
+    @Test
+    public void testVmNotDuringInitialization() {
+        final VM vm = new VM();
+        vm.setStatus(VMStatus.Down);
+        doReturn(false).when(runVmValidator).isVmDuringInitiating(any(VM.class));
+        validateResult(runVmValidator.vmDuringInitialization(vm),
+                true,
+                null);
     }
 
     private VmPropertiesUtils mockVmPropertiesUtils() {

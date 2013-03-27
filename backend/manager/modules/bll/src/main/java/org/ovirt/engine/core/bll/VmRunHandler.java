@@ -22,8 +22,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.vdscommands.IsVmDuringInitiatingVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -56,15 +54,7 @@ public class VmRunHandler {
         List<Disk> vmDisks = getDiskDao().getAllForVm(vm.getId(), true);
         List<DiskImage> vmImages = ImagesHandler.filterImageDisks(vmDisks, true, false);
         if (retValue && !vmImages.isEmpty()) {
-            boolean isVmDuringInit = ((Boolean) getBackend()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.IsVmDuringInitiating,
-                            new IsVmDuringInitiatingVDSCommandParameters(vm.getId()))
-                    .getReturnValue()).booleanValue();
-            if (vm.isRunning() || (vm.getStatus() == VMStatus.NotResponding) || isVmDuringInit) {
-                retValue = false;
-                message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING.toString());
-            } else if (vm.getStatus() == VMStatus.Paused && vm.getRunOnVds() != null) {
+            if (vm.getStatus() == VMStatus.Paused && vm.getRunOnVds() != null) {
                 VDS vds = DbFacade.getInstance().getVdsDao().get(
                         new Guid(vm.getRunOnVds().toString()));
                 if (vds.getStatus() != VDSStatus.Up) {
