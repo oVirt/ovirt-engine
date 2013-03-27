@@ -18,7 +18,6 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -35,6 +34,7 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
 import org.ovirt.engine.core.common.action.RunVmParams;
+import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
@@ -63,9 +63,7 @@ public class RunVmCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.VdsSelectionAlgorithm, "General", "0"),
-            mockConfig(ConfigValues.PredefinedVMProperties, "3.0", "0"),
-            mockConfig(ConfigValues.UserDefinedVMProperties, "3.0", "0")
+            mockConfig(ConfigValues.GuestToolsSetupIsoPrefix, "General", "")
             );
 
     /**
@@ -364,18 +362,6 @@ public class RunVmCommandTest {
     }
 
     @Test
-    public void canRunVmFailNodisk() {
-        initDAOMocks(Collections.<Disk> emptyList());
-
-        final VM vm = new VM();
-        doReturn(new VdsSelector(vm, new Guid(), true, new VdsFreeMemoryChecker(command))).when(command)
-                .getVdsSelector();
-
-        assertFalse(command.canRunVm(vm));
-        assertTrue(command.getReturnValue().getCanDoActionMessages().contains("VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK"));
-    }
-
-    @Test
     public void canRunVmFailVmRunning() {
         final ArrayList<Disk> disks = new ArrayList<Disk>();
         final DiskImage diskImage = createImage();
@@ -497,6 +483,7 @@ public class RunVmCommandTest {
     private RunVmValidator mockSuccessfulRunVmValidator() {
         RunVmValidator runVmValidator = mock(RunVmValidator.class);
         when(runVmValidator.validateVmProperties(any(VM.class), Matchers.anyListOf(String.class))).thenReturn(true);
+        when(runVmValidator.validateBootSequence(any(VM.class), any(BootSequence.class), Matchers.anyListOf(Disk.class))).thenReturn(ValidationResult.VALID);
         doReturn(runVmValidator).when(command).getRunVmValidator();
         return runVmValidator;
     }

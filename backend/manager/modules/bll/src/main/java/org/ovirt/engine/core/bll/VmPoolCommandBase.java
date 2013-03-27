@@ -28,6 +28,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VmPoolDAO;
 
 public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends CommandBase<T> {
@@ -230,12 +231,20 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                         true,
                         new VdsFreeMemoryChecker(new NonWaitingDelayer()));
 
-        return getRunVmValidator().canRunVm(vm, messages) &&
+        return getRunVmValidator().canRunVm(vm,
+                messages,
+                getDiskDao().getAllForVm(vm.getId(), true),
+                runVmParams.getBootSequence())
+                &&
                 VmRunHandler.getInstance().canRunVm(vm,
                         messages,
                         runVmParams,
                         vdsSelector,
                         new SnapshotsValidator());
+    }
+
+    private static DiskDao getDiskDao() {
+        return DbFacade.getInstance().getDiskDao();
     }
 
     private static RunVmValidator getRunVmValidator() {

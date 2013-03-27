@@ -677,8 +677,12 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return true;
         }
         List<String> messages = getReturnValue().getCanDoActionMessages();
+        List<Disk> vmDisks = getDiskDao().getAllForVm(vm.getId(), true);
         boolean canDoAction =
                 getRunVmValidator().validateVmProperties(vm, messages) &&
+                        validate(getRunVmValidator().validateBootSequence(vm,
+                                getParameters().getBootSequence(),
+                                vmDisks)) &&
                         canRunVm(vm) &&
                         validateNetworkInterfaces();
 
