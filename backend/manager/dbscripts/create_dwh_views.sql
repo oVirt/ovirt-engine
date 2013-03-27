@@ -266,7 +266,7 @@ SELECT
 	cast(c.cpu_user as smallint) as user_cpu_usage_percent,
 	c.disks_usage,
 	b.vm_ip,
-	b.guest_cur_user_name as current_user_name,
+	b.console_cur_user_name as current_user_name,
 	b.run_on_vds as currently_running_on_host
 FROM vm_dynamic b, vm_statistics c
 where
