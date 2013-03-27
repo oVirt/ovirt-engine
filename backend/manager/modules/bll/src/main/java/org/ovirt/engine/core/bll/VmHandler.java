@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -452,7 +451,7 @@ public class VmHandler {
         return retVal;
     }
 
-    protected static void handleCustomPropertiesError(List<ValidationError> validationErrors, ArrayList<String> message) {
+    public static void handleCustomPropertiesError(List<ValidationError> validationErrors, List<String> message) {
         String invalidSyntaxMsg = VdcBllMessages.ACTION_TYPE_FAILED_INVALID_CUSTOM_VM_PROPERTIES_INVALID_SYNTAX.name();
 
         List<String> errorMessages =

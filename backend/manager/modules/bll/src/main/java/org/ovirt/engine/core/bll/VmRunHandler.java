@@ -27,11 +27,11 @@ import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
@@ -45,7 +45,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
-import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 
 /** A utility class for verifying running a vm*/
 public class VmRunHandler {
@@ -67,138 +66,128 @@ public class VmRunHandler {
      * @return true if the given VM can run with the given properties, false otherwise
      */
     public boolean canRunVm(VM vm, ArrayList<String> message, RunVmParams runParams,
-            VdsSelector vdsSelector, SnapshotsValidator snapshotsValidator, VmPropertiesUtils vmPropsUtils) {
+            VdsSelector vdsSelector, SnapshotsValidator snapshotsValidator) {
         boolean retValue = true;
 
-        List<VmPropertiesUtils.ValidationError> validationErrors = vmPropsUtils.validateVMProperties(
-                vm.getVdsGroupCompatibilityVersion(),
-                vm.getStaticData());
+        BootSequence boot_sequence = (runParams.getBootSequence() != null) ?
+                runParams.getBootSequence() : vm.getDefaultBootSequence();
+        Guid storagePoolId = vm.getStoragePoolId();
+        // Block from running a VM with no HDD when its first boot device is
+        // HD and no other boot devices are configured
+        List<Disk> vmDisks = getDiskDao().getAllForVm(vm.getId(), true);
+        if (boot_sequence == BootSequence.C && vmDisks.size() == 0) {
+            String messageStr = !vmDisks.isEmpty() ?
+                    VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_PLUGGED_DISK.toString() :
+                    VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK.toString();
 
-        if (!validationErrors.isEmpty()) {
-            VmHandler.handleCustomPropertiesError(validationErrors, message);
+            message.add(messageStr);
             retValue = false;
         } else {
-            BootSequence boot_sequence = (runParams.getBootSequence() != null) ?
-                    runParams.getBootSequence() : vm.getDefaultBootSequence();
-            Guid storagePoolId = vm.getStoragePoolId();
-            // Block from running a VM with no HDD when its first boot device is
-            // HD and no other boot devices are configured
-            List<Disk> vmDisks = getDiskDao().getAllForVm(vm.getId(), true);
-            if (boot_sequence == BootSequence.C && vmDisks.size() == 0) {
-                String messageStr = !vmDisks.isEmpty() ?
-                        VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_PLUGGED_DISK.toString() :
-                        VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK.toString();
+            // If CD appears as first and there is no ISO in storage
+            // pool/ISO inactive -
+            // you cannot run this VM
 
-                message.add(messageStr);
+            if (boot_sequence == BootSequence.CD && findActiveISODomain(storagePoolId) == null) {
+                message.add(VdcBllMessages.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO.toString());
                 retValue = false;
             } else {
-                // If CD appears as first and there is no ISO in storage
-                // pool/ISO inactive -
-                // you cannot run this VM
-
-                if (boot_sequence == BootSequence.CD && findActiveISODomain(storagePoolId) == null) {
-                    message.add(VdcBllMessages.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO.toString());
+                // if there is network in the boot sequence, check that the
+                // vm has network,
+                // otherwise the vm cannot be run in vdsm
+                if (boot_sequence == BootSequence.N
+                        && DbFacade.getInstance().getVmNetworkInterfaceDao().getAllForVm(vm.getId()).size() == 0) {
+                    message.add(VdcBllMessages.VM_CANNOT_RUN_FROM_NETWORK_WITHOUT_NETWORK.toString());
                     retValue = false;
-                } else {
-                    // if there is network in the boot sequence, check that the
-                    // vm has network,
-                    // otherwise the vm cannot be run in vdsm
-                    if (boot_sequence == BootSequence.N
-                            && DbFacade.getInstance().getVmNetworkInterfaceDao().getAllForVm(vm.getId()).size() == 0) {
-                        message.add(VdcBllMessages.VM_CANNOT_RUN_FROM_NETWORK_WITHOUT_NETWORK.toString());
+                }
+
+                if (retValue) {
+                    ValidationResult vmNotLockedResult = new VmValidator(vm).vmNotLocked();
+                    if (!vmNotLockedResult.isValid()) {
+                        message.add(vmNotLockedResult.getMessage().name());
+                        retValue = false;
+                    }
+                }
+
+                if (retValue) {
+                    ValidationResult vmDuringSnapshotResult =
+                            snapshotsValidator.vmNotDuringSnapshot(vm.getId());
+                    if (!vmDuringSnapshotResult.isValid()) {
+                        message.add(vmDuringSnapshotResult.getMessage().name());
+                        retValue = false;
+                    }
+                }
+
+                List<DiskImage> vmImages = ImagesHandler.filterImageDisks(vmDisks, true, false);
+                if (retValue && !vmImages.isEmpty()) {
+                    StoragePool sp = getStoragePoolDAO().get(vm.getStoragePoolId());
+                    ValidationResult spUpResult = new StoragePoolValidator(sp).isUp();
+                    if (!spUpResult.isValid()) {
+                        message.add(spUpResult.getMessage().name());
                         retValue = false;
                     }
 
                     if (retValue) {
-                        ValidationResult vmNotLockedResult = new VmValidator(vm).vmNotLocked();
-                        if (!vmNotLockedResult.isValid()) {
-                            message.add(vmNotLockedResult.getMessage().name());
-                            retValue = false;
-                        }
+                        retValue = performStorageDomainChecks(vm, message, runParams, vmImages);
                     }
 
                     if (retValue) {
-                        ValidationResult vmDuringSnapshotResult =
-                                snapshotsValidator.vmNotDuringSnapshot(vm.getId());
-                        if (!vmDuringSnapshotResult.isValid()) {
-                            message.add(vmDuringSnapshotResult.getMessage().name());
-                            retValue = false;
-                        }
+                        retValue = performImageChecksForRunningVm(message, vmImages);
                     }
 
-                    List<DiskImage> vmImages = ImagesHandler.filterImageDisks(vmDisks, true, false);
-                    if (retValue && !vmImages.isEmpty()) {
-                        StoragePool sp = getStoragePoolDAO().get(vm.getStoragePoolId());
-                        ValidationResult spUpResult = new StoragePoolValidator(sp).isUp();
-                        if (!spUpResult.isValid()) {
-                            message.add(spUpResult.getMessage().name());
-                            retValue = false;
-                        }
-
-                        if (retValue) {
-                            retValue = performStorageDomainChecks(vm, message, runParams, vmImages);
-                        }
-
-                        if (retValue) {
-                            retValue = performImageChecksForRunningVm(message, vmImages);
-                        }
-
-                        // Check if iso and floppy path exists
-                        if (retValue && !vm.isAutoStartup()
-                                && !validateIsoPath(findActiveISODomain(vm.getStoragePoolId()),
-                                        runParams,
-                                        message)) {
-                            retValue = false;
-                        } else if (retValue) {
-                            boolean isVmDuringInit = ((Boolean) getBackend()
-                                    .getResourceManager()
-                                    .RunVdsCommand(VDSCommandType.IsVmDuringInitiating,
-                                            new IsVmDuringInitiatingVDSCommandParameters(vm.getId()))
-                                    .getReturnValue()).booleanValue();
-                            if (vm.isRunning() || (vm.getStatus() == VMStatus.NotResponding) || isVmDuringInit) {
-                                retValue = false;
-                                message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING.toString());
-                            } else if (vm.getStatus() == VMStatus.Paused && vm.getRunOnVds() != null) {
-                                VDS vds = DbFacade.getInstance().getVdsDao().get(
-                                        new Guid(vm.getRunOnVds().toString()));
-                                if (vds.getStatus() != VDSStatus.Up) {
-                                    retValue = false;
-                                    message.add(VdcBllMessages.VAR__HOST_STATUS__UP.toString());
-                                    message.add(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL.toString());
-                                }
-                            }
-
-                            boolean isStatelessVm = shouldVmRunAsStateless(runParams, vm);
-
-                            if (retValue && isStatelessVm && !snapshotsValidator.vmNotInPreview(vm.getId()).isValid()) {
-                                retValue = false;
-                                message.add(VdcBllMessages.VM_CANNOT_RUN_STATELESS_WHILE_IN_PREVIEW.toString());
-                            }
-
-                            // if the VM itself is stateless or run once as stateless
-                            if (retValue && isStatelessVm && vm.isAutoStartup()) {
-                                retValue = false;
-                                message.add(VdcBllMessages.VM_CANNOT_RUN_STATELESS_HA.toString());
-                            }
-
-                            if (retValue && isStatelessVm && !hasSpaceForSnapshots(vm, message)) {
-                                return false;
-                            }
-                        }
-                    }
-
-                    retValue = retValue == false ? retValue : vdsSelector.canFindVdsToRunOn(message, false);
-
-                    /**
-                     * only if can do action ok then check with actions matrix that status is valid for this
-                     * action
-                     */
-                    if (retValue
-                            && !VdcActionUtils.CanExecute(Arrays.asList(vm), VM.class,
-                                    VdcActionType.RunVm)) {
+                    // Check if iso and floppy path exists
+                    if (retValue && !vm.isAutoStartup()
+                            && !validateIsoPath(findActiveISODomain(vm.getStoragePoolId()),
+                                    runParams,
+                                    message)) {
                         retValue = false;
-                        message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL.toString());
+                    } else if (retValue) {
+                        boolean isVmDuringInit = ((Boolean) getBackend()
+                                .getResourceManager()
+                                .RunVdsCommand(VDSCommandType.IsVmDuringInitiating,
+                                        new IsVmDuringInitiatingVDSCommandParameters(vm.getId()))
+                                .getReturnValue()).booleanValue();
+                        if (vm.isRunning() || (vm.getStatus() == VMStatus.NotResponding) || isVmDuringInit) {
+                            retValue = false;
+                            message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING.toString());
+                        } else if (vm.getStatus() == VMStatus.Paused && vm.getRunOnVds() != null) {
+                            VDS vds = DbFacade.getInstance().getVdsDao().get(
+                                    new Guid(vm.getRunOnVds().toString()));
+                            if (vds.getStatus() != VDSStatus.Up) {
+                                retValue = false;
+                                message.add(VdcBllMessages.VAR__HOST_STATUS__UP.toString());
+                                message.add(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL.toString());
+                            }
+                        }
+
+                        boolean isStatelessVm = shouldVmRunAsStateless(runParams, vm);
+
+                        if (retValue && isStatelessVm && !snapshotsValidator.vmNotInPreview(vm.getId()).isValid()) {
+                            retValue = false;
+                            message.add(VdcBllMessages.VM_CANNOT_RUN_STATELESS_WHILE_IN_PREVIEW.toString());
+                        }
+
+                        // if the VM itself is stateless or run once as stateless
+                        if (retValue && isStatelessVm && vm.isAutoStartup()) {
+                            retValue = false;
+                            message.add(VdcBllMessages.VM_CANNOT_RUN_STATELESS_HA.toString());
+                        }
+
+                        if (retValue && isStatelessVm && !hasSpaceForSnapshots(vm, message)) {
+                            return false;
+                        }
                     }
+                }
+
+                retValue = retValue == false ? retValue : vdsSelector.canFindVdsToRunOn(message, false);
+
+                /**
+                 * only if can do action ok then check with actions matrix that status is valid for this action
+                 */
+                if (retValue
+                        && !VdcActionUtils.CanExecute(Arrays.asList(vm), VM.class,
+                                VdcActionType.RunVm)) {
+                    retValue = false;
+                    message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL.toString());
                 }
             }
         }

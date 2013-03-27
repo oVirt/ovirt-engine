@@ -27,7 +27,19 @@ import org.ovirt.engine.core.utils.exceptions.InitializationException;
  */
 public class VmPropertiesUtils {
 
-    private static VmPropertiesUtils vmPropertiesUtils;
+    private static VmPropertiesUtils vmPropertiesUtils = null;
+
+    public static VmPropertiesUtils getInstance() {
+        if (vmPropertiesUtils == null) {
+            synchronized (VmPropertiesUtils.class) {
+                if (vmPropertiesUtils == null) {
+                    vmPropertiesUtils = new VmPropertiesUtils();
+                }
+            }
+        }
+        return vmPropertiesUtils;
+    }
+
     private final Pattern SEMICOLON_PATTERN = Pattern.compile(";");
     private final String PROPERTIES_DELIMETER = ";";
     private final String KEY_VALUE_DELIMETER = "=";
@@ -55,11 +67,6 @@ public class VmPropertiesUtils {
     private Map<Version, Map<String, Pattern>> predefinedProperties;
     private Map<Version, Map<String, Pattern>> userdefinedProperties;
     private Map<Version, String> allVmProperties;
-
-    static {
-     vmPropertiesUtils = new VmPropertiesUtils();
-
-    }
 
     // Defines why validation failed
     public enum ValidationFailureReason {
@@ -111,10 +118,6 @@ public class VmPropertiesUtils {
         }
     }
 
-    public static VmPropertiesUtils getInstance() {
-        return vmPropertiesUtils;
-    }
-
     public void init() throws InitializationException {
         try {
             predefinedProperties = new HashMap<Version, Map<String, Pattern>>();
@@ -144,11 +147,11 @@ public class VmPropertiesUtils {
         }
     }
 
-    private String getUserdefinedVMProperties(Version version) {
+    public String getUserdefinedVMProperties(Version version) {
         return Config.<String> GetValue(ConfigValues.UserDefinedVMProperties, version.getValue());
     }
 
-    protected String getPredefinedVMProperties(Version version) {
+    public String getPredefinedVMProperties(Version version) {
         return Config.<String> GetValue(ConfigValues.PredefinedVMProperties, version.getValue());
     }
 

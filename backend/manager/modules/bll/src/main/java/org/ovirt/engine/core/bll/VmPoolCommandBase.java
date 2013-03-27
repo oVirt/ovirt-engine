@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
+import org.ovirt.engine.core.bll.validator.RunVmValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -28,9 +29,9 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmPoolDAO;
-import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 
 public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends CommandBase<T> {
+    private static final RunVmValidator runVmValidator = new RunVmValidator();
     private VmPool mVmPool;
 
     protected VmPool getVmPool() {
@@ -229,16 +230,16 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                         true,
                         new VdsFreeMemoryChecker(new NonWaitingDelayer()));
 
-        return VmRunHandler.getInstance().canRunVm(vm,
-                messages,
-                runVmParams,
-                vdsSelector,
-                new SnapshotsValidator(),
-                getVmPropertiesUtils());
+        return getRunVmValidator().canRunVm(vm, messages) &&
+                VmRunHandler.getInstance().canRunVm(vm,
+                        messages,
+                        runVmParams,
+                        vdsSelector,
+                        new SnapshotsValidator());
     }
 
-    protected static VmPropertiesUtils getVmPropertiesUtils() {
-        return VmPropertiesUtils.getInstance();
+    private static RunVmValidator getRunVmValidator() {
+        return runVmValidator;
     }
 
     @Override

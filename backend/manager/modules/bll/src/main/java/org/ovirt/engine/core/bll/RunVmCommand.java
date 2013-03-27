@@ -21,6 +21,7 @@ import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.RunVmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -67,7 +68,6 @@ import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 
 
 @LockIdNameAttribute
@@ -75,6 +75,7 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         implements QuotaVdsDependent {
 
+    private static final RunVmValidator runVmValidator = new RunVmValidator();
     private String _cdImagePath = "";
     private String _floppyImagePath = "";
     private boolean mResume;
@@ -456,7 +457,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 return getSucceeded() ? AuditLogType.USER_RESUME_VM : AuditLogType.USER_FAILED_RESUME_VM;
             } else if (getParameters() != null && getParameters().getIsInternal()) {
                 return getSucceeded() ?
-                        (statelessSnapshotExistsForVm() ? AuditLogType.VDS_INITIATED_RUN_VM_AS_STATELESS : AuditLogType.VDS_INITIATED_RUN_VM) :
+                        (statelessSnapshotExistsForVm() ? AuditLogType.VDS_INITIATED_RUN_VM_AS_STATELESS
+                                : AuditLogType.VDS_INITIATED_RUN_VM) :
                         AuditLogType.VDS_INITIATED_RUN_VM_FAILED;
             } else {
                 return getSucceeded() ?
@@ -670,26 +672,32 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             // if VM is paused, it was already checked before that it is capable to run
             return true;
         }
-        else {
-            boolean canDoAction = canRunVm(vm) && validateNetworkInterfaces();
+        List<String> messages = getReturnValue().getCanDoActionMessages();
+        boolean canDoAction =
+                getRunVmValidator().validateVmProperties(vm, messages) &&
+                        canRunVm(vm) &&
+                        validateNetworkInterfaces();
 
-            // check for Vm Payload
-            if (canDoAction && getParameters().getVmPayload() != null) {
-                canDoAction = checkPayload(getParameters().getVmPayload(),
-                        getParameters().getDiskPath());
+        // check for Vm Payload
+        if (canDoAction && getParameters().getVmPayload() != null) {
+            canDoAction = checkPayload(getParameters().getVmPayload(),
+                    getParameters().getDiskPath());
 
-                if (canDoAction && !StringUtils.isEmpty(getParameters().getFloppyPath()) &&
-                        getParameters().getVmPayload().getType() == VmDeviceType.FLOPPY) {
-                    addCanDoActionMessage(VdcBllMessages.VMPAYLOAD_FLOPPY_EXCEEDED);
-                    canDoAction = false;
-                }
-                else {
-                    getVm().setVmPayload(getParameters().getVmPayload());
-                }
+            if (canDoAction && !StringUtils.isEmpty(getParameters().getFloppyPath()) &&
+                    getParameters().getVmPayload().getType() == VmDeviceType.FLOPPY) {
+                addCanDoActionMessage(VdcBllMessages.VMPAYLOAD_FLOPPY_EXCEEDED);
+                canDoAction = false;
             }
-
-            return canDoAction;
+            else {
+                getVm().setVmPayload(getParameters().getVmPayload());
+            }
         }
+
+        return canDoAction;
+    }
+
+    protected RunVmValidator getRunVmValidator() {
+        return runVmValidator;
     }
 
     protected boolean canRunVm(VM vm) {
@@ -697,11 +705,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 getReturnValue().getCanDoActionMessages(),
                 getParameters(),
                 getVdsSelector(),
-                getSnapshotsValidator(), getVmPropertiesUtils());
-    }
-
-    protected VmPropertiesUtils getVmPropertiesUtils() {
-        return VmPropertiesUtils.getInstance();
+                getSnapshotsValidator());
     }
 
     @Override
@@ -786,7 +790,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     /**
      * @return true if all VM network interfaces are valid
      */
-    private boolean validateNetworkInterfaces() {
+    protected boolean validateNetworkInterfaces() {
         Map<String, VmNetworkInterface> interfaceNetworkMap = Entities.interfacesByNetworkName(getVm().getInterfaces());
         Set<String> interfaceNetworkNames = interfaceNetworkMap.keySet();
         List<Network> clusterNetworks = getNetworkDAO().getAllForCluster(getVm().getVdsGroupId());

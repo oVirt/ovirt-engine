@@ -18,13 +18,13 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.invocation.InvocationOnMock;
@@ -32,16 +32,16 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.validator.RunVmValidator;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -50,14 +50,12 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
-import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RunVmCommandTest {
@@ -85,6 +83,9 @@ public class RunVmCommandTest {
 
     @Spy
     private final VmRunHandler vmRunHandler = VmRunHandler.getInstance();
+
+    @Mock
+    private RunVmValidator runVmValidator;
 
     @Mock
     private BackendInternal backend;
@@ -309,8 +310,8 @@ public class RunVmCommandTest {
         command = spy(new RunVmCommand<RunVmParams>(param));
 
         mockVmRunHandler();
+        mockSuccessfulRunVmValidator();
         mockSuccessfulSnapshotValidator();
-        mockVmPropertiesUtils();
         mockBackend();
     }
 
@@ -328,6 +329,24 @@ public class RunVmCommandTest {
         doReturn(true).when(vmRunHandler).performImageChecksForRunningVm(
                 anyListOf(String.class),
                 anyListOf(DiskImage.class));
+    }
+
+    @Test
+    public void testCanDoAction() {
+        final ArrayList<Disk> disks = new ArrayList<Disk>();
+        final DiskImage diskImage = createImage();
+        disks.add(diskImage);
+        initDAOMocks(disks);
+        final VM vm = new VM();
+        vm.setStatus(VMStatus.Down);
+        vm.setStoragePoolId(Guid.NewGuid());
+        doReturn(new VdsSelector(vm, new NGuid(), true, new VdsFreeMemoryChecker(command))).when(command)
+                .getVdsSelector();
+        doReturn(vm).when(command).getVm();
+        doReturn(true).when(command).canRunVm(vm);
+        doReturn(true).when(command).validateNetworkInterfaces();
+        assertTrue(command.canDoAction());
+        assertTrue(command.getReturnValue().getCanDoActionMessages().isEmpty());
     }
 
     @Test
@@ -406,20 +425,6 @@ public class RunVmCommandTest {
         assertEquals(shouldPass, !messages.contains("VM_CANNOT_RUN_STATELESS_HA"));
     }
 
-    private VmPropertiesUtils mockVmPropertiesUtils() {
-        // Mocks vm properties utils (mocks a successful validation)
-        VmPropertiesUtils utils = spy(new VmPropertiesUtils());
-        doReturn(Collections.singletonMap("agent", "true")).when(utils).getPredefinedProperties(any(Version.class),
-                any(VmStatic.class));
-        doReturn(Collections.singletonMap("buff", "123")).when(utils).getUserDefinedProperties(any(Version.class),
-                any(VmStatic.class));
-        doReturn(new HashSet<Version>(Arrays.asList(Version.v3_0, Version.v3_1))).when(utils)
-                .getSupportedClusterLevels();
-        doReturn(Collections.emptyList()).when(utils).validateVMProperties(any(Version.class), any(VmStatic.class));
-        doReturn(utils).when(command).getVmPropertiesUtils();
-        return utils;
-    }
-
     @Test
     public void canRunVmFailStatelessWhenVmHA() {
         canRunStatelessVmTest(true, false, Boolean.TRUE, false);
@@ -473,5 +478,12 @@ public class RunVmCommandTest {
         when(snapshotsValidator.vmNotInPreview(any(Guid.class))).thenReturn(ValidationResult.VALID);
         doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
         return snapshotsValidator;
+    }
+
+    private RunVmValidator mockSuccessfulRunVmValidator() {
+        RunVmValidator runVmValidator = mock(RunVmValidator.class);
+        when(runVmValidator.validateVmProperties(any(VM.class), Matchers.anyListOf(String.class))).thenReturn(true);
+        doReturn(runVmValidator).when(command).getRunVmValidator();
+        return runVmValidator;
     }
 }
