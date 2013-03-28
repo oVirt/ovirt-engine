@@ -1,32 +1,31 @@
 package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class AuditLogHelper {
 
-    public static List<String> getCustomLogFields(Class<?> type, boolean inherit) {
-        List<String> returnValue = null;
+    public static Set<String> getCustomLogFields(Class<?> type, boolean inherit) {
+        Set<String> returnValue = null;
 
-        // Look for inhertied ones
+        // Look for inherited ones
         if (inherit) {
             Class<?>[] interfaces = type.getInterfaces();
             Class<?> superClass = type.getSuperclass();
             if (superClass != null) {
-                returnValue = AuditLogHelper.merge(returnValue, getCustomLogFields(superClass, true));
+                returnValue = getCustomLogFields(superClass, true);
             }
             for (Class<?> clazz : interfaces) {
                 if (!clazz.equals(type)) {
-                    returnValue = AuditLogHelper.merge(returnValue, getCustomLogFields(clazz, true));
+                    returnValue = merge(returnValue, getCustomLogFields(clazz, true));
                 }
-
             }
         }
 
         // Add any you find on this class
         CustomLogField field = (CustomLogField) type.getAnnotation(CustomLogField.class);
         CustomLogFields fields = (CustomLogFields) type.getAnnotation(CustomLogFields.class);
-        List<String> myAnnotations = new ArrayList<String>();
+        Set<String> myAnnotations = new HashSet<String>();
         if (field != null) {
             myAnnotations.add(field.value().toLowerCase());
         }
@@ -38,14 +37,10 @@ public class AuditLogHelper {
         return merge(returnValue, myAnnotations);
     }
 
-    protected static <T> List<T> merge(List<T> list, List<T> items) {
+    public static <T> Set<T> merge(Set<T> list, Set<T> items) {
         if (list != null) {
             if (items != null) {
-                for (T item : items) {
-                    if (!list.contains(item)) {
-                        list.add(item);
-                    }
-                }
+                list.addAll(items);
             }
         } else {
             return items;
