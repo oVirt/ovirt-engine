@@ -53,7 +53,7 @@ import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.model.Users;
 import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.resource.ApiResource;
-import org.ovirt.engine.api.restapi.rsdl.EntryPointBuilder;
+import org.ovirt.engine.api.restapi.rsdl.GeneralMetadataBuilder;
 import org.ovirt.engine.api.restapi.rsdl.RsdlBuilder;
 import org.ovirt.engine.api.restapi.rsdl.SchemaBuilder;
 import org.ovirt.engine.api.restapi.types.DateMapper;
@@ -83,9 +83,9 @@ public class BackendApiResource
     private static final String SCHEMA_DESCRIPTION = "oVirt API entities schema.";
     private static final String SCHEMA_NAME = "ovirt-engine-api-schema.xsd";
     private static final String QUERY_PARAMETER = "?";
-    private static final String ENTRY_POINT_REL = "api";
-    private static final String ENTRY_POINT_NAME = "root";
-    private static final String ENTRY_POINT_DESCRIPTION = "The oVirt RESTful API.";
+    private static final String GENERAL_METADATA_REL = "*";
+    private static final String GENERAL_METADATA_NAME = "The oVirt RESTful API generic descriptor.";
+    private static final String GENERAL_METADATA_DESCRIPTION = "These options are valid for entire application.";
 
     private static RSDL rsdl = null;
 
@@ -367,11 +367,11 @@ public class BackendApiResource
                             .name(SCHEMA_NAME)
                             .description(SCHEMA_DESCRIPTION)
                             .build())
-                    .entryPoint(new EntryPointBuilder()
-                            .rel(ENTRY_POINT_REL)
-                            .href(getUriInfo().getBaseUri().getPath())
-                            .name(ENTRY_POINT_NAME)
-                            .description(ENTRY_POINT_DESCRIPTION)
+                    .generalMetadata(new GeneralMetadataBuilder()
+                            .rel(GENERAL_METADATA_REL)
+                            .href(getUriInfo().getBaseUri().getPath().replace("api", "*"))
+                            .name(GENERAL_METADATA_NAME)
+                            .description(GENERAL_METADATA_DESCRIPTION)
                             .build())
                     .build();
         }

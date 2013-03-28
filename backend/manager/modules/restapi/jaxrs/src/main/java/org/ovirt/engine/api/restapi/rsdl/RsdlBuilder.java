@@ -43,7 +43,7 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.Body;
 import org.ovirt.engine.api.model.DetailedLink;
 import org.ovirt.engine.api.model.DetailedLinks;
-import org.ovirt.engine.api.model.EntryPoint;
+import org.ovirt.engine.api.model.GeneralMetadata;
 import org.ovirt.engine.api.model.Header;
 import org.ovirt.engine.api.model.Headers;
 import org.ovirt.engine.api.model.HttpMethod;
@@ -74,7 +74,7 @@ public class RsdlBuilder {
     private String rel;
     private String href;
     private Schema schema;
-    private EntryPoint entryPoint;
+    private GeneralMetadata generalMetadata;
     private String description;
 
     private static final String ACTION = "Action";
@@ -140,7 +140,7 @@ public class RsdlBuilder {
             rsdl.setHref(getHref());
             rsdl.setDescription(getDescription());
             rsdl.setSchema(getSchema());
-            rsdl.setApi(getEntryPoint());
+            rsdl.setGeneral(getGeneralMetadata());
         } catch (Exception e) {
             e.printStackTrace();
             LOG.error("RSDL generation failure.", e);
@@ -163,8 +163,8 @@ public class RsdlBuilder {
         return this;
     }
 
-    public RsdlBuilder entryPoint(EntryPoint entryPoint) {
-        this.entryPoint = entryPoint;
+    public RsdlBuilder generalMetadata(GeneralMetadata entryPoint) {
+        this.generalMetadata = entryPoint;
         return this;
     }
 
@@ -185,8 +185,8 @@ public class RsdlBuilder {
         return schema;
     }
 
-    public EntryPoint getEntryPoint() {
-        return entryPoint;
+    public GeneralMetadata getGeneralMetadata() {
+        return generalMetadata;
     }
 
     public String getDescription() {
