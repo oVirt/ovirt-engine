@@ -9,10 +9,12 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -157,4 +159,25 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     public void setEntityId(AuditLogableBase logable) {
         logable.setVmTemplateId(mOldTemplate.getId());
     }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        final List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
+
+        if (getVmTemplate() != null) {
+            // host-specific parameters can be changed by administration role only
+            if (!(getVmTemplate().getDedicatedVmForVds() == null ?
+                    getParameters().getVmTemplateData().getDedicatedVmForVds() == null :
+                    getVmTemplate().getDedicatedVmForVds().equals(getParameters().getVmTemplateData()
+                            .getDedicatedVmForVds()))) {
+                permissionList.add(
+                        new PermissionSubject(getParameters().getVmTemplateId(),
+                                VdcObjectType.VmTemplate,
+                                ActionGroup.EDIT_ADMIN_TEMPLATE_PROPERTIES));
+            }
+        }
+
+        return permissionList;
+    }
+
 }

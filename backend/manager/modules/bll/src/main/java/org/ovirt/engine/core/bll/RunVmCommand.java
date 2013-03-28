@@ -869,14 +869,25 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
+        final List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
 
         // special permission is needed to use custom properties
         if (!StringUtils.isEmpty(getParameters().getCustomProperties())) {
             permissionList.add(new PermissionSubject(getParameters().getVmId(),
-                    VdcObjectType.VM,
-                    ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES));
+                VdcObjectType.VM,
+                ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES));
         }
+
+        // check, if user can override default target host for VM
+        if (getVm() != null) {
+            final Guid destinationVdsId = getParameters().getDestinationVdsId();
+            if (destinationVdsId != null && !destinationVdsId.equals(getVm().getDedicatedVmForVds())) {
+                permissionList.add(new PermissionSubject(getParameters().getVmId(),
+                    VdcObjectType.VM,
+                    ActionGroup.EDIT_ADMIN_VM_PROPERTIES));
+            }
+        }
+
         return permissionList;
     }
 

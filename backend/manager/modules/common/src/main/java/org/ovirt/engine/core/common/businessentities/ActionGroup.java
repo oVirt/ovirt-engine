@@ -35,6 +35,10 @@ public enum ActionGroup {
     RECONNECT_TO_VM(13, RoleType.USER, VdcObjectType.VM, true, ApplicationMode.VirtOnly),
 
     CHANGE_VM_CUSTOM_PROPERTIES(14, RoleType.ADMIN, VdcObjectType.VM, true, ApplicationMode.VirtOnly),
+    /**
+     * Admin role can specify destinationVdsId to override default target host.
+     */
+    EDIT_ADMIN_VM_PROPERTIES(15, RoleType.ADMIN, VdcObjectType.VM, true, ApplicationMode.VirtOnly),
 
     // host (vds) actions groups
     CREATE_HOST(100, RoleType.ADMIN, VdcObjectType.VDS, true),
@@ -48,6 +52,7 @@ public enum ActionGroup {
     DELETE_TEMPLATE(202, RoleType.USER, VdcObjectType.VmTemplate, true, ApplicationMode.VirtOnly),
     COPY_TEMPLATE(203, RoleType.USER, VdcObjectType.VmTemplate, true, ApplicationMode.VirtOnly),
     CONFIGURE_TEMPLATE_NETWORK(204, RoleType.USER, VdcObjectType.VmTemplate, true, ApplicationMode.VirtOnly),
+    EDIT_ADMIN_TEMPLATE_PROPERTIES(205, RoleType.ADMIN, VdcObjectType.VmTemplate, true, ApplicationMode.VirtOnly),
     // vm pools actions groups
     CREATE_VM_POOL(300, RoleType.USER, VdcObjectType.VmPool, false, ApplicationMode.VirtOnly),
     EDIT_VM_POOL_CONFIGURATION(301, RoleType.USER, VdcObjectType.VmPool, true, ApplicationMode.VirtOnly),

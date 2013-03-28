@@ -106,9 +106,10 @@ public class RoleTreeView
         array.add(ActionGroup.EDIT_DISK_PROPERTIES);
         array.add(ActionGroup.LOGIN);
         array.add(ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES);
+        array.add(ActionGroup.EDIT_ADMIN_VM_PROPERTIES);
         array.add(ActionGroup.RECONNECT_TO_VM);
+        array.add(ActionGroup.EDIT_ADMIN_TEMPLATE_PROPERTIES);
         return array;
-
     }
 
     private static RoleNode initTreeView()
@@ -311,7 +312,20 @@ public class RoleTreeView
                                                                 new RoleNode(ActionGroup.COPY_TEMPLATE,
                                                                         ConstantsManager.getInstance()
                                                                                 .getConstants()
-                                                                                .allowToCopyTemplateBetweenStorageDomainsRoleTreeTooltip()) }) }),
+                                                                                .allowToCopyTemplateBetweenStorageDomainsRoleTreeTooltip()) }),
+
+                                                 new RoleNode(ConstantsManager.getInstance()
+                                                         .getConstants()
+                                                         .administrationOperationsRoleTree(),
+                                                         ConstantsManager.getInstance()
+                                                                 .getConstants()
+                                                                 .notePermissionsContainigTheseOperationsShuoldAssociatDcOrEqualRoleTreeTooltip(),
+                                                         new RoleNode[] {
+                                                                 new RoleNode(ActionGroup.EDIT_ADMIN_TEMPLATE_PROPERTIES,
+                                                                         ConstantsManager.getInstance()
+                                                                                 .getConstants()
+                                                                                 .allowChangingTemplateAdminPropertiesRoleTreeTooltip()) }) }),
+
                                 new RoleNode(ConstantsManager.getInstance().getConstants().vmRoleTree(),
                                         new RoleNode[] {
                                                 new RoleNode(ConstantsManager.getInstance()
@@ -380,6 +394,10 @@ public class RoleTreeView
                                                                         ConstantsManager.getInstance()
                                                                                 .getConstants()
                                                                                 .allowToChangeVmCustomPropertiesRoleTreeTooltip()),
+                                                                new RoleNode(ActionGroup.EDIT_ADMIN_VM_PROPERTIES,
+                                                                        ConstantsManager.getInstance()
+                                                                                 .getConstants()
+                                                                                 .allowChangingVmAdminPropertiesRoleTreeTooltip()),
                                                                 new RoleNode(ActionGroup.RECONNECT_TO_VM,
                                                                         ConstantsManager.getInstance()
                                                                                 .getConstants()

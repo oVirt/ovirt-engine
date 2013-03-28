@@ -714,17 +714,25 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                     GuidUtils.getGuidValue(getStoragePoolId()),
                     GuidUtils.getGuidValue(getStorageDomainId()));
         }
-        addPermissionSubjectForCustomProperties(permissionList);
+        addPermissionSubjectForAdminLevelProperties(permissionList);
         return permissionList;
     }
 
-    protected void addPermissionSubjectForCustomProperties(List<PermissionSubject> permissionList) {
-        VmStatic vmFromParams = getParameters().getVmStaticData();
+    protected void addPermissionSubjectForAdminLevelProperties(List<PermissionSubject> permissionList) {
+        final VmStatic vmFromParams = getParameters().getVmStaticData();
 
-        // user need specific permission to change custom properties
-        if (vmFromParams != null && !StringUtils.isEmpty(vmFromParams.getCustomProperties())) {
-            permissionList.add(new PermissionSubject(getVdsGroupId(),
-                    VdcObjectType.VdsGroups, ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES));
+        if (vmFromParams != null) {
+            // user needs specific permission to change custom properties
+            if (!StringUtils.isEmpty(vmFromParams.getCustomProperties())) {
+                permissionList.add(new PermissionSubject(getVdsGroupId(),
+                        VdcObjectType.VdsGroups, ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES));
+            }
+
+            // host-specific parameters can be changed by administration role only
+            if (vmFromParams.getDedicatedVmForVds() != null || !StringUtils.isEmpty(vmFromParams.getCpuPinning())) {
+                permissionList.add(new PermissionSubject(getVdsGroupId(),
+                        VdcObjectType.VdsGroups, ActionGroup.EDIT_ADMIN_VM_PROPERTIES));
+            }
         }
     }
 

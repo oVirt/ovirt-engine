@@ -308,18 +308,40 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
-        // user need specific permission to change custom properties
-        if (isVmExist()
-                &&
-                (!StringUtils.equals(getVm().getPredefinedProperties(), getParameters().getVmStaticData()
-                        .getPredefinedProperties())
-                || !StringUtils.equals(getVm().getUserDefinedProperties(), getParameters().getVmStaticData()
-                        .getUserDefinedProperties()))) {
-            permissionList.add(new PermissionSubject(getParameters().getVmId(),
-                    VdcObjectType.VM,
-                    ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES));
+        final List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
+
+        if (isVmExist()) {
+            // user need specific permission to change custom properties
+            if (!StringUtils.equals(
+                    getVm().getPredefinedProperties(),
+                    getParameters().getVmStaticData().getPredefinedProperties())
+                    || !StringUtils.equals(
+                            getVm().getUserDefinedProperties(),
+                            getParameters().getVmStaticData().getUserDefinedProperties())) {
+                permissionList.add(new PermissionSubject(getParameters().getVmId(),
+                        VdcObjectType.VM,
+                        ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES));
+            }
+
+            // host-specific parameters can be changed by administration role only
+            final boolean isDedicatedVmForVdsChanged =
+                    !(getVm().getDedicatedVmForVds() == null ?
+                            getParameters().getVmStaticData().getDedicatedVmForVds() == null :
+                            getVm().getDedicatedVmForVds().equals(getParameters().getVmStaticData().getDedicatedVmForVds()));
+
+            final boolean isCpuPinningChanged =
+                    !(getVm().getCpuPinning() == null ?
+                            getParameters().getVmStaticData().getCpuPinning() == null :
+                            getVm().getCpuPinning().equals(getParameters().getVmStaticData().getCpuPinning()));
+
+            if (isDedicatedVmForVdsChanged || isCpuPinningChanged) {
+                permissionList.add(
+                        new PermissionSubject(getParameters().getVmId(),
+                                VdcObjectType.VM,
+                                ActionGroup.EDIT_ADMIN_VM_PROPERTIES));
+            }
         }
+
         return permissionList;
     }
 

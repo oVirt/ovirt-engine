@@ -93,7 +93,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         permissionList.add(new PermissionSubject(getVmIdFromSnapshot(),
                 VdcObjectType.VM,
                 getActionType().getActionGroup()));
-        addPermissionSubjectForCustomProperties(permissionList);
+        addPermissionSubjectForAdminLevelProperties(permissionList);
         return permissionList;
     }
 

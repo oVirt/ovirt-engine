@@ -68,6 +68,8 @@ public class PermitMapper {
             return PermitType.RECONNECT_TO_VM;
         case CHANGE_VM_CUSTOM_PROPERTIES:
             return PermitType.CHANGE_VM_CUSTOM_PROPERTIES;
+        case EDIT_ADMIN_VM_PROPERTIES:
+            return PermitType.EDIT_ADMIN_VM_PROPERTIES;
         case CREATE_HOST:
             return PermitType.CREATE_HOST;
         case EDIT_HOST_CONFIGURATION:
@@ -82,6 +84,8 @@ public class PermitMapper {
             return PermitType.CREATE_TEMPLATE;
         case EDIT_TEMPLATE_PROPERTIES:
             return PermitType.EDIT_TEMPLATE_PROPERTIES;
+        case EDIT_ADMIN_TEMPLATE_PROPERTIES:
+            return PermitType.EDIT_ADMIN_TEMPLATE_PROPERTIES;
         case DELETE_TEMPLATE:
             return PermitType.DELETE_TEMPLATE;
         case COPY_TEMPLATE:
@@ -198,6 +202,8 @@ public class PermitMapper {
             return ActionGroup.RECONNECT_TO_VM;
         case CHANGE_VM_CUSTOM_PROPERTIES:
             return ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES;
+        case EDIT_ADMIN_VM_PROPERTIES:
+            return ActionGroup.EDIT_ADMIN_VM_PROPERTIES;
         case CREATE_HOST:
             return ActionGroup.CREATE_HOST;
         case EDIT_HOST_CONFIGURATION:
@@ -212,6 +218,8 @@ public class PermitMapper {
             return ActionGroup.CREATE_TEMPLATE;
         case EDIT_TEMPLATE_PROPERTIES:
             return ActionGroup.EDIT_TEMPLATE_PROPERTIES;
+        case EDIT_ADMIN_TEMPLATE_PROPERTIES:
+            return ActionGroup.EDIT_ADMIN_TEMPLATE_PROPERTIES;
         case DELETE_TEMPLATE:
             return ActionGroup.DELETE_TEMPLATE;
         case COPY_TEMPLATE:

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
@@ -26,6 +27,7 @@ import org.ovirt.engine.core.common.action.CreateImageTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -454,19 +456,29 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             permissionCheckSubject.add(new PermissionSubject(storagePoolId,
                     VdcObjectType.StoragePool,
                     getActionType().getActionGroup()));
+
+            // host-specific parameters can be changed by administration role only
+            if (getParameters().getMasterVm().getDedicatedVmForVds() != null ||
+                    !StringUtils.isEmpty(getParameters().getMasterVm().getCpuPinning())) {
+                permissionCheckSubject.add(
+                        new PermissionSubject(storagePoolId,
+                                VdcObjectType.StoragePool,
+                                ActionGroup.EDIT_ADMIN_TEMPLATE_PROPERTIES));
+            }
         }
+
         return permissionCheckSubject;
     }
 
     private void addPermission() {
-        addPermissionForTempalte(getCurrentUser().getUserId(), PredefinedRoles.TEMPLATE_OWNER);
+        addPermissionForTemplate(getCurrentUser().getUserId(), PredefinedRoles.TEMPLATE_OWNER);
         // if the template is for public use, set EVERYONE as a TEMPLATE_USER.
         if (getParameters().isPublicUse()) {
-            addPermissionForTempalte(MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID, PredefinedRoles.TEMPLATE_USER);
+            addPermissionForTemplate(MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID, PredefinedRoles.TEMPLATE_USER);
         }
     }
 
-    private void addPermissionForTempalte(Guid userId, PredefinedRoles role) {
+    private void addPermissionForTemplate(Guid userId, PredefinedRoles role) {
         permissions perms = new permissions();
         perms.setad_element_id(userId);
         perms.setObjectType(VdcObjectType.VmTemplate);

@@ -31,6 +31,7 @@ public enum PermitType {
     MANIPULATE_VM_SNAPSHOTS,
     RECONNECT_TO_VM,
     CHANGE_VM_CUSTOM_PROPERTIES,
+    EDIT_ADMIN_VM_PROPERTIES,
     // host (vds) actions groups
     CREATE_HOST,
     EDIT_HOST_CONFIGURATION,
@@ -40,6 +41,7 @@ public enum PermitType {
     // templates actions groups
     CREATE_TEMPLATE,
     EDIT_TEMPLATE_PROPERTIES,
+    EDIT_ADMIN_TEMPLATE_PROPERTIES,
     DELETE_TEMPLATE,
     COPY_TEMPLATE,
     CONFIGURE_TEMPLATE_NETWORK,

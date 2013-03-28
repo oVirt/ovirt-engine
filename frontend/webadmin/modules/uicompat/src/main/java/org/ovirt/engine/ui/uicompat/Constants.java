@@ -1130,6 +1130,12 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Allow changing VM custom properties")
     String allowToChangeVmCustomPropertiesRoleTreeTooltip();
 
+    @DefaultStringValue("Allow changing VM administrative properties")
+    String allowChangingVmAdminPropertiesRoleTreeTooltip();
+
+    @DefaultStringValue("Allow changing Template administrative properties")
+    String allowChangingTemplateAdminPropertiesRoleTreeTooltip();
+
     @DefaultStringValue("Allow to override the currently opened remote console session")
     String allowReconnectToVmRoleTreeTooltip();
 
