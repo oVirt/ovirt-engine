@@ -407,22 +407,12 @@ def startEngine():
     # If the PID already exists then we need to check if the
     # process is running and tell the user that the service needs
     # to be restarted:
-    if enginePid:
-        if not isProcessRunning(enginePid):
-            raise Exception(
-                "The engine PID file \"%s\" contains %d but "
-                "that process doesn't exist. This means that "
-                "the engine crashed or was killed. You need "
-                "to explicitly run 'service ovirt-engine stop' "
-                "and then 'service ovirt-engine start' to "
-                "enable it again." %
-                (enginePidFile, enginePid))
-        else:
-            syslog.syslog(syslog.LOG_WARNING,
-                "The engine PID file \"%s\" exists and the "
-                "process %d is running." %
-                (enginePidFile, enginePid))
-            return
+    if enginePid and isProcessRunning(enginePid):
+        syslog.syslog(syslog.LOG_WARNING,
+            "The engine PID file \"%s\" exists and the "
+            "process %d is running." %
+            (enginePidFile, enginePid))
+        return
 
     # The list of applications to be deployed:
     engineApps = engineConfig.getString("ENGINE_APPS").split()
