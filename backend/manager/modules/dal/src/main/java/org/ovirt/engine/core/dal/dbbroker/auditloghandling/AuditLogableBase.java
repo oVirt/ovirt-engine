@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +51,7 @@ public class AuditLogableBase extends TimeoutBase {
     private NGuid mUserId = Guid.Empty;
     private String mUserName;
     private String mVmName;
-    private final Map<String, String> customValues = new HashMap<String, String>();
+    private Map<String, String> customValues = Collections.emptyMap();
     private NGuid mVdsId;
     private String mVdsName;
     private NGuid mVmTemplateId;
@@ -441,16 +442,24 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     public void addCustomValue(final String name, final String value) {
+        allocateCustomValues();
         customValues.put(name.toLowerCase(), value);
     }
 
     public void appendCustomValue(final String name, final String value, final String separator) {
         final String key = name.toLowerCase();
         String newValue = value;
+        allocateCustomValues();
         if (customValues.containsKey(key)) {
             newValue = String.format("%1$s%2$s%3$s", customValues.get(key), separator, value);
         }
         customValues.put(name.toLowerCase(), newValue);
+    }
+
+    private void allocateCustomValues() {
+        if (Collections.EMPTY_MAP.equals(customValues)) {
+            customValues = new HashMap<String, String>();
+        }
     }
 
     public Map<String, String> getCustomValues() {
