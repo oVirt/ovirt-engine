@@ -12,7 +12,7 @@ public class AuditLog extends IVdcQueryable implements Serializable {
     private static final long serialVersionUID = -2808392095455280186L;
 
     private long auditLogId;
-    private Date logTime = new Date(0);
+    private Date logTime;
     private String message;
     private NGuid userId;
     private String userName;
