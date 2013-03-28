@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.validator;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,8 @@ import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
+import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -239,6 +242,14 @@ public class RunVmValidator {
         return ValidationResult.VALID;
     }
 
+    public ValidationResult validateVmStatusUsingMatrix(VM vm) {
+        if (!VdcActionUtils.CanExecute(Arrays.asList(vm), VM.class,
+                VdcActionType.RunVm)) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
+        }
+        return ValidationResult.VALID;
+    }
+
     protected SnapshotsValidator getSnapshotValidator() {
         return new SnapshotsValidator();
     }
@@ -376,6 +387,11 @@ public class RunVmValidator {
             }
         }
         if (!vdsSelector.canFindVdsToRunOn(messages, false)) {
+            return false;
+        }
+        result = validateVmStatusUsingMatrix(vm);
+        if (!result.isValid()) {
+            messages.add(result.getMessage().toString());
             return false;
         }
 

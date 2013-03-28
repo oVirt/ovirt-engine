@@ -24,7 +24,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
@@ -76,12 +75,6 @@ public class RunVmCommandTest {
     @Mock
     private StoragePoolDAO spDao;
 
-    @Spy
-    private final VmRunHandler vmRunHandler = VmRunHandler.getInstance();
-
-    @Mock
-    private RunVmValidator runVmValidator;
-
     @Mock
     private BackendInternal backend;
 
@@ -95,7 +88,6 @@ public class RunVmCommandTest {
 
     public void mockBackend() {
         doReturn(backend).when(command).getBackend();
-        doReturn(backend).when(vmRunHandler).getBackend();
 
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
         vdsReturnValue.setReturnValue(true);
@@ -307,7 +299,6 @@ public class RunVmCommandTest {
         RunVmParams param = new RunVmParams(Guid.NewGuid());
         command = spy(new RunVmCommand<RunVmParams>(param));
         mockIsoDomainListSyncronizer();
-        mockVmRunHandler();
         mockSuccessfulRunVmValidator();
         mockSuccessfulSnapshotValidator();
         mockBackend();
@@ -316,16 +307,6 @@ public class RunVmCommandTest {
     private void mockIsoDomainListSyncronizer() {
         doNothing().when(isoDomainListSyncronizer).init();
         doReturn(isoDomainListSyncronizer).when(command).getIsoDomainListSyncronizer();
-    }
-
-    protected void mockVmRunHandler() {
-        StoragePool sp = new StoragePool();
-        sp.setstatus(StoragePoolStatus.Up);
-        when(spDao.get(any(Guid.class))).thenReturn(sp);
-        doReturn(spDao).when(vmRunHandler).getStoragePoolDAO();
-        doReturn(vmRunHandler).when(command).getVmRunHandler();
-        doNothing().when(isoDomainListSyncronizer).init();
-        doReturn(isoDomainListSyncronizer).when(vmRunHandler).getIsoDomainListSyncronizer();
     }
 
     @Test
@@ -341,7 +322,6 @@ public class RunVmCommandTest {
         doReturn(true).when(vdsSelector).canFindVdsToRunOn(Matchers.anyList(), anyBoolean());
         doReturn(vdsSelector).when(command).getVdsSelector();
         doReturn(vm).when(command).getVm();
-        doReturn(true).when(command).canRunVm(vm);
         doReturn(true).when(command).validateNetworkInterfaces();
         assertTrue(command.canDoAction());
         assertTrue(command.getReturnValue().getCanDoActionMessages().isEmpty());
@@ -355,13 +335,11 @@ public class RunVmCommandTest {
         final DiskDao diskDao = mock(DiskDao.class);
         when(diskDao.getAllForVm(Guid.Empty, true)).thenReturn(disks);
         doReturn(diskDao).when(command).getDiskDao();
-        doReturn(diskDao).when(vmRunHandler).getDiskDao();
 
         final StorageDomainDAO storageDomainDAO = mock(StorageDomainDAO.class);
         when(storageDomainDAO.getAllForStoragePool(Guid.Empty))
                 .thenReturn(new ArrayList<StorageDomain>());
         doReturn(storageDomainDAO).when(command).getStorageDomainDAO();
-        doReturn(storageDomainDAO).when(vmRunHandler).getStorageDomainDAO();
     }
 
     private SnapshotsValidator mockSuccessfulSnapshotValidator() {
@@ -390,6 +368,7 @@ public class RunVmCommandTest {
         when(runVmValidator.vmDuringInitialization(any(VM.class))).thenReturn(ValidationResult.VALID);
         when(runVmValidator.validateVdsStatus(any(VM.class), Matchers.anyListOf(String.class))).thenReturn(true);
         when(runVmValidator.validateStatelessVm(any(VM.class), Matchers.anyListOf(Disk.class), anyBoolean())).thenReturn(ValidationResult.VALID);
+        when(runVmValidator.validateVmStatusUsingMatrix(any(VM.class))).thenReturn(ValidationResult.VALID);
         doReturn(runVmValidator).when(command).getRunVmValidator();
         return runVmValidator;
     }

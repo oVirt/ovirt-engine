@@ -77,10 +77,6 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         return snapshotsValidator;
     }
 
-    public void setSnapshotsValidator(SnapshotsValidator snapshotsValidator) {
-        this.snapshotsValidator = snapshotsValidator;
-    }
-
     /**
      * List on all vdss, vm run on. In the case of problem to run vm will be more then one
      */

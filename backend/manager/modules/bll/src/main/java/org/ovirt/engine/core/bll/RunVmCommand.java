@@ -711,7 +711,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                                 vmDisks,
                                 getParameters().getRunAsStateless())))) &&
                         getVdsSelector().canFindVdsToRunOn(messages, false) &&
-                        canRunVm(vm) &&
+                        validate(getRunVmValidator().validateVmStatusUsingMatrix(vm)) &&
                         validateNetworkInterfaces();
 
         // check for Vm Payload
@@ -738,14 +738,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     protected RunVmValidator getRunVmValidator() {
         return runVmValidator;
-    }
-
-    protected boolean canRunVm(VM vm) {
-        return getVmRunHandler().canRunVm(vm,
-                getReturnValue().getCanDoActionMessages(),
-                getParameters(),
-                getVdsSelector(),
-                getSnapshotsValidator());
     }
 
     @Override
@@ -931,10 +923,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         return permissionList;
-    }
-
-    protected VmRunHandler getVmRunHandler() {
-        return VmRunHandler.getInstance();
     }
 
     private static final Log log = LogFactory.getLog(RunVmCommand.class);

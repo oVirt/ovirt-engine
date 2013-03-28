@@ -240,13 +240,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                 runVmParams.getDiskPath(),
                 runVmParams.getFloppyPath(),
                 runVmParams.getRunAsStateless(),
-                vdsSelector)
-                &&
-                VmRunHandler.getInstance().canRunVm(vm,
-                        messages,
-                        runVmParams,
-                        vdsSelector,
-                        new SnapshotsValidator());
+                vdsSelector);
     }
 
     private static DiskDao getDiskDao() {
