@@ -276,6 +276,10 @@ def loadConfig():
     jbossConfigFile = os.path.join(engineTmpDir, "engine-service.xml")
 
 
+def isProcessRunning(pid):
+    return os.path.exists(os.path.join('/proc', str(pid)))
+
+
 def checkOwnership(name, uid=None, gid=None):
     # Get the metadata of the file:
     st = os.stat(name)
@@ -385,7 +389,7 @@ def startEngine():
     # process is running and tell the user that the service needs
     # to be restarted:
     if enginePid:
-        if not os.path.exists("/proc/%d" % enginePid):
+        if not isProcessRunning(enginePid):
             raise Exception(
                 "The engine PID file \"%s\" contains %d but "
                 "that process doesn't exist. This means that "
@@ -609,7 +613,7 @@ def stopEngine():
         return
 
     # First check that the process exists:
-    if not os.path.exists("/proc/%d" % enginePid):
+    if not isProcessRunning(enginePid):
         syslog.syslog(syslog.LOG_WARNING, "The engine PID file \"%s\" contains %d, but that process doesn't exist, will just remove the file." % (enginePidFile, enginePid))
         removeEnginePid()
         return
@@ -623,7 +627,7 @@ def stopEngine():
     os.kill(enginePid, signal.SIGTERM)
     initialTime = time.time()
     timeElapsed = 0
-    while os.path.exists("/proc/%d" % enginePid):
+    while isProcessRunning(enginePid):
         syslog.syslog(syslog.LOG_INFO, "Waiting up to %d seconds for engine process %d to finish." % ((stopTime - timeElapsed), enginePid))
         timeElapsed = time.time() - initialTime
         if timeElapsed > stopTime:
@@ -632,7 +636,7 @@ def stopEngine():
 
     # If the process didn't dissapear after the allowed time then we forcibly
     # kill it:
-    if os.path.exists("/proc/%d" % enginePid):
+    if isProcessRunning(enginePid):
         syslog.syslog(syslog.LOG_WARNING, "The engine process %d didn't finish after waiting %d seconds, killing it." % (enginePid, timeElapsed))
         os.kill(enginePid, signal.SIGKILL)
         syslog.syslog(syslog.LOG_WARNING, "Killed engine process %d." % enginePid)
@@ -675,7 +679,7 @@ def checkEngine():
         sys.exit(3)
 
     # Now check that the process exists:
-    if not os.path.exists("/proc/%d" % enginePid):
+    if not isProcessRunning(enginePid):
         print("The engine process %d is not running." % enginePid)
         sys.exit(1)
 
