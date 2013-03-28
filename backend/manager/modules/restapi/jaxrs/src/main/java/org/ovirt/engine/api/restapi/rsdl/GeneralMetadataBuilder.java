@@ -17,30 +17,30 @@
 package org.ovirt.engine.api.restapi.rsdl;
 
 import org.ovirt.engine.api.common.security.auth.SessionUtils;
-import org.ovirt.engine.api.model.EntryPoint;
+import org.ovirt.engine.api.model.GeneralMetadata;
 import org.ovirt.engine.api.model.Header;
 import org.ovirt.engine.api.model.Headers;
 import org.ovirt.engine.api.model.Request;
 
-public class EntryPointBuilder {
+public class GeneralMetadataBuilder {
 
-    private EntryPoint entryPoint;
+    private GeneralMetadata generalMetadata;
 
-    public EntryPointBuilder() {
-        this.entryPoint = new EntryPoint();
+    public GeneralMetadataBuilder() {
+        this.generalMetadata = new GeneralMetadata();
     }
 
-    public EntryPoint build() {
+    public GeneralMetadata build() {
         produceRequestHeaders();
 
-        return this.entryPoint;
+        return this.generalMetadata;
     }
 
     private void produceRequestHeaders() {
-        this.entryPoint.setRequest(new Request());
-        this.entryPoint.getRequest().setHeaders(new Headers());
+        this.generalMetadata.setRequest(new Request());
+        this.generalMetadata.getRequest().setHeaders(new Headers());
 
-        injectSessionTtlHeader(this.entryPoint.getRequest().getHeaders());
+        injectSessionTtlHeader(this.generalMetadata.getRequest().getHeaders());
     }
 
     private void injectSessionTtlHeader(Headers headers) {
@@ -59,23 +59,23 @@ public class EntryPointBuilder {
         }
     }
 
-    public EntryPointBuilder description(String description) {
-        this.entryPoint.setDescription(description);
+    public GeneralMetadataBuilder description(String description) {
+        this.generalMetadata.setDescription(description);
         return this;
     }
 
-    public EntryPointBuilder href(String href) {
-        this.entryPoint.setHref(href);
+    public GeneralMetadataBuilder href(String href) {
+        this.generalMetadata.setHref(href);
         return this;
     }
 
-    public EntryPointBuilder name(String name) {
-        this.entryPoint.setName(name);
+    public GeneralMetadataBuilder name(String name) {
+        this.generalMetadata.setName(name);
         return this;
     }
 
-    public EntryPointBuilder rel(String rel) {
-        this.entryPoint.setRel(rel);
+    public GeneralMetadataBuilder rel(String rel) {
+        this.generalMetadata.setRel(rel);
         return this;
     }
 }
