@@ -20,10 +20,8 @@
 # description: oVirt Engine
 # pidfile: /var/run/ovirt-engine.pid
 
-import errno
 import glob
 import grp
-import optparse
 import os
 import pwd
 import re
@@ -31,11 +29,9 @@ import resource
 import shutil
 import signal
 import stat
-import string
 import sys
 import syslog
 import time
-import traceback
 
 from Cheetah.Template import Template
 
@@ -72,14 +68,18 @@ engineLogDir = None
 engineTmpDir = None
 engineUsrDir = None
 engineVarDir = None
+engineCacheDir = None
 engineContentDir = None
 engineDeploymentsDir = None
+engineServiceDir = None
 
 # Engine files:
 enginePidFile = None
 engineLogFile = None
+jbossConfigFile = None
 engineConsoleLogFile = None
 engineServerLogFile = None
+jbossConfigTemplateFile = None
 
 
 # Helper class to simplify getting values from the configuration, specially
@@ -709,7 +709,7 @@ def prettyAction(label, action):
     try:
         action()
         sys.stdout.write(moveColumn + " [  " + colorSuccess + "OK" + colorNormal + "  ]\n")
-    except Exception as exception:
+    except Exception:
         sys.stdout.write(moveColumn + " [" + colorFailure + "FAILED" + colorNormal + "]\n")
         raise
 
