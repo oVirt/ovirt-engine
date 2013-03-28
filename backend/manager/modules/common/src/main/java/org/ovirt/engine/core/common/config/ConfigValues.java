@@ -1343,6 +1343,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("Auto")
     ClientConsoleModeDefault(501),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    MigrationNetworkEnabled(502),
+
     Invalid(65535);
 
     private int intValue;
