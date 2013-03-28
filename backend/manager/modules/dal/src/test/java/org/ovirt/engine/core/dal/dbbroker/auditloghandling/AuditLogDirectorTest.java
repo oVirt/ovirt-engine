@@ -42,10 +42,6 @@ public class AuditLogDirectorTest {
 //        PowerMockito.when(AuditLogDirector.getDbFacadeInstance()).thenReturn(dbFacade);
 //    }
 //
-    @Test
-    public void testPropertyLoading() {
-        AuditLogDirector.checkSeverities();
-    }
 //
 //    /**
 //     * The test assures that audit loggable objects with timeout, which were created without an explicit log type, with

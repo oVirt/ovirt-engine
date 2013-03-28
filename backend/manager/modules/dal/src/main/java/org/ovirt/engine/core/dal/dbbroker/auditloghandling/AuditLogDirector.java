@@ -3,10 +3,10 @@ package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.compat.ApplicationException;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.backendcompat.PropertyInfo;
 import org.ovirt.engine.core.compat.backendcompat.TypeCompat;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
@@ -751,7 +750,7 @@ public final class AuditLogDirector {
         }
     }
 
-    static void checkMessages() {
+    private static void checkMessages() {
         AuditLogType[] values = AuditLogType.values();
         if (values.length != messages.size()) {
             for (AuditLogType value : values) {
@@ -762,7 +761,7 @@ public final class AuditLogDirector {
         }
     }
 
-    static void checkSeverities() {
+    private static void checkSeverities() {
         AuditLogType[] values = AuditLogType.values();
         if (values.length != severities.size()) {
             for (AuditLogType value : values) {
@@ -933,7 +932,7 @@ public final class AuditLogDirector {
     static String resolveMessage(String message, AuditLogableBase logable) {
         String returnValue = message;
         if (logable != null) {
-            Map<String, String> map = getAvailableValues(logable);
+            Map<String, String> map = getAvailableValues(message, logable);
             returnValue = resolveMessage(message, map);
         }
         return returnValue;
@@ -974,22 +973,27 @@ public final class AuditLogDirector {
         return buffer.toString();
     }
 
-    static Map<String, String> getAvailableValues(AuditLogableBase logable) {
-        Map<String, String> returnValue = new HashMap<String, String>(logable.getCustomValues());
-        Class<?> type = AuditLogableBase.class;
-        for (PropertyInfo propertyInfo : TypeCompat.GetProperties(type)) {
-            Object value = propertyInfo.getValue(logable, null);
-            String stringValue = value != null ? value.toString() : null;
-            if (!returnValue.containsKey(propertyInfo.getName().toLowerCase())) {
-                returnValue.put(propertyInfo.getName().toLowerCase(), stringValue);
-            } else {
-                log.errorFormat("Try to add duplicate audit log values with the same name. Type: {0}. Value: {1}",
-                        logable.getAuditLogTypeValue(), propertyInfo.getName().toLowerCase());
-            }
+    private static Set<String> resolvePlaceHolders(String message) {
+        Set<String> result = new HashSet<String>();
+        Matcher matcher = pattern.matcher(message);
+
+        String token;
+        while (matcher.find()) {
+            token = matcher.group();
+
+            // remove leading ${ and trailing }
+            token = token.substring(2, token.length() - 1);
+            result.add(token.toLowerCase());
         }
-        List<String> attributes = AuditLogHelper.getCustomLogFields(logable.getClass(), true);
+        return result;
+    }
+
+    private static Map<String, String> getAvailableValues(String message, AuditLogableBase logable) {
+        Map<String, String> returnValue = new HashMap<String, String>(logable.getCustomValues());
+        Set<String> attributes = resolvePlaceHolders(message);
+        attributes = AuditLogHelper.merge(attributes, AuditLogHelper.getCustomLogFields(logable.getClass(), true));
         if (attributes != null && attributes.size() > 0) {
-            TypeCompat.getPropertyValues(logable, new HashSet<String>(attributes), returnValue);
+            TypeCompat.getPropertyValues(logable, attributes, returnValue);
         }
         return returnValue;
     }
