@@ -21,7 +21,6 @@ public enum VdcQueryType implements Serializable {
     IsVdsWithSameHostExist,
     IsVdsWithSameIpExists,
     GetVdsByVdsId,
-    GetVdsByHost,
     GetVdsByName,
     GetVdsByType,
     GetVdsFenceStatus,
