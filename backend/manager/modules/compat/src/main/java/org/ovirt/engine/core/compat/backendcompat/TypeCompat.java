@@ -32,20 +32,6 @@ public class TypeCompat {
         return returnValue;
     }
 
-    public static PropertyInfo GetProperty(Class<?> type, String idField) {
-        try {
-            PropertyDescriptor[] pds = Introspector.getBeanInfo(type).getPropertyDescriptors();
-            for (PropertyDescriptor pd : pds) {
-                if (pd.getName().equalsIgnoreCase(idField)) {
-                    return new PropertyInfo(pd);
-                }
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return null;
-    }
-
     /**
      * The following method will get values for properties of provided object and will keep them in map
      * @param obj - this is an object which values will be taken
