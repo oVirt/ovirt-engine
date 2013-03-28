@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.vdscommands.MigrateVDSCommandParameters;
 
 public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> extends VdsBrokerCommand<P> {
@@ -20,6 +21,10 @@ public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> exte
         migrationInfo.put(VdsProperties.method, migMethod);
         if (parameters.getTunnelMigration() != null) {
             migrationInfo.put(VdsProperties.TUNNELED, parameters.getTunnelMigration().toString());
+        }
+
+        if (StringUtils.isNotBlank(parameters.getDstQemu())) {
+            migrationInfo.put(VdsProperties.DST_QEMU, parameters.getDstQemu());
         }
     }
 

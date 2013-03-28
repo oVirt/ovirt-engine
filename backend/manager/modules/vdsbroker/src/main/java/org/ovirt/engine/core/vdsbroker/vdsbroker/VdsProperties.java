@@ -254,6 +254,7 @@ public final class VdsProperties {
     public static final String domains = "storageDomains";
     public static final String hooks = "hooks";
     public static final String TUNNELED = "tunneled";
+    public static final String DST_QEMU = "dstqemu";
 
     // storage domains
     public static final String code = "code";

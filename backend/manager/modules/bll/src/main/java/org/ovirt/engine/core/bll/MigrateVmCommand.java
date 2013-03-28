@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
@@ -13,6 +14,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.MigrateStatusVDSCommandParameters;
@@ -125,6 +128,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                     getVm().getTunnelMigration() != null ? getVm().getTunnelMigration()
                             : getVdsGroup().isTunnelMigration();
         }
+
         // Starting migration at src VDS
         boolean connectToLunDiskSuccess = connectLunDisks(_vdsDestinationId);
         if (connectToLunDiskSuccess) {
@@ -134,7 +138,9 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                     .RunAsyncVdsCommand(
                             VDSCommandType.Migrate,
                             new MigrateVDSCommandParameters(getVdsId(), getVmId(), srcVdsHost, _vdsDestinationId,
-                                    dstVdsHost, MigrationMethod.ONLINE, tunnelMigration), this).getReturnValue());
+                                    dstVdsHost, MigrationMethod.ONLINE, tunnelMigration, getMigrationNetworkIp()),
+                            this)
+                    .getReturnValue());
         }
         if (!connectToLunDiskSuccess || (VMStatus) getActionReturnValue() != VMStatus.MigratingFrom) {
             getVm().setMigreatingToPort(0);
@@ -143,6 +149,40 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             throw new VdcBLLException(VdcBllErrors.RESOURCE_MANAGER_MIGRATION_FAILED_AT_DST);
         }
         ExecutionHandler.setAsyncJob(getExecutionContext(), true);
+    }
+
+    private String getMigrationNetworkIp() {
+
+        if (!FeatureSupported.migrationNetwork(getVm().getVdsGroupCompatibilityVersion())) {
+            return null;
+        }
+
+        Network migrationNetwork = null;
+
+        // Find migrationNetworkCluster
+        List<Network> allNetworksInCluster =
+                DbFacade.getInstance().getNetworkDao().getAllForCluster(getVm().getVdsGroupId());
+
+        for (Network tempNetwork : allNetworksInCluster) {
+            if (tempNetwork.getCluster().isMigration()) {
+                migrationNetwork = tempNetwork;
+                break;
+            }
+        }
+
+        // Find migration ip
+        if (migrationNetwork != null) {
+            final List<VdsNetworkInterface> allInterfacesForDstVds =
+                    DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(getDestinationVds().getId());
+
+            for (VdsNetworkInterface nic : allInterfacesForDstVds) {
+                if (migrationNetwork.getName().equals(nic.getNetworkName())) {
+                    return nic.getAddress();
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
