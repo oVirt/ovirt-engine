@@ -328,7 +328,6 @@ def checkInstallation():
     checkFile(jbossModulesJar)
 
     # Check the required engine directories and files:
-    checkDirectory(engineEtcDir, uid=engineUid, gid=engineGid)
     checkDirectory(engineLogDir, uid=engineUid, gid=engineGid)
     checkDirectory(engineUsrDir)
     checkDirectory(engineVarDir, uid=engineUid, gid=engineGid)

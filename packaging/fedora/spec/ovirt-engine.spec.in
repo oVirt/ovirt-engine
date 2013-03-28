@@ -423,7 +423,7 @@ fi
 %endif
 
 # Engine configuration files:
-%dir %attr(-, %{engine_user}, %{engine_group}) %{engine_etc}
+%dir %{engine_etc}
 %config(noreplace) %attr(-, %{engine_user}, %{engine_group}) %{engine_etc}/engine.conf
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_etc}/engine.conf.d
 
