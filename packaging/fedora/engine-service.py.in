@@ -32,6 +32,7 @@ import stat
 import sys
 import syslog
 import time
+from optparse import OptionParser
 
 import daemon
 from Cheetah.Template import Template
@@ -39,6 +40,10 @@ from Cheetah.Template import Template
 
 # The name of the engine:
 engineName = "engine-service"
+
+# Misc
+beQuiet = False
+foreground = False
 
 # The engine system configuration variables:
 engineDefaultsFile = None
@@ -353,7 +358,7 @@ def checkInstallation():
 def loadEnginePid():
     ret = None
     try:
-        if os.path.exists(enginePidFile):
+        if enginePidFile is not None and os.path.exists(enginePidFile):
             with open(enginePidFile, "r") as enginePidFd:
                 ret = int(enginePidFd.readline())
     except ValueError:
@@ -362,13 +367,23 @@ def loadEnginePid():
 
 
 def saveEnginePid(pid):
-    with open(enginePidFile, "w") as enginePidFd:
-        enginePidFd.write(str(pid) + "\n")
+    if enginePidFile is not None:
+        with open(enginePidFile, "w") as enginePidFd:
+            enginePidFd.write(str(pid) + "\n")
 
 
 def removeEnginePid():
-    if os.path.exists(enginePidFile):
-        os.remove(enginePidFile)
+    if enginePidFile is not None and os.path.exists(enginePidFile):
+        try:
+            os.remove(enginePidFile)
+        except OSError:
+            # we may not have permissions to delete pid
+            # so just try to empty it
+            try:
+                with open(enginePidFile, 'w'):
+                    pass
+            except IOError:
+                pass
 
 
 def setLimit(name):
@@ -383,8 +398,7 @@ def setLimit(name):
 
 
 def startEngine():
-    # Load the configuration and perform checks:
-    loadConfig()
+    # perform checks:
     checkInstallation()
 
     # Get the PID:
@@ -584,13 +598,13 @@ def startEngine():
     #
     # This to allow current pretty output
     #
-    if os.fork() != 0:
+    if not foreground and os.fork() != 0:
         return
 
     engineConsoleLog = open(engineConsoleLogFile, "w+")
 
     with daemon.DaemonContext(
-        detach_process=True,
+        detach_process=not foreground,
         signal_map={
             signal.SIGTERM: 'terminate',
             signal.SIGHUP: None,
@@ -611,8 +625,7 @@ def startEngine():
 
 
 def stopEngine():
-    # Load the configuration and perform checks:
-    loadConfig()
+    # perform checks:
     checkInstallation()
 
     # Load the PID:
@@ -677,9 +690,6 @@ def linkModules(modulesDir, modulesTmpDir):
 
 
 def checkEngine():
-    # Load the configuration:
-    loadConfig()
-
     # First check that the engine PID file exists, if it doesn't
     # then we assume that the engine is not running:
     enginePid = loadEnginePid()
@@ -715,15 +725,18 @@ def prettyAction(label, action):
         moveColumn = "\033[60G"
 
     # Inform that we are doing the job:
-    sys.stdout.write(label + " " + engineName + ":")
-    sys.stdout.flush()
+    if not beQuiet:
+        sys.stdout.write(label + " " + engineName + ":")
+        sys.stdout.flush()
 
     # Do the real action:
     try:
         action()
-        sys.stdout.write(moveColumn + " [  " + colorSuccess + "OK" + colorNormal + "  ]\n")
+        if not beQuiet:
+            sys.stdout.write(moveColumn + " [  " + colorSuccess + "OK" + colorNormal + "  ]\n")
     except Exception:
-        sys.stdout.write(moveColumn + " [" + colorFailure + "FAILED" + colorNormal + "]\n")
+        if not beQuiet:
+            sys.stdout.write(moveColumn + " [" + colorFailure + "FAILED" + colorNormal + "]\n")
         raise
 
 
@@ -759,15 +772,52 @@ def performAction(action):
 
 
 def main():
-    # Check the arguments:
-    args = sys.argv[1:]
+    loadConfig()
+
+    parser = OptionParser(
+        usage="usage: %prog [options] start|stop|restart|status",
+    )
+    parser.add_option(
+        "-q", "--quiet",
+        dest="quiet",
+        action="store_true",
+        default=False,
+        help="Quiet mode",
+    )
+    parser.add_option(
+        "--pidfile",
+        dest="pidfile",
+        default=None,
+        metavar="FILE",
+        help="pid file to use",
+    )
+    parser.add_option(
+        "-f", "--foreground",
+        dest="foreground",
+        action="store_true",
+        default=False,
+        help="Do not go into background",
+    )
+    global options
+    (options, args) = parser.parse_args()
+
+    global enginePidFile
+    global engineConsoleLogFile
+    global foreground
+    global beQuiet
+
+    if options.pidfile is not None:
+        enginePidFile = options.pidfile
+    foreground = options.foreground
+    if foreground:
+        enginePidFile = None
+    beQuiet = options.quiet
+
     if len(args) != 1:
-        showUsage()
-        sys.exit(1)
-    action = args[0].lower()
+        parser.error("action is missing")
+    action = args[0]
     if not action in ["start", "stop", "restart", "status"]:
-        showUsage()
-        sys.exit(1)
+        parser.error("invalid action '%s'" % action)
 
     # Run the action with syslog open and remember to close it
     # regardless of what happens in the middle:
