@@ -2160,7 +2160,10 @@ def main(configFile=None):
     miniyum = MiniYum(sink=miniyumsink, extraLog=extraLog)
     miniyum.selinux_role()
     # END: PROCESS-INITIALIZATION
-
+    if not _checkAvailableMemory(
+        interactive=(False if configFile else True)
+    ):
+        return 0
     try:
         logging.debug("Entered main(configFile='%s')"%(configFile))
         print output_messages.INFO_HEADER
@@ -2255,18 +2258,20 @@ def generateAnswerFile(outputFile):
     fd.write(content.read())
     os.chmod(outputFile, 0600)
 
-def _checkAvailableMemory():
+
+def _checkAvailableMemory(interactive):
     """
     checks for memory using the "free" command
     """
     #execute free -m to get output in MB
+    memoryAck = True
     logging.debug("checking total memory")
     cmd = [
         basedefs.EXEC_FREE, "-m"
     ]
     output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_EXP_FREE_MEM)
 
-    #itterate over output and look for the line: "Mem: 1 something"
+    #iterate over output and look for the line: "Mem: 1 something"
     #and extract 1 from it (1 is an example to the free memory)
     availableMemory = 0
     for line in output.split("\n"):
@@ -2279,12 +2284,24 @@ def _checkAvailableMemory():
     availableMemory = int(availableMemory)
     #multiplying CONST_MIN_MEMORY by 0.95 to have tolerance of 5%
     if availableMemory < (basedefs.CONST_MIN_MEMORY_MB * 0.95):
-        logging.error("Availble memory (%s) is lower then the minimum requirments (%s)" % (availableMemory, basedefs.CONST_MIN_MEMORY_MB))
-        raise Exception(output_messages.ERR_EXP_NOT_EMOUGH_MEMORY)
+        reqNotMet = 'Availble memory (%s) is lower then the minimum requirments (%s)' % (
+           availableMemory,
+           basedefs.CONST_MIN_MEMORY_MB,
+        )
+        logging.warn(reqNotMet)
+        # Ask for user input only on interactive run
+        if interactive:
+            print reqNotMet
+            if not utils.askYesNo(output_messages.INFO_PROCEED):
+                logging.debug("exiting gracefully")
+                print output_messages.INFO_STOP_INSTALL_EXIT
+                memoryAck = False
 
-    if availableMemory < basedefs.CONST_WARN_MEMORY_MB:
+    elif availableMemory < basedefs.CONST_WARN_MEMORY_MB:
         logging.warn("There is less then %s available memory " % basedefs.CONST_WARN_MEMORY_MB)
         controller.MESSAGES.append(output_messages.WARN_LOW_MEMORY)
+    return memoryAck
+
 
 def initCmdLineParser():
     """
@@ -2299,7 +2316,6 @@ def initCmdLineParser():
     parser.add_option("--gen-answer-file", help="Generate a template of an answer file, using this option excludes all other option")
     parser.add_option("--answer-file", help="Runs the configuration in non-interactive mode, extracting all information from the \
                                             configuration file. using this option excludes all other options")
-    parser.add_option("--no-mem-check", help="Disable minimum memory check", action="store_true", default=False)
 
     # For each group, create a group option
     for group in controller.getAllGroups():
@@ -2439,10 +2455,6 @@ if __name__ == "__main__":
                         param = group.getParams("CMD_OPTION", key.replace("_","-"))
                         if len(param) > 0 and value:
                             commandLineValues[param[0].getKey("CONF_NAME")] = value
-
-            # Validate host has enough memory
-            if not options.no_mem_check:
-                _checkAvailableMemory()
 
             main(confFile)
 
