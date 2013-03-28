@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.bll.validator;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -17,11 +20,14 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -30,6 +36,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
@@ -208,16 +215,82 @@ public class RunVmValidator {
         return true;
     }
 
-    protected BackendInternal getBackend() {
-        return Backend.getInstance();
+    public ValidationResult validateStatelessVm(VM vm, List<Disk> plugDisks, Boolean stateless) {
+        boolean isStatelessVm = stateless != null ? stateless : vm.isStateless();
+        if (!isStatelessVm) {
+            return ValidationResult.VALID;
+        }
+
+        ValidationResult previewValidation = getSnapshotValidator().vmNotInPreview(vm.getId());
+        if (!previewValidation.isValid()) {
+            return previewValidation;
+        }
+
+        // if the VM itself is stateless or run once as stateless
+        if (vm.isAutoStartup()) {
+            return new ValidationResult(VdcBllMessages.VM_CANNOT_RUN_STATELESS_HA);
+        }
+
+        ValidationResult hasSpaceValidation = hasSpaceForSnapshots(vm, plugDisks);
+        if (!hasSpaceValidation.isValid()) {
+            return hasSpaceValidation;
+        }
+        return ValidationResult.VALID;
+    }
+
+    protected SnapshotsValidator getSnapshotValidator() {
+        return new SnapshotsValidator();
+    }
+
+    /**
+     * check that we can create snapshots for all disks
+     * @param vm
+     * @return true if all storage domains have enough space to create snapshots for this VM plugged disks
+     */
+    public ValidationResult hasSpaceForSnapshots(VM vm, List<Disk> plugDisks) {
+        Integer minSnapshotSize = Config.<Integer> GetValue(ConfigValues.InitStorageSparseSizeInGB);
+        Map<StorageDomain, Integer> mapStorageDomainsToNumOfDisks = mapStorageDomainsToNumOfDisks(vm, plugDisks);
+        for (Entry<StorageDomain, Integer> e : mapStorageDomainsToNumOfDisks.entrySet()) {
+            ValidationResult validationResult =
+                    new StorageDomainValidator(e.getKey()).isDomainHasSpaceForRequest(minSnapshotSize * e.getValue());
+            if (!validationResult.isValid()) {
+                return validationResult;
+            }
+        }
+        return ValidationResult.VALID;
+    }
+
+    /**
+     * map the VM number of pluggable and snapable disks from their domain.
+     * @param vm
+     * @return
+     */
+    public Map<StorageDomain, Integer> mapStorageDomainsToNumOfDisks(VM vm, List<Disk> plugDisks) {
+        Map<StorageDomain, Integer> map = new HashMap<StorageDomain, Integer>();
+        for (Disk disk : plugDisks) {
+            if (disk.isAllowSnapshot()) {
+                for (StorageDomain domain : getStorageDomainDAO().getAllStorageDomainsByImageId(((DiskImage) disk).getImageId())) {
+                    map.put(domain, map.containsKey(domain) ? Integer.valueOf(map.get(domain) + 1) : Integer.valueOf(1));
+                }
+            }
+        }
+        return map;
     }
 
     protected VdsDAO getVdsDao() {
         return DbFacade.getInstance().getVdsDao();
     }
 
+    protected BackendInternal getBackend() {
+        return Backend.getInstance();
+    }
+
     protected VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
         return DbFacade.getInstance().getVmNetworkInterfaceDao();
+    }
+
+    protected StorageDomainDAO getStorageDomainDAO() {
+        return DbFacade.getInstance().getStorageDomainDao();
     }
 
     protected IsoDomainListSyncronizer getIsoDomainListSyncronizer() {
@@ -249,7 +322,8 @@ public class RunVmValidator {
             StoragePool storagePool,
             boolean isInternalExecution,
             String diskPath,
-            String floppyPath) {
+            String floppyPath,
+            Boolean runAsStateless) {
         if (!validateVmProperties(vm, messages)) {
             return false;
         }
@@ -263,7 +337,7 @@ public class RunVmValidator {
             messages.add(result.getMessage().toString());
             return false;
         }
-        result = new SnapshotsValidator().vmNotDuringSnapshot(vm.getId());
+        result = getSnapshotValidator().vmNotDuringSnapshot(vm.getId());
         if (!result.isValid()) {
             messages.add(result.getMessage().toString());
             return false;
@@ -292,6 +366,11 @@ public class RunVmValidator {
                 return false;
             }
             if (!validateVdsStatus(vm, messages)) {
+                return false;
+            }
+            result = validateStatelessVm(vm, vmDisks, runAsStateless);
+            if (!result.isValid()) {
+                messages.add(result.getMessage().toString());
                 return false;
             }
         }

@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
@@ -348,66 +347,6 @@ public class RunVmCommandTest {
         assertTrue(command.getReturnValue().getCanDoActionMessages().isEmpty());
     }
 
-    private void canRunStatelessVmTest(boolean autoStartUp,
-            boolean isVmStateless,
-            Boolean isStatelessParam,
-            boolean shouldPass) {
-        final ArrayList<Disk> disks = new ArrayList<Disk>();
-        final DiskImage diskImage = createImage();
-        disks.add(diskImage);
-
-        final VdsSelector vdsSelector = mock(VdsSelector.class);
-        when(vdsSelector.canFindVdsToRunOn(anyListOf(String.class), anyBoolean())).thenReturn(true);
-        doReturn(vdsSelector).when(command).getVdsSelector();
-
-        VDSReturnValue vdsReturnValue = new VDSReturnValue();
-        vdsReturnValue.setReturnValue(false);
-        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.IsVmDuringInitiating), any(VDSParametersBase.class))).thenReturn(vdsReturnValue);
-        initDAOMocks(disks);
-
-        final VM vm = new VM();
-        // set stateless and HA
-        vm.setStateless(isVmStateless);
-        vm.setAutoStartup(autoStartUp);
-
-        command.getParameters().setRunAsStateless(isStatelessParam);
-        boolean canRunVm = command.canRunVm(vm);
-
-        final List<String> messages = command.getReturnValue().getCanDoActionMessages();
-        assertEquals(shouldPass, canRunVm);
-        assertEquals(shouldPass, !messages.contains("VM_CANNOT_RUN_STATELESS_HA"));
-    }
-
-    @Test
-    public void canRunVmFailStatelessWhenVmHA() {
-        canRunStatelessVmTest(true, false, Boolean.TRUE, false);
-    }
-
-    @Test
-    public void canRunVmPassStatelessWhenVmHAandStatelessFalse() {
-        canRunStatelessVmTest(true, true, Boolean.FALSE, true);
-    }
-
-    @Test
-    public void canRunVmFailStatelessWhenVmHAwithNullStatelessParam() {
-        canRunStatelessVmTest(true, true, null, false);
-    }
-
-    @Test
-    public void canRunVmPassStatelessWhenVmHAwithNullStatelessParam() {
-        canRunStatelessVmTest(true, false, null, true);
-    }
-
-    @Test
-    public void canRunVmPassStatelessWhenVmHAwithNegativeStatelessParam() {
-        canRunStatelessVmTest(true, false, Boolean.FALSE, true);
-    }
-
-    @Test
-    public void canRunVmPassStatelessWhenVmNotHAwithNegativeStatelessParam() {
-        canRunStatelessVmTest(false, false, Boolean.TRUE, true);
-    }
-
     /**
      * @param disks
      * @param guid
@@ -450,6 +389,7 @@ public class RunVmCommandTest {
         when(runVmValidator.validateIsoPath(anyBoolean(), any(Guid.class), any(String.class), any(String.class))).thenReturn(ValidationResult.VALID);
         when(runVmValidator.vmDuringInitialization(any(VM.class))).thenReturn(ValidationResult.VALID);
         when(runVmValidator.validateVdsStatus(any(VM.class), Matchers.anyListOf(String.class))).thenReturn(true);
+        when(runVmValidator.validateStatelessVm(any(VM.class), Matchers.anyListOf(Disk.class), anyBoolean())).thenReturn(ValidationResult.VALID);
         doReturn(runVmValidator).when(command).getRunVmValidator();
         return runVmValidator;
     }

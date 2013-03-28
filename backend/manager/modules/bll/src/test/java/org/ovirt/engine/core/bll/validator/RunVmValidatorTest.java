@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -22,6 +23,7 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -175,6 +177,92 @@ public class RunVmValidatorTest {
         validateResult(runVmValidator.vmDuringInitialization(vm),
                 true,
                 null);
+    }
+
+    @Test
+    public void passNotStatelessVM() {
+        Random rand = new Random();
+        canRunVmAsStateless(rand.nextBoolean(), rand.nextBoolean(), false, false, true, null);
+        canRunVmAsStateless(rand.nextBoolean(), rand.nextBoolean(), false, null, true, null);
+    }
+
+    @Test
+    public void failRunStatelessSnapshotInPreview() {
+        Random rand = new Random();
+        canRunVmAsStateless(rand.nextBoolean(),
+                true,
+                true,
+                true,
+                false,
+                VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
+        canRunVmAsStateless(rand.nextBoolean(),
+                true,
+                true,
+                null,
+                false,
+                VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
+        canRunVmAsStateless(rand.nextBoolean(),
+                true,
+                false,
+                true,
+                false,
+                VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
+    }
+
+    @Test
+    public void failRunStatelessHA_VM() {
+        canRunVmAsStateless(true,
+                false,
+                true,
+                true,
+                false,
+                VdcBllMessages.VM_CANNOT_RUN_STATELESS_HA);
+        canRunVmAsStateless(true,
+                false,
+                true,
+                null,
+                false,
+                VdcBllMessages.VM_CANNOT_RUN_STATELESS_HA);
+        canRunVmAsStateless(true,
+                false,
+                false,
+                true,
+                false,
+                VdcBllMessages.VM_CANNOT_RUN_STATELESS_HA);
+    }
+
+    private void canRunVmAsStateless(boolean autoStartUp,
+            final boolean vmInPreview,
+            boolean isVmStateless,
+            Boolean isStatelessParam,
+            boolean shouldPass,
+            VdcBllMessages message) {
+        runVmValidator = new RunVmValidator() {
+            @Override
+            protected SnapshotsValidator getSnapshotValidator() {
+                return new SnapshotsValidator() {
+                    @Override
+                    public ValidationResult vmNotInPreview(Guid vmId) {
+                        if (vmInPreview) {
+                            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
+                        }
+                        return ValidationResult.VALID;
+                    };
+                };
+            };
+
+            @Override
+            public ValidationResult hasSpaceForSnapshots(VM vm, List<Disk> plugDisks) {
+                return ValidationResult.VALID;
+            }
+        };
+        VM vm = new VM();
+        vm.setAutoStartup(autoStartUp);
+        vm.setStateless(isVmStateless);
+        List<Disk> disks = new ArrayList<Disk>();
+        validateResult(runVmValidator.validateStatelessVm(vm, disks, isStatelessParam),
+                shouldPass,
+                message);
     }
 
     private VmPropertiesUtils mockVmPropertiesUtils() {

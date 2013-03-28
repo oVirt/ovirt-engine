@@ -530,8 +530,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
             // Clear the first user:
             getVm().setConsoleUserId(null);
-
-            getParameters().setRunAsStateless(getVmRunHandler().shouldVmRunAsStateless(getParameters(), getVm()));
+            getParameters().setRunAsStateless(getParameters().getRunAsStateless() != null ? getParameters().getRunAsStateless()
+                    : getVm().isStateless());
 
             getVm().setDisplayType(getParameters().getUseVnc() == null ?
                     getVm().getDefaultDisplayType() :
@@ -706,7 +706,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                                         getParameters().getDiskPath(),
                                         getParameters().getFloppyPath())) &&
                                 validate(getRunVmValidator().vmDuringInitialization(vm)) &&
-                        getRunVmValidator().validateVdsStatus(vm, messages))) &&
+                                getRunVmValidator().validateVdsStatus(vm, messages) &&
+                        validate(getRunVmValidator().validateStatelessVm(vm,
+                                vmDisks,
+                                getParameters().getRunAsStateless())))) &&
                         canRunVm(vm) &&
                         validateNetworkInterfaces();
 

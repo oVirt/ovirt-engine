@@ -238,7 +238,8 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                 fetchStoragePool(vm.getStoragePoolId()),
                 false,
                 runVmParams.getDiskPath(),
-                runVmParams.getFloppyPath())
+                runVmParams.getFloppyPath(),
+                runVmParams.getRunAsStateless())
                 &&
                 VmRunHandler.getInstance().canRunVm(vm,
                         messages,
