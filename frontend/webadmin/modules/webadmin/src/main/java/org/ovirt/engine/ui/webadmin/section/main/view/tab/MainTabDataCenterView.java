@@ -130,7 +130,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<s
             }
         });
 
-        getTable().addActionButton(new WebAdminButtonDefinition<storage_pool>(constants.reinitializeDC(), CommandLocation.OnlyFromFromContext) {
+        getTable().addActionButton(new WebAdminButtonDefinition<storage_pool>(constants.reinitializeDC(), CommandLocation.OnlyFromContext) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRecoveryStorageCommand();

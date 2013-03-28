@@ -47,4 +47,20 @@ public abstract class JsObjectWithProperties extends JavaScriptObject {
         return (this[key] != null && @org.ovirt.engine.ui.webadmin.plugin.jsni.JsArrayHelper::isArray(Lcom/google/gwt/core/client/JavaScriptObject;)(this[key])) ? this[key] : defaultValue;
     }-*/;
 
+    /**
+     * Returns the value for the given key as Enum via {@link Enum#valueOf(Class, String) Enum.valueOf} method.
+     * <p>
+     * Returns {@code defaultValue} on missing key, {@code null} value or wrong value type.
+     */
+    protected native final <T extends Enum<T>> T getValueAsEnum(String key, Class<T> enumType, T defaultValue) /*-{
+        if (this[key] != null && typeof this[key] === 'string') {
+            try {
+                return @java.lang.Enum::valueOf(Ljava/lang/Class;Ljava/lang/String;)(enumType,this[key]);
+            } catch (e) {
+                // Failed to retrieve enum constant
+            }
+        }
+        return defaultValue;
+    }-*/;
+
 }

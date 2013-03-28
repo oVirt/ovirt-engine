@@ -135,7 +135,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
             }
         });
 
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.powerOffVm(), CommandLocation.OnlyFromFromContext) {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.powerOffVm(), CommandLocation.OnlyFromContext) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getStopCommand();

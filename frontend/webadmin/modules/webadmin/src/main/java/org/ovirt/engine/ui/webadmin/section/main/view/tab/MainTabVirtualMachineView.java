@@ -217,7 +217,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return getMainModel().getShutdownCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.powerOffVm(), CommandLocation.OnlyFromFromContext) {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.powerOffVm(), CommandLocation.OnlyFromContext) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getStopCommand();
@@ -233,7 +233,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         });
         // TODO: separator
         getTable().addActionButton(new WebAdminButtonDefinition<VM>(commonConstants.consoleOptions(),
-                CommandLocation.OnlyFromFromContext) { //$NON-NLS-1$
+                CommandLocation.OnlyFromContext) { //$NON-NLS-1$
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditConsoleCommand();

@@ -227,7 +227,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         });
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
             getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.confirmRebootedHost(),
-                    CommandLocation.OnlyFromFromContext) {
+                    CommandLocation.OnlyFromContext) {
                 @Override
                 protected UICommand resolveCommand() {
                     return getMainModel().getManualFenceCommand();

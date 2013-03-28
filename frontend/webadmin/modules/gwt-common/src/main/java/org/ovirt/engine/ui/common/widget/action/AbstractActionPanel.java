@@ -116,7 +116,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
 
         // Add the button to the context menu
         if (buttonDef.getCommandLocation().equals(CommandLocation.ContextAndToolBar)
-                || buttonDef.getCommandLocation().equals(CommandLocation.OnlyFromFromContext)) {
+                || buttonDef.getCommandLocation().equals(CommandLocation.OnlyFromContext)) {
             actionButtonList.add(buttonDef);
         }
 

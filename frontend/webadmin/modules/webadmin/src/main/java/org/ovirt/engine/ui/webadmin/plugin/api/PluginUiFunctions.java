@@ -234,7 +234,7 @@ public class PluginUiFunctions implements HasHandlers {
             }
         });
 
-        table.addActionButton(new WebAdminButtonDefinition<T>(label) {
+        table.addActionButton(new WebAdminButtonDefinition<T>(label, actionButtonInterface.getLocation()) {
             @Override
             protected UICommand resolveCommand() {
                 return command;

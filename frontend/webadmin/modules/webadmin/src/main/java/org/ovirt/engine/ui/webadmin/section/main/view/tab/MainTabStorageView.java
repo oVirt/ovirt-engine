@@ -136,7 +136,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
             }
         });
         getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.destroyStorage(),
-                CommandLocation.OnlyFromFromContext) {
+                CommandLocation.OnlyFromContext) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getDestroyCommand();
