@@ -1776,7 +1776,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         if (storagePoolId != null) {
             storagePool = getStoragePoolDAO().get(storagePoolId);
             if (storagePool != null) {
-                if (storagePool.getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED) {
+                if (storagePool.getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED
+                        || storagePool.getQuotaEnforcementType() == QuotaEnforcementTypeEnum.SOFT_ENFORCEMENT) {
                     permsList.add(new PermissionSubject(StorageDomainId, VdcObjectType.Storage, ActionGroup.CREATE_DISK));
                 }
             }
