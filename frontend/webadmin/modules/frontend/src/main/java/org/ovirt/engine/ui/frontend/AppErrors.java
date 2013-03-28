@@ -886,8 +886,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot suspend VM that belongs to a  VM-Pool.")
     String VM_CANNOT_SUSPEND_VM_FROM_POOL();
 
-    @DefaultStringValue("Cannot suspend VM that has no image disks.")
-    String VM_CANNOT_SUSPEND_VM_WITHOUT_IMAGE_DISKS();
+    @DefaultStringValue("Cannot suspend VM. No active data Storage Domain with enough storage was found in the Data Center.")
+    String VM_CANNOT_SUSPEND_NO_SUITABLE_DOMAIN_FOUND();
 
     @DefaultStringValue("User is not authorized to perform this action.")
     String USER_NOT_AUTHORIZED_TO_PERFORM_ACTION();

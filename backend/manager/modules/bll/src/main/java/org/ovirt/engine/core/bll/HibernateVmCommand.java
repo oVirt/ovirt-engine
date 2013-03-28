@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -12,14 +11,13 @@ import org.ovirt.engine.core.common.action.HibernateVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -59,6 +57,14 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
 
     private Guid _storageDomainId = Guid.Empty;
 
+    /*
+     * find a storage domain to store the hibernation volumes
+     * domain must:
+     *     be data domain (or master)
+     *     be active
+     *     have enough space for the volumes
+     * return Guid.Empty if no domain found
+     */
     @Override
     public NGuid getStorageDomainId() {
         if (_storageDomainId.equals(Guid.Empty) && getVm() != null) {
@@ -68,7 +74,9 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                 for (StorageDomain currDomain : domainsInPool) {
                     if ((currDomain.getStorageDomainType().equals(StorageDomainType.Master)
                             || currDomain.getStorageDomainType().equals(StorageDomainType.Data))
-                            && currDomain.getStatus() == StorageDomainStatus.Active) {
+                            && currDomain.getStatus() == StorageDomainStatus.Active
+                            && doesStorageDomainhaveSpaceForRequest(currDomain, (getImageSizeInBytes()
+                                    + getMetaDataSizeInBytes()) / BYTES_IN_GB)) {
                         _storageDomainId = currDomain.getId();
                         break;
                     }
@@ -233,7 +241,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
         // ReturnValue.CanDoActionMessages.Add(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString());
         // }
         else if (getStorageDomainId().equals(Guid.Empty)) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+            addCanDoActionMessage(VdcBllMessages.VM_CANNOT_SUSPEND_NO_SUITABLE_DOMAIN_FOUND);
             retValue = false;
         } else {
             if (getVm().getStatus() == VMStatus.WaitForLaunch || getVm().getStatus() == VMStatus.NotResponding) {
@@ -259,24 +267,6 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                         retValue = false;
                         addCanDoActionMessage(VdcBllMessages.VM_CANNOT_SUSPEND_VM_FROM_POOL);
                     }
-
-                    if (retValue) {
-                        Collection<DiskImage> disksImages =
-                                ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), false, false);
-                        if (disksImages.isEmpty()) {
-                            retValue = false;
-                            addCanDoActionMessage(VdcBllMessages.VM_CANNOT_SUSPEND_VM_WITHOUT_IMAGE_DISKS);
-                        }
-                    }
-
-                    // Check storage before trying to create Images for hibernation.
-                    StorageDomain domain =
-                            DbFacade.getInstance().getStorageDomainDao().get(getStorageDomainId().getValue());
-                    if (retValue
-                            && !doesStorageDomainhaveSpaceForRequest(domain, (getImageSizeInBytes()
-                                    + getMetaDataSizeInBytes())/BYTES_IN_GB)) {
-                        return false;
-                    }
                 }
             }
         }
@@ -284,7 +274,8 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
     }
 
     protected boolean doesStorageDomainhaveSpaceForRequest(StorageDomain storageDomain, long sizeRequested) {
-        return validate(new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(sizeRequested));
+        // not calling validate in order not to add the messages per domain
+        return (new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(sizeRequested)).isValid();
     }
 
     @Override

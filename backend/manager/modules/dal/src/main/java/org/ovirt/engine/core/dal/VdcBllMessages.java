@@ -280,7 +280,7 @@ public enum VdcBllMessages {
     VM_CANNOT_IMPORT_VM_NAME_EXISTS,
     VM_CANNOT_SUSPEND_STATELESS_VM,
     VM_CANNOT_SUSPEND_VM_FROM_POOL,
-    VM_CANNOT_SUSPEND_VM_WITHOUT_IMAGE_DISKS,
+    VM_CANNOT_SUSPEND_NO_SUITABLE_DOMAIN_FOUND,
     // internal const string VMT_CANNOT_REMOVE_DETECTED_DERIVED_VM =
     // "Cannot delete the template, there are desktop(s) created from template";
     VMT_CANNOT_REMOVE_DETECTED_DERIVED_VM,
