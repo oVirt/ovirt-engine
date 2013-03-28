@@ -71,6 +71,7 @@ cd $WORKDIR
 echo " "
 echo "> Importing CA certificate..."
 # Generate truststore
+keytool -delete -noprompt -alias cacert -keystore ./.truststore -storepass $PASS > /dev/null 2>&1
 keytool -import -noprompt -trustcacerts -alias cacert -keypass $PASS -file certs/ca.der -keystore ./.truststore -storepass $PASS
 
 echo " "
