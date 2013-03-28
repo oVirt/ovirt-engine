@@ -239,7 +239,8 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                 false,
                 runVmParams.getDiskPath(),
                 runVmParams.getFloppyPath(),
-                runVmParams.getRunAsStateless())
+                runVmParams.getRunAsStateless(),
+                vdsSelector)
                 &&
                 VmRunHandler.getInstance().canRunVm(vm,
                         messages,

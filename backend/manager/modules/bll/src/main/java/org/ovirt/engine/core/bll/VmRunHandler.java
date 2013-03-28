@@ -36,7 +36,7 @@ public class VmRunHandler {
      */
     public boolean canRunVm(VM vm, ArrayList<String> message, RunVmParams runParams,
             VdsSelector vdsSelector, SnapshotsValidator snapshotsValidator) {
-        boolean retValue = vdsSelector.canFindVdsToRunOn(message, false);
+        boolean retValue = true;
 
         /**
          * only if can do action ok then check with actions matrix that status is valid for this action

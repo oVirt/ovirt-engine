@@ -710,6 +710,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                         validate(getRunVmValidator().validateStatelessVm(vm,
                                 vmDisks,
                                 getParameters().getRunAsStateless())))) &&
+                        getVdsSelector().canFindVdsToRunOn(messages, false) &&
                         canRunVm(vm) &&
                         validateNetworkInterfaces();
 

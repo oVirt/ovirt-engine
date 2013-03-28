@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.VdsSelector;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
@@ -323,7 +324,7 @@ public class RunVmValidator {
             boolean isInternalExecution,
             String diskPath,
             String floppyPath,
-            Boolean runAsStateless) {
+            Boolean runAsStateless, VdsSelector vdsSelector) {
         if (!validateVmProperties(vm, messages)) {
             return false;
         }
@@ -373,6 +374,9 @@ public class RunVmValidator {
                 messages.add(result.getMessage().toString());
                 return false;
             }
+        }
+        if (!vdsSelector.canFindVdsToRunOn(messages, false)) {
+            return false;
         }
 
         return true;

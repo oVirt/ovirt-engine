@@ -48,7 +48,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
@@ -338,8 +337,9 @@ public class RunVmCommandTest {
         final VM vm = new VM();
         vm.setStatus(VMStatus.Down);
         vm.setStoragePoolId(Guid.NewGuid());
-        doReturn(new VdsSelector(vm, new NGuid(), true, new VdsFreeMemoryChecker(command))).when(command)
-                .getVdsSelector();
+        VdsSelector vdsSelector = mock(VdsSelector.class);
+        doReturn(true).when(vdsSelector).canFindVdsToRunOn(Matchers.anyList(), anyBoolean());
+        doReturn(vdsSelector).when(command).getVdsSelector();
         doReturn(vm).when(command).getVm();
         doReturn(true).when(command).canRunVm(vm);
         doReturn(true).when(command).validateNetworkInterfaces();
