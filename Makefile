@@ -318,10 +318,6 @@ install_sec:
 	install -m 644 backend/manager/conf/ca/cacert.template.in $(DESTDIR)$(PKG_PKI_DIR)
 	install -m 644 backend/manager/conf/ca/cert.template.in $(DESTDIR)$(PKG_PKI_DIR)
 
-	# Certificate database:
-	install -m 644 backend/manager/conf/ca/database.txt $(DESTDIR)$(PKG_PKI_DIR)
-	install -m 644 backend/manager/conf/ca/serial.txt $(DESTDIR)$(PKG_PKI_DIR)
-
 	# Scripts:
 	install -m 755 backend/manager/conf/ca/*.sh $(DESTDIR)$(PKG_PKI_DIR)
 	install -m 644 backend/manager/conf/ca/*.lock $(DESTDIR)$(PKG_PKI_DIR)

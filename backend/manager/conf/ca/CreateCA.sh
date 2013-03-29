@@ -28,6 +28,18 @@ echo O = $2 >> cacert.conf
 echo CN = $3 >> cacert.conf
 cp cert.template cert.conf
 
+#
+# openssl ca directory must
+# be writable for the user
+# as backup files are produced
+# so let's assume directory
+# is in correct permissions
+#
+echo 1000 > serial.txt
+rm -f database.txt
+touch database.txt
+chown --reference=. serial.txt database.txt
+
 openssl genrsa -out private/ca.pem 2048 && \
 	openssl req -new -key private/ca.pem \
 		-config cacert.conf -out requests/ca.csr && \
