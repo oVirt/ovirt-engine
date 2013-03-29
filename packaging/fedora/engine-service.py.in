@@ -350,10 +350,14 @@ def checkInstallation():
 
 
 def loadEnginePid():
-    if not os.path.exists(enginePidFile):
-        return None
-    with open(enginePidFile, "r") as enginePidFd:
-        return int(enginePidFd.read())
+    ret = None
+    try:
+        if os.path.exists(enginePidFile):
+            with open(enginePidFile, "r") as enginePidFd:
+                ret = int(enginePidFd.readline())
+    except ValueError:
+        pass
+    return ret
 
 
 def saveEnginePid(pid):
