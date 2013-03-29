@@ -58,9 +58,8 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     public Map<String, String> getJobMessageProperties() {
         if (jobProperties == null) {
             jobProperties = super.getJobMessageProperties();
-            Snapshot snapshot = getSnapshotDao().get(getParameters().getDstSnapshotId());
-            if (snapshot != null) {
-                jobProperties.put(VdcObjectType.Snapshot.name().toLowerCase(), snapshot.getDescription());
+            if (getSnapshotName() != null) {
+                jobProperties.put(VdcObjectType.Snapshot.name().toLowerCase(), getSnapshotName());
             }
         }
         return jobProperties;
@@ -119,6 +118,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 .getInstance()
                 .getDiskImageDao()
                 .getAllSnapshotsForVmSnapshot(getParameters().getDstSnapshotId());
+
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
@@ -264,4 +264,17 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         return Collections.singletonMap(getVmId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
+
+    @Override
+    public String getSnapshotName() {
+        if (super.getSnapshotName() == null) {
+            final Snapshot snapshot = getSnapshotDao().get(getParameters().getDstSnapshotId());
+            if (snapshot != null) {
+                setSnapshotName(snapshot.getDescription());
+            }
+        }
+
+        return super.getSnapshotName();
+    }
+
 }
