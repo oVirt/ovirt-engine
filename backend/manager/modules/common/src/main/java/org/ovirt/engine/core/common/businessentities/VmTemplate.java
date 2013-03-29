@@ -22,9 +22,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
 public class VmTemplate extends VmBase {
-    private static final long serialVersionUID = -522552511046744989L;
+    private static final long serialVersionUID = -5238366659716600486L;
 
-    private List<VmNetworkInterface> _Interfaces = new ArrayList<VmNetworkInterface>();
+    private List<VmNetworkInterface> interfaces = new ArrayList<VmNetworkInterface>();
 
     private int childCount;
 
@@ -54,29 +54,29 @@ public class VmTemplate extends VmBase {
 
     private boolean disabled;
 
-    public VmTemplate(int child_count, Date creation_date, String description, int mem_size_mb, String name,
-            int num_of_sockets, int cpu_per_socket, VmOsType os, Guid vds_group_id, Guid vmt_guid, String domain,
-            int num_of_monitors, int status, int usb_policy, String time_zone, boolean is_auto_suspend, int nice_level,
-            boolean fail_back, BootSequence default_boot_sequence, VmType vm_type,
+    public VmTemplate(int childCount, Date creationDate, String description, int memSizeMb, String name,
+            int numOfSockets, int cpuPerSocket, VmOsType os, Guid vdsGroupId, Guid vmtGuid, String domain,
+            int numOfMonitors, int status, int usbPolicy, String timeZone, boolean autoSuspend, int niceLevel,
+            boolean failBack, BootSequence defaultBootSequence, VmType vmType,
             boolean smartcardEnabled, boolean deleteProtected, Boolean tunnelMigration, String vncKeyboardLayout,
             int minAllocatedMem) {
-        super(vmt_guid,
-                vds_group_id,
+        super(vmtGuid,
+                vdsGroupId,
                 os,
-                creation_date,
+                creationDate,
                 description,
-                mem_size_mb,
-                num_of_sockets,
-                cpu_per_socket,
-                num_of_monitors,
+                memSizeMb,
+                numOfSockets,
+                cpuPerSocket,
+                numOfMonitors,
                 domain,
-                time_zone,
-                vm_type,
-                UsbPolicy.forValue(usb_policy),
-                fail_back,
-                default_boot_sequence,
-                nice_level,
-                is_auto_suspend,
+                timeZone,
+                vmType,
+                UsbPolicy.forValue(usbPolicy),
+                failBack,
+                defaultBootSequence,
+                niceLevel,
+                autoSuspend,
                 0,
                 false,
                 false,
@@ -94,9 +94,9 @@ public class VmTemplate extends VmBase {
 
         diskTemplateMap = new HashMap<Guid, DiskImage>();
 
-        this.childCount = child_count;
+        this.childCount = childCount;
         setName(name);
-        this.setNumOfMonitors(num_of_monitors);
+        this.setNumOfMonitors(numOfMonitors);
         this.setstatus(VmTemplateStatus.forValue(status));
     }
 
@@ -126,12 +126,12 @@ public class VmTemplate extends VmBase {
 
     @Override
     public List<VmNetworkInterface> getInterfaces() {
-        return _Interfaces;
+        return interfaces;
     }
 
     @Override
     public void setInterfaces(List<VmNetworkInterface> value) {
-        _Interfaces = value;
+        interfaces = value;
     }
 
     public NGuid getstorage_pool_id() {
