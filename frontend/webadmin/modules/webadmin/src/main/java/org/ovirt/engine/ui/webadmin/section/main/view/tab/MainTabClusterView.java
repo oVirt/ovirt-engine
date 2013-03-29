@@ -3,12 +3,14 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -72,13 +74,15 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
         };
         getTable().addColumn(descColumn, constants.descriptionCluster(), "300px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VDSGroup> cpuNameColumn = new TextColumnWithTooltip<VDSGroup>() {
-            @Override
-            public String getValue(VDSGroup object) {
-                return object.getcpu_name();
-            }
-        };
-        getTable().addColumn(cpuNameColumn, constants.cpuNameCluster(), "150px"); //$NON-NLS-1$
+        if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
+            TextColumnWithTooltip<VDSGroup> cpuNameColumn = new TextColumnWithTooltip<VDSGroup>() {
+                @Override
+                public String getValue(VDSGroup object) {
+                    return object.getcpu_name();
+                }
+            };
+            getTable().addColumn(cpuNameColumn, constants.cpuNameCluster(), "150px"); //$NON-NLS-1$
+        }
 
         getTable().addActionButton(new WebAdminButtonDefinition<VDSGroup>(constants.newCluster()) {
             @Override

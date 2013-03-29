@@ -173,7 +173,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
             FormItem formItem = iterator.next();
             Widget widget = formItem.getValue();
             if (widget == kvmVersion || widget == spiceVersion || widget == iScsiInitiatorName || widget == activeVms
-                    || widget == libvirtVersion || widget == maxSchedulingMemory)
+                    || widget == libvirtVersion || widget == maxSchedulingMemory || widget == spmPriority)
             {
                 iterator.remove();
             }

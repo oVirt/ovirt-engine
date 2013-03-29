@@ -395,6 +395,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         {
             spmTab.setVisible(false);
             powerManagementTab.setVisible(false);
+            consoleTab.setVisible(false);
         }
     }
 

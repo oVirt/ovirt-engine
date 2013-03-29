@@ -68,7 +68,9 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
         formBuilder.setColumnsWidth("180px", "180px", "180px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         formBuilder.addFormItem(new FormItem(constants.nameCluster(), name, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.descriptionCluster(), description, 1, 0));
-        formBuilder.addFormItem(new FormItem(constants.dcCluster(), dataCenterName, 2, 0));
+        if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
+            formBuilder.addFormItem(new FormItem(constants.dcCluster(), dataCenterName, 2, 0));
+        }
         formBuilder.addFormItem(new FormItem(constants.compatibilityVersionCluster(), compatibilityVersion, 3, 0));
 
         // Show the cluster type only if the application is running in both the modes
