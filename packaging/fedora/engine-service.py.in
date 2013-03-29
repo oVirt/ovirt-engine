@@ -33,6 +33,7 @@ import sys
 import syslog
 import time
 
+import daemon
 from Cheetah.Template import Template
 
 
@@ -554,39 +555,6 @@ def startEngine():
         "org.jboss.as.standalone", "-c", os.path.basename(jbossConfigFile),
     ])
 
-    # Fork a new process:
-    enginePid = os.fork()
-
-    # If this is the parent process then the last thing we have to do is
-    # saving the child process PID to the file:
-    if enginePid != 0:
-        syslog.syslog(syslog.LOG_INFO, "Started engine process %d." % enginePid)
-        saveEnginePid(enginePid)
-        return
-
-    # Change the resource limits while we are root as we won't be
-    # able to change them once we assume the engine identity (the
-    # values come from the configuration):
-    setLimit("nofile")
-
-    # This is the child process, first thing we do is assume the engine
-    # identity:
-    if engineGid != os.getgid():
-        os.setgid(engineGid)
-    if engineUid != os.getuid():
-        os.setuid(engineUid)
-
-    # Then close standard input and some other security measures:
-    os.close(0)
-    os.setsid()
-    os.chdir("/")
-
-    # Then open the console log and redirect standard output and errors to it:
-    engineConsoleFd = os.open(engineConsoleLogFile, os.O_CREAT | os.O_WRONLY | os.O_APPEND, 0660)
-    os.dup2(engineConsoleFd, 1)
-    os.dup2(engineConsoleFd, 2)
-    os.close(engineConsoleFd)
-
     # Prepare a clean environment:
     engineEnv = {
         "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin",
@@ -601,8 +569,45 @@ def startEngine():
         "ENGINE_CACHE": engineCacheDir,
     }
 
-    # Finally execute the java virtual machine:
-    os.execvpe(javaLauncher, engineArgs, engineEnv)
+    # Change the resource limits while we are root as we won't be
+    # able to change them once we assume the engine identity (the
+    # values come from the configuration):
+    setLimit("nofile")
+
+    # this is required to allow
+    # writing after user id is changed
+    if enginePidFile is not None:
+        with open(enginePidFile, 'w'):
+            pass
+        os.chown(enginePidFile, engineUid, engineGid)
+
+    #
+    # This to allow current pretty output
+    #
+    if os.fork() != 0:
+        return
+
+    engineConsoleLog = open(engineConsoleLogFile, "w+")
+
+    with daemon.DaemonContext(
+        detach_process=True,
+        signal_map={
+            signal.SIGTERM: 'terminate',
+            signal.SIGHUP: None,
+        },
+        uid=engineUid,
+        gid=engineGid,
+        stdout=engineConsoleLog,
+        stderr=engineConsoleLog,
+    ):
+        saveEnginePid(os.getpid())
+        os.execvpe(
+            file=javaLauncher,
+            args=engineArgs,
+            env=engineEnv,
+        )
+
+    raise Exception("Can't execute \"%s\"." % javaLauncher)
 
 
 def stopEngine():

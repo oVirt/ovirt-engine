@@ -207,6 +207,7 @@ Requires: lsof
 Requires: nfs-utils
 Requires: python-cheetah
 Requires: yum
+Requires: python-daemon
 
 %description setup
 Setup and upgrade scripts for %{product_name_short}
