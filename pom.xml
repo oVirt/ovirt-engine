@@ -90,6 +90,9 @@
     <log4j.version>1.2.16</log4j.version>
     <infinispan.version>5.2.5.Final</infinispan.version>
 
+    <!-- OpenStack -->
+    <openstack-client.version>3.0.0</openstack-client.version>
+
     <!-- Plugins Versions -->
     <maven-surefire-plugin.version>2.7.2</maven-surefire-plugin.version>
     <maven-resources-plugin.version>2.4.3</maven-resources-plugin.version>

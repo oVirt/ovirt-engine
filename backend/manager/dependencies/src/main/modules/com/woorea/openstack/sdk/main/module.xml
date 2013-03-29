@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module xmlns="urn:jboss:module:1.0" name="com.woorea.openstack.sdk">
+   <resources>
+     <resource-root path="glance-client.jar"/>
+     <resource-root path="glance-model.jar"/>
+     <resource-root path="keystone-client.jar"/>
+     <resource-root path="keystone-model.jar"/>
+     <resource-root path="openstack-client.jar"/>
+     <resource-root path="quantum-client.jar"/>
+     <resource-root path="quantum-model.jar"/>
+     <resource-root path="resteasy-connector.jar"/>
+   </resources>
+   <dependencies>
+      <module name="javax.ws.rs.api"/>
+      <module name="org.jboss.resteasy.resteasy-jaxrs"/>
+      <module name="org.codehaus.jackson.jackson-core-asl"/>
+      <module name="org.codehaus.jackson.jackson-mapper-asl"/>
+      <module name="org.codehaus.jackson.jackson-jaxrs"/>
+   </dependencies>
+</module>

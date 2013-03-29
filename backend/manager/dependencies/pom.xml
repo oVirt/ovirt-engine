@@ -165,6 +165,54 @@
       <version>${postgres.jdbc.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.woorea</groupId>
+      <artifactId>openstack-client</artifactId>
+      <version>${openstack-client.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.woorea</groupId>
+      <artifactId>keystone-client</artifactId>
+      <version>${openstack-client.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.woorea</groupId>
+      <artifactId>keystone-model</artifactId>
+      <version>${openstack-client.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.woorea</groupId>
+      <artifactId>glance-client</artifactId>
+      <version>${openstack-client.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.woorea</groupId>
+      <artifactId>glance-model</artifactId>
+      <version>${openstack-client.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.woorea</groupId>
+      <artifactId>quantum-client</artifactId>
+      <version>${openstack-client.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.woorea</groupId>
+      <artifactId>quantum-model</artifactId>
+      <version>${openstack-client.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.woorea</groupId>
+      <artifactId>resteasy-connector</artifactId>
+      <version>${openstack-client.version}</version>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -319,6 +367,54 @@
                 <groupId>postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <moduleName>org.postgresql</moduleName>
+              </module>
+
+              <module>
+                <groupId>com.woorea</groupId>
+                <artifactId>openstack-client</artifactId>
+                <moduleName>com.woorea.openstack.sdk</moduleName>
+              </module>
+
+              <module>
+                <groupId>com.woorea</groupId>
+                <artifactId>keystone-client</artifactId>
+                <moduleName>com.woorea.openstack.sdk</moduleName>
+              </module>
+
+              <module>
+                <groupId>com.woorea</groupId>
+                <artifactId>keystone-model</artifactId>
+                <moduleName>com.woorea.openstack.sdk</moduleName>
+              </module>
+
+              <module>
+                <groupId>com.woorea</groupId>
+                <artifactId>glance-client</artifactId>
+                <moduleName>com.woorea.openstack.sdk</moduleName>
+              </module>
+
+              <module>
+                <groupId>com.woorea</groupId>
+                <artifactId>glance-model</artifactId>
+                <moduleName>com.woorea.openstack.sdk</moduleName>
+              </module>
+
+              <module>
+                <groupId>com.woorea</groupId>
+                <artifactId>quantum-client</artifactId>
+                <moduleName>com.woorea.openstack.sdk</moduleName>
+              </module>
+
+              <module>
+                <groupId>com.woorea</groupId>
+                <artifactId>quantum-model</artifactId>
+                <moduleName>com.woorea.openstack.sdk</moduleName>
+              </module>
+
+              <module>
+                <groupId>com.woorea</groupId>
+                <artifactId>resteasy-connector</artifactId>
+                <moduleName>com.woorea.openstack.sdk</moduleName>
               </module>
 
             </modules>
