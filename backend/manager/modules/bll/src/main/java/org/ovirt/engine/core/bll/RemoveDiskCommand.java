@@ -171,7 +171,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private boolean canRemoveTemplateDisk() {
         boolean retValue = true;
         DiskImage diskImage = getDiskImage();
-        if (getVmTemplate().getstatus() == VmTemplateStatus.Locked) {
+        if (getVmTemplate().getStatus() == VmTemplateStatus.Locked) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED);
         }

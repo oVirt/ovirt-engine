@@ -45,7 +45,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         super.setVmTemplateId(parameters.getVmTemplateId());
         parameters.setEntityId(getVmTemplateId());
         if (getVmTemplate() != null) {
-            setStoragePoolId(getVmTemplate().getstorage_pool_id());
+            setStoragePoolId(getVmTemplate().getStoragePoolId());
         }
     }
 

@@ -48,7 +48,7 @@ public class SubTabNetworkTemplateView extends AbstractSubTabTableView<NetworkVi
         TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>> statusColumn = new EnumColumn<PairQueryable<VmNetworkInterface, VmTemplate>, VmTemplateStatus>() {
             @Override
             protected VmTemplateStatus getRawValue(PairQueryable<VmNetworkInterface, VmTemplate> object) {
-                return object.getSecond().getstatus();
+                return object.getSecond().getStatus();
             }
         };
         getTable().addColumn(statusColumn, constants.statusTemplate(), "100px"); //$NON-NLS-1$
@@ -56,7 +56,7 @@ public class SubTabNetworkTemplateView extends AbstractSubTabTableView<NetworkVi
         TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>> clusterColumn = new TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>>() {
             @Override
             public String getValue(PairQueryable<VmNetworkInterface, VmTemplate> object) {
-                return object.getSecond().getvds_group_name();
+                return object.getSecond().getVdsGroupName();
             }
         };
         getTable().addColumn(clusterColumn, constants.clusterTemplate(), "150px"); //$NON-NLS-1$

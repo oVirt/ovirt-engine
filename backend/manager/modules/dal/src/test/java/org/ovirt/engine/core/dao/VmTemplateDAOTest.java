@@ -228,7 +228,7 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
     public void testUpdateStatus() {
         VmTemplate before = dao.get(existingTemplate.getId());
 
-        before.setstatus(VmTemplateStatus.Locked);
+        before.setStatus(VmTemplateStatus.Locked);
         dao.updateStatus(existingTemplate.getId(), VmTemplateStatus.Locked);
 
         VmTemplate after = dao.get(existingTemplate.getId());

@@ -196,7 +196,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     protected Guid getStoragePoolIdFromSourceImageContainer() {
-        return getVmTemplate().getstorage_pool_id().getValue();
+        return getVmTemplate().getStoragePoolId().getValue();
     }
 
     protected int getNeededDiskSize(Guid domainId) {
@@ -406,7 +406,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected void fillImagesMapBasedOnTemplate() {
         ImagesHandler.fillImagesMapBasedOnTemplate(getVmTemplate(),
-                getStorageDomainDAO().getAllForStoragePool(getVmTemplate().getstorage_pool_id().getValue()),
+                getStorageDomainDAO().getAllForStoragePool(getVmTemplate().getStoragePoolId().getValue()),
                 diskInfoDestinationMap,
                 destStorages, false);
     }

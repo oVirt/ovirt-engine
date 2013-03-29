@@ -34,7 +34,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         getModel().getProvisioning().setIsChangable(false);
         getModel().getStorageDomain().setIsChangable(false);
 
-        if (template.getstorage_pool_id() != null && !template.getstorage_pool_id().getValue().equals(NGuid.Empty))
+        if (template.getStoragePoolId() != null && !template.getStoragePoolId().getValue().equals(NGuid.Empty))
         {
             AsyncDataProvider.GetDataCenterById(new AsyncQuery(getModel(),
                     new INewAsyncCallback() {
@@ -50,7 +50,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
                         }
                     },
                     getModel().getHash()),
-                    template.getstorage_pool_id().getValue());
+                    template.getStoragePoolId().getValue());
         }
 
         getModel().getMigrationMode().setSelectedItem(template.getMigrationSupport());

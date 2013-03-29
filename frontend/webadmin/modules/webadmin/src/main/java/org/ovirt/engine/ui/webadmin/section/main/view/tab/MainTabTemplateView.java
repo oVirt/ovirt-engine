@@ -55,7 +55,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
         TextColumnWithTooltip<VmTemplate> statusColumn = new EnumColumn<VmTemplate, VmTemplateStatus>() {
             @Override
             protected VmTemplateStatus getRawValue(VmTemplate object) {
-                return object.getstatus();
+                return object.getStatus();
             }
         };
         getTable().addColumn(statusColumn, constants.statusTemplate(), "100px"); //$NON-NLS-1$
@@ -63,7 +63,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
         TextColumnWithTooltip<VmTemplate> clusterColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
-                return object.getvds_group_name();
+                return object.getVdsGroupName();
             }
         };
         getTable().addColumn(clusterColumn, constants.clusterTemplate(), "150px"); //$NON-NLS-1$
@@ -71,7 +71,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
         TextColumnWithTooltip<VmTemplate> dcColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
-                return object.getstorage_pool_name();
+                return object.getStoragePoolName();
             }
         };
         getTable().addColumn(dcColumn, constants.dcTemplate(), "150px"); //$NON-NLS-1$

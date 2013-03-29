@@ -40,7 +40,7 @@ public class UserPortalTemplateListModel extends TemplateListModel
             ArrayList items = new ArrayList();
             items.add(item);
             getEditCommand().setIsExecutionAllowed(
-                    item.getstatus() != VmTemplateStatus.Locked &&
+                    item.getStatus() != VmTemplateStatus.Locked &&
                             !isBlankTemplateSelected());
             getRemoveCommand().setIsExecutionAllowed(
                     VdcActionUtils.CanExecute(items, VmTemplate.class,

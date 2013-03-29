@@ -388,7 +388,7 @@ public class AddVmCommandTest {
     private VmTemplate createVmTemplate() {
         if (vmTemplate == null) {
             vmTemplate = new VmTemplate();
-            vmTemplate.setstorage_pool_id(STORAGE_POOL_ID);
+            vmTemplate.setStoragePoolId(STORAGE_POOL_ID);
             DiskImage image = createDiskImageTemplate();
             vmTemplate.getDiskMap().put(image.getImageId(), image);
             Map<Guid, DiskImage> diskImageMap = new HashMap<Guid, DiskImage>();

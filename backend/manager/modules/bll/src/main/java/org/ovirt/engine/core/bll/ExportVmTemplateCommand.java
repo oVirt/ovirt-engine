@@ -35,7 +35,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
         super(parameters);
         if (getVmTemplate() != null) {
             setDescription(getVmTemplateName());
-            setStoragePoolId(getVmTemplate().getstorage_pool_id());
+            setStoragePoolId(getVmTemplate().getStoragePoolId());
         }
     }
 
@@ -135,7 +135,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
 
         // check if template (with no override option)
         if (retVal && !getParameters().getForceOverride()) {
-            retVal = !ExportVmCommand.CheckTemplateInStorageDomain(getVmTemplate().getstorage_pool_id().getValue(),
+            retVal = !ExportVmCommand.CheckTemplateInStorageDomain(getVmTemplate().getStoragePoolId().getValue(),
                     getParameters().getStorageDomainId(), getVmTemplateId());
             if (!retVal) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
@@ -172,7 +172,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
         VmTemplateHandler.UpdateDisksFromDb(getVmTemplate());
         // update the target (export) domain
         OvfDataUpdater.getInstance().buildMetadataDictionaryForTemplate(getVmTemplate(), metaDictionary);
-        OvfDataUpdater.getInstance().executeUpdateVmInSpmCommand(getVmTemplate().getstorage_pool_id().getValue(),
+        OvfDataUpdater.getInstance().executeUpdateVmInSpmCommand(getVmTemplate().getStoragePoolId().getValue(),
                 metaDictionary,
                 getParameters().getStorageDomainId());
     }

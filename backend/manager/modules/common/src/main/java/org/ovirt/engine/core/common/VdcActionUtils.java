@@ -307,7 +307,7 @@ public final class VdcActionUtils {
                     null);
         } else if (entity.getClass().getName().endsWith("VmTemplate")) {
             return (entity instanceof VmTemplate ?
-                    ((VmTemplate) entity).getstatus() :
+                    ((VmTemplate) entity).getStatus() :
                     null);
 
         } else if (entity instanceof StorageDomain) {

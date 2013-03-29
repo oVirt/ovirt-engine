@@ -53,7 +53,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
         if (mOldTemplate != null) {
             VmTemplateHandler.UpdateDisksFromDb(mOldTemplate);
-            if (mOldTemplate.getstatus() == VmTemplateStatus.Locked) {
+            if (mOldTemplate.getStatus() == VmTemplateStatus.Locked) {
                 return failCanDoAction(VdcBllMessages.VM_TEMPLATE_IS_LOCKED);
             }
             if (!StringUtils.equals(mOldTemplate.getName(), getVmTemplate().getName())

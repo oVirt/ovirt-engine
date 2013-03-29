@@ -453,7 +453,7 @@ public class TemplateGeneralModel extends EntityModel
         setQuotaName(template.getQuotaName() != null ? template.getQuotaName() : ""); //$NON-NLS-1$
         setQuotaAvailable(template.getQuotaEnforcementType() != null
                 && !template.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED));
-        setHostCluster(template.getvds_group_name());
+        setHostCluster(template.getVdsGroupName());
         setDefinedMemory(template.getMemSizeMb() + " MB"); //$NON-NLS-1$
         setHasHighlyAvailable(template.getVmType() == VmType.Server);
         setIsHighlyAvailable(template.isAutoStartup());

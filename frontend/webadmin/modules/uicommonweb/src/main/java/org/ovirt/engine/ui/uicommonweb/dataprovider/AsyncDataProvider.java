@@ -691,7 +691,7 @@ public final class AsyncDataProvider {
                 {
                     for (VmTemplate template : (ArrayList<VmTemplate>) source)
                     {
-                        if (template.getstatus() == VmTemplateStatus.OK)
+                        if (template.getStatus() == VmTemplateStatus.OK)
                         {
                             list.add(template);
                         }
@@ -2282,7 +2282,7 @@ public final class AsyncDataProvider {
                 for (VmTemplate template : (List<VmTemplate>) source) {
                     if (template.getId().equals(Guid.Empty)) {
                         blankTemplate = template;
-                    } else if (template.getstatus() == VmTemplateStatus.OK) {
+                    } else if (template.getStatus() == VmTemplateStatus.OK) {
                         list.add(template);
                     }
                 }

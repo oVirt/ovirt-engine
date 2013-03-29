@@ -312,7 +312,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
         if (!VmTemplateHandler.BlankVmTemplateId.equals(getVm().getVmtGuid())
                 && getVmTemplate() != null
-                && getVmTemplate().getstatus() == VmTemplateStatus.Locked) {
+                && getVmTemplate().getStatus() == VmTemplateStatus.Locked) {
             return failCanDoAction(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED);
         }
 

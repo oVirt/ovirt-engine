@@ -67,7 +67,7 @@ public final class ImagesHandler {
         List<StorageDomain> domains =
                 DbFacade.getInstance()
                         .getStorageDomainDao()
-                        .getAllForStoragePool(template.getstorage_pool_id().getValue());
+                        .getAllForStoragePool(template.getStoragePoolId().getValue());
         fillImagesMapBasedOnTemplate(template, domains, diskInfoDestinationMap, destStorages, notCheckSize);
     }
 

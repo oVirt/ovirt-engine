@@ -181,7 +181,7 @@ public class OvfDataUpdater {
         List<VmTemplate> templates = getVmTemplateDao().getVmTemplatesByIds(idsToProcess);
 
         for (VmTemplate template : templates) {
-            if (VmTemplateStatus.Locked != template.getstatus()) {
+            if (VmTemplateStatus.Locked != template.getStatus()) {
                 updateTemplateDisksFromDb(template);
                 boolean verifyDisksNotLocked = verifyDisksNotLocked(template.getDiskList());
                 if (verifyDisksNotLocked) {

@@ -31,7 +31,7 @@ public class GetStorageDomainsByVmTemplateIdQuery<P extends GetStorageDomainsByV
                         .get(getParameters().getId(), getUserID(), getParameters().isFiltered());
         ArrayList<StorageDomain> result = new ArrayList<StorageDomain>();
 
-        if (vmTemplate != null && vmTemplate.getstorage_pool_id() != null) {
+        if (vmTemplate != null && vmTemplate.getStoragePoolId() != null) {
             List<Disk> templateDisks = getTemplateDisks();
 
             if (templateDisks.size() > 0) {
@@ -55,6 +55,6 @@ public class GetStorageDomainsByVmTemplateIdQuery<P extends GetStorageDomainsByV
     protected StorageDomain getStorageDomain(Guid domainId) {
         return DbFacade.getInstance()
                 .getStorageDomainDao()
-                .getForStoragePool(domainId, vmTemplate.getstorage_pool_id().getValue());
+                .getForStoragePool(domainId, vmTemplate.getStoragePoolId().getValue());
     }
 }

@@ -114,7 +114,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                     && VmTemplateCommand.isVmTemplateImagesReady(getVmTemplate(), null,
                             getReturnValue().getCanDoActionMessages(), true, true, true, false, getTemplateDisks());
             if (retValue) {
-                setStoragePoolId(getVmTemplate().getstorage_pool_id());
+                setStoragePoolId(getVmTemplate().getStoragePoolId());
                 retValue =
                         checkStorageDomain()
                                 && checkStorageDomainStatus(StorageDomainStatus.Active)
@@ -126,7 +126,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                     && DbFacade.getInstance()
                             .getStoragePoolIsoMapDao()
                             .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
-                                    getVmTemplate().getstorage_pool_id().getValue())) == null) {
+                                    getVmTemplate().getStoragePoolId().getValue())) == null) {
                 retValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
             }

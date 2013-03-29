@@ -260,7 +260,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
     private VmTemplate mockVmTemplate() {
         VmTemplate template = new VmTemplate();
         template.setId(vmTemplateId);
-        template.setstorage_pool_id(storagePoolId);
+        template.setStoragePoolId(storagePoolId);
         setDiskList(template);
 
         return template;

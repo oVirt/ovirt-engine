@@ -256,8 +256,8 @@ public class TemplateMapper {
         if (entity.getOrigin() != null) {
             model.setOrigin(VmMapper.map(entity.getOrigin(), null));
         }
-        if (entity.getstatus() != null) {
-            model.setStatus(StatusUtils.create(map(entity.getstatus(), null)));
+        if (entity.getStatus() != null) {
+            model.setStatus(StatusUtils.create(map(entity.getStatus(), null)));
         }
         if (entity.getOs() != null ||
             entity.getDefaultBootSequence() != null ||

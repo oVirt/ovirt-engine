@@ -73,7 +73,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
         if (checkStorageDomain) {
             StorageDomainValidator storageDomainValidator =
                     new StorageDomainValidator(DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
-                            storageDomainId, vmTemplate.getstorage_pool_id()));
+                            storageDomainId, vmTemplate.getStoragePoolId()));
             ValidationResult res = storageDomainValidator.isDomainExistAndActive();
             returnValue = res.isValid();
             if (!returnValue) {
@@ -95,7 +95,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
             }
         }
         if (returnValue && checkLocked) {
-            if (vmTemplate.getstatus() == VmTemplateStatus.Locked) {
+            if (vmTemplate.getStatus() == VmTemplateStatus.Locked) {
                 returnValue = false;
             } else {
                 if (vmtImages != null) {
@@ -111,7 +111,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
                 reasons.add(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED.toString());
             }
         }
-        if (returnValue && checkIllegal && (vmTemplate.getstatus() == VmTemplateStatus.Illegal)) {
+        if (returnValue && checkIllegal && (vmTemplate.getStatus() == VmTemplateStatus.Illegal)) {
             returnValue = false;
             reasons.add(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_ILLEGAL.toString());
         }

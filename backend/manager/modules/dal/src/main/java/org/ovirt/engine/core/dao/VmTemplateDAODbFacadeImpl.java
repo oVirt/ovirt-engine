@@ -126,7 +126,7 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
 
     private MapSqlParameterSource getInsertOrUpdateParameters(VmTemplate template) {
         return getCustomMapSqlParameterSource()
-                .addValue("child_count", template.getchild_count())
+                .addValue("child_count", template.getChildCount())
                 .addValue("creation_date", template.getCreationDate())
                 .addValue("description", template.getDescription())
                 .addValue("mem_size_mb", template.getMemSizeMb())
@@ -139,7 +139,7 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
                 .addValue("domain", template.getDomain())
                 .addValue("num_of_monitors", template.getNumOfMonitors())
                 .addValue("allow_console_reconnect", template.isAllowConsoleReconnect())
-                .addValue("status", template.getstatus())
+                .addValue("status", template.getStatus())
                 .addValue("usb_policy", template.getUsbPolicy())
                 .addValue("time_zone", template.getTimeZone())
                 .addValue("fail_back", template.isFailBack())
@@ -212,7 +212,7 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
             map(rs, entity);
 
             entity.setId(Guid.createGuidFromString(rs.getString("vmt_guid")));
-            entity.setchild_count(rs.getInt("child_count"));
+            entity.setChildCount(rs.getInt("child_count"));
             entity.setMemSizeMb(rs.getInt("mem_size_mb"));
             entity.setName(rs.getString("name"));
             entity.setOs(VmOsType.forValue(rs.getInt("os")));
@@ -220,10 +220,10 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
             entity.setDomain(rs.getString("domain"));
             entity.setNumOfMonitors(rs.getInt("num_of_monitors"));
             entity.setAllowConsoleReconnect(rs.getBoolean("allow_console_reconnect"));
-            entity.setstatus(VmTemplateStatus.forValue(rs.getInt("status")));
-            entity.setvds_group_name(rs.getString("vds_group_name"));
-            entity.setstorage_pool_id(NGuid.createGuidFromString(rs.getString("storage_pool_id")));
-            entity.setstorage_pool_name(rs.getString("storage_pool_name"));
+            entity.setStatus(VmTemplateStatus.forValue(rs.getInt("status")));
+            entity.setVdsGroupName(rs.getString("vds_group_name"));
+            entity.setStoragePoolId(NGuid.createGuidFromString(rs.getString("storage_pool_id")));
+            entity.setStoragePoolName(rs.getString("storage_pool_name"));
             entity.setDefaultDisplayType(DisplayType.forValue(rs.getInt("default_display_type")));
             entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
             entity.setQuotaName(rs.getString("quota_name"));

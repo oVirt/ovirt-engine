@@ -82,7 +82,7 @@ public class NetworkTemplateListModel extends SearchableListModel
                 public int compare(PairQueryable<VmNetworkInterface, VmTemplate> paramT1,
                         PairQueryable<VmNetworkInterface, VmTemplate> paramT2) {
                     int compareValue =
-                            paramT1.getSecond().getvds_group_name().compareTo(paramT2.getSecond().getvds_group_name());
+                            paramT1.getSecond().getVdsGroupName().compareTo(paramT2.getSecond().getVdsGroupName());
 
                     if (compareValue != 0) {
                         return compareValue;

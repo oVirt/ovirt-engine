@@ -140,7 +140,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
         for (VmTemplate template : templates)
         {
             Guid datacenterId =
-                    template.getstorage_pool_id() == null ? NGuid.Empty : template.getstorage_pool_id().getValue();
+                    template.getStoragePoolId() == null ? NGuid.Empty : template.getStoragePoolId().getValue();
 
             if (template.getId().equals(NGuid.Empty))
             {
@@ -150,7 +150,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
             {
                 continue;
             }
-            else if (template.getstatus() == VmTemplateStatus.OK)
+            else if (template.getStatus() == VmTemplateStatus.OK)
             {
                 templatesList.add(template);
             }

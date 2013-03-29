@@ -154,7 +154,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
 
     @Override
     protected Guid extractStoragePoolIdNullSafe(VmTemplate entity) {
-        return entity.getstorage_pool_id().getValue();
+        return entity.getStoragePoolId().getValue();
     }
 
     @Override
@@ -168,12 +168,12 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         {
             if (!a.getId().equals(NGuid.Empty))
             {
-                if (!t.containsKey(a.getstorage_pool_id()))
+                if (!t.containsKey(a.getStoragePoolId()))
                 {
-                    t.put(a.getstorage_pool_id(), new ArrayList<VmTemplate>());
+                    t.put(a.getStoragePoolId(), new ArrayList<VmTemplate>());
                 }
 
-                ArrayList<VmTemplate> list = t.get(a.getstorage_pool_id());
+                ArrayList<VmTemplate> list = t.get(a.getStoragePoolId());
                 list.add(a);
             }
         }
@@ -574,7 +574,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         boolean blankSelected = isBlankTemplateSelected();
 
         getEditCommand().setIsExecutionAllowed(items.size() == 1 && item != null
-                && item.getstatus() != VmTemplateStatus.Locked);
+                && item.getStatus() != VmTemplateStatus.Locked);
         if (getEditCommand().getIsExecutionAllowed() && blankSelected)
         {
             getEditCommand().getExecuteProhibitionReasons().add(ConstantsManager.getInstance()

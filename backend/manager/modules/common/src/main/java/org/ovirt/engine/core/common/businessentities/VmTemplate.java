@@ -97,30 +97,30 @@ public class VmTemplate extends VmBase {
         this.childCount = childCount;
         setName(name);
         this.setNumOfMonitors(numOfMonitors);
-        this.setstatus(VmTemplateStatus.forValue(status));
+        this.setStatus(VmTemplateStatus.forValue(status));
     }
 
-    public int getchild_count() {
+    public int getChildCount() {
         return this.childCount;
     }
 
-    public void setchild_count(int value) {
+    public void setChildCount(int value) {
         this.childCount = value;
     }
 
-    public VmTemplateStatus getstatus() {
+    public VmTemplateStatus getStatus() {
         return status;
     }
 
-    public void setstatus(VmTemplateStatus value) {
+    public void setStatus(VmTemplateStatus value) {
         status = value;
     }
 
-    public String getvds_group_name() {
+    public String getVdsGroupName() {
         return vdsGroupName;
     }
 
-    public void setvds_group_name(String value) {
+    public void setVdsGroupName(String value) {
         vdsGroupName = value;
     }
 
@@ -134,19 +134,19 @@ public class VmTemplate extends VmBase {
         interfaces = value;
     }
 
-    public NGuid getstorage_pool_id() {
+    public NGuid getStoragePoolId() {
         return storagePoolId;
     }
 
-    public void setstorage_pool_id(NGuid value) {
+    public void setStoragePoolId(NGuid value) {
         storagePoolId = value;
     }
 
-    public String getstorage_pool_name() {
+    public String getStoragePoolName() {
         return storagePoolName;
     }
 
-    public void setstorage_pool_name(String value) {
+    public void setStoragePoolName(String value) {
         storagePoolName = value;
     }
 

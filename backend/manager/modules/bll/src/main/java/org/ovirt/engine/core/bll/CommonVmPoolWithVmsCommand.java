@@ -300,7 +300,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             }
             StorageDomain domain = destStorages.get(domainId);
             if (domain == null) {
-                domain = getStorageDomainDAO().getForStoragePool(domainId, getVmTemplate().getstorage_pool_id());
+                domain = getStorageDomainDAO().getForStoragePool(domainId, getVmTemplate().getStoragePoolId());
             }
             int numOfDisksOnDomain = 0;
             if (storageToDisksMap.containsKey(domainId)) {

@@ -350,8 +350,8 @@ public final class Cloner
     private static VmTemplate CloneVmTemplate(VmTemplate instance)
     {
         VmTemplate obj = new VmTemplate();
-        obj.setstorage_pool_id(instance.getstorage_pool_id());
-        obj.setstorage_pool_name(instance.getstorage_pool_name());
+        obj.setStoragePoolId(instance.getStoragePoolId());
+        obj.setStoragePoolName(instance.getStoragePoolName());
         obj.setDefaultDisplayType(instance.getDefaultDisplayType());
         obj.setPriority(instance.getPriority());
         obj.setIsoPath(instance.getIsoPath());
@@ -361,7 +361,7 @@ public final class Cloner
         obj.setDiskImageMap(instance.getDiskImageMap());
         obj.setInterfaces(instance.getInterfaces());
         obj.setAutoStartup(instance.isAutoStartup());
-        obj.setchild_count(instance.getchild_count());
+        obj.setChildCount(instance.getChildCount());
         obj.setCpuPerSocket(instance.getCpuPerSocket());
         obj.setCreationDate(instance.getCreationDate());
         obj.setDefaultBootSequence(instance.getDefaultBootSequence());
@@ -376,11 +376,11 @@ public final class Cloner
         obj.setNumOfMonitors(instance.getNumOfMonitors());
         obj.setAllowConsoleReconnect(instance.isAllowConsoleReconnect());
         obj.setNumOfSockets(instance.getNumOfSockets());
-        obj.setstatus(instance.getstatus());
+        obj.setStatus(instance.getStatus());
         obj.setTimeZone(instance.getTimeZone());
         obj.setUsbPolicy(instance.getUsbPolicy());
         obj.setVdsGroupId(instance.getVdsGroupId());
-        obj.setvds_group_name(instance.getvds_group_name());
+        obj.setVdsGroupName(instance.getVdsGroupName());
         obj.setVmType(instance.getVmType());
         obj.setId(instance.getId());
         obj.setDiskList(instance.getDiskList());

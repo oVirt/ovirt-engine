@@ -271,7 +271,7 @@ public class OvfDataUpdaterTest {
 
     private VmTemplate createVmTemplate(Guid id, VmTemplateStatus templateStatus) {
         VmTemplate template = new VmTemplate();
-        template.setstatus(templateStatus);
+        template.setStatus(templateStatus);
         template.setDbGeneration(1L);
         template.setId(id);
         return template;
