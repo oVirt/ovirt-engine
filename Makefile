@@ -386,9 +386,9 @@ install_misc:
 
 	# Other misc things:
 	install -m 644 backend/manager/conf/jaas.conf $(DESTDIR)$(DATA_DIR)/conf
-	install -m 640 backend/manager/conf/engine.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/
 	install -m 644 backend/manager/conf/engine.conf.defaults $(DESTDIR)$(DATA_DIR)/conf
-	install -dm 750 $(DESTDIR)$(PKG_SYSCONF_DIR)/engine.conf.d
+	install -m 644 backend/manager/conf/engine.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/
+	install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/engine.conf.d
 	install -m 755 packaging/resources/ovirtlogrot.sh ${DESTDIR}$(DATA_DIR)/scripts/
 	install -m 755 packaging/resources/ovirt-cron ${DESTDIR}$(SYSCONF_DIR)/cron.daily/
 

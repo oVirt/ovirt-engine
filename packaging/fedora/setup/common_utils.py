@@ -1256,6 +1256,9 @@ def editEngineSysconfigDatabase(dbUrl, password):
 
     handler.close()
 
+    chownToEngine(basedefs.FILE_ENGINE_CONF_DATABASE)
+    os.chmod(basedefs.FILE_ENGINE_CONF_DATABASE, 0o640)
+
 # TODO: Support SystemD services
 class Service():
     def __init__(self, name):

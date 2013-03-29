@@ -424,8 +424,8 @@ fi
 
 # Engine configuration files:
 %dir %{engine_etc}
-%config(noreplace) %attr(-, %{engine_user}, %{engine_group}) %{engine_etc}/engine.conf
-%dir %attr(-, %{engine_user}, %{engine_group}) %{engine_etc}/engine.conf.d
+%config(noreplace) %{engine_etc}/engine.conf
+%dir %{engine_etc}/engine.conf.d
 
 # File containing the version number of the engine:
 %{engine_data}/conf/version
