@@ -68,7 +68,6 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
     @Override
     public NGuid getStorageDomainId() {
         if (_storageDomainId.equals(Guid.Empty) && getVm() != null) {
-            VmHandler.updateDisksFromDb(getVm());
             List<StorageDomain> domainsInPool = getStorageDomainDAO().getAllForStoragePool(getVm().getStoragePoolId());
             if (domainsInPool.size() > 0) {
                 for (StorageDomain currDomain : domainsInPool) {
@@ -229,48 +228,32 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
 
     @Override
     protected boolean canDoAction() {
-        boolean retValue = true;
         if (getVm() == null) {
-            retValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
-        // else if (IrsClusterMonitor.Instance.DiskFreePercent <
-        // Config.FreeSpaceLow)
-        // {
-        // retValue = false;
-        // ReturnValue.CanDoActionMessages.Add(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString());
-        // }
-        else if (getStorageDomainId().equals(Guid.Empty)) {
-            addCanDoActionMessage(VdcBllMessages.VM_CANNOT_SUSPEND_NO_SUITABLE_DOMAIN_FOUND);
-            retValue = false;
-        } else {
-            if (getVm().getStatus() == VMStatus.WaitForLaunch || getVm().getStatus() == VMStatus.NotResponding) {
-                retValue = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
-            } else if (getVm().getStatus() != VMStatus.Up) {
-                retValue = false;
-                getReturnValue().getCanDoActionMessages()
-                        .add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_UP.toString());
-            } else {
-                if (AsyncTaskManager.getInstance().EntityHasTasks(getVmId())) {
-                    retValue = false;
-                    addCanDoActionMessage(VdcBllMessages.VM_CANNOT_SUSPENDE_HAS_RUNNING_TASKS);
-                }
-                if (retValue) {
-                    // check if vm has stateless images in db in case vm was run once as stateless
-                    // (then is_stateless is false)
-                    if (getVm().isStateless() ||
-                            DbFacade.getInstance().getSnapshotDao().exists(getVmId(), SnapshotType.STATELESS)) {
-                        retValue = false;
-                        addCanDoActionMessage(VdcBllMessages.VM_CANNOT_SUSPEND_STATELESS_VM);
-                    } else if (DbFacade.getInstance().getVmPoolDao().getVmPoolMapByVmGuid(getVmId()) != null) {
-                        retValue = false;
-                        addCanDoActionMessage(VdcBllMessages.VM_CANNOT_SUSPEND_VM_FROM_POOL);
-                    }
-                }
-            }
+        VMStatus vmStatus = getVm().getStatus();
+        if (vmStatus == VMStatus.WaitForLaunch || vmStatus == VMStatus.NotResponding) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
         }
-        return retValue;
+        if (vmStatus != VMStatus.Up) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_UP);
+        }
+        if (AsyncTaskManager.getInstance().EntityHasTasks(getVmId())) {
+            return failCanDoAction(VdcBllMessages.VM_CANNOT_SUSPENDE_HAS_RUNNING_TASKS);
+        }
+        // check if vm has stateless images in db in case vm was run once as stateless
+        // (then isStateless is false)
+        if (getVm().isStateless() ||
+                DbFacade.getInstance().getSnapshotDao().exists(getVmId(), SnapshotType.STATELESS)) {
+            return failCanDoAction(VdcBllMessages.VM_CANNOT_SUSPEND_STATELESS_VM);
+        }
+        if (DbFacade.getInstance().getVmPoolDao().getVmPoolMapByVmGuid(getVmId()) != null) {
+            return failCanDoAction(VdcBllMessages.VM_CANNOT_SUSPEND_VM_FROM_POOL);
+        }
+        if (getStorageDomainId().equals(Guid.Empty)) {
+            return failCanDoAction(VdcBllMessages.VM_CANNOT_SUSPEND_NO_SUITABLE_DOMAIN_FOUND);
+        }
+        return true;
     }
 
     protected boolean doesStorageDomainhaveSpaceForRequest(StorageDomain storageDomain, long sizeRequested) {
