@@ -96,6 +96,8 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	PKG_CACHE_DIR=%{engine_cache} \\\
 	PKG_LOG_DIR=%{engine_log} \\\
 	PKG_TMP_DIR=%{engine_tmp} \\\
+	PKG_USER=%{engine_user} \\\
+	PKG_GROUP=%{engine_group} \\\
 	%{?BUILD_FLAGS:BUILD_FLAGS="%{BUILD_FLAGS}"} \\\
 	%{?EXTRA_BUILD_FLAGS:EXTRA_BUILD_FLAGS="%{EXTRA_BUILD_FLAGS}"}
 

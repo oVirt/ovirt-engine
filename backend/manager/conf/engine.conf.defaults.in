@@ -47,8 +47,8 @@ ENGINE_PID=@ENGINE_PID@
 # The names of the user and group that will execute the java
 # virtual machine of the engine:
 #
-ENGINE_USER=ovirt
-ENGINE_GROUP=ovirt
+ENGINE_USER=@ENGINE_USER@
+ENGINE_GROUP=@ENGINE_GROUP@
 
 #
 # These variables control the amount of memory used by the java

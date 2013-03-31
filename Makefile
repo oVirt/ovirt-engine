@@ -53,6 +53,8 @@ PKG_JBOSS_MODULES=$(DATA_DIR)/modules
 PKG_CACHE_DIR=$(LOCALSTATE_DIR)/cache/$(ENGINE_NAME)
 PKG_LOG_DIR=$(LOCALSTATE_DIR)/log/$(ENGINE_NAME)
 PKG_TMP_DIR=$(LOCALSTATE_DIR)/tmp/$(ENGINE_NAME)
+PKG_USER=ovirt
+PKG_GROUP=ovirt
 RPMBUILD=rpmbuild
 PYTHON=python
 PYTHON_DIR:=$(shell $(PYTHON) -c "from distutils.sysconfig import get_python_lib as f;print(f())")
@@ -98,6 +100,8 @@ ARTIFACTS = \
 	sed \
 	-e "s|@ENGINE_DEFAULTS@|$(DATA_DIR)/conf/engine.conf.defaults|" \
 	-e "s|@ENGINE_VARS@|$(PKG_SYSCONF_DIR)/engine.conf|" \
+	-e "s|@ENGINE_USER@|$(PKG_USER)|" \
+	-e "s|@ENGINE_GROUP@|$(PKG_GROUP)|" \
 	-e "s|@ENGINE_ETC@|$(PKG_SYSCONF_DIR)|" \
 	-e "s|@ENGINE_PKI@|$(PKG_PKI_DIR)|" \
 	-e "s|@ENGINE_LOG@|$(PKG_LOG_DIR)|" \
