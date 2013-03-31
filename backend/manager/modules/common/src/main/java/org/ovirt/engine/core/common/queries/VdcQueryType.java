@@ -17,8 +17,6 @@ public enum VdcQueryType implements Serializable {
     IsBalloonEnabled(VdcQueryAuthType.User),
 
     // Vds queries
-    IsVdsWithSameNameExist,
-    IsVdsWithSameHostExist,
     IsVdsWithSameIpExists,
     GetVdsByVdsId,
     GetVdsByName,
