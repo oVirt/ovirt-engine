@@ -1,12 +1,12 @@
 package org.ovirt.engine.api.restapi.types;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
-import org.ovirt.engine.api.common.util.StringUtils;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.DataCenterStatus;
-import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.model.Version;
+import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -49,7 +49,7 @@ public class DataCenterMapper {
         DataCenter model = template != null ? template : new DataCenter();
         model.setId(entity.getId().toString());
         model.setName(entity.getname());
-        if (!StringUtils.isNullOrEmpty(entity.getdescription())) {
+        if (!StringUtils.isEmpty(entity.getdescription())) {
                 model.setDescription(entity.getdescription());
         }
         model.setStorageType(StorageDomainMapper.map(entity.getstorage_pool_type(), null));

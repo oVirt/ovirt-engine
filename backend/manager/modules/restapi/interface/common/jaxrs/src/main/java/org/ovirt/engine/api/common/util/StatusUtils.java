@@ -16,13 +16,14 @@
 
 package org.ovirt.engine.api.common.util;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Status;
 
 public class StatusUtils {
 
     public static Status create(String statusStr) {
-        if (StringUtils.isNullOrEmpty(statusStr)) {
+        if (StringUtils.isEmpty(statusStr)) {
             return null;
         } else {
             Status status = new Status();
