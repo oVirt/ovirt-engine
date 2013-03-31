@@ -124,6 +124,8 @@ GENERATED = \
 	backend/manager/tools/src/main/conf/engine-manage-domains-log4j.xml \
 	backend/manager/tools/src/main/conf/engine-notifier-log4j.xml \
 	packaging/fedora/engine-service.py \
+	packaging/fedora/engine-service.systemd \
+	packaging/fedora/engine-service.sysv \
 	packaging/fedora/spec/ovirt-engine.spec \
 	$(NULL)
 

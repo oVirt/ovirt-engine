@@ -28,20 +28,10 @@ ENGINE_VAR=@ENGINE_VAR@
 ENGINE_CACHE=@ENGINE_CACHE@
 
 #
-# Resource limits:
-#
-ENGINE_NOFILE=65535
-
-#
 # Intervals for stoping the engine:
 #
 ENGINE_STOP_TIME=10
 ENGINE_STOP_INTERVAL=1
-
-#
-# Location of the PID file used by the engine:
-#
-ENGINE_PID=@ENGINE_PID@
 
 #
 # The names of the user and group that will execute the java

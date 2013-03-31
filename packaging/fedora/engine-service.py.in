@@ -25,13 +25,13 @@ import grp
 import os
 import pwd
 import re
-import resource
 import shutil
 import signal
 import stat
 import sys
 import syslog
 import time
+import subprocess
 from optparse import OptionParser
 
 import daemon
@@ -256,11 +256,9 @@ def loadConfig():
     engineDeploymentsDir = os.path.join(engineVarDir, "deployments")
 
     # Engine files:
-    global enginePidFile
     global engineLogFile
     global engineConsoleLogFile
     global engineServerLogFile
-    enginePidFile = engineConfig.getString("ENGINE_PID")
     engineLogFile = os.path.join(engineLogDir, "engine.log")
     engineConsoleLogFile = os.path.join(engineLogDir, "console.log")
     engineServerLogFile = os.path.join(engineLogDir, "server.log")
@@ -384,17 +382,6 @@ def removeEnginePid():
                     pass
             except IOError:
                 pass
-
-
-def setLimit(name):
-    limit = eval("resource.RLIMIT_" + name.upper())
-    value = engineConfig.getInteger("ENGINE_" + name.upper())
-    try:
-        resource.setrlimit(limit, (value, value))
-    except:
-        syslog.syslog(syslog.LOG_WARNING,
-            "Can't change the value of the resource "
-            "limit \"%s\" to %d." % (name, value))
 
 
 def startEngine():
@@ -573,11 +560,6 @@ def startEngine():
         "ENGINE_CACHE": engineCacheDir,
     }
 
-    # Change the resource limits while we are root as we won't be
-    # able to change them once we assume the engine identity (the
-    # values come from the configuration):
-    setLimit("nofile")
-
     # this is required to allow
     # writing after user id is changed
     if enginePidFile is not None:
@@ -593,10 +575,16 @@ def startEngine():
 
     engineConsoleLog = open(engineConsoleLogFile, "w+")
 
+    class TerminateException(Exception):
+        pass
+    def myterm(signum, frame):
+        raise TerminateException()
+
     with daemon.DaemonContext(
         detach_process=not foreground,
         signal_map={
-            signal.SIGTERM: 'terminate',
+            signal.SIGTERM: myterm,
+            signal.SIGINT: myterm,
             signal.SIGHUP: None,
         },
         uid=engineUid,
@@ -605,13 +593,51 @@ def startEngine():
         stderr=engineConsoleLog,
     ):
         saveEnginePid(os.getpid())
-        os.execvpe(
-            file=javaLauncher,
-            args=engineArgs,
-            env=engineEnv,
-        )
 
-    raise Exception("Can't execute \"%s\"." % javaLauncher)
+        try:
+            p = subprocess.Popen(
+                args=engineArgs,
+                executable=javaLauncher,
+                env=engineEnv,
+                close_fds=True,
+            )
+            p.wait()
+
+            if p.returncode != 0:
+                raise Exception("Engine terminated with status code %s" % p.returncode)
+
+        except TerminateException:
+            stopTime = engineConfig.getInteger("ENGINE_STOP_TIME")
+            stopInterval = engineConfig.getInteger("ENGINE_STOP_INTERVAL")
+
+            # avoid recursive signals
+            for sig in (signal.SIGTERM, signal.SIGINT):
+                signal.signal(sig, signal.SIG_IGN)
+
+            try:
+                p.terminate()
+                for i in range(stopTime // stopInterval):
+                    if p.poll() is not None:
+                        break
+                    time.sleep(stopInterval)
+            except OSError as e:
+                syslog.syslog(syslog.LOG_WARNING, "Cannot terminate pid %d: %s." % (p.pid, e))
+
+            try:
+                if p.poll() is None:
+                    p.kill()
+                    raise Exception("Had to kill engine process %s" % p.pid)
+            except OSError as e:
+                syslog.syslog(syslog.LOG_WARNING, "Cannot kill pid %d: %s." % (p.pid, e))
+                raise
+
+        finally:
+            # Remove the PID file:
+            removeEnginePid()
+
+            # Clean the temporary directory:
+            if os.path.exists(engineTmpDir):
+                shutil.rmtree(engineTmpDir)
 
 
 def stopEngine():
@@ -654,13 +680,6 @@ def stopEngine():
         syslog.syslog(syslog.LOG_WARNING, "Killed engine process %d." % enginePid)
     else:
         syslog.syslog(syslog.LOG_INFO, "Stopped engine process %d." % enginePid)
-
-    # Remove the PID file:
-    removeEnginePid()
-
-    # Clean the temporary directory:
-    if os.path.exists(engineTmpDir):
-        shutil.rmtree(engineTmpDir)
 
 
 def linkModules(modulesDir, modulesTmpDir):
@@ -791,7 +810,6 @@ def main():
     global options
     (options, args) = parser.parse_args()
 
-    global enginePidFile
     global engineConsoleLogFile
     global foreground
     global beQuiet
@@ -799,8 +817,6 @@ def main():
     if options.pidfile is not None:
         enginePidFile = options.pidfile
     foreground = options.foreground
-    if foreground:
-        enginePidFile = None
     beQuiet = options.quiet
 
     if len(args) != 1:

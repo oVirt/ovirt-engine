@@ -283,6 +283,7 @@ make %{make_common_opts} install DESTDIR=%{buildroot}
 install -dm 755 %{buildroot}/%{engine_state}/deployments
 install -dm 755 %{buildroot}/%{engine_state}/content
 install -dm 755 %{buildroot}/%{engine_log}/{host-deploy,notifier,engine-manage-domains}
+install -dm 755 %{buildroot}/%{engine_cache}
 install -dm 755 %{buildroot}/%{engine_run}/notifier
 
 # Needed for compatibility if package is different than the directory structure
@@ -353,7 +354,7 @@ install -m 644 packaging/resources/ovirt-tmpfilesd %{buildroot}%{_sysconfdir}/tm
 # Install System V init scripts:
 %if %{install_systemv}
 install -dm 755 %{buildroot}%{_sysconfdir}/rc.d/init.d
-ln -s %{engine_data}/service/engine-service.py %{buildroot}%{_sysconfdir}/rc.d/init.d/ovirt-engine
+install -m 644 packaging/fedora/engine-service.sysv %{buildroot}%{_sysconfdir}/rc.d/init.d/ovirt-engine
 %endif
 
 # backward compatibly (pre-3.3.0)
@@ -414,8 +415,8 @@ fi
 %dir %{engine_data}/ovirt-isos
 %dir %{engine_data}/db-backups
 %dir %{engine_data}/scripts
-%dir %{engine_run}
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}
+%dir %attr(-, %{engine_user}, %{engine_group}) %{engine_cache}
 
 # Log rotation script:
 %{engine_data}/scripts/ovirtlogrot.sh

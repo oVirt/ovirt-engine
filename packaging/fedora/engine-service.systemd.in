@@ -1,0 +1,13 @@
+[Unit]
+Description=oVirt Engine
+After=network.service postgresql.service
+
+[Service]
+Type=simple
+User=@ENGINE_USER@
+Group=@ENGINE_GROUP@
+LimitNOFILE=65535
+ExecStart=/usr/bin/engine-service --foreground --quiet start
+
+[Install]
+WantedBy=multi-user.target
