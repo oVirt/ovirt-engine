@@ -1,4 +1,0 @@
-# The default max number of open files is 1024 and it is not
-# enough for the engine:
-
-ovirt - nofile 65535

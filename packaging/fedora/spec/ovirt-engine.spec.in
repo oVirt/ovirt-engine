@@ -430,7 +430,6 @@ fi
 %dir %{engine_etc}/engine.conf.d
 
 # Files needed by the service:
-%config(noreplace) %{_sysconfdir}/security/limits.d/10-ovirt-engine.conf
 %{engine_data}/service
 %{_bindir}/engine-service
 %if %{install_systemd}
