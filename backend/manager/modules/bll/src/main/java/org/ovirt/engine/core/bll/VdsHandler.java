@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -19,7 +18,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -65,15 +63,6 @@ public class VdsHandler extends BaseHandler {
 
     public static void HandleVdsCpuFlagsOrClusterChanged(Guid vdsId) {
 
-    }
-
-    public boolean isVdsWithSameIpExists(String ipAddress) {
-        return isVdsWithSameIpExistsStatic(ipAddress);
-    }
-
-    public static boolean isVdsWithSameIpExistsStatic(String ipAddress) {
-        List<VdsStatic> vds = DbFacade.getInstance().getVdsStaticDao().getAllWithIpAddress(ipAddress);
-        return (vds.size() != 0);
     }
 
     static private boolean isPendingOvirt(VDSType type, VDSStatus status) {
