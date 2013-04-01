@@ -64,6 +64,10 @@ if [ "${res}" =  "${DATABASE}" ]; then
         exit 1
     else
         dropdb  -h ${SERVERNAME} -p ${PORT} -U ${USERNAME} ${DATABASE}
+        if [ $? -ne 0 ]; then
+            echo "Failed to drop database ${DATABASE}."
+            exit 2
+        fi
     fi
 fi
 
