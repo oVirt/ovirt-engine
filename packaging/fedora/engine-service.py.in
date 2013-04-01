@@ -635,11 +635,11 @@ def main():
         help="pid file to use",
     )
     parser.add_option(
-        "-f", "--foreground",
-        dest="foreground",
+        "--background",
+        dest="background",
         action="store_true",
         default=False,
-        help="Do not go into background",
+        help="Go into the background",
     )
     global options
     (options, args) = parser.parse_args()
@@ -649,7 +649,7 @@ def main():
 
     if options.pidfile is not None:
         enginePidFile = options.pidfile
-    foreground = options.foreground
+    foreground = not options.background
 
     if len(args) != 1:
         parser.error("action is missing")
