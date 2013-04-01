@@ -34,7 +34,7 @@ case "$1" in
 	touch "${PIDFILE}"
         chown "${USER}" "${PIDFILE}"
 	daemon --user "${USER}" --pidfile="${PIDFILE}" \
-		/usr/bin/engine-service --pidfile="${PIDFILE}" --quiet start
+		/usr/bin/engine-service --pidfile="${PIDFILE}" start
 	RETVAL=$?
 	echo
 	if [ $RETVAL -eq 0 ]; then

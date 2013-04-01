@@ -14,12 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Start/stop oVirt Engine
-#
-# chkconfig: - 65 34
-# description: oVirt Engine
-# pidfile: /var/run/ovirt-engine.pid
-
 import glob
 import grp
 import os
@@ -42,7 +36,6 @@ from Cheetah.Template import Template
 engineName = "engine-service"
 
 # Misc
-beQuiet = False
 foreground = False
 
 # The engine system configuration variables:
@@ -280,10 +273,6 @@ def loadConfig():
     jbossConfigFile = os.path.join(engineTmpDir, "engine-service.xml")
 
 
-def isProcessRunning(pid):
-    return os.path.exists(os.path.join('/proc', str(pid)))
-
-
 def checkOwnership(name, uid=None, gid=None):
     # Get the metadata of the file:
     st = os.stat(name)
@@ -353,17 +342,6 @@ def checkInstallation():
     # XXX: Add more checks here!
 
 
-def loadEnginePid():
-    ret = None
-    try:
-        if enginePidFile is not None and os.path.exists(enginePidFile):
-            with open(enginePidFile, "r") as enginePidFd:
-                ret = int(enginePidFd.readline())
-    except ValueError:
-        pass
-    return ret
-
-
 def saveEnginePid(pid):
     if enginePidFile is not None:
         with open(enginePidFile, "w") as enginePidFd:
@@ -387,19 +365,6 @@ def removeEnginePid():
 def startEngine():
     # perform checks:
     checkInstallation()
-
-    # Get the PID:
-    enginePid = loadEnginePid()
-
-    # If the PID already exists then we need to check if the
-    # process is running and tell the user that the service needs
-    # to be restarted:
-    if enginePid and isProcessRunning(enginePid):
-        syslog.syslog(syslog.LOG_WARNING,
-            "The engine PID file \"%s\" exists and the "
-            "process %d is running." %
-            (enginePidFile, enginePid))
-        return
 
     # The list of applications to be deployed:
     engineApps = engineConfig.getString("ENGINE_APPS").split()
@@ -640,48 +605,6 @@ def startEngine():
                 shutil.rmtree(engineTmpDir)
 
 
-def stopEngine():
-    # perform checks:
-    checkInstallation()
-
-    # Load the PID:
-    enginePid = loadEnginePid()
-    if not enginePid:
-        syslog.syslog(syslog.LOG_INFO, "The engine PID file \"%s\" doesn't exist." % enginePidFile)
-        return
-
-    # First check that the process exists:
-    if not isProcessRunning(enginePid):
-        syslog.syslog(syslog.LOG_WARNING, "The engine PID file \"%s\" contains %d, but that process doesn't exist, will just remove the file." % (enginePidFile, enginePid))
-        removeEnginePid()
-        return
-
-    # Get the time to wait for the engine to stop from the configuration:
-    stopTime = engineConfig.getInteger("ENGINE_STOP_TIME")
-    stopInterval = engineConfig.getInteger("ENGINE_STOP_INTERVAL")
-
-    # Kill the process softly and wait for it to dissapear or for the timeout
-    # to expire:
-    os.kill(enginePid, signal.SIGTERM)
-    initialTime = time.time()
-    timeElapsed = 0
-    while isProcessRunning(enginePid):
-        syslog.syslog(syslog.LOG_INFO, "Waiting up to %d seconds for engine process %d to finish." % ((stopTime - timeElapsed), enginePid))
-        timeElapsed = time.time() - initialTime
-        if timeElapsed > stopTime:
-            break
-        time.sleep(stopInterval)
-
-    # If the process didn't dissapear after the allowed time then we forcibly
-    # kill it:
-    if isProcessRunning(enginePid):
-        syslog.syslog(syslog.LOG_WARNING, "The engine process %d didn't finish after waiting %d seconds, killing it." % (enginePid, timeElapsed))
-        os.kill(enginePid, signal.SIGKILL)
-        syslog.syslog(syslog.LOG_WARNING, "Killed engine process %d." % enginePid)
-    else:
-        syslog.syslog(syslog.LOG_INFO, "Stopped engine process %d." % enginePid)
-
-
 def linkModules(modulesDir, modulesTmpDir):
     # For each directory in the modules directory create the same in the
     # temporary directory and populate with symlinks pointing to the
@@ -698,100 +621,11 @@ def linkModules(modulesDir, modulesTmpDir):
             os.symlink(childPath, childTmpPath)
 
 
-def checkEngine():
-    # First check that the engine PID file exists, if it doesn't
-    # then we assume that the engine is not running:
-    enginePid = loadEnginePid()
-    if not enginePid:
-        print("The engine is not running.")
-        sys.exit(3)
-
-    # Now check that the process exists:
-    if not isProcessRunning(enginePid):
-        print("The engine process %d is not running." % enginePid)
-        sys.exit(1)
-
-    # XXX: Here we could check deeper the status of the engine sending a
-    # request to the health status servlet.
-    print("The engine process %d is running." % enginePid)
-    sys.exit(0)
-
-
-def showUsage():
-    print("Usage: %s {start|stop|restart|status}" % engineName)
-
-
-def prettyAction(label, action):
-    # Determine the colors to use according to the type of terminal:
-    colorNormal = ""
-    colorSuccess = ""
-    colorFailure = ""
-    moveColumn = ""
-    if os.getenv("TERM") in ["linux", "xterm"]:
-        colorNormal = "\033[0;39m"
-        colorSuccess = "\033[0;32m"
-        colorFailure  = "\033[0;31m"
-        moveColumn = "\033[60G"
-
-    # Inform that we are doing the job:
-    if not beQuiet:
-        sys.stdout.write(label + " " + engineName + ":")
-        sys.stdout.flush()
-
-    # Do the real action:
-    try:
-        action()
-        if not beQuiet:
-            sys.stdout.write(moveColumn + " [  " + colorSuccess + "OK" + colorNormal + "  ]\n")
-    except Exception:
-        if not beQuiet:
-            sys.stdout.write(moveColumn + " [" + colorFailure + "FAILED" + colorNormal + "]\n")
-        raise
-
-
-def performAction(action):
-    # The status action is a bit special, as it has some very
-    # specific requirements regarding the exit codes, so they are
-    # managed inside the function:
-    if action == "status":
-        try:
-            checkEngine()
-        except SystemExit:
-            raise
-        except Exception as exception:
-            print(str(exception))
-            sys.exit(4)
-
-    # The rest of the actions all work in the same way, if
-    # everything goes well finish with exit code zero, otherwise
-    # finish with non zero exit code:
-    try:
-        if action == "start":
-            prettyAction("Starting", startEngine)
-        elif action == "stop":
-            prettyAction("Stopping", stopEngine)
-        elif action == "restart":
-            prettyAction("Stopping", stopEngine)
-            prettyAction("Starting", startEngine)
-    except Exception as exception:
-        syslog.syslog(syslog.LOG_ERR, str(exception))
-        sys.exit(1)
-    else:
-        sys.exit(0)
-
-
 def main():
     loadConfig()
 
     parser = OptionParser(
-        usage="usage: %prog [options] start|stop|restart|status",
-    )
-    parser.add_option(
-        "-q", "--quiet",
-        dest="quiet",
-        action="store_true",
-        default=False,
-        help="Quiet mode",
+        usage="usage: %prog [options] start",
     )
     parser.add_option(
         "--pidfile",
@@ -812,24 +646,27 @@ def main():
 
     global engineConsoleLogFile
     global foreground
-    global beQuiet
 
     if options.pidfile is not None:
         enginePidFile = options.pidfile
     foreground = options.foreground
-    beQuiet = options.quiet
 
     if len(args) != 1:
         parser.error("action is missing")
     action = args[0]
-    if not action in ["start", "stop", "restart", "status"]:
+    if not action in ("start"):
         parser.error("invalid action '%s'" % action)
 
     # Run the action with syslog open and remember to close it
     # regardless of what happens in the middle:
     syslog.openlog(engineName, syslog.LOG_PID)
     try:
-        performAction(action)
+        startEngine()
+    except Exception as exception:
+        syslog.syslog(syslog.LOG_ERR, str(exception))
+        sys.exit(1)
+    else:
+        sys.exit(0)
     finally:
         syslog.closelog()
 
