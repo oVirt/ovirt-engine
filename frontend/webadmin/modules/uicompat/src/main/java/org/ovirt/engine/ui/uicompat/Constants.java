@@ -1790,4 +1790,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Event Details")
     String eventDetailsTitle();
+
+    @DefaultStringValue("'Use Host CPU' is only available for cluster compatible with ver 3.2 or higher, when 'Do not allow migration' is selected or 'Allow manual migration' is selected and no host is specified) ")
+    String hosCPUUnavailable();
 }

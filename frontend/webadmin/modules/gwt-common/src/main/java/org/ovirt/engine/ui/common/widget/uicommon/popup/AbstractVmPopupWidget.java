@@ -981,12 +981,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
             }
         });
 
-        cpuPinningLabel.setVisible(vm.getCpuPinning().getIsAvailable());
+        cpuPinningLabel.setVisible(vm.getCpuPinning().getIsChangable());
         vm.getCpuPinning().getPropertyChangedEvent().addListener(new IEventListener() {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                cpuPinningLabel.setVisible(vm.getCpuPinning().getIsAvailable());
+                cpuPinningLabel.setVisible(vm.getCpuPinning().getIsChangable());
             }
         });
 

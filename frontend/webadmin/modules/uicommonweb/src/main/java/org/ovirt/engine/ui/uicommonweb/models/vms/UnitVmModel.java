@@ -1167,7 +1167,7 @@ public class UnitVmModel extends Model {
 
         setCpuPinning(new NotChangableForVmInPoolEntityModel());
         getCpuPinning().setEntity("");
-        getCpuPinning().setIsAvailable(false);
+        getCpuPinning().setIsChangable(false);
 
         initTimeZones();
     }
@@ -1276,7 +1276,8 @@ public class UnitVmModel extends Model {
             }
             else if (sender == getMigrationMode())
             {
-                MigrationMode_EntityChanged(sender, args);
+                behavior.updateUseHostCpuAvailability();
+                behavior.updateCpuPinningVisibility();
             }
         }
         else if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition))
@@ -1289,8 +1290,9 @@ public class UnitVmModel extends Model {
             {
                 TotalCPUCores_EntityChanged(sender, args);
             }
-            else if (sender == getHostCpu())
+            else if (sender == getIsAutoAssign())
             {
+                behavior.updateUseHostCpuAvailability();
                 behavior.updateCpuPinningVisibility();
             }
             else if (sender == getProvisioning())
@@ -1662,18 +1664,6 @@ public class UnitVmModel extends Model {
 
     private void CoresPerSocket_EntityChanged(Object sender, EventArgs args) {
         behavior.coresPerSocketChanged();
-    }
-
-    private void MigrationMode_EntityChanged(Object sender, EventArgs args)
-    {
-        if (MigrationSupport.PINNED_TO_HOST == getMigrationMode().getSelectedItem()) {
-            getHostCpu().setIsChangable(true);
-        } else {
-            getHostCpu().setEntity(false);
-            getHostCpu().setIsChangable(false);
-        }
-
-        behavior.updateCpuPinningVisibility();
     }
 
     private void UpdateNumOfMonitors()

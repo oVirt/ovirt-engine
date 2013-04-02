@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -38,10 +39,12 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
+import org.ovirt.engine.ui.uicompat.Constants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
+    private final Constants constants = ConstantsManager.getInstance().getConstants();
     private TModel privateModel;
 
     public TModel getModel() {
@@ -532,8 +535,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         Collections.sort(disks, new Linq.DiskByAliasComparer());
                         ArrayList<DiskModel> list = new ArrayList<DiskModel>();
 
-                        for (Disk disk : disks)
-                        {
+                        for (Disk disk : disks) {
                             DiskModel diskModel = new DiskModel();
                             diskModel.getAlias().setEntity(disk.getDiskAlias());
 
@@ -544,7 +546,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                 tempVar.setEntity(diskImage.getSizeInGigabytes());
                                 diskModel.setSize(tempVar);
                                 ListModel tempVar2 = new ListModel();
-                                tempVar2.setItems((diskImage.getVolumeType() == VolumeType.Preallocated ? new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] { VolumeType.Preallocated }))
+                                tempVar2.setItems((diskImage.getVolumeType() == VolumeType.Preallocated ? new ArrayList<VolumeType>(Arrays.asList(new VolumeType[]{VolumeType.Preallocated}))
                                         : AsyncDataProvider.GetVolumeTypeList()));
                                 tempVar2.setSelectedItem(diskImage.getVolumeType());
                                 diskModel.setVolumeType(tempVar2);
@@ -728,7 +730,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         if (getModel().getCluster().getSelectedItem() != null) {
             VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
             String compatibilityVersion = cluster.getcompatibility_version().toString();
-            boolean hasCpuPinning = Boolean.TRUE.equals(getModel().getHostCpu().getEntity());
+            boolean hasCpuPinning = Boolean.FALSE.equals(getModel().getIsAutoAssign().getEntity());
 
             if (Boolean.FALSE.equals(AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.CpuPinningEnabled,
                     compatibilityVersion))) {
@@ -740,10 +742,31 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             }
 
             getModel().getCpuPinning()
-                    .setIsAvailable(hasCpuPinning);
+                    .setIsChangable(hasCpuPinning);
             if (!hasCpuPinning) {
                 getModel().getCpuPinning().setEntity("");
             }
+        }
+    }
+
+    public void updateUseHostCpuAvailability() {
+
+        boolean clusterSupportsHostCpu =
+                getModel().getCluster().getSelectedItem() != null
+                        && ((VDSGroup) (getModel().getCluster().getSelectedItem())).getcompatibility_version()
+                                .compareTo(Version.v3_2) >= 0;
+        boolean nonMigratable = MigrationSupport.PINNED_TO_HOST == getModel().getMigrationMode().getSelectedItem();
+        boolean manuallyMigratableAndAnyHostInCluster =
+                MigrationSupport.IMPLICITLY_NON_MIGRATABLE == getModel().getMigrationMode().getSelectedItem()
+                        && Boolean.TRUE.equals(getModel().getIsAutoAssign().getEntity());
+
+        if (clusterSupportsHostCpu && (nonMigratable || manuallyMigratableAndAnyHostInCluster)) {
+            getModel().getHostCpu().setIsChangable(true);
+        } else {
+            getModel().getHostCpu().setEntity(false);
+            getModel().getHostCpu().setChangeProhibitionReason(constants.hosCPUUnavailable());
+            getModel().getHostCpu().setIsChangable(false);
+
         }
     }
 
