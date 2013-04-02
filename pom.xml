@@ -39,6 +39,9 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!--  <jbossHome>${env.JBOSS_HOME}</jbossHome> -->
     <jbossServer>${jbossHome}/standalone</jbossServer>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
+    <animal.sniffer.signature>java17</animal.sniffer.signature>
 
     <!-- Dependencies Versions -->
     <commons-logging.version>1.1</commons-logging.version>
@@ -367,8 +370,8 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>2.3.2</version>
           <configuration>
-            <source>1.6</source>
-            <target>1.6</target>
+            <source>${maven.compiler.source}</source>
+            <target>${maven.compiler.target}</target>
             <includes>
               <include>**/*.txt</include>
               <include>**/*.java</include>
@@ -530,15 +533,19 @@
     </pluginManagement>
     <plugins>
       <plugin>
-        <groupId>org.jvnet</groupId>
-        <artifactId>animal-sniffer</artifactId>
-        <version>1.2</version>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>animal-sniffer-maven-plugin</artifactId>
+        <version>1.9</version>
         <configuration>
           <signature>
-            <groupId>org.jvnet.animal-sniffer</groupId>
-            <artifactId>java1.6</artifactId>
+            <groupId>org.codehaus.mojo.signature</groupId>
+            <artifactId>${animal.sniffer.signature}</artifactId>
             <version>1.0</version>
           </signature>
+          <ignores>
+            <ignore>sun.security.krb5.Config</ignore>
+            <ignore>sun.misc.Signal</ignore>
+          </ignores>
         </configuration>
       </plugin>
     </plugins>
