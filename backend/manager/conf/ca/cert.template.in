@@ -1,22 +1,24 @@
 RANDFILE = .rnd
 
-[ req ]
+[req]
+
 default_bits = rsa:2048
 default_keyfile = keys/cert.pem
 distinguished_name = req_distinguished_name
 attributes = req_attributes
-x509_extensions	= v3_ca
+x509_extensions = v3_ca
 prompt = no
 output_password = NoSoup4U
 
-[ req_attributes ]
+[req_attributes]
 
-[ v3_ca ]
-subjectKeyIdentifier=hash
+[v3_ca]
+
+subjectKeyIdentifier = hash
 authorityInfoAccess = caIssuers;URI:@AIA@
-authorityKeyIdentifier=keyid:always,issuer:always
+authorityKeyIdentifier = keyid:always,issuer:always
 basicConstraints = CA:false
-keyUsage=critical,digitalSignature,keyEncipherment
-extendedKeyUsage=critical,serverAuth,clientAuth
+keyUsage = critical,digitalSignature,keyEncipherment
+extendedKeyUsage = critical,serverAuth,clientAuth
 
-[ req_distinguished_name ]
+[req_distinguished_name]
