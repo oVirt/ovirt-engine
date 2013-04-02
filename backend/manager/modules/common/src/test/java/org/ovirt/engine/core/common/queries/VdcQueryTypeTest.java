@@ -12,8 +12,8 @@ public class VdcQueryTypeTest {
     @Test
     public void testForValue() {
         assertEquals("wrong value",
-                VdcQueryType.forValue(VdcQueryType.GetAgentFenceOptions2.getValue()),
-                VdcQueryType.GetAgentFenceOptions2);
+                VdcQueryType.forValue(VdcQueryType.GetAgentFenceOptions.getValue()),
+                VdcQueryType.GetAgentFenceOptions);
     }
 
     @Test

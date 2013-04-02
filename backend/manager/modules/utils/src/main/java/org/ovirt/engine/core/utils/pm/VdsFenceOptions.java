@@ -73,23 +73,8 @@ public class VdsFenceOptions implements Serializable {
         fencingAgentInstanceOptions = (value != null) ? new HashMap<String, String>(value.asMap()) : null;
     }
 
-    public ValueObjectMap getFencingOptionMappingMap() {
-        return new ValueObjectMap(fencingOptionMapping, true);
-    }
-
-    @SuppressWarnings("unchecked")
-    public void setFencingOptionMappingMap(ValueObjectMap value) {
-        fencingOptionMapping = (value != null) ? new HashMap<String, HashMap<String, String>>(
-                value.asMap())
-                : null;
-    }
-
-    public HashMap<String, HashMap<String, String>> getFencingOptionMappingMap2() {
+    public HashMap<String, HashMap<String, String>> getFencingOptionMappingMap() {
         return fencingOptionMapping;
-    }
-
-    public void setFencingOptionMappingMap2(HashMap<String, HashMap<String, String>> value) {
-        fencingOptionMapping = value;
     }
 
     public ValueObjectMap getFencingOptionTypesMap() {

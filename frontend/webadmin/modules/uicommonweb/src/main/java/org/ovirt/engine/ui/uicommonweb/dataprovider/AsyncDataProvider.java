@@ -1512,7 +1512,7 @@ public final class AsyncDataProvider {
             }
         };
         aQuery.setData(new Object[] { pmType });
-        Frontend.RunQuery(VdcQueryType.GetAgentFenceOptions2, new VdcQueryParametersBase(), aQuery);
+        Frontend.RunQuery(VdcQueryType.GetAgentFenceOptions, new VdcQueryParametersBase(), aQuery);
     }
 
     public static void GetNetworkList(AsyncQuery aQuery, Guid dataCenterId) {
