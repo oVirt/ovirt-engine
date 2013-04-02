@@ -118,6 +118,8 @@ public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
             valueBox.setReadOnly(true);
             valueBox.getElement().getStyle().setBorderWidth(0, Style.Unit.PX);
         }
+
+        editor.asValueBox().setTitle(model.getTitle());
     }
 
     @Override

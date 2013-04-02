@@ -1781,4 +1781,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("There can be only one bootable disk defined")
     String onlyOneBootableDisk();
+
+    @DefaultStringValue("Enter a valid FS type (e.g. nfs/glusterfs/cifs/smbfs etc.")
+    String posixVfsTypeHint();
 }

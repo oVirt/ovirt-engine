@@ -5,8 +5,10 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class PosixStorageModel extends Model implements IStorageModel {
@@ -83,6 +85,7 @@ public class PosixStorageModel extends Model implements IStorageModel {
 
         setPath(new EntityModel());
         setVfsType(new EntityModel());
+        getVfsType().setTitle(ConstantsManager.getInstance().getConstants().posixVfsTypeHint());
         setMountOptions(new EntityModel());
     }
 
@@ -96,9 +99,7 @@ public class PosixStorageModel extends Model implements IStorageModel {
         );
 
         getVfsType().ValidateEntity(
-            new IValidation[] {
-                new NotEmptyValidation(),
-            }
+                new IValidation[] { new NotEmptyValidation(), new AsciiNameValidation() }
         );
 
 
