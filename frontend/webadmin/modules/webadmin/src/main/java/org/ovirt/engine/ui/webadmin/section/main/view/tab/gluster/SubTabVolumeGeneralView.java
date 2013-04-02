@@ -40,6 +40,7 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
     GeneralFormPanel formPanel;
 
     TextBoxLabel name = new TextBoxLabel();
+    TextBoxLabel volumeId = new TextBoxLabel();
     TextBoxLabel volumeType = new TextBoxLabel();
     TextBoxLabel replicaCount = new TextBoxLabel();
     TextBoxLabel stripeCount = new TextBoxLabel();
@@ -66,17 +67,18 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
         driver.initialize(this);
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 1, 4);
+        formBuilder = new FormBuilder(formPanel, 1, 5);
         formBuilder.addFormItem(new FormItem(constants.NameVolume(), name, 0, 0));
-        formBuilder.addFormItem(new FormItem(constants.volumeTypeVolume(), volumeType, 1, 0));
+        formBuilder.addFormItem(new FormItem(constants.volumeIdVolume(), volumeId, 1, 0));
+        formBuilder.addFormItem(new FormItem(constants.volumeTypeVolume(), volumeType, 2, 0));
 
-        replicaFormItem = new FormItem(constants.replicaCountVolume(), replicaCount, 2, 0);
+        replicaFormItem = new FormItem(constants.replicaCountVolume(), replicaCount, 3, 0);
         formBuilder.addFormItem(replicaFormItem);
 
-        stripeFormItem = new FormItem(constants.stripeCountVolume(), stripeCount, 2, 0);
+        stripeFormItem = new FormItem(constants.stripeCountVolume(), stripeCount, 3, 0);
         formBuilder.addFormItem(stripeFormItem);
 
-        formBuilder.addFormItem(new FormItem(constants.numberOfBricksVolume(), numOfBricks, 3, 0));
+        formBuilder.addFormItem(new FormItem(constants.numberOfBricksVolume(), numOfBricks, 4, 0));
 
         getDetailModel().getPropertyChangedEvent().addListener(new IEventListener() {
 

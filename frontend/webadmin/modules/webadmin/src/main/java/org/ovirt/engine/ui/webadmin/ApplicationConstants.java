@@ -2218,6 +2218,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Cluster")
     String clusterVolume();
 
+    @DefaultStringValue("Volume ID")
+    String volumeIdVolume();
+
     @DefaultStringValue("Volume Type")
     String volumeTypeVolume();
 

@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class VolumeGeneralModel extends EntityModel {
     private String name;
+    private String volumeId;
     private String volumeType;
     private String replicaCount;
     private String stripeCount;
@@ -20,6 +21,14 @@ public class VolumeGeneralModel extends EntityModel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getVolumeId() {
+        return volumeId;
+    }
+
+    public void setVolumeId(String volumeId) {
+        this.volumeId = volumeId;
     }
 
     public String getVolumeType() {
@@ -92,6 +101,7 @@ public class VolumeGeneralModel extends EntityModel {
         }
         GlusterVolumeEntity entity = (GlusterVolumeEntity) getEntity();
         setName(entity.getName());
+        setVolumeId(entity.getId().toString());
         setVolumeType(entity.getVolumeType().toString());
         setReplicaCount(Integer.toString(entity.getReplicaCount()));
         setStripeCount(Integer.toString(entity.getStripeCount()));
