@@ -179,7 +179,7 @@
     <profile>
       <id>all-langs</id>
       <properties>
-        <gwt.locale>en,es,fr,ja,pt_BR,zh_CN</gwt.locale>
+        <gwt.locale>en,es,fr,ja,pt_BR,zh_CN,de</gwt.locale>
       </properties>
     </profile>
   </profiles>
