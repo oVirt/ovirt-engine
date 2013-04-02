@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -47,35 +47,61 @@ public class StorageGeneralModel extends EntityModel
         }
     }
 
-    private String nfsPath;
+    private boolean isPosix;
 
-    public String getNfsPath()
+    public boolean getIsPosix()
     {
-        return nfsPath;
+        return isPosix;
     }
 
-    public void setNfsPath(String value)
+    public void setIsPosix(boolean value)
     {
-        if (!StringHelper.stringsEqual(nfsPath, value))
+        if (isPosix != value)
         {
-            nfsPath = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("NfsPath")); //$NON-NLS-1$
+            isPosix = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("isPosix")); //$NON-NLS-1$
         }
     }
 
-    private String localPath;
+    private String path;
 
-    public String getLocalPath()
+    public String getPath()
     {
-        return localPath;
+        return path;
     }
 
-    public void setLocalPath(String value)
+    public void setPath(String value)
     {
-        if (!StringHelper.stringsEqual(localPath, value))
+        if (!StringHelper.stringsEqual(path, value))
         {
-            localPath = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("LocalPath")); //$NON-NLS-1$
+            path = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("Path")); //$NON-NLS-1$
+        }
+    }
+
+    private String vfsType;
+
+    public String getVfsType() {
+        return vfsType;
+    }
+
+    public void setVfsType(String vfsType) {
+        if (!StringHelper.stringsEqual(this.vfsType, vfsType)) {
+            this.vfsType = vfsType;
+            OnPropertyChanged(new PropertyChangedEventArgs("VfsType")); //$NON-NLS-1$
+        }
+    }
+
+    private String mountOptions;
+
+    public String getMountOptions() {
+        return mountOptions;
+    }
+
+    public void setMountOptions(String mountOptions) {
+        if (!StringHelper.stringsEqual(this.mountOptions, mountOptions)) {
+            this.mountOptions = mountOptions;
+            OnPropertyChanged(new PropertyChangedEventArgs("MountOptions")); //$NON-NLS-1$
         }
     }
 
@@ -96,7 +122,9 @@ public class StorageGeneralModel extends EntityModel
 
             setIsNfs(storageDomain.getStorageType() == StorageType.NFS);
             setIsLocalS(storageDomain.getStorageType() == StorageType.LOCALFS);
-            if (getIsNfs() || getIsLocalS())
+            setIsPosix(storageDomain.getStorageType() == StorageType.POSIXFS);
+
+            if (getIsNfs() || getIsLocalS() || getIsPosix())
             {
                 AsyncQuery _asyncQuery = new AsyncQuery();
                 _asyncQuery.setModel(this);
@@ -106,23 +134,12 @@ public class StorageGeneralModel extends EntityModel
                     {
                         StorageServerConnections connection = (StorageServerConnections) ReturnValue;
                         StorageGeneralModel generalModel = (StorageGeneralModel) model;
-                        String path = null;
-                        if (connection != null)
-                        {
-                            path = connection.getconnection();
-                        }
-                        else
-                        {
-                            generalModel.setNfsPath(null);
-                            generalModel.setLocalPath(null);
-                        }
-                        if (generalModel.getIsNfs())
-                        {
-                            generalModel.setNfsPath(path);
-                        }
-                        else
-                        {
-                            generalModel.setLocalPath(path);
+
+                        generalModel.setPath(connection == null ? null : connection.getconnection());
+
+                        if (isPosix) {
+                            generalModel.setVfsType(connection.getVfsType());
+                            generalModel.setMountOptions(connection.getMountOptions());
                         }
                     }
                 };
@@ -130,8 +147,7 @@ public class StorageGeneralModel extends EntityModel
             }
             else
             {
-                setNfsPath(null);
-                setLocalPath(null);
+                setPath(null);
             }
 
         }

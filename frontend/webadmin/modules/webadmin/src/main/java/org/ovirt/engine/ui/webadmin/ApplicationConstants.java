@@ -1259,11 +1259,14 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Over Allocation Ratio")
     String overAllocRatioStorageGeneral();
 
-    @DefaultStringValue("NFS Export Path")
-    String nfsExportPathStorageGeneral();
+    @DefaultStringValue("Path")
+    String pathStorageGeneral();
 
-    @DefaultStringValue("Local Path on Host")
-    String localPathOnHostStorageGeneral();
+    @DefaultStringValue("VFS Type")
+    String vfsTypeStorageGeneral();
+
+    @DefaultStringValue("Mount Options")
+    String mountOptionsGeneral();
 
     // VM
     @DefaultStringValue("Cluster")

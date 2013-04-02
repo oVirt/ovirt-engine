@@ -50,11 +50,14 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
     // TODO Primitive getters not supported in 2.2
     PercentLabel<Integer> overAllocationRatio = new PercentLabel<Integer>();
 
-    @Path("nfsPath")
-    TextBoxLabel nfsExportPath = new TextBoxLabel();
+    @Path("path")
+    TextBoxLabel path = new TextBoxLabel();
 
-    @Path("localPath")
-    TextBoxLabel hostLocalPath = new TextBoxLabel();
+    @Path("vfsType")
+    TextBoxLabel vfsType = new TextBoxLabel();
+
+    @Path("mountOptions")
+    TextBoxLabel mountOptions = new TextBoxLabel();
 
     @UiField(provided = true)
     GeneralFormPanel formPanel;
@@ -74,7 +77,7 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
         driver.initialize(this);
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 1, 6);
+        formBuilder = new FormBuilder(formPanel, 1, 8);
         formBuilder.setColumnsWidth("100%"); //$NON-NLS-1$
         formBuilder.addFormItem(new FormItem(constants.sizeStorageGeneral(), totalSize, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.availableStorageGeneral(), availableSize, 1, 0));
@@ -89,18 +92,29 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
             }
         });
         formBuilder.addFormItem(new FormItem("", new InlineLabel(""), 4, 0)); // empty cell //$NON-NLS-1$ $NON-NLS-2$
-        formBuilder.addFormItem(new FormItem(constants.nfsExportPathStorageGeneral(), nfsExportPath, 5, 0) {
+        formBuilder.addFormItem(new FormItem(constants.pathStorageGeneral(), path, 5, 0) {
             @Override
             public boolean isVisible() {
-                return getDetailModel().getIsNfs();
+                return getDetailModel().getPath() != null;
             }
         });
-        formBuilder.addFormItem(new FormItem(constants.localPathOnHostStorageGeneral(), hostLocalPath, 5, 0) {
+
+        formBuilder.addFormItem(new FormItem(constants.vfsTypeStorageGeneral(), vfsType, 6, 0) {
             @Override
             public boolean isVisible() {
-                return getDetailModel().getIsLocalS();
+                return getDetailModel().getIsPosix() && getDetailModel().getVfsType() != null
+                        && !getDetailModel().getVfsType().isEmpty();
             }
         });
+
+        formBuilder.addFormItem(new FormItem(constants.mountOptionsGeneral(), mountOptions, 7, 0) {
+            @Override
+            public boolean isVisible() {
+                return getDetailModel().getIsPosix() && getDetailModel().getMountOptions() != null
+                        && !getDetailModel().getMountOptions().isEmpty();
+            }
+        });
+
     }
 
     @Override
