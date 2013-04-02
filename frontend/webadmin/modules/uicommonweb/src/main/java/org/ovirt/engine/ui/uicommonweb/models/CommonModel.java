@@ -598,6 +598,41 @@ public class CommonModel extends ListModel
 
         // Do not Change Tab if the Selection is the Reports
         if (!reportsList.getIsAvailable() || getSelectedItem() != reportsList) {
+            changeSelectedTabIfNeeded(model);
+        } else {
+            reportsList.refreshReportModel();
+        }
+
+        // Update search string if selected item was not changed. If it is,
+        // search string will be updated in OnSelectedItemChanged method.
+        if (getSelectedItem() == oldSelectedItem)
+        {
+            String prefix = ""; //$NON-NLS-1$
+            String search = ""; //$NON-NLS-1$
+            RefObject<String> tempRef_prefix = new RefObject<String>(prefix);
+            RefObject<String> tempRef_search = new RefObject<String>(search);
+            SplitSearchString(getSelectedItem().getDefaultSearchString(), tempRef_prefix, tempRef_search);
+            prefix = tempRef_prefix.argvalue;
+            search = tempRef_search.argvalue;
+
+            setSearchStringPrefix(prefix);
+            setSearchString(search);
+
+            getSearchCommand().Execute();
+
+            if (getSelectedItem() instanceof ISupportSystemTreeContext)
+            {
+                ISupportSystemTreeContext treeContext = (ISupportSystemTreeContext) getSelectedItem();
+                treeContext.setSystemTreeSelectedItem((SystemTreeItemModel) getSystemTree().getSelectedItem());
+            }
+        }
+    }
+
+    private void changeSelectedTabIfNeeded(SystemTreeItemModel model) {
+        if (getSelectedItem() != null && getSelectedItem().getIsAvailable()) {
+            // Do not change tab if we can show it
+            return;
+        } else {
             switch (model.getType())
             {
             case DataCenter:
@@ -640,32 +675,6 @@ public class CommonModel extends ListModel
                     setSelectedItem(getDefaultItem());
                 }
                 break;
-            }
-        } else {
-            reportsList.refreshReportModel();
-        }
-
-        // Update search string if selected item was not changed. If it is,
-        // search string will be updated in OnSelectedItemChanged method.
-        if (getSelectedItem() == oldSelectedItem)
-        {
-            String prefix = ""; //$NON-NLS-1$
-            String search = ""; //$NON-NLS-1$
-            RefObject<String> tempRef_prefix = new RefObject<String>(prefix);
-            RefObject<String> tempRef_search = new RefObject<String>(search);
-            SplitSearchString(getSelectedItem().getDefaultSearchString(), tempRef_prefix, tempRef_search);
-            prefix = tempRef_prefix.argvalue;
-            search = tempRef_search.argvalue;
-
-            setSearchStringPrefix(prefix);
-            setSearchString(search);
-
-            getSearchCommand().Execute();
-
-            if (getSelectedItem() instanceof ISupportSystemTreeContext)
-            {
-                ISupportSystemTreeContext treeContext = (ISupportSystemTreeContext) getSelectedItem();
-                treeContext.setSystemTreeSelectedItem((SystemTreeItemModel) getSystemTree().getSelectedItem());
             }
         }
     }
