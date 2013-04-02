@@ -343,7 +343,7 @@ def validateFQDN(param, options=[]):
             reResolvedAddress = None
             if len(addressSet) > 0:
                 reResolvedAddress = addressSet.pop()
-            if reResolvedAddress == param:
+            if reResolvedAddress.lower() == param.lower():
                 counter += 1
             else:
                 logging.warn("%s did not reverse-resolve into %s"%(address,param))
