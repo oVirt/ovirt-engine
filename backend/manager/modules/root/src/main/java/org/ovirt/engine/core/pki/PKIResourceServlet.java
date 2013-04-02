@@ -88,10 +88,11 @@ public class PKIResourceServlet extends HttpServlet {
                 response.getWriter().print(
                     String.format(
                         (
-                            "-----BEGIN CERTIFICATE-----\n" +
-                            "%1$s" +
-                            "-----END CERTIFICATE-----\n"
+                            "-----BEGIN CERTIFICATE-----%1$c" +
+                            "%2$s" +
+                            "-----END CERTIFICATE-----%1$c"
                         ),
+                        '\n',
                         new Base64(
                             76,
                             new byte[] { (byte)'\n' }
