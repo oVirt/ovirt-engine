@@ -16,16 +16,23 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntity<Netw
      * host during monitoring.
      */
     private boolean required = true;
+    private boolean migration;
 
     public NetworkCluster() {
     }
 
-    public NetworkCluster(Guid clusterId, Guid networkId, NetworkStatus status, boolean display, boolean required) {
+    public NetworkCluster(Guid clusterId,
+            Guid networkId,
+            NetworkStatus status,
+            boolean display,
+            boolean required,
+            boolean migration) {
         id.setClusterId(clusterId);
         id.setNetworkId(networkId);
         this.status = status;
         this.display = display;
         this.required = required;
+        this.migration = migration;
     }
 
     @Override
@@ -78,6 +85,14 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntity<Netw
         this.required = required;
     }
 
+    public boolean isMigration() {
+        return migration;
+    }
+
+    public void setMigration(boolean migration) {
+        this.migration = migration;
+    }
+
     @Override
     public Object getQueryableId() {
         return getId();
@@ -94,6 +109,8 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntity<Netw
                 .append(isDisplay())
                 .append(", required=")
                 .append(isRequired())
+                .append(", migration=")
+                .append(isMigration())
                 .append("}");
         return builder.toString();
     }
@@ -106,6 +123,7 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntity<Netw
         result = prime * result + ((status == null) ? 0 : status.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + (required ? 11 : 13);
+        result = prime * result + (migration ? 1231 : 1237);
         return result;
     }
 
@@ -131,6 +149,9 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntity<Netw
         } else if (!id.equals(other.id))
             return false;
         if (required != other.required) {
+            return false;
+        }
+        if (migration != other.migration) {
             return false;
         }
         return true;

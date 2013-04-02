@@ -207,4 +207,18 @@ public class NetworkClusterDaoTest extends BaseDAOTestCase {
             }
         }
     }
+
+    @Test
+    public void testSetMigration() {
+        dao.setNetworkExclusivelyAsMigration(existingNetworkCluster.getClusterId(),
+                existingNetworkCluster.getNetworkId());
+        List<NetworkCluster> allForCluster = dao.getAllForCluster(existingNetworkCluster.getClusterId());
+        for (NetworkCluster net : allForCluster) {
+            if (net.getId().equals(existingNetworkCluster.getId())) {
+                assertTrue(net.isMigration());
+            } else {
+                assertFalse(net.isMigration());
+            }
+        }
+    }
 }

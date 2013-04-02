@@ -1228,6 +1228,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Overriding MTU is not supported for this Data Center's compatibility version.")
     String NETWORK_MTU_OVERRIDE_NOT_SUPPORTED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Migration network is not supported for this cluster version.")
+    String ACTION_TYPE_FAILED_MIGRATION_NETWORK_IS_NOT_SUPPORTED();
+
     @DefaultStringValue("Cannot ${action} ${type}. The management network '${NetworkName}' must be required, please change the network to be required and try again.")
     String ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_REQUIRED();
 

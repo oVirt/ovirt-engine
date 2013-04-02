@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
@@ -59,6 +60,9 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
         if (getNetworkCluster().isDisplay()) {
             getNetworkClusterDAO().setNetworkExclusivelyAsDisplay(getVdsGroupId(), getNetwork().getId());
         }
+        if (getNetworkCluster().isMigration()) {
+            getNetworkClusterDAO().setNetworkExclusivelyAsMigration(getVdsGroupId(), getNetwork().getId());
+        }
 
         NetworkClusterHelper.setStatus(getVdsGroupId(), getNetwork());
         setSucceeded(true);
@@ -66,10 +70,16 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
 
     @Override
     protected boolean canDoAction() {
-        NetworkClusterValidator validator = new NetworkClusterValidator(getNetworkCluster());
-        return validate(networkClusterAttachmentExists())
-                && (!NetworkUtils.isManagementNetwork(getNetwork())
-                || validate(validator.managementNetworkAttachment(getNetworkName())));
+        return validate(networkClusterAttachmentExists()) && validateAttachment();
+    }
+
+    private boolean validateAttachment() {
+        Version clusterVersion =
+                getVdsGroupDAO().get(getNetworkCluster().getClusterId()).getcompatibility_version();
+        NetworkClusterValidator validator =
+                new NetworkClusterValidator(getNetworkCluster(), clusterVersion);
+        return (!NetworkUtils.isManagementNetwork(getNetwork()) || validate(validator.managementNetworkAttachment(getNetworkName())))
+                && validate(validator.migrationPropertySupported(getNetworkName()));
     }
 
     private ValidationResult networkClusterAttachmentExists() {
@@ -109,4 +119,3 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
         return false;
     }
 }
-

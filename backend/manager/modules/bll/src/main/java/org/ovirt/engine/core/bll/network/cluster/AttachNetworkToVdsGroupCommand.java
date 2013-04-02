@@ -49,10 +49,16 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
             getNetworkClusterDAO().update(getNetworkCluster());
         } else {
             getNetworkClusterDAO().save(new NetworkCluster(getVdsGroupId(), getNetwork().getId(),
-                    NetworkStatus.OPERATIONAL, false, getNetworkCluster().isRequired()));
+                    NetworkStatus.OPERATIONAL,
+                    false,
+                    getNetworkCluster().isRequired(),
+                    getNetworkCluster().isMigration()));
         }
         if (getNetwork().getCluster().isDisplay()) {
             getNetworkClusterDAO().setNetworkExclusivelyAsDisplay(getVdsGroupId(), getNetwork().getId());
+        }
+        if (getNetwork().getCluster().isMigration()) {
+            getNetworkClusterDAO().setNetworkExclusivelyAsMigration(getVdsGroupId(), getNetwork().getId());
         }
         NetworkClusterHelper.setStatus(getVdsGroupId(), getNetwork());
         setSucceeded(true);
@@ -60,10 +66,17 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     @Override
     protected boolean canDoAction() {
-        NetworkClusterValidator validator = new NetworkClusterValidator(getNetworkCluster());
-        return vdsGroupExists() && changesAreClusterCompatible() && logicalNetworkExists()
-                && (!NetworkUtils.isManagementNetwork(getNetwork())
-                || validate(validator.managementNetworkAttachment(getNetworkName())));
+        return vdsGroupExists()
+                && changesAreClusterCompatible()
+                && logicalNetworkExists()
+                && validateAttachment();
+    }
+
+    private boolean validateAttachment() {
+        NetworkClusterValidator validator =
+                new NetworkClusterValidator(getNetworkCluster(), getVdsGroup().getcompatibility_version());
+        return (!NetworkUtils.isManagementNetwork(getNetwork()) || validate(validator.managementNetworkAttachment(getNetworkName())))
+                && validate(validator.migrationPropertySupported(getNetworkName()));
     }
 
     private boolean logicalNetworkExists() {

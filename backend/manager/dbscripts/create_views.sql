@@ -1076,7 +1076,7 @@ CREATE OR REPLACE VIEW network_cluster_view
 AS
 SELECT network_cluster.cluster_id AS cluster_id, network_cluster.network_id AS network_id, network.name as network_name,
        network_cluster.status as status, network_cluster.required as required, network_cluster.is_display as is_display,
-       vds_groups.name as cluster_name
+       network_cluster.migration as migration, vds_groups.name as cluster_name
 FROM network_cluster
 INNER JOIN network ON network_cluster.network_id = network.id
 INNER JOIN vds_groups ON network_cluster.cluster_id = vds_groups.vds_group_id;

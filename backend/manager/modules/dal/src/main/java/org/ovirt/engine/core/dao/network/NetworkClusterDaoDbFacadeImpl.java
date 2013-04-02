@@ -25,6 +25,7 @@ public class NetworkClusterDaoDbFacadeImpl extends BaseDAODbFacade implements Ne
                     entity.setStatus(NetworkStatus.forValue(rs.getInt("status")));
                     entity.setDisplay(rs.getBoolean("is_display"));
                     entity.setRequired(rs.getBoolean("required"));
+                    entity.setMigration(rs.getBoolean("migration"));
                     return entity;
                 }
             };
@@ -73,7 +74,8 @@ public class NetworkClusterDaoDbFacadeImpl extends BaseDAODbFacade implements Ne
                 .addValue("network_id", cluster.getNetworkId())
                 .addValue("status", cluster.getStatus())
                 .addValue("is_display", cluster.isDisplay())
-                .addValue("required", cluster.isRequired());
+                .addValue("required", cluster.isRequired())
+                .addValue("migration", cluster.isMigration());
 
         getCallsHandler().executeModification("Insertnetwork_cluster", parameterSource);
     }
@@ -85,7 +87,8 @@ public class NetworkClusterDaoDbFacadeImpl extends BaseDAODbFacade implements Ne
                 .addValue("network_id", cluster.getNetworkId())
                 .addValue("status", cluster.getStatus())
                 .addValue("is_display", cluster.isDisplay())
-                .addValue("required", cluster.isRequired());
+                .addValue("required", cluster.isRequired())
+                .addValue("migration", cluster.isMigration());
 
         getCallsHandler().executeModification("Updatenetwork_cluster", parameterSource);
     }
@@ -115,5 +118,13 @@ public class NetworkClusterDaoDbFacadeImpl extends BaseDAODbFacade implements Ne
                 .addValue("cluster_id", clusterId).addValue("network_id", networkId);
 
         getCallsHandler().executeModification("set_network_exclusively_as_display", parameterSource);
+    }
+
+    @Override
+    public void setNetworkExclusivelyAsMigration(Guid clusterId, Guid networkId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("cluster_id", clusterId).addValue("network_id", networkId);
+
+        getCallsHandler().executeModification("set_network_exclusively_as_migration", parameterSource);
     }
 }

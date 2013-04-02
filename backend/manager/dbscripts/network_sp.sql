@@ -177,7 +177,7 @@ DROP TYPE IF EXISTS networkViewClusterType CASCADE;
 CREATE TYPE networkViewClusterType AS(id uuid,name VARCHAR(50),description VARCHAR(4000),type INTEGER,
             addr VARCHAR(50),subnet VARCHAR(20),gateway VARCHAR(20),vlan_id INTEGER,stp BOOLEAN,storage_pool_id UUID,
 	    mtu INTEGER, vm_network BOOLEAN, network_id UUID,cluster_id UUID, status INTEGER, is_display BOOLEAN,
-	    required BOOLEAN);
+	    required BOOLEAN, migration BOOLEAN);
 Create or replace FUNCTION GetAllNetworkByClusterId(v_id UUID, v_user_id uuid, v_is_filtered boolean)
 RETURNS SETOF networkViewClusterType
    AS $procedure$
@@ -200,7 +200,8 @@ RETURN QUERY SELECT
     network_cluster.cluster_id,
     network_cluster.status,
     network_cluster.is_display,
-    network_cluster.required
+    network_cluster.required,
+    network_cluster.migration
    FROM network
    INNER JOIN network_cluster
    ON network.id = network_cluster.network_id
@@ -728,12 +729,13 @@ Create or replace FUNCTION Insertnetwork_cluster(v_cluster_id UUID,
    v_network_id UUID,
    v_status INTEGER,
    v_is_display BOOLEAN,
-   v_required BOOLEAN)
+   v_required BOOLEAN,
+   v_migration BOOLEAN)
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO network_cluster(cluster_id, network_id, status, is_display, required)
-	VALUES(v_cluster_id, v_network_id, v_status, v_is_display, v_required);
+INSERT INTO network_cluster(cluster_id, network_id, status, is_display, required, migration)
+	VALUES(v_cluster_id, v_network_id, v_status, v_is_display, v_required, v_migration);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -744,12 +746,13 @@ Create or replace FUNCTION Updatenetwork_cluster(v_cluster_id UUID,
     v_network_id UUID,
     v_status INTEGER,
     v_is_display BOOLEAN,
-    v_required BOOLEAN)
+    v_required BOOLEAN,
+    v_migration BOOLEAN)
 RETURNS VOID
    AS $procedure$
 BEGIN
    UPDATE network_cluster
-   SET status = v_status,is_display = v_is_display, required = v_required
+   SET status = v_status,is_display = v_is_display, required = v_required, migration = v_migration
    WHERE cluster_id = v_cluster_id AND network_id = v_network_id;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -943,6 +946,26 @@ BEGIN
    IF FOUND THEN
        UPDATE network_cluster
        SET is_display = false
+       WHERE cluster_id = v_cluster_id AND network_id != v_network_id;
+   END IF;
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+Create or replace FUNCTION set_network_exclusively_as_migration(v_cluster_id UUID, v_network_id UUID)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+
+   UPDATE network_cluster
+   SET migration = true
+   WHERE cluster_id = v_cluster_id AND network_id = v_network_id;
+
+   IF FOUND THEN
+       UPDATE network_cluster
+       SET migration = false
        WHERE cluster_id = v_cluster_id AND network_id != v_network_id;
    END IF;
 

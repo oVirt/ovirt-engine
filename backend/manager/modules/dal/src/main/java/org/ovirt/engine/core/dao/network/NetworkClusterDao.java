@@ -83,4 +83,12 @@ public interface NetworkClusterDao extends DAO {
      * @param networkId
      */
     void setNetworkExclusivelyAsDisplay(Guid clusterId, Guid networkId);
+
+    /**
+     * Sets this cluster network as the only migration network on the cluster.
+     *
+     * @param clusterId
+     * @param networkId
+     */
+    void setNetworkExclusivelyAsMigration(Guid clusterId, Guid networkId);
 }
