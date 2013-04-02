@@ -59,6 +59,15 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
     @Path("mountOptions")
     TextBoxLabel mountOptions = new TextBoxLabel();
 
+    @Path("nfsVersion")
+    TextBoxLabel nfsVersion = new TextBoxLabel();
+
+    @Path("retransmissions")
+    TextBoxLabel retransmissions = new TextBoxLabel();
+
+    @Path("timeout")
+    TextBoxLabel timeout = new TextBoxLabel();
+
     @UiField(provided = true)
     GeneralFormPanel formPanel;
 
@@ -77,7 +86,7 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
         driver.initialize(this);
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 1, 8);
+        formBuilder = new FormBuilder(formPanel, 1, 9);
         formBuilder.setColumnsWidth("100%"); //$NON-NLS-1$
         formBuilder.addFormItem(new FormItem(constants.sizeStorageGeneral(), totalSize, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.availableStorageGeneral(), availableSize, 1, 0));
@@ -115,6 +124,26 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
             }
         });
 
+        formBuilder.addFormItem(new FormItem(constants.nfsVersionGeneral(), nfsVersion, 6, 0) {
+            @Override
+            public boolean isVisible() {
+                return getDetailModel().getIsNfs() && getDetailModel().getNfsVersion() != null;
+            }
+        });
+
+        formBuilder.addFormItem(new FormItem(constants.nfsRetransmissionsGeneral(), retransmissions, 7, 0) {
+            @Override
+            public boolean isVisible() {
+                return getDetailModel().getIsNfs() && getDetailModel().getRetransmissions() != null;
+            }
+        });
+
+        formBuilder.addFormItem(new FormItem(constants.nfsTimeoutGeneral(), timeout, 8, 0) {
+            @Override
+            public boolean isVisible() {
+                return getDetailModel().getIsNfs() && getDetailModel().getTimeout() != null;
+            }
+        });
     }
 
     @Override

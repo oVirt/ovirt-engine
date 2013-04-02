@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -105,6 +106,45 @@ public class StorageGeneralModel extends EntityModel
         }
     }
 
+    NfsVersion nfsVersion;
+
+    public String getNfsVersion() {
+        return nfsVersion == null ? null : nfsVersion.toString();
+    }
+
+    public void setNfsVersion(NfsVersion nfsVersion) {
+        if (this.nfsVersion != nfsVersion) {
+            this.nfsVersion = nfsVersion;
+            OnPropertyChanged(new PropertyChangedEventArgs("NfsVersion")); //$NON-NLS-1$
+        }
+    }
+
+    Short timeout;
+
+    public String getTimeout() {
+        return timeout == null ? null : timeout.toString();
+    }
+
+    public void setTimeout(Short timeout) {
+        if (this.timeout != timeout) {
+            this.timeout = timeout;
+            OnPropertyChanged(new PropertyChangedEventArgs("Timeout")); //$NON-NLS-1$
+        }
+    }
+
+    Short retransmissions;
+
+    public String getRetransmissions() {
+        return retransmissions == null ? null : retransmissions.toString();
+    }
+
+    public void setRetransmissions(Short retransmissions) {
+        if (this.retransmissions != retransmissions) {
+            this.retransmissions = retransmissions;
+            OnPropertyChanged(new PropertyChangedEventArgs("Retransmissions")); //$NON-NLS-1$
+        }
+    }
+
     public StorageGeneralModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
@@ -136,6 +176,12 @@ public class StorageGeneralModel extends EntityModel
                         StorageGeneralModel generalModel = (StorageGeneralModel) model;
 
                         generalModel.setPath(connection == null ? null : connection.getconnection());
+
+                        if (isNfs) {
+                            generalModel.setNfsVersion(connection.getNfsVersion());
+                            generalModel.setRetransmissions(connection.getNfsRetrans());
+                            generalModel.setTimeout(connection.getNfsTimeo());
+                        }
 
                         if (isPosix) {
                             generalModel.setVfsType(connection.getVfsType());

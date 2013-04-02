@@ -1268,6 +1268,15 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Mount Options")
     String mountOptionsGeneral();
 
+    @DefaultStringValue("NFS Version")
+    String nfsVersionGeneral();
+
+    @DefaultStringValue("Retransmissions (#)")
+    String nfsRetransmissionsGeneral();
+
+    @DefaultStringValue("Timeout (deciseconds)")
+    String nfsTimeoutGeneral();
+
     // VM
     @DefaultStringValue("Cluster")
     String clusterVm();
