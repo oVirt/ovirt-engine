@@ -21,7 +21,12 @@
 # (controlled by the Timeout directive in httpd.conf) is 60 seconds.
 #
 #end raw
-ProxyPass / ajp://localhost:${basedefs.JBOSS_AJP_PORT}/ retry=5 timeout=3600
+<Location />
+  ProxyPass ajp://localhost:${basedefs.JBOSS_AJP_PORT}/ retry=5 timeout=3600
+  <IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/javascript text/css text/html text/xml text/json application/xml application/json application/x-yaml
+  </IfModule>
+</Location>
 
 #raw
 #
