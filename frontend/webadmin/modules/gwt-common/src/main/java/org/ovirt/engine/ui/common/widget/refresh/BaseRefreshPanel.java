@@ -5,7 +5,7 @@ import java.util.Set;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
-import org.ovirt.engine.ui.common.widget.renderer.MilisecondRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.MillisecondRenderer;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
@@ -101,7 +101,7 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
             getElement().appendChild(checkItem.getElement());
 
             Anchor textItem = new Anchor();
-            textItem.setText(MilisecondRenderer.getInstance().render(refreshRate));
+            textItem.setText(MillisecondRenderer.getInstance().render(refreshRate));
             textItem.setStylePrimaryName(style.textItem());
             getElement().appendChild(textItem.getElement());
         }

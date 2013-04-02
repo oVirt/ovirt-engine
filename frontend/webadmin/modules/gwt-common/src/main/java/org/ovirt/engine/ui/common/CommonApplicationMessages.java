@@ -96,4 +96,7 @@ public interface CommonApplicationMessages extends Messages {
 
     @DefaultMessage("Select Console for ''{0}''")
     String selectConsoleFor(String name);
+
+    @DefaultMessage("{0} sec")
+    String refreshRateSeconds(Integer seconds);
 }
