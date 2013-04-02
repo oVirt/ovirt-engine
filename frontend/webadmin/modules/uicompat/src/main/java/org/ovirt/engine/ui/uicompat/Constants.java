@@ -178,6 +178,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Storage")
     String storageTitle();
 
+    @DefaultStringValue("Data Center is uninitialized, in order to initialize add a data domain")
+    String dataCenterUninitializedAlert();
+
     @DefaultStringValue("Detach Storage")
     String detachStorageTitle();
 

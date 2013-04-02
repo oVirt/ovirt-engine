@@ -32,6 +32,7 @@ import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.inject.Inject;
 
 public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
@@ -84,6 +85,9 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
     @Ignore
     @UiField
     FlowPanel specificStorageTypePanel;
+
+    @UiField
+    Image datacenterAlertIcon;
 
     @SuppressWarnings("rawtypes")
     @Ignore
@@ -190,6 +194,14 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 // Reveal the appropriate storage view according to the selected storage type
                 revealStorageView(storageModel);
+            }
+        });
+
+        storageModel.getDataCenterAlert().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                datacenterAlertIcon.setVisible(storageModel.getDataCenterAlert().getIsAvailable());
+                datacenterAlertIcon.setTitle((String) storageModel.getDataCenterAlert().getEntity());
             }
         });
     }

@@ -3,6 +3,8 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
 
+	<ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
+
 	<ui:style src='../../../../../defines.css' type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StoragePopupView.WidgetStyle">
 		.content {
 		}
@@ -72,6 +74,10 @@
             margin-top: 10px;
         }
 
+        .dataCenterAlertIcon {
+            margin-top: 10px;
+        }
+
 	</ui:style>
 
 	<d:SimpleDialogPanel width="760px" height="625px">
@@ -81,7 +87,10 @@
 					<e:EntityModelTextBoxEditor ui:field="nameEditor" addStyleNames="{style.nameEditor}"/>
 					<e:EntityModelTextBoxEditor ui:field="descriptionEditor" addStyleNames="{style.descriptionEditor}"/>
 				</g:HorizontalPanel>
-				<e:ListModelListBoxEditor ui:field="datacenterListEditor" addStyleNames="{style.datacenterListEditor}"/>
+				<g:HorizontalPanel>
+					<e:ListModelListBoxEditor ui:field="datacenterListEditor" addStyleNames="{style.datacenterListEditor}"/>
+					<g:Image ui:field="datacenterAlertIcon" resource='{resources.alertImage}' visible="false" addStyleNames="{style.dataCenterAlertIcon}"/>
+				</g:HorizontalPanel>
 				<g:HorizontalPanel addStyleNames="{style.storageTypePanel}">
 					<e:ListModelListBoxEditor ui:field="storageTypeListEditor" addStyleNames="{style.storageTypeListEditor}"/>
 					<e:ListModelListBoxEditor ui:field="formatListEditor" addStyleNames="{style.formatListEditor}"/>

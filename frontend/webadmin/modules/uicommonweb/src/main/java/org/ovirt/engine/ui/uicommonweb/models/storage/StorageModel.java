@@ -7,16 +7,17 @@ import java.util.Date;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -41,6 +42,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 
@@ -124,6 +126,16 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         privateDataCenter = value;
     }
 
+    private EntityModel dataCenterAlert;
+
+    public EntityModel getDataCenterAlert() {
+        return dataCenterAlert;
+    }
+
+    public void setDataCenterAlert(EntityModel dataCenterAlert) {
+        this.dataCenterAlert = dataCenterAlert;
+    }
+
     private ListModel privateHost;
 
     public ListModel getHost()
@@ -186,6 +198,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 
         setName(new EntityModel());
         setDescription(new EntityModel());
+        setDataCenterAlert(new EntityModel());
         setDataCenter(new ListModel());
         getDataCenter().getSelectedItemChangedEvent().addListener(this);
         setHost(new ListModel());
@@ -318,6 +331,20 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
     private void DataCenter_SelectedItemChanged()
     {
         UpdateItemsAvailability();
+        updateDataCenterAlert();
+    }
+
+    private void updateDataCenterAlert() {
+        if (getDataCenter().getSelectedItem() != null
+                && !UnassignedDataCenterId.equals(((storage_pool) getDataCenter().getSelectedItem()).getId())
+                && ((storage_pool) getDataCenter().getSelectedItem()).getstatus() == StoragePoolStatus.Uninitialized) {
+            getDataCenterAlert().setIsAvailable(true);
+            getDataCenterAlert().setEntity(ConstantsManager.getInstance().getConstants().dataCenterUninitializedAlert());
+        }
+        else {
+            getDataCenterAlert().setIsAvailable(false);
+            getDataCenterAlert().setEntity("");
+        }
     }
 
     private void Host_SelectedItemChanged()
