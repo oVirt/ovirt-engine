@@ -14,13 +14,12 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
 @SuppressWarnings("serial")
-@CustomLogFields({ @CustomLogField("NetworkName") })
+@CustomLogFields("NetworkName")
 public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParameters>
         extends VmTemplateInterfaceCommandBase<T> {
     public UpdateVmTemplateInterfaceCommand(T parameters) {

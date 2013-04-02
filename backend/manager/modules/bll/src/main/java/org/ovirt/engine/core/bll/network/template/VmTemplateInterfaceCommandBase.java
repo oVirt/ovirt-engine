@@ -10,11 +10,10 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 
 @SuppressWarnings("serial")
-@CustomLogFields({ @CustomLogField("InterfaceName"), @CustomLogField("InterfaceType") })
+@CustomLogFields({ "InterfaceName", "InterfaceType" })
 public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInterfaceParameters>
         extends VmTemplateCommand<T> {
 

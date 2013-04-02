@@ -9,10 +9,9 @@ import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 
-@CustomLogFields({ @CustomLogField("VdsGroupName") })
+@CustomLogFields("VdsGroupName")
 public abstract class VdsGroupCommandBase<T extends VdsGroupParametersBase> extends CommandBase<T> {
     private VDSGroup _vdsGroup;
 

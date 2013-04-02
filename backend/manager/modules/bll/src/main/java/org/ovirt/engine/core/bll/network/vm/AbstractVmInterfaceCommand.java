@@ -23,11 +23,10 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 
 @SuppressWarnings("serial")
-@CustomLogFields({ @CustomLogField("NetworkName"), @CustomLogField("InterfaceName") })
+@CustomLogFields({ "NetworkName", "InterfaceName" })
 public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParameters> extends VmCommand<T> {
 
     public AbstractVmInterfaceCommand(T parameters) {

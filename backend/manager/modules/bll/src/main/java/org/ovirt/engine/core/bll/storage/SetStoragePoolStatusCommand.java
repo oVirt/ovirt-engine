@@ -10,10 +10,9 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 
-@CustomLogFields({ @CustomLogField("Error") })
+@CustomLogFields("Error")
 public class SetStoragePoolStatusCommand<T extends SetStoragePoolStatusParameters> extends
         StorageHandlingCommandBase<T> {
     public SetStoragePoolStatusCommand(T parameters) {

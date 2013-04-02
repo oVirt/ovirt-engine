@@ -10,10 +10,9 @@ import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 
-@CustomLogFields({ @CustomLogField("AdGroupName") })
+@CustomLogFields("AdGroupName")
 public abstract class AdGroupsHandlingCommandBase<T extends AdElementParametersBase> extends CommandBase<T> {
     protected tags _tag;
     private LdapGroup mGroup;

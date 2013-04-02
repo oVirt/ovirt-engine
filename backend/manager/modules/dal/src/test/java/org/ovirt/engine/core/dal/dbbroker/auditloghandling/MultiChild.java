@@ -1,5 +1,5 @@
 package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
-@CustomLogFields({ @CustomLogField("Luke"), @CustomLogField("Skywalker"), @CustomLogField("JarJar") })
+@CustomLogFields({ "Luke", "Skywalker", "JarJar" })
 public class MultiChild extends BaseClass {
 }

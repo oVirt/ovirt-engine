@@ -10,11 +10,10 @@ import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 
 @SuppressWarnings("serial")
-@CustomLogFields({ @CustomLogField("NetworkName") })
+@CustomLogFields("NetworkName")
 public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> extends CommandBase<T> {
     public NetworkCommon(T parameters) {
         super(parameters);

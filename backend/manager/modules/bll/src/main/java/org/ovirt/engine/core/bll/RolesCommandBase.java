@@ -11,10 +11,9 @@ import org.ovirt.engine.core.common.businessentities.RoleGroupMap;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 
-@CustomLogFields({ @CustomLogField("RoleName") })
+@CustomLogFields("RoleName")
 public abstract class RolesCommandBase<T extends RolesParameterBase> extends CommandBase<T> {
     private static final long serialVersionUID = -5335986165541561251L;
     private Role _role;

@@ -24,10 +24,9 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 
-@CustomLogFields({ @CustomLogField("VdsDestination"), @CustomLogField("DueToMigrationError") })
+@CustomLogFields({"VdsDestination", "DueToMigrationError"})
 public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmCommandBase<T> {
 
     private static final long serialVersionUID = -89419649366187512L;

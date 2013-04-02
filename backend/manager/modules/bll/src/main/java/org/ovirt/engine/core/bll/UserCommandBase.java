@@ -24,10 +24,9 @@ import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 
-@CustomLogFields({ @CustomLogField("AdUserName") })
+@CustomLogFields("AdUserName")
 public abstract class UserCommandBase<T extends AdElementParametersBase> extends CommandBase<T> {
     public UserCommandBase() {
     }

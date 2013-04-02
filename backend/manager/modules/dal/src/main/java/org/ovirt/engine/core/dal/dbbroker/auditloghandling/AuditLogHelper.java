@@ -23,15 +23,12 @@ public class AuditLogHelper {
         }
 
         // Add any you find on this class
-        CustomLogField field = (CustomLogField) type.getAnnotation(CustomLogField.class);
         CustomLogFields fields = (CustomLogFields) type.getAnnotation(CustomLogFields.class);
-        Set<String> myAnnotations = new HashSet<String>();
-        if (field != null) {
-            myAnnotations.add(field.value().toLowerCase());
-        }
+        Set<String> myAnnotations = null;
         if (fields != null) {
-            for (CustomLogField inner : fields.value()) {
-                myAnnotations.add(inner.value().toLowerCase());
+            myAnnotations = new HashSet<String>();
+            for (String inner : fields.value()) {
+                myAnnotations.add(inner.toLowerCase());
             }
         }
         return merge(returnValue, myAnnotations);

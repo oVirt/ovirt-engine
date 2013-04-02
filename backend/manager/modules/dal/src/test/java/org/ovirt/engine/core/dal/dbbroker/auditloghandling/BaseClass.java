@@ -1,5 +1,5 @@
 package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
-@CustomLogField("JarJar")
+@CustomLogFields("JarJar")
 public class BaseClass {
 }

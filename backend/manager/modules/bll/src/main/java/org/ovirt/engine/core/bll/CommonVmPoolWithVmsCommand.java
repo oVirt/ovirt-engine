@@ -37,7 +37,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.utils.NameForVmInPoolGenerator;
@@ -52,7 +51,7 @@ import org.ovirt.engine.core.utils.NameForVmInPoolGenerator;
  * already exists - number increased. For example if vm_8 exists - vm_9 will be created instead of it.
  */
 
-@CustomLogFields({ @CustomLogField("VmsCount") })
+@CustomLogFields("VmsCount")
 public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> extends AddVmPoolCommand<T>
         implements QuotaStorageDependent {
 
