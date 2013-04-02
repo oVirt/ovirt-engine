@@ -227,7 +227,7 @@ public class EncryptionUtils {
             if (keyMaterial == null || "".equals(keyMaterial)) {
                 secretKey = new SecretKeySpec("jaas is the way".getBytes(Charset.forName("UTF-8")), this.algorithm);
             } else {
-                secretKey = new SecretKeySpec(keyMaterial.getBytes(), this.algorithm);
+                secretKey = new SecretKeySpec(keyMaterial.getBytes(Charset.forName("UTF-8")), this.algorithm);
             }
         }
     }

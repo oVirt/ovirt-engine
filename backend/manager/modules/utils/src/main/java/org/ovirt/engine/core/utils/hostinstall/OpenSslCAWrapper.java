@@ -142,7 +142,7 @@ public class OpenSslCAWrapper {
             log.debug("Running Sign Certificate request script");
             Process process = getRuntime().exec(command_array);
             stdOutput = new BufferedReader(new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")));
-            stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            stdError = new BufferedReader(new InputStreamReader(process.getErrorStream(), Charset.forName("UTF-8")));
             int exitCode = 0;
             boolean completed = false;
             for (int x = 0; x < signatureTimeout; x++) {
