@@ -3,9 +3,6 @@ package org.ovirt.engine.core.utils.vdshooks;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.queries.ValueObjectMap;
-
 /**
  * Parsers a hooks string to a ValueObjectMap of script directories/events to a ValueObjectMap of script names to a
  * ValueObjectMap of script properties The string is in format of a "toString" invocation on java.util.map object - for
@@ -144,35 +141,10 @@ public class VdsHooksParser {
         keyBuilder.append(current);
     }
 
-    /**
-     * Method to parse a given hooks string and return a hooks data structure
-     *
-     * @param hooksStr
-     *            hooks string to parse
-     * @return hooks data structure
-     */
-    public static ValueObjectMap parseHooks(String hooksStr) {
-        ValueObjectMap result = new ValueObjectMap();
-        // If the hooks string is null or empty an empty data structure will be returned
-        if (StringUtils.isNotEmpty(hooksStr)) {
-            char[] chars = new char[hooksStr.length()];
-            hooksStr.getChars(0, hooksStr.length(), chars, 0);
-            ParsingResult parsingResult = parseMap(chars, 0);
-            return convertParsingResultToValueObjectMap(parsingResult);
-        }
-        return result;
-    }
-
-    public static Map<String, Object> parseHooks2(String hooksStr) {
+    public static Map<String, Object> parseHooks(String hooksStr) {
         char[] chars = new char[hooksStr.length()];
         hooksStr.getChars(0, hooksStr.length(), chars, 0);
         ParsingResult parsingResult = parseMap(chars, 0);
         return parsingResult.getMap();
-    }
-
-    private static ValueObjectMap convertParsingResultToValueObjectMap(ParsingResult parsingResult) {
-        Map<String, Object> map = parsingResult.getMap();
-        ValueObjectMap result = new ValueObjectMap(map, true);
-        return result;
     }
 }

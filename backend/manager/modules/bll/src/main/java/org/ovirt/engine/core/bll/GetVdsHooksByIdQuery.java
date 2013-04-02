@@ -3,9 +3,11 @@
  */
 package org.ovirt.engine.core.bll;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.GetVdsHooksByIdParameters;
-import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.vdshooks.VdsHooksParser;
 
@@ -24,7 +26,7 @@ public class GetVdsHooksByIdQuery<P extends GetVdsHooksByIdParameters> extends Q
     protected void executeQueryCommand() {
 
         VDS vds = DbFacade.getInstance().getVdsDao().get(getParameters().getVdsId());
-        ValueObjectMap result = new ValueObjectMap();
+        Map<String, Object> result = new HashMap<String, Object>();
         if (vds != null) {
             result = VdsHooksParser.parseHooks(vds.getHooksStr());
         }

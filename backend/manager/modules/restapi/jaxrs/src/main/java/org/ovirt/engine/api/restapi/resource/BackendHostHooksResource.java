@@ -27,7 +27,7 @@ public class BackendHostHooksResource extends AbstractBackendCollectionResource<
     public Hooks list() {
         @SuppressWarnings("unchecked")
         HashMap<String, HashMap<String, HashMap<String, String>>> hooksMap =
-                getEntity(HashMap.class, VdcQueryType.GetVdsHooksById2,
+                getEntity(HashMap.class, VdcQueryType.GetVdsHooksById,
                         new GetVdsHooksByIdParameters(asGuid(hostId)), null);
         return mapCollection(hooksMap);
     }
