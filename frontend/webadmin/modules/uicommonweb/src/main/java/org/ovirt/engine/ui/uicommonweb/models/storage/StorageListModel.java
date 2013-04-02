@@ -100,6 +100,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
     private UICommand privateEditCommand;
 
+    @Override
     public UICommand getEditCommand()
     {
         return privateEditCommand;
@@ -1112,7 +1113,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         getRemoveCommand().setIsExecutionAllowed(items.size() == 1
                 && Linq.FindAllStorageDomainsBySharedStatus(items, StorageDomainSharedStatus.Unattached).size() == items.size());
 
-        getDestroyCommand().setIsExecutionAllowed(item != null && items.size() == 1);
+        getDestroyCommand().setIsExecutionAllowed(item != null && items.size() == 1
+                && item.getStatus() != StorageDomainStatus.Active);
 
         // System tree dependent actions.
         boolean isAvailable =
