@@ -234,4 +234,6 @@ public interface VdsServerConnector {
     public Map<String, Object> glusterVolumeProfileInfo(String volumeName);
 
     public Map<String, Object> glusterHookEnable(String glusterCommand, String level, String hookName);
+
+    public Map<String, Object> glusterHookDisable(String glusterCommand, String level, String hookName);
 }
