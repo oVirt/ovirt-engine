@@ -6,11 +6,9 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.DisplayNetworkToVdsGroupParameters;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
-@CustomLogFields("NetworkName")
 public class UpdateDisplayToVdsGroupCommand<T extends DisplayNetworkToVdsGroupParameters> extends
         VdsGroupCommandBase<T> {
     private NetworkCluster _networkCluster;

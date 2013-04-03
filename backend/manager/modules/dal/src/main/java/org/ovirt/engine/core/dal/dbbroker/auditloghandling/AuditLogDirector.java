@@ -981,7 +981,6 @@ public final class AuditLogDirector {
     private static Map<String, String> getAvailableValues(String message, AuditLogableBase logable) {
         Map<String, String> returnValue = new HashMap<String, String>(logable.getCustomValues());
         Set<String> attributes = resolvePlaceHolders(message);
-        attributes = AuditLogHelper.merge(attributes, AuditLogHelper.getCustomLogFields(logable.getClass(), true));
         if (attributes != null && attributes.size() > 0) {
             TypeCompat.getPropertyValues(logable, attributes, returnValue);
         }

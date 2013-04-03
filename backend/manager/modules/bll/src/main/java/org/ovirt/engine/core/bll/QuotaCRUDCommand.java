@@ -9,10 +9,8 @@ import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.dao.QuotaDAO;
 
-@CustomLogFields("QuotaName")
 public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> {
 
     private Quota quota;

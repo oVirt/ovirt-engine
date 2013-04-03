@@ -4,9 +4,7 @@ import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 
-@CustomLogFields("TagName")
 public abstract class TagsCommandBase<T extends TagsActionParametersBase> extends AdminOperationCommandBase<T> {
     private tags mTag = null;
     protected boolean noActionDone = true;

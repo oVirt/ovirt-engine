@@ -5,9 +5,7 @@ import org.ovirt.engine.core.common.action.MoveTagParameters;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 
-@CustomLogFields({ "OldParnetTagName", "NewParentTagName" })
 public class MoveTagCommand<T extends MoveTagParameters> extends TagsCommandBase<T> {
     private String _oldParnetTagName = "[null]";
 

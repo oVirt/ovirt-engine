@@ -10,9 +10,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 
-@CustomLogFields("Role")
 public class RemoveAdGroupCommand<T extends AdElementParametersBase> extends AdGroupsHandlingCommandBase<T> {
     private static final long serialVersionUID = 250036567105148334L;
 

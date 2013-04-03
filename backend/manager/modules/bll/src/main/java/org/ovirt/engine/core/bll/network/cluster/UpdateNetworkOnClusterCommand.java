@@ -15,11 +15,9 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
 @SuppressWarnings("serial")
-@CustomLogFields("NetworkName")
 public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> extends
         VdsGroupCommandBase<T> {
 

@@ -4,9 +4,7 @@ import org.ovirt.engine.core.common.action.VmPoolToAdElementParameters;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 
-@CustomLogFields("VmPoolName")
 public abstract class VmPoolToAdGroupBaseCommand<T extends VmPoolToAdElementParameters> extends
         AdGroupsHandlingCommandBase<T> {
     private VmPool mVmPool;

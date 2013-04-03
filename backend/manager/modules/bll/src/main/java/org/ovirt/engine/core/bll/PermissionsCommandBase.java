@@ -10,9 +10,7 @@ import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 
-@CustomLogFields({"RoleName", "VdcObjectType", "VdcObjectName", "SubjectName" })
 public abstract class PermissionsCommandBase<T extends PermissionsOperationsParametes> extends CommandBase<T> {
     private static final long serialVersionUID = -2515073672998232982L;
 
