@@ -249,11 +249,4 @@ public interface VmDAO extends DAO {
      * @return
      */
     List<VM> getAllForVmPool(NGuid vmPoolId);
-
-    /**
-     * Retrieves all VMS that are migrating to a certain Host
-     * @param vdsId
-     *            The Host id
-     */
-    List<VM> getAllMigratingToHost(Guid vdsId);
 }
