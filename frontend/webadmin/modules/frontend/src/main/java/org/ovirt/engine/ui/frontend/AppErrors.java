@@ -2086,6 +2086,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Snapshot description must be formed only from alpha-numeric characters and special characters that conform to the standard ASCII character set.")
     String VALIDATION_DISK_IMAGE_DESCRIPTION_INVALID();
 
+    @DefaultStringValue("VFS type cannot be empty")
+    String VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE();
+
     String VALIDATION_STORAGE_CONNECTION_INVALID();
 
     String VMPAYLOAD_INVALID_PAYLOAD_TYPE();

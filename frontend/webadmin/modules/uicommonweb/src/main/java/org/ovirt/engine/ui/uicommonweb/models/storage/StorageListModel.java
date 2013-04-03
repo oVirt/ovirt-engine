@@ -374,7 +374,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         switch (storage.getStorageType()) {
             case NFS:
                 item = prepareNfsStorageForEdit(storage);
-                boolean isNfsPathEditable = isNfsPathEditable(storage);
+                boolean isNfsPathEditable = isPathEditable(storage);
                 isStorageEditable = isStorageEditable || isNfsPathEditable;
                 //when storage is active, only SPM can perform actions on it, thus it is set above that host is not changeable.
                 //If storage is editable but not active (maintenance) - any host can perform the edit so the changeable here is set based on that
@@ -395,6 +395,11 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
             case POSIXFS:
                 item = preparePosixStorageForEdit(storage);
+                boolean isPathEditable = isPathEditable(storage);
+                isStorageEditable = isStorageEditable || isPathEditable;
+                //when storage is active, only SPM can perform actions on it, thus it is set above that host is not changeable.
+                //If storage is editable but not active (maintenance) - any host can perform the edit so the changeable here is set based on that
+                model.getHost().setIsChangable(isPathEditable);
                 break;
 
             case GLUSTERFS:
@@ -445,7 +450,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         final NfsStorageModel model = new NfsStorageModel();
         model.setRole(storage.getStorageDomainType());
 
-        boolean isNfsPathEditable = isNfsPathEditable(storage);
+        boolean isNfsPathEditable = isPathEditable(storage);
 
         model.getPath().setIsChangable(isNfsPathEditable);
         model.getOverride().setIsChangable(isNfsPathEditable);
@@ -483,7 +488,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         return model;
     }
 
-    private boolean isNfsPathEditable(StorageDomain storage) {
+    private boolean isPathEditable(StorageDomain storage) {
         return (storage.getStorageDomainType() == StorageDomainType.Data || storage.getStorageDomainType() == StorageDomainType.Master) && storage.getStatus() == StorageDomainStatus.Maintenance;
     }
 
@@ -511,9 +516,11 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         final PosixStorageModel model = new PosixStorageModel();
         model.setRole(storage.getStorageDomainType());
-        model.getPath().setIsChangable(false);
-        model.getVfsType().setIsChangable(false);
-        model.getMountOptions().setIsChangable(false);
+
+        boolean isPathEditable = isPathEditable(storage);
+        model.getPath().setIsChangable(isPathEditable);
+        model.getVfsType().setIsChangable(isPathEditable);
+        model.getMountOptions().setIsChangable(isPathEditable);
 
         AsyncDataProvider.GetStorageConnectionById(new AsyncQuery(null, new INewAsyncCallback() {
             @Override
@@ -1235,16 +1242,19 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 }
             }), null, path);
         } else {
-
-            Frontend.RunAction(VdcActionType.UpdateStorageDomain, new StorageDomainManagementParameter(storageDomain), new IFrontendActionAsyncCallback() {
+            StorageDomain storageDomain = (StorageDomain) getSelectedItem();
+            if (isPathEditable(storageDomain)) {
+                updatePath();
+            }
+            else {
+            Frontend.RunAction(VdcActionType.UpdateStorageDomain, new StorageDomainManagementParameter(this.storageDomain), new IFrontendActionAsyncCallback() {
                 @Override
                 public void Executed(FrontendActionAsyncResult result) {
-
                     StorageListModel storageListModel = (StorageListModel) result.getState();
                     storageListModel.OnFinish(storageListModel.context, true, storageListModel.storageModel);
-
                 }
-            }, this);
+                }, this);
+            }
         }
     }
 
@@ -1479,7 +1489,6 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
                     StorageListModel storageListModel = (StorageListModel) target;
                     ArrayList<StorageDomain> storages = (ArrayList<StorageDomain>) returnValue;
-
                     if (storages != null && storages.size() > 0) {
                         String storageName = storages.get(0).getStorageName();
 
@@ -1495,12 +1504,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         }
         else
         {
-            connection = new StorageServerConnections();
-            connection.setid(storageDomain.getStorage());
-
             StorageDomain storageDomain = (StorageDomain) getSelectedItem();
-            if(isNfsPathEditable(storageDomain)) {
-                updateNfsPath();
+            if (isPathEditable(storageDomain)) {
+                updatePath();
             }
             else {
                Frontend.RunAction(VdcActionType.UpdateStorageDomain, new StorageDomainManagementParameter(this.storageDomain),
@@ -1516,25 +1522,32 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         }
     }
 
-    private void updateNfsPath() {
+
+    private void updatePath() {
         StorageModel model = (StorageModel) getWindow();
-        NfsStorageModel nfsModel = (NfsStorageModel) model.getSelectedItem();
         VDS host = (VDS) model.getHost().getSelectedItem();
 
         Guid hostId = Guid.Empty;
         Guid storagePoolId = Guid.Empty;
-        if(host != null) {
-           hostId = host.getId();
-           storagePoolId = host.getStoragePoolId();
+        if (host != null) {
+            hostId = host.getId();
+            storagePoolId = host.getStoragePoolId();
         }
+        IStorageModel storageModel = model.getSelectedItem();
+        connection = new StorageServerConnections();
+        connection.setid(storageDomain.getStorage());
         connection.setconnection(path);
-        connection.setstorage_type(nfsModel.getType());
-        if ((Boolean) nfsModel.getOverride().getEntity()) {
-            connection.setNfsVersion((NfsVersion) ((EntityModel) nfsModel.getVersion().getSelectedItem()).getEntity());
-            connection.setNfsRetrans(nfsModel.getRetransmissions().AsConvertible().nullableShort());
-            connection.setNfsTimeo(nfsModel.getTimeout().AsConvertible().nullableShort());
+        connection.setstorage_type(storageModel.getType());
+
+        if (storageModel.getType().equals(StorageType.NFS)) {
+            updateNFSProperties(storageModel);
         }
-        StorageServerConnectionParametersBase parameters = new StorageServerConnectionParametersBase(connection, hostId);
+        else if (storageModel.getType().equals(StorageType.POSIXFS)) {
+            updatePosixProperties(storageModel);
+        }
+
+        StorageServerConnectionParametersBase parameters =
+                new StorageServerConnectionParametersBase(connection, hostId);
         parameters.setStoragePoolId(storagePoolId);
         Frontend.RunAction(VdcActionType.UpdateStorageServerConnection, parameters,
                 new IFrontendActionAsyncCallback() {
@@ -1547,6 +1560,24 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 }, this);
     }
 
+    private void updateNFSProperties(IStorageModel storageModel) {
+        NfsStorageModel nfsModel = (NfsStorageModel) storageModel;
+        if ((Boolean) nfsModel.getOverride().getEntity()) {
+            connection.setNfsVersion((NfsVersion) ((EntityModel) nfsModel.getVersion().getSelectedItem()).getEntity());
+            connection.setNfsRetrans(nfsModel.getRetransmissions().AsConvertible().nullableShort());
+            connection.setNfsTimeo(nfsModel.getTimeout().AsConvertible().nullableShort());
+        }
+
+    }
+
+    private void updatePosixProperties(IStorageModel storageModel) {
+        PosixStorageModel posixModel = (PosixStorageModel) storageModel;
+        connection.setVfsType(posixModel.getVfsType().getEntity().toString());
+        if (posixModel.getMountOptions().getEntity() != null) {
+            connection.setMountOptions(posixModel.getMountOptions().getEntity().toString());
+        }
+
+    }
 
     public void SaveNewNfsStorage()
     {

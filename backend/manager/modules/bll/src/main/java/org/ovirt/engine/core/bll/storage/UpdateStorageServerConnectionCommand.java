@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -49,14 +50,17 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
     protected boolean canDoAction() {
         StorageServerConnections newConnectionDetails = getParameters().getStorageServerConnection();
 
-        if (newConnectionDetails.getstorage_type() != StorageType.NFS) {
+        if (newConnectionDetails.getstorage_type() != StorageType.NFS && newConnectionDetails.getstorage_type() != StorageType.POSIXFS) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE);
         }
 
-        // todo change it to use annotation - in future patch
         // Check if the NFS path has a valid format
-        if (!new NfsMountPointConstraint().isValid(newConnectionDetails.getconnection(), null)) {
+        if (newConnectionDetails.getstorage_type() == StorageType.NFS &&  !new NfsMountPointConstraint().isValid(newConnectionDetails.getconnection(), null)) {
             return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID);
+        }
+
+        if (newConnectionDetails.getstorage_type() == StorageType.POSIXFS && (StringUtils.isEmpty(newConnectionDetails.getVfsType()))) {
+            return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE);
         }
 
         Guid vdsmId = getParameters().getVdsId();
