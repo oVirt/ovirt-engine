@@ -74,13 +74,13 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
 
         getTable().ensureColumnPresent(vmStatusColumn, constants.empty(), true, "30px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(nameColumn, constants.nameVm(), true, "120px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(nameColumn, constants.nameVm(), true); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(clusterColumn, constants.clusterVm(), true, "120px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(clusterColumn, constants.clusterVm(), true); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(ipColumn, constants.ipVm(), true);
 
-        getTable().ensureColumnPresent(nicActivateStatusColumn, constants.vnicStatusNetworkVM(), true, "70px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(nicActivateStatusColumn, constants.vnicStatusNetworkVM(), true); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(vnicNameColumn, constants.vnicNetworkVM(), true);
 
