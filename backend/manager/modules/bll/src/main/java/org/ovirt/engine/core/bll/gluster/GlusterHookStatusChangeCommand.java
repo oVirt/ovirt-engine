@@ -45,6 +45,13 @@ public abstract class GlusterHookStatusChangeCommand extends GlusterHookCommandB
         return super.getBackend();
     }
 
+    protected GlusterHookEntity getGlusterHook() {
+        if (entity == null) {
+            entity = getGlusterHooksDao().getById(getParameters().getHookId(),true);
+        }
+        return entity;
+    }
+
     @Override
     protected boolean canDoAction() {
         if (!super.canDoAction()) {
@@ -76,7 +83,7 @@ public abstract class GlusterHookStatusChangeCommand extends GlusterHookCommandB
 
     @Override
     protected void executeCommand() {
-        entity = getGlusterHooksDao().getById(getParameters().getHookId(),true);
+        entity = getGlusterHook();
         addCustomValue(GlusterConstants.HOOK_NAME, entity.getName());
         List <VDS> servers = getAllUpServers(getParameters().getClusterId());
         List<GlusterServerHook> serverHooks = entity.getServerHooks();
@@ -107,7 +114,8 @@ public abstract class GlusterHookStatusChangeCommand extends GlusterHookCommandB
 
             VDSReturnValue retValue = pairResult.getSecond();
          // ignore already enabled/disabled errors.
-            if (retValue.getSucceeded() || VdcBllErrors.GlusterHookAlreadyEnabled.equals(retValue.getVdsError().getCode())) {
+            if (retValue.getSucceeded() || VdcBllErrors.GlusterHookAlreadyEnabled.equals(retValue.getVdsError().getCode())
+                    || VdcBllErrors.GlusterHookAlreadyDisabled.equals(retValue.getVdsError().getCode())) {
                 atLeastOneSuccess = true;
                 // update status in database
                 addOrUpdateServerHook(serverHooks, pairResult);
@@ -138,13 +146,13 @@ public abstract class GlusterHookStatusChangeCommand extends GlusterHookCommandB
            // if a new server has been detected, the hook entry needs to be added
             addServerHook(pairResult.getFirst().getId());
         } else {
-            updateServerHookStatusInDb(entity.getId(), pairResult.getFirst().getId(), getNewStatus());
+            updateServerHookStatusInDb(getGlusterHook().getId(), pairResult.getFirst().getId(), getNewStatus());
         }
     }
 
     private void addServerHook(Guid serverId) {
         GlusterServerHook newServerHook = new GlusterServerHook();
-        newServerHook.setHookId(entity.getId());
+        newServerHook.setHookId(getGlusterHook().getId());
         newServerHook.setStatus(getNewStatus());
         newServerHook.setServerId(serverId);
         addServerHookInDb(newServerHook);
@@ -164,8 +172,8 @@ public abstract class GlusterHookStatusChangeCommand extends GlusterHookCommandB
     public Map<String, String> getJobMessageProperties() {
         if (jobProperties == null) {
             jobProperties = super.getJobMessageProperties();
-            if (entity != null) {
-                jobProperties.put(GlusterConstants.HOOK_NAME, entity.getName());
+            if (getGlusterHook() != null) {
+                 jobProperties.put(GlusterConstants.HOOK_NAME, getGlusterHook().getName());
             }
         }
 
