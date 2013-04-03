@@ -12,9 +12,13 @@ import org.ovirt.engine.api.model.NicStatus;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.Options;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Nic;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.Vlan;
+import org.ovirt.engine.core.compat.StringHelper;
 
 public class HostNicMapper {
     private static final String OPTIONS_DELIMITER = "\\ ";
@@ -27,7 +31,17 @@ public class HostNicMapper {
 
     @Mapping(from = HostNIC.class, to = VdsNetworkInterface.class)
     public static VdsNetworkInterface map(HostNIC model, VdsNetworkInterface template) {
-        VdsNetworkInterface entity = template != null ? template : new VdsNetworkInterface();
+        VdsNetworkInterface entity;
+        if (template != null) {
+            entity = template;
+        } else if (model.isSetBonding()) {
+            entity = new Bond();
+        } else if (model.isSetVlan()) {
+            entity = new Vlan();
+        } else {
+            entity = new Nic();
+        }
+
         if (model.isSetId()) {
             entity.setId(GuidUtils.asGuid(model.getId()));
         }
