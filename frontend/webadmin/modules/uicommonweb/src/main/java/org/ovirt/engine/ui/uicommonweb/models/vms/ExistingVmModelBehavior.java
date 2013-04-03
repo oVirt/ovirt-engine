@@ -130,6 +130,10 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         getModel().getIsStateless().setEntity(vm.isStateless());
         getModel().getIsStateless().setIsAvailable(vm.getVmPoolId() == null);
 
+        getModel().getIsRunAndPause().setEntity(vm.isRunAndPause());
+        getModel().getIsRunAndPause().setIsChangable(!vm.isRunning());
+        getModel().getIsRunAndPause().setIsAvailable(vm.getVmPoolId() == null);
+
         getModel().getIsSmartcardEnabled().setEntity(vm.isSmartcardEnabled());
         getModel().getIsDeleteProtected().setEntity(vm.isDeleteProtected());
 

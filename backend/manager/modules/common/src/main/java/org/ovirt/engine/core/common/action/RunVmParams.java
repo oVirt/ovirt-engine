@@ -11,7 +11,7 @@ public class RunVmParams extends VmOperationParameterBase {
     private BootSequence _bootSequence;
     private String _diskPath;
     private boolean _kvmEnable;
-    private boolean _runAndPause;
+    private Boolean _runAndPause;
     private Boolean _useVnc;
     private boolean _acpiEnable;
     private Boolean _win2kHackEnable;
@@ -33,7 +33,7 @@ public class RunVmParams extends VmOperationParameterBase {
     }
 
     public RunVmParams(BootSequence bootSequence, Guid vmId, String diskPath, boolean kvmEnable,
-            boolean runAndPause, Boolean useVnc, boolean acpiEnable, boolean win2kHackEnable,
+            Boolean runAndPause, Boolean useVnc, boolean acpiEnable, boolean win2kHackEnable,
             String clientIp, boolean runAsStateless) {
         super(vmId);
         _internal = false;
@@ -114,11 +114,11 @@ public class RunVmParams extends VmOperationParameterBase {
         _kvmEnable = value;
     }
 
-    public boolean getRunAndPause() {
+    public Boolean getRunAndPause() {
         return _runAndPause;
     }
 
-    public void setRunAndPause(boolean value) {
+    public void setRunAndPause(Boolean value) {
         _runAndPause = value;
     }
 

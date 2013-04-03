@@ -293,30 +293,40 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     protected void AddVmTemplateToDb() {
         // TODO: add timezone handling
-        setVmTemplate(new VmTemplate(0, new Date(), getParameters().getDescription(),
-                getParameters().getMasterVm().getMemSizeMb(), getVmTemplateName(),
-                getParameters().getMasterVm().getNumOfSockets(), getParameters().getMasterVm()
-                        .getCpuPerSocket(), getParameters().getMasterVm().getOs(),
-                getParameters().getMasterVm().getVdsGroupId(), getVmTemplateId(),
-                getParameters().getMasterVm().getDomain(), getParameters().getMasterVm()
-                        .getNumOfMonitors(), (VmTemplateStatus.Locked.getValue()), (getParameters().getMasterVm()
-                        .getUsbPolicy().getValue()), getParameters().getMasterVm().getTimeZone(),
-                getParameters().getMasterVm().isAutoSuspend(), getParameters().getMasterVm()
-                        .getNiceLevel(), getParameters().getMasterVm().isFailBack(),
-                getParameters().getMasterVm().getDefaultBootSequence(), getParameters()
-                        .getMasterVm().getVmType(),
-                getParameters().getMasterVm().isSmartcardEnabled(),
-                getParameters().getMasterVm().isDeleteProtected(),
-                getParameters().getMasterVm().getTunnelMigration(),
-                getParameters().getMasterVm().getVncKeyboardLayout(),
-                getParameters().getMasterVm().getMinAllocatedMem()));
+        setVmTemplate(
+                new VmTemplate(
+                        0,
+                        new Date(),
+                        getParameters().getDescription(),
+                        getParameters().getMasterVm().getMemSizeMb(), getVmTemplateName(),
+                        getParameters().getMasterVm().getNumOfSockets(),
+                        getParameters().getMasterVm().getCpuPerSocket(),
+                        getParameters().getMasterVm().getOs(),
+                        getParameters().getMasterVm().getVdsGroupId(),
+                        getVmTemplateId(),
+                        getParameters().getMasterVm().getDomain(),
+                        getParameters().getMasterVm().getNumOfMonitors(),
+                        VmTemplateStatus.Locked.getValue(),
+                        getParameters().getMasterVm().getUsbPolicy().getValue(),
+                        getParameters().getMasterVm().getTimeZone(),
+                        getParameters().getMasterVm().isAutoSuspend(),
+                        getParameters().getMasterVm().getNiceLevel(),
+                        getParameters().getMasterVm().isFailBack(),
+                        getParameters().getMasterVm().getDefaultBootSequence(),
+                        getParameters().getMasterVm().getVmType(),
+                        getParameters().getMasterVm().isSmartcardEnabled(),
+                        getParameters().getMasterVm().isDeleteProtected(),
+                        getParameters().getMasterVm().getTunnelMigration(),
+                        getParameters().getMasterVm().getVncKeyboardLayout(),
+                        getParameters().getMasterVm().getMinAllocatedMem(),
+                        getParameters().getMasterVm().isStateless(),
+                        getParameters().getMasterVm().isRunAndPause()));
         getVmTemplate().setAutoStartup(getParameters().getMasterVm().isAutoStartup());
         getVmTemplate().setPriority(getParameters().getMasterVm().getPriority());
         getVmTemplate().setDefaultDisplayType(getParameters().getMasterVm().getDefaultDisplayType());
         getVmTemplate().setInitrdUrl(getParameters().getMasterVm().getInitrdUrl());
         getVmTemplate().setKernelUrl(getParameters().getMasterVm().getKernelUrl());
         getVmTemplate().setKernelParams(getParameters().getMasterVm().getKernelParams());
-        getVmTemplate().setStateless(getParameters().getMasterVm().isStateless());
         getVmTemplate().setQuotaId(getParameters().getMasterVm().getQuotaId());
         getVmTemplate().setDedicatedVmForVds(getParameters().getMasterVm().getDedicatedVmForVds());
         getVmTemplate().setMigrationSupport(getParameters().getMasterVm().getMigrationSupport());

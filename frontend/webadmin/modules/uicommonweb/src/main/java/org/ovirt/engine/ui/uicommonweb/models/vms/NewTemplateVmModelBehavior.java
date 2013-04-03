@@ -198,6 +198,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         getModel().getTotalCPUCores().setEntity(Integer.toString(this.vm.getNumOfCpus()));
         getModel().getNumOfSockets().setSelectedItem(this.vm.getNumOfSockets());
         getModel().getIsStateless().setEntity(this.vm.isStateless());
+        getModel().getIsRunAndPause().setEntity(this.vm.isRunAndPause());
         getModel().getIsDeleteProtected().setEntity(this.vm.isDeleteProtected());
         getModel().getIsSmartcardEnabled().setEntity(this.vm.isSmartcardEnabled());
         getModel().getVncKeyboardLayout().setSelectedItem(this.vm.getVncKeyboardLayout());

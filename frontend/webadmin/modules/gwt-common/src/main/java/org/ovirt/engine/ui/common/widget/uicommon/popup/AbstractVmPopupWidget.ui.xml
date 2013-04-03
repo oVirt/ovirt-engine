@@ -271,6 +271,7 @@
 						<g:FlowPanel addStyleNames="{style.sectionPanel}">
 							<e:ListModelListBoxEditor ui:field="oSTypeEditor" />
 							<e:EntityModelCheckBoxEditor ui:field="isStatelessEditor" addStyleNames="{style.checkbox}" />
+							<e:EntityModelCheckBoxEditor ui:field="isRunAndPauseEditor" addStyleNames="{style.checkbox}" />
 							<e:EntityModelCheckBoxEditor ui:field="isDeleteProtectedEditor" addStyleNames="{style.checkbox}" />
 						</g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.sectionPanel}">

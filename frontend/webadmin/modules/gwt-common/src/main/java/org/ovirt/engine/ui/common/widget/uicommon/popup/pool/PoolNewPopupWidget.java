@@ -41,6 +41,7 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
         initTabAvailabilityListeners(object);
         isStatelessEditor.setVisible(false);
         poolNameIcon.setVisible(true);
+        isRunAndPauseEditor.setVisible(false);
 
         if (object.getIsNew()) {
             prestartedVmsEditor.setEnabled(false);

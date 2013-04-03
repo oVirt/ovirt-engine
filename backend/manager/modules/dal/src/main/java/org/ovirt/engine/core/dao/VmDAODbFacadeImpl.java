@@ -239,7 +239,8 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
                 .addValue("host_cpu_flags", vm.isUseHostCpuFlags())
                 .addValue("guest_agent_nics_hash", vm.getGuestAgentNicsHash())
                 .addValue("tunnel_migration", vm.getTunnelMigration())
-                .addValue("vnc_keyboard_layout", vm.getVncKeyboardLayout()));
+                .addValue("vnc_keyboard_layout", vm.getVncKeyboardLayout())
+                .addValue("is_run_and_pause", vm.isRunAndPause()));
     }
 
     @Override
@@ -402,6 +403,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setGuestAgentNicsHash(rs.getInt("guest_agent_nics_hash"));
             entity.setTunnelMigration((Boolean) rs.getObject("tunnel_migration"));
             entity.setVncKeyboardLayout(rs.getString("vnc_keyboard_layout"));
+            entity.setRunAndPause(rs.getBoolean("is_run_and_pause"));
             return entity;
         }
     }

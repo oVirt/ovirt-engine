@@ -196,6 +196,9 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableField
     private int minAllocatedMem;
 
+    @EditableField
+    private boolean runAndPause = false;
+
     public VmBase(Guid id,
             Guid vdsGroupId,
             VmOsType os,
@@ -226,7 +229,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             boolean deleteProtected,
             Boolean tunnelMigration,
             String vncKeyboardLayout,
-            int minAllocatedMem) {
+            int minAllocatedMem,
+            boolean runAndPause) {
         super();
         this.id = id;
         this.vdsGroupId = vdsGroupId;
@@ -258,6 +262,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.tunnelMigration = tunnelMigration;
         this.vncKeyboardLayout = vncKeyboardLayout;
         this.minAllocatedMem = minAllocatedMem;
+        this.runAndPause = runAndPause;
         setQuotaId(quotaId);
     }
 
@@ -724,6 +729,14 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
 
     public void setMinAllocatedMem(int value) {
         minAllocatedMem = value;
+    }
+
+    public boolean isRunAndPause() {
+        return runAndPause;
+    }
+
+    public void setRunAndPause(boolean runAndPause) {
+        this.runAndPause = runAndPause;
     }
 
 }

@@ -57,6 +57,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
 
     private UICommand privateEditCommand;
 
+    @Override
     public UICommand getEditCommand()
     {
         return privateEditCommand;
@@ -455,6 +456,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         template.setUsbPolicy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
         template.setAutoSuspend(false);
         template.setStateless((Boolean) model.getIsStateless().getEntity());
+        template.setRunAndPause((Boolean) model.getIsRunAndPause().getEntity());
         template.setDeleteProtected((Boolean) model.getIsDeleteProtected().getEntity());
         template.setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());
         template.setDefaultBootSequence(model.getBootSequence());

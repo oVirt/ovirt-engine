@@ -59,8 +59,9 @@ public class VmTemplate extends VmBase {
             int numOfMonitors, int status, int usbPolicy, String timeZone, boolean autoSuspend, int niceLevel,
             boolean failBack, BootSequence defaultBootSequence, VmType vmType,
             boolean smartcardEnabled, boolean deleteProtected, Boolean tunnelMigration, String vncKeyboardLayout,
-            int minAllocatedMem) {
-        super(vmtGuid,
+            int minAllocatedMem, boolean stateless, boolean runAndPause) {
+        super(
+                vmtGuid,
                 vdsGroupId,
                 os,
                 creationDate,
@@ -79,7 +80,7 @@ public class VmTemplate extends VmBase {
                 autoSuspend,
                 0,
                 false,
-                false,
+                stateless,
                 null,
                 OriginType.valueOf(Config.<String> GetValue(ConfigValues.OriginType)),
                 null,
@@ -90,7 +91,8 @@ public class VmTemplate extends VmBase {
                 deleteProtected,
                 tunnelMigration,
                 vncKeyboardLayout,
-                minAllocatedMem);
+                minAllocatedMem,
+                runAndPause);
 
         diskTemplateMap = new HashMap<Guid, DiskImage>();
 

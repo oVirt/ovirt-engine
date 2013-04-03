@@ -121,6 +121,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             getModel().getIsDeleteProtected().setEntity(vmBase.isDeleteProtected());
             getModel().getIsSmartcardEnabled().setEntity(vmBase.isSmartcardEnabled());
             getModel().getVncKeyboardLayout().setSelectedItem(vmBase.getVncKeyboardLayout());
+            getModel().getIsRunAndPause().setEntity(false);
 
             boolean hasCd = !StringHelper.isNullOrEmpty(vmBase.getIsoPath());
 

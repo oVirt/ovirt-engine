@@ -69,7 +69,6 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         this.setDiskMap(new HashMap<Guid, Disk>());
         this.setCdPath("");
         this.setFloppyPath("");
-        this.setRunAndPause(false);
         this.setDiskSize(0);
     }
 
@@ -956,7 +955,6 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     // ignores the final fields
     private String cdPath = "";
     private String floppyPath = "";
-    private boolean runAndPause = false;
 
     /**
      * Vitaly change. guest last logout time treatment. If vm stoped without logging out - set last logout time now
@@ -1114,12 +1112,12 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         floppyPath = value;
     }
 
-    public boolean isRunAndPause() {
-        return runAndPause;
+    public Boolean isRunAndPause() {
+        return vmStatic.isRunAndPause();
     }
 
-    public void setRunAndPause(boolean value) {
-        runAndPause = value;
+    public void setRunAndPause(Boolean value) {
+        vmStatic.setRunAndPause(value);
     }
 
     public boolean isWin2kHackEnable() {

@@ -85,7 +85,8 @@ public class VmStatic extends VmBase {
                 vmStatic.isDeleteProtected(),
                 vmStatic.getTunnelMigration(),
                 vmStatic.getVncKeyboardLayout(),
-                vmStatic.getMinAllocatedMem());
+                vmStatic.getMinAllocatedMem(),
+                vmStatic.isRunAndPause());
         setName(vmStatic.getName());
         vmtGuid = vmStatic.getVmtGuid();
         setCustomProperties(vmStatic.getCustomProperties());
@@ -221,6 +222,5 @@ public class VmStatic extends VmBase {
         }
         return getMemSizeMb();
     }
-
 
 }

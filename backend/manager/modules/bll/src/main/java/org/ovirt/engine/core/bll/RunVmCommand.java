@@ -517,7 +517,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             getVm().setCdPath(_cdImagePath);
             getVm().setFloppyPath(_floppyImagePath);
             getVm().setKvmEnable(getParameters().getKvmEnable());
-            getVm().setRunAndPause(getParameters().getRunAndPause());
+            getVm().setRunAndPause(getParameters().getRunAndPause() == null ? getVm().isRunAndPause() : getParameters().getRunAndPause());
             getVm().setAcpiEnable(getParameters().getAcpiEnable());
 
             // Clear the first user:
@@ -921,5 +921,18 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         final VmPool vmPool = getDbFacade().getVmPoolDao().get(getVm().getVmPoolId());
         return vmPool.getVmPoolType().equals(VmPoolType.Manual);
+    }
+
+    @Override
+    public void reportCompleted() {
+        final boolean isRunAndPaused = getVm().isRunAndPause() && getVmDynamicDao().get(getVmId()).getStatus() == VMStatus.Paused;
+
+        if (isRunAndPaused) {
+            final ExecutionContext executionContext = getExecutionContext();
+            executionContext.setShouldEndJob(true);
+            ExecutionHandler.endJob(executionContext, true);
+        } else {
+            super.reportCompleted();
+        }
     }
 }

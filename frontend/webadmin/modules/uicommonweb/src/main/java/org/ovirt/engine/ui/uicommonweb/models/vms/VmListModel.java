@@ -1289,7 +1289,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.getAttachIso().setEntity(false);
         model.getAttachFloppy().setEntity(false);
         model.getRunAsStateless().setEntity(vm.isStateless());
-        model.getRunAndPause().setEntity(false);
+        model.getRunAndPause().setEntity(vm.isRunAndPause());
         model.setHwAcceleration(true);
 
         // passing Kernel parameters
@@ -1580,9 +1580,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 : ""); //$NON-NLS-1$
         tempVar.setFloppyPath(model.getFloppyImagePath());
         tempVar.setKvmEnable(model.getHwAcceleration());
-        tempVar.setRunAndPause((Boolean) model.getRunAndPause().getEntity());
         tempVar.setAcpiEnable(true);
         tempVar.setRunAsStateless((Boolean) model.getRunAsStateless().getEntity());
+        tempVar.setRunAndPause((Boolean) model.getRunAndPause().getEntity());
         tempVar.setReinitialize(model.getReinitialize());
         tempVar.setCustomProperties(model.getCustomPropertySheet().getEntity());
 
@@ -1754,6 +1754,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 / (Integer) model.getNumOfSockets().getSelectedItem());
         tempVar.setAutoSuspend(false);
         tempVar.setStateless((Boolean) model.getIsStateless().getEntity());
+        tempVar.setRunAndPause(((Boolean) model.getIsRunAndPause().getEntity()));
         tempVar.setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());
         tempVar.setDeleteProtected((Boolean) model.getIsDeleteProtected().getEntity());
         tempVar.setDefaultBootSequence(model.getBootSequence());
@@ -2327,6 +2328,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         getcurrentVm().setUsbPolicy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
         getcurrentVm().setAutoSuspend(false);
         getcurrentVm().setStateless((Boolean) model.getIsStateless().getEntity());
+        getcurrentVm().setRunAndPause((Boolean) model.getIsRunAndPause().getEntity());
         getcurrentVm().setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());
         getcurrentVm().setDeleteProtected((Boolean) model.getIsDeleteProtected().getEntity());
         getcurrentVm().setDefaultBootSequence(model.getBootSequence());

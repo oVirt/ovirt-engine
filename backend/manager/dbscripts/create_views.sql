@@ -377,7 +377,8 @@ vm_templates.vm_guid as vmt_guid,
        vm_templates.is_disabled,
        vm_templates.tunnel_migration,
        vm_templates.vnc_keyboard_layout as vnc_keyboard_layout,
-       vm_templates.min_allocated_mem as min_allocated_mem
+       vm_templates.min_allocated_mem as min_allocated_mem,
+       vm_templates.is_run_and_pause as is_run_and_pause
 FROM       vm_static AS vm_templates  INNER JOIN
 vds_groups ON vm_templates.vds_group_id = vds_groups.vds_group_id
 left outer JOIN
@@ -412,7 +413,7 @@ AS
 	                  vm_templates.default_boot_sequence, vm_templates.default_display_type, vm_templates.priority, vm_templates.auto_startup,
 	                  vm_templates.is_stateless, vm_templates.iso_path, vm_templates.origin, vm_templates.initrd_url, vm_templates.kernel_url,
 	                  vm_templates.kernel_params, image_storage_domain_map.storage_domain_id AS storage_id,
-                          quota.quota_name as quota_name, vm_templates.is_disabled, vm_templates.min_allocated_mem
+                          quota.quota_name as quota_name, vm_templates.is_disabled, vm_templates.min_allocated_mem, vm_templates.is_run_and_pause
 FROM                  vm_static AS vm_templates INNER JOIN
 	                  vds_groups ON vm_templates.vds_group_id = vds_groups.vds_group_id LEFT OUTER JOIN
                       storage_pool ON storage_pool.id = vds_groups.storage_pool_id INNER JOIN
@@ -432,7 +433,7 @@ SELECT                vm_templates_1.vm_guid AS vmt_guid, vm_templates_1.vm_name
                       vm_templates_1.priority, vm_templates_1.auto_startup, vm_templates_1.is_stateless, vm_templates_1.iso_path, vm_templates_1.origin,
                       vm_templates_1.initrd_url, vm_templates_1.kernel_url, vm_templates_1.kernel_params,
                       image_storage_domain_map.storage_domain_id AS storage_id,
-                      quota.quota_name as quota_name, vm_templates_1.is_disabled, vm_templates_1.min_allocated_mem
+                      quota.quota_name as quota_name, vm_templates_1.is_disabled, vm_templates_1.min_allocated_mem, vm_templates_1.is_run_and_pause
 FROM                  vm_static AS vm_templates_1 INNER JOIN
                       vds_groups AS vds_groups_1 ON vm_templates_1.vds_group_id = vds_groups_1.vds_group_id LEFT OUTER JOIN
                       storage_pool AS storage_pool_1 ON storage_pool_1.id = vds_groups_1.storage_pool_id INNER JOIN
@@ -551,7 +552,7 @@ SELECT     vm_static.vm_name as vm_name, vm_static.mem_size_mb as vm_mem_size_mb
                       vm_statistics.usage_mem_percent as usage_mem_percent, vm_statistics.usage_cpu_percent as usage_cpu_percent, vds_static.vds_name as run_on_vds_name, vds_groups.cpu_name as vds_group_cpu_name,
                       vm_static.default_display_type as default_display_type, vm_static.priority as priority,vm_static.iso_path as iso_path, vm_static.origin as origin, vds_groups.compatibility_version as vds_group_compatibility_version,
                       vm_static.initrd_url as initrd_url, vm_static.kernel_url as kernel_url, vm_static.kernel_params as kernel_params, vm_dynamic.pause_status as pause_status, vm_dynamic.exit_message as exit_message, vm_dynamic.exit_status as exit_status,vm_static.migration_support as migration_support,vm_static.predefined_properties as predefined_properties,vm_static.userdefined_properties as userdefined_properties,vm_static.min_allocated_mem as min_allocated_mem,  vm_dynamic.hash as hash, vm_static.cpu_pinning as cpu_pinning, vm_static.db_generation as db_generation, vm_static.host_cpu_flags as host_cpu_flags,
-                      vm_static.tunnel_migration as tunnel_migration, vm_static.vnc_keyboard_layout as vnc_keyboard_layout
+                      vm_static.tunnel_migration as tunnel_migration, vm_static.vnc_keyboard_layout as vnc_keyboard_layout, vm_static.is_run_and_pause as is_run_and_pause
 FROM         vm_static INNER JOIN
 vm_dynamic ON vm_static.vm_guid = vm_dynamic.vm_guid INNER JOIN
 vm_static AS vm_templates ON vm_static.vmt_guid = vm_templates.vm_guid INNER JOIN
@@ -588,7 +589,7 @@ SELECT      vms.vm_name, vms.vm_mem_size_mb, vms.nice_level, vms.vmt_guid, vms.v
             vms.vds_group_compatibility_version, vms.initrd_url, vms.kernel_url, vms.kernel_params, vms.pause_status,
             vms.exit_status, vms.exit_message, vms.min_allocated_mem, storage_domain_static.id AS storage_id,
             vms.quota_id as quota_id, vms.quota_name as quota_name, vms.tunnel_migration as tunnel_migration,
-            vms.vnc_keyboard_layout as vnc_keyboard_layout
+            vms.vnc_keyboard_layout as vnc_keyboard_layout, vms.is_run_and_pause as is_run_and_pause
 FROM        vms LEFT OUTER JOIN
             tags_vm_map_view ON vms.vm_guid = tags_vm_map_view.vm_id LEFT OUTER JOIN
             vm_device ON vm_device.vm_id = vms.vm_guid LEFT OUTER JOIN

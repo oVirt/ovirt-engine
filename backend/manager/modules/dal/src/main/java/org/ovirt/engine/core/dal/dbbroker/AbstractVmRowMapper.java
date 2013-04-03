@@ -43,6 +43,7 @@ public abstract class AbstractVmRowMapper<T extends VmBase> implements RowMapper
         entity.setDeleteProtected(rs.getBoolean("is_delete_protected"));
         entity.setTunnelMigration((Boolean) rs.getObject("tunnel_migration"));
         entity.setVncKeyboardLayout(rs.getString("vnc_keyboard_layout"));
+        entity.setRunAndPause(rs.getBoolean("is_run_and_pause"));
     }
 
 }

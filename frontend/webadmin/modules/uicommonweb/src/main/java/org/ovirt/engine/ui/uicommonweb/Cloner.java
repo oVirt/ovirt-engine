@@ -136,6 +136,7 @@ public final class Cloner
         vm.setAutoSuspend(instance.isAutoSuspend());
         vm.setInitialized(instance.isInitialized());
         vm.setStateless(instance.isStateless());
+        vm.setRunAndPause(instance.isRunAndPause());
         vm.setIsoPath(instance.getIsoPath());
         vm.setKernelParams(instance.getKernelParams());
         vm.setKernelUrl(instance.getKernelUrl());
@@ -384,6 +385,7 @@ public final class Cloner
         obj.setVmType(instance.getVmType());
         obj.setId(instance.getId());
         obj.setDiskList(instance.getDiskList());
+        obj.setRunAndPause(instance.isRunAndPause());
 
         return obj;
     }
@@ -408,6 +410,7 @@ public final class Cloner
         obj.setAutoSuspend(instance.isAutoSuspend());
         obj.setInitialized(instance.isInitialized());
         obj.setStateless(instance.isStateless());
+        obj.setRunAndPause(instance.isRunAndPause());
         obj.setMemSizeMb(instance.getMemSizeMb());
         obj.setDiskSize(instance.getDiskSize());
         obj.setNiceLevel(instance.getNiceLevel());

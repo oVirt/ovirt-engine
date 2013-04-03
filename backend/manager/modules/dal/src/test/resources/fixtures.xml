@@ -1049,6 +1049,7 @@
         <column>db_generation</column>
 		<column>tunnel_migration</column>
 		<column>min_allocated_mem</column>
+		<column>is_run_and_pause</column>
         <!-- Templates -->
         <row>
             <value>00000000-0000-0000-0000-000000000000</value>
@@ -1094,6 +1095,7 @@
             <value>1</value>
             <null />
             <value>256</value>
+            <value>false</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
@@ -1139,6 +1141,7 @@
             <value>1</value>
             <value>false</value>
             <value>256</value>
+            <value>false</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b80</value>
@@ -1184,6 +1187,7 @@
             <value>1</value>
             <value>true</value>
             <value>256</value>
+            <value>false</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b81</value>
@@ -1229,6 +1233,7 @@
             <value>1</value>
             <null />
             <value>256</value>
+            <value>false</value>
         </row>
          <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b82</value>
@@ -1274,6 +1279,7 @@
             <value>1</value>
             <null />
             <value>256</value>
+            <value>false</value>
         </row>
 
         <!-- VMS -->
@@ -1321,6 +1327,7 @@
             <value>1</value>
             <null />
             <value>256</value>
+            <value>false</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
@@ -1366,6 +1373,7 @@
             <value>1</value>
             <value>false</value>
             <value>256</value>
+            <value>false</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
@@ -1411,6 +1419,7 @@
             <value>1</value>
             <value>true</value>
             <value>256</value>
+            <value>false</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4357</value>
@@ -1456,6 +1465,7 @@
             <value>1</value>
             <null />
             <value>256</value>
+            <value>false</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
@@ -1501,6 +1511,7 @@
             <value>1</value>
             <null />
             <value>256</value>
+            <value>false</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4360</value>
@@ -1546,6 +1557,7 @@
             <value>1</value>
             <null />
             <value>256</value>
+            <value>false</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5001</value>
@@ -1591,6 +1603,7 @@
             <value>1</value>
             <null />
             <value>256</value>
+            <value>false</value>
         </row>
     </table>
 

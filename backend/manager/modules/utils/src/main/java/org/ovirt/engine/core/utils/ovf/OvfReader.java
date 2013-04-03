@@ -439,6 +439,20 @@ public abstract class OvfReader implements IOvfBuilder {
             }
         }
 
+        node = content.SelectSingleNode("IsStateless");
+        if (node != null) {
+            if (StringUtils.isNotEmpty(node.InnerText)) {
+                vmBase.setStateless(Boolean.parseBoolean(node.InnerText));
+            }
+        }
+
+        node = content.SelectSingleNode("IsRunAndPause");
+        if (node != null) {
+            if (StringUtils.isNotEmpty(node.InnerText)) {
+                vmBase.setRunAndPause(Boolean.parseBoolean(node.InnerText));
+            }
+        }
+
         readGeneralData(content);
     }
 

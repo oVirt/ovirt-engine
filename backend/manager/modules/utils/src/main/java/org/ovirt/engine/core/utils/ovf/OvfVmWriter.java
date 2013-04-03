@@ -41,9 +41,6 @@ public class OvfVmWriter extends OvfWriter {
         _writer.WriteStartElement("IsInitilized");
         _writer.WriteRaw(String.valueOf(_vm.getStaticData().isInitialized()));
         _writer.WriteEndElement();
-        _writer.WriteStartElement("IsStateless");
-        _writer.WriteRaw(String.valueOf(vmBase.isStateless()));
-        _writer.WriteEndElement();
         _writer.WriteStartElement("Origin");
         _writer.WriteRaw(String.valueOf(_vm.getOrigin().getValue()));
         _writer.WriteEndElement();

@@ -106,6 +106,7 @@ public class UnitVmModel extends Model {
 
             getOSType().setIsChangable(false);
             getIsStateless().setIsChangable(false);
+            getIsRunAndPause().setIsChangable(false);
             getIsDeleteProtected().setIsChangable(false);
 
             // ==Initial run Tab==
@@ -618,6 +619,18 @@ public class UnitVmModel extends Model {
         privateIsStateless = value;
     }
 
+    private NotChangableForVmInPoolEntityModel privateIsRunAndPause;
+
+    public EntityModel getIsRunAndPause()
+    {
+        return privateIsRunAndPause;
+    }
+
+    private void setIsRunAndPause(NotChangableForVmInPoolEntityModel value)
+    {
+        privateIsRunAndPause = value;
+    }
+
     private NotChangableForVmInPoolEntityModel privateIsDeleteProtected;
 
     public EntityModel getIsDeleteProtected() {
@@ -1066,6 +1079,7 @@ public class UnitVmModel extends Model {
         setMinAllocatedMemory(new NotChangableForVmInPoolEntityModel());
         setUsbPolicy(new NotChangableForVmInPoolListModel());
         setIsStateless(new NotChangableForVmInPoolEntityModel());
+        setIsRunAndPause(new NotChangableForVmInPoolEntityModel());
         setIsSmartcardEnabled(new NotChangableForVmInPoolEntityModel());
         setIsDeleteProtected(new NotChangableForVmInPoolEntityModel());
         setVncKeyboardLayout(new NotChangableForVmInPoolListModel());
@@ -1207,6 +1221,7 @@ public class UnitVmModel extends Model {
         getMemSize().setEntity(256);
         getMinAllocatedMemory().setEntity(256);
         getIsStateless().setEntity(false);
+        getIsRunAndPause().setEntity(false);
         getIsSmartcardEnabled().setEntity(false);
         getIsHighlyAvailable().setEntity(false);
         getIsAutoAssign().setEntity(true);

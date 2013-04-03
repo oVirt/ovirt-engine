@@ -262,6 +262,14 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteStartElement("MinAllocatedMem");
         _writer.WriteRaw(String.valueOf(vmBase.getMinAllocatedMem()));
         _writer.WriteEndElement();
+
+        _writer.WriteStartElement("IsStateless");
+        _writer.WriteRaw(String.valueOf(vmBase.isStateless()));
+        _writer.WriteEndElement();
+
+        _writer.WriteStartElement("IsRunAndPause");
+        _writer.WriteRaw(String.valueOf(vmBase.isRunAndPause()));
+        _writer.WriteEndElement();
     }
 
     protected abstract void WriteAppList();

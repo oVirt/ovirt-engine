@@ -637,6 +637,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         tempVar.setUsbPolicy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
         tempVar.setAutoSuspend(false);
         tempVar.setStateless((Boolean) model.getIsStateless().getEntity());
+        tempVar.setRunAndPause(((Boolean) model.getIsRunAndPause().getEntity()));
         tempVar.setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());
         tempVar.setDefaultBootSequence(model.getBootSequence());
         tempVar.setAutoStartup((Boolean) model.getIsHighlyAvailable().getEntity());
@@ -701,7 +702,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         model.getAttachIso().setEntity(false);
         model.getAttachFloppy().setEntity(false);
         model.getRunAsStateless().setEntity(vm.isStateless());
-        model.getRunAndPause().setEntity(false);
+        model.getRunAndPause().setEntity(vm.isRunAndPause());
         model.setHwAcceleration(true);
         // disable Host tab
         model.setIsHostTabVisible(false);
@@ -947,6 +948,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         tempVar.setRunAndPause((Boolean) model.getRunAndPause().getEntity());
         tempVar.setAcpiEnable(true);
         tempVar.setRunAsStateless((Boolean) model.getRunAsStateless().getEntity());
+        tempVar.setRunAndPause((Boolean) model.getRunAndPause().getEntity());
         tempVar.setReinitialize(model.getReinitialize());
         tempVar.setCustomProperties((String) model.getCustomProperties().getEntity());
         RunVmOnceParams param = tempVar;
@@ -1332,6 +1334,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         gettempVm().setUsbPolicy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
         gettempVm().setAutoSuspend(false);
         gettempVm().setStateless((Boolean) model.getIsStateless().getEntity());
+        gettempVm().setRunAndPause(((Boolean) model.getIsRunAndPause().getEntity()));
         gettempVm().setDeleteProtected((Boolean) model.getIsDeleteProtected().getEntity());
         gettempVm().setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());
         gettempVm().setDefaultBootSequence(model.getBootSequence());

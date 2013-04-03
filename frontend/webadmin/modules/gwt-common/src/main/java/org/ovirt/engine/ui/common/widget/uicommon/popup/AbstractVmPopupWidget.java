@@ -282,6 +282,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     public EntityModelCheckBoxEditor isStatelessEditor;
 
     @UiField(provided = true)
+    @Path(value = "isRunAndPause.entity")
+    @WithElementId("isRunAndPause")
+    public EntityModelCheckBoxEditor isRunAndPauseEditor;
+
+    @UiField(provided = true)
     @Path(value = "isSmartcardEnabled.entity")
     @WithElementId("isSmartcardEnabled")
     public EntityModelCheckBoxEditor isSmartcardEnabledEditor;
@@ -482,6 +487,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         hostCpuEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isHighlyAvailableEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isStatelessEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        isRunAndPauseEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isDeleteProtectedEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isSmartcardEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         cdAttachedEditor = new EntityModelCheckBoxEditor(Align.LEFT);
@@ -715,6 +721,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
         oSTypeEditor.setLabel(constants.osVmPopup());
         isStatelessEditor.setLabel(constants.statelessVmPopup());
+        isRunAndPauseEditor.setLabel(constants.runAndPauseVmPopup());
         isDeleteProtectedEditor.setLabel(constants.deleteProtectionPopup());
         isSmartcardEnabledEditor.setLabel(constants.smartcardVmPopup());
 
@@ -1083,6 +1090,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
         oSTypeEditor.setTabIndex(nextTabIndex++);
         isStatelessEditor.setTabIndex(nextTabIndex++);
+        isRunAndPauseEditor.setTabIndex(nextTabIndex++);
         isDeleteProtectedEditor.setTabIndex(nextTabIndex++);
 
         // == Pools ==
