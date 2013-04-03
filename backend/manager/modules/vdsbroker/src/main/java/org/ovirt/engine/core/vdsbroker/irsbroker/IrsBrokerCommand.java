@@ -197,9 +197,10 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             // ugly patch because vdsm doesnt check if host is spm on spm
             // operations
             VDSReturnValue result = null;
-            if (mCurrentVdsId != null) {
+            Guid curVdsId = mCurrentVdsId;
+            if (curVdsId != null) {
                 result = ResourceManager.getInstance().runVdsCommand(VDSCommandType.SpmStatus,
-                        new SpmStatusVDSCommandParameters(mCurrentVdsId, _storagePoolId));
+                        new SpmStatusVDSCommandParameters(curVdsId, _storagePoolId));
             }
 
             if (result == null
@@ -233,7 +234,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                             (HashMap<Guid, AsyncTaskStatus>) ResourceManager
                                     .getInstance()
                                     .runVdsCommand(VDSCommandType.HSMGetAllTasksStatuses,
-                                            new VdsIdVDSCommandParametersBase(mCurrentVdsId)).getReturnValue();
+                                            new VdsIdVDSCommandParametersBase(curVdsId)).getReturnValue();
                     boolean allTasksFinished = true;
                     if (tasksList != null) {
                         for (AsyncTaskStatus taskStatus : tasksList.values()) {
