@@ -101,11 +101,11 @@ public class VolumeGeneralModel extends EntityModel {
         }
         GlusterVolumeEntity entity = (GlusterVolumeEntity) getEntity();
         setName(entity.getName());
-        setVolumeId(entity.getId().toString());
-        setVolumeType(entity.getVolumeType().toString());
-        setReplicaCount(Integer.toString(entity.getReplicaCount()));
-        setStripeCount(Integer.toString(entity.getStripeCount()));
-        setNumOfBricks(Integer.toString(entity.getBricks().size()));
+        setVolumeId(entity.getId() != null ? entity.getId().toString() : null);
+        setVolumeType(entity.getVolumeType() != null ? entity.getVolumeType().toString() : null);
+        setReplicaCount(entity.getReplicaCount() != null ? Integer.toString(entity.getReplicaCount()) : null);
+        setStripeCount(entity.getStripeCount() != null ? Integer.toString(entity.getStripeCount()) : null);
+        setNumOfBricks(entity.getBricks() != null ? Integer.toString(entity.getBricks().size()) : null);
     }
 
 }
