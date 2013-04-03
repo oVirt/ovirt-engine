@@ -266,6 +266,10 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___GLUSTER_HOOK_ENABLE_FAILED();
 
+    String AuditLogType___GLUSTER_HOOK_DISABLE();
+
+    String AuditLogType___GLUSTER_HOOK_DISABLE_FAILED();
+
     String VdcActionType___ActivateVds();
 
 	String VdcActionType___RecoveryStoragePool();
@@ -570,6 +574,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 	String vdcActionType___StopGlusterVolumeProfile();
 
 	String VdcActionType___EnableGlusterHook();
+
+	String VdcActionType___DisableGlusterHook();
 
 	String VdcActionType___ConnectStorageToVds();
 

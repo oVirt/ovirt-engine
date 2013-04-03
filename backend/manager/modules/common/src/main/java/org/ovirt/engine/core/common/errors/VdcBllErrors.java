@@ -369,7 +369,9 @@ public enum VdcBllErrors {
     GlusterPeerListFailed(4407),
     GlusterHookFailed(4500),
     GlusterHookEnableFailed(4501),
+    GlusterHookDisableFailed(4502),
     GlusterHookAlreadyEnabled(4503),
+    GlusterHookAlreadyDisabled(4504),
     GlusterHookNotFound(4505),
 
     UnicodeArgumentException(4900),
