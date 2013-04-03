@@ -39,7 +39,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
 
     @Override
     protected boolean canDoAction() {
-        AddNetworkValidator validator = new AddNetworkValidator(getNetwork());
+        AddNetworkValidator validator = getNetworkValidator();
         return validate(validator.dataCenterExists())
                 && validate(validator.vmNetworkSetCorrectly())
                 && validate(validator.stpForVmNetworkOnly())
@@ -48,6 +48,10 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
                 && validate(validator.networkNameNotUsed())
                 && validate(validator.vlanIdNotUsed())
                 && (getNetwork().getProvidedBy() == null || externalNetworkValid(validator));
+    }
+
+    protected AddNetworkValidator getNetworkValidator() {
+        return new AddNetworkValidator(getNetwork());
     }
 
     private boolean externalNetworkValid(AddNetworkValidator validator) {
