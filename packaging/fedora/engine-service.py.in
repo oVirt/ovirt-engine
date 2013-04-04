@@ -645,6 +645,7 @@ def main():
     (options, args) = parser.parse_args()
 
     global engineConsoleLogFile
+    global enginePidFile
     global foreground
 
     if options.pidfile is not None:
