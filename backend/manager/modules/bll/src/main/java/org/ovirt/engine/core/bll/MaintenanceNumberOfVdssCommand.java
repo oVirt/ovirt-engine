@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.MaintenanceVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -25,13 +24,10 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -179,29 +175,10 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                     } else if (vds.getStatus() == VDSStatus.NonResponsive && vds.getSpmStatus() != VdsSpmStatus.None) {
                         result = false;
                         addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_RESPONDING_AND_IS_SPM);
-                    } else if (vds.getSpmStatus() == VdsSpmStatus.SPM && vds.getStatus() == VDSStatus.Up) {
-                        try {
-                            @SuppressWarnings("unchecked")
-                            HashMap<Guid, AsyncTaskStatus> taskStatuses =
-                                    (HashMap<Guid, AsyncTaskStatus>) Backend
-                                            .getInstance()
-                                            .getResourceManager()
-                                            .RunVdsCommand(VDSCommandType.HSMGetAllTasksStatuses,
-                                                    new VdsIdVDSCommandParametersBase(vdsId)).getReturnValue();
-                            if (taskStatuses.size() > 0) {
-                                addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_SPM_WITH_RUNNING_TASKS);
-                                result = false;
-                            }
-                        } catch (VdcBLLException e) {
-                            if (e.getErrorCode() == VdcBllErrors.VDS_NETWORK_ERROR) {
-                                addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_RESPONDING_AND_IS_SPM);
-                                result = false;
-                            } else {
-                                log.error("Error getting spm task list.", e);
-                            }
-                        } catch (RuntimeException exp) {
-                            log.error("Error getting spm task list.", exp);
-                        }
+                    } else if (vds.getSpmStatus() == VdsSpmStatus.SPM && vds.getStatus() == VDSStatus.Up &&
+                            getAsyncTaskDao().getAsyncTaskIdsByStoragePoolId(vds.getStoragePoolId()).size() > 0) {
+                        addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_SPM_WITH_RUNNING_TASKS);
+                        result = false;
                     }
                 }
             }

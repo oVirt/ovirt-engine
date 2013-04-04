@@ -29,7 +29,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.AsyncTaskDAO;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -300,10 +299,6 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 _isLastMaster = true;
             }
         }
-    }
-
-    protected AsyncTaskDAO getAsyncTaskDao() {
-        return DbFacade.getInstance().getAsyncTaskDao();
     }
 
     @Override

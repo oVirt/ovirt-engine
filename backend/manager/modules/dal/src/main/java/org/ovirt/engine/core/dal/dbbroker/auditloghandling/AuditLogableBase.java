@@ -23,6 +23,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.AdGroupDAO;
+import org.ovirt.engine.core.dao.AsyncTaskDAO;
 import org.ovirt.engine.core.dao.DbUserDAO;
 import org.ovirt.engine.core.dao.PermissionDAO;
 import org.ovirt.engine.core.dao.RoleDAO;
@@ -603,6 +604,10 @@ public class AuditLogableBase extends TimeoutBase {
 
     protected NetworkDao getNetworkDAO() {
         return getDbFacade().getNetworkDao();
+    }
+
+    protected AsyncTaskDAO getAsyncTaskDao() {
+        return getDbFacade().getAsyncTaskDao();
     }
 
     protected DbFacade getDbFacade() {
