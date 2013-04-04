@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -38,6 +39,10 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
 
     public UpdateVdsCommand(T parameters) {
         super(parameters);
+    }
+
+    protected UpdateVdsCommand(Guid commandId) {
+        super(commandId);
     }
 
     @Override
@@ -141,6 +146,9 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                 if (vdcReturnValueBase != null && !vdcReturnValueBase.getCanDoAction()) {
                     ArrayList<String> canDoActionMessages = vdcReturnValueBase.getCanDoActionMessages();
                     if (!canDoActionMessages.isEmpty()) {
+                        // add can do action messages to return value so error messages
+                        // are returned back to the client
+                        getReturnValue().getCanDoActionMessages().addAll(canDoActionMessages);
                         log.errorFormat("Installation/upgrade of Host {0},{1} failed due to: {2} ",
                                 getVdsId(),
                                 getVdsName(),
@@ -149,7 +157,15 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                                         .TranslateErrorText(canDoActionMessages),
                                         ","));
                     }
+                    // set can do action to false so can do action messages are
+                    // returned back to client
+                    getReturnValue().setCanDoAction(false);
                     setSucceeded(false);
+                    // add old vds dynamic data to compensation context. This
+                    // way the status will revert back to what it was before
+                    // starting installation process
+                    getCompensationContext().snapshotEntityStatus(_oldVds.getDynamicData(), _oldVds.getDynamicData().getstatus());
+                    getCompensationContext().stateChanged();
                     return;
                 }
             }
