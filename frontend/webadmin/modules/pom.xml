@@ -48,7 +48,7 @@
     <gwt.userAgent>ie8,ie9,gecko1_8,safari,opera</gwt.userAgent>
     <!-- Control target locales for GWT compilation, maps to 'locale' deferred binding property in *.gwt.xml -->
     <!-- By default, only English locale is supported, see 'all-langs' profile for a complete list -->
-    <gwt.locale>en</gwt.locale>
+    <gwt.locale>en_US</gwt.locale>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -179,7 +179,7 @@
     <profile>
       <id>all-langs</id>
       <properties>
-        <gwt.locale>en,es,fr,ja,pt_BR,zh_CN,de</gwt.locale>
+        <gwt.locale>en_US,es,fr,ja,pt_BR,zh_CN,de</gwt.locale>
       </properties>
     </profile>
   </profiles>

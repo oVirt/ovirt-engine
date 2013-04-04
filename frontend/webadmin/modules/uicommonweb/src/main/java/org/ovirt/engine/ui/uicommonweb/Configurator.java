@@ -40,7 +40,7 @@ public abstract class Configurator {
         setSpiceFullScreen(false);
 
         String currentLocale = LocaleInfo.getCurrentLocale().getLocaleName();
-        documentationLangPath = (currentLocale.equals("default") ? "en-US" : currentLocale) + "/"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        documentationLangPath = currentLocale.replaceAll("_", "-") + "/"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
         setSpiceVersion(new Version(4, 4));
         setSpiceDefaultUsbPort(32023);
