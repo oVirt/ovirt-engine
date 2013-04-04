@@ -418,6 +418,3 @@ install_service:
 	install -m 644 packaging/fedora/engine-service.xml.in $(DESTDIR)$(DATA_DIR)/service
 	install -m 644 packaging/fedora/engine-service-logging.properties.in $(DESTDIR)$(DATA_DIR)/service
 	install -m 755 packaging/fedora/engine-service.py $(DESTDIR)$(DATA_DIR)/service
-
-	# Install the links:
-	ln -sf $(DATA_DIR)/service/engine-service.py $(DESTDIR)$(BIN_DIR)/engine-service

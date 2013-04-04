@@ -435,7 +435,6 @@ fi
 
 # Files needed by the service:
 %{engine_data}/service
-%{_bindir}/engine-service
 %if %{install_systemd}
 %{_unitdir}/%{engine_name}.service
 %endif

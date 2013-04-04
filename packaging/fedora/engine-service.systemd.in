@@ -7,7 +7,7 @@ Type=simple
 User=@ENGINE_USER@
 Group=@ENGINE_GROUP@
 LimitNOFILE=65535
-ExecStart=/usr/bin/engine-service start
+ExecStart=/usr/share/ovirt-engine/service/engine-service.py start
 
 [Install]
 WantedBy=multi-user.target
