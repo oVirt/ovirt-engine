@@ -37,7 +37,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
-@LockIdNameAttribute(isReleaseAtEndOfExecute = true)
+@LockIdNameAttribute
 public class UpdateStorageServerConnectionCommand<T extends StorageServerConnectionParametersBase> extends StorageServerConnectionCommandBase<T> {
     private List<StorageDomain> domains = null;
 

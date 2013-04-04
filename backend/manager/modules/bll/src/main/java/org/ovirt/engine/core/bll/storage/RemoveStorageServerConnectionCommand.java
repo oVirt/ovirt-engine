@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.Map;
 
 @NonTransactiveCommandAttribute
-@LockIdNameAttribute(isReleaseAtEndOfExecute = true)
+@LockIdNameAttribute
 public class RemoveStorageServerConnectionCommand<T extends StorageServerConnectionParametersBase> extends DisconnectStorageServerConnectionCommand {
 
     public RemoveStorageServerConnectionCommand(T parameters) {

@@ -22,7 +22,7 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @SuppressWarnings("serial")
-@LockIdNameAttribute(isReleaseAtEndOfExecute = true)
+@LockIdNameAttribute
 @InternalCommandAttribute
 public class AddStorageServerConnectionCommand<T extends StorageServerConnectionParametersBase> extends
         ConnectStorageToVdsCommand<T> {
