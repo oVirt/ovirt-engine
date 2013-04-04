@@ -204,9 +204,11 @@ public class IsoDomainListSyncronizer {
         boolean updateFromVDSMSucceeded = true;
 
         // If the SPM and the storage pool are valid, try to refresh the Iso list by fetching it from the SPM.
-        if (imageType == ImageFileType.ISO) {
+        if (imageType == ImageFileType.ISO || imageType == ImageFileType.All) {
             updateFromVDSMSucceeded = updateIsoListFromVDSM(storagePoolId, storageDomainId);
-        } else if (imageType == ImageFileType.Floppy) {
+        }
+
+        if (imageType == ImageFileType.Floppy || imageType == ImageFileType.All) {
             updateFromVDSMSucceeded =
                     updateFloppyListFromVDSM(storagePoolId, storageDomainId) && updateFromVDSMSucceeded;
         }

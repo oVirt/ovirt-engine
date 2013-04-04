@@ -23,9 +23,15 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 public class RepoFileMetaDataDAODbFacadeImpl extends BaseDAODbFacade implements RepoFileMetaDataDAO {
 
     @Override
-    public void removeRepoDomainFileList(Guid id, ImageFileType filetype) {
+    public void removeRepoDomainFileList(Guid id, ImageFileType fileType) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("repo_domain_id", id).addValue("file_type", filetype.getValue());
+                .addValue("storage_domain_id", id);
+
+        if (fileType == null || fileType == ImageFileType.All) {
+            parameterSource.addValue("file_type", null);
+        } else {
+            parameterSource.addValue("file_type", fileType.getValue());
+        }
 
         getCallsHandler().executeModification("DeleteRepo_domain_file_list", parameterSource);
     }
@@ -50,12 +56,17 @@ public class RepoFileMetaDataDAODbFacadeImpl extends BaseDAODbFacade implements 
     @Override
     public List<RepoFileMetaData> getRepoListForStorageDomain(Guid storageDomainId,
             ImageFileType fileType) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("storage_domain_id",
-                storageDomainId);
-        parameterSource.addValue("file_type", fileType.getValue());
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("storage_domain_id", storageDomainId);
 
-        return getCallsHandler().executeReadList("GetRepo_files_by_storage_domain", RepoFileMetaDataMapper.instance,
-                parameterSource);
+        if (fileType == null || fileType == ImageFileType.All) {
+            parameterSource.addValue("file_type", null);
+        } else {
+            parameterSource.addValue("file_type", fileType.getValue());
+        }
+
+        return getCallsHandler().executeReadList("GetRepo_files_by_storage_domain",
+                RepoFileMetaDataMapper.instance, parameterSource);
     }
 
     /**
@@ -101,6 +112,7 @@ public class RepoFileMetaDataDAODbFacadeImpl extends BaseDAODbFacade implements 
             entity.setSize(rs.getLong("size"));
             entity.setDateCreated((Date) rs.getObject("date_created"));
             entity.setLastRefreshed(rs.getLong("last_refreshed"));
+            entity.setFileType(ImageFileType.forValue(rs.getInt("file_type")));
             return entity;
         }
     }

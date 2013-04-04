@@ -1,28 +1,27 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class StorageIsoListModel extends SearchableListModel implements IFrontendMultipleQueryAsyncCallback
+public class StorageIsoListModel extends SearchableListModel
 {
     @Override
     public Iterable getItems()
@@ -145,23 +144,52 @@ public class StorageIsoListModel extends SearchableListModel implements IFronten
 
         StorageDomain storageDomain = (StorageDomain) getEntity();
 
-        GetImagesListParameters isoListParams = new GetImagesListParameters(
-                storageDomain.getId(), ImageFileType.ISO);
-        isoListParams.setForceRefresh(true);
-        isoListParams.setRefresh(getIsQueryFirstTime());
-
-        GetImagesListParameters floppyListParams = new GetImagesListParameters(
-                storageDomain.getId(), ImageFileType.Floppy);
-        floppyListParams.setForceRefresh(true);
-        floppyListParams.setRefresh(getIsQueryFirstTime());
+        GetImagesListParameters imagesListParams = new GetImagesListParameters(storageDomain.getId(), ImageFileType.All);
+        imagesListParams.setForceRefresh(true);
+        imagesListParams.setRefresh(getIsQueryFirstTime());
 
         StartProgress(null);
 
-        Frontend.RunMultipleQueries(new ArrayList<VdcQueryType>(Arrays.asList(new VdcQueryType[] {
-                VdcQueryType.GetImagesList, VdcQueryType.GetImagesList })),
-                new ArrayList<VdcQueryParametersBase>(Arrays.asList(new VdcQueryParametersBase[] {
-                        isoListParams, floppyListParams })),
-                this);
+        AsyncQuery _asyncQuery = new AsyncQuery();
+        _asyncQuery.setModel(this);
+        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object returnObject)
+            {
+                VdcQueryReturnValue returnValue = (VdcQueryReturnValue) returnObject;
+
+                StopProgress();
+
+                if (!returnValue.getSucceeded()) {
+                    return;
+                }
+
+                ArrayList<RepoFileMetaData> repoFileList = (ArrayList<RepoFileMetaData>)
+                        returnValue.getReturnValue();
+
+                Collections.sort(repoFileList, new Comparator<RepoFileMetaData>() {
+                    @Override
+                    public int compare(RepoFileMetaData a, RepoFileMetaData b) {
+                        return a.getRepoFileName().compareToIgnoreCase(b.getRepoFileName());
+                    }
+                });
+
+                ArrayList<EntityModel> entityList = new ArrayList<EntityModel>();
+
+                for (RepoFileMetaData repoFileItem : repoFileList) {
+                    EntityModel entityItem = new EntityModel();
+                    entityItem.setHashName(repoFileItem.getRepoFileName());
+                    entityItem.setTitle(repoFileItem.getRepoFileName());
+                    entityItem.setEntity(repoFileItem.getFileType());
+                    entityList.add(entityItem);
+                }
+
+                UpdateIsoModels(entityList);
+                setIsEmpty(entityList.isEmpty());
+            }
+        };
+
+        Frontend.RunQuery(VdcQueryType.GetImagesList, imagesListParams, _asyncQuery);
     }
 
     @Override
@@ -169,57 +197,6 @@ public class StorageIsoListModel extends SearchableListModel implements IFronten
     {
         super.AsyncSearch();
         SyncSearch();
-    }
-
-    @Override
-    public void Executed(FrontendMultipleQueryAsyncResult result)
-    {
-        StopProgress();
-
-        ArrayList<EntityModel> items = new ArrayList<EntityModel>();
-
-        VdcQueryReturnValue isoReturnValue = result.getReturnValues().get(0);
-
-        ArrayList<RepoFileMetaData> isoImages =
-                isoReturnValue.getSucceeded() ? (ArrayList<RepoFileMetaData>) isoReturnValue.getReturnValue()
-                        : new ArrayList<RepoFileMetaData>();
-
-        ArrayList<String> fileNameList = new ArrayList<String>();
-        for (RepoFileMetaData RepoFileMetaData : isoImages) {
-            fileNameList.add(RepoFileMetaData.getRepoFileName());
-        }
-        Collections.sort(fileNameList, new Linq.CaseInsensitiveComparer());
-
-        for (String item : fileNameList) {
-            EntityModel model = new EntityModel();
-            model.setHashName(item);
-            model.setTitle(item);
-            model.setEntity("CD/DVD"); //$NON-NLS-1$
-            items.add(model);
-        }
-
-        VdcQueryReturnValue floppyReturnValue = result.getReturnValues().get(1);
-
-        ArrayList<RepoFileMetaData> floppyImages =
-                floppyReturnValue.getSucceeded() ? (ArrayList<RepoFileMetaData>) floppyReturnValue.getReturnValue()
-                        : new ArrayList<RepoFileMetaData>();
-
-        ArrayList<String> floppyNameList = new ArrayList<String>();
-        for (RepoFileMetaData RepoFileMetaData : floppyImages) {
-            floppyNameList.add(RepoFileMetaData.getRepoFileName());
-        }
-        Collections.sort(floppyNameList, new Linq.CaseInsensitiveComparer());
-
-        for (String item : floppyNameList) {
-            EntityModel model = new EntityModel();
-            model.setHashName(item);
-            model.setTitle(item);
-            model.setEntity("Floppy"); //$NON-NLS-1$
-            items.add(model);
-        }
-
-        UpdateIsoModels(items);
-        setIsEmpty(items.isEmpty());
     }
 
     private void UpdateIsoModels(ArrayList<EntityModel> items)

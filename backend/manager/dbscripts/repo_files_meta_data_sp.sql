@@ -18,28 +18,28 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION DeleteRepo_domain_file_list(v_repo_domain_id UUID, v_file_type INTEGER)
+Create or replace FUNCTION DeleteRepo_domain_file_list(v_storage_domain_id UUID, v_file_type INTEGER DEFAULT NULL)
 RETURNS VOID
    AS $procedure$
 BEGIN
 
    DELETE FROM repo_file_meta_data
-   WHERE repo_domain_id = v_repo_domain_id
-     AND file_type = v_file_type;
+   WHERE repo_domain_id = v_storage_domain_id
+     AND (v_file_type IS NULL OR file_type = v_file_type);
 
    RETURN;
 END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetRepo_files_by_storage_domain(v_storage_domain_id UUID, v_file_type INTEGER)
+Create or replace FUNCTION GetRepo_files_by_storage_domain(v_storage_domain_id UUID, v_file_type INTEGER DEFAULT NULL)
 RETURNS SETOF repo_file_meta_data
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT repo_file_meta_data.*
    FROM repo_file_meta_data
    WHERE repo_domain_id = v_storage_domain_id
-   AND repo_file_meta_data.file_type = v_file_type
+   AND (v_file_type IS NULL OR repo_file_meta_data.file_type = v_file_type)
    ORDER BY repo_file_meta_data.last_refreshed;
 END; $procedure$
 LANGUAGE plpgsql;
