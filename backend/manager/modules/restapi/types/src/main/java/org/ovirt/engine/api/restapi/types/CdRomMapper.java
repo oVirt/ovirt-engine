@@ -1,11 +1,11 @@
 package org.ovirt.engine.api.restapi.types;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class CdRomMapper {
 
@@ -24,7 +24,7 @@ public class CdRomMapper {
     public static CdRom map(VM entity, CdRom template) {
         CdRom model = template != null ? template : new CdRom();
         model.setId(CDROM_ID.toString());
-        if (!StringHelper.isNullOrEmpty(entity.getStaticData().getIsoPath())) {
+        if (!StringUtils.isEmpty(entity.getStaticData().getIsoPath())) {
             model.setFile(new File());
             model.getFile().setId(entity.getStaticData().getIsoPath());
         }
@@ -39,7 +39,7 @@ public class CdRomMapper {
     public static CdRom map(VmTemplate entity, CdRom template) {
         CdRom model = template != null ? template : new CdRom();
         model.setId(CDROM_ID.toString());
-        if (!StringHelper.isNullOrEmpty(entity.getIsoPath())) {
+        if (!StringUtils.isEmpty(entity.getIsoPath())) {
             model.setFile(new File());
             model.getFile().setId(entity.getIsoPath());
         }

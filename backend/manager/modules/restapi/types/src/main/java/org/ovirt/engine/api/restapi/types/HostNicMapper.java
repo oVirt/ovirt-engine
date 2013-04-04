@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.types;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Bonding;
 import org.ovirt.engine.api.model.BootProtocol;
@@ -14,7 +15,6 @@ import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class HostNicMapper {
     private static final String OPTIONS_DELIMITER = "\\ ";
@@ -108,7 +108,7 @@ public class HostNicMapper {
         if(entity.getSpeed()!=null && entity.getSpeed()>0){
             model.setSpeed(entity.getSpeed() * 1000L * 1000);
         }
-        if(!StringHelper.isNullOrEmpty(entity.getBondOptions())){
+        if (!StringUtils.isEmpty(entity.getBondOptions())) {
             if(model.getBonding() == null) model.setBonding(new Bonding());
             model.getBonding().setOptions(new Options());
             for(String opt : entity.getBondOptions().split(OPTIONS_DELIMITER)){
@@ -136,7 +136,7 @@ public class HostNicMapper {
     }
 
     private static String getType(final String[] optionPair) {
-        if(!StringHelper.isNullOrEmpty(optionPair[0]) && optionPair[0].equals("mode") && !StringHelper.isNullOrEmpty(optionPair[1])){
+        if (!StringUtils.isEmpty(optionPair[0]) && optionPair[0].equals("mode") && !StringUtils.isEmpty(optionPair[1])) {
             Integer mode = tryParse(optionPair[1]);
             if(mode != null && mode > 0 && mode < 6){
                 return BONDING_MODS[mode - 1];

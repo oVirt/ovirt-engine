@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.common.util.TimeZoneMapping;
 import org.ovirt.engine.api.model.Boot;
@@ -58,7 +59,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 
 public class VmMapper {
@@ -409,7 +409,7 @@ public class VmMapper {
         policy.setGuaranteed(new Long(entity.getMinAllocatedMem()) * BYTES_PER_MB);
         model.setMemoryPolicy(policy);
         model.setTimezone(TimeZoneMapping.getJava(entity.getTimeZone()));
-        if (!StringHelper.isNullOrEmpty(entity.getCustomProperties())) {
+        if (!StringUtils.isEmpty(entity.getCustomProperties())) {
             CustomProperties hooks = new CustomProperties();
             hooks.getCustomProperty().addAll(CustomPropertiesParser.parse(entity.getCustomProperties(), false));
             model.setCustomProperties(hooks);

@@ -1,15 +1,15 @@
 package org.ovirt.engine.api.restapi.types;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Groups;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class UserMapper {
 
@@ -30,7 +30,7 @@ public class UserMapper {
                 model.getGroups().getGroups().add(group);
             }
         }
-        if(!StringHelper.isNullOrEmpty(entity.getdomain())){
+        if (!StringUtils.isEmpty(entity.getdomain())) {
             Domain dom = new Domain();
             dom.setName(entity.getdomain());
             dom.setId(new NGuid(entity.getdomain().getBytes(), true).toString());
@@ -66,7 +66,7 @@ public class UserMapper {
                 model.getGroups().getGroups().add(group);
             }
         }
-        if(!StringHelper.isNullOrEmpty(entity.getDomainControler())){
+        if (!StringUtils.isEmpty(entity.getDomainControler())) {
             Domain dom = new Domain();
             dom.setName(entity.getDomainControler());
             dom.setId(new NGuid(entity.getDomainControler().getBytes(), true).toString());
