@@ -97,7 +97,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         // that has storage domain associated to which has one task on it
         List<Guid> guids = dao.getAsyncTaskIdsByStoragePoolId(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
         assertNotNull(guids);
-        assertEquals(guids.size(), 1);
+        assertEquals(guids.size(), 2);
     }
 
     @Test
@@ -216,13 +216,13 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         List<AsyncTasks> tasks = dao.getAll();
         assertNotNull(tasks);
         int tasksNumber = tasks.size();
-        dao.saveOrUpdate(existingAsyncTask);
+        dao.saveOrUpdate(existingAsyncTask, VdcObjectType.Disk);
         tasks = dao.getAll();
         assertEquals(tasksNumber, tasks.size());
         AsyncTasks taskFromDb = dao.get(existingAsyncTask.gettask_id());
         assertNotNull(taskFromDb);
         assertEquals(taskFromDb,existingAsyncTask);
-        dao.saveOrUpdate(newAsyncTask);
+        dao.saveOrUpdate(newAsyncTask, VdcObjectType.Disk, Guid.NewGuid());
         tasks = dao.getAll();
         assertNotNull(tasks);
         assertEquals(tasksNumber+1, tasks.size());

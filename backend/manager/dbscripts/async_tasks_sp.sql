@@ -110,9 +110,8 @@ Create or replace FUNCTION GetAsyncTasksByStoragePoolId(v_storage_pool_id UUID)
 RETURNS SETOF idUuidType
   AS $procedure$
 BEGIN
-   RETURN QUERY SELECT task_ent.async_task_id
-   FROM  storage_pool_iso_map sd_map
-   JOIN async_tasks_entities task_ent ON sd_map.storage_id = task_ent.entity_id
+   RETURN QUERY SELECT async_tasks.task_id
+   FROM  async_tasks
    WHERE storage_pool_id = v_storage_pool_id;
 END; $procedure$
 LANGUAGE plpgsql;
