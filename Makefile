@@ -314,7 +314,7 @@ install_setup:
 	install -m 640 backend/manager/tools/dbutils/fkvalidator_sp.sql $(DESTDIR)$(DATA_DIR)/scripts/dbutils
 
 install_aio_plugin:
-	install -m 755 packaging/fedora/setup/plugins/all_in_one_100.py $(DESTDIR)$(DATA_DIR)/scripts/plugins
+	install -m 644 packaging/fedora/setup/plugins/all_in_one_100.py $(DESTDIR)$(DATA_DIR)/scripts/plugins
 
 install_sec:
 	install -dm 755 $(DESTDIR)$(PKG_PKI_DIR)/certs
