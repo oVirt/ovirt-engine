@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -198,6 +199,20 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                     new RunVmParams(getVmId()),
                     ExecutionHandler.createInternalJobContext());
         }
+    }
+
+    @Override
+    protected List<VdcActionParametersBase> getParametersForChildCommand() {
+        List<VdcActionParametersBase> sortedList = getParameters().getImagesParameters();
+        Collections.sort(sortedList, new Comparator<VdcActionParametersBase>() {
+            @Override
+            public int compare(VdcActionParametersBase o1, VdcActionParametersBase o2) {
+                return ((ImagesActionsParametersBase) o1).getDestinationImageId()
+                        .compareTo(((ImagesActionsParametersBase) o2).getDestinationImageId());
+            }
+        });
+
+        return sortedList;
     }
 
     /**

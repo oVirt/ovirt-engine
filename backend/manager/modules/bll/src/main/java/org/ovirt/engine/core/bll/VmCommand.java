@@ -183,7 +183,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected void endActionOnDisks() {
-        for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
+        for (VdcActionParametersBase p : getParametersForChildCommand()) {
             if (overrideChildCommandSuccess()) {
                 p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
             }
@@ -191,6 +191,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             getBackend().EndAction(
                     p.getCommandType() == VdcActionType.Unknown ? getChildActionType() : p.getCommandType(), p);
         }
+    }
+
+    protected List<VdcActionParametersBase> getParametersForChildCommand() {
+        return getParameters().getImagesParameters();
     }
 
     protected void unlockVm() {
