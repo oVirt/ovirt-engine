@@ -198,7 +198,6 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
             if (getParameters().getParentCommand() == VdcActionType.ImportVm) {
                 removeImageParams.setParentParameters(removeImageParams);
                 removeImageParams.setParentCommand(VdcActionType.RemoveImage);
-                removeImageParams.setRemoveDuringExecution(false);
                 removeImageParams.setRemoveFromDB(true);
             } else {
                 removeImageParams.setParentParameters(getParameters());

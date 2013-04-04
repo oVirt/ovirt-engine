@@ -374,8 +374,6 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_FAILED_MOVED_VM_DISK, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_MOVED_VM_DISK_FINISHED_SUCCESS, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_MOVED_VM_DISK_FINISHED_FAILURE, AuditLogSeverity.ERROR);
-        severities.put(AuditLogType.USER_REMOVE_DISK, AuditLogSeverity.NORMAL);
-        severities.put(AuditLogType.USER_FAILED_REMOVE_DISK, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_FINISHED_REMOVE_DISK, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_FINISHED_FAILED_REMOVE_DISK, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.IRS_FAILURE, AuditLogSeverity.ERROR);
@@ -476,7 +474,6 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_FAILED_ADD_VM, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_UPDATE_VM, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_FAILED_UPDATE_VM, AuditLogSeverity.ERROR);
-        severities.put(AuditLogType.USER_REMOVE_VM, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_REMOVE_VM_FINISHED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_REMOVE_VM_FINISHED_WITH_ILLEGAL_DISKS, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.USER_FAILED_REMOVE_VM, AuditLogSeverity.ERROR);

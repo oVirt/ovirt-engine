@@ -49,7 +49,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
-@LockIdNameAttribute(isReleaseAtEndOfExecute = false)
+@LockIdNameAttribute
 @NonTransactiveCommandAttribute
 public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBase<T>
         implements QuotaStorageDependent {
@@ -261,8 +261,9 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                                     buildRemoveImageParameters(getDiskImage()),
                                     ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
             if (vdcReturnValue.getSucceeded()) {
+                incrementVmsGeneration();
                 getReturnValue().getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
-                setSucceeded(vdcReturnValue.getSucceeded());
+                setSucceeded(true);
             }
         } else {
             removeLunDisk();
@@ -274,12 +275,14 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         result.setTransactionScopeOption(TransactionScopeOption.Suppress);
         result.setDiskImage(diskImage);
         result.setParentCommand(VdcActionType.RemoveDisk);
-        result.setRemoveDuringExecution(false);
         result.setEntityId(getParameters().getEntityId());
         result.setParentParameters(getParameters());
+        result.setRemoveFromSnapshots(true);
         result.setStorageDomainId(getParameters().getStorageDomainId());
         result.setForceDelete(getParameters().getForceDelete());
-        result.setRemoveFromDB(diskImage.getStorageIds().size() == 1);
+        if (diskImage.getStorageIds().size() > 1) {
+            result.setRemoveFromDB(false);
+        }
         return result;
     }
 
@@ -296,39 +299,29 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     @Override
     protected void endSuccessfully() {
-        endCommand();
+        setSucceeded(true);
     }
 
     @Override
     protected void endWithFailure() {
-        endCommand();
+        setSucceeded(true);
     }
 
-    private void endCommand() {
+    private void incrementVmsGeneration() {
         List<VM> listVms = getVmsForDiskId();
         for (VM vm : listVms) {
             getVmStaticDAO().incrementDbGeneration(vm.getId());
         }
-        // Get the disk before it is being deleted to use the disk alias in the audit log.
-        getDisk();
-        Backend.getInstance().EndAction(VdcActionType.RemoveImage, getParameters().getImagesParameters().get(0));
-        setSucceeded(true);
     }
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
         case EXECUTE:
-            if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
-                return getSucceeded() ? AuditLogType.USER_REMOVE_DISK : AuditLogType.USER_FAILED_REMOVE_DISK;
-            } else {
-                return getSucceeded() ? AuditLogType.USER_FINISHED_REMOVE_DISK
-                        : AuditLogType.USER_FINISHED_FAILED_REMOVE_DISK;
-            }
-        case END_SUCCESS:
-            return AuditLogType.USER_FINISHED_REMOVE_DISK;
+            return getSucceeded() ? AuditLogType.USER_FINISHED_REMOVE_DISK
+                    : AuditLogType.USER_FINISHED_FAILED_REMOVE_DISK;
         default:
-            return AuditLogType.USER_FINISHED_FAILED_REMOVE_DISK;
+            return AuditLogType.UNASSIGNED;
         }
     }
 

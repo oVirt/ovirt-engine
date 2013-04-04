@@ -8,12 +8,12 @@ public class RemoveImageParameters extends ImagesContainterParametersBase implem
 
     private DiskImage diskImage;
     private boolean removeFromDB;
-    private boolean removeDuringExecution = true;
+    private boolean removeFromSnapshots;
 
     public RemoveImageParameters(Guid imageId) {
         super(imageId, null);
         setForceDelete(false);
-        removeFromDB = false;
+        removeFromDB = true;
     }
 
     public RemoveImageParameters() {
@@ -27,19 +27,19 @@ public class RemoveImageParameters extends ImagesContainterParametersBase implem
         diskImage = value;
     }
 
-    public boolean isRemoveDuringExecution() {
-        return removeDuringExecution;
-    }
-
-    public void setRemoveDuringExecution(boolean removeDuringExecution) {
-        this.removeDuringExecution = removeDuringExecution;
-    }
-
     public void setRemoveFromDB(boolean removeFromDB) {
         this.removeFromDB = removeFromDB;
     }
 
     public boolean getRemoveFromDB() {
         return removeFromDB;
+    }
+
+    public boolean isRemoveFromSnapshots() {
+        return removeFromSnapshots;
+    }
+
+    public void setRemoveFromSnapshots(boolean removeFromSnapshots) {
+        this.removeFromSnapshots = removeFromSnapshots;
     }
 }

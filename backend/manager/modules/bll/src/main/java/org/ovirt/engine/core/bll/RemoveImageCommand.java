@@ -19,6 +19,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.ImageStorageDomainMapId;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
@@ -76,17 +78,25 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     @Override
     protected void executeCommand() {
         if (getDiskImage() != null) {
-            VDSReturnValue vdsReturnValue = performImageVdsmOperation();
-            getReturnValue().getInternalTaskIdList().add(
-                    createTask(vdsReturnValue.getCreationInfo(),
-                            getParameters().getParentCommand(),
-                            VdcObjectType.Storage,
-                            getParameters().getStorageDomainId()));
+            try {
+                VDSReturnValue vdsReturnValue = performImageVdsmOperation();
+                getReturnValue().getInternalTaskIdList().add(
+                        createTask(vdsReturnValue.getCreationInfo(),
+                                getParameters().getParentCommand(),
+                                VdcObjectType.Storage,
+                                getParameters().getStorageDomainId()));
+            } catch (VdcBLLException e) {
+                if (e.getErrorCode() != VdcBllErrors.ImageDoesNotExistInDomainError) {
+                    throw e;
+                }
+                log.warnFormat("The image group with id {0} wasn't actually deleted from the storage domain {1} because it didn't exist in it",
+                        getDiskImage().getId(),
+                        getStorageDomainId());
+            }
 
-            if (getParameters().isRemoveDuringExecution()
-                    && getParameters().getParentCommand() != VdcActionType.RemoveVmFromImportExport
+            if (getParameters().getParentCommand() != VdcActionType.RemoveVmFromImportExport
                     && getParameters().getParentCommand() != VdcActionType.RemoveVmTemplateFromImportExport) {
-                removeImageFromDB(false);
+                performImageDbOperations();
             }
         } else {
             log.warn("DiskImage is null, nothing to remove");
@@ -99,7 +109,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         return AsyncTaskType.deleteImage;
     }
 
-    private void removeImageFromDB(boolean isLockOnSnapshotsNeeded) {
+    private void removeImageFromDB() {
         final DiskImage diskImage = getDiskImage();
         final List<Snapshot> updatedSnapshots;
 
@@ -107,7 +117,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
             VM vm = getVmForNonShareableDiskImage(diskImage);
             // if the disk is not part of a vm (floating), there are no snapshots to update
             // so no lock is required.
-            if (isLockOnSnapshotsNeeded && vm!=null) {
+            if (getParameters().isRemoveFromSnapshots() && vm != null) {
                 lockVmSnapshotsWithWait(vm);
                 updatedSnapshots = prepareSnapshotConfigWithoutImage(diskImage.getId());
             } else {
@@ -264,27 +274,28 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
 
     @Override
     protected void endSuccessfully() {
-        endCommand();
+        setSucceeded(true);
     }
 
     @Override
     protected void endWithFailure() {
-        endCommand();
+        setSucceeded(true);
     }
 
-    private void endCommand() {
+    private void performImageDbOperations() {
         if (getParameters().getRemoveFromDB()) {
-            if (!getParameters().isRemoveDuringExecution()) {
-                removeImageFromDB(true);
-            }
+                removeImageFromDB();
         } else {
-            getImageStorageDomainMapDao().remove(
-                    new ImageStorageDomainMapId(getParameters().getImageId(),
-                            getParameters().getStorageDomainId()));
-            unLockImage();
+            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+                @Override
+                public Void runInTransaction() {
+                    getImageStorageDomainMapDao().remove(
+                            new ImageStorageDomainMapId(getParameters().getImageId(),
+                                    getParameters().getStorageDomainId()));
+                    unLockImage();
+                    return null;
+                }});
         }
-
-        setSucceeded(true);
     }
 
     @Override

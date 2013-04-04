@@ -123,30 +123,30 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
             } else {
                 getReturnValue().setFault(vdcRetValue.getFault());
             }
-        } else {
-            EndRemoveTemplate();
         }
+
+        setCommandShouldBeLogged(false);
+        setSucceeded(true);
     }
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.IMPORTEXPORT_REMOVE_TEMPLATE
-                : AuditLogType.IMPORTEXPORT_REMOVE_TEMPLATE_FAILED;
+        switch (getActionState()) {
+        case EXECUTE:
+            return getSucceeded() ? AuditLogType.IMPORTEXPORT_REMOVE_TEMPLATE
+                    : AuditLogType.IMPORTEXPORT_REMOVE_TEMPLATE_FAILED;
+        default:
+            return AuditLogType.UNASSIGNED;
+        }
     }
 
     @Override
     protected void endSuccessfully() {
-        EndRemoveTemplate();
+        setSucceeded(true);
     }
 
     @Override
     protected void endWithFailure() {
-        EndRemoveTemplate();
-    }
-
-    protected void EndRemoveTemplate() {
-        setCommandShouldBeLogged(false);
-
         setSucceeded(true);
     }
 

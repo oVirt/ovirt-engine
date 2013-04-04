@@ -78,16 +78,17 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             if (!removeVmImages(null)) {
                 return false;
             }
+            processUnremovedDisks(false);
         }
-        else {
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-                @Override
-                public Void runInTransaction() {
-                    removeVmFromDb();
-                    return null;
-                }
-            });
-        }
+
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+            @Override
+            public Void runInTransaction() {
+                removeVmFromDb();
+                return null;
+            }
+        });
+
         return true;
     }
 
@@ -230,15 +231,12 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
         case EXECUTE:
-            if (hasImages) {
-                return getSucceeded() ? AuditLogType.USER_REMOVE_VM : AuditLogType.USER_FAILED_REMOVE_VM;
-            } else {
-                return getSucceeded() ? AuditLogType.USER_REMOVE_VM_FINISHED : AuditLogType.USER_FAILED_REMOVE_VM;
-            }
+            return getSucceeded() ? (disksLeftInVm.isEmpty() ? AuditLogType.USER_REMOVE_VM_FINISHED : AuditLogType.USER_REMOVE_VM_FINISHED_WITH_ILLEGAL_DISKS)
+                    : AuditLogType.USER_FAILED_REMOVE_VM;
         case END_FAILURE:
         case END_SUCCESS:
         default:
-            return disksLeftInVm.isEmpty() ? AuditLogType.USER_REMOVE_VM_FINISHED
+            return disksLeftInVm.isEmpty() ? AuditLogType.UNASSIGNED
                     : AuditLogType.USER_REMOVE_VM_FINISHED_WITH_ILLEGAL_DISKS;
         }
     }
@@ -278,7 +276,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                 // and a second multiple VMs removal that include the same VM).
                 setVm(DbFacade.getInstance().getVmDao().get(getVmId()));
                 if (getVm() != null) {
-                    updateDisksAfterVmRemoved();
+                    processUnremovedDisks(true);
 
                     // Remove VM from DB.
                     removeVmFromDb();
@@ -293,7 +291,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     /**
      * Update disks for VM after disks were removed.
      */
-    private void updateDisksAfterVmRemoved() {
+    private void processUnremovedDisks(boolean shouldUpdateDiskStatus) {
         VmHandler.updateDisksFromDb(getVm());
 
         // Get all disk images for VM (VM should not have any image disk associated with it).
@@ -304,7 +302,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         // If the VM still has disk images related to it, change their status to Illegal.
         if (!diskImages.isEmpty()) {
             for (DiskImage diskImage : diskImages) {
-                if (diskImage.getImageStatus() != ImageStatus.ILLEGAL) {
+                if (shouldUpdateDiskStatus && diskImage.getImageStatus() != ImageStatus.ILLEGAL) {
                     log.errorFormat("Disk {0} which is part of VM {1} was not at ILLEGAL state.",
                             diskImage.getDiskAlias(),
                             getVm().getName());
