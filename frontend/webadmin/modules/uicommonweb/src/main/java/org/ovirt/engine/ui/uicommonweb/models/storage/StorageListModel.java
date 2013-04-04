@@ -366,7 +366,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.getHost().setIsChangable(false);
         model.getName().setIsChangable(isStorageEditable);
         model.getDescription().setIsChangable(isStorageEditable);
-        model.getAvailableStorageItems().setIsChangable(isStorageEditable);
+        //set the field domain type to non editable
+        model.getAvailableStorageItems().setIsChangable(false);
         model.setIsChangable(isStorageEditable);
 
         IStorageModel item = null;
