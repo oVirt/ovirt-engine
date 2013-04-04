@@ -156,6 +156,7 @@ EXEC_SYSTEMCTL="/bin/systemctl"
 EXEC_SETSEBOOL="/usr/sbin/setsebool"
 EXEC_SEMANAGE="/usr/sbin/semanage"
 EXEC_KEYTOOL="/usr/bin/keytool"
+EXEC_FIREWALL_CMD = '/usr/bin/firewall-cmd'
 
 CONST_BASE_MAC_ADDR="00:1A:4A"
 CONST_DEFAULT_MAC_RANGE="00:1a:4a:16:84:02-00:1a:4a:16:84:fd"

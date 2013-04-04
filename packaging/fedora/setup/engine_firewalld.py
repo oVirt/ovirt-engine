@@ -1,18 +1,46 @@
-from gi.repository import GObject
-import sys
-from firewall.client import FirewallClient
-from firewall.errors import *
+import common_utils as utils
+import basedefs
+
+ALREADY_ENABLED = 11
+
 
 def getActiveZones():
-    fw = FirewallClient()
-    zones = fw.getActiveZones()
+    cmd = [
+        basedefs.EXEC_FIREWALL_CMD,
+        '--get-active-zones',
+    ]
+    out, rc = utils.execCmd(
+        cmdList=cmd,
+        failOnError=True,
+        msg='Error running firewall-cmd'
+    )
+    zones = {}
+    for line in out.splitlines():
+        zone_name, devices = line.split(':')
+        zones[zone_name] = devices.split()
     return zones
 
+
 def addServiceToZone(service, zone):
-    fw = FirewallClient()
-    fw_zone = fw.config().getZoneByName(zone)
-    fw_settings = fw_zone.getSettings()
-    fw_settings.addService(service)
-    fw_zone.update(fw_settings)
-
-
+    cmdList = [
+        [
+            basedefs.EXEC_FIREWALL_CMD,
+            '--permanent',
+            '--zone',
+            zone,
+            '--add-service',
+            service,
+        ],
+        [
+            basedefs.EXEC_FIREWALL_CMD,
+            '--reload',
+        ],
+    ]
+    for cmd in cmdList:
+        out, rc = utils.execCmd(
+            cmdList=cmd,
+            failOnError=False,
+            msg='Error running firewall-cmd'
+        )
+        if rc not in (0, ALREADY_ENABLED):
+            raise Exception(out)
