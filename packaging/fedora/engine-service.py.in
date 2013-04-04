@@ -14,84 +14,58 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 import glob
-import grp
+import logging
+import logging.handlers
+import optparse
 import os
-import pwd
 import re
 import shutil
 import signal
-import stat
-import sys
-import syslog
-import time
 import subprocess
-from optparse import OptionParser
+import sys
+import time
+import gettext
+_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine')
+
 
 import daemon
 from Cheetah.Template import Template
 
 
-# The name of the engine:
-engineName = "engine-service"
-
-# Misc
-foreground = False
-
-# The engine system configuration variables:
-engineDefaultsFile = None
-engineConfigFile = None
-engineConfig = None
-
-# The name of the user and group that should run the service:
-engineUid = None
-engineGid = None
-
-# Java home directory:
-javaHomeDir = None
-
-# Java virtual machine launcher:
-javaLauncher = None
-
-# JBoss directories:
-jbossHomeDir = None
-
-# JBoss files:
-jbossModulesJar = None
-jbossBootLoggingTemplateFile = None
-jbossBootLoggingFile = None
-
-# Engine directories:
-engineEtcDir = None
-engineLogDir = None
-engineTmpDir = None
-engineUsrDir = None
-engineVarDir = None
-engineCacheDir = None
-engineContentDir = None
-engineDeploymentsDir = None
-engineServiceDir = None
-
-# Engine files:
-enginePidFile = None
-engineLogFile = None
-jbossConfigFile = None
-engineConsoleLogFile = None
-engineServerLogFile = None
-jbossConfigTemplateFile = None
+class Config(object):
+    ENGINE_DEFAULT_FILE = '@ENGINE_DEFAULTS@'
+    ENGINE_VARS = '@ENGINE_VARS@'
 
 
-# Helper class to simplify getting values from the configuration, specially
-# from the template used to generate the application server configuration
-# file:
-class Config():
+class Base(object):
+    """
+    Base class for logging.
+    """
+    def __init__(self):
+        self._logger = logging.getLogger(
+            'ovirt.engine.service.%s' % self.__class__.__name__
+        )
+
+
+class ConfigFile(Base):
+    """
+    Helper class to simplify getting values from the configuration, specially
+    from the template used to generate the application server configuration
+    file
+    """
+
     # Compile regular expressions:
-    COMMENT_EXPR = re.compile(r"\s*#.*$")
-    BLANK_EXPR = re.compile(r"^\s*$")
-    VALUE_EXPR = re.compile(r"^\s*(\w+)\s*=\s*(.*?)\s*$")
-    REF_EXPR = re.compile(r"\$\{(\w+)\}")
+    COMMENT_EXPR = re.compile(r'\s*#.*$')
+    BLANK_EXPR = re.compile(r'^\s*$')
+    VALUE_EXPR = re.compile(r'^\s*(?P<key>\w+)\s*=\s*(?P<value>.*?)\s*$')
+    REF_EXPR = re.compile(r'\$\{(?P<ref>\w+)\}')
 
     def __init__(self, files):
+        super(ConfigFile, self).__init__()
+
+        self._dir = dir
         # Save the list of files:
         self.files = files
 
@@ -103,29 +77,40 @@ class Config():
         # in files appearing later in the list:
         for file in self.files:
             self.loadFile(file)
+            for filed in sorted(
+                glob.glob(
+                    os.path.join(
+                        '%s.d' % file,
+                        '*.conf',
+                    )
+                )
+            ):
+                self.loadFile(filed)
 
     def loadFile(self, file):
-        with open(file, "r") as fd:
-            for line in fd:
-                self.loadLine(line)
+        if os.path.exists(file):
+            self._logger.debug("loading config '%s'", file)
+            with open(file, 'r') as f:
+                for line in f:
+                    self.loadLine(line)
 
     def loadLine(self, line):
         # Remove comments:
-        commentMatch = Config.COMMENT_EXPR.search(line)
+        commentMatch = self.COMMENT_EXPR.search(line)
         if commentMatch is not None:
             line = line[:commentMatch.start()] + line[commentMatch.end():]
 
         # Skip empty lines:
-        emptyMatch = Config.BLANK_EXPR.search(line)
+        emptyMatch = self.BLANK_EXPR.search(line)
         if emptyMatch is not None:
             return
 
         # Separate name from value:
-        keyValueMatch = Config.VALUE_EXPR.search(line)
+        keyValueMatch = self.VALUE_EXPR.search(line)
         if keyValueMatch is None:
             return
-        key = keyValueMatch.group(1)
-        value = keyValueMatch.group(2)
+        key = keyValueMatch.group('key')
+        value = keyValueMatch.group('value')
 
         # Strip quotes from value:
         if len(value) >= 2 and value[0] == '"' and value[-1] == '"':
@@ -133,14 +118,18 @@ class Config():
 
         # Expand references to other parameters:
         while True:
-            refMatch = Config.REF_EXPR.search(value)
+            refMatch = self.REF_EXPR.search(value)
             if refMatch is None:
                 break
-            refKey = refMatch.group(1)
+            refKey = refMatch.group('ref')
             refValue = self.values.get(refKey)
             if refValue is None:
                 break
-            value = value[:refMatch.start()] + refValue + value[refMatch.end():]
+            value = '%s%s%s' % (
+                value[:refMatch.start()],
+                refValue,
+                value[refMatch.end():],
+            )
 
         # Update the values:
         self.values[key] = value
@@ -148,512 +137,803 @@ class Config():
     def getString(self, name):
         text = self.values.get(name)
         if text is None:
-            raise Exception("The parameter \"%s\" doesn't have a value." % name)
+            raise RuntimeError(
+                _("The parameter '{name}' does not have a value").format(
+                    name=name,
+                )
+            )
         return text
 
     def getBoolean(self, name):
-        text = self.getString(name)
-        return text.lower() in ["t", "true", "y", "yes", "1"]
+        return self.getString(name) in ('t', 'true', 'y', 'yes', '1')
 
     def getInteger(self, name):
-        text = self.getString(name)
+        value = self.getString(name)
         try:
-            return int(text)
-        except:
-            raise Exception("The value \"%s\" of parameter \"%s\" is not a valid integer." % (text, name))
-
-
-def loadConfig():
-    # Locate the defaults file:
-    global engineDefaultsFile
-    engineDefaultsFile = os.getenv("ENGINE_DEFAULTS", "@ENGINE_DEFAULTS@")
-    if not os.path.exists(engineDefaultsFile):
-        raise Exception("The engine configuration defaults file \"%s\" doesn't exist." % engineDefaultsFile)
-
-    # Locate the configuration file:
-    global engineConfigFile
-    engineConfigFile = os.getenv("ENGINE_VARS", "@ENGINE_VARS@")
-    if not os.path.exists(engineConfigFile):
-        raise Exception("The engine configuration file \"%s\" doesn't exist." % engineConfigFile)
-
-    # This will be the list of configuration files to load and merge, later
-    # files override earlier ones:
-    engineConfigFiles = [
-        engineDefaultsFile,
-        engineConfigFile,
-    ]
-
-    # Find additional configuration files in the optional configuration
-    # directory, sorted alphabetically so that numeric prefixes can be used to
-    # force the order:
-    engineConfigDir = engineConfigFile + ".d"
-    if os.path.isdir(engineConfigDir):
-        additionalEngineConfigFiles = glob.glob(engineConfigDir + "/*.conf")
-        additionalEngineConfigFiles.sort()
-        engineConfigFiles.extend(additionalEngineConfigFiles)
-
-    # Merge all the configuration files:
-    global engineConfig
-    engineConfig = Config(engineConfigFiles)
-
-    # Java home directory:
-    global javaHomeDir
-    javaHomeDir = engineConfig.getString("JAVA_HOME")
-
-    # Java launcher:
-    global javaLauncher
-    javaLauncher = os.path.join(javaHomeDir, "bin/java")
-
-    # Engine directories:
-    global engineEtcDir
-    global engineLogDir
-    global engineTmpDir
-    global engineUsrDir
-    global engineVarDir
-    global engineCacheDir
-    global engineServiceDir
-    global engineContentDir
-    global engineDeploymentsDir
-    engineEtcDir = engineConfig.getString("ENGINE_ETC")
-    engineLogDir = engineConfig.getString("ENGINE_LOG")
-    engineTmpDir = engineConfig.getString("ENGINE_TMP")
-    engineUsrDir = engineConfig.getString("ENGINE_USR")
-    engineVarDir = engineConfig.getString("ENGINE_VAR")
-    engineCacheDir = engineConfig.getString("ENGINE_CACHE")
-    engineServiceDir = os.path.join(engineUsrDir, "service")
-    engineContentDir = os.path.join(engineVarDir, "content")
-    engineDeploymentsDir = os.path.join(engineVarDir, "deployments")
-
-    # Engine files:
-    global engineLogFile
-    global engineConsoleLogFile
-    global engineServerLogFile
-    engineLogFile = os.path.join(engineLogDir, "engine.log")
-    engineConsoleLogFile = os.path.join(engineLogDir, "console.log")
-    engineServerLogFile = os.path.join(engineLogDir, "server.log")
-
-    # JBoss directories:
-    global jbossHomeDir
-    jbossHomeDir = engineConfig.getString("JBOSS_HOME")
-
-    # JBoss files:
-    global jbossModulesJar
-    global jbossBootLoggingTemplateFile
-    global jbossBootLoggingFile
-    global jbossConfigTemplateFile
-    global jbossConfigFile
-    jbossModulesJar = os.path.join(jbossHomeDir, "jboss-modules.jar")
-    jbossBootLoggingTemplateFile = os.path.join(engineServiceDir, "engine-service-logging.properties.in")
-    jbossBootLoggingFile = os.path.join(engineTmpDir, "engine-service-logging.properties")
-    jbossConfigTemplateFile = os.path.join(engineServiceDir, "engine-service.xml.in")
-    jbossConfigFile = os.path.join(engineTmpDir, "engine-service.xml")
-
-
-def checkOwnership(name, uid=None, gid=None):
-    # Get the metadata of the file:
-    st = os.stat(name)
-
-    # Check that the file is owned by the given user:
-    if uid and st[stat.ST_UID] != uid:
-        user = pwd.getpwuid(uid).pw_name
-        owner = pwd.getpwuid(st[stat.ST_UID]).pw_name
-        if os.path.isdir(name):
-            raise Exception("The directory \"%s\" is not owned by user \"%s\", but by \"%s\"." % (name, user, owner))
-        else:
-            raise Exception("The file \"%s\" is not owned by user \"%s\", but by \"%s\"." % (name, user, owner))
-
-    # Check that the file is owned by the given group:
-    if gid and st[stat.ST_GID] != gid:
-        group = grp.getgrgid(gid).gr_name
-        owner = grp.getgrgid(st[stat.ST_GID]).gr_name
-        if os.path.isdir(name):
-            raise Exception("The directory \"%s\" is not owned by group \"%s\", but by \"%s\"." % (name, group, owner))
-        else:
-            raise Exception("The file \"%s\" is not owned by group \"%s\", but by \"%s\"." % (name, group, owner))
-
-
-def checkDirectory(name, uid=None, gid=None):
-    if not os.path.isdir(name):
-        raise Exception("The directory \"%s\" doesn't exist." % name)
-    checkOwnership(name, uid, gid)
-
-
-def checkFile(name, uid=None, gid=None):
-    if not os.path.isfile(name):
-        raise Exception("The file \"%s\" doesn't exist." % name)
-    checkOwnership(name, uid, gid)
-
-
-def checkLog(name):
-    log = os.path.join(engineLogDir, name)
-    if os.path.exists(log):
-        checkOwnership(log, engineUid, engineGid)
-
-
-def checkInstallation():
-    # Check that the Java home directory exists and that it contais at least
-    # the java executable:
-    checkDirectory(javaHomeDir)
-    checkFile(javaLauncher)
-
-    # Check the required JBoss directories and files:
-    checkDirectory(jbossHomeDir)
-    checkFile(jbossModulesJar)
-
-    # Check the required engine directories and files:
-    checkDirectory(engineLogDir, uid=engineUid, gid=engineGid)
-    checkDirectory(engineUsrDir)
-    checkDirectory(engineVarDir, uid=engineUid, gid=engineGid)
-    checkDirectory(engineServiceDir)
-    checkDirectory(engineContentDir, uid=engineUid, gid=engineGid)
-    checkDirectory(engineDeploymentsDir, uid=engineUid, gid=engineGid)
-    checkFile(jbossBootLoggingTemplateFile)
-    checkFile(jbossConfigTemplateFile)
-
-    # Check that log files are owned by the engine user, if they exist:
-    checkLog(engineLogFile)
-    checkLog(engineConsoleLogFile)
-    checkLog(engineServerLogFile)
-
-    # XXX: Add more checks here!
-
-
-def saveEnginePid(pid):
-    if enginePidFile is not None:
-        with open(enginePidFile, "w") as enginePidFd:
-            enginePidFd.write(str(pid) + "\n")
-
-
-def removeEnginePid():
-    if enginePidFile is not None and os.path.exists(enginePidFile):
-        try:
-            os.remove(enginePidFile)
-        except OSError:
-            # we may not have permissions to delete pid
-            # so just try to empty it
-            try:
-                with open(enginePidFile, 'w'):
-                    pass
-            except IOError:
-                pass
-
-
-def startEngine():
-    if os.geteuid() == 0:
-        raise Exception("This script cannot be run as root")
-    global engineUid
-    global engineGid
-    engineUid = os.geteuid()
-    engineGid = os.getegid()
-
-    # perform checks:
-    checkInstallation()
-
-    # The list of applications to be deployed:
-    engineApps = engineConfig.getString("ENGINE_APPS").split()
-
-    for engineApp in engineApps:
-        # Do nothing if the application is not available:
-        engineAppDir = os.path.join(engineUsrDir, engineApp)
-        if not os.path.exists(engineAppDir):
-            syslog.syslog(syslog.LOG_WARNING, "The application \"%s\" doesn't exist, it will be ignored." % engineAppDir)
-            continue
-
-        # Make sure the application is linked in the deployments directory, if not
-        # link it now:
-        engineAppLink = os.path.join(engineDeploymentsDir, engineApp)
-        if not os.path.islink(engineAppLink):
-            syslog.syslog(syslog.LOG_INFO, "The symbolic link \"%s\" doesn't exist, will create it now." % engineAppLink)
-            try:
-                os.symlink(engineAppDir, engineAppLink)
-            except:
-                raise Exception("Can't create symbolic link from \"%s\" to \"%s\"." % (engineAppLink, engineAppDir))
-
-        # Remove all existing deployment markers:
-        for markerFile in glob.glob("%s.*" % engineAppLink):
-            try:
-                os.remove(markerFile)
-            except:
-                raise Exception("Can't remove deployment marker file \"%s\"." % markerFile)
-
-        # Create the new marker file to trigger deployment of the application:
-        markerFile = "%s.dodeploy" % engineAppLink
-        try:
-            markerFd = open(markerFile, "w")
-            markerFd.close()
-        except:
-            raise Exception("Can't create deployment marker file \"%s\"." % markerFile)
-
-    # Clean and recreate the temporary directory:
-    if os.path.exists(engineTmpDir):
-        shutil.rmtree(engineTmpDir)
-    os.mkdir(engineTmpDir)
-
-    # Create cache directory if does not exist
-    os.chown(engineTmpDir, engineUid, engineGid)
-    if not os.path.exists(engineCacheDir):
-        os.mkdir(engineCacheDir)
-    os.chown(engineCacheDir, engineUid, engineGid)
-
-    # Create the boot logging file from the template:
-    jbossBootLoggingTemplate = Template(file=jbossBootLoggingTemplateFile, searchList=[engineConfig])
-    jbossBootLoggingText = str(jbossBootLoggingTemplate)
-    with open(jbossBootLoggingFile, "w") as jbossBootLoggingFd:
-        jbossBootLoggingFd.write(jbossBootLoggingText)
-    os.chown(jbossBootLoggingFile, engineUid, engineGid)
-
-    # Generate the main configuration from the template and copy it to the
-    # configuration temporary directory making sure that the application server
-    # will be able to write to it:
-    jbossConfigTemplate = Template(file=jbossConfigTemplateFile, searchList=[engineConfig])
-    jbossConfigText = str(jbossConfigTemplate)
-    with open(jbossConfigFile, "w") as jbossConfigFd:
-        jbossConfigFd.write(jbossConfigText)
-    os.chown(jbossConfigFile, engineUid, engineGid)
-
-    # Get heap configuration parameters from the environment or use defaults if
-    # they are not provided:
-    engineHeapMin = engineConfig.getString("ENGINE_HEAP_MIN")
-    engineHeapMax = engineConfig.getString("ENGINE_HEAP_MAX")
-    enginePermMin = engineConfig.getString("ENGINE_PERM_MIN")
-    enginePermMax = engineConfig.getString("ENGINE_PERM_MAX")
-
-    # Modules directories:
-    jbossModulesDir = os.path.join(jbossHomeDir, "modules")
-    engineModulesDir = os.path.join(engineUsrDir, "modules")
-
-    # Link all the JBoss modules into a temporary directory:
-    jbossModulesTmpDir = os.path.join(engineTmpDir, "modules")
-    linkModules(jbossModulesDir, jbossModulesTmpDir)
-
-    # Module path should include first the engine modules so that they can override
-    # those provided by the application server if needed:
-    engineModulePath = "%s:%s" % (engineModulesDir, jbossModulesTmpDir)
-
-    # We start with an empty list of arguments:
-    engineArgs = []
-
-    # Add arguments for the java virtual machine:
-    engineArgs.extend([
-        # The name or the process, as displayed by ps:
-        engineName,
-
-        # Virtual machine options:
-        "-server",
-        "-XX:+TieredCompilation",
-        "-Xms%s" % engineHeapMin,
-        "-Xmx%s" % engineHeapMax,
-        "-XX:PermSize=%s" % enginePermMin,
-        "-XX:MaxPermSize=%s" % enginePermMax,
-        "-Djava.net.preferIPv4Stack=true",
-        "-Dsun.rmi.dgc.client.gcInterval=3600000",
-        "-Dsun.rmi.dgc.server.gcInterval=3600000",
-        "-Djava.awt.headless=true",
-    ])
-
-    # Add extra system properties provided in the configuration:
-    engineProperties = engineConfig.getString("ENGINE_PROPERTIES")
-    if engineProperties:
-        for engineProperty in engineProperties.split():
-            if not engineProperty.startswith("-D"):
-                engineProperty = "-D" + engineProperty
-            engineArgs.append(engineProperty)
-
-    # Add arguments for remote debugging of the java virtual machine:
-    engineDebugAddress = engineConfig.getString("ENGINE_DEBUG_ADDRESS")
-    if engineDebugAddress:
-        engineArgs.append("-Xrunjdwp:transport=dt_socket,address=%s,server=y,suspend=n" % engineDebugAddress)
-
-    # Enable verbose garbage collection if required:
-    engineVerboseGC = engineConfig.getBoolean("ENGINE_VERBOSE_GC")
-    if engineVerboseGC:
-        engineArgs.extend([
-            "-verbose:gc",
-            "-XX:+PrintGCTimeStamps",
-            "-XX:+PrintGCDetails",
-        ])
-
-    # Add arguments for JBoss:
-    engineArgs.extend([
-        "-Djava.util.logging.manager=org.jboss.logmanager",
-        "-Dlogging.configuration=file://%s" % jbossBootLoggingFile,
-        "-Dorg.jboss.resolver.warning=true",
-        "-Djboss.modules.system.pkgs=org.jboss.byteman",
-        "-Djboss.modules.write-indexes=false",
-        "-Djboss.server.default.config=engine-service",
-        "-Djboss.home.dir=%s" % jbossHomeDir,
-        "-Djboss.server.base.dir=%s" % engineUsrDir,
-        "-Djboss.server.config.dir=%s" % engineTmpDir,
-        "-Djboss.server.data.dir=%s" % engineVarDir,
-        "-Djboss.server.log.dir=%s" % engineLogDir,
-        "-Djboss.server.temp.dir=%s" % engineTmpDir,
-        "-Djboss.controller.temp.dir=%s" % engineTmpDir,
-        "-jar", jbossModulesJar,
-        "-mp", engineModulePath,
-        "-jaxpmodule", "javax.xml.jaxp-provider",
-        "org.jboss.as.standalone", "-c", os.path.basename(jbossConfigFile),
-    ])
-
-    # Prepare environment:
-    engineEnv = os.environ.copy()
-    engineEnv.update({
-        "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin",
-        "LANG": "en_US.UTF-8",
-        "LC_ALL": "en_US.UTF-8",
-        "ENGINE_DEFAULTS": engineDefaultsFile,
-        "ENGINE_VARS": engineConfigFile,
-        "ENGINE_ETC": engineEtcDir,
-        "ENGINE_LOG": engineLogDir,
-        "ENGINE_TMP": engineTmpDir,
-        "ENGINE_USR": engineUsrDir,
-        "ENGINE_VAR": engineVarDir,
-        "ENGINE_CACHE": engineCacheDir,
-    })
-
-    # this is required to allow
-    # writing after user id is changed
-    if enginePidFile is not None:
-        with open(enginePidFile, 'w'):
-            pass
-        os.chown(enginePidFile, engineUid, engineGid)
-
-    #
-    # This to allow current pretty output
-    #
-    if not foreground and os.fork() != 0:
-        return
-
-    engineConsoleLog = open(engineConsoleLogFile, "w+")
-
-    class TerminateException(Exception):
-        pass
-    def myterm(signum, frame):
-        raise TerminateException()
-
-    with daemon.DaemonContext(
-        detach_process=not foreground,
-        signal_map={
-            signal.SIGTERM: myterm,
-            signal.SIGINT: myterm,
-            signal.SIGHUP: None,
-        },
-        stdout=engineConsoleLog,
-        stderr=engineConsoleLog,
-    ):
-        saveEnginePid(os.getpid())
-
-        try:
-            p = subprocess.Popen(
-                args=engineArgs,
-                executable=javaLauncher,
-                env=engineEnv,
-                close_fds=True,
+            return int(value)
+        except ValueError:
+            raise RuntimeError(
+                _(
+                    "The value '{value}' of parameter '{name}' "
+                    "is not a valid integer"
+                ).format(
+                    name,
+                    value,
+                )
             )
-            p.wait()
 
-            if p.returncode != 0:
-                raise Exception("Engine terminated with status code %s" % p.returncode)
 
-        except TerminateException:
-            stopTime = engineConfig.getInteger("ENGINE_STOP_TIME")
-            stopInterval = engineConfig.getInteger("ENGINE_STOP_INTERVAL")
+class TempDir(Base):
+    """
+    Temporary directory scope management
 
-            # avoid recursive signals
-            for sig in (signal.SIGTERM, signal.SIGINT):
-                signal.signal(sig, signal.SIG_IGN)
+    Usage:
+        with TempDir(directory):
+            pass
+    """
 
+    def _clear(self):
+        self._logger.debug("removing directory '%s'", self._dir)
+        if os.path.exists(self._dir):
+            shutil.rmtree(self._dir)
+
+    def __init__(self, dir):
+        super(TempDir, self).__init__()
+        self._dir = dir
+
+    def __enter__(self):
+        self._clear()
+        os.mkdir(self._dir)
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        try:
+            self._clear()
+        except Exception as e:
+            self._logger.warning(
+                _("Cannot remove directory '{directory}': {error}").format(
+                    directory=self._dir,
+                    error=e,
+                ),
+            )
+            self._logger.debug('exception', exc_info=True)
+
+
+class PidFile(Base):
+    """
+    pidfile scope management
+
+    Usage:
+        with PidFile(pidfile):
+            pass
+    """
+
+    def __init__(self, file):
+        super(PidFile, self).__init__()
+        self._file = file
+
+    def __enter__(self):
+        if self._file is not None:
+            self._logger.debug(
+                "creating pidfile '%s' pid=%s",
+                self._file,
+                os.getpid()
+            )
+            with open(self._file, 'w') as f:
+                f.write('%s\n' % os.getpid())
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if self._file is not None:
+            self._logger.debug("removing pidfile '%s'", self._file)
             try:
-                p.terminate()
-                for i in range(stopTime // stopInterval):
-                    if p.poll() is not None:
-                        break
-                    time.sleep(stopInterval)
-            except OSError as e:
-                syslog.syslog(syslog.LOG_WARNING, "Cannot terminate pid %d: %s." % (p.pid, e))
-
-            try:
-                if p.poll() is None:
-                    p.kill()
-                    raise Exception("Had to kill engine process %s" % p.pid)
-            except OSError as e:
-                syslog.syslog(syslog.LOG_WARNING, "Cannot kill pid %d: %s." % (p.pid, e))
-                raise
-
-        finally:
-            # Remove the PID file:
-            removeEnginePid()
-
-            # Clean the temporary directory:
-            if os.path.exists(engineTmpDir):
-                shutil.rmtree(engineTmpDir)
+                os.remove(self._file)
+            except OSError:
+                # we may not have permissions to delete pid
+                # so just try to empty it
+                try:
+                    with open(self._file, 'w'):
+                        pass
+                except IOError as e:
+                    self._logger.error(
+                        _("Cannot remove pidfile '{file}': {error}").format(
+                            file=self._file,
+                            error=e,
+                        ),
+                    )
+                    self._logger.debug('exception', exc_info=True)
 
 
-def linkModules(modulesDir, modulesTmpDir):
-    # For each directory in the modules directory create the same in the
-    # temporary directory and populate with symlinks pointing to the
-    # original files (excluding indexes):
-    for parentDir, childrenDirs, childrenFiles in os.walk(modulesDir):
-        parentTmpDir = parentDir.replace(modulesDir, modulesTmpDir, 1)
-        if not os.path.exists(parentTmpDir):
-            os.makedirs(parentTmpDir)
-        for childFile in childrenFiles:
-            if childFile.endswith(".index"):
+class EngineDaemon(Base):
+    """
+    The engine daemon
+    """
+
+    def __init__(self):
+        super(EngineDaemon, self).__init__()
+
+    def _loadConfig(self):
+        if not os.path.exists(Config.ENGINE_DEFAULT_FILE):
+            raise RuntimeError(
+                _(
+                    "The engine configuration defaults file '{file}' "
+                    "required but missing"
+                ).format(
+                    file=Config.ENGINE_DEFAULT_FILE,
+                )
+            )
+
+        self._config = ConfigFile(
+            (
+                Config.ENGINE_DEFAULT_FILE,
+                Config.ENGINE_VARS,
+            ),
+        )
+
+    def _processTemplate(self, template):
+        out = os.path.join(
+            self._config.getString('ENGINE_TMP'),
+            re.sub('\.in$', '', os.path.basename(template)),
+        )
+        with open(out, 'w') as f:
+            f.write(str(Template(file=template, searchList=[self._config])))
+        return out
+
+    def _linkModules(self, modulesDir):
+        """Link all the JBoss modules into a temporary directory"""
+
+        modulesTmpDir = os.path.join(
+            self._config.getString('ENGINE_TMP'),
+            'modules',
+        )
+
+        # For each directory in the modules directory create the same in the
+        # temporary directory and populate with symlinks pointing to the
+        # original files (excluding indexes):
+        for parentDir, childrenDirs, childrenFiles in os.walk(modulesDir):
+            parentTmpDir = parentDir.replace(modulesDir, modulesTmpDir, 1)
+            if not os.path.exists(parentTmpDir):
+                os.makedirs(parentTmpDir)
+            for childFile in childrenFiles:
+                if childFile.endswith('.index'):
+                    continue
+                childPath = os.path.join(parentDir, childFile)
+                childTmpPath = os.path.join(parentTmpDir, childFile)
+                os.symlink(childPath, childTmpPath)
+
+        return modulesTmpDir
+
+    def _check(
+        self,
+        name,
+        mustExist=True,
+        readable=True,
+        writable=False,
+        executable=False,
+        directory=False,
+    ):
+        artifact = _('Directory') if directory else _('File')
+
+        if directory:
+            readable = True
+            executable = True
+
+        if os.path.exists(name):
+            if directory and not os.path.isdir(name):
+                raise RuntimeError(
+                    _("{artifact} '{name}' is required but missing").format(
+                        artifact=artifact,
+                        name=name,
+                    )
+                )
+            if readable and not os.access(name, os.R_OK):
+                raise RuntimeError(
+                    _(
+                        "{artifact} '{name}' cannot be accessed "
+                        "for reading"
+                    ).format(
+                        artifact=artifact,
+                        name=name,
+                    )
+                )
+            if writable and not os.access(name, os.W_OK):
+                raise RuntimeError(
+                    _(
+                        "{artifact} '{name}' cannot be accessed "
+                        "for writing"
+                    ).format(
+                        artifact=artifact,
+                        name=name,
+                    )
+                )
+            if executable and not os.access(name, os.X_OK):
+                raise RuntimeError(
+                    _(
+                        "{artifact} '{name}' cannot be accessed "
+                        "for execution"
+                    ).format(
+                        artifact=artifact,
+                        name=name,
+                    )
+                )
+        else:
+            if mustExist:
+                raise RuntimeError(
+                    _("{artifact} '{name}' is required but missing").format(
+                        artifact=artifact,
+                        name=name,
+                    )
+                )
+
+            if not os.path.exists(os.path.dirname(name)):
+                raise RuntimeError(
+                    _(
+                        "{artifact} '{name}' is to be created but "
+                        "parent directory is missing"
+                    ).format(
+                        artifact=artifact,
+                        name=name,
+                    )
+                )
+
+            if not os.access(os.path.dirname(name), os.W_OK):
+                raise RuntimeError(
+                    _(
+                        "{artifact} '{name}' is to be created but "
+                        "parent directory is not writable"
+                    ).format(
+                        artifact=artifact,
+                        name=name,
+                    )
+                )
+
+    def _checkInstallation(
+        self,
+        pidfile,
+        jbossModulesJar,
+        java,
+    ):
+        # Check that the Java home directory exists and that it contais at
+        # least the java executable:
+        self._check(
+            name=self._config.getString('JAVA_HOME'),
+            directory=True,
+        )
+        self._check(
+            name=java,
+            executable=True,
+        )
+
+        # Check the required JBoss directories and files:
+        self._check(
+            name=self._config.getString('JBOSS_HOME'),
+            directory=True,
+        )
+        self._check(
+            name=jbossModulesJar,
+        )
+
+        # Check the required engine directories and files:
+        self._check(
+            os.path.join(
+                self._config.getString('ENGINE_USR'),
+                'service',
+            ),
+            directory=True,
+        )
+        self._check(
+            self._config.getString('ENGINE_CACHE'),
+            directory=True,
+            writable=True,
+        )
+        self._check(
+            self._config.getString('ENGINE_TMP'),
+            directory=True,
+            writable=True,
+            mustExist=False,
+        )
+        for dir in ('.', 'content', 'deployments'):
+            self._check(
+                os.path.join(
+                    self._config.getString('ENGINE_VAR'),
+                    dir
+                ),
+                directory=True,
+                writable=True,
+            )
+        self._check(
+            self._config.getString('ENGINE_LOG'),
+            directory=True,
+            writable=True,
+        )
+        self._check(
+            name=os.path.join(
+                self._config.getString("ENGINE_LOG"),
+                'host-deploy',
+            ),
+            directory=True,
+            writable=True,
+        )
+        for log in ('engine.log', 'console.log', 'server.log'):
+            self._check(
+                name=os.path.join(self._config.getString("ENGINE_LOG"), log),
+                mustExist=False,
+                writable=True,
+            )
+        if pidfile is not None:
+            self._check(
+                name=pidfile,
+                writable=True,
+            )
+
+    def _setupEngineApps(self):
+
+        # The list of applications to be deployed:
+        for engineApp in self._config.getString('ENGINE_APPS').split():
+            # Do nothing if the application is not available:
+            engineAppDir = os.path.join(
+                self._config.getString('ENGINE_USR'),
+                engineApp,
+            )
+            if not os.path.exists(engineAppDir):
+                self._logger.warning(
+                    _(
+                        "Application '{application}' directory '{directory}' "
+                        "does not exist, it will be ignored"
+                    ).format(
+                        application=engineApp,
+                        directory=engineAppDir,
+                    ),
+                )
                 continue
-            childPath = os.path.join(parentDir, childFile)
-            childTmpPath = os.path.join(parentTmpDir, childFile)
-            os.symlink(childPath, childTmpPath)
+
+            # Make sure the application is linked in the deployments
+            # directory, if not link it now:
+            engineAppLink = os.path.join(
+                self._config.getString('ENGINE_VAR'),
+                'deployments',
+                engineApp,
+            )
+            if not os.path.islink(engineAppLink):
+                try:
+                    os.symlink(engineAppDir, engineAppLink)
+                except OSError as e:
+                    self._logger.debug('exception', exc_info=True)
+                    raise RuntimeError(
+                        _(
+                            "Cannot create symbolic link '{file}': "
+                            "{error}"
+                        ).format(
+                            file=engineAppLink,
+                            error=e,
+                        ),
+                    )
+
+            # Remove all existing deployment markers:
+            for markerFile in glob.glob('%s.*' % engineAppLink):
+                try:
+                    os.remove(markerFile)
+                except OSError as e:
+                    self._logger.debug('exception', exc_info=True)
+                    raise RuntimeError(
+                        _(
+                            "Cannot remove deployment marker file '{file}': "
+                            "{error}"
+                        ).format(
+                            file=markerFile,
+                            error=e,
+                        ),
+                    )
+
+            # Create the new marker file to trigger deployment
+            # of the application:
+            markerFile = "%s.dodeploy" % engineAppLink
+            try:
+                with open(markerFile, "w"):
+                    pass
+            except IOError as e:
+                self._logger.debug('exception', exc_info=True)
+                raise RuntimeError(
+                    _(
+                        "Cannot create deployment marker file '{file}': "
+                        "{error}"
+                    ).format(
+                        file=markerFile,
+                        error=e,
+                    )
+                )
+
+    def _daemon(self, args, executable, env):
+
+        self._logger.debug(
+            'executing daemon: exe=%s, args=%s, env=%s',
+            executable,
+            args,
+            env,
+        )
+        self._logger.debug('background=%s', self._options.background)
+
+        class _TerminateException(Exception):
+            pass
+
+        def _myterm(signum, frame):
+            raise _TerminateException()
+
+        engineConsoleLog = open(
+            os.path.join(
+                self._config.getString('ENGINE_LOG'),
+                'console.log'
+            ),
+            'w+',
+        )
+
+        with daemon.DaemonContext(
+            detach_process=self._options.background,
+            signal_map={
+                signal.SIGTERM: _myterm,
+                signal.SIGINT: _myterm,
+                signal.SIGHUP: None,
+            },
+            stdout=engineConsoleLog,
+            stderr=engineConsoleLog,
+        ):
+            self._logger.debug('I am a daemon %s', os.getpid())
+
+            with PidFile(self._options.pidfile):
+                try:
+                    self._logger.debug('creating process')
+                    p = subprocess.Popen(
+                        args=args,
+                        executable=executable,
+                        env=env,
+                        close_fds=True,
+                    )
+
+                    self._logger.debug(
+                        'waiting for termination of pid=%s',
+                        p.pid,
+                    )
+                    p.wait()
+                    self._logger.debug(
+                        'terminated pid=%s rc=%s',
+                        p.pid,
+                        p.returncode,
+                    )
+
+                    if p.returncode != 0:
+                        raise RuntimeError(
+                            _(
+                                'Engine terminated with status '
+                                'code {code}'
+                            ).format(
+                                code=p.returncode,
+                            )
+                        )
+
+                except _TerminateException:
+                    self._logger.debug('got stop signal')
+
+                    stopTime = self._config.getInteger(
+                        'ENGINE_STOP_TIME'
+                    )
+                    stopInterval = self._config.getInteger(
+                        'ENGINE_STOP_INTERVAL'
+                    )
+
+                    # avoid recursive signals
+                    for sig in (signal.SIGTERM, signal.SIGINT):
+                        signal.signal(sig, signal.SIG_IGN)
+
+                    try:
+                        self._logger.debug('terminating pid=%s', p.pid)
+                        p.terminate()
+                        for i in range(stopTime // stopInterval):
+                            if p.poll() is not None:
+                                self._logger.debug('terminated pid=%s', p.pid)
+                                break
+                            self._logger.debug(
+                                'waiting for termination of pid=%s',
+                                p.pid,
+                            )
+                            time.sleep(stopInterval)
+                    except OSError as e:
+                        self._logger.warning(
+                            _('Cannot terminate pid {pid}: {error}').format(
+                                pid=p.pid,
+                                error=e,
+                            )
+                        )
+                        self._logger.debug('exception', exc_info=True)
+
+                    try:
+                        if p.poll() is None:
+                            self._logger.debug('killing pid=%s', p.pid)
+                            p.kill()
+                            raise RuntimeError(
+                                _('Had to kill engine process {pid}').format(
+                                    pid=p.pid
+                                )
+                            )
+                    except OSError as e:
+                        self._logger.warning(
+                            _('Cannot kill pid {pid}: {error}').format(
+                                pid=p.pid,
+                                error=e
+                            )
+                        )
+                        self._logger.debug('exception', exc_info=True)
+                        raise
+
+    def _start(self):
+
+        self._logger.debug('start entry pid=%s', os.getpid())
+
+        if os.geteuid() == 0:
+            raise RuntimeError(
+                _('This script cannot be run as root')
+            )
+
+        self._loadConfig()
+
+        jbossModulesJar = os.path.join(
+            self._config.getString('JBOSS_HOME'),
+            'jboss-modules.jar',
+        )
+        java = os.path.join(
+            self._config.getString('JAVA_HOME'),
+            'bin',
+            'java',
+        )
+
+        self._checkInstallation(
+            pidfile=self._options.pidfile,
+            jbossModulesJar=jbossModulesJar,
+            java=java,
+        )
+
+        with TempDir(self._config.getString('ENGINE_TMP')):
+            self._setupEngineApps()
+
+            jbossBootLoggingFile = self._processTemplate(
+                os.path.join(
+                    self._config.getString('ENGINE_USR'),
+                    'service',
+                    'engine-service-logging.properties.in'
+                ),
+            )
+
+            jbossConfigFile = self._processTemplate(
+                os.path.join(
+                    self._config.getString('ENGINE_USR'),
+                    'service',
+                    'engine-service.xml.in',
+                ),
+            )
+
+            jbossModulesTmpDir = self._linkModules(
+                os.path.join(
+                    self._config.getString('JBOSS_HOME'),
+                    'modules',
+                ),
+            )
+
+            # We start with an empty list of arguments:
+            engineArgs = []
+
+            # Add arguments for the java virtual machine:
+            engineArgs.extend([
+                # The name or the process, as displayed by ps:
+                'engine-service',
+
+                # Virtual machine options:
+                '-server',
+                '-XX:+TieredCompilation',
+                '-Xms%s' % self._config.getString('ENGINE_HEAP_MIN'),
+                '-Xmx%s' % self._config.getString('ENGINE_HEAP_MAX'),
+                '-XX:PermSize=%s' % self._config.getString('ENGINE_PERM_MIN'),
+                '-XX:MaxPermSize=%s' % self._config.getString(
+                    'ENGINE_PERM_MAX'
+                ),
+                '-Djava.net.preferIPv4Stack=true',
+                '-Dsun.rmi.dgc.client.gcInterval=3600000',
+                '-Dsun.rmi.dgc.server.gcInterval=3600000',
+                '-Djava.awt.headless=true',
+            ])
+
+            # Add extra system properties provided in the configuration:
+            engineProperties = self._config.getString('ENGINE_PROPERTIES')
+            for engineProperty in engineProperties.split():
+                if not engineProperty.startswith('-D'):
+                    engineProperty = '-D' + engineProperty
+                engineArgs.append(engineProperty)
+
+            # Add arguments for remote debugging of the java virtual machine:
+            engineDebugAddress = self._config.getString('ENGINE_DEBUG_ADDRESS')
+            if engineDebugAddress:
+                engineArgs.append(
+                    (
+                        '-Xrunjdwp:transport=dt_socket,address=%s,'
+                        'server=y,suspend=n'
+                    ) % (
+                        engineDebugAddress
+                    )
+                )
+
+            # Enable verbose garbage collection if required:
+            if self._config.getBoolean('ENGINE_VERBOSE_GC'):
+                engineArgs.extend([
+                    '-verbose:gc',
+                    '-XX:+PrintGCTimeStamps',
+                    '-XX:+PrintGCDetails',
+                ])
+
+            # Add arguments for JBoss:
+            engineArgs.extend([
+                '-Djava.util.logging.manager=org.jboss.logmanager',
+                '-Dlogging.configuration=file://%s' % jbossBootLoggingFile,
+                '-Dorg.jboss.resolver.warning=true',
+                '-Djboss.modules.system.pkgs=org.jboss.byteman',
+                '-Djboss.modules.write-indexes=false',
+                '-Djboss.server.default.config=engine-service',
+                '-Djboss.home.dir=%s' % self._config.getString(
+                    'JBOSS_HOME'
+                ),
+                '-Djboss.server.base.dir=%s' % self._config.getString(
+                    'ENGINE_USR'
+                ),
+                '-Djboss.server.config.dir=%s' % self._config.getString(
+                    'ENGINE_TMP'
+                ),
+                '-Djboss.server.data.dir=%s' % self._config.getString(
+                    'ENGINE_VAR'
+                ),
+                '-Djboss.server.log.dir=%s' % self._config.getString(
+                    'ENGINE_LOG'
+                ),
+                '-Djboss.server.temp.dir=%s' % self._config.getString(
+                    'ENGINE_TMP'
+                ),
+                '-Djboss.controller.temp.dir=%s' % self._config.getString(
+                    'ENGINE_TMP'
+                ),
+                '-jar', jbossModulesJar,
+
+                # Module path should include first the engine modules
+                # so that they can override those provided by the
+                # application server if needed:
+                '-mp', "%s:%s" % (
+                    os.path.join(
+                        self._config.getString('ENGINE_USR'),
+                        'modules',
+                    ),
+                    jbossModulesTmpDir,
+                ),
+
+                '-jaxpmodule', 'javax.xml.jaxp-provider',
+                'org.jboss.as.standalone',
+                '-c', os.path.basename(jbossConfigFile),
+            ])
+
+            engineEnv = os.environ.copy()
+            engineEnv.update({
+                'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin',
+                'LANG': 'en_US.UTF-8',
+                'LC_ALL': 'en_US.UTF-8',
+                'ENGINE_DEFAULTS': Config.ENGINE_DEFAULT_FILE,
+                'ENGINE_VARS': Config.ENGINE_VARS,
+                'ENGINE_ETC': self._config.getString('ENGINE_ETC'),
+                'ENGINE_LOG': self._config.getString('ENGINE_LOG'),
+                'ENGINE_TMP': self._config.getString('ENGINE_TMP'),
+                'ENGINE_USR': self._config.getString('ENGINE_USR'),
+                'ENGINE_VAR': self._config.getString('ENGINE_VAR'),
+                'ENGINE_CACHE': self._config.getString('ENGINE_CACHE'),
+            })
+
+            self._daemon(
+                args=engineArgs,
+                executable=java,
+                env=engineEnv,
+            )
+
+            self._logger.debug('start return')
+
+    def run(self):
+        self._logger.debug('startup args=%s', sys.argv)
+
+        parser = optparse.OptionParser(
+            usage=_('usage: %prog [options] start'),
+        )
+        parser.add_option(
+            '-d', '--debug',
+            dest='debug',
+            action='store_true',
+            default=False,
+            help=_('debug mode'),
+        )
+        parser.add_option(
+            '--pidfile',
+            dest='pidfile',
+            default=None,
+            metavar=_('FILE'),
+            help=_('pid file to use'),
+        )
+        parser.add_option(
+            '--background',
+            dest='background',
+            action='store_true',
+            default=False,
+            help=_('Go into the background'),
+        )
+        (self._options, args) = parser.parse_args()
+
+        if self._options.debug:
+            logging.getLogger('ovirt').setLevel(logging.DEBUG)
+
+        if len(args) != 1:
+            parser.error(_('Action is missing'))
+        action = args[0]
+        if not action in ('start'):
+            parser.error(
+                _("Invalid action '{action}'").format(
+                    action=action
+                )
+            )
+
+        try:
+            self._start()
+        except Exception as e:
+            self._logger.error(
+                _('Error: {error}').format(
+                    error=e,
+                )
+            )
+            self._logger.debug('exception', exc_info=True)
+            sys.exit(1)
+        else:
+            sys.exit(0)
 
 
-def main():
-    loadConfig()
+def _setupLogger():
+    class _MyFormatter(logging.Formatter):
+        """Needed as syslog will truncate any lines after first."""
 
-    parser = OptionParser(
-        usage="usage: %prog [options] start",
-    )
-    parser.add_option(
-        "--pidfile",
-        dest="pidfile",
-        default=None,
-        metavar="FILE",
-        help="pid file to use",
-    )
-    parser.add_option(
-        "--background",
-        dest="background",
-        action="store_true",
-        default=False,
-        help="Go into the background",
-    )
-    global options
-    (options, args) = parser.parse_args()
+        def __init__(
+            self,
+            fmt=None,
+            datefmt=None,
+        ):
+            logging.Formatter.__init__(self, fmt=fmt, datefmt=datefmt)
 
-    global engineConsoleLogFile
-    global enginePidFile
-    global foreground
+        def format(self, record):
+            return logging.Formatter.format(self, record).replace('\n', ' | ')
 
-    if options.pidfile is not None:
-        enginePidFile = options.pidfile
-    foreground = not options.background
-
-    if len(args) != 1:
-        parser.error("action is missing")
-    action = args[0]
-    if not action in ("start"):
-        parser.error("invalid action '%s'" % action)
-
-    # Run the action with syslog open and remember to close it
-    # regardless of what happens in the middle:
-    syslog.openlog(engineName, syslog.LOG_PID)
-    try:
-        startEngine()
-    except Exception as exception:
-        syslog.syslog(syslog.LOG_ERR, str(exception))
-        sys.exit(1)
+    logger = logging.getLogger('ovirt')
+    logger.propagate = False
+    if os.environ.get('OVIRT_ENGINE_SERVICE_DEBUG', '0') != '0':
+        logger.setLevel(logging.DEBUG)
     else:
-        sys.exit(0)
-    finally:
-        syslog.closelog()
+        logger.setLevel(logging.INFO)
+    h = logging.handlers.SysLogHandler(
+        address='/dev/log',
+        facility=logging.handlers.SysLogHandler.LOG_DAEMON,
+    )
+    h.setLevel(logging.DEBUG)
+    h.setFormatter(
+        _MyFormatter(
+            fmt=(
+                os.path.splitext(os.path.basename(sys.argv[0]))[0] +
+                '[%(process)s] '
+                '%(levelname)s '
+                '%(funcName)s:%(lineno)d '
+                '%(message)s'
+            ),
+        ),
+    )
+    logger.addHandler(h)
 
 
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    _setupLogger()
+    d = EngineDaemon()
+    d.run()
+
+
+# vim: expandtab tabstop=4 shiftwidth=4

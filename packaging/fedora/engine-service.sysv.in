@@ -18,52 +18,57 @@
 
 RETVAL=0
 PROG="oVirt Engine"
-LOCKFILE=/var/lock/subsys/engine-service
-PIDFILE=${PIDFILE:-"/var/run/ovirt-engine.pid"}
+LOCKFILE="/var/lock/subsys/ovirt-engine"
+PIDFILE="${PIDFILE:-/var/run/ovirt-engine.pid}"
 USER="@ENGINE_USER@"
 
 # See how we were called.
 case "$1" in
-  start)
-	if [ `id -u` -ne 0 ]; then
-		echo $"Insufficient privilege" 1>&2
-		exit 4
-	fi
-	echo -n $"Starting $PROG: "
-	ulimit -n ${FILENO:-65535}
-	touch "${PIDFILE}"
-        chown "${USER}" "${PIDFILE}"
-	daemon --user "${USER}" --pidfile="${PIDFILE}" \
-		/usr/share/ovirt-engine/service/engine-service.py --pidfile="${PIDFILE}" --background start
-	RETVAL=$?
-	echo
-	if [ $RETVAL -eq 0 ]; then
-		touch $LOCKFILE
-	else
-		if [ -f $LOCKFILE ]; then
-			RETVAL=0
+	start)
+		if [ `id -u` -ne 0 ]; then
+			echo $"Insufficient privilege" 1>&2
+			exit 4
 		fi
-	fi
-	;;
-  stop)
-	echo -n $"Stopping $PROG: "
-	killproc -p "${PIDFILE}"
-	RETVAL=$?
-	echo
-	[ $RETVAL -eq 0 ] && rm -f $LOCKFILE
-	;;
-  status)
-	status -p "${PIDFILE}"
-	RETVAL=$?
-	;;
-  restart)
-	$0 stop
-	$0 start
-	RETVAL=$?
-	;;
-  *)
-	echo $"Usage: $0 {start|stop|status|restart}"
-	exit 2
+		echo -n $"Starting $PROG: "
+		ulimit -n ${FILENO:-65535}
+		touch "${PIDFILE}"
+		chown "${USER}" "${PIDFILE}"
+		daemon --user "${USER}" --pidfile="${PIDFILE}" \
+			/usr/share/ovirt-engine/service/engine-service.py \
+				--pidfile="${PIDFILE}" \
+				--background \
+				${OVIRT_ENGINE_EXTRA_ARGS} \
+				start
+		RETVAL=$?
+		echo
+		if [ $RETVAL -eq 0 ]; then
+			touch "${LOCKFILE}"
+		else
+			if [ -f "${LOCKFILE}" ]; then
+				RETVAL=0
+			fi
+		fi
+		;;
+	stop)
+		echo -n $"Stopping $PROG: "
+		killproc -p "${PIDFILE}" -d 60
+		RETVAL=$?
+		echo
+		[ $RETVAL -eq 0 ] && rm -f "${LOCKFILE}"
+		;;
+	status)
+		status -p "${PIDFILE}"
+		RETVAL=$?
+		;;
+	restart)
+		$0 stop
+		$0 start
+		RETVAL=$?
+		;;
+	*)
+		echo $"Usage: $0 {start|stop|status|restart}"
+		exit 2
+		;;
 esac
 
 exit $RETVAL
