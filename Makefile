@@ -130,9 +130,13 @@ GENERATED = \
 	$(NULL)
 
 all: \
+	generated-files \
 	$(BUILD_FILE) \
-	$(GENERATED) \
 	$(NULL)
+
+generated-files:	$(GENERATED)
+	chmod a+x packaging/fedora/engine-service.sysv
+	chmod a+x packaging/fedora/engine-service.py
 
 $(BUILD_FILE):
 	-[ "$(MAVEN_OUTPUT_DIR_DEFAULT)" = "$(MAVEN_OUTPUT_DIR)" ] && rm -fr "$(MAVEN_OUTPUT_DIR)"
