@@ -81,11 +81,4 @@ public interface AsyncTaskDAO extends DAO {
      * @param task the task to save
      */
     void save(AsyncTasks newAsyncTask);
-
-    /**
-     * Saves or updates the async task
-     * @param asyncTask the task to update or save
-     */
-    void saveOrUpdate(AsyncTasks asyncTask);
-
 }
