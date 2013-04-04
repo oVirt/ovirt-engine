@@ -15,9 +15,8 @@ import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.Permissions;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.api.resource.PermissionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
-
+import org.ovirt.engine.api.resource.PermissionResource;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -25,15 +24,14 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.GetDbUserByUserIdParameters;
+import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByPermissionIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.queries.GetDbUserByUserIdParameters;
-import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class BackendAssignedPermissionsResource
         extends AbstractBackendCollectionResource<Permission, permissions>
@@ -187,9 +185,8 @@ public class BackendAssignedPermissionsResource
         return map(entity, template);
     }
 
-    //REVISIT: fix once BE can distinguish between the user and group
-    private boolean isUser(DbUser user) {
-        return StringHelper.isNullOrEmpty(user.getusername()) ? false : true;
+    private static boolean isUser(DbUser user) {
+        return !user.getIsGroup();
     }
 
     /**
