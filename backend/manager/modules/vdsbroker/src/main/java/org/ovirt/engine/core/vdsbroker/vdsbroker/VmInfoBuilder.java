@@ -43,7 +43,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     private final List<XmlRpcStruct> devices = new ArrayList<XmlRpcStruct>();
     private List<VmDevice> managedDevices = null;
-    private boolean hasNonDefaultBootOrder;
+    private final boolean hasNonDefaultBootOrder;
 
     public VmInfoBuilder(VM vm, XmlRpcStruct createInfo) {
         this.vm = vm;
@@ -316,13 +316,6 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                                 vmInterface,
                                 vmDevice,
                                 VmInterfaceType.pv.name(),
-                                vm.getVdsGroupCompatibilityVersion());
-                        // Doual Mode: in this case we have to insert 2 interfaces with the same entries except nicModel
-                        XmlRpcStruct rtl8139Struct = new XmlRpcStruct();
-                        addNetworkInterfaceProperties(rtl8139Struct,
-                                vmInterface,
-                                vmDevice,
-                                VmInterfaceType.rtl8139.name(),
                                 vm.getVdsGroupCompatibilityVersion());
                     } else {
                         addNetworkInterfaceProperties(struct,

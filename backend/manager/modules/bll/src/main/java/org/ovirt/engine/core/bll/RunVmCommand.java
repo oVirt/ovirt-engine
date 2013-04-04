@@ -197,6 +197,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (getVdsToRunOn()) {
             VMStatus status = null;
             try {
+                VmHandler.UpdateVmGuestAgentVersion(getVm());
                 incrementVdsPendingVmsCount();
                 attachCd();
                 if (connectLunDisks(getVdsId())) {
@@ -576,7 +577,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         boolean attachCd = false;
         String selectedToolsVersion = "";
         String selectedToolsClusterVersion = "";
-        VmHandler.UpdateVmGuestAgentVersion(getVm());
         StorageDomain isoDomain = null;
         if (getVm().getVmOs().isWindows()
                 && (null != (isoDomain =
