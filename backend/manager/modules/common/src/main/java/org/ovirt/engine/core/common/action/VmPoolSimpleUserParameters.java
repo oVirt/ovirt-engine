@@ -9,15 +9,30 @@ public class VmPoolSimpleUserParameters extends VmPoolParametersBase {
     private static final long serialVersionUID = -956095100193433604L;
 
     @NotNull
-    private Guid _userId = Guid.Empty;
+    private Guid userId = Guid.Empty;
 
     public VmPoolSimpleUserParameters(NGuid vmPoolId, Guid userId) {
         super(vmPoolId);
-        _userId = userId;
+        this.userId = userId;
+    }
+
+    public VmPoolSimpleUserParameters(NGuid vmPoolId, Guid userId, Guid vmId) {
+        this(vmPoolId, userId);
+        this.vmId = vmId;
     }
 
     public Guid getUserId() {
-        return _userId;
+        return userId;
+    }
+
+    private Guid vmId = Guid.Empty;
+
+    public Guid getVmId() {
+        return vmId;
+    }
+
+    public void setVmId(Guid value) {
+        vmId = value;
     }
 
     public VmPoolSimpleUserParameters() {

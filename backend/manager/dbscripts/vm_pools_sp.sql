@@ -9,12 +9,13 @@ Create or replace FUNCTION InsertVm_pools(v_vm_pool_description VARCHAR(4000),
  v_vm_pool_type INTEGER,
  v_parameters VARCHAR(200),
  v_prestarted_vms INTEGER,
- v_vds_group_id UUID)
+ v_vds_group_id UUID,
+ v_max_assigned_vms_per_user SMALLINT)
 RETURNS VOID
    AS $procedure$
 BEGIN
-      INSERT INTO vm_pools(vm_pool_id,vm_pool_description, vm_pool_name, vm_pool_type,parameters, prestarted_vms, vds_group_id)
-      VALUES(v_vm_pool_id,v_vm_pool_description, v_vm_pool_name,v_vm_pool_type,v_parameters, v_prestarted_vms, v_vds_group_id);
+      INSERT INTO vm_pools(vm_pool_id,vm_pool_description, vm_pool_name, vm_pool_type,parameters, prestarted_vms, vds_group_id, max_assigned_vms_per_user)
+      VALUES(v_vm_pool_id,v_vm_pool_description, v_vm_pool_name,v_vm_pool_type,v_parameters, v_prestarted_vms, v_vds_group_id, v_max_assigned_vms_per_user);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -28,7 +29,8 @@ Create or replace FUNCTION UpdateVm_pools(v_vm_pool_description VARCHAR(4000),
  v_vm_pool_type INTEGER,
  v_parameters VARCHAR(200),
  v_prestarted_vms INTEGER,
- v_vds_group_id UUID)
+ v_vds_group_id UUID,
+ v_max_assigned_vms_per_user SMALLINT)
 RETURNS VOID
 
 	--The [vm_pools] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -36,7 +38,8 @@ RETURNS VOID
 BEGIN
       UPDATE vm_pools
       SET vm_pool_description = v_vm_pool_description,vm_pool_name = v_vm_pool_name,
-      vm_pool_type = v_vm_pool_type,parameters = v_parameters, prestarted_vms = v_prestarted_vms, vds_group_id = v_vds_group_id
+      vm_pool_type = v_vm_pool_type,parameters = v_parameters, prestarted_vms = v_prestarted_vms, vds_group_id = v_vds_group_id,
+      max_assigned_vms_per_user = v_max_assigned_vms_per_user
       WHERE vm_pool_id = v_vm_pool_id;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -66,7 +69,7 @@ LANGUAGE plpgsql;
 
 
 DROP TYPE IF EXISTS GetAllFromVm_pools_rs CASCADE;
-Create type GetAllFromVm_pools_rs AS (vm_pool_id UUID, assigned_vm_count INTEGER, vm_running_count INTEGER, vm_pool_description VARCHAR(4000), vm_pool_name VARCHAR(255), vm_pool_type INTEGER, parameters VARCHAR(200), prestarted_vms INTEGER, vds_group_id UUID, vds_group_name VARCHAR(40));
+Create type GetAllFromVm_pools_rs AS (vm_pool_id UUID, assigned_vm_count INTEGER, vm_running_count INTEGER, vm_pool_description VARCHAR(4000), vm_pool_name VARCHAR(255), vm_pool_type INTEGER, parameters VARCHAR(200), prestarted_vms INTEGER, vds_group_id UUID, vds_group_name VARCHAR(40), max_assigned_vms_per_user SMALLINT);
 Create or replace FUNCTION GetAllFromVm_pools() RETURNS SETOF GetAllFromVm_pools_rs
    AS $procedure$
 BEGIN
@@ -136,7 +139,8 @@ BEGIN
             parameters VARCHAR(200),
             prestarted_vms INTEGER,
             vds_group_id UUID,
-            vds_group_name VARCHAR(40)
+            vds_group_name VARCHAR(40),
+            max_assigned_vms_per_user SMALLINT
          ) WITH OIDS;
          exception when others then
             truncate table tt_VM_POOL_RESULT;
@@ -150,10 +154,11 @@ BEGIN
             parameters,
             prestarted_vms,
             vds_group_id,
-            vds_group_name)
+            vds_group_name,
+            max_assigned_vms_per_user)
       select ppr.vm_pool_id, ppr.assigned_vm_count, ppr.vm_running_count,
   				 p.vm_pool_description, p.vm_pool_name, p.vm_pool_type, p.parameters, p.prestarted_vms,
-					 p.vds_group_id, p.vds_group_name
+					 p.vds_group_id, p.vds_group_name, p.max_assigned_vms_per_user
       from tt_VM_POOL_PRERESULT ppr
       inner join vm_pools_view p on ppr.vm_pool_id = p.vm_pool_id;
       RETURN QUERY select *

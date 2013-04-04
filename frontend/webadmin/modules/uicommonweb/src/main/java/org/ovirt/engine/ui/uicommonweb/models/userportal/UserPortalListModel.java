@@ -1420,17 +1420,16 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 // Add pool to map.
                 poolMap.put(pool.getVmPoolId(), pool);
 
-                boolean found = false;
+                int attachedVmsCount = 0;
                 for (VM vm : getvms())
                 {
                     if (vm.getVmPoolId() != null && vm.getVmPoolId().equals(pool.getVmPoolId()))
                     {
-                        found = true;
-                        break;
+                        attachedVmsCount++;
                     }
                 }
 
-                if (!found)
+                if (attachedVmsCount < pool.getMaxAssignedVmsPerUser())
                 {
                     filteredPools.add(pool);
                 }

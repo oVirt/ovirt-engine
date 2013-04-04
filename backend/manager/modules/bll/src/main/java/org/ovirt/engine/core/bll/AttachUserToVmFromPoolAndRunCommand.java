@@ -69,15 +69,21 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
             }
         }
 
-        // check user isn't already attached to vm from this pool
+        // check user isn't already attached to maximum number of vms from this pool
         if (returnValue) {
-            List<VM> vmsForUser = DbFacade.getInstance().getVmDao().getAllForUser(getAdUserId());
+            List<VM> vmsForUser = getVmDAO().getAllForUser(getAdUserId());
 
+            int vmCount = 0;
             for (VM vm : vmsForUser) {
                 if (vm.getVmPoolId() != null && getVmPoolId().equals(vm.getVmPoolId())) {
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_USER_ATTACHED_TO_POOL);
-                    returnValue = false;
+                    vmCount++;
                 }
+            }
+
+            int limit = getVmPool().getMaxAssignedVmsPerUser();
+            if (vmCount >= limit) {
+                addCanDoActionMessage(VdcBllMessages.VM_POOL_CANNOT_ATTACH_TO_MORE_VMS_FROM_POOL);
+                returnValue = false;
             }
         }
         if (!returnValue) {

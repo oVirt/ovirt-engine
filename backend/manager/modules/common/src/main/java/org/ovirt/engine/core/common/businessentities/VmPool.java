@@ -50,6 +50,8 @@ public class VmPool extends IVdcQueryable implements Serializable, Nameable {
 
     private int vmPoolRunningCount = 1;
 
+    private int maxAssignedVmsPerUser = 1;
+
     public static final char MASK_CHARACTER = '?';
 
     public VmPool() {
@@ -71,6 +73,7 @@ public class VmPool extends IVdcQueryable implements Serializable, Nameable {
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + vmPoolRunningCount;
         result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + maxAssignedVmsPerUser;
         return result;
     }
 
@@ -94,7 +97,8 @@ public class VmPool extends IVdcQueryable implements Serializable, Nameable {
                 && ObjectUtils.objectsEqual(vdsGroupId, other.vdsGroupId)
                 && ObjectUtils.objectsEqual(description, other.description)
                 && ObjectUtils.objectsEqual(name, other.name)
-                && ObjectUtils.objectsEqual(type, other.type));
+                && ObjectUtils.objectsEqual(type, other.type)
+                && maxAssignedVmsPerUser == other.maxAssignedVmsPerUser);
     }
 
     private void initializeTimeLeasedDefaultData(String parameter) {
@@ -206,6 +210,14 @@ public class VmPool extends IVdcQueryable implements Serializable, Nameable {
 
     public void setAssignedVmsCount(int value) {
         vmPoolAssignedCount = value;
+    }
+
+    public int getMaxAssignedVmsPerUser() {
+        return maxAssignedVmsPerUser;
+    }
+
+    public void setMaxAssignedVmsPerUser(int maxAssignedVmsPerUser) {
+        this.maxAssignedVmsPerUser = maxAssignedVmsPerUser;
     }
 
     public int getRunningVmsCount() {

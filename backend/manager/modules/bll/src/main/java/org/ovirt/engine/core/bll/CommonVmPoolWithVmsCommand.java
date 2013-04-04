@@ -178,6 +178,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     @Override
     protected boolean canDoAction() {
+
         VDSGroup grp = getVdsGroupDAO().get(getParameters().getVmPool().getVdsGroupId());
         if (grp == null) {
             addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
@@ -231,6 +232,12 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
         if (getParameters().getVmPool().getPrestartedVms() > getParameters().getVmPool().getAssignedVmsCount()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_PRESTARTED_VMS_CANNOT_EXCEED_VMS_COUNT);
+            return false;
+        }
+
+        pool = getParameters().getVmPool();
+        if (pool.getMaxAssignedVmsPerUser() < 1 || pool.getMaxAssignedVmsPerUser() > pool.getAssignedVmsCount()) {
+            addCanDoActionMessage(VdcBllMessages.VM_POOL_NUMBER_OF_ASSIGNED_VMS_OUT_OF_RANGE);
             return false;
         }
 

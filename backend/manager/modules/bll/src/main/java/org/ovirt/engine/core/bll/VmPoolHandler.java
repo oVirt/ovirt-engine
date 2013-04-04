@@ -9,9 +9,9 @@ import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.action.VmPoolSimpleUserParameters;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
-import org.ovirt.engine.core.common.businessentities.VmPoolType;
-import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.VmPool;
+import org.ovirt.engine.core.common.businessentities.VmPoolMap;
+import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
@@ -39,8 +39,7 @@ public class VmPoolHandler {
                 // should be only one user in the collection
                 for (DbUser dbUser : users) {
                     Backend.getInstance().runInternalAction(VdcActionType.DetachUserFromVmFromPool,
-                            new VmPoolSimpleUserParameters(map.getvm_pool_id(), dbUser.getuser_id()),
-                            context);
+                            new VmPoolSimpleUserParameters(map.getvm_pool_id(), dbUser.getuser_id(), vmId), context);
                 }
             }
         } else {

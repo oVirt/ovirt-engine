@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.List;
-
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
@@ -31,23 +29,21 @@ public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameter
 
     }
 
-    protected void DetachAllVmsFromUser() {
-        List<VM> vms = DbFacade.getInstance().getVmDao().getAllForUser(getAdUserId());
-        for (VM vm : vms) {
-            if (getVmPoolId().equals(vm.getVmPoolId())) {
-                permissions perm = DbFacade
-                        .getInstance()
-                        .getPermissionDao()
-                        .getForRoleAndAdElementAndObject(
-                                PredefinedRoles.ENGINE_USER.getId(),
-                                getAdUserId(), vm.getId());
-                if (perm != null) {
-                    DbFacade.getInstance().getPermissionDao().remove(perm.getId());
-                    RestoreVmFromBaseSnapshot(vm);
-                }
+    protected void DetachVmFromUser() {
+        VM vm = DbFacade.getInstance().getVmDao().get(getParameters().getVmId());
+
+        if (vm != null && getVmPoolId().equals(vm.getVmPoolId())) {
+            permissions perm = DbFacade
+                    .getInstance()
+                    .getPermissionDao()
+                    .getForRoleAndAdElementAndObject(
+                            PredefinedRoles.ENGINE_USER.getId(),
+                            getAdUserId(), vm.getId());
+            if (perm != null) {
+                DbFacade.getInstance().getPermissionDao().remove(perm.getId());
+                RestoreVmFromBaseSnapshot(vm);
             }
         }
-
     }
 
     private void RestoreVmFromBaseSnapshot(VM vm) {
@@ -66,7 +62,7 @@ public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameter
     @Override
     protected void executeCommand() {
         if (getVmPoolId() != null) {
-            DetachAllVmsFromUser();
+            DetachVmFromUser();
         }
         setSucceeded(true);
     }

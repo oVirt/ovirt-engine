@@ -1,8 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
-
-import org.ovirt.engine.core.common.users.*;
+import org.ovirt.engine.core.common.users.VdcUser;
+import org.ovirt.engine.core.compat.Guid;
 
 public class VmPoolUserParameters extends VmPoolSimpleUserParameters implements java.io.Serializable {
     private static final long serialVersionUID = -5672324868972973061L;
@@ -31,16 +30,6 @@ public class VmPoolUserParameters extends VmPoolSimpleUserParameters implements 
 
     private void setIsInternal(boolean value) {
         privateIsInternal = value;
-    }
-
-    private Guid privateVmId = new Guid();
-
-    public Guid getVmId() {
-        return privateVmId;
-    }
-
-    public void setVmId(Guid value) {
-        privateVmId = value;
     }
 
     public VmPoolUserParameters() {
