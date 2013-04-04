@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.invocation.Current;
 import org.ovirt.engine.api.common.util.CompletenessAssertor;
 import org.ovirt.engine.api.common.util.EnumValidator;
@@ -27,7 +28,6 @@ import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -215,7 +215,7 @@ public class BaseBackendResource {
     protected <T> T handleError(Class<T> clz, Exception e, boolean notFoundAs404) {
         if ((e instanceof EntityNotFoundException) && (notFoundAs404)) {
             throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).build());
-        } else if ((e instanceof BackendFailureException) && (!StringHelper.isNullOrEmpty(e.getMessage()))) {
+        } else if ((e instanceof BackendFailureException) && (!StringUtils.isEmpty(e.getMessage()))) {
             LOG.errorFormat(localize(Messages.BACKEND_FAILED_TEMPLATE), e.getMessage(), null);
             throw new WebFaultException(null, e.getMessage(), Response.Status.BAD_REQUEST);
         } else {

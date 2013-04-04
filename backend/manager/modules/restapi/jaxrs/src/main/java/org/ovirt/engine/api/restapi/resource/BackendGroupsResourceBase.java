@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.security.auth.Principal;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Group;
@@ -22,7 +23,6 @@ import org.ovirt.engine.core.common.queries.GetAdGroupByIdParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class BackendGroupsResourceBase extends AbstractBackendCollectionResource<Group, LdapGroup> {
 
@@ -116,7 +116,7 @@ public class BackendGroupsResourceBase extends AbstractBackendCollectionResource
                               :
                               domain));
 
-        sb.append(StringHelper.isNullOrEmpty(constraint)?
+        sb.append(StringUtils.isEmpty(constraint) ?
                         "name="+param
                         :
                         constraint);

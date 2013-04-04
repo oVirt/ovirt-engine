@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.HostNIC;
@@ -14,8 +15,6 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.resource.HostNicResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
-import org.ovirt.engine.api.restapi.resource.AbstractBackendResource.EntityIdResolver;
-
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsParameters;
 import org.ovirt.engine.core.common.action.UpdateNetworkToVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -24,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class BackendHostNicResource
     extends AbstractBackendActionableResource<HostNIC, VdsNetworkInterface>
@@ -154,7 +152,7 @@ public class BackendHostNicResource
 
     private org.ovirt.engine.core.common.businessentities.network.Network getOldNetwork(VdsNetworkInterface originalInter) {
         String oldNetworkName = originalInter.getNetworkName();
-        if (!StringHelper.isNullOrEmpty(oldNetworkName)) {
+        if (!StringUtils.isEmpty(oldNetworkName)) {
             return lookupAtachedNetwork(originalInter.getNetworkName());
         } else {
             InterfaceAndIdQueryParameters params = new InterfaceAndIdQueryParameters(
@@ -170,7 +168,7 @@ public class BackendHostNicResource
     }
 
     private org.ovirt.engine.core.common.businessentities.network.Network lookupAtachedNetwork(String networkName) {
-        if(!StringHelper.isNullOrEmpty(networkName)){
+        if(!StringUtils.isEmpty(networkName)){
             for(org.ovirt.engine.core.common.businessentities.network.Network nwk : parent.getClusterNetworks()){
                 if(nwk.getName().equals(networkName)) return nwk;
             }

@@ -8,24 +8,23 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.security.auth.Principal;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Users;
-import org.ovirt.engine.api.restapi.resource.BaseBackendResource.WebFaultException;
 import org.ovirt.engine.core.common.action.AdElementParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.common.queries.GetDbUserByUserIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class BackendUsersResourceBase extends AbstractBackendCollectionResource<User, DbUser> {
 
@@ -94,7 +93,7 @@ public class BackendUsersResourceBase extends AbstractBackendCollectionResource<
                         :
                         domain));
 
-         sb.append(StringHelper.isNullOrEmpty(constraint)?
+        sb.append(StringUtils.isEmpty(constraint) ?
                         "allnames=" + username
                         :
                         constraint);
