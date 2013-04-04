@@ -196,30 +196,6 @@ def loadConfig():
     global engineConfig
     engineConfig = Config(engineConfigFiles)
 
-    # Get the id of the engine user:
-    global engineUid
-    if os.geteuid() == 0:
-        engineUser = engineConfig.getString("ENGINE_USER")
-        if engineUser:
-            try:
-                engineUid = pwd.getpwnam(engineUser).pw_uid
-            except:
-                raise Exception("The engine user \"%s\" doesn't exist." % engineUser)
-    else:
-        engineUid = os.geteuid()
-
-    # Get id of the engine group:
-    global engineGid
-    if os.geteuid() == 0:
-        engineGroup = engineConfig.getString("ENGINE_GROUP")
-        if engineGroup:
-            try:
-                engineGid = grp.getgrnam(engineGroup).gr_gid
-            except:
-                raise Exception("The engine group \"%s\" doesn't exist." % engineGroup)
-    else:
-        engineGid = os.getegid()
-
     # Java home directory:
     global javaHomeDir
     javaHomeDir = engineConfig.getString("JAVA_HOME")
@@ -363,6 +339,13 @@ def removeEnginePid():
 
 
 def startEngine():
+    if os.geteuid() == 0:
+        raise Exception("This script cannot be run as root")
+    global engineUid
+    global engineGid
+    engineUid = os.geteuid()
+    engineGid = os.getegid()
+
     # perform checks:
     checkInstallation()
 
@@ -552,8 +535,6 @@ def startEngine():
             signal.SIGINT: myterm,
             signal.SIGHUP: None,
         },
-        uid=engineUid,
-        gid=engineGid,
         stdout=engineConsoleLog,
         stderr=engineConsoleLog,
     ):
