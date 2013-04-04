@@ -1470,9 +1470,6 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         storageDomain.setDescription((String) model.getDescription().getEntity());
         storageDomain.setStorageFormat((StorageFormatType) model.getFormat().getSelectedItem());
 
-        connection = new StorageServerConnections();
-        connection.setid(selectedItem.getStorage());
-
         if (isNew)
         {
             AsyncDataProvider.GetStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
@@ -1497,6 +1494,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         }
         else
         {
+            connection = new StorageServerConnections();
+            connection.setid(storageDomain.getStorage());
+
             StorageDomain storageDomain = (StorageDomain) getSelectedItem();
             if(isNfsPathEditable(storageDomain)) {
                 updateNfsPath();
