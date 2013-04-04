@@ -126,7 +126,7 @@ public class StorageGeneralModel extends EntityModel
     }
 
     public void setTimeout(Short timeout) {
-        if (this.timeout != timeout) {
+        if (!isShortsEqual(this.timeout, timeout)) {
             this.timeout = timeout;
             OnPropertyChanged(new PropertyChangedEventArgs("Timeout")); //$NON-NLS-1$
         }
@@ -139,7 +139,7 @@ public class StorageGeneralModel extends EntityModel
     }
 
     public void setRetransmissions(Short retransmissions) {
-        if (this.retransmissions != retransmissions) {
+        if (!isShortsEqual(this.retransmissions, retransmissions)) {
             this.retransmissions = retransmissions;
             OnPropertyChanged(new PropertyChangedEventArgs("Retransmissions")); //$NON-NLS-1$
         }
@@ -197,5 +197,12 @@ public class StorageGeneralModel extends EntityModel
             }
 
         }
+    }
+
+    private boolean isShortsEqual(Short a, Short b) {
+        if (a == null) {
+            return b == null;
+        }
+        return a.equals(b);
     }
 }
