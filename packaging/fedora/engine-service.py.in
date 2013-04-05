@@ -494,10 +494,12 @@ def startEngine():
         "org.jboss.as.standalone", "-c", os.path.basename(jbossConfigFile),
     ])
 
-    # Prepare a clean environment:
-    engineEnv = {
+    # Prepare environment:
+    engineEnv = os.environ.copy()
+    engineEnv.update({
         "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin",
         "LANG": "en_US.UTF-8",
+        "LC_ALL": "en_US.UTF-8",
         "ENGINE_DEFAULTS": engineDefaultsFile,
         "ENGINE_VARS": engineConfigFile,
         "ENGINE_ETC": engineEtcDir,
@@ -506,7 +508,7 @@ def startEngine():
         "ENGINE_USR": engineUsrDir,
         "ENGINE_VAR": engineVarDir,
         "ENGINE_CACHE": engineCacheDir,
-    }
+    })
 
     # this is required to allow
     # writing after user id is changed
