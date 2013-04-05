@@ -1,3 +1,19 @@
+/*
+* Copyright (c) 2014 Red Hat, Inc.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*   http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 package org.ovirt.engine.build;
 
 import java.io.File;
@@ -17,6 +33,8 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
 import org.codehaus.plexus.util.FileUtils;
+import org.jboss.jandex.Indexer;
+import org.jboss.jandex.JarIndexer;
 
 @Mojo(name = "jboss-modules", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyCollection = ResolutionScope.COMPILE)
 public class ModulesMojo extends AbstractMojo {
@@ -50,6 +68,13 @@ public class ModulesMojo extends AbstractMojo {
      */
     @Parameter(property = "modules")
     private List<Module> modules;
+
+    /**
+     * This parameter indicates if the generated modules should include also
+     * annotation indexes.
+     */
+    @Parameter(property = "generateIndex", defaultValue="true")
+    private boolean generateIndex;
 
     /**
      * The temporary directory where modules will be stored.
@@ -161,23 +186,53 @@ public class ModulesMojo extends AbstractMojo {
                     "and group id \"" + module.getGroupId() + "\"");
         }
 
-        // Copy the artifact to the slot directory:
+        // Copy the artifact to the temporary directory (this is needed because the index generator has a bug and will
+        // remove the file if it isn't in the same file system that the temporary file it uses internally):
         File artifactFrom = matchingArtifact.getFile();
         if (artifactFrom == null) {
             throw new MojoExecutionException(
-                    "Can't find file for artifact id \"" + module.getArtifactId() + "\" " +
-                    "and group id \"" + module.getGroupId() + "\"");
+                "Can't find file for artifact id \"" + module.getArtifactId() + "\" " + "and group id \"" +
+                module.getGroupId() + "\""
+            );
         }
-        File artifactTo = new File(slotDir, module.getResourcePath());
-        getLog().info("Copying artifact to \"" + artifactTo + "\"");
+        File artifactTmp;
         try {
-            FileUtils.copyFile(artifactFrom, artifactTo);
+            artifactTmp = File.createTempFile("index", null);
+            FileUtils.copyFile(artifactFrom, artifactTmp);
         }
         catch (IOException exception) {
             throw new MojoExecutionException(
-                    "Can't copy artifact from \"" + artifactFrom.getAbsolutePath() + "\" " +
-                    "to \"" + artifactTo.getAbsolutePath() + "\"",
-                    exception);
+                "Can't create temporary file for \"" + artifactFrom.getAbsolutePath() + "\".",
+                exception
+            );
+        }
+
+        // Add the annotations index to the temporary file:
+        if (generateIndex) {
+            getLog().info("Creating annotations index for \"" + artifactFrom.getAbsolutePath() + "\"");
+            try {
+                JarIndexer.createJarIndex(artifactTmp, new Indexer(), true, false, false);
+            }
+            catch (IOException exception) {
+                throw new MojoExecutionException(
+                    "Can't add annotations index to \"" + artifactTmp.getAbsolutePath() + "\".",
+                     exception
+                );
+            }
+        }
+
+        // Move the temporary artifact file (maybe modified to include the index) to the slot directory:
+        File artifactTo = new File(slotDir, module.getResourcePath());
+        getLog().info("Copying artifact to \"" + artifactTo.getAbsolutePath() + "\"");
+        try {
+            FileUtils.rename(artifactTmp, artifactTo);
+        }
+        catch (IOException exception) {
+            throw new MojoExecutionException(
+                "Can't move temporary file \"" + artifactTmp.getAbsolutePath() + "\" to slot directory \"" +
+                slotDir.getAbsolutePath() + "\".",
+                exception
+            );
         }
     }
 

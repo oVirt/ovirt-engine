@@ -331,6 +331,7 @@
           <groupId>org.ovirt.engine</groupId>
           <artifactId>jboss-modules-maven-plugin</artifactId>
           <configuration>
+            <generateIndex>false</generateIndex>
             <modules>
 
               <module>
