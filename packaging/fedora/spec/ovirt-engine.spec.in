@@ -145,6 +145,10 @@ Requires: postgresql-server >= 8.4.7
 # Require JBoss AS 7:
 Requires: jboss-as >= 7.1.1-9.3
 
+%if %{install_systemd}
+BuildRequires: systemd
+%endif
+
 # We can't require exactly the same version and release of the
 # setup package because it needs to be updated independely as part
 # of the update process implemented in the engine-upgrade script:
@@ -183,6 +187,12 @@ Requires: %{name} = %{version}-%{release}
 Requires: java
 Requires: openssh
 Requires: openssl
+
+%if %{install_systemd}
+Requires(post): systemd
+Requires(preun): systemd
+Requires(postun): systemd
+%endif
 
 
 %description backend
@@ -377,6 +387,12 @@ then
 fi
 
 
+%preun backend
+%if %{install_systemd}
+%systemd_preun ovirt-engine.service
+%endif
+
+
 %postun
 if [ "$1" -eq 0 ]
 then
@@ -388,6 +404,12 @@ then
         sed -i '/%{name}/d' %{_sysconfdir}/yum/pluginconf.d/versionlock.list
     fi
 fi
+
+
+%postun backend
+%if %{install_systemd}
+%systemd_postun ovirt-engine.service
+%endif
 
 
 %pre
@@ -404,6 +426,12 @@ fi
 
 %pre tools
 %create_engine_user
+
+
+%post backend
+%if %{install_systemd}
+%systemd_post ovirt-engine.service
+%endif
 
 
 %files
