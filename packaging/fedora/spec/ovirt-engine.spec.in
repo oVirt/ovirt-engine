@@ -428,15 +428,6 @@ fi
 %config(noreplace) %{engine_etc}/engine.conf
 %dir %{engine_etc}/engine.conf.d
 
-# Files needed by the service:
-%{engine_data}/service
-%if %{install_systemd}
-%{_unitdir}/%{engine_name}.service
-%endif
-%if %{install_systemv}
-%{_initddir}/ovirt-engine
-%endif
-
 # Jar files used by all the components:
 %dir %{engine_java}
 %{engine_java}/common.jar
@@ -467,6 +458,15 @@ fi
 %dir %{engine_data}/bin
 # Directory for ui plugins
 %dir %{engine_data}/ui-plugins
+
+# Files needed by the service:
+%{engine_data}/service
+%if %{install_systemd}
+%{_unitdir}/%{engine_name}.service
+%endif
+%if %{install_systemv}
+%{_initddir}/ovirt-engine
+%endif
 
 # Jar files:
 %{engine_java}/bll.jar
