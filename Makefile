@@ -98,22 +98,22 @@ ARTIFACTS = \
 # Rule to generate files from templates:
 .in:
 	sed \
-	-e "s|@ENGINE_DEFAULTS@|$(DATA_DIR)/conf/engine.conf.defaults|" \
-	-e "s|@ENGINE_VARS@|$(PKG_SYSCONF_DIR)/engine.conf|" \
-	-e "s|@ENGINE_USER@|$(PKG_USER)|" \
-	-e "s|@ENGINE_GROUP@|$(PKG_GROUP)|" \
-	-e "s|@ENGINE_ETC@|$(PKG_SYSCONF_DIR)|" \
-	-e "s|@ENGINE_PKI@|$(PKG_PKI_DIR)|" \
-	-e "s|@ENGINE_LOG@|$(PKG_LOG_DIR)|" \
-	-e "s|@ENGINE_TMP@|$(PKG_TMP_DIR)|" \
-	-e "s|@ENGINE_USR@|$(DATA_DIR)|" \
-	-e "s|@ENGINE_VAR@|$(ENGINE_STATE)|" \
-	-e "s|@ENGINE_CACHE@|$(PKG_CACHE_DIR)|" \
-	-e "s|@ENGINE_PID@|$(PID_DIR)/$(ENGINE_NAME).pid|" \
-	-e "s|@RPM_VERSION@|$(RPM_VERSION)|" \
-	-e "s|@RPM_RELEASE@|$(RPM_RELEASE)|" \
-	-e "s|@PACKAGE_NAME@|$(PACKAGE_NAME)|" \
-	-e "s|@PACKAGE_VERSION@|$(PACKAGE_VERSION)|" \
+	-e "s|@ENGINE_DEFAULTS@|$(DATA_DIR)/conf/engine.conf.defaults|g" \
+	-e "s|@ENGINE_VARS@|$(PKG_SYSCONF_DIR)/engine.conf|g" \
+	-e "s|@ENGINE_USER@|$(PKG_USER)|g" \
+	-e "s|@ENGINE_GROUP@|$(PKG_GROUP)|g" \
+	-e "s|@ENGINE_ETC@|$(PKG_SYSCONF_DIR)|g" \
+	-e "s|@ENGINE_PKI@|$(PKG_PKI_DIR)|g" \
+	-e "s|@ENGINE_LOG@|$(PKG_LOG_DIR)|g" \
+	-e "s|@ENGINE_TMP@|$(PKG_TMP_DIR)|g" \
+	-e "s|@ENGINE_USR@|$(DATA_DIR)|g" \
+	-e "s|@ENGINE_VAR@|$(ENGINE_STATE)|g" \
+	-e "s|@ENGINE_CACHE@|$(PKG_CACHE_DIR)|g" \
+	-e "s|@ENGINE_PID@|$(PID_DIR)/$(ENGINE_NAME).pid|g" \
+	-e "s|@RPM_VERSION@|$(RPM_VERSION)|g" \
+	-e "s|@RPM_RELEASE@|$(RPM_RELEASE)|g" \
+	-e "s|@PACKAGE_NAME@|$(PACKAGE_NAME)|g" \
+	-e "s|@PACKAGE_VERSION@|$(PACKAGE_VERSION)|g" \
 	$< > $@
 
 # List of files that will be generated from templates:
