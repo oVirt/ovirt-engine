@@ -347,8 +347,6 @@ done
 %if %{install_systemd}
 install -dm 755 %{buildroot}%{_unitdir}
 install -m 644 packaging/fedora/engine-service.systemd %{buildroot}%{_unitdir}/%{engine_name}.service
-install -dm 755 %{buildroot}%{_sysconfdir}/tmpfiles.d
-install -m 644 packaging/resources/ovirt-tmpfilesd %{buildroot}%{_sysconfdir}/tmpfiles.d/ovirt-engine.conf
 %endif
 
 # Install System V init scripts:
@@ -424,9 +422,6 @@ fi
 
 # Misc configuration files:
 %{engine_data}/conf
-%if %{install_systemd}
-%{_sysconfdir}/tmpfiles.d/ovirt-engine.conf
-%endif
 
 # Engine configuration files:
 %dir %{engine_etc}
