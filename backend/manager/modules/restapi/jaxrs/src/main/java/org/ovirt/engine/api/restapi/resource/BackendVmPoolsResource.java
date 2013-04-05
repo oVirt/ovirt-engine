@@ -14,7 +14,10 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
@@ -106,12 +109,11 @@ public class BackendVmPoolsResource
     }
 
     protected VM mapToVM(VmPool model, VmTemplate template) {
-        // REVISIT: we should reverse the mapping order here,
-        // so that we map from template->VM in the first instance
-        // and then override any values (memory size, boot order etc.)
-        // that are set in the client-provided VmPool instance
-        VM vm = getMapper(VmPool.class, VM.class).map(model, null);
-        vm.getStaticData().setMemSizeMb(template.getMemSizeMb());
+        // apply template
+        VmStatic vmStatic = getMapper(VmTemplate.class, VmStatic.class).map(template, null);
+        // override with client-provided data
+        VM vm = getMapper(VmPool.class, VM.class).map(model, new VM(vmStatic, new VmDynamic(), new VmStatistics()));
+
         return vm;
     }
 
