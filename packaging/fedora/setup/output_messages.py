@@ -88,7 +88,11 @@ INFO_DB_RESTORED="Database upgrade failed. Previous database has been restored"
 
 #config ip tables
 INFO_IPTABLES_FILE="an example of the required configuration for iptables can be found at: %s"
-INFO_FIREWALLD_INSTRUCTIONS="In order to configure firewalld, please execute the following command: firewall-cmd --add-service ovirt"
+INFO_FIREWALLD_INSTRUCTIONS = (
+    "In order to configure firewalld, please copy the template files from "
+    "{template_dir} to {firewalld_dir} and execute the following commands: "
+    "{commands}"
+)
 # the last 2 ports are http & https entered by the user
 INFO_IPTABLES_PORTS=basedefs.APP_NAME + " requires the following TCP/IP Incoming ports to be opened on the firewall:\n\
 22, %s, %s "

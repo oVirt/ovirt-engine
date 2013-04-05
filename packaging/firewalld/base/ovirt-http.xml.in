@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>ovirt-http</short>
+  <description>oVirt configured http service</description>
+  <port protocol="tcp" port="@HTTP_PORT@"/>
+</service>

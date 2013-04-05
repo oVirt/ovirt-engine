@@ -620,7 +620,7 @@ fi
 %{engine_data}/scripts/dbutils
 
 # Firewalld configuration
-%config(noreplace) %{_sysconfdir}/firewalld/services/ovirt.xml
+%{engine_data}/firewalld/base
 
 # Man pages
 %{_mandir}/man8/engine-setup.*
@@ -635,6 +635,7 @@ fi
 
 %files setup-plugin-allinone
 %{engine_data}/scripts/plugins/all_in_one_100.py*
+%{engine_data}/firewalld/aio
 
 
 %files dbscripts

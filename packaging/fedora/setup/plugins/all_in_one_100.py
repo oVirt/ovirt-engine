@@ -229,6 +229,10 @@ def addFirewallRules():
         '-A INPUT -p tcp -m state --state NEW -m multiport --dports 49152:49216 -j ACCEPT'
     ]
 
+    if basedefs.CONST_CONFIG_EXTRA_FIREWALLD_RULES not in controller.CONF:
+        controller.CONF[basedefs.CONST_CONFIG_EXTRA_FIREWALLD_RULES] = []
+    controller.CONF[basedefs.CONST_CONFIG_EXTRA_FIREWALLD_RULES].append('ovirt-aio')
+
 def waitForJbossUp():
     """
     Wait for Jboss to start

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+    <short>ovirt-nfs</short>
+    <description>oVirt configured nfs service</description>
+    <port protocol="tcp" port="111"/>
+    <port protocol="udp" port="111"/>
+    <port protocol="tcp" port="662"/>
+    <port protocol="udp" port="662"/>
+    <port protocol="tcp" port="875"/>
+    <port protocol="udp" port="875"/>
+    <port protocol="tcp" port="892"/>
+    <port protocol="udp" port="892"/>
+    <port protocol="tcp" port="2049"/>
+    <port protocol="udp" port="32769"/>
+    <port protocol="tcp" port="32803"/>
+</service>

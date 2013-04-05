@@ -242,6 +242,7 @@ create_dirs:
 	@install -dm 755 $(DESTDIR)$(DATA_DIR)/ovirt-isos
 	@install -dm 755 $(DESTDIR)$(DATA_DIR)/scripts/plugins
 	@install -dm 755 $(DESTDIR)$(DATA_DIR)/scripts/dbutils
+	@install -dm 755 $(DESTDIR)$(DATA_DIR)/firewalld/base
 	@install -dm 755 $(DESTDIR)$(MAN_DIR)/man8
 	@install -dm 755 $(DESTDIR)$(PYTHON_DIR)/sos/plugins
 	@install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config
@@ -275,7 +276,11 @@ install_setup:
 	# Configuration files:
 	install -m 644 packaging/conf/engine-config-install.properties $(DESTDIR)$(DATA_DIR)/conf
 	install -m 644 packaging/fedora/setup/iptables.default $(DESTDIR)$(DATA_DIR)/conf
-	install -m 644 packaging/fedora/setup/firewalld.ovirt.xml $(DESTDIR)$(SYSCONF_DIR)/firewalld/services/ovirt.xml
+	#FirewallD
+	install -m 644 packaging/firewalld/base/ovirt-nfs.xml.in $(DESTDIR)$(DATA_DIR)/firewalld/base/ovirt-nfs.xml.in
+	install -m 644 packaging/firewalld/base/ovirt-http.xml.in $(DESTDIR)$(DATA_DIR)/firewalld/base/ovirt-http.xml.in
+	install -m 644 packaging/firewalld/base/ovirt-https.xml.in $(DESTDIR)$(DATA_DIR)/firewalld/base/ovirt-https.xml.in
+
 	install -m 644 packaging/fedora/setup/nfs.sysconfig $(DESTDIR)$(DATA_DIR)/conf
 	install -m 644 packaging/fedora/setup/ovirt-engine-proxy.conf.in $(DESTDIR)$(DATA_DIR)/conf
 	install -m 644 packaging/fedora/setup/ovirt-engine-root-redirect.conf.in $(DESTDIR)$(DATA_DIR)/conf
@@ -323,6 +328,8 @@ install_setup:
 
 install_aio_plugin:
 	install -m 644 packaging/fedora/setup/plugins/all_in_one_100.py $(DESTDIR)$(DATA_DIR)/scripts/plugins
+	install -dm 755 $(DESTDIR)$(DATA_DIR)/firewalld/aio
+	install -m 644 packaging/firewalld/aio/ovirt-aio.xml.in $(DESTDIR)$(DATA_DIR)/firewalld/aio/ovirt-aio.xml.in
 
 install_sec:
 	install -dm 755 $(DESTDIR)$(PKG_PKI_DIR)/certs

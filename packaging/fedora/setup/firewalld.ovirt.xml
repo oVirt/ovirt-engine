@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<service>
-  <short>ovirt</short>
-  <description>ovirt-engine-service</description>
-  <port protocol="tcp" port="80"/>
-  <port protocol="tcp" port="443"/>
-</service>

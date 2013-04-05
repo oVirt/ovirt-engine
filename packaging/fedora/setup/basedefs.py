@@ -68,6 +68,9 @@ DIR_YUM_CACHE = "/var/cache/yum"
 DIR_PKGS_INSTALL = "/usr/share"
 DIR_ETC_EXPORTSD = "/etc/exports.d"
 
+DIR_FIREWALLD_TEMPLATES = '%s/ovirt-engine/firewalld' % DIR_USR_SHARE
+DIR_FIREWALLD_SERVICES = '/etc/firewalld/services'
+
 FILE_INSTALLER_LOG="engine-setup.log"
 FILE_KRB_CONF="%s/deployments/configuration/krb5.conf" % DIR_ENGINE
 FILE_CA_CRT_SRC="%s/ca.pem"%(DIR_OVIRT_PKI)
@@ -88,7 +91,6 @@ FILE_SLIMMING_PROFILE_CONF="/usr/share/ovirt-engine/conf/slimming.conf"
 FILE_IPTABLES_DEFAULT="%s/ovirt-engine/conf/iptables.default" % DIR_USR_SHARE
 FILE_IPTABLES_EXAMPLE="/etc/ovirt-engine/iptables.example"
 FILE_IPTABLES_BACKUP="%s/ovirt-engine/backups/iptables.backup" % DIR_VAR_LIB
-FILE_FIREWALLD_SERVICE="/etc/firewalld/services/ovirt.xml"
 FILE_NFS_SYSCONFIG="%s/ovirt-engine/conf/nfs.sysconfig" % DIR_USR_SHARE
 FILE_NFS_BACKUP="%s/ovirt-engine/backups/nfs.backup" % DIR_VAR_LIB
 FILE_ETC_EXPORTS="/etc/exports"
@@ -222,6 +224,7 @@ CONST_KVM_GID  = 36
 CONST_MAX_PSQL_CONNS= 150
 CONST_SHMMAX=35554432
 CONST_CONFIG_EXTRA_IPTABLES_RULES="EXTRA_IPTABLES_RULES"
+CONST_CONFIG_EXTRA_FIREWALLD_RULES="EXTRA_FIREWALLD_RULES"
 CONST_INSTALL_SIZE_MB=500
 CONST_DOWNLOAD_SIZE_MB=500
 CONST_DB_SIZE=500

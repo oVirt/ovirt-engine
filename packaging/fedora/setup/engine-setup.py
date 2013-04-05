@@ -1,5 +1,6 @@
 #! /usr/bin/python
 
+import glob
 import sys
 import logging
 import os
@@ -974,12 +975,19 @@ def getFirewalls():
 def _configFirewall():
     # Create Sample configuration files
     _createIptablesConfig()
-    _createFirewalldConfig()
+    firewalld_services = ['ovirt-http', 'ovirt-https']
+    if utils.compareStrIgnoreCase(controller.CONF['CONFIG_NFS'], 'yes'):
+        firewalld_services.append('ovirt-nfs')
+    if basedefs.CONST_CONFIG_EXTRA_FIREWALLD_RULES in controller.CONF:
+        firewalld_services += controller.CONF[
+            basedefs.CONST_CONFIG_EXTRA_FIREWALLD_RULES
+        ]
+    _createFirewalldConfig(firewalld_services)
 
     # Configure chosen firewall
     if utils.compareStrIgnoreCase(controller.CONF["FIREWALL_MANAGER"],
                                   "firewalld"):
-        _configureFirewalld()
+        _configureFirewalld(firewalld_services)
     elif utils.compareStrIgnoreCase(controller.CONF["FIREWALL_MANAGER"],
                                     "iptables"):
         _configureIptables()
@@ -999,50 +1007,66 @@ def _configFirewall():
                 )
             )
         if 'Firewalld' in firewalls:
+            commands = '\nfirewall-cmd --permanent --add-service '.join(
+                ['', ] + firewalld_services
+            )
+            commands += 'firewall-cmd --reload'
             controller.MESSAGES.append(
-                output_messages.INFO_FIREWALLD_INSTRUCTIONS
+                output_messages.INFO_FIREWALLD_INSTRUCTIONS.format(
+                    template_dir=basedefs.DIR_FIREWALLD_TEMPLATES,
+                    firewalld_dir=basedefs.DIR_FIREWALLD_SERVICES,
+                    commands=commands
+                )
             )
 
 
-def _createFirewalldConfig():
+def _createFirewalldConfig(services):
     logging.debug("Creating firewalld configuration")
+    services_config = {
+        '@HTTP_PORT@': controller.CONF['HTTP_PORT'],
+        '@HTTPS_PORT@': controller.CONF['HTTPS_PORT']
+    }
+    for service in services:
+        template_file = glob.glob(
+            os.path.join(
+                basedefs.DIR_FIREWALLD_TEMPLATES,
+                '*',
+                '%s.xml.in' % service
+            )
+        )[0]
+        utils.processTemplate(
+            template_file,
+            os.path.splitext(template_file)[0],
+            services_config
+        )
 
-    # Open xml
-    servicexml = utils.XMLConfigFileHandler(basedefs.FILE_FIREWALLD_SERVICE)
-    servicexml.open()
 
-    # Remove all port entries
-    servicexml.removeNodes("/service/port")
-
-    # Add ports to service xml
-    ports = []
-    for port in [controller.CONF["HTTP_PORT"], controller.CONF["HTTPS_PORT"]]:
-        ports.append({
-            'port': port,
-            'protocol': ['tcp']
-        })
-
-    if utils.compareStrIgnoreCase(controller.CONF["CONFIG_NFS"], "yes"):
-        ports += NFS_IPTABLES_PORTS
-
-    for portCfg in ports:
-        for protocol in portCfg["protocol"]:
-             servicexml.addNodes("/service", "<port protocol=\"%s\" port=\"%s\"/>" % (protocol, portCfg["port"]))
-
-    # Save firewalld service configuration
-    servicexml.close()
-
-def _configureFirewalld():
+def _configureFirewalld(firewalld_services):
     logging.debug("configuring firewalld")
     # Always start firewalld, otherwise, we will get DBus exception
+    for firewalld_service in firewalld_services:
+        shutil.copy2(
+            glob.glob(
+                os.path.join(
+                    basedefs.DIR_FIREWALLD_TEMPLATES,
+                    '*',
+                    '%s.xml' % firewalld_service
+                )
+            )[0],
+            os.path.join(
+                basedefs.DIR_FIREWALLD_SERVICES,
+                '%s.xml' % firewalld_service
+            )
+        )
     service = utils.Service("firewalld")
+    # Restart firewalld for reloading services
+    service.stop(True)
     service.start(True)
-
-    for zone in firewalld.getActiveZones():
-        firewalld.addServiceToZone("ovirt", zone)
+    for firewalld_service in firewalld_services:
+        for zone in firewalld.getActiveZones():
+            firewalld.addServiceToZone(firewalld_service, zone)
 
     # Restart firewalld
-    service = utils.Service("firewalld")
     service.stop(True)
     service.start(True)
 
