@@ -3,7 +3,7 @@
 
   <parent>
     <groupId>org.ovirt.engine.core</groupId>
-    <artifactId>beans</artifactId>
+    <artifactId>manager-modules</artifactId>
     <version>3.3.0-SNAPSHOT</version>
   </parent>
 

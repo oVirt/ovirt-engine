@@ -19,9 +19,9 @@
     <module>common</module>
     <module>dal</module>
     <module>vdsbroker</module>
+    <module>scheduler</module>
     <module>searchbackend</module>
     <module>bll</module>
-    <module>beans</module>
     <module>restapi</module>
     <module>root</module>
   </modules>
