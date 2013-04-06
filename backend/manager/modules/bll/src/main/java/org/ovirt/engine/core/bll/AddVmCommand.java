@@ -710,9 +710,13 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 VdcObjectType.VmTemplate,
                 getActionType().getActionGroup()));
         if (getVmTemplate() != null && !getVmTemplate().getDiskList().isEmpty()) {
-            addStoragePermissionByQuotaMode(permissionList,
-                    GuidUtils.getGuidValue(getStoragePoolId()),
-                    GuidUtils.getGuidValue(getStorageDomainId()));
+            for (DiskImage disk : getParameters().getDiskInfoDestinationMap().values()) {
+                if (disk.getStorageIds() != null && !disk.getStorageIds().isEmpty()) {
+                    addStoragePermissionByQuotaMode(permissionList,
+                            GuidUtils.getGuidValue(getStoragePoolId()),
+                            GuidUtils.getGuidValue(disk.getStorageIds().get(0)));
+                }
+            }
         }
         addPermissionSubjectForAdminLevelProperties(permissionList);
         return permissionList;
