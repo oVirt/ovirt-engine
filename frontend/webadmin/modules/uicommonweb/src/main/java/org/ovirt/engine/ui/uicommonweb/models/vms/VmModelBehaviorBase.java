@@ -38,13 +38,13 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
-import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
 import org.ovirt.engine.ui.uicompat.Constants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     private final Constants constants = ConstantsManager.getInstance().getConstants();
+
     private TModel privateModel;
 
     public TModel getModel() {
@@ -602,12 +602,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
                 ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
                 ArrayList<StorageDomain> activeStorageDomains = FilterStorageDomains(storageDomains);
-                DisksAllocationModel disksAllocationModel = getModel().getDisksAllocationModel();
 
                 boolean provisioning = (Boolean) behavior.getModel().getProvisioning().getEntity();
                 ArrayList<DiskModel> disks = (ArrayList<DiskModel>) behavior.getModel().getDisks();
                 Linq.Sort(activeStorageDomains, new Linq.StorageDomainByNameComparer());
-                disksAllocationModel.setActiveStorageDomains(activeStorageDomains);
 
                 for (DiskModel diskModel : disks) {
                     ArrayList<StorageDomain> availableDiskStorageDomains = new ArrayList<StorageDomain>();
@@ -618,27 +616,15 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                     ArrayList<StorageDomain> activeDiskStorageDomains =
                             Linq.getStorageDomainsByIds(storageIds, activeStorageDomains);
 
-                    if (provisioning) {
-                        if (activeDiskStorageDomains.size() > 0) {
-                            availableDiskStorageDomains = activeStorageDomains;
-                        }
-                    }
-                    else {
-                        availableDiskStorageDomains = activeDiskStorageDomains;
-                    }
+                    // Set target storage domains
+                    availableDiskStorageDomains = provisioning ? activeStorageDomains : activeDiskStorageDomains;
                     Linq.Sort(availableDiskStorageDomains, new Linq.StorageDomainByNameComparer());
                     diskModel.getStorageDomain().setItems(availableDiskStorageDomains);
+
+                    diskModel.getStorageDomain().setChangeProhibitionReason(
+                            constants.noActiveTargetStorageDomainAvailableMsg());
+                    diskModel.getStorageDomain().setIsChangable(!availableDiskStorageDomains.isEmpty());
                 }
-
-                ArrayList<StorageDomain> storageDomainsDisjoint =
-                        Linq.getStorageDomainsDisjoint(disks, activeStorageDomains);
-
-                Linq.Sort(storageDomainsDisjoint, new Linq.StorageDomainByNameComparer());
-
-                ArrayList<StorageDomain> singleDestDomains =
-                        provisioning ? activeStorageDomains : storageDomainsDisjoint;
-                getModel().getStorageDomain().setItems(singleDestDomains);
-                getModel().getStorageDomain().setSelectedItem(Linq.FirstOrDefault(singleDestDomains));
             }
         }, getModel().getHash()), dataCenter.getId(), ActionGroup.CREATE_VM);
     }

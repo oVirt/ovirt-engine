@@ -798,6 +798,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
                     }
                 } else if ("IsCustomPropertiesTabAvailable".equals(propName)) { //$NON-NLS-1$
                     setupCustomPropertiesAvailability(object);
+                } else if ("IsDisksAvailable".equals(propName)) { //$NON-NLS-1$
+                    addDiskAllocation(object);
                 }
             }
         });
@@ -815,13 +817,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
         // only for non local storage available
         setupHostTabAvailability(object);
-
-        object.getStorageDomain().getItemsChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                addDiskAllocation(object);
-            }
-        });
 
         object.getProvisioning().getPropertyChangedEvent().addListener(new IEventListener() {
             @Override

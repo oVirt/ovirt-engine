@@ -957,19 +957,6 @@ public final class Linq
         return list;
     }
 
-    public static ArrayList<StorageDomain> getStorageDomainsDisjoint(ArrayList<DiskModel> disks,
-            ArrayList<StorageDomain> storageDomains) {
-        ArrayList<ArrayList<StorageDomain>> storageDomainslists = new ArrayList<ArrayList<StorageDomain>>();
-        for (DiskModel diskModel : disks) {
-            ArrayList<StorageDomain> list =
-                    getStorageDomainsByIds(((DiskImage) diskModel.getDisk()).getStorageIds(), storageDomains);
-
-            storageDomainslists.add(list);
-        }
-
-        return Intersection(storageDomainslists);
-    }
-
     public static <T> ArrayList<EntityModel> ToEntityModelList(ArrayList<T> list)
     {
         ArrayList<EntityModel> entityModelList = new ArrayList<EntityModel>();
