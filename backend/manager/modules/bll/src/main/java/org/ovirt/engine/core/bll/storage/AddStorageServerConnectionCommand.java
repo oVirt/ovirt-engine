@@ -13,6 +13,8 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.NfsMountPointConstraint;
@@ -34,16 +36,23 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
     protected void executeCommand() {
         StorageServerConnections currConnection = getConnection();
         boolean isValidConnection = true;
-        isValidConnection = connect(getVds().getId()).getFirst();
+        Pair<Boolean, Integer> result = connect(getVds().getId());
+        isValidConnection = result.getFirst();
 
         // Add storage Connection to the database.
         if (isValidConnection && (StringUtils.isNotEmpty(currConnection.getid())
                 || getDbFacade().getStorageServerConnectionDao().get(currConnection.getid()) == null)) {
             currConnection.setid(Guid.NewGuid().toString());
             getDbFacade().getStorageServerConnectionDao().save(currConnection);
+            getReturnValue().setActionReturnValue(getConnection().getid());
+            setSucceeded(true);
         }
-        getReturnValue().setActionReturnValue(getConnection().getid());
-        setSucceeded(true);
+        else {
+            VdcFault fault = new VdcFault();
+            fault.setError(VdcBllErrors.forValue(result.getSecond()));
+            getReturnValue().setFault(fault);
+            setSucceeded(false);
+        }
     }
 
     @Override

@@ -458,6 +458,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String VdcActionType___AttachUserToVmFromPoolAndRun();
 
+	String VdcActionType___AddStorageServerConnection();
+
 	String VdcActionType___DataCenters();
 
 	String VdcActionType___Clusters();

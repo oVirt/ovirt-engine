@@ -800,7 +800,11 @@ public class Frontend {
 
     private static void runActionExecutionFailed(VdcActionType actionType, VdcFault fault) {
         if (getEventsHandler() != null) {
-            fault.setMessage(vdsmErrorsTranslator.TranslateErrorTextSingle(fault.getMessage()));
+            // The VdcFault error property takes precedence, if it's null we try to translate the message property
+            String translatedMessage =
+                    vdsmErrorsTranslator.TranslateErrorTextSingle(fault.getError() == null ? fault.getMessage()
+                            : fault.getError().toString());
+            fault.setMessage(translatedMessage);
             getEventsHandler().runActionExecutionFailed(actionType, fault);
         }
     }
