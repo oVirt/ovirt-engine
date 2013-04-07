@@ -351,7 +351,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 return diskImage.getStoragesNames().get(0);
             }
         };
-        internalDiskTable.addColumn(storageDomainColumn, constants.storageDomainVmDiskTable());
+        internalDiskTable.addColumn(storageDomainColumn, constants.storageDomainVmDiskTable(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<EntityModel> interfaceColumn = new EnumColumn<EntityModel, DiskInterface>() {
             @Override
@@ -360,7 +360,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 return disk.getDiskInterface();
             }
         };
-        internalDiskTable.addColumn(interfaceColumn, constants.interfaceVmDiskPopup(), "55px"); //$NON-NLS-1$
+        internalDiskTable.addColumn(interfaceColumn, constants.interfaceVmDiskPopup(), "90px"); //$NON-NLS-1$
 
         internalDiskTable.addColumn(new ImageResourceColumn<EntityModel>() {
             @Override
@@ -393,7 +393,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 return disk.getDiskAlias();
             }
         };
-        externalDiskTable.addColumn(aliasColumn, constants.aliasVmDiskTable());
+        externalDiskTable.addColumn(aliasColumn, constants.aliasVmDiskTable(), "60px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<EntityModel> descriptionColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
@@ -402,7 +402,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 return disk.getDiskDescription();
             }
         };
-        externalDiskTable.addColumn(descriptionColumn, constants.descriptionVmDiskTable());
+        externalDiskTable.addColumn(descriptionColumn, constants.descriptionVmDiskTable(), "85px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<EntityModel> lunIdColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
@@ -411,7 +411,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 return disk.getLun().getLUN_id();
             }
         };
-        externalDiskTable.addColumn(lunIdColumn, constants.lunIdSanStorage());
+        externalDiskTable.addColumn(lunIdColumn, constants.lunIdSanStorage(), "60px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<EntityModel> idColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
@@ -420,7 +420,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 return disk.getId().toString();
             }
         };
-        externalDiskTable.addColumn(idColumn, constants.idVmDiskTable());
+        externalDiskTable.addColumn(idColumn, constants.idVmDiskTable(), "60px"); //$NON-NLS-1$
 
         DiskSizeColumn<EntityModel> sizeColumn = new DiskSizeColumn<EntityModel>(DiskSizeUnit.GIGABYTE) {
             @Override
@@ -429,7 +429,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 return (long) disk.getLun().getDeviceSize();
             }
         };
-        externalDiskTable.addColumn(sizeColumn, constants.devSizeSanStorage(), "60px"); //$NON-NLS-1$
+        externalDiskTable.addColumn(sizeColumn, constants.devSizeSanStorage(), "70px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<EntityModel> pathColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
@@ -447,7 +447,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 return disk.getLun().getVendorId();
             }
         };
-        externalDiskTable.addColumn(vendorIdColumn, constants.vendorIdSanStorage());
+        externalDiskTable.addColumn(vendorIdColumn, constants.vendorIdSanStorage(), "70px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<EntityModel> productIdColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
@@ -456,7 +456,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 return disk.getLun().getProductId();
             }
         };
-        externalDiskTable.addColumn(productIdColumn, constants.productIdSanStorage());
+        externalDiskTable.addColumn(productIdColumn, constants.productIdSanStorage(), "70px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<EntityModel> serialColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
@@ -465,7 +465,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 return disk.getLun().getSerial();
             }
         };
-        externalDiskTable.addColumn(serialColumn, constants.serialSanStorage());
+        externalDiskTable.addColumn(serialColumn, constants.serialSanStorage(), "70px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<EntityModel> interfaceColumn = new EnumColumn<EntityModel, DiskInterface>() {
             @Override
@@ -474,7 +474,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 return disk.getDiskInterface();
             }
         };
-        externalDiskTable.addColumn(interfaceColumn, constants.interfaceVmDiskPopup(), "55px"); //$NON-NLS-1$
+        externalDiskTable.addColumn(interfaceColumn, constants.interfaceVmDiskPopup(), "90px"); //$NON-NLS-1$
 
         externalDiskTable.addColumn(new ImageResourceColumn<EntityModel>() {
             @Override
