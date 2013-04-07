@@ -88,7 +88,6 @@ public abstract class DragDropEventBase<H extends EventHandler> extends DomEvent
      * @return the data for the specified format
      */
     public String getData(String format) {
-        DataTransfer dt = getDataTransfer();
         return getDataTransfer().getData(format);
     }
 
