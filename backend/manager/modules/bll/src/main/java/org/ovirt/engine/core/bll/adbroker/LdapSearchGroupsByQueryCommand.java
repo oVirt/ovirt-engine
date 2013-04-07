@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.adbroker;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class LdapSearchGroupsByQueryCommand extends LdapWithConfiguredCredentialsCommandBase {
 
@@ -27,16 +26,11 @@ public class LdapSearchGroupsByQueryCommand extends LdapWithConfiguredCredential
                 if (distinguishedName != null) {
                     String groupName = LdapBrokerUtils.generateGroupDisplayValue(searchResult.getDistinguishedName());
                     LdapGroup group = new LdapGroup(searchResult.getGuid(), groupName, getDomain(),distinguishedName,memberOf);
-                    initGroupFromDb(group);
                     groupList.add(group);
                 }
             }
         }
         setReturnValue(groupList);
         setSucceeded(true);
-    }
-
-    private void initGroupFromDb(LdapGroup group) {
-        LdapGroup dbGroup = DbFacade.getInstance().getAdGroupDao().get(group.getid());
     }
 }
