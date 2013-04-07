@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -38,7 +37,7 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
                                 Object[] array = (Object[]) target;
                                 NewEditStorageModelBehavior behavior = (NewEditStorageModelBehavior) array[0];
                                 IStorageModel storageModelItem = (IStorageModel) array[1];
-                                behavior.PostUpdateItemsAvailability(behavior, storageModelItem, returnValue == null);
+                                behavior.postUpdateItemsAvailability(storageModelItem, returnValue == null);
 
                             }
                         }, getHash()), dataCenter.getId());
@@ -53,35 +52,37 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
                                 Object[] array = (Object[]) target;
                                 NewEditStorageModelBehavior behavior = (NewEditStorageModelBehavior) array[0];
                                 IStorageModel storageModelItem = (IStorageModel) array[1];
-                                behavior.PostUpdateItemsAvailability(behavior, storageModelItem, returnValue == null);
+                                behavior.postUpdateItemsAvailability(storageModelItem, returnValue == null);
 
                             }
                         }, getHash()), dataCenter.getId());
             }
             else
             {
-                PostUpdateItemsAvailability(this, item, false);
+                postUpdateItemsAvailability(item, false);
             }
         }
     }
 
-    public void PostUpdateItemsAvailability(NewEditStorageModelBehavior behavior,
-            IStorageModel item,
-            boolean isNoStorageAttached)
-    {
+    public void postUpdateItemsAvailability(IStorageModel item, boolean isNoExportOrIsoStorageAttached) {
         storage_pool dataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
         Model model = (Model) item;
 
-        model.setIsSelectable(dataCenter != null
-                && ((dataCenter.getId().equals(StorageModel.UnassignedDataCenterId) && item.getRole() == StorageDomainType.Data)
-                        || (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId) && ((item.getRole() == StorageDomainType.Data && item.getType() == dataCenter.getstorage_pool_type())
-                                || (item.getRole() == StorageDomainType.ImportExport
-                                        && item.getType() == StorageType.NFS
-                                        && dataCenter.getstatus() != StoragePoolStatus.Uninitialized && isNoStorageAttached) || item.getRole() == StorageDomainType.ISO
-                                && item.getType() == StorageType.NFS
-                                && dataCenter.getstatus() != StoragePoolStatus.Uninitialized && isNoStorageAttached)) || (getModel().getStorage() != null && item.getType() == getModel().getStorage()
-                        .getStorageType())));
+        boolean isExistingStorage = getModel().getStorage() != null &&
+                item.getType() == getModel().getStorage().getStorageType();
+        boolean isNoneDataCenter = dataCenter != null &&
+                dataCenter.getId().equals(StorageModel.UnassignedDataCenterId);
 
-        behavior.OnStorageModelUpdated(item);
+        boolean isData = item.getRole() == StorageDomainType.Data;
+        boolean isExportOrIso = item.getRole() == StorageDomainType.ImportExport || item.getRole() == StorageDomainType.ISO;
+
+        boolean canAttachData = isData && item.getType() == dataCenter.getstorage_pool_type();
+        boolean canAttachExportOrIso = isExportOrIso && isNoExportOrIsoStorageAttached &&
+                dataCenter.getstatus() != StoragePoolStatus.Uninitialized;
+
+        model.setIsSelectable(isExistingStorage || (isNoneDataCenter && isData) ||
+                (!isNoneDataCenter && (canAttachData || canAttachExportOrIso)));
+
+        OnStorageModelUpdated(item);
     }
 }

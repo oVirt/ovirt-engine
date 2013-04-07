@@ -310,15 +310,6 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         nfsExportModel.setRole(StorageDomainType.ImportExport);
         items.add(nfsExportModel);
 
-        IscsiStorageModel iscsiExportModel = new IscsiStorageModel();
-        iscsiExportModel.setRole(StorageDomainType.ImportExport);
-        iscsiExportModel.setIsGrouppedByTarget(true);
-        items.add(iscsiExportModel);
-
-        FcpStorageModel fcpExportModel = new FcpStorageModel();
-        fcpExportModel.setRole(StorageDomainType.ImportExport);
-        items.add(fcpExportModel);
-
         GlusterStorageModel GlusterDataModel = new GlusterStorageModel();
         GlusterDataModel.setRole(StorageDomainType.Data);
         items.add(GlusterDataModel);
