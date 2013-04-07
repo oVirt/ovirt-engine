@@ -103,17 +103,15 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
     }
 
     private void HandleVdsInformation() {
-        getVds().setMemCommited(getVds().getMemCommited() + getParameters().getVm().getVmMemSizeMb());
-        getVds().setMemCommited(getVds().getMemCommited() + getVds().getGuestOverhead());
-        getVds().setVmCount(getVds().getVmCount() + 1);
-        getVds().setVmsCoresCount(getVds().getVmsCoresCount() + getParameters().getVm().getNumOfCpus());
-        getVds().setPendingVcpusCount(
-                getVds().getPendingVcpusCount() + getParameters().getVm().getNumOfCpus());
-        getVds().setPendingVmemSize(
-                getVds().getPendingVmemSize() + getParameters().getVm().getMinAllocatedMem());
-        log.infoFormat("IncreasePendingVms::CreateVmIncreasing vds {0} pending vcpu count, now {1}. Vm: {2}", getVds()
-                .getName(), getVds().getPendingVcpusCount(), getParameters().getVm().getName());
-        _vdsManager.UpdateDynamicData(getVds().getDynamicData());
+        DbFacade.getInstance()
+                .getVdsDynamicDao()
+                .updatePartialVdsDynamicCalc(getVds().getId(),
+                        1,
+                        getParameters().getVm().getNumOfCpus(),
+                        getParameters().getVm().getMinAllocatedMem(),
+                        getParameters().getVm().getVmMemSizeMb(),
+                        getParameters().getVm().getNumOfCpus());
+
     }
 
     private boolean CanExecute() {

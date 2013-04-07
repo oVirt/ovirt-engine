@@ -57,10 +57,10 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                                 DbFacade.getInstance().getVmNetworkStatisticsDao().update(stats);
                             }
                         }
-                        getVds().setMemCommited(getVds().getMemCommited() - curVm.getVmMemSizeMb());
-                        getVds().setMemCommited(getVds().getMemCommited() - getVds().getGuestOverhead());
-                        getVds().setVmsCoresCount(getVds().getVmsCoresCount() - curVm.getNumOfCpus());
-                        _vdsManager.UpdateDynamicData(getVds().getDynamicData());
+                        DbFacade.getInstance()
+                                .getVdsDynamicDao()
+                                .updatePartialVdsDynamicCalc(getVdsId(), 0, 0, 0,
+                                        -curVm.getVmMemSizeMb(), -curVm.getNumOfCpus());
                         return null;
                     }
                 });

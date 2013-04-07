@@ -33,7 +33,6 @@ import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.FailedToRunVmVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.UpdateVdsDynamicDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -326,50 +325,15 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     protected void decreasePendingVms(Guid vdsId) {
         getDecreaseLock(vdsId).lock();
         try {
-            boolean updateDynamic = false;
-            VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
-            if (vds == null)
-                return;
-            // VCPU
-            if (vds.getPendingVcpusCount() != null && !vds.getPendingVcpusCount().equals(0)) {
-                vds.setPendingVcpusCount(vds.getPendingVcpusCount() - getVm().getNumOfCpus());
-                updateDynamic = true;
-            } else if (log.isDebugEnabled()) {
-                log.debugFormat(
-                        "DecreasePendingVms::Decreasing vds {0} pending vcpu count failed, its already 0 or null",
-                        vds.getName(), getVm().getName());
-            }
-            // VMEM
-            if (vds.getPendingVmemSize() > 0) {
-                // decrease min memory assigned, because it is already taken in account when VM is up
-                updateDynamic = true;
-                if (vds.getPendingVmemSize() >= getVm().getMinAllocatedMem()) {
-                    vds.setPendingVmemSize(vds.getPendingVmemSize() - getVm().getMinAllocatedMem());
-                } else {
-                    if (log.isDebugEnabled()) {
-                        log.debugFormat("Pending host {0} vmem {1} is smaller than VM min allocated memory {2},Setting pending host vmem to 0.",
-                                vds.getName(),
-                                vds.getPendingVmemSize(),
-                                getVm().getMinAllocatedMem());
-                    }
-                    vds.setPendingVmemSize(0);
-                }
-            } else if (log.isDebugEnabled()) {
-                log.debugFormat(
-                        "DecreasePendingVms::Decreasing vds {0} pending vmem size failed, its already 0 or null",
-                        vds.getName(), getVm().getName());
-            }
-            if (updateDynamic) {
-                Backend.getInstance()
-                        .getResourceManager()
-                        .RunVdsCommand(VDSCommandType.UpdateVdsDynamicData,
-                                new UpdateVdsDynamicDataVDSCommandParameters(vds.getDynamicData()));
-                if (log.isDebugEnabled()) {
-                    log.debugFormat("DecreasePendingVms::Decreasing vds {0} pending vcpu count, now {1}. Vm: {2}",
-                            vds.getName(), vds.getPendingVcpusCount(), getVm().getName());
-                    log.debugFormat("DecreasePendingVms::Decreasing vds {0} pending vmem size, now {1}. Vm: {2}",
-                            vds.getName(), vds.getPendingVmemSize(), getVm().getName());
-                }
+            DbFacade.getInstance()
+                    .getVdsDynamicDao()
+                    .updatePartialVdsDynamicCalc(vdsId, 0, -getVm().getNumOfCpus(), -getVm().getMinAllocatedMem(), 0, 0);
+
+            if (log.isDebugEnabled()) {
+                log.debugFormat("DecreasePendingVms::Decreasing vds {0} pending vcpu count, in {1}. Vm: {2}",
+                        vdsId, getVm().getNumOfCpus(), getVm().getName());
+                log.debugFormat("DecreasePendingVms::Decreasing vds {0} pending vmem size, in {1}. Vm: {2}",
+                        vdsId, getVm().getMinAllocatedMem(), getVm().getName());
             }
             getDecreseCondition(vdsId).signal();
         } finally {

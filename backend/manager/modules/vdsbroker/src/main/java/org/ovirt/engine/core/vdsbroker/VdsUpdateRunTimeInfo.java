@@ -112,7 +112,7 @@ public class VdsUpdateRunTimeInfo {
     private boolean processHardwareCapsNeeded;
     private boolean refreshedCapabilities = false;
     private static Map<Guid, Long> hostDownTimes = new HashMap<Guid, Long>();
-    private int runningVmsInTransition = 0;
+    private boolean runningVmsInTransition;
 
     private static final Log log = LogFactory.getLog(VdsUpdateRunTimeInfo.class);
 
@@ -367,7 +367,8 @@ public class VdsUpdateRunTimeInfo {
 
         for (VM vm : _vmDict.values()) {
             if (vm.isRunning() && vm.getStatus() != VMStatus.Up) {
-                runningVmsInTransition++;
+                runningVmsInTransition = true;
+                break;
             }
         }
     }
@@ -1617,13 +1618,11 @@ public class VdsUpdateRunTimeInfo {
     }
 
     private void refreshCommitedMemory() {
-        Integer memCommited = _vds.getGuestOverhead() != null ? 0 : null;
+        Integer memCommited = _vds.getGuestOverhead();
         int vmsCoresCount = 0;
         for (VM vm : _vmDict.values()) {
-            if (_vds.getGuestOverhead() != null) {
-                memCommited += vm.getVmMemSizeMb();
-                memCommited += _vds.getGuestOverhead();
-            }
+            memCommited += vm.getVmMemSizeMb();
+            memCommited += _vds.getGuestOverhead();
             vmsCoresCount += vm.getNumOfCpus();
         }
         if (memCommited == null || !memCommited.equals(_vds.getMemCommited())) {
@@ -1635,12 +1634,12 @@ public class VdsUpdateRunTimeInfo {
             _saveVdsDynamic = true;
         }
 
-        if (_vds.getPendingVcpusCount() != 0 && runningVmsInTransition == 0) {
+        if (_vds.getPendingVcpusCount() != 0 && !runningVmsInTransition) {
             _vds.setPendingVcpusCount(0);
             _saveVdsDynamic = true;
         }
 
-        if (_vds.getPendingVmemSize() != 0 && runningVmsInTransition == 0) {
+        if (_vds.getPendingVmemSize() != 0 && !runningVmsInTransition) {
             // set also vmem size to 0
             _vds.setPendingVmemSize(0);
             _saveVdsDynamic = true;

@@ -42,13 +42,11 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
             entity.setId(Guid.createGuidFromString(rs
                     .getString("vds_id")));
             entity.setvm_active((Integer) rs.getObject("vm_active"));
-            entity.setvm_count((Integer) rs.getObject("vm_count"));
-            entity.setvms_cores_count((Integer) rs
-                    .getObject("vms_cores_count"));
+            entity.setvm_count(rs.getInt("vm_count"));
+            entity.setvms_cores_count(rs.getInt("vms_cores_count"));
             entity.setvm_migrating((Integer) rs.getObject("vm_migrating"));
             entity.setreserved_mem((Integer) rs.getObject("reserved_mem"));
-            entity.setguest_overhead((Integer) rs
-                    .getObject("guest_overhead"));
+            entity.setguest_overhead(rs.getInt("guest_overhead"));
             entity.setsoftware_version(rs.getString("software_version"));
             entity.setversion_name(rs.getString("version_name"));
             entity.setVersion(new RpmVersion(rs.getString("rpm_version")));
@@ -239,5 +237,24 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
                 .addValue("net_config_dirty", netConfigDirty);
 
         getCallsHandler().executeModification("UpdateVdsDynamicNetConfigDirty", parameterSource);
+    }
+
+    @Override
+    public void updatePartialVdsDynamicCalc(Guid id,
+            int vmCount,
+            int pendingVcpusCount,
+            int pendingVmemSize,
+            int memCommited,
+            int vmsCoresCount) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vds_guid", id)
+                .addValue("vmCount", vmCount)
+                .addValue("pendingVcpusCount", pendingVcpusCount)
+                .addValue("pendingVmemSize", pendingVmemSize)
+                .addValue("memCommited", memCommited)
+                .addValue("vmsCoresCount", vmsCoresCount);
+
+        getCallsHandler().executeModification("UpdatePartialVdsDynamicCalc", parameterSource);
+
     }
 }

@@ -132,6 +132,9 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         pending_vcpus_count = 0;
         pending_vmem_size = 0;
         transparentHugePagesState = VdsTransparentHugePagesState.Never;
+        vm_count = 0;
+        vms_cores_count = 0;
+        guest_overhead = 0;
     }
 
     public VdsDynamic(Integer cpu_cores, Integer cpuThreads, String cpu_model, Double cpu_speed_mh, String if_total_speed,

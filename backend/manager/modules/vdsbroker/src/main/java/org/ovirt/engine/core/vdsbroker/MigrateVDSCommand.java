@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.vdsbroker;
 
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.vdscommands.MigrateVDSCommandParameters;
@@ -54,7 +53,7 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
             });
 
             if (retval == VMStatus.MigratingFrom) {
-                updateDestinationVdsThreaded(parameters.getDstVdsId(), vm);
+                updateDestinationVds(parameters.getDstVdsId(), vm);
             }
 
             getVDSReturnValue().setReturnValue(retval);
@@ -63,53 +62,22 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
         }
     }
 
-    private void updateDestinationVdsThreaded(Guid dstVdsId, final VM vm) {
-        final VdsManager vdsManager = ResourceManager.getInstance().GetVdsManager(dstVdsId);
+    private void updateDestinationVds(final Guid dstVdsId, final VM vm) {
+        ThreadPoolUtil.execute(new Runnable() {
+            @Override
+            public void run() {
+                DbFacade.getInstance()
+                        .getVdsDynamicDao()
+                        .updatePartialVdsDynamicCalc(dstVdsId, 1, vm.getNumOfCpus(), vm.getMinAllocatedMem(), 0, 0);
 
-        if (vdsManager != null) {
-            ThreadPoolUtil.execute(new Runnable() {
-                @Override
-                public void run() {
-                    updateDestinationVdsOnTimer(vdsManager, vm);
-                }
-            });
-        }
-    }
-
-    private void updateDestinationVdsOnTimer(final VdsManager vdsManager, final VM vm) {
-        synchronized (vdsManager.getLockObj()) {
-            VDS vds = DbFacade.getInstance().getVdsDao().get(vdsManager.getVdsId());
-            try {
-                vds.setVmCount(vds.getVmCount() + 1);
-                vds.setPendingVcpusCount(vds.getPendingVcpusCount() + vm.getNumOfCpus());
-                vds.setPendingVmemSize(vds.getPendingVmemSize() + vm.getMinAllocatedMem());
-                if (log.isDebugEnabled()) {
-                    log.debugFormat(
-                            "IncreasePendingVms::MigrateVm Increasing vds {0} pending vcpu count, now {1}, and pending vmem size, now {2}. Vm: {3}",
-                            vds.getName(),
-                            vds.getPendingVcpusCount(),
-                            vds.getPendingVmemSize(),
-                            vm.getName());
-                }
-                vdsManager.UpdateDynamicData(vds.getDynamicData());
-            } catch (RuntimeException ex) {
-                if (vds == null) {
-                    log.fatalFormat(
-                            "VDS::migrate:: Could not update destination vds commited memory to db. vds {0} : was not find, error: {1}, {2}",
-                            vdsManager.getVdsId(),
-                            ex.toString(),
-                            ex.getStackTrace()[0]);
-                } else {
-                    log.fatalFormat(
-                            "VDS::migrate:: Could not update destination vds commited memory to db. vds {0} : {1}, error: {2}, {3}",
-                            vds.getId(),
-                            vds.getName(),
-                            ex.toString(),
-                            ex.getStackTrace()[0]);
-                }
+                log.debugFormat(
+                        "IncreasePendingVms::MigrateVm Increasing vds {0} pending vcpu count, in {1}, and pending vmem size, in {2}. Vm: {3}",
+                        dstVdsId,
+                        vm.getNumOfCpus(),
+                        vm.getMinAllocatedMem(),
+                        vm.getName());
             }
-
-        }
+        });
     }
 
     private static Log log = LogFactory.getLog(MigrateVDSCommand.class);
