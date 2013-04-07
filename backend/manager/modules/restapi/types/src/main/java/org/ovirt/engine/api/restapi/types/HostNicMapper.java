@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol
 import org.ovirt.engine.core.common.businessentities.network.Nic;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.Vlan;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class HostNicMapper {
     private static final String OPTIONS_DELIMITER = "\\ ";
