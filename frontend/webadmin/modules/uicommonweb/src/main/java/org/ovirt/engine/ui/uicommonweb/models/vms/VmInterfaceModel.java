@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -446,7 +445,7 @@ public abstract class VmInterfaceModel extends Model
                 ArrayList<Network> networks = new ArrayList<Network>();
                 for (Network a : (ArrayList<Network>) result1)
                 {
-                    if (a.getCluster().getStatus() == NetworkStatus.OPERATIONAL && a.isVmNetwork())
+                    if (a.isVmNetwork())
                     {
                         networks.add(a);
                     }
