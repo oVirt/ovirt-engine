@@ -43,7 +43,7 @@
 		<g:center>
 			<g:SimplePanel ui:field="snapshotsTableContainer"/>
 		</g:center>
-		<g:east size="600">
+		<g:east size="660">
 			<g:SimplePanel ui:field="snapshotInfoContainer"/>
 		</g:east>
 	</g:SplitLayoutPanel>

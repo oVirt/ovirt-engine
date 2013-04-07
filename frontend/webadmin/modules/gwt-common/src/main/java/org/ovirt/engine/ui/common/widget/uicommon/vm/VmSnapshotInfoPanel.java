@@ -124,7 +124,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
                 return object.getDiskAlias();
             }
         };
-        disksTable.addColumn(aliasColumn, constants.aliasDisk());
+        disksTable.addColumn(aliasColumn, constants.aliasDisk(), "70px"); //$NON-NLS-1$
 
         DiskSizeColumn<DiskImage> sizeColumn = new DiskSizeColumn<DiskImage>() {
             @Override
@@ -132,7 +132,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
                 return object.getSize();
             }
         };
-        disksTable.addColumn(sizeColumn, constants.provisionedSizeDisk());
+        disksTable.addColumn(sizeColumn, constants.provisionedSizeDisk(), "70px"); //$NON-NLS-1$
 
         DiskSizeColumn<DiskImage> actualSizeColumn = new DiskSizeColumn<DiskImage>() {
             @Override
@@ -140,7 +140,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
                 return object.getActualSizeFromDiskImage();
             }
         };
-        disksTable.addColumn(actualSizeColumn, constants.sizeDisk());
+        disksTable.addColumn(actualSizeColumn, constants.sizeDisk(), "70px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> allocationColumn = new EnumColumn<DiskImage, VolumeType>() {
             @Override
@@ -148,7 +148,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
                 return VolumeType.forValue(object.getVolumeType().getValue());
             }
         };
-        disksTable.addColumn(allocationColumn, constants.allocationDisk(), "60px"); //$NON-NLS-1$
+        disksTable.addColumn(allocationColumn, constants.allocationDisk(), "110px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> interfaceColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
@@ -156,7 +156,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
                 return object.getDiskInterface().toString();
             }
         };
-        disksTable.addColumn(interfaceColumn, constants.interfaceDisk(), "60px"); //$NON-NLS-1$
+        disksTable.addColumn(interfaceColumn, constants.interfaceDisk(), "95px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> statusColumn = new EnumColumn<DiskImage, ImageStatus>() {
             @Override
@@ -164,7 +164,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
                 return object.getImageStatus();
             }
         };
-        disksTable.addColumn(statusColumn, constants.statusDisk(), "60px"); //$NON-NLS-1$
+        disksTable.addColumn(statusColumn, constants.statusDisk(), "65px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> dateCreatedColumn = new FullDateTimeColumn<DiskImage>() {
             @Override
