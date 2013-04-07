@@ -380,8 +380,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("1:pentium3:vmx:pentium3;2:intel-qemu64-nx:vmx,sse2:qemu64,-nx,+sse2;3:intel-qemu64:vmx,sse2,nx:qemu64,+sse2;2:amd-qemu64-nx:svm,sse2:qemu64,-nx,+sse2;3:amd-qemu64:svm,sse2,nx:qemu64,+sse2")
     ServerCPUList(130),
     @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("RHEV-Agent")
+    @TypeConverterAttribute(java.util.List.class)
+    @DefaultValueAttribute("ovirt-guest-agent-common,ovirt-guest-agent")
+    @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     AgentAppName(132),
     @Reloadable
     @TypeConverterAttribute(Map.class)

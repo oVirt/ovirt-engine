@@ -303,21 +303,20 @@ public class VmHandler {
         if (vm.getAppList() != null) {
             final String[] parts = vm.getAppList().split("[,]", -1);
             if (parts != null && parts.length != 0) {
-                final String agentAppName = Config.<String> GetValue(ConfigValues.AgentAppName);
+                final List<String> possibleAgentAppNames = Config.<List<String>> GetValue(ConfigValues.AgentAppName);
                 final Map<String, String> spiceDriversInGuest =
                         Config.<Map<String, String>> GetValue(ConfigValues.SpiceDriverNameInGuest);
                 final String spiceDriverInGuest =
                         spiceDriversInGuest.get(ObjectUtils.toString(vm.getOs().getOsType()).toLowerCase());
 
                 for (final String part : parts) {
-                    if (StringUtils.containsIgnoreCase(part, agentAppName)) {
-                        vm.setGuestAgentVersion(GetApplicationVersion(part,
-                                agentAppName));
-                    }
-                    if (StringUtils.containsIgnoreCase(part,
-                            spiceDriverInGuest)) {
-                        vm.setSpiceDriverVersion(GetApplicationVersion(part,
-                                spiceDriverInGuest));
+                    for (String agentName : possibleAgentAppNames) {
+                        if (StringUtils.containsIgnoreCase(part, agentName)) {
+                            vm.setGuestAgentVersion(GetApplicationVersion(part, agentName));
+                        }
+                        if (StringUtils.containsIgnoreCase(part, spiceDriverInGuest)) {
+                            vm.setSpiceDriverVersion(GetApplicationVersion(part, spiceDriverInGuest));
+                        }
                     }
                 }
             }
