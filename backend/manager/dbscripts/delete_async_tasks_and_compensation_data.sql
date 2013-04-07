@@ -1,5 +1,5 @@
-truncate table  async_tasks;
+truncate table  async_tasks CASCADE;
 
-truncate table business_entity_snapshot;
+truncate table business_entity_snapshot CASCADE;
 
 
