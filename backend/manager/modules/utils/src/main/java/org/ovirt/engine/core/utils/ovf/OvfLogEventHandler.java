@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
-
 import org.ovirt.engine.core.common.businessentities.OvfExportOnlyField;
 import org.ovirt.engine.core.common.businessentities.OvfExportOnlyField.ExportOption;
 import org.ovirt.engine.core.utils.log.Log;
@@ -143,9 +142,7 @@ public abstract class OvfLogEventHandler<T> {
     public void addValueForAlias(String alias, String value) {
         String fieldName = aliasesToFieldsMap.get(alias);
         try {
-
             Field declaredField = entity.getClass().getDeclaredField(fieldName);
-            OvfExportOnlyField ovfLogEventField = declaredField.getAnnotation(OvfExportOnlyField.class);
             TypeConverter typeConverter = getTypeConverter(fieldName);
             Object objValue = typeConverter.convert(value, declaredField.getType());
             BeanUtils.setProperty(entity, fieldName, objValue);
