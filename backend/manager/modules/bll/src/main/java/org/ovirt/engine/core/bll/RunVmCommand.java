@@ -693,7 +693,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                         (validate(new StoragePoolValidator(getStoragePoolDAO().get(vm.getStoragePoolId())).isUp())
                                 &&
                         getRunVmValidator().validateStorageDomains(vm, messages, isInternalExecution(), vmImages) &&
-                        getRunVmValidator().validateImagesForRunVm(messages, vmImages))) &&
+                                getRunVmValidator().validateImagesForRunVm(messages, vmImages)
+                                &&
+                        validate(getRunVmValidator().validateIsoPath(vm.isAutoStartup(), vm.getStoragePoolId(),
+                                getParameters().getDiskPath(),
+                                getParameters().getFloppyPath())))) &&
                         canRunVm(vm) &&
                         validateNetworkInterfaces();
 

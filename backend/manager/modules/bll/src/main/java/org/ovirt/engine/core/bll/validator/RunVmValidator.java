@@ -3,17 +3,25 @@ package org.ovirt.engine.core.bll.validator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmHandler;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageFileType;
+import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.queries.GetImagesListParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -108,6 +116,67 @@ public class RunVmValidator {
         return validate(diskImagesValidator.diskImagesNotLocked(), message);
     }
 
+    @SuppressWarnings("unchecked")
+    public ValidationResult validateIsoPath(boolean isAutoStartup,
+            Guid storageDomainId,
+            String diskPath,
+            String floppyPath) {
+        if (isAutoStartup) {
+            return ValidationResult.VALID;
+        }
+        if (!StringUtils.isEmpty(diskPath)) {
+            if (storageDomainId == null) {
+                return new ValidationResult(VdcBllMessages.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
+            }
+            boolean retValForIso = false;
+            VdcQueryReturnValue ret =
+                    getBackend().runInternalQuery(VdcQueryType.GetImagesList,
+                            new GetImagesListParameters(storageDomainId, ImageFileType.ISO));
+            if (ret != null && ret.getReturnValue() != null && ret.getSucceeded()) {
+                List<RepoFileMetaData> repoFileNameList = (List<RepoFileMetaData>) ret.getReturnValue();
+                if (repoFileNameList != null) {
+                    for (RepoFileMetaData isoFileMetaData : (List<RepoFileMetaData>) ret.getReturnValue()) {
+                        if (isoFileMetaData.getRepoImageId().equals(diskPath)) {
+                            retValForIso = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (!retValForIso) {
+                return new ValidationResult(VdcBllMessages.ERROR_CANNOT_FIND_ISO_IMAGE_PATH);
+            }
+        }
+
+        if (!StringUtils.isEmpty(floppyPath)) {
+            boolean retValForFloppy = false;
+            VdcQueryReturnValue ret =
+                    getBackend().runInternalQuery(VdcQueryType.GetImagesList,
+                            new GetImagesListParameters(storageDomainId, ImageFileType.Floppy));
+            if (ret != null && ret.getReturnValue() != null && ret.getSucceeded()) {
+                List<RepoFileMetaData> repoFileNameList = (List<RepoFileMetaData>) ret.getReturnValue();
+                if (repoFileNameList != null) {
+
+                    for (RepoFileMetaData isoFileMetaData : (List<RepoFileMetaData>) ret.getReturnValue()) {
+                        if (isoFileMetaData.getRepoImageId().equals(floppyPath)) {
+                            retValForFloppy = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (!retValForFloppy) {
+                return new ValidationResult(VdcBllMessages.ERROR_CANNOT_FIND_FLOPPY_IMAGE_PATH);
+            }
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    private BackendInternal getBackend() {
+        return Backend.getInstance();
+    }
+
     protected VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
         return DbFacade.getInstance().getVmNetworkInterfaceDao();
     }
@@ -139,7 +208,9 @@ public class RunVmValidator {
             List<Disk> vmDisks,
             BootSequence bootSequence,
             StoragePool storagePool,
-            boolean isInternalExecution) {
+            boolean isInternalExecution,
+            String diskPath,
+            String floppyPath) {
         if (!validateVmProperties(vm, messages)) {
             return false;
         }
@@ -171,7 +242,13 @@ public class RunVmValidator {
             if (!validateImagesForRunVm(messages, images)) {
                 return false;
             }
+            result = validateIsoPath(vm.isAutoStartup(), vm.getStoragePoolId(), diskPath, floppyPath);
+            if (!result.isValid()) {
+                messages.add(result.getMessage().toString());
+                return false;
+            }
         }
+
         return true;
     }
 
