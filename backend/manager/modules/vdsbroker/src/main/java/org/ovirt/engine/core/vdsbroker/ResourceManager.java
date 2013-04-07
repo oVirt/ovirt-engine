@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
@@ -291,13 +290,6 @@ public class ResourceManager {
             statistics.setTransmitRate(0D);
             statistics.setReceiveRate(0D);
             statistics.setReceiveDropRate(0D);
-        }
-    }
-
-    public void UpdateVdsDynamicData(VdsDynamic vdsDynamic) {
-        VdsManager vdsManager = GetVdsManager(vdsDynamic.getId());
-        if (vdsManager != null) {
-            vdsManager.UpdateDynamicData(vdsDynamic);
         }
     }
 

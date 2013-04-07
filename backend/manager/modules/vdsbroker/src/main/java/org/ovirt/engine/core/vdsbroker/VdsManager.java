@@ -323,7 +323,7 @@ public class VdsManager {
     private void HandleVdsRecoveringException(VDSRecoveringException ex) {
         if (_vds.getStatus() != VDSStatus.Initializing && _vds.getStatus() != VDSStatus.NonOperational) {
             setStatus(VDSStatus.Initializing, _vds);
-            UpdateDynamicData(_vds.getDynamicData());
+            DbFacade.getInstance().getVdsDynamicDao().updateStatus(_vds.getId(), VDSStatus.Initializing);
             AuditLogableBase logable = new AuditLogableBase(_vds.getId());
             logable.addCustomValue("ErrorMessage", ex.getMessage());
             AuditLogDirector.log(logable, AuditLogType.VDS_INITIALIZING);
@@ -490,10 +490,10 @@ public class VdsManager {
             if (mFailedToRunVmAttempts.get() < Config.<Integer> GetValue(ConfigValues.NumberOfFailedRunsOnVds)
                     && vds.getStatus() == VDSStatus.Error) {
                 setStatus(VDSStatus.Up, vds);
-                UpdateDynamicData(vds.getDynamicData());
+                DbFacade.getInstance().getVdsDynamicDao().updateStatus(getVdsId(), VDSStatus.Up);
             }
-            log.infoFormat("OnVdsDuringFailureTimer of vds {0} entered. Time:{1}. Attempts after {2}", vds.getName(),
-                    new java.util.Date(), mFailedToRunVmAttempts);
+            log.infoFormat("OnVdsDuringFailureTimer of vds {0} entered. Attempts after {1}", vds.getName(),
+                    mFailedToRunVmAttempts);
         }
     }
 
