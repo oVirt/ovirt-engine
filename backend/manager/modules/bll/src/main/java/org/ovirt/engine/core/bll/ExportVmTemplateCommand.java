@@ -33,7 +33,10 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
 
     public ExportVmTemplateCommand(T parameters) {
         super(parameters);
-        setStoragePoolId(getVmTemplate().getstorage_pool_id());
+        if (getVmTemplate() != null) {
+            setDescription(getVmTemplateName());
+            setStoragePoolId(getVmTemplate().getstorage_pool_id());
+        }
     }
 
     protected ExportVmTemplateCommand(Guid commandId) {
@@ -114,8 +117,8 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
 
     @Override
     protected boolean canDoAction() {
-        if (getVmTemplate() != null) {
-            setDescription(getVmTemplateName());
+        if (getVmTemplate() == null) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
         StorageDomainValidator storageDomainValidator = new StorageDomainValidator(getStorageDomain());
         boolean retVal = validate(storageDomainValidator.isDomainExistAndActive());
