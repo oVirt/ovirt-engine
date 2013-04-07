@@ -24,18 +24,6 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class HostBondInterfaceModel extends Model
 {
 
-    private boolean compactMode;
-
-    public boolean isCompactMode()
-    {
-        return compactMode;
-    }
-
-    private void setCompactMode(boolean value)
-    {
-        compactMode = value;
-    }
-
     private SortedListModel privateBond;
 
     public SortedListModel getBond()
@@ -187,12 +175,6 @@ public class HostBondInterfaceModel extends Model
     }
 
     public HostBondInterfaceModel() {
-        this(false);
-    }
-
-    public HostBondInterfaceModel(boolean compactMode)
-    {
-        setCompactMode(compactMode);
         setAddress(new EntityModel());
         setSubnet(new EntityModel());
         setGateway(new EntityModel());

@@ -48,6 +48,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManage
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupNetworksPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ManualFencePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksBondPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksManagementPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePopupPresenterWidget;
@@ -159,6 +160,7 @@ public class HostModule extends AbstractGinModule {
             final Provider<HostManagementPopupPresenterWidget> hostManagementPopupProvider,
             final Provider<SetupNetworksManagementPopupPresenterWidget> setupNetworksManagementPopupProvider,
             final Provider<HostBondPopupPresenterWidget> hostBondPopupProvider,
+            final Provider<SetupNetworksBondPopupPresenterWidget> setupNetworksBondPopupProvider,
             final Provider<HostSetupNetworksPopupPresenterWidget> hostSetupNetworksPopupProvider) {
         return new SearchableDetailTabModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel>(ginjector,
                 HostListModel.class,
@@ -177,7 +179,7 @@ public class HostModule extends AbstractGinModule {
                 if (source.getWindow() instanceof HostSetupNetworksModel){
                     // Resolve by dialog model
                     if (windowModel instanceof HostBondInterfaceModel) {
-                        return hostBondPopupProvider.get();
+                        return setupNetworksBondPopupProvider.get();
                     } else if (windowModel instanceof HostInterfaceModel) {
                         HostInterfaceModel hostInterfaceModel = (HostInterfaceModel) windowModel;
 

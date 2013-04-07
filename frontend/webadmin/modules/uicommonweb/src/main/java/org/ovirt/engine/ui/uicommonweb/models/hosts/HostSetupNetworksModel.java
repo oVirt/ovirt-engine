@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +11,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -239,48 +237,8 @@ public class HostSetupNetworksModel extends EntityModel {
              * Bond Dialog
              *****************/
             final VdsNetworkInterface entity = ((NetworkInterfaceModel) item).getEntity();
-            editPopup = new HostBondInterfaceModel(true);
-            final HostBondInterfaceModel bondDialogModel = (HostBondInterfaceModel) editPopup;
-            bondDialogModel.setTitle(ConstantsManager.getInstance()
-                    .getMessages()
-                    .editBondInterfaceTitle(entity.getName()));
-            bondDialogModel.getNetwork().setIsAvailable(false);
-            bondDialogModel.getCheckConnectivity().setIsAvailable(false);
-            bondDialogModel.getAddress().setIsAvailable(false);
-            bondDialogModel.getSubnet().setIsAvailable(false);
-            bondDialogModel.getGateway().setIsAvailable(false);
-            bondDialogModel.setBootProtocolAvailable(false);
-
-            // bond name
-            bondDialogModel.getBond().setIsChangable(false);
-            List<VdsNetworkInterface> bondName = Arrays.asList(entity);
-            bondDialogModel.getBond().setItems(bondName);
-            bondDialogModel.getBond().setSelectedItem(entity);
-
-            // bond options
-            String bondOptions = entity.getBondOptions();
-            List<KeyValuePairCompat<String, EntityModel>> items =
-                    (List<KeyValuePairCompat<String, EntityModel>>) bondDialogModel.getBondingOptions().getItems();
-            boolean found = false;
-            KeyValuePairCompat<String, EntityModel> customKey = null;
-            for (KeyValuePairCompat<String, EntityModel> pair : items) {
-                String key = pair.getKey();
-                if (key.equals(bondOptions)) {
-                    bondDialogModel.getBondingOptions().setSelectedItem(pair);
-                    found = true;
-                    break;
-                } else {
-                    if ("custom".equals(key)) { //$NON-NLS-1$
-                        customKey = pair;
-                    }
-                }
-            }
-            if (!found) {
-                EntityModel value = new EntityModel();
-                value.setEntity(bondOptions);
-                customKey.setValue(value);
-                bondDialogModel.getBondingOptions().setSelectedItem(customKey);
-            }
+            editPopup = new SetupNetworksEditBondModel(entity);
+            final SetupNetworksBondModel bondDialogModel = (SetupNetworksBondModel) editPopup;
 
             // OK Target
             okTarget = new BaseCommandTarget() {
@@ -422,15 +380,6 @@ public class HostSetupNetworksModel extends EntityModel {
         if (operation.isNullOperation()) {
             return;
         } else if (operation == NetworkOperation.BOND_WITH) {
-            final HostBondInterfaceModel bondPopup = new HostBondInterfaceModel(true);
-            bondPopup.setTitle(ConstantsManager.getInstance().getConstants().createNewBondTitle());
-            bondPopup.getNetwork().setIsAvailable(false);
-            bondPopup.getCheckConnectivity().setIsAvailable(false);
-            bondPopup.setBootProtocol(NetworkBootProtocol.NONE);
-            bondPopup.getAddress().setIsAvailable(false);
-            bondPopup.getSubnet().setIsAvailable(false);
-            bondPopup.getGateway().setIsAvailable(false);
-            bondPopup.setBootProtocolAvailable(false);
             List<VdsNetworkInterface> freeBonds = getFreeBonds();
             if (freeBonds.isEmpty()) {
                 popupWindow = new ConfirmationModel();
@@ -440,7 +389,7 @@ public class HostSetupNetworksModel extends EntityModel {
                 sourceListModel.setConfirmWindow(popupWindow);
                 return;
             }
-            bondPopup.getBond().setItems(freeBonds);
+            final SetupNetworksBondModel bondPopup = new SetupNetworksAddBondModel(freeBonds);
             bondPopup.getCommands().add(new UICommand("OK", new BaseCommandTarget() { //$NON-NLS-1$
 
                         @Override
@@ -741,7 +690,7 @@ public class HostSetupNetworksModel extends EntityModel {
         }
     }
 
-    private void setBondOptions(VdsNetworkInterface entity, HostBondInterfaceModel bondDialogModel) {
+    private void setBondOptions(VdsNetworkInterface entity, SetupNetworksBondModel bondDialogModel) {
         KeyValuePairCompat<String, EntityModel> BondPair =
                 (KeyValuePairCompat<String, EntityModel>) bondDialogModel.getBondingOptions()
                         .getSelectedItem();

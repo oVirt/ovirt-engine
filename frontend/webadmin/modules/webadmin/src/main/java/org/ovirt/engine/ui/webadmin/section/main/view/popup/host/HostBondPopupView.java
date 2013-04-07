@@ -221,19 +221,6 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
 
         bondingModeEditor.setVisible(true);
         bondingModeEditor.asWidget().setVisible(true);
-
-        if (object.isCompactMode()) {
-            // hide widgets
-            info.setVisible(false);
-            message.setVisible(false);
-            checkConnectivity.setVisible(false);
-            commitChanges.setVisible(false);
-            // resize
-            layoutPanel.remove(infoPanel);
-            layoutPanel.setWidgetSize(mainPanel, 300);
-            asPopupPanel().setPixelSize(400, 400);
-        }
-
     }
 
     @Override
