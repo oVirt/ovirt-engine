@@ -1021,7 +1021,7 @@ public class VdsUpdateRunTimeInfo {
         List<String> vmsToUpdateFromVds = new ArrayList<String>();
         for (VmInternalData vmInternalData : _runningVms.values()) {
             VmDynamic vmDynamic = vmInternalData.getVmDynamic();
-            if (vmDynamic != null && vmDynamic.getstatus() != VMStatus.MigratingTo) {
+            if (vmDynamic != null && vmDynamic.getStatus() != VMStatus.MigratingTo) {
                 VM vm = _vmDict.get(vmDynamic.getId());
                 if (vm != null) {
                     String dbHash = vm.getHash();
