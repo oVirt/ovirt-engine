@@ -17,9 +17,9 @@ public class SetupNetworksEditBondModel extends SetupNetworksBondModel {
 
         // bond name
         getBond().setIsChangable(false);
-        List<VdsNetworkInterface> bondName = Arrays.asList(bond);
+        List<String> bondName = Arrays.asList(bond.getName());
         getBond().setItems(bondName);
-        getBond().setSelectedItem(bond);
+        getBond().setSelectedItem(bond.getName());
 
         // bond options
         String bondOptions = bond.getBondOptions();

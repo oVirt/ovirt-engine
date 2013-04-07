@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -380,7 +381,7 @@ public class HostSetupNetworksModel extends EntityModel {
         if (operation.isNullOperation()) {
             return;
         } else if (operation == NetworkOperation.BOND_WITH) {
-            List<VdsNetworkInterface> freeBonds = getFreeBonds();
+            List<String> freeBonds = getFreeBonds();
             if (freeBonds.isEmpty()) {
                 popupWindow = new ConfirmationModel();
                 popupWindow.setTitle(ConstantsManager.getInstance().getConstants().errorTitle());
@@ -395,7 +396,7 @@ public class HostSetupNetworksModel extends EntityModel {
                         @Override
                         public void ExecuteCommand(UICommand command) {
                             sourceListModel.setConfirmWindow(null);
-                            VdsNetworkInterface bond = (VdsNetworkInterface) bondPopup.getBond().getSelectedItem();
+                            VdsNetworkInterface bond = new Bond((String) bondPopup.getBond().getSelectedItem());
                             setBondOptions(bond, bondPopup);
                             NetworkInterfaceModel nic1 = (NetworkInterfaceModel) networkCommand.getOp1();
                             NetworkInterfaceModel nic2 = (NetworkInterfaceModel) networkCommand.getOp2();
@@ -468,11 +469,11 @@ public class HostSetupNetworksModel extends EntityModel {
 
     }
 
-    private List<VdsNetworkInterface> getFreeBonds() {
-        List<VdsNetworkInterface> freeBonds = new ArrayList<VdsNetworkInterface>();
+    private List<String> getFreeBonds() {
+        List<String> freeBonds = new ArrayList<String>();
         for (VdsNetworkInterface bond : allBonds) {
             if (!nicMap.containsKey(bond.getName())) {
-                freeBonds.add(bond);
+                freeBonds.add(bond.getName());
             }
         }
         return freeBonds;

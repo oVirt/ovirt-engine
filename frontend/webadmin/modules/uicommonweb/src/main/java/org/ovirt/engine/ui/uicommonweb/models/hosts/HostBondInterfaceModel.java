@@ -5,9 +5,9 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.utils.LexoNumericComparator;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.RefObject;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -178,7 +178,7 @@ public class HostBondInterfaceModel extends Model
         setAddress(new EntityModel());
         setSubnet(new EntityModel());
         setGateway(new EntityModel());
-        setBond(new SortedListModel(new Linq.InterfaceComparator()));
+        setBond(new SortedListModel(new LexoNumericComparator()));
         setNetwork(new ListModel());
         setBootProtocolAvailable(true);
         setBondingOptions(new ListModel());

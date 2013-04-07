@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -119,13 +118,7 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
     public HostBondPopupView(EventBus eventBus, ApplicationResources resources, final ApplicationConstants constants) {
         super(eventBus, resources);
 
-        bondEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            protected String renderNullSafe(Object object) {
-                return ((VdsNetworkInterface) object).getName();
-            }
-
-        });
+        bondEditor = new ListModelListBoxEditor<Object>();
         networkEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             protected String renderNullSafe(Object object) {

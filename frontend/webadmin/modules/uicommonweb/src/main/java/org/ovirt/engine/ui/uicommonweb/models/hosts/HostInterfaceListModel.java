@@ -1410,8 +1410,8 @@ public class HostInterfaceListModel extends SearchableListModel
                 // allocate a new bond name, edit the existing one:
                 {
                     innerBondModel.getBond()
-                            .setItems(new ArrayList<VdsNetworkInterface>(Arrays.asList(new VdsNetworkInterface[] { bond })));
-                    innerBondModel.getBond().setSelectedItem(bond);
+                            .setItems(new ArrayList<String>(Arrays.asList(new String[] { bond.getName() })));
+                    innerBondModel.getBond().setSelectedItem(bond.getName());
                     innerBondModel.getBond().setIsChangable(false);
                     hostInterfaceListModel.PostBond(hostInterfaceListModel,
                             innerBondModel,
@@ -1432,9 +1432,13 @@ public class HostInterfaceListModel extends SearchableListModel
                             List<VdsNetworkInterface> bonds =
                                     (List<VdsNetworkInterface>) ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
 
-                            bModel.getBond().setItems(bonds);
+                            List<String> bondNames = new ArrayList<String>();
+                            for (VdsNetworkInterface bond : bonds) {
+                                bondNames.add(bond.getName());
+                            }
+                            bModel.getBond().setItems(bondNames);
                             // ((List<Interface>)model.Bond.Options).Sort(a => a.name);
-                            bModel.getBond().setSelectedItem(Linq.FirstOrDefault(bonds));
+                            bModel.getBond().setSelectedItem(Linq.FirstOrDefault(bondNames));
                             boolean hasManagement = false;
                             for (VdsNetworkInterface innerItem : innerHostInterfaceListModel.getSelectedItemsWithVlans())
                             {
@@ -1608,7 +1612,7 @@ public class HostInterfaceListModel extends SearchableListModel
             }
 
             parameters.setBootProtocol(model.getBootProtocol());
-            parameters.setBondName(((VdsNetworkInterface) model.getBond().getSelectedItem()).getName());
+            parameters.setBondName((String) model.getBond().getSelectedItem());
 
             if (model.getIsStaticAddress())
             {
@@ -1673,7 +1677,7 @@ public class HostInterfaceListModel extends SearchableListModel
             // };
             AddBondParameters parameters =
                     new AddBondParameters(host.getId(),
-                            ((VdsNetworkInterface) model.getBond().getSelectedItem()).getName(),
+                            (String) model.getBond().getSelectedItem(),
                             net,
                             nics);
             Map.Entry<String, EntityModel> bondingOption;
