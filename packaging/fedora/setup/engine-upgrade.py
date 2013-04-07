@@ -69,6 +69,7 @@ Please check your yum repositories or use --no-yum-rollback"
 MSG_ERROR_NEW_SETUP_AVAIL="\nError: New %s rpm available via yum.\n\
 Please execute `yum update %s`, then re-execute '%s'.\n\
 To use the current %s rpm, execute '%s --force-current-setup-rpm'." % (RPM_SETUP, RPM_SETUP, RPM_UPGRADE, RPM_SETUP, RPM_UPGRADE)
+MSG_ERROR_CANNOT_CHOWN = "Error: Cannot change ownership of directory"
 MSG_ERROR_BACKUP_DB = "Error: Database backup failed"
 MSG_ERROR_RESTORE_DB = "Error: Database restore failed"
 MSG_ERROR_DROP_DB = "Error: Database drop failed"
@@ -1050,6 +1051,17 @@ def deleteEngineSysconfig():
         shutil.rmtree(basedefs.DIR_ENGINE_SYSCONFIG)
 
 
+def setupVarPrivileges():
+    # previous versions mixed root/ovirt
+    # ownership in these directories
+    shutil.rmtree(basedefs.DIR_ENGINE_TMP)
+    utils.execCmd(
+        cmdList=('chown', '-Rh', 'ovirt:ovirt', basedefs.DIR_DEPLOYMENTS),
+        failOnError=True,
+        msg=MSG_ERROR_CANNOT_CHOWN,
+    )
+
+
 def main(options):
     # BEGIN: PROCESS-INITIALIZATION
     miniyumsink = utils.MiniYumSink()
@@ -1092,7 +1104,7 @@ def main(options):
     stopEngineService = [stopEngine]
     startEngineService = [startEngine]
     preupgradeFunc = [preupgradeUUIDCheck]
-    upgradeFunc = [rhyum.update, generateEngineConf]
+    upgradeFunc = [rhyum.update, generateEngineConf, setupVarPrivileges]
     postFunc = [modifyUUIDs, ca.commit, runPost, deleteEngineSysconfig]
     engineService = basedefs.ENGINE_SERVICE_NAME
     # define db connections services

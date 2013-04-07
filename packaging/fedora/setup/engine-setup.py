@@ -167,7 +167,7 @@ def initSequences():
                         'steps'           : [ { 'title'     : output_messages.INFO_CFG_IPTABLES,
                                                 'functions' : [_configFirewall] },
                                               { 'title'     : output_messages.INFO_START_ENGINE,
-                                                'functions' : [_startEngine] } ]
+                                                'functions' : [_setupVarPrivileges, _startEngine] } ]
                        },
                       { 'description'     : 'Handling httpd',
                         'condition'       : [utils.compareStrIgnoreCase, controller.CONF["OVERRIDE_HTTPD_CONFIG"], "yes"],
@@ -1749,7 +1749,15 @@ def _startHttpd():
     srv.stop(False)
     srv.start(True)
 
-
+def _setupVarPrivileges():
+    # previous versions mixed root/ovirt
+    # ownership in these directories
+    shutil.rmtree(basedefs.DIR_ENGINE_TMP)
+    utils.execCmd(
+        cmdList=('chown', '-Rh', 'ovirt:ovirt', basedefs.DIR_DEPLOYMENTS),
+        failOnError=True,
+        msg=output_messages.ERR_FAILED_CHOWN,
+    )
 
 def _startEngine():
     logging.debug("using chkconfig to enable engine to load on system startup.")

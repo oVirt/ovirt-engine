@@ -261,6 +261,7 @@ ERR_CANT_FIND_RHEVM_CONFIG_FILE="Unexpected error, Cannot find %s"
 ERR_FAILED_UPD_VDC_OPTIONS="Failed updating configuration parameter: %s"
 ERR_FAILED_GET_VDC_OPTIONS="Failed to retrieve configuration parameter: %s"
 #start_jboss
+ERR_FAILED_CHOWN="Failed to change ownership of files"
 ERR_FAILED_CHKCFG_JBOSS="Failed to configure JBoss service to start on boot"
 ERR_FAILED_STP_JBOSS_SERVICE="Failed stopping JBoss service"
 ERR_FAILED_START_JBOSS_SERVICE="Failed starting JBoss service"
