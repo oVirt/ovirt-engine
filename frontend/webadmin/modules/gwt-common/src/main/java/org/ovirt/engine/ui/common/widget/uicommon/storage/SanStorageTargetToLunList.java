@@ -211,14 +211,14 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             public String getRawValue(LunModel model) {
                 return String.valueOf(model.getMultipathing());
             }
-        }, constants.pathSanStorage(), "40px"); //$NON-NLS-1$
+        }, constants.pathSanStorage(), "55px"); //$NON-NLS-1$
 
         table.addColumn(new LunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return EnumTranslator.createAndTranslate(model.getStatus());
             }
-        }, constants.statusSanStorage(), "60px"); //$NON-NLS-1$
+        }, constants.statusSanStorage(), "75px"); //$NON-NLS-1$
 
         table.addColumn(new LunTextColumn() {
             @Override

@@ -20,7 +20,7 @@
 	margin: 0px;
 	height: 24px !important;
 	border: 0px;
-	white-space: nowrap;
+	white-space: normal;
 	cursor: pointer;
 }
 
