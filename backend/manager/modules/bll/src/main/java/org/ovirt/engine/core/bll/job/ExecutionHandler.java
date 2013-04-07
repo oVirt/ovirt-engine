@@ -237,6 +237,26 @@ public class ExecutionHandler {
      * @return The created instance of the step or {@code null}.
      */
     public static Step addStep(ExecutionContext context, StepEnum stepName, String description) {
+        return addStep(context, stepName, description, false);
+
+    }
+
+    /**
+     * Adds a {@link Step} entity by the provided context. A {@link Step} will not be created if
+     * {@code ExecutionContext.isMonitored()} returns false.
+     *
+     * @param context
+     *            The context of the execution which defines visibility and execution method.
+     * @param stepName
+     *            The name of the step.
+     * @param description
+     *            A presentation name for the step. If not provided, the presentation name is resolved by the
+     *            {@code stepName}.
+     * @param isExternal
+     *        Indicates if the step is invoked by a plug-in
+     * @return
+     */
+    public static Step addStep(ExecutionContext context, StepEnum stepName, String description, boolean isExternal) {
         if (context == null) {
             return null;
         }
@@ -270,6 +290,7 @@ public class ExecutionHandler {
                 log.error(e);
             }
         }
+        step.setExternal(isExternal);
         return step;
     }
 

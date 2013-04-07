@@ -348,12 +348,18 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         String tempVar = getDescription();
         getReturnValue().setDescription((tempVar != null) ? tempVar : getReturnValue().getDescription());
         setActionMessageParameters();
-
-        Step validatingStep = ExecutionHandler.addStep(getExecutionContext(), StepEnum.VALIDATING, null);
+        Step validatingStep=null;
+        boolean actionAllowed = false;
+        boolean isExternal = this.getParameters().getJobId() != null || this.getParameters().getStepId() != null;
+        if (!isExternal) {
+            validatingStep = ExecutionHandler.addStep(getExecutionContext(), StepEnum.VALIDATING, null);
+        }
 
         try {
-            boolean actionAllowed = getReturnValue().getCanDoAction() || internalCanDoAction();
-            ExecutionHandler.endStep(getExecutionContext(), validatingStep, actionAllowed);
+            actionAllowed = getReturnValue().getCanDoAction() || internalCanDoAction();
+            if (!isExternal) {
+                ExecutionHandler.endStep(getExecutionContext(), validatingStep, actionAllowed);
+            }
 
             if (actionAllowed) {
                 execute();
@@ -1947,27 +1953,24 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * @return A map which contains the data to be used to populate the {@code Job} description.
      */
     public Map<String, String> getJobMessageProperties() {
-        if (jobProperties == null) {
-            jobProperties = new HashMap<String, String>();
-            List<PermissionSubject> subjects = getPermissionCheckSubjects();
-            if (!subjects.isEmpty()) {
-                VdcObjectType entityType;
-                Guid entityId;
-                String value;
-                for (PermissionSubject permSubject : subjects) {
-                    entityType = permSubject.getObjectType();
-                    entityId = permSubject.getObjectId();
-                    if (entityType != null && entityId != null) {
-                        value = DbFacade.getInstance().getEntityNameByIdAndType(entityId, entityType);
-                        if (value == null) {
-                            value = entityId.toString();
-                        }
-                        jobProperties.put(entityType.name().toLowerCase(), value);
+        jobProperties = new HashMap<>();
+        List<PermissionSubject> subjects = getPermissionCheckSubjects();
+        if (!subjects.isEmpty()) {
+            VdcObjectType entityType;
+            Guid entityId;
+            String value;
+            for (PermissionSubject permSubject : subjects) {
+                entityType = permSubject.getObjectType();
+                entityId = permSubject.getObjectId();
+                if (entityType != null && entityId != null) {
+                    value = DbFacade.getInstance().getEntityNameByIdAndType(entityId, entityType);
+                    if (value == null) {
+                        value = entityId.toString();
                     }
+                    jobProperties.put(entityType.name().toLowerCase(), value);
                 }
             }
         }
-
         return jobProperties;
     }
 
