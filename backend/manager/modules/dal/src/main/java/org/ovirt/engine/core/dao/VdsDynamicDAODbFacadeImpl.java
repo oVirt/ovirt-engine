@@ -231,4 +231,13 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
 
         getCallsHandler().executeModification("UpdateVdsDynamicStatus", parameterSource);
     }
+
+    @Override
+    public void updateNetConfigDirty(Guid id, Boolean netConfigDirty) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vds_guid", id)
+                .addValue("net_config_dirty", netConfigDirty);
+
+        getCallsHandler().executeModification("UpdateVdsDynamicNetConfigDirty", parameterSource);
+    }
 }

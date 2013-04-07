@@ -14,12 +14,9 @@ import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
-import org.ovirt.engine.core.common.vdscommands.UpdateVdsDynamicDataVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -59,10 +56,9 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
 
             @Override
             public Void runInTransaction() {
-                VdsDynamic vdsDynamic = DbFacade.getInstance().getVdsDynamicDao().get(getVds().getId());
-                vdsDynamic.setnet_config_dirty(getVds().getNetConfigDirty());
-                ResourceManager.getInstance().runVdsCommand(VDSCommandType.UpdateVdsDynamicData,
-                        new UpdateVdsDynamicDataVDSCommandParameters(vdsDynamic));
+                DbFacade.getInstance()
+                        .getVdsDynamicDao()
+                        .updateNetConfigDirty(getVds().getId(), getVds().getNetConfigDirty());
                 return null;
             }
         });

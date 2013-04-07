@@ -895,7 +895,18 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-
+Create or replace FUNCTION UpdateVdsDynamicNetConfigDirty(
+        v_vds_guid UUID,
+        v_net_config_dirty BOOLEAN)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+      UPDATE vds_dynamic
+      SET
+      net_config_dirty = v_net_config_dirty
+      WHERE vds_id = v_vds_guid;
+END; $procedure$
+LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetVdsByNetworkId(v_network_id UUID) RETURNS SETOF vds
    AS $procedure$

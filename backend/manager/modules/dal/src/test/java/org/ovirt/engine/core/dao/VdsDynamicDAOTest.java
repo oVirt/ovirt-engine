@@ -96,4 +96,14 @@ public class VdsDynamicDAOTest extends BaseDAOTestCase {
         assertEquals(before, after);
     }
 
+    @Test
+    public void testUpdateNetConfigDirty() {
+        VdsDynamic before = dao.get(existingVds.getId());
+        Boolean netConfigDirty = before.getnet_config_dirty();
+        netConfigDirty = Boolean.FALSE.equals(netConfigDirty);
+        before.setnet_config_dirty(netConfigDirty);
+        dao.updateNetConfigDirty(before.getId(), netConfigDirty);
+        VdsDynamic after = dao.get(existingVds.getId());
+        assertEquals(before, after);
+    }
 }
