@@ -44,13 +44,13 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
         }
 
         if (!isISO(dom) && !isExport(dom) || format) {
-            if (!ConnectStorage()) {
+            if (!connectStorage()) {
                 return;
             }
 
             boolean failed = !formatStorage(dom, vds);
 
-            DisconnectStorage();
+            disconnectStorage();
 
             if (failed) {
                 return;
@@ -129,26 +129,18 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
         return true;
     }
 
-    private boolean ConnectStorage() {
+    private boolean connectStorage() {
         return getStorageHelper(getStorageDomain()).connectStorageToDomainByVdsId(getStorageDomain(),
                 getVds().getId());
     }
 
-    private void DisconnectStorage() {
+    private void disconnectStorage() {
         getStorageHelper(getStorageDomain()).disconnectStorageFromDomainByVdsId(getStorageDomain(),
                 getVds().getId());
     }
 
     protected VDSBrokerFrontend getVdsBroker() {
         return getBackend().getResourceManager();
-    }
-
-    protected boolean isFCP(StorageDomain dom) {
-        return dom.getStorageType() == StorageType.FCP;
-    }
-
-    protected boolean isISCSI(StorageDomain dom) {
-        return dom.getStorageType() == StorageType.ISCSI;
     }
 
     protected boolean isLocalFs(StorageDomain dom) {
