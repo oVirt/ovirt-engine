@@ -47,13 +47,15 @@ public class TypeCompat {
                 if (properties.contains(propertyName)) {
                     Object value = null;
                     hitCount++;
-                    try {
-                        value = pd.getReadMethod().invoke(obj);
-                        String stringValue = value != null ? value.toString() : null;
-                        values.put(propertyName, stringValue);
-                    } catch (Exception e) {
-                        log.warn("Unable to get value of property: " + pd.getDisplayName() + " for class "
-                                + obj.getClass().getName());
+                    if(!values.containsKey(propertyName))  {
+                        try {
+                            value = pd.getReadMethod().invoke(obj);
+                            String stringValue = value != null ? value.toString() : null;
+                            values.put(propertyName, stringValue);
+                        } catch (Exception e) {
+                            log.warn("Unable to get value of property: " + pd.getDisplayName() + " for class "
+                                    + obj.getClass().getName());
+                        }
                     }
                     if (hitCount == properties.size()) {
                         break;
