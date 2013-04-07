@@ -416,7 +416,6 @@ public class ManageDomains {
     public void getConfiguration() {
         String currentDomainNameEntry = configurationProvider.getConfigValue(ConfigValues.DomainName);
         String currentAdUserNameEntry = configurationProvider.getConfigValue(ConfigValues.AdUserName);
-        String currentAuthModeEntry = configurationProvider.getConfigValue(ConfigValues.LDAPSecurityAuthentication);
 
         DomainsConfigurationEntry domainNameEntry =
                 new DomainsConfigurationEntry(currentDomainNameEntry, DOMAIN_SEPERATOR, null);
