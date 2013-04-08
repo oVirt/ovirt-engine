@@ -296,11 +296,6 @@ install -dm 755 %{buildroot}/%{engine_log}/{host-deploy,notifier,engine-manage-d
 install -dm 755 %{buildroot}/%{engine_cache}
 install -dm 755 %{buildroot}/%{engine_run}/notifier
 
-# Needed for compatibility if package is different than the directory structure
-%if "%{name}" != "%{engine_name}"
-ln -s "%{engine_name}" "%{buildroot}%{engine_java}/../%{name}"
-%endif
-
 #
 # Force TLS/SSL for selected applications.
 #
@@ -351,6 +346,11 @@ do
     %add_maven_depmap "${jpppom}"
   fi
 done
+%endif
+
+# Needed for compatibility if package is different than the directory structure
+%if "%{name}" != "%{engine_name}"
+ln -s "%{engine_name}" "%{buildroot}%{engine_java}/../%{name}"
 %endif
 
 # Install the systemd files:
