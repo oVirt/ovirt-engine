@@ -173,15 +173,6 @@ public class FenceExecutor {
     }
 
     /**
-     * Check if the proxy can be used to fence the host successfully.
-     * @return Whether the proxy host can be used to fence the host successfully.
-     */
-    public boolean checkProxyHostConnectionToHost() {
-        return runFenceAction(FenceActionType.Status, FenceAgentOrder.Primary).getSucceeded();
-    }
-
-
-    /**
      * Run the specified fence action.
      * @param actionType The action to run.
      * @return The result of running the fence command.

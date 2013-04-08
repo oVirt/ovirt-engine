@@ -118,13 +118,12 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                         :
                         DbFacade.getInstance().getAuditLogDao().getTimeToWaitForNextPmOp(getVds().getName(), event);
                 if (secondsLeftToNextPmOp <= 0) {
-                    // try to get vds status
+                    // Check for proxy
                     executor = createExecutorForProxyCheck();
                     if (executor.findProxyHost()) {
-                        if (!(retValue = executor.checkProxyHostConnectionToHost())) {
-                            addCanDoActionMessage(VdcBllMessages.VDS_FAILED_FENCE_VIA_PROXY_CONNECTION);
-                        }
-                    } else {
+                        retValue = true;
+                    }
+                    else {
                         addCanDoActionMessage(VdcBllMessages.VDS_NO_VDS_PROXY_FOUND);
                     }
                 } else {
@@ -234,6 +233,11 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         if (getFenceSucceeded()) {
             executor = new FenceExecutor(getVds(), FenceActionType.Status);
             if (waitForStatus(getVds().getName(), getParameters().getAction(),FenceAgentOrder.Secondary)) {
+                // raise an alert that secondary agent was used
+                AuditLogableBase logable = new AuditLogableBase();
+                logable.setVdsId(getVds().getId());
+                logable.addCustomValue("Operation", getParameters().getAction().name());
+                AuditLogDirector.log(logable, AuditLogType.VDS_ALERT_SECONDARY_AGENT_USED_FOR_FENCE_OPERATION);
                 handleSpecificCommandActions();
             }
             else {
