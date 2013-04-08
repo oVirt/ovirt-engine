@@ -113,7 +113,6 @@ Source0: http://ovirt.org/releases/stable/src/@PACKAGE_NAME@-@PACKAGE_VERSION@.t
 BuildArch: noarch
 
 # Build time requirements:
-BuildRequires: dos2unix
 BuildRequires: java-devel
 BuildRequires: jpackage-utils
 BuildRequires: make
