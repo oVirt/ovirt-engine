@@ -1538,6 +1538,10 @@ public class VdsUpdateRunTimeInfo {
                     vmToUpdate.getId(),
                     vmToUpdate.getStatus().name(),
                     runningVm.getStatus().name());
+
+            if (vmToUpdate.getStatus() == VMStatus.Unknown) {
+                logVmStatusTransionFromUnknown(vmToUpdate, runningVm);
+            }
         }
     }
 
@@ -1912,6 +1916,13 @@ public class VdsUpdateRunTimeInfo {
 
     public DbFacade getDbFacade() {
         return DbFacade.getInstance();
+    }
+
+    private static void logVmStatusTransionFromUnknown(VM vmToUpdate, VmDynamic runningVm) {
+        final AuditLogableBase auditLogable = new AuditLogableBase();
+        auditLogable.setVmId(vmToUpdate.getId());
+        auditLogable.addCustomValue("VmStatus", runningVm.getStatus().toString());
+        AuditLogDirector.log(auditLogable, AuditLogType.VM_STATUS_RESTORED);
     }
 
 }

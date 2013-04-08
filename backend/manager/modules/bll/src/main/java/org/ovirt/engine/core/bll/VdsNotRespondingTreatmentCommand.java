@@ -83,11 +83,6 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
                 : AuditLogType.VDS_RECOVER : AuditLogType.VDS_RECOVER_FAILED;
     }
 
-    @Override
-    protected void handleNonRespondingTreatmentFailure() {
-        AlertIfPowerManagementOperationSkipped(RESTART);
-    };
-
     /**
      * Determine if the status is legal for actually fence the VDS.
      *

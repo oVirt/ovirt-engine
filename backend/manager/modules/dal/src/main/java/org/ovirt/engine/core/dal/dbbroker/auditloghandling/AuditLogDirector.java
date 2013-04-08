@@ -442,6 +442,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.TEMPLATE_IMPORT_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VM_IMPORT_INFO, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.VM_NOT_RESPONDING, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.VM_STATUS_RESTORED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.VM_MIGRATION_TRYING_RERUN, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.VM_PAUSED_ENOSPC, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VM_PAUSED_ERROR, AuditLogSeverity.ERROR);
