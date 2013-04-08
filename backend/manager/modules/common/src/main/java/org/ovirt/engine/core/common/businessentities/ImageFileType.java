@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum ImageType {
+public enum ImageFileType {
     Unknown(0),
     ISO(1),
     Floppy(2),
@@ -11,16 +11,16 @@ public enum ImageType {
     All(4);
 
     private int intValue;
-    private static Map<Integer, ImageType> mappings;
+    private static Map<Integer, ImageFileType> mappings;
 
     static {
-        mappings = new HashMap<Integer, ImageType>();
-        for (ImageType error : values()) {
+        mappings = new HashMap<Integer, ImageFileType>();
+        for (ImageFileType error : values()) {
             mappings.put(error.getValue(), error);
         }
     }
 
-    private ImageType(int value) {
+    private ImageFileType(int value) {
         intValue = value;
     }
 
@@ -28,7 +28,7 @@ public enum ImageType {
         return intValue;
     }
 
-    public static ImageType forValue(int value) {
+    public static ImageFileType forValue(int value) {
         return mappings.get(value);
     }
 }

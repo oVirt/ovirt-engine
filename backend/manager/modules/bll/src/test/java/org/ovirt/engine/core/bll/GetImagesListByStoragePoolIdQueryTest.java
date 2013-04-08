@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.ovirt.engine.core.common.businessentities.ImageType;
+import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetImagesListByStoragePoolIdParameters;
@@ -28,18 +28,18 @@ public class GetImagesListByStoragePoolIdQueryTest
         extends AbstractUserQueryTest<GetImagesListByStoragePoolIdParameters, GetImagesListByStoragePoolIdQuery<? extends GetImagesListByStoragePoolIdParameters>> {
 
     private Class<? extends GetImagesListByStoragePoolIdQuery<GetImagesListByStoragePoolIdParameters>> queryClass;
-    private ImageType expectedType;
+    private ImageFileType expectedType;
     private Guid storageDomainId;
 
     @Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]
-        { { GetImagesListByStoragePoolIdQuery.class, ImageType.ISO },
-                { GetImagesListByStoragePoolIdQuery.class, ImageType.Floppy } });
+        { { GetImagesListByStoragePoolIdQuery.class, ImageFileType.ISO },
+                { GetImagesListByStoragePoolIdQuery.class, ImageFileType.Floppy } });
     }
 
     public GetImagesListByStoragePoolIdQueryTest(Class<? extends GetImagesListByStoragePoolIdQuery<GetImagesListByStoragePoolIdParameters>> queryClass,
-            ImageType expectedType) {
+            ImageFileType expectedType) {
         this.queryClass = queryClass;
         this.expectedType = expectedType;
     }

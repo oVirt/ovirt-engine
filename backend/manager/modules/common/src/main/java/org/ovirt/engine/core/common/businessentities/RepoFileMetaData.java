@@ -19,7 +19,7 @@ public class RepoFileMetaData extends IVdcQueryable implements Serializable {
     private long size = 0;
     private Date dateCreated = new Date();
     private long lastRefreshed;
-    private ImageType fileType;
+    private ImageFileType fileType;
 
     /**
      * Empty constructor for retrieving new clean entity
@@ -166,14 +166,14 @@ public class RepoFileMetaData extends IVdcQueryable implements Serializable {
      * @param fileType
      *            - The file type extension.
      */
-    public void setFileType(ImageType fileType) {
+    public void setFileType(ImageFileType fileType) {
         this.fileType = fileType;
     }
 
     /**
      * @return the file type.
      */
-    public ImageType getFileType() {
+    public ImageFileType getFileType() {
         return fileType;
     }
 }

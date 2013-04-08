@@ -1,17 +1,17 @@
 package org.ovirt.engine.core.common.queries;
 
-import org.ovirt.engine.core.common.businessentities.ImageType;
+import org.ovirt.engine.core.common.businessentities.ImageFileType;
 
 /** A base class for parameters of queries that retrieve images lists */
 public abstract class GetImagesListParametersBase extends VdcQueryParametersBase {
     private static final long serialVersionUID = 2562476365144558247L;
     private boolean forceRefresh;
-    private ImageType imageType = ImageType.All;
+    private ImageFileType imageType = ImageFileType.All;
 
     public GetImagesListParametersBase() {
     }
 
-    public GetImagesListParametersBase(ImageType imageType) {
+    public GetImagesListParametersBase(ImageFileType imageType) {
         setImageType(imageType);
     }
 
@@ -23,11 +23,11 @@ public abstract class GetImagesListParametersBase extends VdcQueryParametersBase
         this.forceRefresh = forceRefresh;
     }
 
-    public ImageType getImageType() {
+    public ImageFileType getImageType() {
         return imageType;
     }
 
-    public void setImageType(ImageType value) {
+    public void setImageType(ImageFileType value) {
         imageType = value;
     }
 }

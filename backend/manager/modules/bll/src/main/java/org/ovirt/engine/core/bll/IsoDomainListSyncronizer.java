@@ -13,7 +13,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.businessentities.ImageType;
+import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -147,7 +147,7 @@ public class IsoDomainListSyncronizer {
      * @return List of RepoFilesMetaData files or null (If fetch from VDSM failed).
      */
     public List<RepoFileMetaData> getUserRequestForStorageDomainRepoFileList(Guid storageDomainId,
-            ImageType imageType,
+            ImageFileType imageType,
             boolean forceRefresh) {
         // The result list we send back.
         List<RepoFileMetaData> repoList = null;
@@ -177,7 +177,7 @@ public class IsoDomainListSyncronizer {
      */
     public List<RepoFileMetaData> getUserRequestForStoragePoolAndDomainRepoFileList(Guid storagePoolId,
             Guid storageDomainId,
-            ImageType imageType,
+            ImageFileType imageType,
             boolean forceRefresh) {
         // The result list we send back.
         List<RepoFileMetaData> repoList = null;
@@ -192,7 +192,7 @@ public class IsoDomainListSyncronizer {
         return repoList;
     }
 
-    private boolean refreshRepos(Guid storageDomainId, ImageType imageType, boolean forceRefresh) {
+    private boolean refreshRepos(Guid storageDomainId, ImageFileType imageType, boolean forceRefresh) {
         boolean res = true;
         List<RepoFileMetaData> tempProblematicRepoFileList = new ArrayList<RepoFileMetaData>();
         // If user choose to force refresh.
@@ -229,15 +229,15 @@ public class IsoDomainListSyncronizer {
      */
     private boolean refreshIsoDomainFileForStoragePool(Guid storageDomainId,
             Guid storagePoolId,
-            ImageType imageType) {
+            ImageFileType imageType) {
         boolean refreshSucceeded = false;
         // Setting the indication to the indication whether the storage pool is valid.
         boolean updateFromVDSMSucceeded = true;
 
         // If the SPM and the storage pool are valid, try to refresh the Iso list by fetching it from the SPM.
-        if (imageType == ImageType.ISO) {
+        if (imageType == ImageFileType.ISO) {
             updateFromVDSMSucceeded = updateIsoListFromVDSM(storagePoolId, storageDomainId);
-        } else if (imageType == ImageType.Floppy) {
+        } else if (imageType == ImageFileType.Floppy) {
             updateFromVDSMSucceeded =
                     updateFloppyListFromVDSM(storagePoolId, storageDomainId) && updateFromVDSMSucceeded;
         }
@@ -270,7 +270,7 @@ public class IsoDomainListSyncronizer {
      */
     private boolean refreshIsoDomain(Guid storageDomainId,
             List<RepoFileMetaData> problematicRepoFileList,
-            ImageType imageType) {
+            ImageFileType imageType) {
         boolean refreshSucceeded = false;
         List<RepoFileMetaData> tempProblematicRepoFileList = new ArrayList<RepoFileMetaData>();
 
@@ -361,7 +361,7 @@ public class IsoDomainListSyncronizer {
      *            - The file type extension (ISO  or Floppy).
      * @return List of Iso file fetched from DB, if parameter is invalid returns an empty list.
      */
-    public List<RepoFileMetaData> getCachedIsoListByStoragePoolAndDomainId(Guid isoStoragePoolId, Guid isoStorageDomainId, ImageType imageType) {
+    public List<RepoFileMetaData> getCachedIsoListByStoragePoolAndDomainId(Guid isoStoragePoolId, Guid isoStorageDomainId, ImageFileType imageType) {
         List<RepoFileMetaData> fileListMD = new ArrayList<RepoFileMetaData>();
         // Check validation of parameters.
         if (isoStorageDomainId != null && isoStoragePoolId != null && VmRunHandler.getInstance().findActiveISODomain(isoStoragePoolId) != null) {
@@ -379,7 +379,7 @@ public class IsoDomainListSyncronizer {
      * @return List of Iso files fetched from DB, if parameter is invalid returns an empty list.
      */
     public List<RepoFileMetaData> getCachedIsoListByDomainId(Guid isoStorageDomainId,
-            ImageType imageType) {
+            ImageFileType imageType) {
         List<RepoFileMetaData> fileListMD = new ArrayList<RepoFileMetaData>();
         if (isoStorageDomainId != null) {
             fileListMD =
@@ -418,7 +418,7 @@ public class IsoDomainListSyncronizer {
      *            - The file type extension (ISO  or Floppy).
      * @see #handleErrorLog(List)
      */
-    private static void handleErrorLog(Guid storagePoolId, Guid storageDomainId, ImageType imageType) {
+    private static void handleErrorLog(Guid storagePoolId, Guid storageDomainId, ImageFileType imageType) {
         List<RepoFileMetaData> tempProblematicRepoFileList = new ArrayList<RepoFileMetaData>();
 
         // set mock repo file meta data with storage domain id and storage pool id.
@@ -548,7 +548,7 @@ public class IsoDomainListSyncronizer {
      */
     private static boolean refreshIsoFileListMetaData(final Guid repoStorageDomainId,
             final RepoFileMetaDataDAO repoFileMetaDataDao,
-            final List<String> isoDomainList, final ImageType imageType) {
+            final List<String> isoDomainList, final ImageFileType imageType) {
         Lock syncObject = getSyncObject(repoStorageDomainId, imageType);
         try {
             syncObject.lock();
@@ -591,11 +591,11 @@ public class IsoDomainListSyncronizer {
     private synchronized void refreshActivatedStorageDomainFromVdsm(Guid storagePoolId, Guid storageDomainId) {
         if (!updateIsoListFromVDSM(storagePoolId, storageDomainId)) {
             // Add an audit log that refresh was failed for Iso files.
-            handleErrorLog(storagePoolId, storageDomainId, ImageType.ISO);
+            handleErrorLog(storagePoolId, storageDomainId, ImageFileType.ISO);
         }
         if (!updateFloppyListFromVDSM(storagePoolId, storageDomainId)) {
             // Add an audit log that refresh was failed for Floppy files.
-            handleErrorLog(storagePoolId, storageDomainId, ImageType.Floppy);
+            handleErrorLog(storagePoolId, storageDomainId, ImageFileType.Floppy);
         }
     }
 
@@ -637,7 +637,7 @@ public class IsoDomainListSyncronizer {
                     refreshIsoSucceeded =
                             refreshIsoFileListMetaData(repoStorageDomainId,
                                     repoStorageDom,
-                                    isoDomainList, ImageType.ISO);
+                                    isoDomainList, ImageFileType.ISO);
                 }
             } catch (Exception e) {
                 refreshIsoSucceeded = false;
@@ -674,7 +674,7 @@ public class IsoDomainListSyncronizer {
                     refreshFloppySucceeded =
                             refreshIsoFileListMetaData(repoStorageDomainId,
                                     repoStorageDom,
-                                    isoDomainFloppyList, ImageType.Floppy);
+                                    isoDomainFloppyList, ImageFileType.Floppy);
                 }
                 log.debugFormat("The refresh process from VDSM, for Floppy files succeeded.");
             } catch (Exception e) {
@@ -697,8 +697,8 @@ public class IsoDomainListSyncronizer {
      *            - The file type supposed to be refreshed.
      * @return - The Lock object, which represent the domain and the file type, to lock.
      */
-    private static Lock getSyncObject(Guid domainId, ImageType imageType) {
-        Pair<Guid, ImageType> domainPerFileType = new Pair<Guid, ImageType>(domainId, imageType);
+    private static Lock getSyncObject(Guid domainId, ImageFileType imageType) {
+        Pair<Guid, ImageFileType> domainPerFileType = new Pair<Guid, ImageFileType>(domainId, imageType);
         syncDomainForFileTypeMap.putIfAbsent(domainPerFileType, new ReentrantLock());
         return syncDomainForFileTypeMap.get(domainPerFileType);
     }
@@ -728,7 +728,7 @@ public class IsoDomainListSyncronizer {
     }
 
 
-    private boolean isStorageDomainValid(Guid storageDomainId, ImageType imageType, boolean forceRefresh) {
+    private boolean isStorageDomainValid(Guid storageDomainId, ImageFileType imageType, boolean forceRefresh) {
         // Check storage domain Id validity.
         if (storageDomainId == null) {
             log.error("Storage domain ID received from command query is null.");
