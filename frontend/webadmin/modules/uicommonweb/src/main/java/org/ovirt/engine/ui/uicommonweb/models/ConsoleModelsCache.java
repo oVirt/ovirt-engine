@@ -162,7 +162,8 @@ public class ConsoleModelsCache {
     }
 
     private ConsoleModel determineConsoleModelFromVm(VM vm, ArrayList<ConsoleModel> cachedModels) {
-        return vm.getDefaultDisplayType() == DisplayType.vnc ? cachedModels.get(VNC_INDEX) : cachedModels.get(SPICE_INDEX);
+        DisplayType vmDisplayType = vm.isRunningOrPaused() ? vm.getDisplayType() : vm.getDefaultDisplayType();
+        return cachedModels.get(vmDisplayType == DisplayType.vnc ? VNC_INDEX : SPICE_INDEX);
     }
 
     public ConsoleModel determineConsoleModelForVm(VM vm) {
