@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.EntityStatusSnapshot;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.SnapshotType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
 import org.ovirt.engine.core.utils.Serializer;
 
@@ -115,6 +116,7 @@ public class DefaultCompensationContext implements CompensationContext {
      */
     private void snapshotEntityInMemory(BusinessEntity<?> entity, Serializable payload, SnapshotType snapshotType) {
         CachedEntityEntry cachedEntityEntry = new CachedEntityEntry(entity, snapshotType);
+        checkEntityForRollback(entity);
         if (!cachedEntities.contains(cachedEntityEntry)) {
             cachedEntities.add(cachedEntityEntry);
 
@@ -129,6 +131,16 @@ public class DefaultCompensationContext implements CompensationContext {
             entitySnapshot.setInsertionOrder(cachedEntities.size());
 
             entitiesToPersist.add(entitySnapshot);
+        }
+    }
+
+    private void checkEntityForRollback(BusinessEntity<?> entity) {
+        if(entity == null) {
+            throw new IllegalArgumentException("Can not create snapshot from a null entity");
+        }
+        if (DbFacade.getInstance().getDaoForEntity((Class<BusinessEntity<Serializable>>) entity.getClass()) == null) {
+            throw new IllegalArgumentException("There is no rollback DAO registered for entity type "
+                    + entity.getClass().getName());
         }
     }
 
