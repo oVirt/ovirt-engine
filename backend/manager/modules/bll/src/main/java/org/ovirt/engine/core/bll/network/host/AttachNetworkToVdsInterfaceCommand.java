@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -37,8 +38,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
         String bond = null;
         T params = getParameters();
         String address = params.getAddress();
-        String subnet = StringUtils.isEmpty(params.getSubnet()) ? params.getNetwork()
-                .getSubnet() : params.getSubnet();
+        String subnet = StringUtils.isEmpty(params.getSubnet()) ? logicalNetwork.getSubnet() : params.getSubnet();
         String gateway = StringUtils.isEmpty(params.getGateway()) ? "" : params.getGateway();
         java.util.ArrayList<String> nics = new java.util.ArrayList<String>();
         nics.add(params.getInterface().getName());
@@ -80,12 +80,28 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
 
             if (retVal.getSucceeded()) {
                 Guid groupId = getVdsDAO().get(params.getVdsId()).getVdsGroupId();
-                NetworkClusterHelper.setStatus(groupId, params.getNetwork());
+                NetworkClusterHelper.setStatus(groupId, logicalNetwork);
                 setSucceeded(true);
             }
         }
     }
 
+    /**
+     * The supported network topologies over a nic are:
+     * <ul>
+     * <li>Attach a VM network (with/without vlan)</li>
+     * <li>Attach a non-VM network (with/without vlan)</li>
+     * <li>Attach a non-VM network to a nic which a vlan is already attached to.</li>
+     * <li>Attach a vlan to a nic which a non-VM network is already attached to.</li>
+     * </ul>
+     * </p> The unsupported network topologies are:
+     * <ul>
+     * <li>Attaching any network to a nic which a non-vlan VM network is already attached to.</li>
+     * <li>Attach a non-vlan VM network to a nic which any network is already attached to.</li>
+     * <li>Attach a non-VM network to a nic which a non-VM network is already attached to.</li>
+     * <li>Attach any network to a nic if unmanaged network is already attached to.</li>
+     * </ul>
+     */
     @Override
     protected boolean canDoAction() {
         T params = getParameters();
@@ -98,34 +114,17 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
             addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_NOT_EXISTS);
             return false;
         }
+
         // check if the parameters interface is part of a bond
         if (!StringUtils.isEmpty(params.getInterface().getBondName())) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_ALREADY_IN_BOND);
             return false;
         }
-        // Check that the specify interface has no network
-        if (!StringUtils.isEmpty(iface.getNetworkName())) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_ALREADY_HAVE_NETWORK);
-            return false;
-        }
-        if (!NetworkUtils.getEngineNetwork().equals(params.getNetwork().getName())
-                && !StringUtils.isEmpty(params.getGateway())) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_ATTACH_ILLEGAL_GATEWAY);
-            return false;
-        }
-
-        // check that the required not attached to other interface
-        iface = Entities.interfacesByNetworkName(interfaces).get(params.getNetwork().getName());
-        if (iface != null) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_ALREADY_ATTACHED_TO_INTERFACE);
-            return false;
-        }
-
-        // check that the network exists in current cluster
 
         Map<String, Network> networksByName =
                 Entities.entitiesByName(getNetworkDAO().getAllForCluster(getVds().getVdsGroupId()));
 
+        // check that the network exists in current cluster
         if (!networksByName.containsKey(params.getNetwork().getName())) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CLUSTER);
             return false;
@@ -133,6 +132,23 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
             logicalNetwork = networksByName.get(params.getNetwork().getName());
         }
 
+        if (!networkConfigurationSupported(iface, networksByName)) {
+            addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_ALREADY_HAVE_NETWORK);
+            return false;
+        }
+
+        if (!NetworkUtils.getEngineNetwork().equals(logicalNetwork.getName())
+                && !StringUtils.isEmpty(params.getGateway())) {
+            addCanDoActionMessage(VdcBllMessages.NETWORK_ATTACH_ILLEGAL_GATEWAY);
+            return false;
+        }
+
+        // check that the required not attached to other interface
+        iface = Entities.interfacesByNetworkName(interfaces).get(logicalNetwork.getName());
+        if (iface != null) {
+            addCanDoActionMessage(VdcBllMessages.NETWORK_ALREADY_ATTACHED_TO_INTERFACE);
+            return false;
+        }
 
         // check address exists in static ip
         if (params.getBootProtocol() == NetworkBootProtocol.STATIC_IP) {
@@ -143,7 +159,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
         }
 
         // check that nic have no vlans
-        if (params.getNetwork().getVlanId() == null) {
+        if (vmNetworkNonVlan(logicalNetwork)) {
             VdcQueryReturnValue ret = Backend.getInstance().runInternalQuery(
                     VdcQueryType.GetAllChildVlanInterfaces,
                     new InterfaceAndIdQueryParameters(params.getVdsId(), params
@@ -163,5 +179,48 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.NETWORK_ATTACH_NETWORK_TO_VDS
                 : AuditLogType.NETWORK_ATTACH_NETWORK_TO_VDS_FAILED;
+    }
+
+    /**
+     * Validates whether the network configuration is supported.
+     *
+     * @param iface
+     *            The target network interface
+     * @param networksByName
+     *            A map contains all cluster's networks
+     * @return <code>true</code> if the configuration is supported, else <code>false</code>
+     */
+    private boolean networkConfigurationSupported(VdsNetworkInterface iface, Map<String, Network> networksByName) {
+        if (StringUtils.isEmpty(iface.getNetworkName())) {
+            return true;
+        }
+
+        Network attachedNetwork = networksByName.get(iface.getNetworkName());
+
+        // Prevent attaching a network if unmanaged network is already attached to the nic
+        if (attachedNetwork == null) {
+            return false;
+        }
+
+        // Prevent attaching a VM network when a VM network is already attached
+        if (vmNetworkNonVlan(attachedNetwork) || vmNetworkNonVlan(logicalNetwork)) {
+            return false;
+        }
+
+        // Verify that only VM networks exists on the nic if the non-Vm network feature isn't supported by the cluster
+        if (!FeatureSupported.nonVmNetwork(getVds().getVdsGroupCompatibilityVersion()) && (!iface.isBridged())) {
+            return false;
+        }
+
+        // Prevent attaching non-VM network to a nic which already has an attached non-VM network
+        if (NetworkUtils.isNonVmNonVlanNetwork(attachedNetwork) && NetworkUtils.isNonVmNonVlanNetwork(logicalNetwork)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean vmNetworkNonVlan(Network network) {
+        return network.isVmNetwork() && network.getVlanId() == null;
     }
 }
