@@ -121,9 +121,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     // Table container's horizontal scroll position, used to align table header with main table
     private int tableContainerHorizontalScrollPosition = 0;
 
-    // Table container's vertical scroll position, used to retain table scroll position after data refresh
-    private int tableContainerVerticalScrollPosition = 0;
-
     public AbstractActionTable(final SearchableTableModelProvider<T, ?> dataProvider,
             Resources resources, Resources headerResources, EventBus eventBus) {
         super(dataProvider, eventBus);
@@ -140,6 +137,10 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
                     selectionModel.setMultiSelectEnabled(event.getCtrlKey());
                     selectionModel.setMultiRangeSelectEnabled(event.getShiftKey());
                 }
+                // Remove focus from the table so refreshes won't try to focus on the
+                // selected row. This important when the user has scrolled the selected
+                // row off the screen, we don't want the browser to scroll back.
+                table.setFocus(false);
                 super.onBrowserEvent2(event);
             }
 
@@ -172,13 +173,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
                 super.setRowData(start, values);
                 selectionModel.resolveChanges();
                 updateTableControls();
-
-                Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-                     @Override
-                     public void execute() {
-                         tableContainer.getElement().setScrollTop(tableContainerVerticalScrollPosition);
-                     }
-                });
             }
 
             @Override
@@ -196,7 +190,8 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             }
 
         };
-        //Can't do this in the onBrowserEvent, as the GWT Cell table doesn't support double click.
+
+        // Can't do this in the onBrowserEvent, as the GWT Cell table doesn't support double click.
         this.table.addDomHandler(new DoubleClickHandler() {
             @Override
             public void onDoubleClick(DoubleClickEvent event) {
@@ -217,7 +212,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         // Apply selection model to the table widget
         this.selectionModel.setDataDisplay(table);
 
-        //Default to 'no items to display'
+        // Default to 'no items to display'
         this.table.setEmptyTableWidget(new NoItemsLabel());
     }
 
@@ -355,7 +350,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             @Override
             public void onScroll(ScrollEvent event) {
                 tableContainerHorizontalScrollPosition = tableContainer.getElement().getScrollLeft();
-                tableContainerVerticalScrollPosition = tableContainer.getElement().getScrollTop();
                 updateTableHeaderPosition();
             }
         }, ScrollEvent.getType());
@@ -648,4 +642,5 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     public String getContentTableElementId() {
         return table.getElementId();
     }
+
 }
