@@ -10,6 +10,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.File;
+import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
@@ -55,11 +56,10 @@ public class BackendFilesResourceTest
     @Test
     public void testList() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
-
-        setupGetStorageDomainExpectations(StorageDomainType.ISO);
-        setUpQueryExpectations("");
-
         collection.setUriInfo(uriInfo);
+        setupGetStorageDomainExpectations(StorageDomainType.ISO);
+        setUpQueryExpectations("", null);
+
         verifyCollection(getCollection());
     }
 
@@ -89,8 +89,8 @@ public class BackendFilesResourceTest
         Throwable t = new RuntimeException(FAILURE);
         setUpEntityQueryExpectations(VdcQueryType.GetImagesList,
                 GetImagesListParameters.class,
-                new String[] { "StorageDomainId" },
-                new Object[] { GUIDS[0] },
+                new String[] { "StorageDomainId", "ImageType" },
+                new Object[] { GUIDS[0], ImageFileType.All },
                 setUpFiles(),
                 AbstractBackendCollectionResourceTest.FAILURE);
         collection.setUriInfo(uriInfo);
@@ -114,8 +114,8 @@ public class BackendFilesResourceTest
         Throwable t = new RuntimeException(FAILURE);
         setUpEntityQueryExpectations(VdcQueryType.GetImagesList,
                 GetImagesListParameters.class,
-                new String[] { "StorageDomainId" },
-                new Object[] { GUIDS[0] },
+                new String[] { "StorageDomainId", "ImageType" },
+                new Object[] { GUIDS[0], ImageFileType.All },
                 setUpFiles(),
                 AbstractBackendCollectionResourceTest.FAILURE);
         setupGetStorageDomainExpectations(StorageDomainType.ISO);
@@ -146,8 +146,8 @@ public class BackendFilesResourceTest
         UriInfo uriInfo = setUpUriExpectations(null);
         setUpEntityQueryExpectations(VdcQueryType.GetImagesList,
                 GetImagesListParameters.class,
-                new String[] { "StorageDomainId" },
-                new Object[] { GUIDS[0] },
+                new String[] { "StorageDomainId", "ImageType" },
+                new Object[] { GUIDS[0], ImageFileType.All },
                 setUpFiles(),
                 AbstractBackendCollectionResourceTest.FAILURE);
         setupGetStorageDomainExpectations(StorageDomainType.ISO);
@@ -183,8 +183,8 @@ public class BackendFilesResourceTest
 
         setUpEntityQueryExpectations(VdcQueryType.GetImagesList,
                                      GetImagesListParameters.class,
-                                     new String[] { "StorageDomainId" },
-                                     new Object[] { GUIDS[0] },
+                                     new String[] { "StorageDomainId", "ImageType" },
+                                     new Object[] { GUIDS[0], ImageFileType.All },
                                      setUpFiles(),
                                      failure);
         control.replay();

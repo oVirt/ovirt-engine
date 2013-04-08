@@ -71,7 +71,7 @@ public class BackendFilesResource
     }
 
     protected List<String> listFiles() {
-        GetImagesListParameters queryParams = new GetImagesListParameters(asGuid(storageDomainId), ImageFileType.ISO);
+        GetImagesListParameters queryParams = new GetImagesListParameters(asGuid(storageDomainId), ImageFileType.All);
         queryParams.setForceRefresh(true);
 
         List<RepoFileMetaData> files = getBackendCollection(RepoFileMetaData.class, VdcQueryType.GetImagesList,
