@@ -902,7 +902,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
-        optionalArguments: {action.storage_domain.id|name: 'xs:string', action.vm.snapshots.collapse_snapshots: 'xs:boolean', action.clone: 'xs:boolen', action.exclusive: 'xs:boolen', action.vm.name: 'xs:string', action.vm.disks.disk--COLLECTION: {disk.id: 'xs:string'}}
+        optionalArguments: {action.async: 'xs:boolean',action.storage_domain.id|name: 'xs:string', action.vm.snapshots.collapse_snapshots: 'xs:boolean', action.clone: 'xs:boolen', action.exclusive: 'xs:boolen', action.vm.name: 'xs:string', action.vm.disks.disk--COLLECTION: {disk.id: 'xs:string'}}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
