@@ -84,6 +84,12 @@ if [ -z "$MAIL_SERVER" ]; then
     die "Error: \$MAIL_SERVER is not defined, please check for this in configuration file $CONF_FILE\n" 6
 fi
 
+nslookup $MAIL_SERVER &>/dev/null
+if [ $? -ne 0 ] ; then
+  die "Error: \$MAIL_SERVER ($MAIL_SERVER) must contain resolvable address"
+fi
+
+
 # Now check for properties that if defined, can not be empty
 # INTERVAL_IN_SECONDS if defined can not be empty
 if [ "${INTERVAL_IN_SECONDS+x}" ]; then
