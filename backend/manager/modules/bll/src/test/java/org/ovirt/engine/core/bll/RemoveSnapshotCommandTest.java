@@ -15,7 +15,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
@@ -31,7 +30,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
@@ -66,6 +64,7 @@ public class RemoveSnapshotCommandTest {
 
     private static final Guid STORAGE_DOMAIN_ID = Guid.NewGuid();
     private static final Guid STORAGE_DOMAIN_ID2 = Guid.NewGuid();
+    private static final Guid STORAGE_POOLD_ID = Guid.NewGuid();
 
     private static final int USED_SPACE_GB = 4;
     private static final int IMAGE_ACTUAL_SIZE_GB = 4;
@@ -80,8 +79,9 @@ public class RemoveSnapshotCommandTest {
         doReturn(spDao).when(cmd).getStoragePoolDAO();
         doReturn(vmTemplateDAO).when(cmd).getVmTemplateDAO();
         doReturn(diskImageDAO).when(cmd).getDiskImageDao();
+        doReturn(sdDAO).when(cmd).getStorageDomainDAO();
         doReturn(snapshotValidator).when(cmd).createSnapshotValidator();
-        mockDAOs(cmd);
+        doReturn(STORAGE_POOLD_ID).when(cmd).getStoragePoolId();
         mockConfigSizeDefaults();
     }
 
@@ -94,12 +94,8 @@ public class RemoveSnapshotCommandTest {
         mockConfigSizeRequirements(requiredSpaceBufferInGB);
     }
 
-    private void mockDAOs(RemoveSnapshotCommand<?> cmd) {
-        doReturn(sdDAO).when(cmd).getStorageDomainDAO();
-    }
-
     private void mockStorageDomainDAOGetForStoragePool(int domainSpaceGB, Guid storageDomainId) {
-        when(sdDAO.getForStoragePool(Matchers.<Guid> eq(storageDomainId), Matchers.<NGuid> any(NGuid.class))).thenReturn(createStorageDomain(domainSpaceGB,
+        when(sdDAO.getForStoragePool(storageDomainId, STORAGE_POOLD_ID)).thenReturn(createStorageDomain(domainSpaceGB,
                 storageDomainId));
     }
 
@@ -207,14 +203,13 @@ public class RemoveSnapshotCommandTest {
 
     @Test
     public void testCanDoActionVmUp() {
-        Guid spId = Guid.NewGuid();
         VM vm = new VM();
         vm.setId(Guid.NewGuid());
         vm.setStatus(VMStatus.Up);
-        vm.setStoragePoolId(spId);
+        vm.setStoragePoolId(STORAGE_POOLD_ID);
 
         storage_pool sp = new storage_pool();
-        sp.setId(spId);
+        sp.setId(STORAGE_POOLD_ID);
         sp.setstatus(StoragePoolStatus.Up);
 
         cmd.setSnapshotName("someSnapshot");
@@ -223,7 +218,7 @@ public class RemoveSnapshotCommandTest {
         doReturn(ValidationResult.VALID).when(snapshotValidator).snapshotExists(any(Guid.class), any(Guid.class));
         doReturn(true).when(cmd).validateImages();
         doReturn(vm).when(cmd).getVm();
-        doReturn(sp).when(spDao).get(spId);
+        doReturn(sp).when(spDao).get(STORAGE_POOLD_ID);
         doReturn(Collections.emptyList()).when(cmd).getSourceImages();
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
     }
@@ -264,6 +259,7 @@ public class RemoveSnapshotCommandTest {
         sd.setStatus(StorageDomainStatus.Active);
         sd.setAvailableDiskSize(availableSpace);
         sd.setUsedDiskSize(USED_SPACE_GB);
+        sd.setStoragePoolId(STORAGE_POOLD_ID);
         sd.setId(storageDomainId);
         return sd;
     }
