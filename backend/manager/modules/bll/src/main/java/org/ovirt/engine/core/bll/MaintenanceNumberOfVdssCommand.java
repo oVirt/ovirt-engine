@@ -144,41 +144,51 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                 VDS vds = vdssToMaintenance.get(vdsId);
                 if (vds != null) {
                     List<VM> vms = getVmDAO().getAllRunningForVds(vdsId);
-                    if (vms.size() > 0) {
-                        vdsWithRunningVMs.add(vdsId);
+                    if ((vds.getStatus() != VDSStatus.Maintenance) && (vds.getStatus() != VDSStatus.NonResponsive)
+                            && (vds.getStatus() != VDSStatus.Up) && (vds.getStatus() != VDSStatus.Error)
+                            && (vds.getStatus() != VDSStatus.PreparingForMaintenance)
+                            && (vds.getStatus() != VDSStatus.Down)) {
+                        result = false;
+                        addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_OPERATIONAL.toString());
                     }
-                    _vdsGroupIds.add(vds.getVdsGroupId());
-                    List<String> nonMigratableVmDescriptionsToFrontEnd = new ArrayList<String>();
-                    for (VM vm : vms) {
-                        if (vm.getMigrationSupport() != MigrationSupport.MIGRATABLE) {
-                            nonMigratableVmDescriptionsToFrontEnd.add(vm.getName());
+                    else {
+                        if (vms.size() > 0) {
+                            vdsWithRunningVMs.add(vdsId);
                         }
-                    }
+                        _vdsGroupIds.add(vds.getVdsGroupId());
+                        List<String> nonMigratableVmDescriptionsToFrontEnd = new ArrayList<String>();
+                        for (VM vm : vms) {
+                            if (vm.getMigrationSupport() != MigrationSupport.MIGRATABLE) {
+                                nonMigratableVmDescriptionsToFrontEnd.add(vm.getName());
+                            }
+                        }
 
-                    if (nonMigratableVmDescriptionsToFrontEnd.size() > 0) {
-                        hostsWithNonMigratableVms.add(vds.getName());
-                        nonMigratableVms.addAll(nonMigratableVmDescriptionsToFrontEnd);
+                        if (nonMigratableVmDescriptionsToFrontEnd.size() > 0) {
+                            hostsWithNonMigratableVms.add(vds.getName());
+                            nonMigratableVms.addAll(nonMigratableVmDescriptionsToFrontEnd);
 
-                        // The non migratable VM names will be comma separated
-                        log.error(String.format("VDS %1$s contains non migratable VMs", vdsId));
-                        result = false;
+                            // The non migratable VM names will be comma separated
+                            log.error(String.format("VDS %1$s contains non migratable VMs", vdsId));
+                            result = false;
 
-                    } else if (vds.getStatus() == VDSStatus.Maintenance) {
-                        addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_VDS_IS_IN_MAINTENANCE);
-                        result = false;
-                    } else if (vds.getSpmStatus() == VdsSpmStatus.Contending) {
-                        addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_SPM_CONTENDING);
-                        result = false;
-                    } else if (vds.getStatus() == VDSStatus.NonResponsive && vds.getVmCount() > 0) {
-                        result = false;
-                        hostNotRespondingList.add(vds.getName());
-                    } else if (vds.getStatus() == VDSStatus.NonResponsive && vds.getSpmStatus() != VdsSpmStatus.None) {
-                        result = false;
-                        addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_RESPONDING_AND_IS_SPM);
-                    } else if (vds.getSpmStatus() == VdsSpmStatus.SPM && vds.getStatus() == VDSStatus.Up &&
-                            getAsyncTaskDao().getAsyncTaskIdsByStoragePoolId(vds.getStoragePoolId()).size() > 0) {
-                        addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_SPM_WITH_RUNNING_TASKS);
-                        result = false;
+                        } else if (vds.getStatus() == VDSStatus.Maintenance) {
+                            addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_VDS_IS_IN_MAINTENANCE);
+                            result = false;
+                        } else if (vds.getSpmStatus() == VdsSpmStatus.Contending) {
+                            addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_SPM_CONTENDING);
+                            result = false;
+                        } else if (vds.getStatus() == VDSStatus.NonResponsive && vds.getVmCount() > 0) {
+                            result = false;
+                            hostNotRespondingList.add(vds.getName());
+                        } else if (vds.getStatus() == VDSStatus.NonResponsive
+                                && vds.getSpmStatus() != VdsSpmStatus.None) {
+                            result = false;
+                            addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_RESPONDING_AND_IS_SPM);
+                        } else if (vds.getSpmStatus() == VdsSpmStatus.SPM && vds.getStatus() == VDSStatus.Up &&
+                                getAsyncTaskDao().getAsyncTaskIdsByStoragePoolId(vds.getStoragePoolId()).size() > 0) {
+                            addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_SPM_WITH_RUNNING_TASKS);
+                            result = false;
+                        }
                     }
                 }
             }
