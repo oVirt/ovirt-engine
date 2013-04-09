@@ -1,5 +1,8 @@
 #
-# ovirt-engine proxy
+# The name of this file name is very important, the "z-" prefix is used
+# to force the web server to load this file after all the other
+# configurations, in particular after the configuration of the required
+# proxy modules, otherwise the "IfModule" directives fail.
 #
 <IfModule proxy_ajp_module>
 
