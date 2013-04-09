@@ -1063,6 +1063,33 @@ def setupVarPrivileges():
     )
 
 
+def updateHttpdConf():
+    """
+    Update httpd configuration if it's used by the existing setup.
+    Update root redirection if it's used by existing setup else
+    ask if root redirection should be enabled.
+    """
+    if os.path.exists(basedefs.FILE_OVIRT_HTTPD_CONF_LEGACY):
+        os.rename(
+            basedefs.FILE_OVIRT_HTTPD_CONF_LEGACY,
+            "%s.%s" %(
+                basedefs.FILE_OVIRT_HTTPD_CONF_LEGACY,
+                utils.getCurrentDateTime(),
+            ),
+        )
+        utils.processTemplate(
+            basedefs.FILE_OVIRT_HTTPD_CONF_TEMPLATE,
+            basedefs.FILE_OVIRT_HTTPD_CONF,
+            {
+                '@JBOSS_AJP_PORT@': basedefs.JBOSS_AJP_PORT,
+            }
+        )
+        utils.copyFile(
+            basedefs.FILE_OVIRT_HTTPD_CONF_ROOT_TEMPLATE,
+            basedefs.FILE_OVIRT_HTTPD_CONF_ROOT,
+        )
+
+
 def main(options):
     # BEGIN: PROCESS-INITIALIZATION
     miniyumsink = utils.MiniYumSink()
@@ -1105,7 +1132,9 @@ def main(options):
     stopEngineService = [stopEngine]
     startEngineService = [startEngine]
     preupgradeFunc = [preupgradeUUIDCheck]
-    upgradeFunc = [rhyum.update, generateEngineConf, setupVarPrivileges]
+    upgradeFunc = [rhyum.update, generateEngineConf, setupVarPrivileges,
+        updateHttpdConf,
+    ]
     postFunc = [modifyUUIDs, ca.commit, runPost, deleteEngineSysconfig]
     engineService = basedefs.ENGINE_SERVICE_NAME
     # define db connections services
