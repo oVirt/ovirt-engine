@@ -45,7 +45,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -2475,53 +2474,12 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                         public void OnSuccess(Object model1, Object result1)
                         {
                             VmListModel vmListModel = (VmListModel) model1;
-                            ArrayList<DiskImage> templateDisks = (ArrayList<DiskImage>) result1;
-
                             UnitVmModel unitVmModel = (UnitVmModel) vmListModel.getWindow();
 
-                            HashMap<Guid, DiskImage> imageToDestinationDomainMap =
-                                    unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap();
-
-                            ArrayList<StorageDomain> activeStorageDomains =
-                                    unitVmModel.getDisksAllocationModel().getActiveStorageDomains();
-
-                            HashMap<Guid, DiskImage> dict =
-                                    unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap();
-                            for (DiskImage templateDisk : templateDisks)
-                            {
-                                DiskModel disk = null;
-                                for (DiskModel a : unitVmModel.getDisksAllocationModel().getDisks())
-                                {
-                                    if (templateDisk.getId().equals(a.getDisk().getId()))
-                                    {
-                                        disk = a;
-                                        break;
-                                    }
-                                }
-
-                                StorageDomain storageDomain =
-                                        Linq.getStorageById(
-                                                imageToDestinationDomainMap.get(templateDisk.getId())
-                                                        .getStorageIds()
-                                                        .get(0), activeStorageDomains);
-
-                                if (disk != null) {
-                                    dict.get(templateDisk.getId())
-                                            .setVolumeType((VolumeType) disk.getVolumeType()
-                                                    .getSelectedItem());
-                                    dict.get(templateDisk.getId())
-                                            .setvolumeFormat(AsyncDataProvider.GetDiskVolumeFormat(
-                                                    (VolumeType) disk.getVolumeType().getSelectedItem(),
-                                                    storageDomain.getStorageType()));
-                                    if (disk.getQuota().getSelectedItem() != null) {
-                                        dict.get(templateDisk.getId()).setQuotaId(((Quota) disk.getQuota()
-                                                .getSelectedItem()).getId());
-                                    }
-                                }
-                            }
-
-                            AddVmFromTemplateParameters param =
-                                    new AddVmFromTemplateParameters(vmListModel.getcurrentVm(), dict, Guid.Empty);
+                            AddVmFromTemplateParameters param = new AddVmFromTemplateParameters(
+                                    vmListModel.getcurrentVm(),
+                                    unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap(),
+                                    Guid.Empty);
 
                             ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
                             parameters.add(param);
