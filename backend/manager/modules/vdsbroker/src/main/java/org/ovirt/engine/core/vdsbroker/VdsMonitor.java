@@ -1,35 +1,22 @@
 package org.ovirt.engine.core.vdsbroker;
 
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.SynchronousQueue;
 
 public class VdsMonitor {
 
-    private final Lock lock;
-    private final Condition decreasedMemoryCondition;
+    private final BlockingQueue<Boolean> queue;
 
     public VdsMonitor() {
-        lock = new ReentrantLock();
-        decreasedMemoryCondition = getLock().newCondition();
+        queue = new SynchronousQueue<Boolean>();
     }
 
     /**
-     * A lock for the enclosing VDS
+     * A synchronous queue for the enclosing VDS
      *
      * @return
      */
-    public Lock getLock() {
-        return lock;
+    public BlockingQueue<Boolean> getQueue() {
+        return queue;
     }
-
-    /**
-     * a signal condition to communicate updates the decreased amount of memory this vds reserevs for scheduling a VM
-     *
-     * @return
-     */
-    public Condition getDecreasedMemoryCondition() {
-        return decreasedMemoryCondition;
-    }
-
 }

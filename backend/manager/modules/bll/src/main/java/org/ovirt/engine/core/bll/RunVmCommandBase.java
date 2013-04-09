@@ -7,10 +7,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext.ExecutionMethod;
@@ -323,21 +321,16 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     }
 
     protected void decreasePendingVms(Guid vdsId) {
-        getDecreaseLock(vdsId).lock();
-        try {
-            DbFacade.getInstance()
-                    .getVdsDynamicDao()
-                    .updatePartialVdsDynamicCalc(vdsId, 0, -getVm().getNumOfCpus(), -getVm().getMinAllocatedMem(), 0, 0);
+        DbFacade.getInstance()
+                .getVdsDynamicDao()
+                .updatePartialVdsDynamicCalc(vdsId, 0, -getVm().getNumOfCpus(), -getVm().getMinAllocatedMem(), 0, 0);
+        getBlockingQueue(vdsId).offer(Boolean.TRUE);
 
-            if (log.isDebugEnabled()) {
-                log.debugFormat("DecreasePendingVms::Decreasing vds {0} pending vcpu count, in {1}. Vm: {2}",
-                        vdsId, getVm().getNumOfCpus(), getVm().getName());
-                log.debugFormat("DecreasePendingVms::Decreasing vds {0} pending vmem size, in {1}. Vm: {2}",
-                        vdsId, getVm().getMinAllocatedMem(), getVm().getName());
-            }
-            getDecreseCondition(vdsId).signal();
-        } finally {
-            getDecreaseLock(vdsId).unlock();
+        if (log.isDebugEnabled()) {
+            log.debugFormat("DecreasePendingVms::Decreasing vds {0} pending vcpu count, in {1}. Vm: {2}",
+                    vdsId, getVm().getNumOfCpus(), getVm().getName());
+            log.debugFormat("DecreasePendingVms::Decreasing vds {0} pending vmem size, in {1}. Vm: {2}",
+                    vdsId, getVm().getMinAllocatedMem(), getVm().getName());
         }
     }
 
@@ -351,30 +344,23 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     public void delay(Guid vdsId) {
         log.debug("try to wait for te engine update the host memory and cpu stats");
 
-        getDecreaseLock(vdsId).lock();
         try {
             // time out waiting for an update is the highest between the refresh rate and the last update elapsed time
             // but still no higher than a configurable max to prevent very long updates to stall command.
-            long t =   Math.max(
+            long t = Math.max(
                     ResourceManager.getInstance().GetVdsManager(vdsId).getLastUpdateElapsed(),
                     TimeUnit.SECONDS.toMillis(Config.<Integer> GetValue(VdsRefreshRate)));
             t = Math.max(Config.<Integer> GetValue(ConfigValues.ThrottlerMaxWaitForVdsUpdateInMillis), t);
 
             // wait for the run-time refresh to decrease any current powering-up VMs
-            getDecreseCondition(vdsId).await(t, TimeUnit.MILLISECONDS);
+            getBlockingQueue(vdsId).poll(t, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             // ignore
-        } finally {
-            getDecreaseLock(vdsId).unlock();
         }
     }
 
-    private Condition getDecreseCondition(Guid vdsId) {
-        return getMonitor(vdsId).getDecreasedMemoryCondition();
-    }
-
-    private Lock getDecreaseLock(Guid vdsId) {
-        return getMonitor(vdsId).getLock();
+    private BlockingQueue<Boolean> getBlockingQueue(Guid vdsId) {
+        return getMonitor(vdsId).getQueue();
     }
 
     /**
