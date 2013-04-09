@@ -4,14 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.ui.uicommonweb.ConsoleManager;
-import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
+import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.IUserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.userportal.section.login.presenter.ConnectAutomaticallyProvider;
-import org.ovirt.engine.ui.userportal.widget.basic.ConsoleUtils;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -34,8 +33,6 @@ public class ConnectAutomaticallyManager {
 
     private final ConsoleManager consoleManager;
 
-    private final ConsoleUtils consoleUtils;
-
     @Inject
     public ConnectAutomaticallyManager(ConnectAutomaticallyProvider connectAutomatically,
             ConsoleUtils consoleUtils,
@@ -43,7 +40,6 @@ public class ConnectAutomaticallyManager {
             EventBus eventBus) {
         this.connectAutomatically = connectAutomatically;
         this.consoleManager = consoleManager;
-        this.consoleUtils = consoleUtils;
     }
 
     public void resetAlreadyOpened() {
@@ -98,8 +94,7 @@ public class ConnectAutomaticallyManager {
             if (connectAutomatically.readConnectAutomatically() && model.getCanConnectAutomatically() && !alreadyOpened) {
                 UserPortalItemModel userPortalItemModel = model.GetUpVms(model.getItems()).get(0);
                 if (userPortalItemModel != null) {
-                    ConsoleProtocol selectedProtocol = consoleUtils.determineConnectionProtocol(userPortalItemModel);
-                    consoleManager.connectToConsole(selectedProtocol, userPortalItemModel);
+                    consoleManager.connectToConsole(userPortalItemModel);
 
                     alreadyOpened = true;
                 }
