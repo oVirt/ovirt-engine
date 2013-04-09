@@ -48,6 +48,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Create New Bond")
     String createNewBondTitle();
 
+    @DefaultStringValue("Join Bonds")
+    String joinBondsTitle();
+
     @DefaultStringValue("Setup Host Networks")
     String setupHostNetworksTitle();
 
@@ -1654,26 +1657,23 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("The following LUNs are already part of Storage Domains:")
     String lunsAlreadyPartOfSD();
 
-    @DefaultStringValue("Networks on both interfaces : Detach all the networks from one of the interfaces/bond, if required re-attach to the bond")
-    String networksOnBothInterfaces();
-
     @DefaultStringValue("Invalid operation with unmanaged network: unmanaged network can only be removed")
-    String invalidOperationWithUnmanagedNetwork();
+    String nullOperationUnmanagedNetwork();
 
-    @DefaultStringValue("Cannot add nic with unmanaged network/s to a bond")
-    String cannotAddNicWithUnmanagedNetworkToBond();
-
-    @DefaultStringValue("Cannot create a bond if one of the nics contains unmanaged network/s")
-    String cannotCreateBondIfNicsContainsUnmanagedNetwork();
-
-    @DefaultStringValue("Cannot add nic with unsync network/s to a bond")
-    String cannotAddNicWithUnsyncNetworkToBond();
+    @DefaultStringValue("Cannot perform bond operation with an unmanaged network.")
+    String nullOperationBondUnmanaged();
 
     @DefaultStringValue("Invalid operation with unsync network: unsync network can only be detached")
-    String invalidOperationWithUnsyncNetwork();
+    String nullOperationOutOfSyncNetwork();    
 
-    @DefaultStringValue("Cannot create a bond if one of the nics contains unsync network/s")
-    String cannotCreateBondIfNicsContainsUnsyncNetwork();
+    @DefaultStringValue("Cannot perform bond operation with an out-of-sync network.")
+    String nullOperationBondOutOfSync();
+
+    @DefaultStringValue("Cannot have more than one non-VLAN network on one interface.")
+    String nullOperationTooManyNonVlans();
+
+    @DefaultStringValue("Cannot have a non-VLAN VM network and VLAN-tagged networks on one interface.")
+    String nullOperationVmWithVlans();
 
     @DefaultStringValue("Unassigned Logical Networks panel")
     String unassignedLogicalNetworksPanel();

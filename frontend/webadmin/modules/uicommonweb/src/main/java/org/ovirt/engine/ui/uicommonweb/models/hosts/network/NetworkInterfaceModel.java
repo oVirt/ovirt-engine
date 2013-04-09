@@ -77,4 +77,21 @@ public class NetworkInterfaceModel extends NetworkItemModel<InterfaceStatus> {
     public String getType() {
         return HostSetupNetworksModel.NIC;
     }
+
+    private String culpritNetwork;
+
+    /**
+     * If this NIC was the destination of a null bond operation, the culprit network is one of those that caused the
+     * operation to fail, the first encountered of the following: unmanaged, out of sync, one of several non-VLAN
+     * networks, VM network when VLAN networks exist.
+     *
+     * @return the name of the network at fault, or null if there isn't one.
+     */
+    public String getCulpritNetwork() {
+        return culpritNetwork;
+    }
+
+    public void setCulpritNetwork(String culpritNetwork) {
+        this.culpritNetwork = culpritNetwork;
+    }
 }

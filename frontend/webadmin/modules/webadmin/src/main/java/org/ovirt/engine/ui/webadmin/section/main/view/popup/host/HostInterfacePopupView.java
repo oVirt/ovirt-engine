@@ -136,11 +136,11 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
             protected String renderNullSafe(Object object) {
                 KeyValuePairCompat<String, EntityModel> pair = (KeyValuePairCompat<String, EntityModel>) object;
                 String key = pair.getKey();
+                String value = (String) pair.getValue().getEntity();
                 if ("custom".equals(key)) { //$NON-NLS-1$
-                    return constants.customHostPopup() + ":"; //$NON-NLS-1$
+                    return constants.customHostPopup() + ": " + value; //$NON-NLS-1$
                 }
-                EntityModel value = pair.getValue();
-                return (String) value.getEntity();
+                return value;
             }
         });
         bootProtocol = new EnumRadioEditor<NetworkBootProtocol>(NetworkBootProtocol.class, eventBus);

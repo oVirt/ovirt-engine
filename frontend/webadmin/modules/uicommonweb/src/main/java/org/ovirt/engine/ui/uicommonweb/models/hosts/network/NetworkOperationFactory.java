@@ -2,7 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 
@@ -41,156 +43,126 @@ public class NetworkOperationFactory {
     public static NetworkOperation operationFor(NetworkItemModel<?> op1, NetworkItemModel<?> op2, boolean isDrag) {
         // !! always check bond before nic because of inheritance !!
 
-        // op1: bond
-        if (op1 instanceof BondNetworkInterfaceModel) {
-            BondNetworkInterfaceModel bond = (BondNetworkInterfaceModel) op1;
-            // op2: null
-            if (op2 == null) {
+        // unary operation dragging op1 to nowhere
+        if (op2 == null) {
+
+            // op1 is a bond, break it
+            if (op1 instanceof BondNetworkInterfaceModel) {
                 return NetworkOperation.BREAK_BOND;
             }
-            return NetworkOperation.NULL_OPERATION;
-        }
-        // op1: nic
-        else if (op1 instanceof NetworkInterfaceModel) {
-            NetworkInterfaceModel nic1 = (NetworkInterfaceModel) op1;
-            // op2: null
-            if (nic1.isBonded() && op2 == null) {
-                return NetworkOperation.REMOVE_FROM_BOND;
-            }
-            // op2: bond
-            else if (op2 instanceof BondNetworkInterfaceModel) {
-                BondNetworkInterfaceModel bond = (BondNetworkInterfaceModel) op2;
-                if (!nic1.isBonded()) {
-
-                    boolean containsUnmanaged = containsUnmanaged(nic1);
-                    if (containsUnmanaged){
-                        return NetworkOperation.NULL_OPERATION_ADD_TO_BOND_UNMANAGED;
-                    }
-
-                    boolean containsUnsync = containsUnsync(nic1);
-                    if (containsUnsync){
-                        return NetworkOperation.NULL_OPERATION_ADD_TO_BOND_UNSYNC;
-                    }
-
-                    if (canBond(nic1, bond)) {
-                        return NetworkOperation.ADD_TO_BOND;
-                    } else {
-                        return NetworkOperation.NULL_OPERATION_BOND;
-                    }
-                 }
-            }
-            // op2: nic
-            else if (op2 instanceof NetworkInterfaceModel) {
-                NetworkInterfaceModel nic2 = (NetworkInterfaceModel) op2;
-                if (!nic1.isBonded() && !nic1.equals(nic2)) {
-
-                    boolean containsUnmanaged = containsUnmanaged(nic1) || containsUnmanaged(nic2);
-                    if (containsUnmanaged){
-                        return NetworkOperation.NULL_OPERATION_BOND_WITH_UNMANAGED;
-                    }
-
-                    boolean containsUnsync = containsUnsync(nic1) || containsUnsync(nic2);
-                    if (containsUnsync){
-                        return NetworkOperation.NULL_OPERATION_BOND_WITH_UNSYNC;
-                    }
-
-                    if (canBond(nic1, nic2)) {
-                        return NetworkOperation.BOND_WITH;
-                    } else {
-                        return NetworkOperation.NULL_OPERATION_BOND;
-                    }
+            // op1 is an interface, if it's bonded remove from bond
+            else if (op1 instanceof NetworkInterfaceModel) {
+                NetworkInterfaceModel nic = (NetworkInterfaceModel) op1;
+                if (nic.isBonded()) {
+                    return NetworkOperation.REMOVE_FROM_BOND;
                 }
             }
-            return NetworkOperation.NULL_OPERATION;
-        }
-        // op1: network
-        else if (op1 instanceof LogicalNetworkModel) {
-            LogicalNetworkModel network = (LogicalNetworkModel) op1;
-            // op2: null
-            if (network.isAttached() && op2 == null) {
-
-                // not managed
-                if (!network.isManaged()){
-                    if (isDrag){
-                        return NetworkOperation.NULL_OPERATION_UNMANAGED;
-                    }else {
-                        return NetworkOperation.REMOVE_UNMANAGED_NETWORK;
+            // op1 is a network, detach it if already attached to a NIC
+            else if (op1 instanceof LogicalNetworkModel) {
+                LogicalNetworkModel network = (LogicalNetworkModel) op1;
+                if (network.isAttached()) {
+                    if (!network.isManaged()) {
+                        if (isDrag) {
+                            return NetworkOperation.NULL_OPERATION_UNMANAGED;
+                        } else {
+                            return NetworkOperation.REMOVE_UNMANAGED_NETWORK;
+                        }
                     }
+                    return NetworkOperation.DETACH_NETWORK;
                 }
-
-                return NetworkOperation.DETACH_NETWORK;
             }
-            // op2: nic
-            else if (op2 instanceof NetworkInterfaceModel) {
+        }
+        // binary operation joining items together - in most cases valid iff their networks comply
+        else if (op2 instanceof NetworkInterfaceModel) {
+            NetworkInterfaceModel dst = (NetworkInterfaceModel) op2;
 
-                NetworkInterfaceModel nic = (NetworkInterfaceModel) op2;
+            // first collect the networks into one set
+            Set<LogicalNetworkModel> networks = new HashSet<LogicalNetworkModel>();
+            networks.addAll(dst.getItems());
 
-                // not managed
+            // op1 is a NIC, verify that it isn't already part of a bond or dragged unto itself
+            if (op1 instanceof NetworkInterfaceModel) {
+                NetworkInterfaceModel src = (NetworkInterfaceModel) op1;
+                if (src.isBonded() || src.equals(dst)) {
+                    return NetworkOperation.NULL_OPERATION;
+                }
+                networks.addAll(((NetworkInterfaceModel) op1).getItems());
+            }
+            // op1 is a network, verify that it isn't dragged unto the NIC already containing it
+            else if (op1 instanceof LogicalNetworkModel) {
+                if (!networks.add((LogicalNetworkModel) op1)) {
+                    return NetworkOperation.NULL_OPERATION;
+                }
+            }
+
+            // go over the networks and check whether they comply, if not - the reason is important
+            boolean vlanFound = false;
+            String nonVlanVmNetwork = null;
+            int nonVlanCounter = 0;
+            for (LogicalNetworkModel network : networks) {
                 if (!network.isManaged()) {
-                    return NetworkOperation.NULL_OPERATION_UNMANAGED;
-                }
-
-                // not in sync
-                if (!network.isInSync()) {
-                    return NetworkOperation.NULL_OPERATION_UNSYNC;
-                }
-
-                List<LogicalNetworkModel> nicNetworks = nic.getItems();
-                if (!nicNetworks.contains(network)) {
-                    if (!network.hasVlan()) {
-
-                        // non-vlan, bridge - can't be added to a nic that already has networks
-                        if ((nicNetworks.size() > 0) && (network.getEntity().isVmNetwork())) {
-                            return NetworkOperation.NULL_OPERATION;
-                        }
-
-                        // non-vlan, non-bridge - can't be added to a nic that already has a non-vlan network
-                        for (LogicalNetworkModel nicNetwork : nicNetworks) {
-                            if (!nicNetwork.hasVlan()) {
-                                return NetworkOperation.NULL_OPERATION;
-                            }
-                        }
-                    } else {
-                        // vlan- can't be added to a nic that already has non-vlan bridge network
-                        for (LogicalNetworkModel nicNetwork : nicNetworks) {
-                            if (!nicNetwork.hasVlan() && nicNetwork.getEntity().isVmNetwork()) {
-                                return NetworkOperation.NULL_OPERATION;
-                            }
-                        }
+                    if (op1 instanceof LogicalNetworkModel) {
+                        return NetworkOperation.NULL_OPERATION_UNMANAGED;
+                    } else if (op1 instanceof NetworkInterfaceModel) {
+                        dst.setCulpritNetwork(network.getName());
+                        return NetworkOperation.NULL_OPERATION_BOND_UNMANAGED;
                     }
-                    return NetworkOperation.ATTACH_NETWORK;
+                } else if (!network.isInSync()) {
+                    if (op1 instanceof LogicalNetworkModel) {
+                        return NetworkOperation.NULL_OPERATION_OUT_OF_SYNC;
+                    } else if (op1 instanceof NetworkInterfaceModel) {
+                        dst.setCulpritNetwork(network.getName());
+                        return NetworkOperation.NULL_OPERATION_BOND_OUT_OF_SYNC;
+                    }
+                }
+                if (network.hasVlan()) {
+                    vlanFound = true;
+                } else if (network.getEntity().isVmNetwork()) {
+                    nonVlanVmNetwork = network.getName();
+                    ++nonVlanCounter;
+                } else {
+                    ++nonVlanCounter;
+                }
+                if (nonVlanCounter > 1) {
+                    if (op1 instanceof LogicalNetworkModel) {
+                        return NetworkOperation.NULL_OPERATION_TOO_MANY_NON_VLANS;
+                    } else if (op1 instanceof NetworkInterfaceModel) {
+                        dst.setCulpritNetwork(network.getName());
+                        return NetworkOperation.NULL_OPERATION_BOND_TOO_MANY_NON_VLANS;
+                    }
+                } else if (nonVlanVmNetwork != null && vlanFound) {
+                    if (op1 instanceof LogicalNetworkModel) {
+                        return NetworkOperation.NULL_OPERATION_VM_WITH_VLANS;
+                    } else if (op1 instanceof NetworkInterfaceModel) {
+                        dst.setCulpritNetwork(nonVlanVmNetwork);
+                        return NetworkOperation.NULL_OPERATION_BOND_VM_WITH_VLANS;
+                    }
                 }
             }
-            return NetworkOperation.NULL_OPERATION;
+
+            // networks comply, all that's left is to return the correct operation
+            if (op1 instanceof LogicalNetworkModel) {
+                return NetworkOperation.ATTACH_NETWORK;
+            } else if (op1 instanceof BondNetworkInterfaceModel) {
+                if (op2 instanceof BondNetworkInterfaceModel) {
+                    return NetworkOperation.JOIN_BONDS;
+                } else {
+                    return NetworkOperation.EXTEND_BOND_WITH;
+                }
+            } else if (op1 instanceof NetworkInterfaceModel) {
+                if (op2 instanceof BondNetworkInterfaceModel) {
+                    return NetworkOperation.ADD_TO_BOND;
+                } else {
+                    return NetworkOperation.BOND_WITH;
+                }
+            }
         }
+
         return NetworkOperation.NULL_OPERATION;
     }
 
     public static NetworkOperation operationFor(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
         return operationFor(op1, op2, false);
-    }
-    private static boolean canBond(NetworkInterfaceModel nic1, NetworkInterfaceModel nic2) {
-        return (nic1.getItems().size() == 0 || nic2.getItems().size() == 0);
-    }
-
-    private static boolean containsUnmanaged(NetworkInterfaceModel nic) {
-        // Check if contains unmanaged networks
-        for (LogicalNetworkModel network : nic.getItems()) {
-            if (!network.isManaged()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static boolean containsUnsync(NetworkInterfaceModel nic) {
-        // Check if contains unsync networks
-        for (LogicalNetworkModel network : nic.getItems()) {
-            if (!network.isInSync()) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private final List<LogicalNetworkModel> allNetworks;

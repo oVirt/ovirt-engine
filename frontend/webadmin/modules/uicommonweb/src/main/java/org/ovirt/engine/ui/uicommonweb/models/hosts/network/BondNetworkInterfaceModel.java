@@ -35,4 +35,8 @@ public class BondNetworkInterfaceModel extends NetworkInterfaceModel {
             bonded.getEntity().setBondName(null);
         }
     }
+
+    public String getBondOptions() {
+        return getEntity().getBondOptions();
+    }
 }

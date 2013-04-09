@@ -1,8 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -16,6 +18,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
  *
  */
 public enum NetworkOperation {
+
     BREAK_BOND {
 
         @Override
@@ -61,8 +64,10 @@ public enum NetworkOperation {
                 }
             };
         }
+
     },
     DETACH_NETWORK {
+
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
             return ConstantsManager.getInstance().getMessages().detachNetwork(op1.getName());
@@ -88,8 +93,10 @@ public enum NetworkOperation {
                 }
             };
         }
+
     },
     ATTACH_NETWORK {
+
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
             return ConstantsManager.getInstance().getMessages().attachTo(op1.getName());
@@ -127,6 +134,7 @@ public enum NetworkOperation {
                 }
             };
         }
+
     },
     BOND_WITH {
 
@@ -162,6 +170,46 @@ public enum NetworkOperation {
 
                     nic1.getEntity().setBondName(bondName);
                     nic2.getEntity().setBondName(bondName);
+                }
+            };
+        }
+
+    },
+    JOIN_BONDS {
+
+        @Override
+        public String getVerb(NetworkItemModel<?> op1) {
+            return BOND_WITH.getVerb(op1);
+        }
+
+        @Override
+        protected NetworkOperationCommandTarget getTarget() {
+            return new NetworkOperationCommandTarget() {
+                @Override
+                protected void ExecuteNetworkCommand(NetworkItemModel<?> op1,
+                        NetworkItemModel<?> op2,
+                        List<VdsNetworkInterface> allNics, Object... params) {
+                    assert op1 instanceof BondNetworkInterfaceModel;
+                    assert op2 instanceof BondNetworkInterfaceModel;
+                    assert params.length == 1 : "incorrect params length"; //$NON-NLS-1$
+                    Set<NetworkInterfaceModel> nics = new HashSet<NetworkInterfaceModel>();
+                    nics.addAll(((BondNetworkInterfaceModel) op1).getBonded());
+                    nics.addAll(((BondNetworkInterfaceModel) op2).getBonded());
+
+                    // break both bonds
+                    BREAK_BOND.getCommand(op1, null, allNics).Execute();
+                    BREAK_BOND.getCommand(op2, null, allNics).Execute();
+
+                    // param
+                    VdsNetworkInterface bond = (VdsNetworkInterface) params[0];
+                    String bondName = bond.getName();
+
+                    // add to nic list
+                    allNics.add(bond);
+
+                    for (NetworkInterfaceModel nic : nics) {
+                        nic.getEntity().setBondName(bondName);
+                    }
                 }
             };
         }
@@ -204,6 +252,26 @@ public enum NetworkOperation {
         }
 
     },
+    EXTEND_BOND_WITH {
+
+        @Override
+        public String getVerb(NetworkItemModel<?> op1) {
+            return ConstantsManager.getInstance().getMessages().extendBond(op1.getName());
+        }
+
+        @Override
+        protected NetworkOperationCommandTarget getTarget() {
+            return new NetworkOperationCommandTarget() {
+                @Override
+                protected void ExecuteNetworkCommand(NetworkItemModel<?> op1,
+                        NetworkItemModel<?> op2,
+                        List<VdsNetworkInterface> allNics, Object... params) {
+                    NetworkOperation.ADD_TO_BOND.getCommand(op2, op1, allNics).Execute();
+                }
+            };
+        }
+
+    },
     REMOVE_FROM_BOND {
 
         @Override
@@ -238,6 +306,7 @@ public enum NetworkOperation {
 
     },
     REMOVE_UNMANAGED_NETWORK {
+
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
             return ConstantsManager.getInstance().getMessages().removeNetwork(op1.getName());
@@ -259,6 +328,7 @@ public enum NetworkOperation {
                 }
             };
         }
+
     },
     NULL_OPERATION {
 
@@ -273,30 +343,13 @@ public enum NetworkOperation {
         }
 
     },
-    NULL_OPERATION_BOND {
-
-        @Override
-        public String getVerb(NetworkItemModel<?> op1) {
-            return ConstantsManager.getInstance().getConstants().networksOnBothInterfaces();
-        }
-
-        @Override
-        public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
-            return getVerb(op1);
-        }
-
-        @Override
-        public boolean isNullOperation() {
-            return true;
-        }
-
-    },
     NULL_OPERATION_UNMANAGED {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return ConstantsManager.getInstance().getConstants().invalidOperationWithUnmanagedNetwork();
+            return ConstantsManager.getInstance().getConstants().nullOperationUnmanagedNetwork();
         }
+
         @Override
         public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
             return getVerb(op1);
@@ -308,12 +361,31 @@ public enum NetworkOperation {
         }
 
     },
-    NULL_OPERATION_ADD_TO_BOND_UNMANAGED {
+    NULL_OPERATION_BOND_UNMANAGED {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return ConstantsManager.getInstance().getConstants().cannotAddNicWithUnmanagedNetworkToBond();
+            return ConstantsManager.getInstance().getConstants().nullOperationBondUnmanaged();
         }
+
+        @Override
+        public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+            return appendDetachNetworkSuggestion(getVerb(op1), (NetworkInterfaceModel) op2);
+        }
+
+        @Override
+        public boolean isNullOperation() {
+            return true;
+        }
+
+    },
+    NULL_OPERATION_OUT_OF_SYNC {
+
+        @Override
+        public String getVerb(NetworkItemModel<?> op1) {
+            return ConstantsManager.getInstance().getConstants().nullOperationOutOfSyncNetwork();
+        }
+
         @Override
         public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
             return getVerb(op1);
@@ -325,12 +397,31 @@ public enum NetworkOperation {
         }
 
     },
-    NULL_OPERATION_BOND_WITH_UNMANAGED {
+    NULL_OPERATION_BOND_OUT_OF_SYNC {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return ConstantsManager.getInstance().getConstants().cannotCreateBondIfNicsContainsUnmanagedNetwork();
+            return ConstantsManager.getInstance().getConstants().nullOperationBondOutOfSync();
         }
+
+        @Override
+        public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+            return appendDetachNetworkSuggestion(getVerb(op1), (NetworkInterfaceModel) op2);
+        }
+
+        @Override
+        public boolean isNullOperation() {
+            return true;
+        }
+
+    },
+    NULL_OPERATION_TOO_MANY_NON_VLANS {
+
+        @Override
+        public String getVerb(NetworkItemModel<?> op1) {
+            return ConstantsManager.getInstance().getConstants().nullOperationTooManyNonVlans();
+        }
+
         @Override
         public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
             return getVerb(op1);
@@ -342,12 +433,31 @@ public enum NetworkOperation {
         }
 
     },
-    NULL_OPERATION_UNSYNC {
+    NULL_OPERATION_BOND_TOO_MANY_NON_VLANS {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return ConstantsManager.getInstance().getConstants().invalidOperationWithUnsyncNetwork();
+            return ConstantsManager.getInstance().getConstants().nullOperationTooManyNonVlans();
         }
+
+        @Override
+        public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+            return appendDetachNetworkSuggestion(getVerb(op1), (NetworkInterfaceModel) op2);
+        }
+
+        @Override
+        public boolean isNullOperation() {
+            return true;
+        }
+
+    },
+    NULL_OPERATION_VM_WITH_VLANS {
+
+        @Override
+        public String getVerb(NetworkItemModel<?> op1) {
+            return ConstantsManager.getInstance().getConstants().nullOperationVmWithVlans();
+        }
+
         @Override
         public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
             return getVerb(op1);
@@ -357,34 +467,17 @@ public enum NetworkOperation {
         public boolean isNullOperation() {
             return true;
         }
-
     },
-    NULL_OPERATION_ADD_TO_BOND_UNSYNC {
+    NULL_OPERATION_BOND_VM_WITH_VLANS {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return ConstantsManager.getInstance().getConstants().cannotAddNicWithUnsyncNetworkToBond();
+            return ConstantsManager.getInstance().getConstants().nullOperationVmWithVlans();
         }
+
         @Override
         public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
-            return getVerb(op1);
-        }
-
-        @Override
-        public boolean isNullOperation() {
-            return true;
-        }
-
-    },
-    NULL_OPERATION_BOND_WITH_UNSYNC {
-
-        @Override
-        public String getVerb(NetworkItemModel<?> op1) {
-            return ConstantsManager.getInstance().getConstants().cannotCreateBondIfNicsContainsUnsyncNetwork();
-        }
-        @Override
-        public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
-            return getVerb(op1);
+            return appendDetachNetworkSuggestion(getVerb(op1), (NetworkInterfaceModel) op2);
         }
 
         @Override
@@ -449,7 +542,15 @@ public enum NetworkOperation {
      */
     public String getMessage(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
         String message = getVerb(op1);
-        return isUnary() ? message : message + " " + getNoun(op2); //$NON-NLS-1$
+        if (!isUnary()) {
+            message += ' ' + getNoun(op2);
+        }
+        return message;
+    }
+
+    protected String appendDetachNetworkSuggestion(String originalMessage, NetworkInterfaceModel nic) {
+        return originalMessage + ' '
+                + ConstantsManager.getInstance().getMessages().suggestDetachNetwork(nic.getCulpritNetwork());
     }
 
     /**

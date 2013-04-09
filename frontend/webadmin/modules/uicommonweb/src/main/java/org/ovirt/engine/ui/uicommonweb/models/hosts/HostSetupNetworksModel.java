@@ -379,8 +379,16 @@ public class HostSetupNetworksModel extends EntityModel {
 
         if (operation.isNullOperation()) {
             return;
-        } else if (operation == NetworkOperation.BOND_WITH) {
-            final SetupNetworksBondModel bondPopup = new SetupNetworksAddBondModel(getFreeBonds());
+        } else if (operation == NetworkOperation.BOND_WITH || operation == NetworkOperation.JOIN_BONDS) {
+            final SetupNetworksBondModel bondPopup;
+            if (operation == NetworkOperation.BOND_WITH) {
+                bondPopup = new SetupNetworksAddBondModel(getFreeBonds());
+            } else {
+                bondPopup =
+                        new SetupNetworksJoinBondsModel(getFreeBonds(),
+                                (BondNetworkInterfaceModel) networkCommand.getOp1(),
+                                (BondNetworkInterfaceModel) networkCommand.getOp2());
+            }
             bondPopup.getCommands().add(new UICommand("OK", new BaseCommandTarget() { //$NON-NLS-1$
 
                         @Override
@@ -393,9 +401,9 @@ public class HostSetupNetworksModel extends EntityModel {
                             setBondOptions(bond, bondPopup);
                             NetworkInterfaceModel nic1 = (NetworkInterfaceModel) networkCommand.getOp1();
                             NetworkInterfaceModel nic2 = (NetworkInterfaceModel) networkCommand.getOp2();
-                            List<LogicalNetworkModel> networks =
-                                    nic1.getItems().size() != 0 ? new ArrayList<LogicalNetworkModel>(nic1.getItems())
-                                            : new ArrayList<LogicalNetworkModel>(nic2.getItems());
+                            List<LogicalNetworkModel> networks = new ArrayList<LogicalNetworkModel>();
+                            networks.addAll(nic1.getItems());
+                            networks.addAll(nic2.getItems());
                             networkCommand.Execute(bond);
                             redraw();
 

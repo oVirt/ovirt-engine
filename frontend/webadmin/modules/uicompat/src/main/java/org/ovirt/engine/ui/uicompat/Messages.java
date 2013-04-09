@@ -186,11 +186,17 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Add {0} to Bond")
     String addToBond(String name);
 
+    @DefaultMessage("Extend {0} with")
+    String extendBond(String name);
+
     @DefaultMessage("Remove {0} from Bond")
     String removeFromBond(String name);
 
     @DefaultMessage("No valid Operation for {0} and ")
     String noValidOperation(String name);
+
+    @DefaultMessage("You could detach {0} first.")
+    String suggestDetachNetwork(String networkName);
 
     @DefaultMessage("Incorrect number of Total Virtual CPUs. It is not possible to compose this number from the available Virtual Sockets and Cores per Virtual Sockets")
     String incorrectVCPUNumber();
