@@ -1775,7 +1775,8 @@ def _startHttpd():
 def _setupVarPrivileges():
     # previous versions mixed root/ovirt
     # ownership in these directories
-    shutil.rmtree(basedefs.DIR_ENGINE_TMP)
+    if os.path.exists(basedefs.DIR_ENGINE_TMP):
+        shutil.rmtree(basedefs.DIR_ENGINE_TMP)
     utils.execCmd(
         cmdList=('chown', '-Rh', 'ovirt:ovirt', basedefs.DIR_DEPLOYMENTS),
         failOnError=True,
