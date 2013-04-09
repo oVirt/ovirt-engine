@@ -76,6 +76,9 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID);
         }
+        if (paramConnection.getstorage_type() == StorageType.POSIXFS && (StringUtils.isEmpty(paramConnection.getVfsType()))) {
+            return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE);
+        }
 
         if (getParameters().getVdsId().equals(Guid.Empty)) {
             returnValue = InitializeVds();
