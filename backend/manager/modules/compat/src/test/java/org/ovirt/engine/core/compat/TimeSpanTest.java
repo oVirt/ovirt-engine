@@ -1,9 +1,14 @@
 package org.ovirt.engine.core.compat;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
-public class TimeSpanTest extends TestCase {
+import org.junit.Test;
 
+public class TimeSpanTest {
+
+    @Test
     public void testBasicConstructors() {
         TimeSpan span = new TimeSpan(10, 10, 10);
         assertEquals("hours1", 10, span.Hours);
@@ -13,6 +18,7 @@ public class TimeSpanTest extends TestCase {
         assertEquals("miliseconds", 0, span.Milliseconds);
     }
 
+    @Test
     public void testNegativeConstructors() {
         TimeSpan span = new TimeSpan(1, -20, -10, 10);
         assertEquals("days1", 0, span.Days);
@@ -22,6 +28,7 @@ public class TimeSpanTest extends TestCase {
         assertEquals("miliseconds", 0, span.Milliseconds);
     }
 
+    @Test
     public void testParsing() {
         TimeSpan span = TimeSpan.Parse("1");
         assertEquals("days1", 1, span.Days);
@@ -57,15 +64,12 @@ public class TimeSpanTest extends TestCase {
         assertEquals("ms7", -5, span.Milliseconds);
     }
 
+    @Test(expected = IllegalArgumentException.class)
     public void testInvalidParse() {
-        try {
-            TimeSpan.Parse("1.02.03");
-            fail("No exception was thrown");
-        } catch (IllegalArgumentException e) {
-            // eat it, we are ok
-        }
+        TimeSpan.Parse("1.02.03");
     }
 
+    @Test
     public void testTryParse() {
         TimeSpan ref = TimeSpan.tryParse("-1.02:03:04.05");
         assertNotNull("A TimeSpan should be returned", ref);
