@@ -134,7 +134,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         }
 
         if (isManagement()) {
-            netParams.setGateway(nicEntity.getGateway());
+            netParams.setGateway(!hasVlan() ? nicEntity.getGateway() : vlanNic.getEntity().getGateway());
         }
 
         getSetupModel().getNetworkToLastDetachParams().put(getName(), netParams);
