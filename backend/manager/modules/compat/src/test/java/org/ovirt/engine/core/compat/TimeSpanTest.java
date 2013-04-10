@@ -6,7 +6,6 @@ public class TimeSpanTest extends TestCase {
 
     public void testBasicConstructors() {
         TimeSpan span = new TimeSpan(10, 10, 10);
-        System.out.println(span);
         assertEquals("hours1", 10, span.Hours);
         assertEquals("minutes1", 10, span.Minutes);
         assertEquals("seconds1", 10, span.Seconds);
@@ -16,7 +15,6 @@ public class TimeSpanTest extends TestCase {
 
     public void testNegativeConstructors() {
         TimeSpan span = new TimeSpan(1, -20, -10, 10);
-        System.out.println(span);
         assertEquals("days1", 0, span.Days);
         assertEquals("hours1", 3, span.Hours);
         assertEquals("minutes1", 50, span.Minutes);
