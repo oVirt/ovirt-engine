@@ -1,12 +1,15 @@
 package org.ovirt.engine.core.utils;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.FileWriter;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class FileUtilTest extends TestCase {
+public class FileUtilTest {
 
+    @Test
     public void testReadAllText() throws Exception {
         File iFile = File.createTempFile("Test", ".txt");
         FileWriter iFileWriter = new FileWriter(iFile);
@@ -20,6 +23,7 @@ public class FileUtilTest extends TestCase {
     /**
      * Test to verify fix on File.ReadAllText()
      */
+    @Test
     public void testReadAllTextTonSOfTimes() throws Exception {
         File iFile = File.createTempFile("Test", ".txt");
         FileWriter iFileWriter = new FileWriter(iFile);
