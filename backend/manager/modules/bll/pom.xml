@@ -170,6 +170,16 @@
               <value>${engine.schema}</value>
             </property>
 	 </systemProperties>
+
+         <!-- These environment variables are needed to run the tests
+              using an alternative configuration that disables retries
+              when trying to locate the data source, otherwise each
+              test will have to wait till the timeout expires: -->
+         <environmentVariables>
+           <ENGINE_DEFAULTS>${basedir}/src/test/resources/engine.conf.defaults</ENGINE_DEFAULTS>
+           <ENGINE_VARS>${basedir}/src/test/resources/engine.conf</ENGINE_VARS>
+         </environmentVariables>
+
           <argLine>-Dengine.ejb3.connector.port=${engine.ejb3.connector.port} -Dengine.bisocket.connector.port=${engine.bisocket.connector.port} -Dsun.lang.ClassLoader.allowArraySyntax=true -Djava.endorsed.dirs="${settings.localRepository}/org/codehaus/woodstox/wstx-asl/3.2.9/"</argLine>
           <additionalClasspathElements>
             <additionalClasspathElement>${basedir}/src/test/java</additionalClasspathElement>

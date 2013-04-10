@@ -1,0 +1,3 @@
+# Reduce the database connection timeouts so we fail inmediately:
+ENGINE_DB_CONNECTION_TIMEOUT=0
+ENGINE_DB_CHECK_INTERVAL=0
