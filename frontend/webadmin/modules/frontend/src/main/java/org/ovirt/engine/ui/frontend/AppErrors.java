@@ -1627,6 +1627,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Host name must be formed of alphanumeric characters, numbers or \"-_.\"")
     String VALIDATION_VDS_NAME_INVALID();
 
+    @DefaultStringValue("Console address must be a FQDN or a valid IP address")
+    String VALIDATION_VDS_CONSOLEADDRESSS_HOSTNAME_OR_IP();
+
     @DefaultStringValue("email format is not valid")
     String VALIDATION_EVENTS_EMAIL_FORMAT();
 
