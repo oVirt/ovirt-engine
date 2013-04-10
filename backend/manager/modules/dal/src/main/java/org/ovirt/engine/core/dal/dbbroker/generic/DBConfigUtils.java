@@ -28,7 +28,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
     /**
      * Refreshes the VDC option cache.
      */
-    private static void RefreshVdcOptionCache(DbFacade db) {
+    protected static void refreshVdcOptionCache(DbFacade db) {
         _vdcOptionCache.clear();
         List<VdcOption> list = db.getVdcOptionDao().getAll();
         for (VdcOption option : list) {
@@ -169,7 +169,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
     public DBConfigUtils(boolean initDB) {
         if (initDB) {
             dbfacade = DbFacade.getInstance();
-            RefreshVdcOptionCache(dbfacade);
+            refreshVdcOptionCache(dbfacade);
         }
     }
 

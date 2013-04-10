@@ -28,6 +28,16 @@
             <value></value>
             <value>general</value>
         </row>
+        <row>
+            <value>NonVmNetworkSupported</value>
+            <value>false</value>
+            <value>3.0</value>
+        </row>
+        <row>
+            <value>NonVmNetworkSupported</value>
+            <value>true</value>
+            <value>3.2</value>
+        </row>
     </table>
 
 

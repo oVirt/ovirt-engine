@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VdcOption;
 
 public class VdcOptionDAOTest extends BaseDAOTestCase {
-    private static final int OPTION_COUNT = 5;
+    private static final int OPTION_COUNT = 7;
     private VdcOptionDAO dao;
     private VdcOption existingOption;
     private VdcOption newOption;
