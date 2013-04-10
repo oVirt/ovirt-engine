@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.action.CreateSnapshotFromTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -41,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
+import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -500,6 +502,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                         addDiskPermissions(newDiskImages);
                         addVmPayload();
                         updateSmartCardDevices();
+                        addVmWatchdog();
                         setActionReturnValue(getVm().getId());
                         setSucceeded(true);
                         return null;
@@ -516,6 +519,17 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         // add or remove the smartcard according to user request
         if (getVm().isSmartcardEnabled() != getVmTemplate().isSmartcardEnabled()) {
             VmDeviceUtils.updateSmartcardDevice(getVm().getId(), getVm().isSmartcardEnabled());
+        }
+    }
+
+    protected void addVmWatchdog() {
+        VmWatchdog vmWatchdog = getParameters().getWatchdog();
+        if (vmWatchdog != null) {
+            WatchdogParameters parameters = new WatchdogParameters();
+            parameters.setId(getParameters().getVmId());
+            parameters.setAction(vmWatchdog.getAction());
+            parameters.setModel(vmWatchdog.getModel());
+            getBackend().runInternalAction(VdcActionType.AddWatchdog, parameters);
         }
     }
 

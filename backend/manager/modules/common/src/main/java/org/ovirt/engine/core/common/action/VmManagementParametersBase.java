@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmManagementParametersBase extends VmOperationParameterBase {
@@ -24,6 +25,13 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
     private boolean clearPayload;
     private boolean balloonEnabled = true;
     private VM vm = null;
+    private VmWatchdog watchdog = null;
+    /*
+     * This parameter is needed at update to make sure that when we get a null watchdog from rest-api
+     * it is not meant to be removing the watchdog, rest-api will simply call watchdog commands directly.
+     * Default is false so to avoid breaking rest-api.
+     */
+    private boolean updateWatchdog = false;
 
     public VmManagementParametersBase() {
     }
@@ -122,4 +130,21 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
     public void setBalloonEnabled(boolean isBallonEnabled) {
         this.balloonEnabled = isBallonEnabled;
     }
+
+    public VmWatchdog getWatchdog() {
+        return watchdog;
+    }
+
+    public void setWatchdog(VmWatchdog watchdog) {
+        this.watchdog = watchdog;
+    }
+
+    public boolean isUpdateWatchdog() {
+        return updateWatchdog;
+    }
+
+    public void setUpdateWatchdog(boolean updateWatchdog) {
+        this.updateWatchdog = updateWatchdog;
+    }
+
 }

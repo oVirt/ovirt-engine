@@ -244,6 +244,17 @@ public class VdsBrokerObjectsBuilder {
             }
         }
         vm.setPauseStatus(pauseStatus);
+
+        if (xmlRpcStruct.containsKey(VdsProperties.watchdogEvent)) {
+            Map<String, Object> watchdogStruct = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.watchdogEvent);
+            double time = Double.parseDouble(watchdogStruct.get(VdsProperties.time).toString());
+            // vdsm may not send the action http://gerrit.ovirt.org/14134
+            String action =
+                    watchdogStruct.containsKey(VdsProperties.action) ? watchdogStruct.get(VdsProperties.action)
+                            .toString() : null;
+            vm.setLastWatchdogEvent((long) time);
+            vm.setLastWatchdogAction(action);
+        }
     }
 
     public static void updateVMStatisticsData(VmStatistics vm, Map<String, Object> xmlRpcStruct) {

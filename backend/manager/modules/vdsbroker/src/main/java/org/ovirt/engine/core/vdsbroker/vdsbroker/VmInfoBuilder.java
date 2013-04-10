@@ -660,9 +660,9 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         Set<Entry<String, Object>> values = specParams.entrySet();
         for (Entry<String, Object> currEntry : values) {
             if (currEntry.getValue() instanceof String) {
-                struct.put(currEntry.getKey(), (String) currEntry.getValue());
+                struct.put(currEntry.getKey(), currEntry.getValue());
             } else if (currEntry.getValue() instanceof Map) {
-                struct.put(currEntry.getKey(), (Map) currEntry.getValue());
+                struct.put(currEntry.getKey(), currEntry.getValue());
             }
         }
     }
@@ -674,6 +674,25 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
      */
     private static boolean isFirstMasterController(String model) {
         return model.equalsIgnoreCase(FIRST_MASTER_MODEL);
+    }
+
+    protected void buildVmWatchdog() {
+        List<VmDevice> watchdogs =
+                DbFacade.getInstance()
+                        .getVmDeviceDao()
+                        .getVmDeviceByVmIdAndType(vm.getId(),
+                                VmDeviceType.WATCHDOG.getName());
+        for (VmDevice watchdog : watchdogs) {
+            HashMap watchdogFromRpc = new HashMap();
+            watchdogFromRpc.put(VdsProperties.Type, watchdog.getType());
+            watchdogFromRpc.put(VdsProperties.Device, watchdog.getDevice());
+            Map<String, Object> specParams = watchdog.getSpecParams();
+            if (specParams == null) {
+                specParams = new HashMap<String, Object>();
+            }
+            watchdogFromRpc.put(VdsProperties.SpecParams, specParams);
+            addDevice(watchdogFromRpc, watchdog, null);
+        }
     }
 
 }

@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.vdsbroker;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -22,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -131,6 +134,21 @@ public class VdsUpdateRunTimeInfoTest {
     private void initVds() {
         vds = new VDS();
         vds.setId(Guid.createGuidFromString("00000000-0000-0000-0000-000000000012"));
+    }
 
+    @Test
+    public void isNewWatchdogEvent() {
+        VmDynamic dynamic = new VmDynamic();
+        VM vm = new VM();
+        assertFalse(VdsUpdateRunTimeInfo.isNewWatchdogEvent(dynamic, vm));
+        dynamic.setLastWatchdogEvent(1l);
+        assertTrue(VdsUpdateRunTimeInfo.isNewWatchdogEvent(dynamic, vm));
+        vm.setLastWatchdogEvent(1l);
+        dynamic.setLastWatchdogEvent(1l);
+        assertFalse(VdsUpdateRunTimeInfo.isNewWatchdogEvent(dynamic, vm));
+        dynamic.setLastWatchdogEvent(2l);
+        assertTrue(VdsUpdateRunTimeInfo.isNewWatchdogEvent(dynamic, vm));
+        dynamic.setLastWatchdogEvent(null);
+        assertFalse(VdsUpdateRunTimeInfo.isNewWatchdogEvent(dynamic, vm));
     }
 }

@@ -265,6 +265,11 @@ public final class VdsProperties {
     public static final String DISK_STATS = "diskStats";
     public static final String DISK_STATS_FREE = "free";
 
+    // watchdog
+    public static final String watchdogEvent = "watchdogEvent";
+    public static final String time = "time";
+    public static final String action = "action";
+
     public static String MigrationMethostoString(MigrationMethod method) {
         if (method == MigrationMethod.OFFLINE) {
             return offline;

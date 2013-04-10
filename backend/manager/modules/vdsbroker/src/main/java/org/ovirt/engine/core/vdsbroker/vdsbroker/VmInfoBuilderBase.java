@@ -275,4 +275,6 @@ public abstract class VmInfoBuilderBase {
 
     protected abstract void buildVmMemoryBalloon();
 
+    protected abstract void buildVmWatchdog();
+
 }

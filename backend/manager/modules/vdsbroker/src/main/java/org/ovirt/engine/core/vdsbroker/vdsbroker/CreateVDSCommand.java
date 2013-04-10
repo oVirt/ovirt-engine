@@ -72,6 +72,7 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
         builder.buildVmTimeZone();
         builder.buildVmUsbDevices();
         builder.buildVmMemoryBalloon();
+        builder.buildVmWatchdog();
         builder.buildUnmanagedDevices();
     }
 

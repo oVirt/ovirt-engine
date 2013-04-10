@@ -221,6 +221,8 @@ public class VmDeviceUtils {
                 specParams.put(VdsProperties.Model, VdsProperties.Virtio);
             } else if (VmDeviceType.SMARTCARD.getName().equals(device.getType())) {
                 specParams = new SmartcardSpecParams();
+            } else if (VmDeviceType.WATCHDOG.getName().equals(device.getType())) {
+                specParams.putAll(device.getSpecParams());
             }
             device.setId(new VmDeviceId(id, dstId));
             device.setSpecParams(specParams);

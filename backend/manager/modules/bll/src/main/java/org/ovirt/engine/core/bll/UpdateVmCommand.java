@@ -16,7 +16,9 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -25,10 +27,13 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -83,7 +88,42 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         getVmStaticDAO().update(newVmStatic);
         updateVmPayload();
         VmDeviceUtils.updateVmDevices(getParameters(), oldVm);
+        updateWatchdog();
         setSucceeded(true);
+    }
+
+    private void updateWatchdog() {
+        // do not update if this flag is not set
+        if (getParameters().isUpdateWatchdog()) {
+            VdcQueryReturnValue query =
+                    getBackend().RunQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(getParameters().getVmId()));
+            @SuppressWarnings("unchecked")
+            List<VmWatchdog> watchdogs = (List<VmWatchdog>) query.getReturnValue();
+            if (watchdogs.isEmpty()) {
+                if (getParameters().getWatchdog() == null) {
+                    // nothing to do, no watchdog and no watchdog to create
+                } else {
+                    WatchdogParameters parameters = new WatchdogParameters();
+                    parameters.setId(getParameters().getVmId());
+                    parameters.setAction(getParameters().getWatchdog().getAction());
+                    parameters.setModel(getParameters().getWatchdog().getModel());
+                    getBackend().runInternalAction(VdcActionType.AddWatchdog, parameters);
+                }
+            } else {
+                WatchdogParameters watchdogParameters = new WatchdogParameters();
+                watchdogParameters.setId(getParameters().getVmId());
+                if (getParameters().getWatchdog() == null) {
+                    // there is a watchdog in the vm, there should not be any, so let's delete
+                    getBackend().runInternalAction(VdcActionType.RemoveWatchdog, watchdogParameters);
+                } else {
+                    // there is a watchdog in the vm, we have to update.
+                    watchdogParameters.setAction(getParameters().getWatchdog().getAction());
+                    watchdogParameters.setModel(getParameters().getWatchdog().getModel());
+                    getBackend().runInternalAction(VdcActionType.UpdateWatchdog, watchdogParameters);
+                }
+            }
+
+        }
     }
 
     protected void updateVmPayload() {

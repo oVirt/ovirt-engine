@@ -46,6 +46,8 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
     private String mExitMessage;
     private ArrayList<DiskImageDynamic> disks;
     private boolean win2kHackEnabled = false;
+    private Long lastWatchdogEvent = null;
+    private String lastWatchdogAction = null;
 
     @Override
     public int hashCode() {
@@ -84,6 +86,8 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
         result = prime * result + ((vmIp == null) ? 0 : vmIp.hashCode());
         result = prime * result + ((lastStartTime == null) ? 0 : lastStartTime.hashCode());
         result = prime * result + ((vmPid == null) ? 0 : vmPid.hashCode());
+        result = prime * result + (lastWatchdogEvent == null ? 0 : lastWatchdogEvent.hashCode());
+        result = prime * result + (lastWatchdogAction == null ? 0 : lastWatchdogAction.hashCode());
         return result;
     }
 
@@ -131,7 +135,9 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
                 && ObjectUtils.objectsEqual(vmHost, other.vmHost)
                 && ObjectUtils.objectsEqual(vmIp, other.vmIp)
                 && ObjectUtils.objectsEqual(lastStartTime, other.lastStartTime)
-                && ObjectUtils.objectsEqual(vmPid, other.vmPid));
+                && ObjectUtils.objectsEqual(vmPid, other.vmPid)
+                && ObjectUtils.objectsEqual(lastWatchdogEvent, other.lastWatchdogEvent)
+                && ObjectUtils.objectsEqual(lastWatchdogAction, other.lastWatchdogAction));
     }
 
     public String getExitMessage() {
@@ -430,4 +436,21 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
     public int compareTo(VmDynamic o) {
         return BusinessEntityGuidComparator.<VmDynamic>newInstance().compare(this,o);
     }
+
+    public Long getLastWatchdogEvent() {
+        return lastWatchdogEvent;
+    }
+
+    public void setLastWatchdogEvent(Long lastWatchdogEvent) {
+        this.lastWatchdogEvent = lastWatchdogEvent;
+    }
+
+    public String getLastWatchdogAction() {
+        return lastWatchdogAction;
+    }
+
+    public void setLastWatchdogAction(String lastWatchdogAction) {
+        this.lastWatchdogAction = lastWatchdogAction;
+    }
+
 }

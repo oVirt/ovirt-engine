@@ -238,6 +238,8 @@ public enum VdcQueryType implements Serializable {
     // Providers
     GetAllProviders,
 
+    GetWatchdog(VdcQueryAuthType.User),
+
     // Default type instead of having to null check
     Unknown(VdcQueryAuthType.User);
 

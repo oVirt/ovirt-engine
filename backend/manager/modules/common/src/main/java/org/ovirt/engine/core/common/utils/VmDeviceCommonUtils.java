@@ -285,7 +285,9 @@ public class VmDeviceCommonUtils {
         return (VmDeviceType.SOUND.getName().equals(type) ||
                 VmDeviceType.USB.getName().equals(device) ||
                 (VmDeviceType.SMARTCARD.getName().equals(device) && VmDeviceType.SMARTCARD.getName().equals(type)) ||
-                (VmDeviceType.SPICEVMC.getName().equals(device) && VmDeviceType.REDIR.getName().equals(type)) || (VmDeviceType.MEMBALLOON.getName()
-                        .equals(device) && VmDeviceType.BALLOON.getName().equals(type)));
+                (VmDeviceType.SPICEVMC.getName().equals(device) && VmDeviceType.REDIR.getName().equals(type))
+                || (VmDeviceType.MEMBALLOON.getName()
+                        .equals(device) && VmDeviceType.BALLOON.getName().equals(type)) || (VmDeviceType.WATCHDOG.getName()
+                .equals(device) && VmDeviceType.WATCHDOG.getName().equals(type)));
     }
 }

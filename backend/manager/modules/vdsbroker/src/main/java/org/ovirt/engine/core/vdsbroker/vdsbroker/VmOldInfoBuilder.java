@@ -212,4 +212,8 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
     protected void buildVmMemoryBalloon() {
         // Not supported in old code
     }
+
+    protected void buildVmWatchdog() {
+        // Not supported in old code
+    }
 }

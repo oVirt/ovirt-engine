@@ -14,10 +14,16 @@ import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -99,7 +105,44 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         if (getVmTemplate() != null) {
             getVmStaticDAO().incrementDbGeneration(getVmTemplate().getId());
             UpdateVmTemplate();
+            updateWatchdog();
             setSucceeded(true);
+        }
+    }
+
+    private void updateWatchdog() {
+        // do not update if this flag is not set
+        if (getParameters().isUpdateWatchdog()) {
+            Guid templateId = getParameters().getVmTemplateData().getId();
+            VdcQueryReturnValue query =
+                    getBackend().RunQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(templateId));
+            @SuppressWarnings("unchecked")
+            List<VmWatchdog> watchdogs = (List<VmWatchdog>) query.getReturnValue();
+            if (watchdogs.isEmpty()) {
+                if (getParameters().getWatchdog() == null) {
+                    // nothing to do, no watchdog and no watchdog to create
+                } else {
+                    WatchdogParameters parameters = new WatchdogParameters();
+                    parameters.setVm(false);
+                    parameters.setId(templateId);
+                    parameters.setAction(getParameters().getWatchdog().getAction());
+                    parameters.setModel(getParameters().getWatchdog().getModel());
+                    getBackend().runInternalAction(VdcActionType.AddWatchdog, parameters);
+                }
+            } else {
+                WatchdogParameters watchdogParameters = new WatchdogParameters();
+                watchdogParameters.setVm(false);
+                watchdogParameters.setId(templateId);
+                if (getParameters().getWatchdog() == null) {
+                    // there is a watchdog in the vm, there should not be any, so let's delete
+                    getBackend().runInternalAction(VdcActionType.RemoveWatchdog, watchdogParameters);
+                } else {
+                    // there is a watchdog in the vm, we have to update.
+                    watchdogParameters.setAction(getParameters().getWatchdog().getAction());
+                    watchdogParameters.setModel(getParameters().getWatchdog().getModel());
+                    getBackend().runInternalAction(VdcActionType.UpdateWatchdog, watchdogParameters);
+                }
+            }
         }
     }
 

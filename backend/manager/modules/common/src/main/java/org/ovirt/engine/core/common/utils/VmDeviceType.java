@@ -19,6 +19,7 @@ public enum VmDeviceType {
     MEMBALLOON("memballoon"),
     SMARTCARD("smartcard"),
     BALLOON("balloon"),
+    WATCHDOG("watchdog"),
     OTHER("other", "0"),
     UNKNOWN("unknown", "-1");
 

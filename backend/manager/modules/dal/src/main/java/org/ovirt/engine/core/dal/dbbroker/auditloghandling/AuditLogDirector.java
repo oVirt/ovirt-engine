@@ -584,7 +584,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.HA_VM_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.HA_VM_RESTART_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_FAILED_ATTACH_DISK_TO_VM, AuditLogSeverity.ERROR);
-
+        severities.put(AuditLogType.WATCHDOG_EVENT, AuditLogSeverity.WARNING);
     }
 
     private static void initClusterSeverities() {

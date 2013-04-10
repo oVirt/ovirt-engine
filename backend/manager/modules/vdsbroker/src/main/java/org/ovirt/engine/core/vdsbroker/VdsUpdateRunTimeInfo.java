@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -13,6 +14,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -955,6 +957,8 @@ public class VdsUpdateRunTimeInfo {
         if (command.getVDSReturnValue().getSucceeded()) {
             List<VM> running = checkVmsStatusChanged();
 
+            proceedWatchdogEvents();
+
             proceedDownVms();
 
             // update repository and check if there are any vm in cache that not
@@ -1273,6 +1277,29 @@ public class VdsUpdateRunTimeInfo {
         }
         return running;
     }
+
+    private void proceedWatchdogEvents() {
+        for (VmInternalData vmInternalData : _runningVms.values()) {
+            VmDynamic vmDynamic = vmInternalData.getVmDynamic();
+            VM vmTo = _vmDict.get(vmDynamic.getId());
+            if (isNewWatchdogEvent(vmDynamic, vmTo)) {
+                AuditLogableBase auditLogable = new AuditLogableBase();
+                auditLogable.setVmId(vmDynamic.getId());
+                auditLogable.addCustomValue("wdaction", vmDynamic.getLastWatchdogAction());
+                //for the interpretation of vdsm's response see http://docs.python.org/2/library/time.html
+                auditLogable.addCustomValue("wdevent",
+                        ObjectUtils.toString(new Date(vmDynamic.getLastWatchdogEvent().longValue() * 1000)));
+                AuditLogDirector.log(auditLogable, AuditLogType.WATCHDOG_EVENT);
+            }
+        }
+    }
+
+    protected static boolean isNewWatchdogEvent(VmDynamic vmDynamic, VM vmTo) {
+        Long lastWatchdogEvent = vmDynamic.getLastWatchdogEvent();
+        return vmTo != null && lastWatchdogEvent != null
+                && (vmTo.getLastWatchdogEvent() == null || vmTo.getLastWatchdogEvent() < lastWatchdogEvent);
+    }
+
 
     /**
      * Delete all vms with status Down

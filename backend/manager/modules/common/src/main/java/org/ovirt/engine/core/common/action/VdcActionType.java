@@ -244,7 +244,13 @@ public enum VdcActionType {
     AddProvider(1600, false, QuotaDependency.NONE),
     UpdateProvider(1601, false, QuotaDependency.NONE),
     RemoveProvider(1602, false, QuotaDependency.NONE),
-    TestProviderConnectivity(1603, false, QuotaDependency.NONE);
+    TestProviderConnectivity(1603, false, QuotaDependency.NONE),
+
+    AddWatchdog(1700, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.NONE),
+    UpdateWatchdog(1701, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.NONE),
+    RemoveWatchdog(1702, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.NONE),
+    ;
+
 
     private int intValue;
     private ActionGroup actionGroup;

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmTemplateParametersBase extends VdcActionParametersBase implements java.io.Serializable {
@@ -10,6 +11,12 @@ public class VmTemplateParametersBase extends VdcActionParametersBase implements
     private Guid vmTemplateId = Guid.Empty;
     private Guid quotaId;
     private boolean privateCheckDisksExists;
+    private VmWatchdog watchdog = null;
+    /*
+     * see VmManagementParametersBase#updateWatchdog for details
+     */
+    private boolean updateWatchdog = false;
+
 
     public boolean getCheckDisksExists() {
         return privateCheckDisksExists;
@@ -55,4 +62,22 @@ public class VmTemplateParametersBase extends VdcActionParametersBase implements
     public void setQuotaId(Guid value) {
         quotaId = value;
     }
+
+    public VmWatchdog getWatchdog() {
+        return watchdog;
+    }
+
+    public void setWatchdog(VmWatchdog watchdog) {
+        this.watchdog = watchdog;
+    }
+
+    public boolean isUpdateWatchdog() {
+        return updateWatchdog;
+    }
+
+    public void setUpdateWatchdog(boolean updateWatchdog) {
+        this.updateWatchdog = updateWatchdog;
+    }
+
+
 }

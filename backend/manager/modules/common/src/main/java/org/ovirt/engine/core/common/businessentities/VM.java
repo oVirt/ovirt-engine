@@ -1160,6 +1160,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         setExitMessage(vm.getExitMessage());
         setClientIp(vm.getClientIp());
         setVmPauseStatus(vm.getPauseStatus());
+        setLastWatchdogEvent(vm.getLastWatchdogEvent());
 
         // TODO: check what to do with update disk data
         // updateDisksData(vm);
@@ -1436,4 +1437,13 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     public void setTunnelMigration(Boolean value) {
         vmStatic.setTunnelMigration(value);
     }
+
+    public Long getLastWatchdogEvent() {
+        return vmDynamic.getLastWatchdogEvent();
+    }
+
+    public void setLastWatchdogEvent(Long lastWatchdogEvent) {
+        vmDynamic.setLastWatchdogEvent(lastWatchdogEvent);
+    }
+
 }

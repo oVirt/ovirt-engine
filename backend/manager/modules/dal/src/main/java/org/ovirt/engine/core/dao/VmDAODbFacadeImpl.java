@@ -404,6 +404,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setTunnelMigration((Boolean) rs.getObject("tunnel_migration"));
             entity.setVncKeyboardLayout(rs.getString("vnc_keyboard_layout"));
             entity.setRunAndPause(rs.getBoolean("is_run_and_pause"));
+            entity.setLastWatchdogEvent(getLong(rs, "last_watchdog_event"));
             return entity;
         }
     }

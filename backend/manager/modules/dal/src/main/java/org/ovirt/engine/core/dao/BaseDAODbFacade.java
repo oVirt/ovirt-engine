@@ -91,4 +91,20 @@ public abstract class BaseDAODbFacade {
     public void setDbFacade(DbFacade dbFacade) {
         this.dbFacade = dbFacade;
     }
+
+    /**
+     * Returns a Double or a null if the column was NULL.
+     * @param resultSet the ResultSet to extract the result from
+     * @param columnName
+     * @return a Long or null
+     * @throws SQLException
+     */
+    final static Long getLong(ResultSet resultSet, String columnName) throws SQLException {
+        if (resultSet.getLong(columnName) == 0 && resultSet.wasNull()) {
+            return null;
+        } else {
+            return resultSet.getLong(columnName);
+        }
+    }
+
 }
