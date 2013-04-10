@@ -382,6 +382,17 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @WithElementId("priority")
     public EntityModelCellTable<ListModel> priorityEditor;
 
+    @UiField(provided = true)
+    @Path(value = "watchdogModel.selectedItem")
+    @WithElementId("watchdogModel")
+    public ListModelListBoxEditor<Object> watchdogModelEditor;
+
+    @UiField(provided = true)
+    @Path(value = "watchdogAction.selectedItem")
+    @WithElementId("watchdogAction")
+    public ListModelListBoxEditor<Object> watchdogActionEditor;
+
+
     // ==Resource Allocation Tab==
     @UiField
     protected DialogTab resourceAllocationTab;
@@ -519,6 +530,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         // TODO: How to align right without creating the widget manually?
         hostCpuEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isHighlyAvailableEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        watchdogModelEditor = new ListModelListBoxEditor<Object>();
+        watchdogActionEditor = new ListModelListBoxEditor<Object>();
         isStatelessEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isRunAndPauseEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isDeleteProtectedEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -799,6 +812,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
         // High Availability Tab
         isHighlyAvailableEditor.setLabel(constants.highlyAvailableVmPopup());
+
+        // watchdog
+        watchdogActionEditor.setLabel(constants.watchdogAction());
+        watchdogModelEditor.setLabel(constants.watchdogModel());
 
         // Resource Allocation Tab
         provisioningEditor.setLabel(constants.templateProvisVmPopup());
@@ -1170,6 +1187,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         nextTabIndex = highAvailabilityTab.setTabIndexes(nextTabIndex);
         isHighlyAvailableEditor.setTabIndex(nextTabIndex++);
         priorityEditor.setTabIndex(nextTabIndex++);
+
+        watchdogModelEditor.setTabIndex(nextTabIndex++);
+        watchdogActionEditor.setTabIndex(nextTabIndex++);
 
         // ==Resource Allocation Tab==
         nextTabIndex = resourceAllocationTab.setTabIndexes(nextTabIndex);

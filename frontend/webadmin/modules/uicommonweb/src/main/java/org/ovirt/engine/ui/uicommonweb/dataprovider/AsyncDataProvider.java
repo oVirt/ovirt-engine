@@ -1011,6 +1011,10 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.GetStoragePoolById, new StoragePoolQueryParametersBase(dataCenterId), aQuery);
     }
 
+    public static void GetWatchdogByVmId(AsyncQuery aQuery, Guid vmId) {
+        Frontend.RunQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(vmId), aQuery);
+    }
+
     public static void getTemplateById(AsyncQuery aQuery, Guid templateId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override

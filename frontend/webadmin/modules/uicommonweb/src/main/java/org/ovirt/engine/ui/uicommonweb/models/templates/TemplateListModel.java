@@ -21,6 +21,9 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.businessentities.VmWatchdog;
+import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
+import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -413,7 +416,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
 
     public void postNameUniqueCheck(boolean isNameUnique)
     {
-        UnitVmModel model = (UnitVmModel) getWindow();
+        final UnitVmModel model = (UnitVmModel) getWindow();
 
         if (model.getProgress() != null)
         {
@@ -421,7 +424,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         }
 
         VmTemplate selectedItem = (VmTemplate) getSelectedItem();
-        VmTemplate template = (VmTemplate) Cloner.clone(selectedItem);
+        final VmTemplate template = (VmTemplate) Cloner.clone(selectedItem);
 
         String name = (String) model.getName().getEntity();
 
@@ -493,7 +496,10 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
 
         model.startProgress(null);
 
-        Frontend.RunAction(VdcActionType.UpdateVmTemplate, new UpdateVmTemplateParameters(template),
+        UpdateVmTemplateParameters parameters = new UpdateVmTemplateParameters(template);
+        setVmWatchdogToParams(model, parameters);
+
+        Frontend.RunAction(VdcActionType.UpdateVmTemplate, parameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
@@ -504,6 +510,20 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
                     }
                 }, this);
     }
+
+    private void setVmWatchdogToParams(final UnitVmModel model, UpdateVmTemplateParameters updateVmParams) {
+        VmWatchdogType wdModel = VmWatchdogType.getByName((String) model.getWatchdogModel()
+                .getSelectedItem());
+        updateVmParams.setUpdateWatchdog(true);
+        if(wdModel != null) {
+            VmWatchdog vmWatchdog = new VmWatchdog();
+            vmWatchdog.setAction(VmWatchdogAction.getByName((String) model.getWatchdogAction()
+                    .getSelectedItem()));
+            vmWatchdog.setModel(wdModel);
+            updateVmParams.setWatchdog(vmWatchdog);
+        }
+    }
+
 
     public void postUpdateVmTemplate(VdcReturnValueBase returnValue)
     {

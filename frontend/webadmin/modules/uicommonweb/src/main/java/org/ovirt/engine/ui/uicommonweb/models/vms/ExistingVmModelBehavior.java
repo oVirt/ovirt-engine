@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -9,9 +11,14 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VmWatchdog;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -74,6 +81,21 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                 },
                 getModel().getHash()),
                 vm.getStoragePoolId());
+        AsyncDataProvider.GetWatchdogByVmId(new AsyncQuery(this.getModel(), new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object target, Object returnValue) {
+                UnitVmModel model = (UnitVmModel) target;
+                VdcQueryReturnValue val = (VdcQueryReturnValue) returnValue;
+                @SuppressWarnings("unchecked")
+                Collection<VmWatchdog> watchdogs = (Collection<VmWatchdog>) val.getReturnValue();
+                for(VmWatchdog watchdog: watchdogs) {
+                    model.getWatchdogAction().setSelectedItem(watchdog.getAction() == null ? null
+                            : watchdog.getAction().name().toLowerCase());
+                    model.getWatchdogModel().setSelectedItem(watchdog.getModel() == null ? ""
+                            : watchdog.getModel().name());
+                }
+            }
+        }), vm.getId());
     }
 
     @Override
@@ -149,6 +171,25 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         getModel().getCustomProperties().setEntity(vm.getCustomProperties());
         getModel().getCustomPropertySheet().setEntity(vm.getCustomProperties());
         getModel().getCpuPinning().setEntity(vm.getCpuPinning());
+
+        Frontend.RunQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(getVm().getId()), new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                @SuppressWarnings("unchecked")
+                List<VmWatchdog> watchdogs = (List<VmWatchdog>) ((VdcQueryReturnValue)returnValue).getReturnValue();
+                if(watchdogs.isEmpty()) {
+                    getModel().getWatchdogAction().setSelectedItem(null);
+                    getModel().getWatchdogModel().setSelectedItem(null);
+                } else {
+                    VmWatchdog vmWatchdog = watchdogs.get(0);
+                    getModel().getWatchdogAction().setSelectedItem(vmWatchdog.getAction() == null ? null
+                            : vmWatchdog.getAction().name().toLowerCase());
+                    getModel().getWatchdogModel().setSelectedItem(vmWatchdog.getModel() == null ? ""
+                            : vmWatchdog.getModel().name());
+                }
+            }
+        }));
+
 
         getModel().getVncKeyboardLayout().setSelectedItem(vm.getVncKeyboardLayout());
 

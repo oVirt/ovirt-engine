@@ -43,6 +43,9 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.businessentities.VmWatchdog;
+import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
+import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
@@ -1942,7 +1945,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
     private void onSave()
     {
-        UnitVmModel model = (UnitVmModel) getWindow();
+        final UnitVmModel model = (UnitVmModel) getWindow();
         VM selectedItem = (VM) getSelectedItem();
 
         String name = (String) model.getName().getEntity();
@@ -2022,9 +2025,13 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                 model.startProgress(null);
 
-                Frontend.RunAction(VdcActionType.AddVmFromScratch, new AddVmFromScratchParameters(getcurrentVm(),
+
+                AddVmFromScratchParameters parameters = new AddVmFromScratchParameters(getcurrentVm(),
                         new ArrayList<DiskImage>(),
-                        NGuid.Empty),
+                        NGuid.Empty);
+
+                setVmWatchdogToParams(model, parameters);
+                Frontend.RunAction(VdcActionType.AddVmFromScratch, parameters,
                         new IFrontendActionAsyncCallback() {
                             @Override
                             public void executed(FrontendActionAsyncResult result) {
@@ -2100,6 +2107,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
                     parameters.add(params);
 
+                    setVmWatchdogToParams(model, params);
                     Frontend.RunMultipleAction(VdcActionType.AddVm, parameters,
                             new IFrontendMultipleActionAsyncCallback() {
                                 @Override
@@ -2139,8 +2147,11 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                 VdcReturnValueBase returnValueBase = result.getReturnValue();
                                 if (returnValueBase != null && returnValueBase.getSucceeded())
                                 {
+                                    VmManagementParametersBase updateVmParams = new VmManagementParametersBase(vmListModel.getcurrentVm());
+                                    setVmWatchdogToParams(model, updateVmParams);
+
                                     Frontend.RunAction(VdcActionType.UpdateVm,
-                                            new VmManagementParametersBase(vmListModel.getcurrentVm()),
+                                            updateVmParams,
                                             new IFrontendActionAsyncCallback() {
                                                 @Override
                                                 public void executed(FrontendActionAsyncResult result1) {
@@ -2152,7 +2163,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                                     {
                                                         vmListModel1.cancel();
                                                     }
-
                                                 }
                                             },
                                             vmListModel);
@@ -2173,8 +2183,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 }
 
                 model.startProgress(null);
+                VmManagementParametersBase updateVmParams = new VmManagementParametersBase(getcurrentVm());
 
-                Frontend.RunAction(VdcActionType.UpdateVm, new VmManagementParametersBase(getcurrentVm()),
+                setVmWatchdogToParams(model, updateVmParams);
+                Frontend.RunAction(VdcActionType.UpdateVm, updateVmParams,
                         new IFrontendActionAsyncCallback() {
                             @Override
                             public void executed(FrontendActionAsyncResult result) {
@@ -2186,10 +2198,22 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                 {
                                     vmListModel.cancel();
                                 }
-
                             }
                         }, this);
             }
+        }
+    }
+
+    private void setVmWatchdogToParams(final UnitVmModel model, VmManagementParametersBase updateVmParams) {
+        VmWatchdogType wdModel = VmWatchdogType.getByName((String) model.getWatchdogModel()
+                .getSelectedItem());
+        updateVmParams.setUpdateWatchdog(true);
+        if(wdModel != null) {
+            VmWatchdog vmWatchdog = new VmWatchdog();
+            vmWatchdog.setAction(VmWatchdogAction.getByName((String) model.getWatchdogAction()
+                    .getSelectedItem()));
+            vmWatchdog.setModel(wdModel);
+            updateVmParams.setWatchdog(vmWatchdog);
         }
     }
 

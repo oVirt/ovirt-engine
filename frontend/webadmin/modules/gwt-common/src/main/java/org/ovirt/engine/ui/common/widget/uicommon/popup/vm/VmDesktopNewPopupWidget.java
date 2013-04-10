@@ -38,8 +38,7 @@ public class VmDesktopNewPopupWidget extends AbstractVmPopupWidget {
     }
 
     private void initTabAvailabilityListeners() {
-        // High Availability only avail in server mode
-        highAvailabilityTab.setVisible(false);
+        highAvailabilityTab.setVisible(true);
 
         // only avail for desktop mode
         isStatelessEditor.setVisible(true);

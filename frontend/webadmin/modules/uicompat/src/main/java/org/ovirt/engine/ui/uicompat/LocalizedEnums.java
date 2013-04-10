@@ -617,6 +617,12 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String VdcObjectType___GlusterHook();
 
+	String VdcObjectType___UpdateWatchdog();
+
+	String VdcObjectType___RemoveWatchdog();
+
+	String VdcObjectType___AddWatchdog();
+
 	String VdsSelectionAlgorithm___None();
 
 	String VdsSelectionAlgorithm___EvenlyDistribute();
@@ -686,4 +692,18 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String GlusterHookContentType___TEXT();
 
     String GlusterHookContentType___BINARY();
+
+    String VmWatchdogType___i6300esb();
+
+    String VmWatchdogType___ib700();
+
+    String VmWatchdogAction___NONE();
+
+    String VmWatchdogAction___RESET();
+
+    String VmWatchdogAction___POWEROFF();
+
+    String VmWatchdogAction___DUMP();
+
+    String VmWatchdogAction___PAUSE();
 }

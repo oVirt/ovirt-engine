@@ -139,6 +139,9 @@
 		<include name="common/businessentities/comparators/LexoNumericComparator.java" />
         <include name="common/businessentities/Identifiable.java" />
 		<include name="common/businessentities/VmGuestAgentInterface.java" />
+		<include name="common/businessentities/VmWatchdog.java" />
+		<include name="common/businessentities/VmWatchdogAction.java" />
+		<include name="common/businessentities/VmWatchdogType.java" />
 		<include name="common/job/*.java" />
 
 		<!-- Quota -->

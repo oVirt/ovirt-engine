@@ -381,6 +381,11 @@
 							<g:Label addStyleNames="{style.sectionLabel}" text="{constants.priorForRunMigrationQueueVmPopup}" />
 							<e:EntityModelCellTable ui:field="priorityEditor" />
 						</g:FlowPanel>
+						<g:FlowPanel addStyleNames="{style.sectionPanel}">
+							<g:Label addStyleNames="{style.sectionLabel}" text="{constants.watchdog}" />
+							<e:ListModelListBoxEditor ui:field="watchdogModelEditor" />
+							<e:ListModelListBoxEditor ui:field="watchdogActionEditor" />
+						</g:FlowPanel>
 					</g:FlowPanel>
 				</t:content>
 			</t:DialogTab>

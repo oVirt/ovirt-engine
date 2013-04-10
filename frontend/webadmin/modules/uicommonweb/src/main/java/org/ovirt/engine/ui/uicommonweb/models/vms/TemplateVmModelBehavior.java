@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -9,6 +10,8 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VmWatchdog;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -53,6 +56,19 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
                     template.getStoragePoolId().getValue());
         }
 
+        AsyncDataProvider.GetWatchdogByVmId(new AsyncQuery(this.getModel(), new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object target, Object returnValue) {
+                UnitVmModel model = (UnitVmModel) target;
+                @SuppressWarnings("unchecked")
+                Collection<VmWatchdog> watchdogs =
+                        (Collection<VmWatchdog>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                for(VmWatchdog watchdog: watchdogs) {
+                    model.getWatchdogAction().setSelectedItem(watchdog.getAction().name().toLowerCase());
+                    model.getWatchdogModel().setSelectedItem(watchdog.getModel().name());
+                }
+            }
+        }), template.getId());
         getModel().getMigrationMode().setSelectedItem(template.getMigrationSupport());
     }
 

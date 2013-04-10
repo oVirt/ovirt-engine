@@ -400,6 +400,12 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Highly Available")
     String highlyAvailableVmPopup();
 
+    @DefaultStringValue("Watchdog Action")
+    String watchdogAction();
+
+    @DefaultStringValue("Watchdog Model")
+    String watchdogModel();
+
     @DefaultStringValue("Template Provisioning")
     String templateProvisVmPopup();
 
@@ -438,6 +444,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Priority for Run/Migration queue:")
     String priorForRunMigrationQueueVmPopup();
+
+    @DefaultStringValue("Watchdog")
+    String watchdog();
 
     @DefaultStringValue("Memory Allocation:")
     String memAllocVmPopup();

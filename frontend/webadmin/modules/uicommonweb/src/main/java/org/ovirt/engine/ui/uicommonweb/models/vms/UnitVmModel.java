@@ -20,6 +20,8 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
+import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -51,6 +53,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidati
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.Constants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -1151,6 +1154,23 @@ public class UnitVmModel extends Model {
         setHostCpu(new NotChangableForVmInPoolEntityModel());
         getHostCpu().getEntityChangedEvent().addListener(this);
 
+        setWatchdogAction(new NotChangableForVmInPoolListModel());
+        getWatchdogAction().getEntityChangedEvent().addListener(this);
+        ArrayList<String> watchDogActions = new ArrayList<String>();
+        for(VmWatchdogAction action : VmWatchdogAction.values()) {
+            watchDogActions.add(EnumTranslator.createAndTranslate(action));
+        }
+        getWatchdogAction().setItems(watchDogActions);
+
+        setWatchdogModel(new NotChangableForVmInPoolListModel());
+        getWatchdogModel().getEntityChangedEvent().addListener(this);
+        ArrayList<String> watchDogModels = new ArrayList<String>();
+        watchDogModels.add(null);
+        for(VmWatchdogType type : VmWatchdogType.values()) {
+            watchDogModels.add(EnumTranslator.createAndTranslate(type));
+        }
+        getWatchdogModel().setItems(watchDogModels);
+
         setIsAutoAssign(new NotChangableForVmInPoolEntityModel());
         getIsAutoAssign().getEntityChangedEvent().addListener(this);
 
@@ -1343,7 +1363,18 @@ public class UnitVmModel extends Model {
                 if ((Boolean) getProvisioningClone_IsSelected().getEntity()) {
                     getProvisioning().setEntity(true);
                 }
+            } else if (sender == getWatchdogModel()) {
+                WatchdogModel_EntityChanged(sender, args);
             }
+        }
+    }
+
+    private void WatchdogModel_EntityChanged(Object sender, EventArgs args) {
+        if("".equals(getWatchdogModel().getEntity())) {
+            getWatchdogAction().setIsChangable(false);
+            getWatchdogAction().setSelectedItem(""); //$NON-NLS-1$
+        } else {
+            getWatchdogAction().setIsChangable(true);
         }
     }
 
@@ -2214,4 +2245,24 @@ public class UnitVmModel extends Model {
             return this;
         }
     }
+
+    private ListModel watchdogModel;
+    public ListModel getWatchdogModel() {
+        return watchdogModel;
+    }
+
+    public void setWatchdogModel(ListModel watchdogModel) {
+        this.watchdogModel = watchdogModel;
+    }
+
+    private ListModel watchdogAction;
+
+    public ListModel getWatchdogAction() {
+        return watchdogAction;
+    }
+
+    public void setWatchdogAction(ListModel watchdogAction) {
+        this.watchdogAction = watchdogAction;
+    }
+
 }
