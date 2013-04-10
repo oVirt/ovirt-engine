@@ -1,11 +1,15 @@
 package org.ovirt.engine.core.utils;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class ObjectIdentityCheckerTest extends TestCase {
+public class ObjectIdentityCheckerTest {
+    @Test
     public void testIsUpdateable() {
         ObjectIdentityChecker oic = new ObjectIdentityChecker(Jedi.class);
         assertFalse("Should be false by default", oic.IsFieldUpdatable("name"));
@@ -13,6 +17,7 @@ public class ObjectIdentityCheckerTest extends TestCase {
         assertTrue("Should be true now", oic.IsFieldUpdatable("name"));
     }
 
+    @Test
     public void testNoChanges() {
         Jedi jedi1 = new Jedi();
         Jedi jedi2 = new Jedi();
@@ -21,6 +26,7 @@ public class ObjectIdentityCheckerTest extends TestCase {
         assertTrue("Should be no changes", changes.size() == 0);
     }
 
+    @Test
     public void testChanges() {
         Jedi jedi1 = new Jedi();
         Jedi jedi2 = new Jedi();
@@ -30,6 +36,7 @@ public class ObjectIdentityCheckerTest extends TestCase {
         assertTrue("Should be 1 changes", changes.size() == 1);
     }
 
+    @Test
     public void testIsFieldsUpdated() {
         Jedi jedi1 = new Jedi();
         Jedi jedi2 = new Jedi();
