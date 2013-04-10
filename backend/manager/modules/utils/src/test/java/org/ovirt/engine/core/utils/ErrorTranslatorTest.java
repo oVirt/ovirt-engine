@@ -1,24 +1,28 @@
 package org.ovirt.engine.core.utils;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import junit.framework.TestCase;
-
+import org.junit.Test;
 import org.ovirt.engine.core.common.interfaces.ErrorTranslator;
 
-public class ErrorTranslatorTest extends TestCase {
+public class ErrorTranslatorTest {
 
     private static final String TEST_KEY_NO_REPLACEMENT = "TEST_KEY_NO_REPLACEMENT";
     private static final String TEST_KEY_WITH_REPLACEMENT = "TEST_KEY_WITH_REPLACEMENT";
     private static final String FILENAME = "TestAppErrors";
     private static final String FILENAME_WITH_SUFFIX = FILENAME + ".properties";
 
+    @Test
     public void testNoStringSubstitutionWithoutSuffix() {
         doTestNoStringSubstitution(FILENAME);
     }
 
+    @Test
     public void testNoStringSubstitutionWithSuffix() {
         doTestNoStringSubstitution(FILENAME_WITH_SUFFIX);
     }
@@ -29,6 +33,7 @@ public class ErrorTranslatorTest extends TestCase {
         assertEquals("String should equal", "VM not found", error);
     }
 
+    @Test
     public void testNoStringSubstitutionWithList() {
         ErrorTranslator et = new ErrorTranslatorImpl(FILENAME);
         List<String> error = et.TranslateErrorText(Arrays.asList(TEST_KEY_NO_REPLACEMENT));
@@ -36,6 +41,7 @@ public class ErrorTranslatorTest extends TestCase {
         assertEquals("String should equal", "VM not found", error.get(0));
     }
 
+    @Test
     public void testStringSubstitutionWithList() {
         ErrorTranslator et = new ErrorTranslatorImpl(FILENAME);
         List<String> error = et.TranslateErrorText(Arrays.asList(TEST_KEY_WITH_REPLACEMENT,
@@ -45,10 +51,12 @@ public class ErrorTranslatorTest extends TestCase {
         assertEquals("String should equal", result, error.get(0));
     }
 
+    @Test
     public void testLocaleSpecificWithoutSuffix() {
         doTestLocaleSpecific(FILENAME);
     }
 
+    @Test
     public void testLocaleSpecificWithSuffix() {
         doTestLocaleSpecific(FILENAME_WITH_SUFFIX);
     }
@@ -68,10 +76,12 @@ public class ErrorTranslatorTest extends TestCase {
         }
     }
 
+    @Test
     public void testLocaleOverrideWithoutSuffix() {
         doTestLocaleOverride(FILENAME);
     }
 
+    @Test
     public void testLocaleOverrideWithSuffix() {
         doTestLocaleOverride(FILENAME_WITH_SUFFIX);
     }
