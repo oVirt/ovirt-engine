@@ -23,7 +23,7 @@ public class ErrorTranslatorTest extends TestCase {
         doTestNoStringSubstitution(FILENAME_WITH_SUFFIX);
     }
 
-    private void doTestNoStringSubstitution(String name) {
+    private static void doTestNoStringSubstitution(String name) {
         ErrorTranslator et = new ErrorTranslatorImpl(name);
         String error = et.TranslateErrorTextSingle(TEST_KEY_NO_REPLACEMENT);
         assertEquals("String should equal", "VM not found", error);
@@ -53,7 +53,7 @@ public class ErrorTranslatorTest extends TestCase {
         doTestLocaleSpecific(FILENAME_WITH_SUFFIX);
     }
 
-    private void doTestLocaleSpecific(String name) {
+    private static void doTestLocaleSpecific(String name) {
         Locale locale = Locale.getDefault();
         try {
             Locale.setDefault(Locale.GERMAN);
@@ -76,7 +76,7 @@ public class ErrorTranslatorTest extends TestCase {
         doTestLocaleOverride(FILENAME_WITH_SUFFIX);
     }
 
-    private void doTestLocaleOverride(String name) {
+    private static void doTestLocaleOverride(String name) {
         ErrorTranslator et = new ErrorTranslatorImpl(name);
         List<String> errors = et.TranslateErrorText(Arrays.asList(TEST_KEY_NO_REPLACEMENT), Locale.ITALIAN);
         assertEquals("Unexpected Size", 1, errors.size());
