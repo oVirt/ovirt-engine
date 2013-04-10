@@ -1,8 +1,11 @@
 package org.ovirt.engine.core.utils;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertNotSame;
 
-public class TicketingTest extends TestCase {
+import org.junit.Test;
+
+public class TicketingTest {
+    @Test
     public void testNoRepeats() {
         String sample = Ticketing.GenerateOTP();
         for (int x = 0; x < 1000; x++) {
