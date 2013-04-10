@@ -324,6 +324,52 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
+- name: /api/vms/{vm:id}/watchdogs|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /api/vms/{vm:id}/wacthdogs/{watchdog:id}|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /api/vms/{vm:id}/watchdogs/{watchdog:id}|rel=delete
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /api/vms/{vm:id}/watchdogs/{watchdog:id}|rel=update
+  request:
+    body:
+      parameterType: WatchDog
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {watchdog.action: 'xs:string', watchdog.model: 'xs:string'}
+    urlparams:
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /api/vms/{vm:id}/watchdogs|rel=add
+  request:
+    body:
+      parameterType: WatchDog
+      signatures:
+      - mandatoryArguments: {watchdog.action: 'xs:string', watchdog.model: 'xs:string'}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/disks|rel=get
   request:
     body:

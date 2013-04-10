@@ -87,6 +87,8 @@ import org.ovirt.engine.api.model.VmStates;
 import org.ovirt.engine.api.model.VmStatus;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.model.VmTypes;
+import org.ovirt.engine.api.model.WatchdogActions;
+import org.ovirt.engine.api.model.WatchdogModels;
 import org.ovirt.engine.api.resource.CapabilitiesResource;
 import org.ovirt.engine.api.resource.CapabiliyResource;
 import org.ovirt.engine.api.restapi.model.StorageFormat;
@@ -94,6 +96,8 @@ import org.ovirt.engine.api.restapi.resource.utils.FeaturesHelper;
 import org.ovirt.engine.api.restapi.types.IpVersion;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.types.NetworkUsage;
+import org.ovirt.engine.api.restapi.types.WatchdogAction;
+import org.ovirt.engine.api.restapi.types.WatchdogModel;
 import org.ovirt.engine.api.restapi.util.FenceOptionsParser;
 import org.ovirt.engine.api.restapi.util.ServerCpuParser;
 import org.ovirt.engine.api.restapi.util.VersionHelper;
@@ -214,6 +218,8 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addIpVersions(version, IpVersion.values());
         addCpuModes(version, CpuMode.values());
         addScsiGenericIoOptions(version, ScsiGenericIO.values());
+        addWatchdogActions(version, WatchdogAction.values());
+        addWatchdogModels(version, WatchdogModel.values());
 
         version.setFeatures(featuresHelper.getFeatures(v));
 
@@ -243,6 +249,24 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
             version.setSgioOptions(new ScsiGenericIoOptions());
             for (ScsiGenericIO mode : values) {
                 version.getSgioOptions().getScsiGenericIoOptions().add(mode.value());
+            }
+        }
+    }
+
+    private void addWatchdogModels(VersionCaps version, WatchdogModel[] values) {
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_3)) {
+            version.setWatchdogModels(new WatchdogModels());
+            for (WatchdogModel watchdogModel : values) {
+                version.getWatchdogModels().getWatchdogModels().add(watchdogModel.value());
+            }
+        }
+    }
+
+    private void addWatchdogActions(VersionCaps version, WatchdogAction[] values) {
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_3)) {
+            version.setWatchdogActions(new WatchdogActions());
+            for (WatchdogAction watchdogAction : values) {
+                version.getWatchdogActions().getWatchdogActions().add(watchdogAction.value());
             }
         }
     }

@@ -16,6 +16,7 @@ import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.api.resource.ReadOnlyDevicesResource;
 import org.ovirt.engine.api.resource.TemplateDisksResource;
 import org.ovirt.engine.api.resource.TemplateResource;
+import org.ovirt.engine.api.resource.WatchdogsResource;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
@@ -34,7 +35,7 @@ public class BackendTemplateResource
     extends AbstractBackendActionableResource<Template, VmTemplate>
     implements TemplateResource {
 
-    static final String[] SUB_COLLECTIONS = { "disks", "nics", "cdroms", "permissions" };
+    static final String[] SUB_COLLECTIONS = { "disks", "nics", "cdroms", "permissions", "watchdogs" };
 
     public BackendTemplateResource(String id) {
         super(id, Template.class, VmTemplate.class, SUB_COLLECTIONS);
@@ -125,6 +126,14 @@ public class BackendTemplateResource
     @Override
     protected Template doPopulate(Template model, VmTemplate entity) {
         return model;
+    }
+
+    @Override
+    @SingleEntityResource
+    public WatchdogsResource getWatchdogsResource() {
+        return inject(new BackendWatchdogsResource(guid,
+                VdcQueryType.GetWatchdog,
+                new IdQueryParameters(guid)));
     }
 
 }

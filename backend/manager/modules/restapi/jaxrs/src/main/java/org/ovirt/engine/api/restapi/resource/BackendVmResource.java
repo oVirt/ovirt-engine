@@ -35,6 +35,7 @@ import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.api.resource.VmNicsResource;
 import org.ovirt.engine.api.resource.VmReportedDevicesResource;
 import org.ovirt.engine.api.resource.VmResource;
+import org.ovirt.engine.api.resource.WatchdogsResource;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
@@ -134,6 +135,14 @@ public class BackendVmResource extends
     public DevicesResource<CdRom, CdRoms> getCdRomsResource() {
         return inject(new BackendCdRomsResource(guid,
                                                 VdcQueryType.GetVmByVmId,
+                                                new IdQueryParameters(guid)));
+    }
+
+    @Override
+    @SingleEntityResource
+    public WatchdogsResource getWatchdogsResource() {
+        return inject(new BackendWatchdogsResource(guid,
+                                                VdcQueryType.GetWatchdog,
                                                 new IdQueryParameters(guid)));
     }
 

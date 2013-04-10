@@ -32,7 +32,7 @@ public class BackendTemplatesResource
     extends AbstractBackendCollectionResource<Template, VmTemplate>
     implements TemplatesResource {
 
-    static final String[] SUB_COLLECTIONS = { "disks", "nics", "cdroms", "permissions" };
+    static final String[] SUB_COLLECTIONS = { "disks", "nics", "cdroms", "permissions", "watchdogs" };
 
     public BackendTemplatesResource() {
         super(Template.class, VmTemplate.class, SUB_COLLECTIONS);

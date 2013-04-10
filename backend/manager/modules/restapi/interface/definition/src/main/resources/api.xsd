@@ -586,6 +586,8 @@
           <xs:element ref="pm_proxy_types" minOccurs="0"/>
           <xs:element ref="cpu_modes" minOccurs="0"/>
           <xs:element ref="sgio_options" minOccurs="0"/>
+          <xs:element ref="watchdog_models" minOccurs="0"/>
+          <xs:element ref="watchdog_actions" minOccurs="0"/>
 
           <!-- Gluster related -->
           <xs:element ref="gluster_volume_types" minOccurs="0"/>
@@ -922,6 +924,34 @@
   </xs:complexType>
 
 
+  <xs:element name="watchdog_actions" type="WatchdogActions"/>
+
+  <xs:complexType name="WatchdogActions">
+    <xs:sequence>
+      <xs:element name="action" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="WatchdogActions"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="watchdog_models" type="WatchdogModels"/>
+
+  <xs:complexType name="WatchdogModels">
+    <xs:sequence>
+      <xs:element name="model" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="WatchdogModels"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
   <!-- Common to all resources -->
 
   <xs:complexType name="ActionableResource">
@@ -1049,6 +1079,35 @@
           </xs:appinfo>
         </xs:annotation>
     </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="WatchDogs">
+    <xs:complexContent>
+      <xs:extension base="BaseDevices">
+        <xs:sequence>
+          <xs:element ref="watchdog" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="WatchDogs"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="WatchDog">
+    <xs:complexContent>
+      <xs:extension base="BaseDevice">
+        <xs:sequence>
+          <xs:element name="model" type="xs:string" minOccurs="1"
+            maxOccurs="1" />
+          <xs:element name="action" type="xs:string" minOccurs="1"
+            maxOccurs="1" />
+          </xs:sequence>
+        </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="MemoryPolicy">
@@ -1947,7 +2006,7 @@
           <xs:element ref="domain" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="usb" minOccurs="0" maxOccurs="1"/>
           <xs:element name="tunnel_migration" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-          <!-- also rel="cdroms/disks/nics" links, see Devices below -->
+          <!-- also rel="cdroms/disks/nics/watchdogs" links, see Devices below -->
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -2169,6 +2228,7 @@
           <!-- also rel="users" links, see Users above -->
 
           <xs:element ref="reported_devices" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="watchdogs" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -2381,6 +2441,10 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+
+  <xs:element name="watchdog" type="WatchDog"/>
+
+  <xs:element name="watchdogs" type="WatchDogs"/>
 
   <xs:complexType name="CdRom">
     <xs:complexContent>

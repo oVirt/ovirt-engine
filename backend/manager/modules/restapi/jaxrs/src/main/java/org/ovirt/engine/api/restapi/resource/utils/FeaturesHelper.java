@@ -57,8 +57,16 @@ public class FeaturesHelper {
             addFeatureComment(features);
             addFeatureRefreshHostCapabilities(features);
             addFeatureMemorySnapshot(features);
+            addWatchdogFeature(features);
         }
         return features;
+    }
+
+    private void addWatchdogFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Watchdog Device");
+        feature.setDescription("Ability to create watchdog devices in VM's");
+        features.getFeature().add(feature);
     }
 
     private void addFeatureSessionBasedAuthentication(Features features) {

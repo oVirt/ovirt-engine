@@ -68,6 +68,7 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VersionCaps;
 import org.ovirt.engine.api.model.VmPool;
+import org.ovirt.engine.api.model.WatchDog;
 import org.ovirt.engine.api.resource.AssignedNetworkResource;
 import org.ovirt.engine.api.resource.AssignedNetworksResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
@@ -144,6 +145,7 @@ import org.ovirt.engine.api.resource.VmReportedDeviceResource;
 import org.ovirt.engine.api.resource.VmReportedDevicesResource;
 import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.resource.VmsResource;
+import org.ovirt.engine.api.resource.WatchdogResource;
 import org.ovirt.engine.api.resource.gluster.GlusterBrickResource;
 import org.ovirt.engine.api.resource.gluster.GlusterBricksResource;
 import org.ovirt.engine.api.resource.gluster.GlusterVolumeResource;
@@ -316,6 +318,14 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(CapabiliyResource.class, CapabilitiesResource.class);
         TYPES.put(VersionCaps.class, map);
+
+        map = new ParentToCollectionMap(DeviceResource.class, DevicesResource.class);
+        map.add(DeviceResource.class, DevicesResource.class, Template.class);
+        map.add(DeviceResource.class, DevicesResource.class, VM.class);
+        map.add(WatchdogResource.class, DevicesResource.class, VM.class);
+        map.add(WatchdogResource.class, DevicesResource.class, Template.class);
+        TYPES.put(WatchDog.class, map);
+
     }
 
     /**
