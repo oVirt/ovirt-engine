@@ -34,6 +34,8 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 public class VdsSelector {
     private final List<Guid> privateRunVdssList = new ArrayList<Guid>();
     private List<VmNetworkInterface> vmNICs;
+    private boolean displayNetworkInitialized;
+    private Network displayNetwork;
 
     public List<Guid> getRunVdssList() {
         return privateRunVdssList;
@@ -300,12 +302,14 @@ public class VdsSelector {
 
                 @Override
                 public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate) {
-                    if (!areRequiredNetworksAvailable(vds)) {
+                    VdcBllMessages returnValue = validateRequiredNetworksAvailable(vds);
+                    if (VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_NETWORKS == returnValue) {
                         sb.append("is missing networks required by VM nics ").append(Entities.interfacesByNetworkName(getVmNICs())
-                                .keySet());
-                        return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_NETWORKS;
+                                        .keySet());
+                    } else if (VdcBllMessages.ACTION_TYPE_FAILED_MISSING_DISPLAY_NETWORK == returnValue) {
+                        sb.append("is missing the cluster's display network");
                     }
-                    return null;
+                    return returnValue;
                 }
             });
             add(new HostValidator() {
@@ -378,6 +382,52 @@ public class VdsSelector {
                 .<Integer> GetValue(ConfigValues.BlockMigrationOnSwapUsagePercentage);
     }
 
+    /**
+     * Determines whether the cluster's display network is defined on the host.
+     *
+     * @param host
+     *            The host.
+     * @return <c>true</c> if the cluster's display network is defined on the host or
+     *         ConfigValue.OnlyRequiredNetworksMandatoryForVdsSelection is true; otherwise, <c>false</c>.
+     */
+    private boolean isDisplayNetworkAvailable(VDS host,
+            boolean onlyRequiredNetworks,
+            List<VdsNetworkInterface> allInterfacesForVds,
+            List<Network> allNetworksInCluster) {
+        if (onlyRequiredNetworks) {
+            return true;
+        }
+
+        if (!displayNetworkInitialized) {
+            resolveClusterDisplayNetwork(host, allNetworksInCluster);
+        }
+
+        if (displayNetwork == null) {
+            return true;
+        }
+
+        // Check if display network attached to host
+        for (VdsNetworkInterface nic : allInterfacesForVds) {
+            if (displayNetwork.getName().equals(nic.getNetworkName())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void resolveClusterDisplayNetwork(VDS host, List<Network> allNetworksInCluster) {
+        // Find the cluster's display network
+        for (Network tempNetwork : allNetworksInCluster) {
+            if (tempNetwork.getCluster().isDisplay()) {
+                displayNetwork = tempNetwork;
+                break;
+            }
+        }
+
+        displayNetworkInitialized = true;
+    }
+
     private Guid getVdsToRunOn(Iterable<VDS> vdss, boolean isMigrate) {
         StringBuilder sb = new StringBuilder();
         final List<VDS> readyToRun = new ArrayList<VDS>();
@@ -399,15 +449,20 @@ public class VdsSelector {
     }
 
     /**
-    * Determine whether all required Networks are attached to the Host's Nics. A required Network, depending on
-    * ConfigValue.OnlyRequiredNetworksMandatoryForVdsSelection, is defined as:
-    * 1. false: any network that is defined on an Active vNic of the VM.
-    * 2. true: a Cluster-Required Network that is defined on an Active vNic of the VM.
-    * @param vdsId
-    *            The Host id.
-    * @return <code>true</code> if all required Networks are attached to a Host Nic, otherwise, <code>false</code>.
-    */
-    private boolean areRequiredNetworksAvailable(VDS vds) {
+     * Determine whether all required Networks are attached to the Host's Nics. A required Network, depending on
+     * ConfigValue.OnlyRequiredNetworksMandatoryForVdsSelection, is defined as: 1. false: any network that is defined on
+     * an Active vNic of the VM or the cluster's display network. 2. true: a Cluster-Required Network that is defined on
+     * an Active vNic of the VM.
+     *
+     * @param vdsId
+     *            The Host id.
+     * @return <code>VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_NETWORKS</code> if a required network on an active vnic is
+     *         not attached to the host.<br>
+     *         <code>VdcBllMessages.ACTION_TYPE_FAILED_MISSING_DISPLAY_NETWORK</code> if the cluster's display network
+     *         is required and not attached to the host.<br>
+     *         Otherwise, <code>null</code>.
+     */
+    private VdcBllMessages validateRequiredNetworksAvailable(VDS vds) {
         final List<VdsNetworkInterface> allInterfacesForVds = getInterfaceDAO().getAllInterfacesForVds(vds.getId());
         final List<Network> clusterNetworks = getNetworkDAO().getAllForCluster(vds.getVdsGroupId());
         final Map<String, Network> networksByName = Entities.entitiesByName(clusterNetworks);
@@ -429,10 +484,15 @@ public class VdsSelector {
                 }
             }
             if (!found) {
-                return false;
+                return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_NETWORKS;
             }
         }
-        return true;
+
+        if (!isDisplayNetworkAvailable(vds, onlyRequiredNetworks, allInterfacesForVds, clusterNetworks)) {
+            return VdcBllMessages.ACTION_TYPE_FAILED_MISSING_DISPLAY_NETWORK;
+        }
+
+        return null;
     }
 
     private NetworkDao getNetworkDAO() {
