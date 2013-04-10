@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.ovirt.engine.core.common.utils.LexoNumericComparator;
 import org.ovirt.engine.ui.common.widget.MenuBar;
 import org.ovirt.engine.ui.common.widget.PopupPanel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkCommand;
@@ -171,9 +172,11 @@ public abstract class NetworkItemPanel extends DnDPanel {
                 });
             } else {
                 Collections.sort(commands, new Comparator<NetworkCommand>() {
+                    private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+
                     @Override
-                    public int compare(NetworkCommand o1, NetworkCommand o2) {
-                        return o1.getName().compareTo(o2.getName());
+                    public int compare(NetworkCommand com1, NetworkCommand com2) {
+                        return lexoNumeric.compare(com1.getName(), com2.getName());
                     }
                 });
                 MenuBar subMenu = subMenu();
