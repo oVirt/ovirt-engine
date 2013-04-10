@@ -1,12 +1,16 @@
 package org.ovirt.engine.core.searchbackend;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class EnumValueAutoCompleterTest extends TestCase {
+public class EnumValueAutoCompleterTest {
 
+    @Test
     public void testValues() {
         IAutoCompleter comp = new EnumValueAutoCompleter(Jedi.class);
         List<String> comps = Arrays.asList(comp.getCompletion("L"));
@@ -15,6 +19,7 @@ public class EnumValueAutoCompleterTest extends TestCase {
         assertTrue("leia", comps.contains("leia"));
     }
 
+    @Test
     public void testConvertFieldEnumValueToActualValue() {
         EnumValueAutoCompleter comp = new EnumValueAutoCompleter(Jedi.class);
         assertEquals("MACE", "4", comp.convertFieldEnumValueToActualValue("MACE"));

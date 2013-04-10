@@ -1,11 +1,15 @@
 package org.ovirt.engine.core.searchbackend;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-
-public class SearchObjectAutoCompleterTest extends TestCase {
+public class SearchObjectAutoCompleterTest {
+    @Test
     public void testGetDefaultSortbyPhrase() {
         SearchObjectAutoCompleter comp = new SearchObjectAutoCompleter(true);
         assertTrue("HOST", comp.getDefaultSort("HOST").contains("vds_name"));
@@ -13,6 +17,7 @@ public class SearchObjectAutoCompleterTest extends TestCase {
         assertEquals("Null", "", comp.getDefaultSort(null));
     }
 
+    @Test
     public void testGetRelatedTableName() {
         SearchObjectAutoCompleter comp = new SearchObjectAutoCompleter(true);
         assertEquals("EVENTS", "audit_log", comp.getRelatedTableName("EVENTS"));
@@ -20,6 +25,7 @@ public class SearchObjectAutoCompleterTest extends TestCase {
         assertNull("Null", comp.getRelatedTableName(null));
     }
 
+    @Test
     public void testIsCrossReference() {
         SearchObjectAutoCompleter comp = new SearchObjectAutoCompleter(true);
         assertTrue("EVENTS", comp.isCrossReferece("EVENTS", "TEMPLATES"));
@@ -29,6 +35,7 @@ public class SearchObjectAutoCompleterTest extends TestCase {
         assertFalse("Null text", comp.isCrossReferece(null, "TEMPLATES"));
     }
 
+    @Test
     public void testGetInnerJoin() {
         SearchObjectAutoCompleter comp = new SearchObjectAutoCompleter(true);
         assertNotNull("Sanity test", comp.getInnerJoin("EVENT", "USER"));
@@ -36,9 +43,9 @@ public class SearchObjectAutoCompleterTest extends TestCase {
 
     @Test
     public void testGetEntitySearchInfo() {
-        Assert.assertNotNull(SearchObjectAutoCompleter.getEntitySearchInfo(SearchObjects.AUDIT_PLU_OBJ_NAME));
-        Assert.assertEquals(SearchObjectAutoCompleter.getEntitySearchInfo(SearchObjects.AUDIT_PLU_OBJ_NAME),
+        assertNotNull(SearchObjectAutoCompleter.getEntitySearchInfo(SearchObjects.AUDIT_PLU_OBJ_NAME));
+        assertEquals(SearchObjectAutoCompleter.getEntitySearchInfo(SearchObjects.AUDIT_PLU_OBJ_NAME),
                 SearchObjectAutoCompleter.getEntitySearchInfo(SearchObjects.AUDIT_OBJ_NAME));
-        Assert.assertNull(SearchObjectAutoCompleter.getEntitySearchInfo("RANDOM_NOTEXISTING_KEY"));
+        assertNull(SearchObjectAutoCompleter.getEntitySearchInfo("RANDOM_NOTEXISTING_KEY"));
     }
 }

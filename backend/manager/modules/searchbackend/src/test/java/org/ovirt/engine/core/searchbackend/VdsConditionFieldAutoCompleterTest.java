@@ -1,14 +1,18 @@
 package org.ovirt.engine.core.searchbackend;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
 
 /**
  * Use this to test the BigDecimal delegate
  *
  *
  */
-public class VdsConditionFieldAutoCompleterTest extends TestCase {
+public class VdsConditionFieldAutoCompleterTest {
 
+    @Test
     public void testValidate() {
         VdsConditionFieldAutoCompleter comp = new VdsConditionFieldAutoCompleter();
         assertTrue("1", comp.validateFieldValue("LOAD", "1"));

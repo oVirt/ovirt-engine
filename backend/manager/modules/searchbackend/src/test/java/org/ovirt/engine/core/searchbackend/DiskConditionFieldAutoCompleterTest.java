@@ -1,9 +1,12 @@
 package org.ovirt.engine.core.searchbackend;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertTrue;
 
-public class DiskConditionFieldAutoCompleterTest extends TestCase {
+import org.junit.Test;
 
+public class DiskConditionFieldAutoCompleterTest {
+
+    @Test
     public void testValidateFieldValueWithEnum() {
         IConditionFieldAutoCompleter comp = new DiskConditionFieldAutoCompleter();
         assertTrue(comp.validateFieldValue("FORMAT", "RAW"));

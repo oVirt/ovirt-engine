@@ -1,16 +1,20 @@
 package org.ovirt.engine.core.searchbackend;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * this is the main test class for the BaseAutoCompleter class
  *
  */
-public class BitValueAutoCompleterTest extends TestCase {
+public class BitValueAutoCompleterTest {
 
+    @Test
     public void testEmpty() {
         IAutoCompleter comp = new BitValueAutoCompleter();
         List<String> comps = Arrays.asList(comp.getCompletion(""));
@@ -19,6 +23,7 @@ public class BitValueAutoCompleterTest extends TestCase {
         assertTrue("False", !comps.contains("False"));
     }
 
+    @Test
     public void testSpace() {
         IAutoCompleter comp = new BitValueAutoCompleter();
         List<String> comps = Arrays.asList(comp.getCompletion(" "));
@@ -27,6 +32,7 @@ public class BitValueAutoCompleterTest extends TestCase {
         assertTrue("False", !comps.contains("False"));
     }
 
+    @Test
     public void testValue() {
         IAutoCompleter comp = new BitValueAutoCompleter();
         List<String> comps = Arrays.asList(comp.getCompletion("t"));
@@ -34,6 +40,7 @@ public class BitValueAutoCompleterTest extends TestCase {
         assertTrue("false", !comps.contains("false"));
     }
 
+    @Test
     public void testValueCaps() {
         IAutoCompleter comp = new BitValueAutoCompleter();
         List<String> comps = Arrays.asList(comp.getCompletion("FA"));
@@ -41,6 +48,7 @@ public class BitValueAutoCompleterTest extends TestCase {
         assertTrue("true", !comps.contains("true"));
     }
 
+    @Test
     public void testValidate() {
         IAutoCompleter comp = new BitValueAutoCompleter();
         assertTrue("true", comp.validate("true"));
@@ -48,6 +56,7 @@ public class BitValueAutoCompleterTest extends TestCase {
         assertFalse("JarJar", comp.validate("JarJar"));
     }
 
+    @Test
     public void testValidateCompletion() {
         IAutoCompleter comp = new BitValueAutoCompleter();
         assertTrue("TRUE", comp.validateCompletion("TRUE"));

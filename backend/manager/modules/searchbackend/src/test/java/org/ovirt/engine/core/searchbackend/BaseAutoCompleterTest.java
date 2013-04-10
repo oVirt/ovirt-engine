@@ -1,11 +1,14 @@
 package org.ovirt.engine.core.searchbackend;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 /**
  * @see BitValueAutoCompleterTest
  */
-public class BaseAutoCompleterTest extends TestCase {
+public class BaseAutoCompleterTest {
+    @Test
     public void testChangeCaseDisplay() {
         BaseAutoCompleter bac = new BaseAutoCompleter();
         assertEquals("normal", "jarjarbinks", bac.changeCaseDisplay("JarJarBinks"));

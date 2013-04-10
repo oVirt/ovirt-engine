@@ -1,12 +1,16 @@
 package org.ovirt.engine.core.searchbackend;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class DateEnumValueAutoCompleterTest extends TestCase {
+public class DateEnumValueAutoCompleterTest {
 
+    @Test
     public void testValues() {
         DateEnumValueAutoCompleter comp = new DateEnumValueAutoCompleter(Jedi.class);
         List<String> comps = Arrays.asList(comp.getCompletion(" "));
@@ -15,6 +19,7 @@ public class DateEnumValueAutoCompleterTest extends TestCase {
         assertTrue("mace", comps.contains("mace"));
     }
 
+    @Test
     public void testConvertFieldEnumValueToActualValue() {
         DateEnumValueAutoCompleter comp = new DateEnumValueAutoCompleter(Jedi.class);
         // Dates should return dates

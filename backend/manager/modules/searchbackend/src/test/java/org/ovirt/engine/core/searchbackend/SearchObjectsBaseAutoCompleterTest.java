@@ -1,9 +1,12 @@
 package org.ovirt.engine.core.searchbackend;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-public class SearchObjectsBaseAutoCompleterTest extends TestCase {
+import org.junit.Test;
 
+public class SearchObjectsBaseAutoCompleterTest {
+
+    @Test
     public void testChangeCaseDisplay() {
         SearchObjectsBaseAutoCompleter comp = new SearchObjectsBaseAutoCompleter();
         assertEquals("hello", "Hello", comp.changeCaseDisplay("hello"));

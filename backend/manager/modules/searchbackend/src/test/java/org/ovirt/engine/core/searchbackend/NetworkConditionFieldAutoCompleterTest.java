@@ -1,9 +1,12 @@
 package org.ovirt.engine.core.searchbackend;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertTrue;
 
-public class NetworkConditionFieldAutoCompleterTest extends TestCase {
+import org.junit.Test;
 
+public class NetworkConditionFieldAutoCompleterTest {
+
+    @Test
     public void testValidateFieldValueWithEnum() {
         IConditionFieldAutoCompleter comp = new NetworkConditionFieldAutoCompleter();
         assertTrue(comp.validateFieldValue("NAME", "ABC"));
