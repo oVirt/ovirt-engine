@@ -23,7 +23,6 @@ public enum VdcActionType {
     InternalMigrateVm(15, QuotaDependency.NONE),
     MigrateVmToServer(16, ActionGroup.MIGRATE_VM, QuotaDependency.NONE),
     VmLogon(18, ActionGroup.CONNECT_TO_VM, QuotaDependency.NONE),
-    VmLock(20, QuotaDependency.NONE),
     SetVmTicket(22, ActionGroup.CONNECT_TO_VM, false, QuotaDependency.NONE),
     ExportVm(23, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
     ExportVmTemplate(24, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),

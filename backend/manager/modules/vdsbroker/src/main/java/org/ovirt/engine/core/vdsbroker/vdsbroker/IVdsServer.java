@@ -46,8 +46,6 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc desktopLogoff(String vmId, String force);
 
-    StatusOnlyReturnForXmlRpc desktopLock(String vmId);
-
     VMInfoListReturnForXmlRpc getVmStats(String vmId);
 
     VMInfoListReturnForXmlRpc getAllVmStats();

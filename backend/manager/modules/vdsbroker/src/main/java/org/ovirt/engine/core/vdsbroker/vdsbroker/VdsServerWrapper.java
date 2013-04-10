@@ -210,18 +210,6 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc desktopLock(String vmId) {
-        try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.desktopLock(vmId);
-            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
-            return wrapper;
-        } catch (UndeclaredThrowableException ute) {
-            throw new XmlRpcRunTimeException(ute);
-        }
-
-    }
-
-    @Override
     public synchronized VMInfoListReturnForXmlRpc getVmStats(String vmId) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getVmStats(vmId);

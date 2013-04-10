@@ -34,8 +34,6 @@ public interface VdsServerConnector {
 
     public Map<String, Object> desktopLogoff(String vmId, String force);
 
-    public Map<String, Object> desktopLock(String vmId);
-
     public Map<String, Object> getVmStats(String vmId);
 
     public Map<String, Object> getAllVmStats();

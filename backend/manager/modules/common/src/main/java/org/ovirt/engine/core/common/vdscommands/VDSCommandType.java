@@ -18,7 +18,6 @@ public enum VDSCommandType {
     ChangeFloppy("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     VmLogon("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     VmLogoff("org.ovirt.engine.core.vdsbroker.vdsbroker"),
-    VmLock("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     VmMonitorCommand("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     SetVmTicket("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     SetVdsStatus("org.ovirt.engine.core.vdsbroker"),
