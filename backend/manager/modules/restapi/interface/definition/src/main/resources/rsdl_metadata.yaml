@@ -2044,7 +2044,7 @@ actions:
       parameterType: Tag
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {tag.name: 'xs:string', tag.description: 'xs:string', tag.parent.name: 'xs:string'}
+        optionalArguments: {tag.name: 'xs:string', tag.description: 'xs:string', tag.parent.tag.name: 'xs:string'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -2055,7 +2055,7 @@ actions:
       parameterType: Tag
       signatures:
       - mandatoryArguments: {tag.name: 'xs:string'}
-        optionalArguments: {tag.description: 'xs:string', tag.parent.name: 'xs:string'}
+        optionalArguments: {tag.description: 'xs:string', tag.parent.tag.name: 'xs:string'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
