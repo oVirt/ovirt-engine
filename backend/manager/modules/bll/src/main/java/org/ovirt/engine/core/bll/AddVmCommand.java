@@ -72,6 +72,7 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationErro
 @SuppressWarnings("serial")
 @DisableInPrepareMode
 @LockIdNameAttribute
+@NonTransactiveCommandAttribute
 public class AddVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T>
         implements QuotaStorageDependent, QuotaVdsDependent {
 
@@ -485,27 +486,37 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                     addVmNetwork();
                     addVmStatistics();
                     addActiveSnapshot();
+                    addVmPermission();
                     getCompensationContext().stateChanged();
                     return null;
                 }
             });
 
-            addVmPermission();
             if (addVmImages()) {
-                copyVmDevices();
-                addDiskPermissions(newDiskImages);
-                addVmPayload();
-                // if vm smartcard settings is different from template's
-                // add or remove the smartcard according to user request
-                if (getVm().isSmartcardEnabled() != getVmTemplate().isSmartcardEnabled())
-                {
-                    VmDeviceUtils.updateSmartcardDevice(getVm().getId(), getVm().isSmartcardEnabled());
-                }
-                setActionReturnValue(getVm().getId());
-                setSucceeded(true);
+                TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+
+                    @Override
+                    public Void runInTransaction() {
+                        copyVmDevices();
+                        addDiskPermissions(newDiskImages);
+                        addVmPayload();
+                        updateSmartCardDevices();
+                        setActionReturnValue(getVm().getId());
+                        setSucceeded(true);
+                        return null;
+                    }
+                });
             }
         } else {
             log.errorFormat("Failed to add vm . The reasons are: {0}", StringUtils.join(errorMessages, ','));
+        }
+    }
+
+    private void updateSmartCardDevices() {
+        // if vm smartcard settings is different from template's
+        // add or remove the smartcard according to user request
+        if (getVm().isSmartcardEnabled() != getVmTemplate().isSmartcardEnabled()) {
+            VmDeviceUtils.updateSmartcardDevice(getVm().getId(), getVm().isSmartcardEnabled());
         }
     }
 
@@ -745,6 +756,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             permissions perms = new permissions(getCurrentUser().getUserId(), PredefinedRoles.VM_OPERATOR.getId(),
                     getVmId(), VdcObjectType.VM);
             MultiLevelAdministrationHandler.addPermission(perms);
+            getCompensationContext().snapshotNewEntity(perms);
         }
     }
 

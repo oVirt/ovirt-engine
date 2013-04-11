@@ -85,7 +85,8 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     protected abstract Guid getPoolId();
 
     /**
-     * This operation may take much time, so transactions timeout increased to 2 minutes
+     * This operation may take much time so the inner commands have fine-grained TX handling which
+     * means they aim to make all calls to Vds commands (i.e VDSM calls) out of TX.
      */
     @Override
     protected void executeCommand() {

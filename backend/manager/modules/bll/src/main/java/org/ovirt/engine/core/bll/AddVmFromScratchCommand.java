@@ -26,6 +26,7 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 
 @DisableInPrepareMode
 @LockIdNameAttribute
+@NonTransactiveCommandAttribute
 public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> extends AddVmCommand<T> {
     public AddVmFromScratchCommand(T parameters) {
         super(parameters);

@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 
 @InternalCommandAttribute
+@NonTransactiveCommandAttribute
 public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameters> extends AddVmCommand<T> {
     public AddVmAndAttachToPoolCommand(T parameters) {
         super(parameters);
@@ -21,38 +22,48 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
     @Override
     protected void executeCommand() {
         VmStatic vmStatic = getParameters().getVmStaticData();
-        boolean vmAddedSuccessfully = false;
-        VdcReturnValueBase returnValueFromAddVm = null;
-        if (VmTemplateHandler.BlankVmTemplateId.equals(vmStatic.getVmtGuid())) {
-            // Vm from scratch
-            AddVmFromScratchParameters tempVar = new AddVmFromScratchParameters(vmStatic, getParameters()
-                    .getDiskInfoList(), getParameters().getStorageDomainId());
-            tempVar.setSessionId(getParameters().getSessionId());
-            tempVar.setDontAttachToDefaultTag(true);
-            returnValueFromAddVm =
-                    Backend.getInstance().runInternalAction(VdcActionType.AddVmFromScratch,
-                            tempVar,
-                            ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
-        } else {
-            VmManagementParametersBase tempVar2 = new VmManagementParametersBase(vmStatic);
-            tempVar2.setSessionId(getParameters().getSessionId());
-            tempVar2.setDontCheckTemplateImages(true);
-            tempVar2.setDontAttachToDefaultTag(true);
-            tempVar2.setDiskInfoDestinationMap(diskInfoDestinationMap);
-            returnValueFromAddVm =
-                    Backend.getInstance().runInternalAction(VdcActionType.AddVm,
-                            tempVar2,
-                            ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
-        }
-        vmAddedSuccessfully = returnValueFromAddVm.getSucceeded();
+        VdcReturnValueBase returnValueFromAddVm;
 
-        if (vmAddedSuccessfully) {
-            getTaskIdList().addAll(returnValueFromAddVm.getInternalTaskIdList());
-            AddVmToPoolParameters tempVar3 = new AddVmToPoolParameters(getParameters().getPoolId(),
-                    vmStatic.getId());
-            tempVar3.setShouldBeLogged(false);
-            setSucceeded(Backend.getInstance().runInternalAction(VdcActionType.AddVmToPool, tempVar3).getSucceeded());
-            addVmPermission();
+        if (VmTemplateHandler.BlankVmTemplateId.equals(vmStatic.getVmtGuid())) {
+            returnValueFromAddVm = addVmFromScratch(vmStatic);
+        } else {
+            returnValueFromAddVm = addVm(vmStatic);
         }
+
+        if (returnValueFromAddVm.getSucceeded()) {
+            getTaskIdList().addAll(returnValueFromAddVm.getInternalTaskIdList());
+            addVmToPool(vmStatic);
+        }
+    }
+
+    private VdcReturnValueBase addVmFromScratch(VmStatic vmStatic) {
+        AddVmFromScratchParameters parameters = new AddVmFromScratchParameters(vmStatic, getParameters()
+                .getDiskInfoList(), getParameters().getStorageDomainId());
+        parameters.setSessionId(getParameters().getSessionId());
+        parameters.setDontAttachToDefaultTag(true);
+
+        return Backend.getInstance().runInternalAction(VdcActionType.AddVmFromScratch,
+                        parameters,
+                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+    }
+
+    private VdcReturnValueBase addVm(VmStatic vmStatic) {
+        VmManagementParametersBase parameters = new VmManagementParametersBase(vmStatic);
+        parameters.setSessionId(getParameters().getSessionId());
+        parameters.setDontCheckTemplateImages(true);
+        parameters.setDontAttachToDefaultTag(true);
+        parameters.setDiskInfoDestinationMap(diskInfoDestinationMap);
+
+        return Backend.getInstance().runInternalAction(VdcActionType.AddVm,
+                        parameters,
+                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+    }
+
+    private void addVmToPool(VmStatic vmStatic) {
+        AddVmToPoolParameters parameters = new AddVmToPoolParameters(getParameters().getPoolId(),
+                vmStatic.getId());
+        parameters.setShouldBeLogged(false);
+        setSucceeded(Backend.getInstance().runInternalAction(VdcActionType.AddVmToPool, parameters).getSucceeded());
+        addVmPermission();
     }
 }

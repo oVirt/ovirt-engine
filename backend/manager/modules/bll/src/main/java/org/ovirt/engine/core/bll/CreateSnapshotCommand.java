@@ -19,6 +19,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
  * This command responsible to creating snapshot from existing image and replace it to VM, holds the image. This command
@@ -26,6 +28,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
  */
 
 @InternalCommandAttribute
+@NonTransactiveCommandAttribute
 public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extends BaseImagesCommand<T> {
     protected DiskImage mNewCreatedDiskImage;
 
@@ -49,13 +52,17 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
         if (canCreateSnapshot()) {
             VDSReturnValue vdsReturnValue = performImageVdsmOperation();
             if (vdsReturnValue != null && vdsReturnValue.getSucceeded()) {
-                /**
-                 * Vitaly TODO: think about transactivity in DB
-                 */
-                processOldImageFromDb();
-                addDiskImageToDb(mNewCreatedDiskImage, null);
-                setActionReturnValue(mNewCreatedDiskImage);
-                setSucceeded(true);
+                TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+                    @Override
+                    public Void runInTransaction() {
+                        processOldImageFromDb();
+                        addDiskImageToDb(mNewCreatedDiskImage, getCompensationContext());
+                        setActionReturnValue(mNewCreatedDiskImage);
+                        setSucceeded(true);
+                        return null;
+                    }
+                });
+
             }
         }
 
@@ -134,10 +141,12 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
      * By default old image must be replaced by new one
      */
     protected void processOldImageFromDb() {
+        getCompensationContext().snapshotEntity(getDiskImage().getImage());
         getParameters().setOldLastModifiedValue(getDiskImage().getLastModified());
         getDiskImage().setLastModified(new Date());
         getDiskImage().setActive(false);
         getImageDao().update(getDiskImage().getImage());
+        getCompensationContext().stateChanged();
     }
 
     @Override
