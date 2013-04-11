@@ -21,10 +21,6 @@ public interface IVdcUser extends Serializable {
 
     void setDomainControler(String value);
 
-    String getBrowser();
-
-    void setBrowser(String value);
-
     String getGroupNames();
 
     void setGroupNames(String value);

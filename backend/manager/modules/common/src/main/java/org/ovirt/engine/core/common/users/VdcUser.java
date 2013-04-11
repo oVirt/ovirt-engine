@@ -11,7 +11,6 @@ public class VdcUser implements IVdcUser {
     private String mUserName;
     private String mPassword;
     private String mDomainControler;
-    private String mBrowser;
     private String mGroupNames;
     private String groupIds;
 
@@ -92,16 +91,6 @@ public class VdcUser implements IVdcUser {
     @Override
     public void setDomainControler(String value) {
         mDomainControler = value;
-    }
-
-    @Override
-    public String getBrowser() {
-        return mBrowser;
-    }
-
-    @Override
-    public void setBrowser(String value) {
-        mBrowser = value;
     }
 
     @Override
