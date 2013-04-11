@@ -52,6 +52,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
+import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -240,17 +241,21 @@ public class BackendVmResource extends
         if (action.isSetPause() && action.isPause()) {
             params.setRunAndPause(true);
         }
-        return doAction(VdcActionType.RunVmOnce, setReinitializeSysPrep(params), action);
+        return doAction(VdcActionType.RunVmOnce, setInitializationType(params), action);
     }
 
-    private VdcActionParametersBase setReinitializeSysPrep(RunVmOnceParams params) {
+    private VdcActionParametersBase setInitializationType(RunVmOnceParams params) {
         //REVISE when BE supports default val. for RunVmOnceParams.privateReinitialize
         org.ovirt.engine.core.common.businessentities.VM vm = getEntity(org.ovirt.engine.core.common.businessentities.VM.class,
                                                                         VdcQueryType.GetVmByVmId,
                                                                         new IdQueryParameters(guid),
                                                                         "VM");
         if (SimpleDependecyInjector.getInstance().get(OsRepository.class).isWindows(vm.getVmOsId()) && vm.isFirstRun()) {
-            params.setReinitialize(true);
+            params.setInitializationType(InitializationType.Sysprep);
+        } else if (SimpleDependecyInjector.getInstance().get(OsRepository.class).isLinux(vm.getVmOsId()) && params.getCloudInitParameters() != null) {
+            params.setInitializationType(InitializationType.CloudInit);
+        } else {
+            params.setInitializationType(InitializationType.None);
         }
         return params;
     }

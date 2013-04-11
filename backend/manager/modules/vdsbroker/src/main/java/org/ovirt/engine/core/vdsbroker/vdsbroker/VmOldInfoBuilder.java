@@ -118,6 +118,11 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
         createInfo.put(VdsProperties.sysprepInf, binarySysPrep);
     }
 
+    @Override
+    protected void buildCloudInitVmPayload(Map<String, byte[]> cloudInitContent) {
+        // Not supported in old code
+    }
+
     /**
      * Find VM device for this disk from the list of VM devices.
      *

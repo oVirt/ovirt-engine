@@ -60,12 +60,16 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
     protected CreateVmVDSCommandParameters initCreateVmParams() {
         getVm().setRunOnce(true);
         CreateVmVDSCommandParameters createVmParams = super.initCreateVmParams();
-        SysPrepParams sysPrepParams = new SysPrepParams();
         RunVmOnceParams runOnceParams = getParameters();
+
+        SysPrepParams sysPrepParams = new SysPrepParams();
         sysPrepParams.setSysPrepDomainName(runOnceParams.getSysPrepDomainName());
         sysPrepParams.setSysPrepUserName(runOnceParams.getSysPrepUserName());
         sysPrepParams.setSysPrepPassword(runOnceParams.getSysPrepPassword());
         createVmParams.setSysPrepParams(sysPrepParams);
+
+        createVmParams.setCloudInitParameters(runOnceParams.getCloudInitParameters());
+
         return createVmParams;
     }
 

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.action.CloudInitParameters;
 import org.ovirt.engine.core.common.action.SysPrepParams;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
@@ -7,6 +8,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class CreateVmVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
 
     private VM vm;
+    private CloudInitParameters cloudInitParameters;
     private SysPrepParams sysPrepParams;
     private boolean clearHibernationVolumes;
 
@@ -25,6 +27,14 @@ public class CreateVmVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     @Override
     public String toString() {
         return String.format("%s, vm=%s", super.toString(), getVm());
+    }
+
+    public CloudInitParameters getCloudInitParameters() {
+        return cloudInitParameters;
+    }
+
+    public void setCloudInitParameters(CloudInitParameters CloudInitParameters) {
+        this.cloudInitParameters = CloudInitParameters;
     }
 
     public SysPrepParams getSysPrepParams() {

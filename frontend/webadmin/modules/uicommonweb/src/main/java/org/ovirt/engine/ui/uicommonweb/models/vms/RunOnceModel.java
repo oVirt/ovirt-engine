@@ -7,6 +7,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -418,17 +419,24 @@ public abstract class RunOnceModel extends Model
     // pseudo floppy disk image. In order not to change the back-end
     // interface, the Reinitialize variable was changed to a read-only
     // property and its value is based on the selected floppy image.
-    public boolean getReinitialize()
+    // A similar comparison is done for cloud-init iso images, so the
+    // variable was changed from a boolean to an Enum.
+    public InitializationType getInitializationType()
     {
-        return ((Boolean) getAttachFloppy().getEntity() && getFloppyImage().getSelectedItem() != null && getFloppyImage().getSelectedItem()
-                .equals("[sysprep]")); //$NON-NLS-1$
+        if ((Boolean) getAttachFloppy().getEntity()
+                && "[sysprep]".equals(getFloppyImage().getSelectedItem())) { //$NON-NLS-1$
+            return InitializationType.Sysprep;
+        } else {
+            return InitializationType.None;
+        }
     }
 
     public String getFloppyImagePath()
     {
         if ((Boolean) getAttachFloppy().getEntity())
         {
-            return getReinitialize() ? "" : (String) getFloppyImage().getSelectedItem(); //$NON-NLS-1$
+            return getInitializationType() == InitializationType.Sysprep
+                    ? "" : (String) getFloppyImage().getSelectedItem(); //$NON-NLS-1$
         }
         else
         {
@@ -570,7 +578,7 @@ public abstract class RunOnceModel extends Model
         params.setRunAndPause((Boolean) getRunAndPause().getEntity());
         params.setAcpiEnable(true);
         params.setRunAsStateless((Boolean) getRunAsStateless().getEntity());
-        params.setReinitialize(getReinitialize());
+        params.setInitializationType(getInitializationType());
         params.setCustomProperties((String) getCustomProperties().getEntity());
 
         // kernel params
@@ -596,6 +604,8 @@ public abstract class RunOnceModel extends Model
         {
             params.setSysPrepPassword((String) getSysPrepPassword().getEntity());
         }
+
+        params.setCloudInitParameters(null);
 
         EntityModel displayProtocolSelectedItem = (EntityModel) getDisplayProtocol().getSelectedItem();
         params.setUseVnc((DisplayType) displayProtocolSelectedItem.getEntity() == DisplayType.vnc);
@@ -715,6 +725,7 @@ public abstract class RunOnceModel extends Model
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
                         List<String> images = (List<String>) returnValue;
+
                         getIsoImage().setItems(images);
 
                         if (getIsoImage().getIsChangable()
@@ -845,7 +856,10 @@ public abstract class RunOnceModel extends Model
     // floppy]
     private void updateIsSysprepEnabled()
     {
-        getIsSysprepEnabled().setEntity(getIsWindowsOS() && getReinitialize());
+        boolean isFloppyAttached = (Boolean) getAttachFloppy().getEntity();
+        boolean isVmFirstRun = (Boolean) getIsVmFirstRun().getEntity();
+
+        getIsSysprepEnabled().setEntity(getIsWindowsOS() && getInitializationType() == InitializationType.Sysprep);
     }
 
     public boolean validate() {

@@ -34,6 +34,8 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     private List<Snapshot> snapshots = new ArrayList<Snapshot>();
     private boolean runOnce = false;
 
+    private InitializationType initializationType = InitializationType.None;
+
     private Map<VmDevice, Map<String, String>> runtimeDeviceCustomProperties =
             new HashMap<VmDevice, Map<String, String>>();
 
@@ -970,18 +972,27 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         }
     }
 
-    private boolean useSysPrep;
-
-    public boolean useSysPrep() {
-        return useSysPrep;
+    public InitializationType getInitializationType() {
+        return initializationType;
     }
 
-    public void setUseSysPrep(boolean value) {
-        useSysPrep = value;
+    public void setInitializationType(InitializationType value) {
+        initializationType = value;
     }
 
     public boolean isFirstRun() {
         return vmStatic.isFirstRun();
+    }
+
+    public boolean isSysprepUsed() {
+        return getInitializationType() == InitializationType.Sysprep
+                && SimpleDependecyInjector.getInstance().get(OsRepository.class).isWindows(getVmOsId())
+                && (getFloppyPath() == null || "".equals(getFloppyPath()));
+    }
+
+    public boolean isCloudInitUsed() {
+        return getInitializationType() == InitializationType.CloudInit
+                && SimpleDependecyInjector.getInstance().get(OsRepository.class).isLinux(getVmOsId());
     }
 
     private double _actualDiskWithSnapthotsSize = 0;
@@ -1242,6 +1253,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         temp = (long)diskSize;
         result = prime * result + (int) (temp ^ (temp >>> 32));
         result = prime * result + ((floppyPath == null) ? 0 : floppyPath.hashCode());
+        result = prime * result + ((initializationType == null) ? 0 : initializationType.hashCode());
         result = prime * result + migreatingFromPort;
         result = prime * result + migreatingToPort;
         result = prime * result + ((privateGuestAgentVersion == null) ? 0 : privateGuestAgentVersion.hashCode());
@@ -1252,7 +1264,6 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         result = prime * result + ((storagePoolId == null) ? 0 : storagePoolId.hashCode());
         result = prime * result + ((storagePoolName == null) ? 0 : storagePoolName.hashCode());
         result = prime * result + (transparentHugePages ? 1231 : 1237);
-        result = prime * result + (useSysPrep ? 1231 : 1237);
         result =
                 prime * result + ((vdsGroupCompatibilityVersion == null) ? 0 : vdsGroupCompatibilityVersion.hashCode());
         result = prime * result + ((vdsGroupCpuFlagsData == null) ? 0 : vdsGroupCpuFlagsData.hashCode());

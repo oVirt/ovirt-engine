@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
@@ -20,7 +21,7 @@ public class RunVmParams extends VmOperationParameterBase {
     private String privateClientIp;
     private VdcUser privateRequestingUser;
     private Guid _destinationVdsId;
-    private boolean privateReinitialize;
+    private InitializationType privateInitializationType = InitializationType.None;
     private Boolean privateRunAsStateless;
     private String initrd_url;
     private String kernel_url;
@@ -150,12 +151,12 @@ public class RunVmParams extends VmOperationParameterBase {
         privateRequestingUser = value;
     }
 
-    public boolean getReinitialize() {
-        return privateReinitialize;
+    public InitializationType getInitializationType() {
+        return privateInitializationType;
     }
 
-    public void setReinitialize(boolean value) {
-        privateReinitialize = value;
+    public void setInitializationType(InitializationType value) {
+        privateInitializationType = value;
     }
 
     public Boolean getRunAsStateless() {

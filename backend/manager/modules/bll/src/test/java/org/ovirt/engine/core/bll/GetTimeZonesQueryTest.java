@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -53,8 +55,8 @@ public class GetTimeZonesQueryTest extends AbstractSysprepQueryTest<TimeZoneQuer
         getQuery().executeQueryCommand();
         Map<String, String> map = ((Map<String, String>) getQuery().getQueryReturnValue().getReturnValue());
 
-        assertFalse(map.get("E. Australia Standard Time") != null);
-        assertTrue(TimeZone.getTimeZone(map.get("Asia/Riyadh87")) != null);
+        assertNull(map.get("E. Australia Standard Time"));
+        assertNotNull(TimeZone.getTimeZone(map.get("Asia/Riyadh")));
     }
 
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -39,6 +40,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     private static final String DEVICES = "devices";
     private static final String USB_BUS = "usb";
     private final static String FIRST_MASTER_MODEL = "ich9-ehci1";
+    private static final String CLOUD_INIT_VOL_ID = "config-2";
 
     private final List<Map<String, Object>> devices = new ArrayList<Map<String, Object>>();
     private List<VmDevice> managedDevices = null;
@@ -466,6 +468,32 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         Map<String, Object> struct = new HashMap<String, Object>();
         addFloppyDetails(vmDevice, struct);
         addDevice(struct, vmDevice, vm.getFloppyPath());
+    }
+
+    @Override
+    protected void buildCloudInitVmPayload(Map<String, byte[]> cloudInitContent) {
+        VmPayload vmPayload = new VmPayload();
+        vmPayload.setType(VmDeviceType.CDROM);
+        vmPayload.setVolumeId(CLOUD_INIT_VOL_ID);
+        for (Map.Entry<String, byte[]> entry : cloudInitContent.entrySet()) {
+            vmPayload.getFiles().put(entry.getKey(), Base64.encodeBase64String(entry.getValue()));
+        }
+
+        VmDevice vmDevice =
+                new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
+                        VmDeviceGeneralType.DISK,
+                        VmDeviceType.CDROM.getName(),
+                        "",
+                        0,
+                        vmPayload.getSpecParams(),
+                        true,
+                        true,
+                        true,
+                        "",
+                        null);
+        Map<String, Object> struct = new HashMap<String, Object>();
+        addCdDetails(vmDevice, struct);
+        addDevice(struct, vmDevice, "");
     }
 
     private static void addBootOrder(VmDevice vmDevice, Map<String, Object> struct) {

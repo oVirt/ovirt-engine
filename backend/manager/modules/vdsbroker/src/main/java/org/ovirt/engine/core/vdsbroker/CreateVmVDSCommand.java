@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
-import org.ovirt.engine.core.common.osinfo.OsRepositoryImpl;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -18,6 +17,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CreateVDSCommand;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.CreateVmFromCloudInitVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CreateVmFromSysPrepVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CreateVmFromSysPrepVDSCommandParameters;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSGenericException;
@@ -36,8 +36,9 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
 
         final VM vm = getParameters().getVm();
         if (canExecute() && ResourceManager.getInstance().AddAsyncRunningVm(vm.getId())) {
-            CreateVDSCommand<?> command = initCreateVDSCommand(vm);
+            CreateVDSCommand<?> command = null;
             try {
+                command = initCreateVDSCommand(vm);
                 command.execute();
                 if (command.getVDSReturnValue().getSucceeded()) {
                     vm.setInitialized(true);
@@ -61,7 +62,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                 }
             } catch (java.lang.Exception e) {
                 log.error("Error in excuting CreateVmVDSCommand", e);
-                if (!command.getVDSReturnValue().getSucceeded()) {
+                if (command != null && !command.getVDSReturnValue().getSucceeded()) {
                     ResourceManager.getInstance().RemoveAsyncRunningVm(getParameters().getVmId());
                 }
                 throw new RuntimeException(e);
@@ -70,8 +71,8 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
         getVDSReturnValue().setReturnValue(vm.getStatus());
     }
 
-    private CreateVDSCommand<?> initCreateVDSCommand(VM vm) {
-        if (isSysprepUsed(vm)) {
+    private CreateVDSCommand<?> initCreateVDSCommand(VM vm) throws Exception {
+        if (vm.isSysprepUsed()) {
             // use answer file to run after sysprep.
             CreateVmFromSysPrepVDSCommandParameters createVmFromSysPrepParam =
                     new CreateVmFromSysPrepVDSCommandParameters(
@@ -82,19 +83,13 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
             createVmFromSysPrepParam.setSysPrepParams(getParameters().getSysPrepParams());
             return new CreateVmFromSysPrepVDSCommand<CreateVmFromSysPrepVDSCommandParameters>(createVmFromSysPrepParam);
         }
+        else if (vm.isCloudInitUsed()) {
+            return new CreateVmFromCloudInitVDSCommand<CreateVmVDSCommandParameters>(getParameters());
+        }
         else {
             // normal run.
             return new CreateVDSCommand<CreateVmVDSCommandParameters>(getParameters());
         }
-    }
-
-    /**
-     * @param vm
-     * @return
-     */
-    private boolean isSysprepUsed(final VM vm) {
-        return vm.useSysPrep() && OsRepositoryImpl.INSTANCE.isWindows(vm.getVmOsId())
-                && StringUtils.isEmpty(vm.getFloppyPath());
     }
 
     private boolean canExecute() {

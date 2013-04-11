@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.StopVmParameters;
 import org.ovirt.engine.core.common.action.StopVmTypeEnum;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
+import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
@@ -136,9 +137,14 @@ public class VmItemBehavior extends ItemBehavior
     {
         VM entity = (VM) getItem().getEntity();
         // use sysprep iff the vm is not initialized and vm has Win OS
-        boolean reinitialize = !entity.isInitialized() && AsyncDataProvider.isWindowsOsType(entity.getVmOsId());
         RunVmParams tempVar = new RunVmParams(entity.getId());
-        tempVar.setReinitialize(reinitialize);
+        if (!entity.isInitialized() && AsyncDataProvider.isWindowsOsType(entity.getVmOsId())) {
+            tempVar.setInitializationType(InitializationType.Sysprep);
+        } else if (!entity.isInitialized() && AsyncDataProvider.isLinuxOsType(entity.getVmOsId())) {
+            tempVar.setInitializationType(InitializationType.CloudInit);
+        } else {
+            tempVar.setInitializationType(InitializationType.None);
+        }
         Frontend.RunAction(VdcActionType.RunVm, tempVar);
     }
 

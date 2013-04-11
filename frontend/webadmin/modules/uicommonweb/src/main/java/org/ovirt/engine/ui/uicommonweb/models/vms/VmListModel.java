@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -1737,9 +1738,16 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         {
             VM a = (VM) item;
             // use sysprep iff the vm is not initialized and vm has Win OS
-            boolean reinitialize = !a.isInitialized() && AsyncDataProvider.isWindowsOsType(a.getVmOsId());
             RunVmParams tempVar = new RunVmParams(a.getId());
-            tempVar.setReinitialize(reinitialize);
+            if (!a.isInitialized() && AsyncDataProvider.isWindowsOsType(a.getVmOsId())) {
+                tempVar.setInitializationType(InitializationType.Sysprep);
+            }
+            else if (!a.isInitialized() && AsyncDataProvider.isLinuxOsType(a.getVmOsId())) {
+                tempVar.setInitializationType(InitializationType.CloudInit);
+            }
+            else {
+                tempVar.setInitializationType(InitializationType.None);
+            }
             list.add(tempVar);
         }
 

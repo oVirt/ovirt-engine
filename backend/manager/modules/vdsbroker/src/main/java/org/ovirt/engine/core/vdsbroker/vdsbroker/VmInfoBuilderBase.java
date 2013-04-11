@@ -242,6 +242,8 @@ public abstract class VmInfoBuilderBase {
 
     protected abstract void buildSysprepVmPayload(String strSysPrepContent);
 
+    protected abstract void buildCloudInitVmPayload(Map<String, byte[]> cloudInitContent);
+
     protected abstract void buildVmUsbDevices();
 
     protected abstract void buildVmMemoryBalloon();

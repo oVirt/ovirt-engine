@@ -617,9 +617,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                      // the VM can run with display type which is different from its default display type
                     (getParameters().getUseVnc() ? DisplayType.vnc : DisplayType.qxl));
 
-            if (getParameters().getReinitialize()) {
-                getVm().setUseSysPrep(true);
-            }
+            getVm().setInitializationType(getParameters().getInitializationType());
+
             // if we attach floppy we don't need the sysprep
             if (!StringUtils.isEmpty(getVm().getFloppyPath())) {
                 getVmStaticDAO().update(getVm().getStaticData());

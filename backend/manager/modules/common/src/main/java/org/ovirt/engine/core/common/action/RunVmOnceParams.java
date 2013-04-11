@@ -12,6 +12,8 @@ public class RunVmOnceParams extends RunVmParams {
 
     private String sysPrepPassword;
 
+    private CloudInitParameters cloudInitParameters;
+
     public RunVmOnceParams() {
     }
 
@@ -45,6 +47,14 @@ public class RunVmOnceParams extends RunVmParams {
 
     public String getSysPrepPassword() {
         return sysPrepPassword;
+    }
+
+    public void setCloudInitParameters(CloudInitParameters cloudInitParameters) {
+        this.cloudInitParameters = cloudInitParameters;
+    }
+
+    public CloudInitParameters getCloudInitParameters() {
+        return cloudInitParameters;
     }
 
 }
