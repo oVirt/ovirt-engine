@@ -49,6 +49,12 @@ public class ExecutionHandler {
 
     private static final List<Class<?>> validationGroups = Arrays.asList(new Class<?>[] { PreRun.class });
 
+    private static final ExecutionHandler instance = new ExecutionHandler();
+
+    public static ExecutionHandler getInstance() {
+        return instance;
+    }
+
     /**
      * Creates and returns an instance of {@link Job} entity.
      *

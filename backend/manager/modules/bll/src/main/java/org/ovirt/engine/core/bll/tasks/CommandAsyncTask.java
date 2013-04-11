@@ -4,13 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.CommandMultiAsyncTasks;
 import org.ovirt.engine.core.bll.CommandsFactory;
-import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -40,8 +39,8 @@ public class CommandAsyncTask extends SPMAsyncTask {
         return entityInfo;
     }
 
-    public CommandAsyncTask(AsyncTaskParameters parameters, boolean duringInit) {
-        super(parameters);
+    public CommandAsyncTask(CommandCoordinator coco, AsyncTaskParameters parameters, boolean duringInit) {
+        super(coco, parameters);
         boolean isNewCommandAdded = false;
         synchronized (_lockObject) {
             if (!_multiTasksByCommandIds.containsKey(getCommandId())) {
@@ -148,10 +147,8 @@ public class CommandAsyncTask extends SPMAsyncTask {
                     context = ExecutionHandler.createFinalizingContext(stepId);
                 }
 
-                vdcReturnValue =
-                        Backend.getInstance().endAction(getEndActionType(dbAsyncTask),
-                                dbAsyncTask.getActionParameters(),
-                                new CommandContext(context));
+                vdcReturnValue = coco.endAction(stepId, getEndActionType(dbAsyncTask), dbAsyncTask, context);
+
             } catch (VdcBLLException ex) {
                 log.error(getErrorMessage());
                 log.error(ex.toString());

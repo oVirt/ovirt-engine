@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -72,13 +73,27 @@ public final class AsyncTaskManager {
 
     private CountDownLatch irsBrokerLatch;
 
-    private static final AsyncTaskManager _taskManager = new AsyncTaskManager();
+    private static volatile AsyncTaskManager taskManager;
+    private static final Object LOCK = new Object();
+    private CommandCoordinator coco;
 
     public static AsyncTaskManager getInstance() {
-        return _taskManager;
+        return taskManager;
     }
 
-    private AsyncTaskManager() {
+    public static AsyncTaskManager getInstance(CommandCoordinator coco) {
+        if (taskManager == null) {
+            synchronized(LOCK) {
+                if (taskManager == null) {
+                    taskManager = new AsyncTaskManager(coco);
+                }
+            }
+        }
+        return taskManager;
+    }
+
+    private AsyncTaskManager(CommandCoordinator coco) {
+        this.coco = coco;
         _tasks = new ConcurrentHashMap<Guid, SPMAsyncTask>();
 
         SchedulerUtil scheduler = SchedulerUtilQuartzImpl.getInstance();
@@ -304,12 +319,12 @@ public final class AsyncTaskManager {
                 });
     }
 
-    public static void logAndFailTaskOfCommandWithEmptyVdsmId(Guid asyncTaskId, String message) {
+    public void logAndFailTaskOfCommandWithEmptyVdsmId(Guid asyncTaskId, String message) {
         AsyncTasks task = DbFacade.getInstance().getAsyncTaskDao().get(asyncTaskId);
         logAndFailTaskOfCommandWithEmptyVdsmId(task, message);
     }
 
-    public static void logAndFailTaskOfCommandWithEmptyVdsmId(final AsyncTasks task, String message) {
+    public void logAndFailTaskOfCommandWithEmptyVdsmId(final AsyncTasks task, String message) {
         log.infoFormat(
                 "Failing task with empty vdsm id AsyncTaskType {0} : Task '{1}' Parent Command {2}",
                 task.getTaskType(),
@@ -329,7 +344,7 @@ public final class AsyncTaskManager {
                     task.getTaskId(),
                     (task.getaction_type()));
         AsyncTaskCreationInfo creationInfo = new AsyncTaskCreationInfo(Guid.Empty, task.getTaskType(), task.getStoragePoolId());
-        SPMAsyncTask spmTask = AsyncTaskFactory.construct(creationInfo, task);
+        SPMAsyncTask spmTask = AsyncTaskFactory.construct(coco, creationInfo, task);
         AsyncTaskStatus failureStatus = new AsyncTaskStatus();
         failureStatus.setStatus(AsyncTaskStatusEnum.finished);
         failureStatus.setResult(AsyncTaskResultEnum.failure);
@@ -618,7 +633,7 @@ public final class AsyncTaskManager {
     }
 
     public SPMAsyncTask createTask(AsyncTaskType taskType, AsyncTaskParameters taskParameters) {
-        return AsyncTaskFactory.construct(taskType, taskParameters, false);
+        return AsyncTaskFactory.construct(coco, taskType, taskParameters, false);
     }
 
     public synchronized void startPollingTask(Guid vdsmTaskId) {
@@ -684,7 +699,7 @@ public final class AsyncTaskManager {
                             SPMAsyncTask task;
                             if (partiallyCompletedCommandTasks.containsKey(creationInfo.getVdsmTaskId())) {
                                 AsyncTasks asyncTaskInDb = partiallyCompletedCommandTasks.get(creationInfo.getVdsmTaskId());
-                                task = AsyncTaskFactory.construct(creationInfo, asyncTaskInDb);
+                                task = AsyncTaskFactory.construct(coco, creationInfo, asyncTaskInDb);
                                 if (task.getEntitiesMap() == null) {
                                     task.setEntitiesMap(new HashMap<Guid, VdcObjectType>());
                                 }
@@ -693,7 +708,7 @@ public final class AsyncTaskManager {
                                 // Will result in failure of the command
                                 task.setPartiallyCompletedCommandTask(true);
                             } else {
-                                task = AsyncTaskFactory.construct(creationInfo);
+                                task = AsyncTaskFactory.construct(coco, creationInfo);
                             }
                             addTaskToManager(task);
                             newlyAddedTasks.add(task);

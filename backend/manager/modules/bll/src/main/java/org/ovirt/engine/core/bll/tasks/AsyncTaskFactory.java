@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.tasks;
 
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
@@ -18,16 +19,13 @@ public final class AsyncTaskFactory {
      * Constructs a task based on creation info (task type and task parameters
      * as retrieved from the vdsm). Use in order to construct tasks when service
      * is initializing.
-     *
-     * @param taskID
-     *            the ID of the task to construct.
-     * @param pollingEnabled
-     *            true if we want to start polling the task, false otherwise.
+     * @param coco
+     *          Handle to command coordinator
      * @param creationInfo
-     *            the info by which we construct the task.
+     *          The Asyc Task Creation info
      * @return
      */
-    public static SPMAsyncTask construct(AsyncTaskCreationInfo creationInfo) {
+    public static SPMAsyncTask construct(CommandCoordinator coco, AsyncTaskCreationInfo creationInfo) {
         AsyncTasks asyncTask = DbFacade.getInstance().getAsyncTaskDao().getByVdsmTaskId(creationInfo.getVdsmTaskId());
         if (asyncTask == null || asyncTask.getActionParameters() == null) {
             asyncTask =
@@ -45,34 +43,34 @@ public final class AsyncTaskFactory {
             creationInfo.setTaskType(AsyncTaskType.unknown);
         }
         AsyncTaskParameters asyncTaskParams = new AsyncTaskParameters(creationInfo, asyncTask);
-        return construct(creationInfo.getTaskType(), asyncTaskParams, true);
+        return construct(coco, creationInfo.getTaskType(), asyncTaskParams, true);
     }
 
-    public static SPMAsyncTask construct(AsyncTaskCreationInfo creationInfo, AsyncTasks asyncTask) {
+    public static SPMAsyncTask construct(CommandCoordinator coco, AsyncTaskCreationInfo creationInfo, AsyncTasks asyncTask) {
         AsyncTaskParameters asyncTaskParams = new AsyncTaskParameters(creationInfo, asyncTask);
-        return construct(creationInfo.getTaskType(), asyncTaskParams, true);
+        return construct(coco, creationInfo.getTaskType(), asyncTaskParams, true);
     }
 
     /**
      * Constructs a task based on its type and the task type's parameters.
      *
-     * @param taskID
-     *            the ID of the task to construct.
-     * @param pollingEnabled
-     *            true if we want to start polling the task, false otherwise.
+     * @param coco
+     *            handle to command coordinator
      * @param taskType
      *            the type of the task which we want to construct.
      * @param asyncTaskParams
      *            the parameters by which we construct the task.
+     * @param duringInit
+     *            If this method is called during initialization
      * @return
      */
-    public static SPMAsyncTask construct(AsyncTaskType taskType, AsyncTaskParameters asyncTaskParams, boolean duringInit) {
+    public static SPMAsyncTask construct(CommandCoordinator coco, AsyncTaskType taskType, AsyncTaskParameters asyncTaskParams, boolean duringInit) {
         try {
             SPMAsyncTask result = null;
             if (taskType == AsyncTaskType.unknown) {
-                result = new SPMAsyncTask(asyncTaskParams);
+                result = new SPMAsyncTask(coco, asyncTaskParams);
             } else {
-                result = new CommandAsyncTask(asyncTaskParams, duringInit);
+                result = new CommandAsyncTask(coco, asyncTaskParams, duringInit);
             }
             return result;
         }

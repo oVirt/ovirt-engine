@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
@@ -22,7 +23,11 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class SPMAsyncTask {
-    public SPMAsyncTask(AsyncTaskParameters parameters) {
+
+    protected final CommandCoordinator coco;
+
+    public SPMAsyncTask(CommandCoordinator coco, AsyncTaskParameters parameters) {
+        this.coco = coco;
         setParameters(parameters);
         setState(AsyncTaskState.Initializing);
     }

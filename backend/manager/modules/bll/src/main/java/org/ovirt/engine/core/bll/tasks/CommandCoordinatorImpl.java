@@ -4,11 +4,16 @@ import java.util.ArrayList;
 import java.util.Map;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.CommandsFactory;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
@@ -27,16 +32,17 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
-public class CommandCoordinator {
+public class CommandCoordinatorImpl extends CommandCoordinator {
 
     private static final Log log = LogFactory.getLog(CommandCoordinator.class);
 
-    CommandCoordinator() {
+    CommandCoordinatorImpl() {
     }
 
     /**
-     * Use this method in order to create task in the AsyncTaskManager in a safe way. If you use this method within a
-     * certain command, make sure that the command implemented the ConcreteCreateTask method.
+     * Use this method in order to create task in the AsyncTaskManager in a safe way. If you use
+     * this method within a certain command, make sure that the command implemented the
+     * ConcreteCreateTask method.
      *
      * @param asyncTaskCreationInfo
      *            info to send to AsyncTaskManager when creating the task.
@@ -49,11 +55,11 @@ public class CommandCoordinator {
      * @return Guid of the created task.
      */
     public Guid createTask(Guid taskId,
-                                CommandBase command,
-                                AsyncTaskCreationInfo asyncTaskCreationInfo,
-                                VdcActionType parentCommand,
-                                String description,
-                                Map<Guid, VdcObjectType> entitiesMap) {
+                           CommandBase command,
+                           AsyncTaskCreationInfo asyncTaskCreationInfo,
+                           VdcActionType parentCommand,
+                           String description,
+                           Map<Guid, VdcObjectType> entitiesMap) {
         Step taskStep =
                 ExecutionHandler.addTaskStep(command.getExecutionContext(),
                         StepEnum.getStepNameByTaskType(asyncTaskCreationInfo.getTaskType()),
@@ -91,7 +97,7 @@ public class CommandCoordinator {
     }
 
     public SPMAsyncTask createTask(AsyncTaskType taskType, AsyncTaskParameters taskParameters) {
-        return AsyncTaskFactory.construct(taskType, taskParameters, false);
+        return AsyncTaskFactory.construct(this, taskType, taskParameters, false);
     }
 
     public AsyncTasks getAsyncTask(
@@ -176,8 +182,18 @@ public class CommandCoordinator {
         }
     }
 
+    public VdcReturnValueBase endAction(Guid stepId,
+                                        VdcActionType actionType,
+                                        AsyncTasks dbAsyncTask,
+                                        ExecutionContext context) {
+        VdcActionParametersBase parameters = dbAsyncTask.getActionParameters();
+        CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters);
+        command.setContext(new CommandContext(context));
+        return command.endAction();
+    }
+
     private AsyncTaskManager getAsyncTaskManager() {
-        return AsyncTaskManager.getInstance();
+        return AsyncTaskManager.getInstance(this);
     }
 
     protected BackendInternal getBackend() {

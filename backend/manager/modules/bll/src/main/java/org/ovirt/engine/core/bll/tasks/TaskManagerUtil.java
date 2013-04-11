@@ -14,7 +14,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class TaskManagerUtil {
 
-    public static final CommandCoordinator coco = new CommandCoordinator();
+    public static final CommandCoordinatorImpl coco = new CommandCoordinatorImpl();
 
     public static void startPollingTask(Guid taskID) {
         getAsyncTaskManager().startPollingTask(taskID);
@@ -94,11 +94,11 @@ public class TaskManagerUtil {
     }
 
     public static void logAndFailTaskOfCommandWithEmptyVdsmId(Guid taskId, String message) {
-        AsyncTaskManager.logAndFailTaskOfCommandWithEmptyVdsmId(taskId, message);
+        getAsyncTaskManager().logAndFailTaskOfCommandWithEmptyVdsmId(taskId, message);
     }
 
     public static void logAndFailTaskOfCommandWithEmptyVdsmId(AsyncTasks task, String message) {
-        AsyncTaskManager.logAndFailTaskOfCommandWithEmptyVdsmId(task, message);
+        getAsyncTaskManager().logAndFailTaskOfCommandWithEmptyVdsmId(task, message);
     }
 
     public static void removeTaskFromDbByTaskId(Guid taskId) {
@@ -106,7 +106,7 @@ public class TaskManagerUtil {
     }
 
     private static AsyncTaskManager getAsyncTaskManager() {
-        return AsyncTaskManager.getInstance();
+        return AsyncTaskManager.getInstance(coco);
     }
 
 }
