@@ -7,11 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.ListUtils;
@@ -819,7 +819,6 @@ public class ConfigureLocalStorageModel extends Model {
         public VDS host;
         public storage_pool hostDataCenter;
         public VDSGroup hostCluster;
-        public storage_pool candidate;
         public ArrayList<storage_pool> dataCenterList;
         public ArrayList<VDSGroup> clusterList;
         public ArrayList<StorageDomain> storageList;
