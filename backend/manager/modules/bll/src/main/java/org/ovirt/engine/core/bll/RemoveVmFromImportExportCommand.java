@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.tasks.AsyncTaskManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -9,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.memory.MemoryImageRemoverFromExportDomain;
+import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -86,7 +86,7 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
         // not using getVm() since its overridden to get vm from export domain
         VM vm = getVmDAO().get(getVmId());
         if (vm != null && vm.getStatus() == VMStatus.ImageLocked) {
-            if (AsyncTaskManager.getInstance().hasTasksForEntityIdAndAction(vm.getId(), VdcActionType.ExportVm)) {
+            if (TaskManagerUtil.hasTasksForEntityIdAndAction(vm.getId(), VdcActionType.ExportVm)) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_DURING_EXPORT);
             }
         }

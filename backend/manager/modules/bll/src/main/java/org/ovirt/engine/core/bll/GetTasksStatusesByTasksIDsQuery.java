@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.tasks.AsyncTaskManager;
+import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
 
 public class GetTasksStatusesByTasksIDsQuery<P extends GetTasksStatusesByTasksIDsParameters>
@@ -11,6 +11,6 @@ public class GetTasksStatusesByTasksIDsQuery<P extends GetTasksStatusesByTasksID
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(AsyncTaskManager.getInstance().pollTasks(getParameters().getTasksIDs()));
+        getQueryReturnValue().setReturnValue(TaskManagerUtil.pollTasks(getParameters().getTasksIDs()));
     }
 }

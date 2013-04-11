@@ -18,7 +18,7 @@ import org.ovirt.engine.core.bll.provider.ExternalTrustStoreInitializer;
 import org.ovirt.engine.core.bll.scheduling.MigrationHandler;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
-import org.ovirt.engine.core.bll.tasks.AsyncTaskManager;
+import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
@@ -57,7 +57,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             EngineExtensionsManager.getInstance().engineInitialize();
             AuthenticationProfileRepository.getInstance();
             DbUserCacheManager.getInstance().init();
-            AsyncTaskManager.getInstance().initAsyncTaskManager();
+            TaskManagerUtil.initAsyncTaskManager();
             ResourceManager.getInstance().init();
             OvfDataUpdater.getInstance().initOvfDataUpdater();
 

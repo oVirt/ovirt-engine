@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
-import org.ovirt.engine.core.bll.tasks.AsyncTaskManager;
+import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -348,7 +348,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
             if (!vdsRetValue.getSucceeded()) {
                 if (startPollingTasks) {
-                    AsyncTaskManager.getInstance().startPollingTask(guid1);
+                    TaskManagerUtil.startPollingTask(guid1);
                 }
                 return false;
             }
@@ -357,8 +357,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             getTaskIdList().add(guid2);
 
             if (startPollingTasks) {
-                AsyncTaskManager.getInstance().startPollingTask(guid1);
-                AsyncTaskManager.getInstance().startPollingTask(guid2);
+                TaskManagerUtil.startPollingTask(guid1);
+                TaskManagerUtil.startPollingTask(guid2);
             }
         }
 

@@ -36,11 +36,9 @@ import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
-import org.ovirt.engine.core.bll.tasks.AsyncTaskFactory;
-import org.ovirt.engine.core.bll.tasks.AsyncTaskManager;
-import org.ovirt.engine.core.bll.tasks.AsyncTaskUtils;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTask;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
+import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -49,13 +47,9 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase.CommandExecut
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
-import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ActionVersionMap;
-import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
-import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
-import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot;
@@ -68,12 +62,10 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.errors.VdcFault;
-import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
-import org.ovirt.engine.core.common.vdscommands.SPMTaskGuidBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -97,7 +89,6 @@ import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.RollbackHandler;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -373,7 +364,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                     for (Guid asyncTaskId : getReturnValue().getTaskPlaceHolderIdList()) {
                         AsyncTasks task = getAsyncTaskDao().get(asyncTaskId);
                         if (task != null && Guid.isNullOrEmpty(task.getVdsmTaskId())) {
-                            AsyncTaskManager.removeTaskFromDbByTaskId(task.getTaskId());
+                            TaskManagerUtil.removeTaskFromDbByTaskId(task.getTaskId());
                         }
 
                     }
@@ -1306,7 +1297,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
     }
 
-    private boolean hasTasks() {
+    public boolean hasTasks() {
         return !getReturnValue().getVdsmTaskIdList().isEmpty();
     }
 
@@ -1416,8 +1407,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return persistAsyncTaskPlaceHolder(parentCommand, DEFAULT_TASK_KEY);
     }
 
-
-
     public Guid persistAsyncTaskPlaceHolder(VdcActionType parentCommand, final String taskKey) {
         if (taskKeyToTaskIdMap.containsKey(taskKey)) {
             return taskKeyToTaskIdMap.get(taskKey);
@@ -1468,7 +1457,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     public void deleteAsyncTaskPlaceHolder(String taskKey) {
         Guid taskId = taskKeyToTaskIdMap.remove(taskKey);
         if (!Guid.isNullOrEmpty(taskId)) {
-            AsyncTaskManager.removeTaskFromDbByTaskId(taskId);
+            TaskManagerUtil.removeTaskFromDbByTaskId(taskId);
         }
     }
 
@@ -1483,11 +1472,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return taskKeyToTaskIdMap.get(taskKey);
     }
     /**
-     * Use this method in order to create task in the AsyncTaskManager in a safe way. If you use this method within a
+     * Use this method in order to create task in the TaskManagerUtil in a safe way. If you use this method within a
      * certain command, make sure that the command implemented the ConcreteCreateTask method.
      *
      * @param asyncTaskCreationInfo
-     *            info to send to AsyncTaskManager when creating the task.
+     *            info to send to TaskManagerUtil when creating the task.
      * @param parentCommand
      *            VdcActionType of the command that its endAction we want to invoke when tasks are finished.
      * @param entityType
@@ -1523,11 +1512,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     /**
-     * Use this method in order to create task in the AsyncTaskManager in a safe way. If you use this method within a
+     * Use this method in order to create task in the TaskManagerUtil in a safe way. If you use this method within a
      * certain command, make sure that the command implemented the ConcreteCreateTask method.
      *
      * @param asyncTaskCreationInfo
-     *            info to send to AsyncTaskManager when creating the task.
+     *            info to send to TaskManagerUtil when creating the task.
      * @param parentCommand
      *            VdcActionType of the command that its endAction we want to invoke when tasks are finished.
      * @param entityType
@@ -1567,11 +1556,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     /**
-     * Use this method in order to create task in the AsyncTaskManager in a safe way. If you use this method within a
+     * Use this method in order to create task in the TaskManagerUtil in a safe way. If you use this method within a
      * certain command, make sure that the command implemented the ConcreteCreateTask method.
      *
      * @param asyncTaskCreationInfo
-     *            info to send to AsyncTaskManager when creating the task.
+     *            info to send to TaskManagerUtil when creating the task.
      * @param parentCommand
      *            VdcActionType of the command that its endAction we want to invoke when tasks are finished.
      * @param description
@@ -1604,33 +1593,19 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 createEntitiesMapForSingleEntityType(entityType, entityIds));
     }
 
-    private Guid createTaskImpl(Guid taskId,
-            AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand,
-            String description,
-            Map<Guid, VdcObjectType> entitiesMap) {
-        Step taskStep =
-                ExecutionHandler.addTaskStep(getExecutionContext(),
-                        StepEnum.getStepNameByTaskType(asyncTaskCreationInfo.getTaskType()),
-                        description);
-        if (taskStep != null) {
-            asyncTaskCreationInfo.setStepId(taskStep.getId());
-        }
-        SPMAsyncTask task = concreteCreateTask(taskId, asyncTaskCreationInfo, parentCommand);
-        task.setEntitiesMap(entitiesMap);
-        AsyncTaskUtils.addOrUpdateTaskInDB(task);
-        getAsyncTaskManager().lockAndAddTaskToManager(task);
-        Guid vdsmTaskId = task.getVdsmTaskId();
-        ExecutionHandler.updateStepExternalId(taskStep, vdsmTaskId, ExternalSystemType.VDSM);
-        return vdsmTaskId;
-
-    }
-
     private Map<Guid, VdcObjectType> createEntitiesMapForSingleEntityType(VdcObjectType entityType, Guid... entityIds) {
         Map<Guid, VdcObjectType> entitiesMap = new HashMap<Guid, VdcObjectType>();
         for (Guid entityId : entityIds) {
             entitiesMap.put(entityId, entityType);
         }
         return entitiesMap;
+    }
+
+    private Guid createTaskImpl(Guid taskId,
+            AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand,
+            String description,
+            Map<Guid, VdcObjectType> entitiesMap) {
+        return TaskManagerUtil.createTask(taskId, this, asyncTaskCreationInfo, parentCommand, description, entitiesMap);
     }
 
     /**
@@ -1644,43 +1619,17 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             Guid taskId,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
-        AsyncTaskParameters p =
-                new AsyncTaskParameters(asyncTaskCreationInfo,
-                getAsyncTask(taskId, asyncTaskCreationInfo, parentCommand));
-        p.setEntityInfo(getParameters().getEntityInfo());
-        return createTask(internalGetTaskType(), p);
-    }
-
-    public SPMAsyncTask createTask(AsyncTaskType taskType, AsyncTaskParameters taskParameters) {
-        return AsyncTaskFactory.construct(taskType, taskParameters, false);
+        return TaskManagerUtil.concreteCreateTask(taskId, this, asyncTaskCreationInfo, parentCommand);
     }
 
     private AsyncTasks getAsyncTask(
             Guid taskId,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
-        AsyncTasks asyncTask = null;
-        if (!taskId.equals(Guid.Empty)) {
-            asyncTask = DbFacade.getInstance().getAsyncTaskDao().get(taskId);
-        }
-        if (asyncTask != null) {
-            VdcActionParametersBase parentParameters = getParentParameters(parentCommand);
-            asyncTask.setaction_type(parentCommand);
-            asyncTask.setVdsmTaskId(asyncTaskCreationInfo.getVdsmTaskId());
-            asyncTask.setActionParameters(parentParameters);
-            asyncTask.setTaskParameters(getParameters());
-            asyncTask.setStepId(asyncTaskCreationInfo.getStepId());
-            asyncTask.setCommandId(getCommandId());
-            asyncTask.setRootCommandId(parentParameters.getCommandId());
-            asyncTask.setStoragePoolId(asyncTaskCreationInfo.getStoragePoolID());
-            asyncTask.setTaskType(asyncTaskCreationInfo.getTaskType());
-        } else {
-            asyncTask = createAsyncTask(asyncTaskCreationInfo, parentCommand);
-        }
-        return asyncTask;
+        return TaskManagerUtil.getAsyncTask(taskId, this, asyncTaskCreationInfo, parentCommand);
     }
 
-    private VdcActionParametersBase getParentParameters(VdcActionType parentCommand) {
+    public VdcActionParametersBase getParentParameters(VdcActionType parentCommand) {
         VdcActionParametersBase parentParameters = getParametersForTask(parentCommand, getParameters());
         if (parentParameters.getParametersCurrentUser() == null && getCurrentUser() != null) {
             parentParameters.setParametersCurrentUser(getCurrentUser());
@@ -1691,22 +1640,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private AsyncTasks createAsyncTask(
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
-        VdcActionParametersBase parentParameters = getParentParameters(parentCommand);
-        return new AsyncTasks(parentCommand,
-                AsyncTaskResultEnum.success,
-                AsyncTaskStatusEnum.running,
-                asyncTaskCreationInfo.getVdsmTaskId(),
-                parentParameters,
-                getParameters(),
-                asyncTaskCreationInfo.getStepId(),
-                getCommandId(),
-                parentParameters.getCommandId(),
-                asyncTaskCreationInfo.getStoragePoolID(),
-                asyncTaskCreationInfo.getTaskType());
+        return TaskManagerUtil.createAsyncTask(this, asyncTaskCreationInfo, parentCommand);
     }
 
     /** @return The type of task that should be created for this command. Commands that do not create async tasks should throw a {@link UnsupportedOperationException} */
-    private AsyncTaskType internalGetTaskType() {
+    public AsyncTaskType internalGetTaskType() {
         if (hasTaskHandlers()) {
             if (getParameters().getExecutionReason() == CommandExecutionReason.REGULAR_FLOW) {
                 return getCurrentTaskHandler().getTaskType();
@@ -1723,7 +1661,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected void startPollingAsyncTasks(Collection<Guid> taskIds) {
         for (Guid taskID : taskIds) {
-            getAsyncTaskManager().startPollingTask(taskID);
+            TaskManagerUtil.startPollingTask(taskID);
         }
     }
 
@@ -1750,41 +1688,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     private void cancelTasks() {
-        if (hasTasks()) {
-            ThreadPoolUtil.execute(new Runnable() {
-                @Override
-                public void run() {
-                    log.infoFormat("Rollback for command: {0}.", CommandBase.this.getClass().getName());
-                    try {
-                        getAsyncTaskManager().cancelTasks(getReturnValue().getVdsmTaskIdList());
-                    } catch (Exception e) {
-                        log.errorFormat("Failed to cancel tasks for command: {0}.",
-                                CommandBase.this.getClass().getName());
-                    }
-                }
-            });
-        }
+        TaskManagerUtil.cancelTasks(this);
     }
 
     protected void revertTasks() {
-        if (getParameters().getVdsmTaskIds() != null) {
-            // list to send to the pollTasks method
-            ArrayList<Guid> taskIdAsList = new ArrayList<Guid>();
-
-            for (Guid taskId : getParameters().getVdsmTaskIds()) {
-                taskIdAsList.add(taskId);
-                ArrayList<AsyncTaskStatus> tasksStatuses = getAsyncTaskManager().pollTasks(
-                        taskIdAsList);
-                // call revert task only if ended successfully
-                if (tasksStatuses.get(0).getTaskEndedSuccessfully()) {
-                    getBackend().getResourceManager().RunVdsCommand(
-                            VDSCommandType.SPMRevertTask,
-                            new SPMTaskGuidBaseVDSCommandParameters(
-                                    getStoragePool().getId(), taskId));
-                }
-                taskIdAsList.clear();
-            }
-        }
+        TaskManagerUtil.revertTasks(this);
     }
 
     protected EngineLock getLock() {
@@ -2128,10 +2036,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected QuotaManager getQuotaManager() {
         return QuotaManager.getInstance();
-    }
-
-    protected AsyncTaskManager getAsyncTaskManager() {
-        return AsyncTaskManager.getInstance();
     }
 
     protected List<SPMAsyncTaskHandler> getTaskHandlers() {

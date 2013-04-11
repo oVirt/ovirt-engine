@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
-import org.ovirt.engine.core.bll.tasks.AsyncTaskManager;
+import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -248,7 +248,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         if (vmStatus != VMStatus.Up) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_UP);
         }
-        if (AsyncTaskManager.getInstance().entityHasTasks(getVmId())) {
+        if (TaskManagerUtil.entityHasTasks(getVmId())) {
             return failCanDoAction(VdcBllMessages.VM_CANNOT_SUSPENDE_HAS_RUNNING_TASKS);
         }
         // check if vm has stateless images in db in case vm was run once as stateless

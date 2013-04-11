@@ -16,7 +16,7 @@ import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.bll.scheduling.RunVmDelayer;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
-import org.ovirt.engine.core.bll.tasks.AsyncTaskManager;
+import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
 import org.ovirt.engine.core.common.action.RemoveVmHibernationVolumesParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -204,7 +204,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
         for (Guid taskId : vdcRetValue.getInternalVdsmTaskIdList()) {
-            AsyncTaskManager.getInstance().startPollingTask(taskId);
+            TaskManagerUtil.startPollingTask(taskId);
         }
     }
 
