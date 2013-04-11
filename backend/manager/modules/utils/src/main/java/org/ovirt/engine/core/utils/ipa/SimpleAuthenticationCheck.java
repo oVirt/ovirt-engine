@@ -21,7 +21,6 @@ import org.springframework.ldap.core.support.LdapContextSource;
 
 public class SimpleAuthenticationCheck {
     private static String INVALID_CREDENTIALS_ERROR_CODE = "49";
-    private LdapProviderType ldapProviderType;
 
     public enum Arguments {
         domain,
