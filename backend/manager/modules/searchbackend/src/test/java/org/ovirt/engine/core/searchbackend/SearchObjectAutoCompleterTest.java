@@ -6,12 +6,19 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Before;
 import org.junit.Test;
 
 public class SearchObjectAutoCompleterTest {
+    private SearchObjectAutoCompleter comp;
+
+    @Before
+    public void setUp() {
+        comp = new SearchObjectAutoCompleter(true);
+    }
+
     @Test
     public void testGetDefaultSortbyPhrase() {
-        SearchObjectAutoCompleter comp = new SearchObjectAutoCompleter(true);
         assertTrue("HOST", comp.getDefaultSort("HOST").contains("vds_name"));
         assertEquals("Garbage", "", comp.getDefaultSort("kjfhkjdshkjfs"));
         assertEquals("Null", "", comp.getDefaultSort(null));
@@ -19,7 +26,6 @@ public class SearchObjectAutoCompleterTest {
 
     @Test
     public void testGetRelatedTableName() {
-        SearchObjectAutoCompleter comp = new SearchObjectAutoCompleter(true);
         assertEquals("EVENTS", "audit_log", comp.getRelatedTableName("EVENTS"));
         assertNull("Garbage", comp.getRelatedTableName("kjfhkjdshkjfs"));
         assertNull("Null", comp.getRelatedTableName(null));
@@ -27,7 +33,6 @@ public class SearchObjectAutoCompleterTest {
 
     @Test
     public void testIsCrossReference() {
-        SearchObjectAutoCompleter comp = new SearchObjectAutoCompleter(true);
         assertTrue("EVENTS", comp.isCrossReferece("EVENTS", "TEMPLATES"));
         assertFalse("Garbage Cross", comp.isCrossReferece("fsfsdf", "TEMPLATES"));
         assertFalse("Garbage Object", comp.isCrossReferece("EVENTS", "fsfds"));
@@ -37,7 +42,6 @@ public class SearchObjectAutoCompleterTest {
 
     @Test
     public void testGetInnerJoin() {
-        SearchObjectAutoCompleter comp = new SearchObjectAutoCompleter(true);
         assertNotNull("Sanity test", comp.getInnerJoin("EVENT", "USER"));
     }
 

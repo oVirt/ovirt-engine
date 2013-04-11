@@ -6,13 +6,20 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 
 public class EnumValueAutoCompleterTest {
+    private EnumValueAutoCompleter comp;
+
+    @Before
+    public void setUp() {
+        comp = new EnumValueAutoCompleter(Jedi.class);
+    }
+
 
     @Test
     public void testValues() {
-        IAutoCompleter comp = new EnumValueAutoCompleter(Jedi.class);
         List<String> comps = Arrays.asList(comp.getCompletion("L"));
         assertTrue("luke", comps.contains("luke"));
         assertTrue("leia", comps.contains("leia"));
@@ -20,7 +27,6 @@ public class EnumValueAutoCompleterTest {
 
     @Test
     public void testConvertFieldEnumValueToActualValue() {
-        EnumValueAutoCompleter comp = new EnumValueAutoCompleter(Jedi.class);
         assertEquals("MACE", "4", comp.convertFieldEnumValueToActualValue("MACE"));
         assertEquals("mace", "4", comp.convertFieldEnumValueToActualValue("mace"));
     }

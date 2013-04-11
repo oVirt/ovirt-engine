@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -13,10 +14,15 @@ import org.junit.Test;
  *
  */
 public class BitValueAutoCompleterTest {
+    private IAutoCompleter comp;
+
+    @Before
+    public void setUp() {
+        comp = new BitValueAutoCompleter();
+    }
 
     @Test
     public void testEmpty() {
-        IAutoCompleter comp = new BitValueAutoCompleter();
         List<String> comps = Arrays.asList(comp.getCompletion(""));
         assertTrue("true", comps.contains("true"));
         assertTrue("false", comps.contains("false"));
@@ -25,7 +31,6 @@ public class BitValueAutoCompleterTest {
 
     @Test
     public void testSpace() {
-        IAutoCompleter comp = new BitValueAutoCompleter();
         List<String> comps = Arrays.asList(comp.getCompletion(" "));
         assertTrue("true", comps.contains("true"));
         assertTrue("false", comps.contains("false"));
@@ -34,7 +39,6 @@ public class BitValueAutoCompleterTest {
 
     @Test
     public void testValue() {
-        IAutoCompleter comp = new BitValueAutoCompleter();
         List<String> comps = Arrays.asList(comp.getCompletion("t"));
         assertTrue("true", comps.contains("true"));
         assertTrue("false", !comps.contains("false"));
@@ -42,7 +46,6 @@ public class BitValueAutoCompleterTest {
 
     @Test
     public void testValueCaps() {
-        IAutoCompleter comp = new BitValueAutoCompleter();
         List<String> comps = Arrays.asList(comp.getCompletion("FA"));
         assertTrue("false", comps.contains("false"));
         assertTrue("true", !comps.contains("true"));
@@ -50,7 +53,6 @@ public class BitValueAutoCompleterTest {
 
     @Test
     public void testValidate() {
-        IAutoCompleter comp = new BitValueAutoCompleter();
         assertTrue("true", comp.validate("true"));
         assertTrue("TRUE", comp.validate("TRUE"));
         assertFalse("JarJar", comp.validate("JarJar"));
@@ -58,7 +60,6 @@ public class BitValueAutoCompleterTest {
 
     @Test
     public void testValidateCompletion() {
-        IAutoCompleter comp = new BitValueAutoCompleter();
         assertTrue("TRUE", comp.validateCompletion("TRUE"));
         assertTrue("TR", comp.validateCompletion("TR"));
         assertFalse("JarJar", comp.validateCompletion("JarJar"));
