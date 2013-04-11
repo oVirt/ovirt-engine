@@ -1116,6 +1116,7 @@ actions:
       parameterType: Network
       signatures:
       - mandatoryArguments: {network.id|name: 'xs:string'}
+        optionalArguments: {network.usages.usage--COLLECTION: {usage: 'xs:string'}}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -1409,6 +1410,7 @@ actions:
       parameterType: Network
       signatures:
       - mandatoryArguments: {network.id|name: 'xs:string'}
+        optionalArguments: {network.usages.usage--COLLECTION: {usage: 'xs:string'}}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
