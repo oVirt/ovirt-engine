@@ -14,7 +14,6 @@ public class DateEnumValueAutoCompleterTest {
     public void testValues() {
         DateEnumValueAutoCompleter comp = new DateEnumValueAutoCompleter(Jedi.class);
         List<String> comps = Arrays.asList(comp.getCompletion(" "));
-        System.out.println(comps);
         assertTrue("Monday", comps.contains("Monday") || comps.contains("Tuesday"));
         assertTrue("mace", comps.contains("mace"));
     }

@@ -14,7 +14,6 @@ public class EnumValueAutoCompleterTest {
     public void testValues() {
         IAutoCompleter comp = new EnumValueAutoCompleter(Jedi.class);
         List<String> comps = Arrays.asList(comp.getCompletion("L"));
-        System.out.println(comps);
         assertTrue("luke", comps.contains("luke"));
         assertTrue("leia", comps.contains("leia"));
     }

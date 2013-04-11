@@ -20,7 +20,6 @@ public class AdGroupConditionFieldAutoCompleterTest {
     public void testEmpty() {
         IConditionFieldAutoCompleter comp = new AdGroupConditionFieldAutoCompleter();
         List<String> comps = Arrays.asList(comp.getCompletion(""));
-        System.out.println(comps);
         assertTrue("name", comps.contains("name"));
         assertFalse("False", comps.contains("False"));
     }

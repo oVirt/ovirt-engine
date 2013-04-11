@@ -14,20 +14,8 @@ public class SyntaxCheckerTest {
     @Rule
     public MockConfigRule mcr = new MockConfigRule();
 
-    public void dumpCompletionArray(SyntaxContainer res) {
-        System.out.print("[");
-        for (String item : res.getCompletionArray()) {
-            System.out.print(" " + item);
-        }
-        System.out.print("]");
-    }
-
     public boolean contains(SyntaxContainer res, String item) {
-        boolean returnValue = Arrays.asList(res.getCompletionArray()).contains(item);
-        if (!returnValue) {
-            this.dumpCompletionArray(res);
-        }
-        return returnValue;
+        return Arrays.asList(res.getCompletionArray()).contains(item);
     }
 
     /**
@@ -57,7 +45,6 @@ public class SyntaxCheckerTest {
         SyntaxChecker chkr = new SyntaxChecker(20, true);
         SyntaxContainer res = null;
         res = chkr.getCompletion("");
-        this.dumpCompletionArray(res);
         assertTrue("Hosts", contains(res, "Hosts"));
         res = chkr.getCompletion("H");
         assertTrue("Hots2", contains(res, "Hosts"));
