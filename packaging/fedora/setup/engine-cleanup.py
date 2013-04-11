@@ -454,6 +454,8 @@ def clearProxyConfig():
         os.remove(basedefs.FILE_OVIRT_HTTPD_CONF_ROOT)
     if os.path.exists(basedefs.FILE_OVIRT_HTTPD_CONF):
         os.remove(basedefs.FILE_OVIRT_HTTPD_CONF)
+    if os.path.exists(basedefs.FILE_OVIRT_HTTPD_CONF_LEGACY):
+        os.remove(basedefs.FILE_OVIRT_HTTPD_CONF_LEGACY)
 
 def main(options):
     db = DB()
