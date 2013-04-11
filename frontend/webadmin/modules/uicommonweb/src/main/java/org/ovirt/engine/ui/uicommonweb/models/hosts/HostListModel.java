@@ -63,6 +63,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
+import org.ovirt.engine.ui.uicompat.Constants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -71,6 +72,7 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.Messages;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -1257,26 +1259,32 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
     public void Restart()
     {
+        final Constants constants = ConstantsManager.getInstance().getConstants();
+        final Messages messages = ConstantsManager.getInstance().getMessages();
         ConfirmationModel model = new ConfirmationModel();
         setConfirmWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().restartHostsTitle());
+        model.setTitle(constants.restartHostsTitle());
         model.setHashName("restart_host"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantToRestartTheFollowingHostsMsg());
-        // model.Items = SelectedItems.Cast<VDS>().Select(a => a.vds_name);
+        model.setMessage(constants.areYouSureYouWantToRestartTheFollowingHostsMsg());
         ArrayList<String> items = new ArrayList<String>();
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
-            items.add(vds.getName());
+            int runningVms = vds.getVmCount();
+            if (runningVms > 0) {
+                items.add(messages.hostNumberOfRunningVms(vds.getName(),runningVms));
+            } else {
+                items.add(vds.getName());
+            }
         }
         model.setItems(items);
 
         UICommand tempVar = new UICommand("OnRestart", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        tempVar.setTitle(constants.ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
         UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        tempVar2.setTitle(constants.cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
     }

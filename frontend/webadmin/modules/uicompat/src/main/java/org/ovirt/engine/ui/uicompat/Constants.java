@@ -721,7 +721,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Are you sure you want to place the following host(s) into maintenance mode?")
     String areYouSureYouWantToPlaceFollowingHostsIntoMaintenanceModeMsg();
 
-    @DefaultStringValue("Are you sure you want to Restart the following Host(s)?")
+    @DefaultStringValue("Are you sure you want to Restart the following Host(s), ungracefully stopping running VM(s)?")
     String areYouSureYouWantToRestartTheFollowingHostsMsg();
 
     @DefaultStringValue("Are you sure you want to Stop the following Host(s)?")

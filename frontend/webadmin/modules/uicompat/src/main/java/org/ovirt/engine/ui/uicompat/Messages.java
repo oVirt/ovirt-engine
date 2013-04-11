@@ -264,4 +264,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Brick Details not supported for this Cluster''s compatibility version({0}).")
     String brickDetailsNotSupportedInClusterCompatibilityVersion(String version);
+
+    @DefaultMessage("{0} ({1} Running VM(s))")
+    String hostNumberOfRunningVms(String hostName, int runningVms);
+
 }
