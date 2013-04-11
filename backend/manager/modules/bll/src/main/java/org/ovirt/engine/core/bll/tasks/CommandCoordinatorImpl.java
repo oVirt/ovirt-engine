@@ -39,6 +39,7 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 public class CommandCoordinatorImpl extends CommandCoordinator {
 
     private static final Log log = LogFactory.getLog(CommandCoordinator.class);
+    private CommandsCache commandsCache = new CommandsCacheImpl();
 
     CommandCoordinatorImpl() {
     }
@@ -81,6 +82,9 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         SPMAsyncTask task = concreteCreateTask(taskId, command, asyncTaskCreationInfo, parentCommand);
         task.setEntitiesMap(entitiesMap);
         AsyncTaskUtils.addOrUpdateTaskInDB(task);
+        commandsCache.put(command.getCommandId(),
+                command.getParameters().getParentParameters() == null ? Guid.Empty : command.getParameters().getParentParameters().getCommandId(),
+                task);
         getAsyncTaskManager().lockAndAddTaskToManager(task);
         Guid vdsmTaskId = task.getVdsmTaskId();
         ExecutionHandler.updateStepExternalId(taskStep, vdsmTaskId, ExternalSystemType.VDSM);
