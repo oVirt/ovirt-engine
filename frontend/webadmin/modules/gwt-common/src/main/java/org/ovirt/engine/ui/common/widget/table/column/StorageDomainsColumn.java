@@ -26,7 +26,8 @@ public class StorageDomainsColumn extends Column<Disk, String> implements Column
         DiskImage diskImage = (DiskImage) object;
         getCell().setTitle(StringUtils.join(diskImage.getStoragesNames(), ", ")); //$NON-NLS-1$
 
-        int numOfStorageDomains = diskImage.getStoragesNames().size();
+        int numOfStorageDomains = diskImage.getStoragesNames() != null ?
+                diskImage.getStoragesNames().size() : 0;
         if (numOfStorageDomains == 0) {
             return CONSTANTS.empty();
         }
