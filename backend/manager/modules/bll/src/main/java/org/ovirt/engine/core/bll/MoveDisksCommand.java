@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.DiskImageDAO;
-import org.ovirt.engine.core.utils.MultiValueMapUtils;
+import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
 public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase<T> {
 

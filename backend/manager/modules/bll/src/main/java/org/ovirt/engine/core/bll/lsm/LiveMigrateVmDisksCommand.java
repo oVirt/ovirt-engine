@@ -35,7 +35,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.utils.MultiValueMapUtils;
+import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
 @LockIdNameAttribute
 @NonTransactiveCommandAttribute

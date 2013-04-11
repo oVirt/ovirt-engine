@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.utils;
+package org.ovirt.engine.core.utils.collections;
 
 import static org.junit.Assert.assertEquals;
 
@@ -10,6 +10,8 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.ovirt.engine.core.utils.RandomUtils;
+import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 
 /** A test case for the {@link MultiValueMapUtils} class. */
 public class MultiValueMapUtilsTest {
