@@ -81,13 +81,13 @@ public class VdsDAOTest extends BaseDAOTestCase {
     }
 
     /**
-     * Ensures that an empty collection is returned.
+     * Ensures that {@code null} is returned.
      */
     @Test
-    public void testGetAllWithNameUsingInvalidName() {
-        List<VDS> result = dao.getAllWithName("farkle");
+    public void testGetUsingInvalidName() {
+        VDS result = dao.getByName("farkle");
 
-        assertIncorrectGetResult(result);
+        assertNull(result);
     }
 
     /**
@@ -113,14 +113,11 @@ public class VdsDAOTest extends BaseDAOTestCase {
      * Ensures the right set of objects are returned with the given name.
      */
     @Test
-    public void testGetAllWithName() {
-        List<VDS> result = dao.getAllWithName(existingVds.getName());
+    public void testGetWithName() {
+        VDS result = dao.getByName(existingVds.getName());
 
         assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (VDS vds : result) {
-            assertEquals(existingVds.getName(), vds.getName());
-        }
+        assertEquals(existingVds.getName(), result.getName());
     }
 
     /**

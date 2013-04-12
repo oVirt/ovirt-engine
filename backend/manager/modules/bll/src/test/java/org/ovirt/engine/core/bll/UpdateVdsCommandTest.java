@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Arrays;
-
 import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -76,7 +74,7 @@ public class UpdateVdsCommandTest {
         VdsDAO vdsDaoMock = Mockito.mock(VdsDAO.class);
         Mockito.when(vdsDaoMock.get(vdsId)).thenReturn(oldVdsData);
         //now return the old vds data
-        Mockito.when(vdsDaoMock.getAllWithName("BAR")).thenReturn(Arrays.asList(oldVdsData));
+        Mockito.when(vdsDaoMock.getByName("BAR")).thenReturn(oldVdsData);
 
         Mockito.when(commandMock.getVdsDAO()).thenReturn(vdsDaoMock);
         VdsHandler.Init();

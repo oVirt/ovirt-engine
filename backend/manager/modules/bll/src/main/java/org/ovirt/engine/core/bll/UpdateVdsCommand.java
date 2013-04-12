@@ -76,7 +76,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                 // check if a name is updated to an existing vds name
                 else if (!StringUtils.equalsIgnoreCase(_oldVds.getName(), getParameters().getVdsStaticData()
                         .getName())
-                        && getVdsDAO().getAllWithName(vdsName).size() != 0) {
+                        && getVdsDAO().getByName(vdsName) != null) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                 } else if (!StringUtils.equalsIgnoreCase(_oldVds.getHostName(), getParameters().getVdsStaticData()
                         .getHostName())

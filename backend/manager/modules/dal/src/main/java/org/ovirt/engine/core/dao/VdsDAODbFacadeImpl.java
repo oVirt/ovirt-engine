@@ -42,8 +42,8 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     }
 
     @Override
-    public List<VDS> getAllWithName(String name) {
-        return getCallsHandler().executeReadList("GetVdsByName",
+    public VDS getByName(String name) {
+        return getCallsHandler().executeRead("GetVdsByName",
                 VdsRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("vds_name", name));

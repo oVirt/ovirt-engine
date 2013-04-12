@@ -435,50 +435,46 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         log.debugFormat("Entering");
         boolean returnValue = true;
         VdsDAO vdsDAO = DbFacade.getInstance().getVdsDao();
-        List<VDS> hosts = vdsDAO.getAllWithName(getParameters().getVdsName());
+        VDS storedHost = vdsDAO.getByName(getParameters().getVdsName());
         List<String> allHostNames = getAllHostNames(vdsDAO.getAll());
         boolean hostExistInDB = hostToRegister != null;
 
-        if (hosts.size() > 0) {
+        if (storedHost != null) {
             log.debugFormat(
-                    "found {0} VDS(s) with the same name {1}.  Will try to register with a new name",
-                    hosts.size(),
+                    "found VDS with the same name {0}.  Will try to register with a new name",
                     getParameters().getVdsName());
 
             String nameToRegister = getParameters().getVdsName();
             String uniqueIdToRegister = getParameters().getVdsUniqueId();
             String newName;
 
-            for (VDS storedHost : hosts) {
-                // check different uniqueIds but same name
-                if (!uniqueIdToRegister.equals(storedHost.getUniqueId())
-                        && nameToRegister.equals(storedHost.getName())) {
-                    if (hostExistInDB) {
-                        // update the registered host if exist in db
-                        allHostNames.remove(hostToRegister.getName());
-                        newName = generateUniqueName(nameToRegister, allHostNames);
-                        hostToRegister.setVdsName(newName);
-                        UpdateVdsActionParameters parameters =
-                                new UpdateVdsActionParameters(hostToRegister.getStaticData(), "", false);
-                        VdcReturnValueBase ret = Backend.getInstance().runInternalAction(VdcActionType.UpdateVds, parameters);
-                        if (ret == null || !ret.getSucceeded()) {
-                            error = AuditLogType.VDS_REGISTER_ERROR_UPDATING_NAME;
-                            logable.addCustomValue("VdsName2", newName);
-                            log.errorFormat("could not update VDS {0}", nameToRegister);
-                            CaptureCommandErrorsToLogger(ret, "RegisterVdsQuery::HandleOldVdssWithSameName");
-                            return false;
-                        } else {
-                            log.infoFormat(
-                                    "Another VDS was using this name with IP {0}. Changed to {1}",
-                                    nameToRegister,
-                                    newName);
-                        }
+            // check different uniqueIds but same name
+            if (!uniqueIdToRegister.equals(storedHost.getUniqueId())
+                    && nameToRegister.equals(storedHost.getName())) {
+                if (hostExistInDB) {
+                    // update the registered host if exist in db
+                    allHostNames.remove(hostToRegister.getName());
+                    newName = generateUniqueName(nameToRegister, allHostNames);
+                    hostToRegister.setVdsName(newName);
+                    UpdateVdsActionParameters parameters =
+                            new UpdateVdsActionParameters(hostToRegister.getStaticData(), "", false);
+                    VdcReturnValueBase ret = Backend.getInstance().runInternalAction(VdcActionType.UpdateVds, parameters);
+                    if (ret == null || !ret.getSucceeded()) {
+                        error = AuditLogType.VDS_REGISTER_ERROR_UPDATING_NAME;
+                        logable.addCustomValue("VdsName2", newName);
+                        log.errorFormat("could not update VDS {0}", nameToRegister);
+                        CaptureCommandErrorsToLogger(ret, "RegisterVdsQuery::HandleOldVdssWithSameName");
+                        return false;
                     } else {
-                        // host doesn't exist in db yet. not persisting changes just object values.
-                        newName = generateUniqueName(nameToRegister, allHostNames);
-                        getParameters().setVdsName(newName);
+                        log.infoFormat(
+                                "Another VDS was using this name with IP {0}. Changed to {1}",
+                                nameToRegister,
+                                newName);
                     }
-                    break;
+                } else {
+                    // host doesn't exist in db yet. not persisting changes just object values.
+                    newName = generateUniqueName(nameToRegister, allHostNames);
+                    getParameters().setVdsName(newName);
                 }
             }
         }

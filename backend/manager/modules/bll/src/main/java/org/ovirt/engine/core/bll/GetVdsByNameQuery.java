@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.List;
-
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.GetVdsByNameParameters;
 
@@ -12,11 +10,9 @@ public class GetVdsByNameQuery<P extends GetVdsByNameParameters> extends Queries
 
     @Override
     protected void executeQueryCommand() {
-        List<VDS> vds = getDbFacade().getVdsDao().getAllWithName(getParameters().getName());
+        VDS vds = getDbFacade().getVdsDao().getByName(getParameters().getName());
 
-        if (vds.size() > 0) {
-            getQueryReturnValue().setReturnValue(vds.get(0));
-        }
+        getQueryReturnValue().setReturnValue(vds);
 
     }
 }

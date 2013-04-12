@@ -37,13 +37,13 @@ public interface VdsDAO extends DAO, SearchDAO<VDS>, AutoRecoverDAO<VDS> {
     VDS get(NGuid id, Guid userID, boolean isFiltered);
 
     /**
-     * Finds all instances with the given name.
+     * Finds an instance with the given name.
      *
      * @param name
      *            the name
-     * @return the list of instances
+     * @return the found instance or {@code null}
      */
-    List<VDS> getAllWithName(String name);
+    VDS getByName(String name);
 
     /**
      * Finds all instances for the given host.

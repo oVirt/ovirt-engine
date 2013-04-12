@@ -304,7 +304,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             } else if (!ValidationUtils.validHostname(hostName)) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_VDS_HOSTNAME);
                 returnValue = false;
-            } else if (getVdsDAO().getAllWithName(vdsName).size() != 0) {
+            } else if (getVdsDAO().getByName(vdsName) != null) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                 returnValue = false;
             } else if (getVdsDAO().getAllForHostname(hostName).size() != 0) {
