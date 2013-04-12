@@ -373,6 +373,7 @@ public enum VdcBllErrors {
     GlusterHookAlreadyEnabled(4503),
     GlusterHookAlreadyDisabled(4504),
     GlusterHookNotFound(4505),
+    GlusterHookListException(4511),
 
     UnicodeArgumentException(4900),
 

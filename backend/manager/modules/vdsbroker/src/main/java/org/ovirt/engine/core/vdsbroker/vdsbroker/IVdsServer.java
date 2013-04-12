@@ -9,6 +9,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterServersListReturnForXmlRpc
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeOptionsInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeProfileInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeStatusReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterHooksListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IsoListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
@@ -240,4 +241,6 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc glusterHookEnable(String glusterCommand, String stage, String hookName);
 
     StatusOnlyReturnForXmlRpc glusterHookDisable(String glusterCommand, String stage, String hookName);
+
+    GlusterHooksListReturnForXmlRpc glusterHooksList();
 }

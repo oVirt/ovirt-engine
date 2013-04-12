@@ -11,6 +11,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterServersListReturnForXmlRpc
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeOptionsInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeProfileInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeStatusReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterHooksListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IsoListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
@@ -1172,6 +1173,17 @@ public class VdsServerWrapper implements IVdsServer {
 
             Map<String, Object> xmlRpcReturnValue = vdsServer.glusterHookDisable(glusterCommand, stage, hookName);
             StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public GlusterHooksListReturnForXmlRpc glusterHooksList() {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterHooksList();
+            GlusterHooksListReturnForXmlRpc wrapper = new GlusterHooksListReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);

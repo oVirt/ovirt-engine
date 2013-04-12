@@ -741,4 +741,6 @@ public interface VdsmErrors extends ConstantsWithLookup {
     @DefaultStringValue("Gluster hook not found")
     String GlusterHookNotFound();
 
+    @DefaultStringValue("Failed to get gluster hook list")
+    String GlusterHookListException();
 }

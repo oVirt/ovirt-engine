@@ -139,6 +139,7 @@ public enum VDSCommandType {
     GetGlusterVolumeProfileInfo("org.ovirt.engine.core.vdsbroker.gluster"),
     EnableGlusterHook("org.ovirt.engine.core.vdsbroker.gluster"),
     DisableGlusterHook("org.ovirt.engine.core.vdsbroker.gluster"),
+    GlusterHooksList("org.ovirt.engine.core.vdsbroker.gluster"),
     ;
 
     String packageName;
