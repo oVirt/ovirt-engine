@@ -31,13 +31,6 @@ public interface RepoFileMetaDataDAO extends DAO {
     public void addRepoFileMap(RepoFileMetaData map);
 
     /**
-     * Returns a list of repository files with specific file extension from storage domain id with specific status. If
-     * no repository found, will return an empty list.
-     */
-    public List<RepoFileMetaData> getRepoListForStorageDomainAndStoragePool(Guid storagePoolId, Guid storageDomainId,
-            ImageFileType fileType);
-
-    /**
      * Returns a list of repository files with specific file extension from storage domain id.<BR/>
      * If no repository found, will return an empty list.
      */

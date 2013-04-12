@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -17,19 +15,15 @@ public class GetImagesListByStoragePoolIdQuery<P extends GetImagesListByStorageP
         super(parameters);
     }
 
+    /**
+     * @return The storage domain to get the images from
+     */
+    @Override
     protected Guid getStorageDomainId() {
         if (doesUserHavePermissionsOnStoragePool()) {
             return getDbFacade().getStorageDomainDao().getIsoStorageDomainIdForPool(getStoragePoolId());
         }
         return null;
-    }
-
-    @Override
-    protected List<RepoFileMetaData> getUserRequestForStorageDomainRepoFileList() {
-        return IsoDomainListSyncronizer.getInstance().getUserRequestForStoragePoolAndDomainRepoFileList
-                (getStoragePoolId(), getStorageDomainId(),
-                        getParameters().getImageType(),
-                        getParameters().getForceRefresh());
     }
 
     /**

@@ -32,21 +32,6 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetRepo_files_by_storage_domain_and_storage_pool(v_storage_pool_id UUID,
-	v_storage_domain_id UUID, v_file_type INTEGER)
-RETURNS SETOF storage_domain_file_repos
-   AS $procedure$
-BEGIN
-   RETURN QUERY SELECT storage_domain_file_repos.*
-   FROM storage_domain_file_repos
-   WHERE storage_domain_id = v_storage_domain_id
-   AND storage_pool_id = v_storage_pool_id
-   AND storage_domain_file_repos.file_type = v_file_type
-   ORDER BY storage_domain_file_repos.last_refreshed;
-END; $procedure$
-LANGUAGE plpgsql;
-
-
 Create or replace FUNCTION GetRepo_files_by_storage_domain(v_storage_domain_id UUID, v_file_type INTEGER)
 RETURNS SETOF repo_file_meta_data
    AS $procedure$

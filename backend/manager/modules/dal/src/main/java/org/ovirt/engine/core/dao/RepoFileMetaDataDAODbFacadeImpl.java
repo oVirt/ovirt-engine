@@ -44,22 +44,6 @@ public class RepoFileMetaDataDAODbFacadeImpl extends BaseDAODbFacade implements 
     }
 
     /**
-     * Returns a list of repository files with specific file extension from storage domain id with specific status.
-     */
-    @Override
-    public List<RepoFileMetaData> getRepoListForStorageDomainAndStoragePool(Guid storagePoolId, Guid storageDomainId,
-            ImageFileType fileType) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("storage_pool_id",
-                storagePoolId);
-        parameterSource.addValue("storage_domain_id", storageDomainId);
-        parameterSource.addValue("file_type", fileType.getValue());
-
-        return getCallsHandler().executeReadList("GetRepo_files_by_storage_domain_and_storage_pool",
-                StorageDomainRepoFileMetaDataMapper.instance,
-                parameterSource);
-    }
-
-    /**
      * Returns a list of repository files with specific file extension from storage domain id.<BR/>
      * If no repository is found, the method will return an empty list.
      */
@@ -115,25 +99,6 @@ public class RepoFileMetaDataDAODbFacadeImpl extends BaseDAODbFacade implements 
             entity.setRepoDomainId(Guid.createGuidFromString(rs.getString("repo_domain_id")));
             entity.setRepoFileName(rs.getString("repo_file_name"));
             entity.setSize(rs.getLong("size"));
-            entity.setDateCreated((Date) rs.getObject("date_created"));
-            entity.setLastRefreshed(rs.getLong("last_refreshed"));
-            return entity;
-        }
-    }
-
-    private static class StorageDomainRepoFileMetaDataMapper implements RowMapper<RepoFileMetaData> {
-        public static final StorageDomainRepoFileMetaDataMapper instance = new StorageDomainRepoFileMetaDataMapper();
-
-        @Override
-        public RepoFileMetaData mapRow(ResultSet rs, int rowNum) throws SQLException {
-            RepoFileMetaData entity = new RepoFileMetaData();
-            entity.setStoragePoolId(Guid.createGuidFromString(rs.getString("storage_pool_id")));
-            entity.setRepoDomainId(Guid.createGuidFromString(rs.getString("storage_domain_id")));
-            entity.setRepoFileName(rs.getString("repo_file_name"));
-            entity.setStoragePoolStatus(StoragePoolStatus.forValue(rs.getInt("storage_pool_status")));
-            entity.setVdsStatus(VDSStatus.forValue(rs.getInt("vds_status")));
-            entity.setSize(rs.getLong("size"));
-            entity.setStorageDomainStatus(StorageDomainStatus.forValue(rs.getInt("storage_domain_status")));
             entity.setDateCreated((Date) rs.getObject("date_created"));
             entity.setLastRefreshed(rs.getLong("last_refreshed"));
             return entity;

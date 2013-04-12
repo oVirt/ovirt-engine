@@ -161,37 +161,6 @@ public class IsoDomainListSyncronizer {
         return repoList;
     }
 
-    /**
-     * Returns a RepoFilesMetaData list with Iso file names for storage domain Id and with file type extension.<BR>
-     * If user choose to refresh the cache, and a problem occurs, then returns null.
-     *
-     * @param storagePoolId
-     *            - The storage pool Id
-     * @param storageDomainId
-     *            - The storage domain Id, which we fetch the Iso list from.
-     * @param imageType
-     *            - The imageType we want to fetch the files from the cache.
-     * @param forceRefresh
-     *            - Indicates if the domain should be refreshed from VDSM.
-     * @return List of RepoFilesMetaData files or null (If fetch from VDSM failed).
-     */
-    public List<RepoFileMetaData> getUserRequestForStoragePoolAndDomainRepoFileList(Guid storagePoolId,
-            Guid storageDomainId,
-            ImageFileType imageType,
-            boolean forceRefresh) {
-        // The result list we send back.
-        List<RepoFileMetaData> repoList = null;
-
-        if (! isStorageDomainValid(storageDomainId, imageType, forceRefresh)){
-            return null;
-        }
-        // At any case, if refreshed or not, get Iso list from the cache.
-        repoList = getCachedIsoListByStoragePoolAndDomainId(storagePoolId, storageDomainId, imageType);
-
-        // Return list of repository files.
-        return repoList;
-    }
-
     private boolean refreshRepos(Guid storageDomainId, ImageFileType imageType, boolean forceRefresh) {
         boolean res = true;
         List<RepoFileMetaData> tempProblematicRepoFileList = new ArrayList<RepoFileMetaData>();
@@ -348,27 +317,6 @@ public class IsoDomainListSyncronizer {
                 }
             });
         }
-    }
-
-    /**
-     * Returns the cached Iso file meta data list, of the storage pool Id with the storage domain id.
-     *
-     * @param isoStoragePoolId
-     *            - The storage domain Id we want to get the file list from.
-     * @param isoStorageDomainId
-     *            - The storage pool Id we want to get the file list from.
-     * @param imageType
-     *            - The file type extension (ISO  or Floppy).
-     * @return List of Iso file fetched from DB, if parameter is invalid returns an empty list.
-     */
-    public List<RepoFileMetaData> getCachedIsoListByStoragePoolAndDomainId(Guid isoStoragePoolId, Guid isoStorageDomainId, ImageFileType imageType) {
-        List<RepoFileMetaData> fileListMD = new ArrayList<RepoFileMetaData>();
-        // Check validation of parameters.
-        if (isoStorageDomainId != null && isoStoragePoolId != null && VmRunHandler.getInstance().findActiveISODomain(isoStoragePoolId) != null) {
-            // Get all the Iso files of storage and domain ID.
-            fileListMD = repoStorageDom.getRepoListForStorageDomainAndStoragePool(isoStoragePoolId, isoStorageDomainId, imageType);
-        }
-        return fileListMD;
     }
 
     /**
