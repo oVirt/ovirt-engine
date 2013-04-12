@@ -19,12 +19,13 @@ import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.TableLayout;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -130,11 +131,11 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
                 loginButton.getCommand().Execute();
             }
         });
-        loginButton.setWidth("52px"); //$NON-NLS-1$
+        loginButton.getElement().getStyle().setFloat(Float.RIGHT);
+        loginButton.getElement().getStyle().setMarginRight(2, Unit.PX);
 
         panel.add(loginButton);
         panel.setCellWidth(loginButton, "60px"); //$NON-NLS-1$
-        panel.setCellHorizontalAlignment(loginButton, HasHorizontalAlignment.ALIGN_RIGHT);
     }
 
     private void additemToRootNodePanel(HorizontalPanel panel,
