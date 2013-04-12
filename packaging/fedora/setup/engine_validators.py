@@ -383,11 +383,13 @@ def validateFQDN(param, options=[]):
         for address in resolvedAddresses:
             addressSet = _getPatternFromNslookup(address, pattern)
             reResolvedAddress = None
+            revResolved = False
             if len(addressSet) > 0:
                 reResolvedAddress = addressSet.pop()
-            if reResolvedAddress.lower() == param.lower():
-                counter += 1
-            else:
+                if reResolvedAddress.lower() == param.lower():
+                    counter += 1
+                    revResolved = True
+            if not revResolved:
                 logging.warn("%s did not reverse-resolve into %s"%(address,param))
         if counter < 1:
             logging.error("The following addresses: %s did not reverse resolve into %s"%(prettyString, param))
