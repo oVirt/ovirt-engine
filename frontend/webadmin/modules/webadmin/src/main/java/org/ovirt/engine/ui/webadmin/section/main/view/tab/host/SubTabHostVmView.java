@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostVmPresenter;
@@ -146,8 +145,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
                 resources.consoleImage(), resources.consoleDisabledImage()) {
             @Override
             protected UICommand resolveCommand() {
-                ConsoleModel defaultConsoleModel = getDetailModel().getDefaultConsoleModel();
-                return defaultConsoleModel != null ? defaultConsoleModel.getConnectCommand() : null;
+                return getDetailModel().getConsoleConnectCommand();
             }
         });
 

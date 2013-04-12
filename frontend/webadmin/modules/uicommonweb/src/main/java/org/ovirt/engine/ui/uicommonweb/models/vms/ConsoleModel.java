@@ -21,6 +21,8 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.dom.client.FormElement;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.NamedFrame;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextArea;
@@ -272,10 +274,11 @@ public abstract class ConsoleModel extends EntityModel {
     }
 
     public static void makeConsoleConfigRequest(String fileName, String contentType, String configFileContent) {
-        FormPanel formPanel = new FormPanel(new NamedFrame("_self")); //$NON-NLS-1$
+        // open form always in a new window
+        final FormPanel formPanel = new FormPanel(new NamedFrame("_blank")); //$NON-NLS-1$
         formPanel.setMethod(FormPanel.METHOD_POST);
 
-        FlowPanel innerPanel = new FlowPanel();
+        final FlowPanel innerPanel = new FlowPanel();
         innerPanel.add(buildTextArea("filename", fileName));//$NON-NLS-1$
         innerPanel.add(buildTextArea("contenttype", contentType));//$NON-NLS-1$
         innerPanel.add(buildTextArea("content", configFileContent));//$NON-NLS-1$
@@ -285,11 +288,19 @@ public abstract class ConsoleModel extends EntityModel {
         formPanel.setAction(GET_ATTACHMENT_SERVLET_URL);
         formPanel.setVisible(false);
 
-        FormElement form = FormElement.as(formPanel.getElement());
+        final FormElement form = FormElement.as(formPanel.getElement());
         formPanel.setEncoding(FormPanel.ENCODING_URLENCODED);
         RootPanel.getBodyElement().appendChild(form);
+
+        // clean-up after form submit
+        formPanel.addSubmitCompleteHandler(new SubmitCompleteHandler() {
+            @Override
+            public void onSubmitComplete(SubmitCompleteEvent event) {
+                RootPanel.getBodyElement().removeChild(form);
+            }
+        });
+
         form.submit();
-        RootPanel.getBodyElement().removeChild(form);
     }
 
     private static TextArea buildTextArea(String name, String value) {

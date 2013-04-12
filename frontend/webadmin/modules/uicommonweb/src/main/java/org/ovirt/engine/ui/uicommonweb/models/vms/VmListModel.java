@@ -100,7 +100,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTreeContext, HasConsoleModel, UserSelectedDisplayProtocolManager
+public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTreeContext, UserSelectedDisplayProtocolManager
 {
 
     private UICommand privateNewServerCommand;
@@ -366,24 +366,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
     }
 
-    // get { return SelectedItems == null ? new object[0] : SelectedItems.Cast<VM>().Select(a =>
-    // a.vm_guid).Cast<object>().ToArray(); }
-    protected Object[] getSelectedKeys()
-    {
-        if (getSelectedItems() == null)
-        {
-            return new Object[0];
-        }
-
-        Object[] keys = new Object[getSelectedItems().size()];
-        for (int i = 0; i < getSelectedItems().size(); i++)
-        {
-            keys[i] = ((VM) getSelectedItems().get(i)).getId();
-        }
-
-        return keys;
-    }
-
     private Object privateGuideContext;
 
     public Object getGuideContext()
@@ -424,30 +406,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         privateCustomPropertiesKeysList = value;
     }
 
-    private ConsoleModel defaultConsoleModel;
-
-    @Override
-    public ConsoleModel getDefaultConsoleModel() {
-        return defaultConsoleModel;
-    }
-
-    public void setDefaultConsoleModel(ConsoleModel defaultConsoleModel) {
-        this.defaultConsoleModel = defaultConsoleModel;
-    }
-
-    private ConsoleModel additionalConsoleModel;
     private ConsoleUtils consoleUtils;
     private ConsoleManager consoleManager;
     private ErrorPopupManager errorPopupManager;
-
-    public void setAdditionalConsoleModel(ConsoleModel additionalConsoleModel) {
-        this.additionalConsoleModel = additionalConsoleModel;
-    }
-
-    @Override
-    public ConsoleModel getAdditionalConsoleModel() {
-        return additionalConsoleModel;
-    }
+    private List<HasConsoleModel> selectedHasConsoleModels;
 
     public VmListModel()
     {
@@ -728,25 +690,35 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         setItems(getAsyncResult().getData());
     }
 
-    private void updateConsoleModels()
-    {
-        List tempVar = getSelectedItems();
-        List selectedItems = (tempVar != null) ? tempVar : new ArrayList();
-        Object tempVar2 = getSelectedItem();
-        VM vm = (VM) ((tempVar2 instanceof VM) ? tempVar2 : null);
-
-        if (vm == null) {
-            setDefaultConsoleModel(null);
-            setAdditionalConsoleModel(null);
+    private void updateConsoleModels() {
+        final List selectedItems = getSelectedItems();
+        if (selectedItems == null || selectedItems.isEmpty()) {
+            setSelectedHasConsoleModels(null);
             return;
         }
 
-        if (selectedItems.size() == 1) {
+        final List<HasConsoleModel> list = new ArrayList<HasConsoleModel>();
+
+        // filter list of VMs and convert them to list of HasConsoleModel items
+        // multiple consoles can be opened at a time
+        for (Object o : selectedItems) {
+            if (!(o instanceof VM)) {
+                continue;
+            }
+
+            final VM vm = (VM) o;
             consoleModelsCache.updateConsoleModelsForVm(vm);
 
-            setDefaultConsoleModel(consoleModelsCache.determineConsoleModelForVm(vm));
-            setAdditionalConsoleModel(consoleModelsCache.determineAdditionalConsoleModelForVm(vm));
+            final WebAdminItemModel webAdminItemModel = new WebAdminItemModel(this, consoleModelsCache);
+            webAdminItemModel.setEntity(vm);
+            webAdminItemModel.setDefaultConsoleModel(consoleModelsCache.determineConsoleModelForVm(vm));
+            webAdminItemModel.setAdditionalConsoleModel(consoleModelsCache.determineAdditionalConsoleModelForVm(vm));
+
+            list.add(webAdminItemModel);
         }
+
+        // update model list
+        setSelectedHasConsoleModels(list);
     }
 
     private void NewDesktop()
@@ -799,21 +771,25 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             return;
         }
 
-        ConsolePopupModel model = new ConsolePopupModel();
+        final HasConsoleModel hasConsoleModel = getSelectedHasConsoleModel();
+        if (hasConsoleModel == null) {
+            return;
+        }
+
+        final ConsolePopupModel model = new ConsolePopupModel();
         model.setConsoleContext(ConsoleContext.WA);
-        model.setModel(this);
+        model.setModel(hasConsoleModel);
         model.setHashName("editConsole"); //$NON-NLS-1$
         setWindow(model);
 
-        UICommand saveCommand = new UICommand("OnEditConsoleSave", this); //$NON-NLS-1$
+        final UICommand saveCommand = new UICommand("OnEditConsoleSave", this); //$NON-NLS-1$
         saveCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
         saveCommand.setIsDefault(true);
         model.getCommands().add(saveCommand);
-        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
+        final UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
         cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         cancelCommand.setIsCancel(true);
         model.getCommands().add(cancelCommand);
-
     }
 
     private void Edit()
@@ -1343,9 +1319,12 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                         final ExportVmModel model = (ExportVmModel) target;
                         @SuppressWarnings("unchecked")
                         final ArrayList<Disk> vmDisks = (ArrayList<Disk>) returnValue;
-                        VmModelHelper.sendWarningForNonExportableDisks(model, vmDisks, VmModelHelper.WarningType.VM_EXPORT);
+                        VmModelHelper.sendWarningForNonExportableDisks(model,
+                                vmDisks,
+                                VmModelHelper.WarningType.VM_EXPORT);
                     }
-                }), entity.getId());
+                }),
+                entity.getId());
     }
 
     private void RunOnce()
@@ -1443,7 +1422,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 {
                     BootSequenceModel bootSequenceModel = runOnceModel.getBootSequence();
                     bootSequenceModel.getNetworkOption()
-                            .setChangeProhibitionReason(ConstantsManager.getInstance().getMessages().interfaceIsRequiredToBootFromNetwork());
+                            .setChangeProhibitionReason(ConstantsManager.getInstance()
+                                    .getMessages()
+                                    .interfaceIsRequiredToBootFromNetwork());
                     bootSequenceModel.getNetworkOption().setIsChangable(false);
                 }
             }
@@ -1467,7 +1448,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 if (vmDisks.isEmpty()) {
                     runOnceModel.getRunAsStateless().setIsChangable(false);
                     runOnceModel.getRunAsStateless()
-                            .setChangeProhibitionReason(ConstantsManager.getInstance().getMessages().disklessVmCannotRunAsStateless());
+                            .setChangeProhibitionReason(ConstantsManager.getInstance()
+                                    .getMessages()
+                                    .disklessVmCannotRunAsStateless());
                     runOnceModel.getRunAsStateless().setEntity(false);
                 }
 
@@ -1484,7 +1467,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     BootSequenceModel bootSequenceModel = runOnceModel.getBootSequence();
                     bootSequenceModel.getHardDiskOption().setIsChangable(false);
                     bootSequenceModel.getHardDiskOption()
-                            .setChangeProhibitionReason(ConstantsManager.getInstance().getMessages().bootableDiskIsRequiredToBootFromDisk());
+                            .setChangeProhibitionReason(ConstantsManager.getInstance()
+                                    .getMessages()
+                                    .bootableDiskIsRequiredToBootFromDisk());
                 }
             }
         };
@@ -1602,8 +1587,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                         final RunOnceModel model = (RunOnceModel) target;
                         final List<VDS> hosts = (ArrayList<VDS>) returnValue;
                         final List<VDS> activeHosts = new ArrayList<VDS>();
-                        for(VDS host : hosts) {
-                            if(VDSStatus.Up.equals(host.getStatus())) {
+                        for (VDS host : hosts) {
+                            if (VDSStatus.Up.equals(host.getStatus())) {
                                 activeHosts.add(host);
                             }
                         }
@@ -1611,7 +1596,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                         model.getDefaultHost().setItems(activeHosts);
 
                         // hide host tab when no active host is available
-                        if(activeHosts.isEmpty()) {
+                        if (activeHosts.isEmpty()) {
                             model.setIsHostTabVisible(false);
                         }
                     }
@@ -2425,7 +2410,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         getcurrentVm().setUseHostCpuFlags((Boolean) model.getHostCpu().getEntity());
 
-
         if (model.getIsNew())
         {
             if (getcurrentVm().getVmtGuid().equals(NGuid.Empty))
@@ -2754,14 +2738,25 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         getGuideCommand().setIsExecutionAllowed(getGuideContext() != null
                 || (getSelectedItem() != null && getSelectedItems() != null && getSelectedItems().size() == 1));
 
-
         getConsoleConnectCommand().setIsExecutionAllowed(isConsoleCommandsExecutionAllowed());
         getEditConsoleCommand().setIsExecutionAllowed(isConsoleCommandsExecutionAllowed());
     }
 
     private boolean isConsoleCommandsExecutionAllowed() {
-        ConsoleProtocol protocol = consoleUtils.determineConnectionProtocol(this);
-        return consoleUtils.canShowConsole(protocol, this);
+        final List<HasConsoleModel> list = getSelectedHasConsoleModels();
+        if (list == null || list.isEmpty()) {
+            return false;
+        }
+
+        // return true, if at least one console is available
+        for (HasConsoleModel hasConsoleModel : list) {
+            final ConsoleProtocol protocol = consoleUtils.determineConnectionProtocol(hasConsoleModel);
+            if (consoleUtils.canShowConsole(protocol, hasConsoleModel)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -2811,7 +2806,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
         else if (command == getConsoleConnectCommand())
         {
-            connectToConsole();
+            connectToConsoles();
         }
         else if (command == getRemoveCommand())
         {
@@ -2935,10 +2930,33 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
     }
 
-    private void connectToConsole() {
-        String errorMessage = consoleManager.connectToConsole(this);
-        if (errorMessage != null) {
-            errorPopupManager.show(errorMessage);
+    private void connectToConsoles() {
+        StringBuilder errorMessages = null;
+
+        final List<HasConsoleModel> list = getSelectedHasConsoleModels();
+        if (list == null || list.isEmpty()) {
+            return;
+        }
+
+        for (HasConsoleModel model : list) {
+            final String errorMessage = consoleManager.connectToConsole(model);
+
+            if (errorMessage != null) {
+                if (errorMessages == null) {
+                    errorMessages = new StringBuilder();
+                } else {
+                    errorMessages.append("\r\n"); //$NON-NLS-1$
+                }
+
+                errorMessages
+                        .append(model.getVM().getName())
+                        .append(" - ") //$NON-NLS-1$
+                        .append(errorMessage);
+            }
+        }
+
+        if (errorMessages != null) {
+            errorPopupManager.show(errorMessages.toString());
         }
     }
 
@@ -2968,23 +2986,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     }
 
     @Override
-    public boolean isPool() {
-        return false;
-    }
-
-    @Override
-    public ConsoleProtocol getUserSelectedProtocol() {
-        return resolveSelectedProtocol(this);
-    }
-
-    @Override
-    public void setSelectedProtocol(ConsoleProtocol selectedProtocol) {
-        setSelectedProtocol(selectedProtocol, this);
-    }
-
-    @Override
-    public VM getVM() {
-        return (VM) getSelectedItem();
+    public ConsoleProtocol resolveSelectedProtocol(HasConsoleModel item) {
+        return consoleModelsCache.resolveUserSelectedProtocol(item);
     }
 
     @Override
@@ -2992,14 +2995,19 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         consoleModelsCache.setSelectedProtocol(protocol, item);
     }
 
-    @Override
-    public ConsoleProtocol resolveSelectedProtocol(HasConsoleModel item) {
-        return consoleModelsCache.resolveUserSelectedProtocol(item);
+    public List<HasConsoleModel> getSelectedHasConsoleModels() {
+        return selectedHasConsoleModels;
     }
 
-    @Override
-    public ConsoleContext getConsoleContext() {
-        return ConsoleContext.WA;
+    public HasConsoleModel getSelectedHasConsoleModel() {
+        if (selectedHasConsoleModels == null || selectedHasConsoleModels.size() != 1) {
+            return null;
+        }
+        return selectedHasConsoleModels.get(0);
+    }
+
+    public void setSelectedHasConsoleModels(List<HasConsoleModel> selectedHasConsoleModels) {
+        this.selectedHasConsoleModels = selectedHasConsoleModels;
     }
 
 }
