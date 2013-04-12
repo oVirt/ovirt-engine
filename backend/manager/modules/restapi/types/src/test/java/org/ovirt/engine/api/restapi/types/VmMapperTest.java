@@ -7,6 +7,7 @@ import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.CpuTune;
 import org.ovirt.engine.api.model.DisplayType;
+import org.ovirt.engine.api.model.Payload;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.VCpuPin;
 import org.ovirt.engine.api.model.VM;
@@ -18,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -114,6 +116,26 @@ public class VmMapperTest extends
         assertEquals(model.getDisplay().getKeyboardLayout(), transform.getDisplay().getKeyboardLayout());
         assertEquals(model.isDeleteProtected(), transform.isDeleteProtected());
         assertEquals(model.isTunnelMigration(), transform.isTunnelMigration());
+    }
+
+    @Test
+    public void testVmPayloadMapToPaylod() {
+        VmPayload vmPayload = new VmPayload();
+        vmPayload.setType(org.ovirt.engine.core.common.utils.VmDeviceType.CDROM);
+        vmPayload.setVolumeId("CD-VOL");
+        Payload payload = VmMapper.map(vmPayload, null);
+        assertEquals(vmPayload.getType().name().toLowerCase(), payload.getType());
+        assertEquals(vmPayload.getVolumeId(), payload.getVolumeId());
+    }
+
+    @Test
+    public void testPayloadMapToVmPaylod() {
+        Payload payload = new Payload();
+        payload.setType("CDROM");
+        payload.setVolumeId("CD-VOL");
+        VmPayload vmPayload = VmMapper.map(payload, null);
+        assertEquals(payload.getType(), vmPayload.getType().name());
+        assertEquals(payload.getVolumeId(), vmPayload.getVolumeId());
     }
 
     @Test

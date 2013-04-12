@@ -834,6 +834,7 @@ public class VmMapper {
                     model.setType(deviceType.value());
                 }
             }
+            model.setVolumeId(entity.getVolumeId());
             for (Map.Entry<String, String> entry : entity.getFiles().entrySet()) {
                 PayloadFile file = new PayloadFile();
                 file.setName(entry.getKey());
@@ -853,6 +854,9 @@ public class VmMapper {
             if (deviceType!=null) {
                 entity.setType(map(deviceType, null));
             }
+        }
+        if (model.isSetVolumeId()) {
+            entity.setVolumeId(model.getVolumeId());
         }
         if (model.getFile() != null) {
             for (PayloadFile file : model.getFile()) {

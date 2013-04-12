@@ -74,7 +74,7 @@ actions:
           vm.origin: xs:string
           vm.os.kernel: xs:string
           vm.tunnel_migration: xs:boolean
-          vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.file.name: 'xs:string', payload.file.content: 'xs:string'}
+          vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.volume_id: 'xs:string', payload.file.name: 'xs:string', payload.file.content: 'xs:string'}
           vm.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
     urlparams: {}
     headers:
@@ -137,7 +137,7 @@ actions:
           vm.os.kernel: xs:string
           vm.disks.clone: xs:boolean
           vm.tunnel_migration: xs:boolean
-          vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.file.name: 'xs:string', payload.file.content: 'xs:string'}
+          vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.volume_id: 'xs:string', payload.file.name: 'xs:string', payload.file.content: 'xs:string'}
           vm.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
       # the following signature is for clone VM from a Snapshot - requires the Snapshot ID
       - mandatoryArguments: {vm.name: 'xs:string', vm.template.id|name: 'xs:string', vm.cluster.id|name: 'xs:string',
@@ -174,7 +174,7 @@ actions:
           vm.origin: xs:string
           vm.os.kernel: xs:string
           vm.tunnel_migration: xs:boolean
-          vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.file.name: 'xs:string', payload.file.content: 'xs:string'}
+          vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.volume_id: 'xs:string', payload.file.name: 'xs:string', payload.file.content: 'xs:string'}
           vm.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
     urlparams: {}
     headers:

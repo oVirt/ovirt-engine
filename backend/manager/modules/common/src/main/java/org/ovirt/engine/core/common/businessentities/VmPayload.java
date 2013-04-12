@@ -12,13 +12,16 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 public class VmPayload implements Serializable {
     private static final long serialVersionUID = -3665087594884425768L;
     private static String SpecParamsPayload = "vmPayload";
+    private static String SpecParamsVolumeIdType = "volId";
     private static String SpecParamsFileType = "file";
 
     private VmDeviceType type;
+    private String volumeId;
     private Map<String, String> files; // file data is base64-encoded
 
     public VmPayload() {
         this.type = VmDeviceType.CDROM;
+        this.volumeId = null;
         this.files = new HashMap<String, String>();
     }
 
@@ -27,6 +30,7 @@ public class VmPayload implements Serializable {
         this.type = type;
 
         Map<String, Object> payload = (Map<String, Object>)specParams.get(SpecParamsPayload);
+        this.volumeId = (String)payload.get(SpecParamsVolumeIdType);
         this.files = (Map<String, String>)payload.get(SpecParamsFileType);
     }
 
@@ -46,6 +50,14 @@ public class VmPayload implements Serializable {
         this.type = type;
     }
 
+    public String getVolumeId() {
+        return this.volumeId;
+    }
+
+    public void setVolumeId(String volumeId) {
+        this.volumeId = volumeId;
+    }
+
     /**
      * Retrieve a map of files in this payload.  The map is always initialized,
      * and can be updated to add/remove files to/from the payload.
@@ -59,12 +71,15 @@ public class VmPayload implements Serializable {
 
     public Map<String, Object> getSpecParams() {
         // function produce something like that:
-        // vmPayload={file:{filename:content,filename2:content2,...}}
+        // vmPayload={volumeId:volume-id,file:{filename:content,filename2:content2,...}}
         Map<String, Object> specParams = new HashMap<String, Object>();
-        Map<String, Object> fileTypeList = new HashMap<String, Object>();
+        Map<String, Object> payload = new HashMap<String, Object>();
 
-        specParams.put(SpecParamsPayload, fileTypeList);
-        fileTypeList.put(SpecParamsFileType, files);
+        specParams.put(SpecParamsPayload, payload);
+        if (volumeId != null) {
+            payload.put(SpecParamsVolumeIdType, volumeId);
+        }
+        payload.put(SpecParamsFileType, files);
 
         return specParams;
     }
