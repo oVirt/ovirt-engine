@@ -36,7 +36,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
-import org.ovirt.engine.ui.uicommonweb.Configurator;
+import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.ILogger;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -149,8 +149,8 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             }
 
             // make sure to not send the ctrl+alt+delete and TaskMgrExecution if not supported
-            Configurator configurator = (Configurator) TypeResolver.getInstance().Resolve(Configurator.class);
-            if (!configurator.isCtrlAltDeleteEnabled()) {
+            ConsoleUtils consoleUtils = (ConsoleUtils) TypeResolver.getInstance().Resolve(ConsoleUtils.class);
+            if (!consoleUtils.isCtrlAltDelEnabled()) {
                 getspice().setSendCtrlAltDelete(false);
                 getspice().setNoTaskMgrExecution(false);
             }
