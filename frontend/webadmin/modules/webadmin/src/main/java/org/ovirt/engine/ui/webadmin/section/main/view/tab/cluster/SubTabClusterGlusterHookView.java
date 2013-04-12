@@ -47,7 +47,7 @@ public class SubTabClusterGlusterHookView extends AbstractSubTabTableView<VDSGro
                 return object.getGlusterCommand();
             }
         };
-        getTable().addColumn(glusterCommandColumn, constants.glusterCommandHook());
+        getTable().addColumn(glusterCommandColumn, constants.glusterVolumeEventHook());
 
         TextColumnWithTooltip<GlusterHookEntity> stageColumn = new EnumColumn<GlusterHookEntity, GlusterHookStage>() {
 

@@ -1701,17 +1701,14 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Name")
     String nameHook();
 
-    @DefaultStringValue("Gluster Volume Command")
-    String glusterCommandHook();
+    @DefaultStringValue("Volume Event")
+    String glusterVolumeEventHook();
 
     @DefaultStringValue("Stage")
     String stageHook();
 
     @DefaultStringValue("Status")
     String statusHook();
-
-    @DefaultStringValue("In Sync?")
-    String isInSyncHook();
 
     @DefaultStringValue("Content Type")
     String contentTypeHook();
