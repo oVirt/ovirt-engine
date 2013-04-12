@@ -449,8 +449,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         // The sysprep file size isn't being verified for 3.0 clusters and below, so we maintain the same behavior here.
         VmPayload vmPayload = new VmPayload();
         vmPayload.setType(VmDeviceType.FLOPPY);
-        vmPayload.setFileName(SYSPREP_FILE_NAME);
-        vmPayload.setContent(Base64.encodeBase64String(sysPrepContent.getBytes()));
+        vmPayload.getFiles().put(SYSPREP_FILE_NAME, Base64.encodeBase64String(sysPrepContent.getBytes()));
 
         VmDevice vmDevice =
                 new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),

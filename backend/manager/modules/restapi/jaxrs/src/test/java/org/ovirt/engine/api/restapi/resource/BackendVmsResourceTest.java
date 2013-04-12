@@ -877,8 +877,7 @@ public class BackendVmsResourceTest
     private VmPayload getPayloadModel() {
         VmPayload payload = new VmPayload();
         payload.setType(VmDeviceType.CDROM);
-        payload.setContent(PAYLOAD_COMTENT);
-        payload.setContent(new String(Base64.decodeBase64(payload.getContent())));
+        payload.getFiles().put("payloadFile", new String(Base64.decodeBase64(PAYLOAD_COMTENT)));
         return payload;
     }
 

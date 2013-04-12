@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -27,7 +28,9 @@ public class GetVmPayloadQuery<P extends IdQueryParameters> extends QueriesComma
                     VmPayload payload = new VmPayload(VmDeviceType.valueOf(disk.getType().name()),
                             disk.getSpecParams());
                     payload.setType(VmDeviceType.valueOf(disk.getDevice().toUpperCase()));
-                    payload.setContent(new String(Base64.decodeBase64(payload.getContent())));
+                    for (Map.Entry<String, String> entry : payload.getFiles().entrySet()) {
+                        entry.setValue(new String(Base64.decodeBase64(entry.getValue())));
+                    }
 
                     getQueryReturnValue().setReturnValue(payload);
                 }

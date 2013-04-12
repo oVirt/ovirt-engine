@@ -361,8 +361,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             }
 
             // otherwise, we save the content in base64 string
-            getParameters().getVmPayload().setContent(Base64.encodeBase64String(
-                    getParameters().getVmPayload().getContent().getBytes()));
+            for (Map.Entry<String, String> entry : getParameters().getVmPayload().getFiles().entrySet()) {
+                entry.setValue(Base64.encodeBase64String(entry.getValue().getBytes()));
+            }
         }
 
         // Check that the USB policy is legal

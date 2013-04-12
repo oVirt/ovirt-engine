@@ -452,11 +452,17 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         if (payload.getType() != VmDeviceType.CDROM && payload.getType() != VmDeviceType.FLOPPY) {
             addCanDoActionMessage(VdcBllMessages.VMPAYLOAD_INVALID_PAYLOAD_TYPE);
             returnValue = false;
-        } else if (!VmPayload.isPayloadSizeLegal(payload.getContent())) {
-            Integer lengthInKb = 2 * Config.<Integer> GetValue(ConfigValues.PayloadSize) / Kb;
-            addCanDoActionMessage(VdcBllMessages.VMPAYLOAD_SIZE_EXCEEDED);
-            addCanDoActionMessage(String.format("$size %1$s", lengthInKb.toString()));
-            returnValue = false;
+        } else {
+            for (String content : payload.getFiles().values()) {
+                // Check each file individually, no constraint on total size
+                if (!VmPayload.isPayloadSizeLegal(content)) {
+                    Integer lengthInKb = 2 * Config.<Integer> GetValue(ConfigValues.PayloadSize) / Kb;
+                    addCanDoActionMessage(VdcBllMessages.VMPAYLOAD_SIZE_EXCEEDED);
+                    addCanDoActionMessage(String.format("$size %1$s", lengthInKb.toString()));
+                    returnValue = false;
+                    break;
+                }
+            }
         }
         return returnValue;
     }

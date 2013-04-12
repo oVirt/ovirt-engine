@@ -2153,7 +2153,7 @@
 
   <xs:complexType name="Payload">
     <xs:sequence>
-      <xs:element name="file" type="PayloadFile"/>
+      <xs:element name="file" type="PayloadFile" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:attribute name="type" type="xs:string">
         <xs:annotation>

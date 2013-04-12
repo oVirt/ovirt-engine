@@ -826,7 +826,7 @@ public class VmMapper {
 
     @Mapping(from = VmPayload.class, to = Payload.class)
     public static Payload map(VmPayload entity, Payload template) {
-        if (entity.getType() != null || entity.getFileName() != null) {
+        if (entity.getType() != null || entity.getFiles().isEmpty()) {
             Payload model = template != null ? template : new Payload();
             if (entity.getType() != null) {
                 org.ovirt.engine.api.model.VmDeviceType deviceType = map(entity.getType(), null);
@@ -834,11 +834,11 @@ public class VmMapper {
                     model.setType(deviceType.value());
                 }
             }
-            if (entity.getFileName() != null) {
+            for (Map.Entry<String, String> entry : entity.getFiles().entrySet()) {
                 PayloadFile file = new PayloadFile();
-                file.setName(entity.getFileName());
-                file.setContent(entity.getContent());
-                model.setFile(file);
+                file.setName(entry.getKey());
+                file.setContent(entry.getValue());
+                model.getFile().add(file);
             }
             return model;
         }
@@ -855,8 +855,9 @@ public class VmMapper {
             }
         }
         if (model.getFile() != null) {
-            entity.setFileName(model.getFile().getName());
-            entity.setContent(model.getFile().getContent());
+            for (PayloadFile file : model.getFile()) {
+                entity.getFiles().put(file.getName(), file.getContent());
+            }
         }
         return entity;
     }
