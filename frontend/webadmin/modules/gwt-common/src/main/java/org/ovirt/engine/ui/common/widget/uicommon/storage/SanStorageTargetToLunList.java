@@ -103,7 +103,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             public String getValue(SanTargetModel model) {
                 return ""; //$NON-NLS-1$
             }
-        }, constants.empty(), "60px"); //$NON-NLS-1$
+        }, constants.empty(), "70px"); //$NON-NLS-1$
         table.addColumn(new TextColumn<SanTargetModel>() {
             @Override
             public String getValue(SanTargetModel model) {
@@ -203,7 +203,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             public String getRawValue(LunModel model) {
                 return String.valueOf(model.getSize()) + "GB"; //$NON-NLS-1$
             }
-        }, constants.devSizeSanStorage(), "60px"); //$NON-NLS-1$
+        }, constants.devSizeSanStorage(), "70px"); //$NON-NLS-1$
 
         table.addColumn(new LunTextColumn() {
             @Override
