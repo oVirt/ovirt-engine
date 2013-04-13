@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -270,18 +269,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         privateCreateSnapshotCommand = value;
     }
 
-    private UICommand privateMoveCommand;
-
-    public UICommand getMoveCommand()
-    {
-        return privateMoveCommand;
-    }
-
-    private void setMoveCommand(UICommand value)
-    {
-        privateMoveCommand = value;
-    }
-
     private UICommand privateRetrieveIsoImagesCommand;
 
     public UICommand getRetrieveIsoImagesCommand()
@@ -440,7 +427,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         setRunOnceCommand(new UICommand("RunOnce", this)); //$NON-NLS-1$
         setExportCommand(new UICommand("Export", this)); //$NON-NLS-1$
         setCreateSnapshotCommand(new UICommand("CreateSnapshot", this)); //$NON-NLS-1$
-        setMoveCommand(new UICommand("Move", this)); //$NON-NLS-1$
         setGuideCommand(new UICommand("Guide", this)); //$NON-NLS-1$
         setRetrieveIsoImagesCommand(new UICommand("RetrieveIsoImages", this)); //$NON-NLS-1$
         setChangeCdCommand(new UICommand("ChangeCD", this)); //$NON-NLS-1$
@@ -978,40 +964,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         model.setCancelCommand(cancelCommand);
         model.setCloseCommand(closeCommand);
-    }
-
-    private void Move()
-    {
-        VM vm = (VM) getSelectedItem();
-        if (vm == null)
-        {
-            return;
-        }
-
-        if (getWindow() != null)
-        {
-            return;
-        }
-
-        MoveDiskModel model = new MoveDiskModel();
-        setWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().moveVirtualMachineTitle());
-        model.setHashName("move_virtual_machine"); //$NON-NLS-1$
-        model.setEntity(this);
-        model.StartProgress(null);
-
-        AsyncDataProvider.GetVmDiskList(new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object target, Object returnValue) {
-                VmListModel vmListModel = (VmListModel) target;
-                MoveDiskModel moveDiskModel = (MoveDiskModel) vmListModel.getWindow();
-                LinkedList<DiskImage> disks = (LinkedList<DiskImage>) returnValue;
-                ArrayList<DiskImage> diskImages = new ArrayList<DiskImage>();
-                diskImages.addAll(disks);
-
-                moveDiskModel.init(diskImages);
-            }
-        }), vm.getId(), true);
     }
 
     @Override
@@ -2727,8 +2679,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.ExportVm));
         getCreateSnapshotCommand().setIsExecutionAllowed(items.size() == 1
                 && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.CreateAllSnapshotsFromVm));
-        getMoveCommand().setIsExecutionAllowed(items.size() == 1
-                && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.MoveVm));
         getRetrieveIsoImagesCommand().setIsExecutionAllowed(items.size() == 1
                 && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.ChangeDisk));
         getChangeCdCommand().setIsExecutionAllowed(items.size() == 1
@@ -2847,10 +2797,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         else if (command == getCreateSnapshotCommand())
         {
             CreateSnapshot();
-        }
-        else if (command == getMoveCommand())
-        {
-            Move();
         }
         else if (command == getGuideCommand())
         {
