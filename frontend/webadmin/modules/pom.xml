@@ -34,7 +34,6 @@
     <gin.version>1.5.0</gin.version>
     <maven-resources-plugin.version>2.5</maven-resources-plugin.version>
     <maven-clean-plugin.version>2.4.1</maven-clean-plugin.version>
-    <maven-war-plugin.version>2.1.1</maven-war-plugin.version>
     <build-helper-maven-plugin.version>1.5</build-helper-maven-plugin.version>
     <!-- Using older maven-processor-plugin version for Maven 2 compatibility -->
     <maven-processor-plugin.version>1.3.7</maven-processor-plugin.version>
