@@ -243,10 +243,10 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 struct.add(VdsProperties.Device, vmDevice.getDevice());
                 switch (disk.getDiskInterface()) {
                 case IDE:
-                    struct.add(VdsProperties.NETWORK_INTERFACE, "ide");
+                    struct.add(VdsProperties.INTERFACE, "ide");
                     break;
                 case VirtIO:
-                    struct.add(VdsProperties.NETWORK_INTERFACE, VdsProperties.Virtio);
+                    struct.add(VdsProperties.INTERFACE, VdsProperties.Virtio);
                     break;
                 default:
                     // ISCI not supported
@@ -495,7 +495,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         struct.add(VdsProperties.Type, vmDevice.getType());
         struct.add(VdsProperties.Device, vmDevice.getDevice());
         struct.add(VdsProperties.Index, "0"); // IDE slot 2 is reserved by VDSM to CDROM
-        struct.add(VdsProperties.NETWORK_INTERFACE, VdsProperties.Fdc);
+        struct.add(VdsProperties.INTERFACE, VdsProperties.Fdc);
         struct.add(VdsProperties.ReadOnly, String.valueOf(vmDevice.getIsReadOnly()));
         struct.add(VdsProperties.Shareable, Boolean.FALSE.toString());
     }
@@ -504,7 +504,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         struct.add(VdsProperties.Type, vmDevice.getType());
         struct.add(VdsProperties.Device, vmDevice.getDevice());
         struct.add(VdsProperties.Index, "2"); // IDE slot 2 is reserved by VDSM to CDROM
-        struct.add(VdsProperties.NETWORK_INTERFACE, VdsProperties.Ide);
+        struct.add(VdsProperties.INTERFACE, VdsProperties.Ide);
         struct.add(VdsProperties.ReadOnly, Boolean.TRUE.toString());
         struct.add(VdsProperties.Shareable, Boolean.FALSE.toString());
     }

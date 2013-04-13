@@ -67,6 +67,8 @@ public final class VdsProperties {
     public static final String images_last_check = "imagesLastCheck";
     public static final String images_last_delay = "imagesLastDelay";
 
+    public static final String INTERFACE = "iface";
+
     // Network related properties
     public static final String NETWORK = "network";
     public static final String LINK_ACTIVE = "linkActive";
@@ -93,7 +95,6 @@ public final class VdsProperties {
     public static final String NETWORK_BONDINGS = "bondings";
     public static final String NETWORK_BRIDGES = "bridges";
     public static final String NETWORK_LAST_CLIENT_INTERFACE = "lastClientIface";
-    public static final String NETWORK_INTERFACE = "iface";
     public static final String VM_NETWORK_INTERFACES = "netIfaces";
     public static final String VM_IPV4_ADDRESSES = "inet";
     public static final String VM_IPV6_ADDRESSES = "inet6";
