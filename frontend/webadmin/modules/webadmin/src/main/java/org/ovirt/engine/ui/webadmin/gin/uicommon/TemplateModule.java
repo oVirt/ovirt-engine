@@ -48,7 +48,6 @@ public class TemplateModule extends AbstractGinModule {
     public MainModelProvider<VmTemplate, TemplateListModel> getTemplateListProvider(ClientGinjector ginjector,
             final Provider<TemplateNewPresenterWidget> popupProvider,
             final Provider<VmExportPopupPresenterWidget> exportPopupProvider,
-            final Provider<DisksAllocationPopupPresenterWidget> copyPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         return new MainTabModelProvider<VmTemplate, TemplateListModel>(ginjector, TemplateListModel.class) {
             @Override
@@ -60,8 +59,6 @@ public class TemplateModule extends AbstractGinModule {
                     return popupProvider.get();
                 } else if (lastExecutedCommand == getModel().getExportCommand()) {
                     return exportPopupProvider.get();
-                } else if (lastExecutedCommand == getModel().getCopyCommand()) {
-                    return copyPopupProvider.get();
                 } else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }

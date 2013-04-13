@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -92,38 +91,6 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         privateExportCommand = value;
     }
 
-    private UICommand privateCopyCommand;
-
-    public UICommand getCopyCommand()
-    {
-        return privateCopyCommand;
-    }
-
-    private void setCopyCommand(UICommand value)
-    {
-        privateCopyCommand = value;
-    }
-
-    // get { return SelectedItems == null ? new object[0] : SelectedItems.Cast<VmTemplate>().Select(a =>
-    // a.vmt_guid).Cast<object>().ToArray(); }
-    protected Object[] getSelectedKeys()
-    {
-        if (getSelectedItems() == null)
-        {
-            return new Object[0];
-        }
-        else
-        {
-            ArrayList<Guid> items = new ArrayList<Guid>();
-            for (Object item : getSelectedItems())
-            {
-                VmTemplate a = (VmTemplate) item;
-                items.add(a.getId());
-            }
-            return items.toArray(new Guid[] {});
-        }
-    }
-
     private SystemTreeItemModel systemTreeSelectedItem;
 
     @Override
@@ -153,42 +120,11 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setExportCommand(new UICommand("Export", this)); //$NON-NLS-1$
-        setCopyCommand(new UICommand("Copy", this)); //$NON-NLS-1$
 
         UpdateActionAvailability();
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
-    }
-
-    private void Copy()
-    {
-        VmTemplate template = (VmTemplate) getSelectedItem();
-
-        if (getWindow() != null)
-        {
-            return;
-        }
-
-        CopyDiskModel model = new CopyDiskModel();
-        setWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().copyTemplateTitle());
-        model.setHashName("copy_template"); //$NON-NLS-1$
-        model.setIsVolumeFormatAvailable(false);
-        model.setEntity(this);
-
-        model.StartProgress(null);
-
-        AsyncDataProvider.GetTemplateDiskList(new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object target, Object returnValue) {
-                TemplateListModel templateListModel = (TemplateListModel) target;
-                CopyDiskModel copyDiskModel = (CopyDiskModel) templateListModel.getWindow();
-                ArrayList<DiskImage> diskImages = (ArrayList<DiskImage>) returnValue;
-
-                copyDiskModel.init(diskImages);
-            }
-        }), template.getId());
     }
 
     @Override
@@ -667,17 +603,6 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
                     .blankTemplateCannotBeExported());
             getExportCommand().setIsExecutionAllowed(false);
         }
-
-        getCopyCommand().setIsExecutionAllowed(items.size() == 1 && item != null
-                && VdcActionUtils.CanExecute(items, VmTemplate.class, VdcActionType.MoveOrCopyTemplate));
-
-        if (getCopyCommand().getIsExecutionAllowed() && blankSelected)
-        {
-            getCopyCommand().getExecuteProhibitionReasons().add(ConstantsManager.getInstance()
-                    .getConstants()
-                    .blankTemplateCannotBeCopied());
-            getCopyCommand().setIsExecutionAllowed(false);
-        }
     }
 
     /**
@@ -719,10 +644,6 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         else if (command == getRemoveCommand())
         {
             remove();
-        }
-        else if (command == getCopyCommand())
-        {
-            Copy();
         }
         else if (command == getExportCommand())
         {
