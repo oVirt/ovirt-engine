@@ -6,7 +6,6 @@ import java.util.Map;
 public enum DiskInterface {
 
     IDE(0),
-    SCSI(1),
     VirtIO(2);
 
     private int intValue;

@@ -249,7 +249,6 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     struct.add(VdsProperties.INTERFACE, VdsProperties.Virtio);
                     break;
                 default:
-                    // ISCI not supported
                     logUnsupportedInterfaceType();
                     break;
                 }
