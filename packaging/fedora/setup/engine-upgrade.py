@@ -406,8 +406,10 @@ class DB():
             # Perform the upgrade
             # ./upgrade.sh -s ${SERVERNAME} -p ${PORT} -u ${USERNAME} -d ${DATABASE};
             dbupgrade = os.path.join(basedefs.DIR_DB_SCRIPTS, basedefs.FILE_DB_UPGRADE_SCRIPT)
+            logFile = os.path.join(basedefs.DIR_LOG, "engine-db-upgrade-%s.log" %(utils.getCurrentDateTime()))
             cmd = [
                 dbupgrade,
+                "-l", logFile,
                 "-s", SERVER_NAME,
                 "-p", SERVER_PORT,
                 "-u", SERVER_ADMIN,
