@@ -7,13 +7,13 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -609,7 +609,7 @@ public class VmGeneralModel extends EntityModel
         setIsHighlyAvailable(vm.isAutoStartup());
 
         setHasPriority(vm.getVmType() == VmType.Server);
-        setPriority(PriorityToString(vm.getPriority()));
+        setPriority(AsyncDataProvider.priorityToString(vm.getPriority()));
 
         setHasMonitorCount(vm.getVmType() == VmType.Desktop);
         setMonitorCount(vm.getNumOfMonitors());
@@ -618,8 +618,10 @@ public class VmGeneralModel extends EntityModel
         translator = EnumTranslator.Create(UsbPolicy.class);
         setUsbPolicy(translator.get(vm.getUsbPolicy()));
 
-        setCpuInfo(vm.getNumOfCpus() + " " + "(" + vm.getNumOfSockets() + " Socket(s), " + vm.getCpuPerSocket() //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                + " Core(s) per Socket)"); //$NON-NLS-1$
+        setCpuInfo(ConstantsManager.getInstance().getMessages().cpuInfoLabel(
+                vm.getNumOfCpus(),
+                vm.getNumOfSockets(),
+                vm.getCpuPerSocket()));
 
         setHasDomain(AsyncDataProvider.IsWindowsOsType(vm.getVmOs()));
         setDomain(vm.getVmDomain());
@@ -676,7 +678,7 @@ public class VmGeneralModel extends EntityModel
         }
         else
         {
-            setDefaultHost("Any Host in Cluster"); //$NON-NLS-1$
+            setDefaultHost(ConstantsManager.getInstance().getConstants().anyHostInCluster());
         }
     }
 
@@ -732,28 +734,4 @@ public class VmGeneralModel extends EntityModel
         Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, params, _asyncQuery);
     }
 
-    // TODO: Find a better place for this code. It must be something common,
-    // allowing using of converters' code available in UICommon.
-    public String PriorityToString(int value)
-    {
-        int highPriority = AsyncDataProvider.GetMaxVmPriority();
-        int roundedPriority = AsyncDataProvider.RoundPriority(value);
-
-        if (roundedPriority == 1)
-        {
-            return "Low"; //$NON-NLS-1$
-        }
-        else if (roundedPriority == AsyncDataProvider.GetMaxVmPriority() / 2)
-        {
-            return "Medium"; //$NON-NLS-1$
-        }
-        else if (roundedPriority == AsyncDataProvider.GetMaxVmPriority())
-        {
-            return "High"; //$NON-NLS-1$
-        }
-        else
-        {
-            return "Unknown"; //$NON-NLS-1$
-        }
-    }
 }

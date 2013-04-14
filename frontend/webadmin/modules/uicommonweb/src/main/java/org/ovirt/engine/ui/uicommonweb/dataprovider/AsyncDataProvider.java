@@ -128,6 +128,7 @@ import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmModelBehaviorBase;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WANDisableEffects;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WanColorDepth;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
@@ -2901,5 +2902,22 @@ public final class AsyncDataProvider {
         // sort by cluster name
         Collections.sort(filteredList, new Linq.VdsGroupByNameComparer());
         return filteredList;
+    }
+
+    public static String priorityToString(int value) {
+        int roundedPriority = AsyncDataProvider.RoundPriority(value);
+
+        if (roundedPriority == 1) {
+            return ConstantsManager.getInstance().getConstants().vmLowPriority();
+        }
+        else if (roundedPriority == AsyncDataProvider.GetMaxVmPriority() / 2) {
+            return ConstantsManager.getInstance().getConstants().vmMediumPriority();
+        }
+        else if (roundedPriority == AsyncDataProvider.GetMaxVmPriority()) {
+            return ConstantsManager.getInstance().getConstants().vmHighPriority();
+        }
+        else {
+            return ConstantsManager.getInstance().getConstants().vmUnknownPriority();
+        }
     }
 }

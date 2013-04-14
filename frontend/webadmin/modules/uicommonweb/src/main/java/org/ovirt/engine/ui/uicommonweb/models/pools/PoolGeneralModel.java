@@ -6,11 +6,11 @@ import java.util.Iterator;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
@@ -452,8 +452,10 @@ public class PoolGeneralModel extends EntityModel
                 if (getvm() != null)
                 {
                     poolGeneralModel.setTemplate(getvm().getVmtName());
-                    poolGeneralModel.setCpuInfo(getvm().getNumOfCpus() + " " + "(" + getvm().getNumOfSockets() //$NON-NLS-1$ //$NON-NLS-2$
-                            + " Socket(s), " + getvm().getCpuPerSocket() + " Core(s) per Socket)"); //$NON-NLS-1$ //$NON-NLS-2$
+                    poolGeneralModel.setCpuInfo(ConstantsManager.getInstance().getMessages().cpuInfoLabel(
+                            getvm().getNumOfCpus(),
+                            getvm().getNumOfSockets(),
+                            getvm().getCpuPerSocket()));
                     poolGeneralModel.setMonitorCount(getvm().getNumOfMonitors());
 
                     Translator translator = EnumTranslator.Create(VmOsType.class);
@@ -509,7 +511,9 @@ public class PoolGeneralModel extends EntityModel
                     }
                     else
                     {
-                        poolGeneralModel.setDefaultHost("Any Host in Cluster"); //$NON-NLS-1$
+                        poolGeneralModel.setDefaultHost(ConstantsManager.getInstance()
+                                .getConstants()
+                                .anyHostInCluster());
 
                         poolGeneralModel.UpdateStorageDomain();
                     }

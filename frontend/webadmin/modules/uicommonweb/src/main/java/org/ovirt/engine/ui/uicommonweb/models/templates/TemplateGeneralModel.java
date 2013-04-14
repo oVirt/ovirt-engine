@@ -457,7 +457,7 @@ public class TemplateGeneralModel extends EntityModel
         setDefinedMemory(template.getMemSizeMb() + " MB"); //$NON-NLS-1$
         setHasHighlyAvailable(template.getVmType() == VmType.Server);
         setIsHighlyAvailable(template.isAutoStartup());
-        setPriority(PriorityToString(template.getPriority()));
+        setPriority(AsyncDataProvider.priorityToString(template.getPriority()));
         setMonitorCount(template.getNumOfMonitors());
         setAllowConsoleReconnect(template.isAllowConsoleReconnect());
         setCpuInfo(ConstantsManager.getInstance().getMessages().cpuInfoLabel(
@@ -487,29 +487,4 @@ public class TemplateGeneralModel extends EntityModel
         setIsStateless(template.isStateless());
     }
 
-    public String PriorityToString(int value)
-    {
-        String priorityStr;
-        int highPriority = AsyncDataProvider.GetMaxVmPriority();
-        int roundedPriority = AsyncDataProvider.RoundPriority(value);
-
-        if (roundedPriority == 1)
-        {
-            priorityStr = "Low"; //$NON-NLS-1$
-        }
-        else if (roundedPriority == highPriority / 2)
-        {
-            priorityStr = "Medium"; //$NON-NLS-1$
-        }
-        else if (roundedPriority == highPriority)
-        {
-            priorityStr = "High"; //$NON-NLS-1$
-        }
-        else
-        {
-            priorityStr = "Unknown"; //$NON-NLS-1$
-        }
-
-        return priorityStr;
-    }
 }

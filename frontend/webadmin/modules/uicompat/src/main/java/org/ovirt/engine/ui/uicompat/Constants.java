@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicompat;
 
-import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 
 
@@ -1794,4 +1793,19 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("'Use Host CPU' is only available for cluster compatible with ver 3.2 or higher, when 'Do not allow migration' is selected or 'Allow manual migration' is selected and no host is specified) ")
     String hosCPUUnavailable();
+
+    @DefaultStringValue("Low")
+    String vmLowPriority();
+
+    @DefaultStringValue("Medium")
+    String vmMediumPriority();
+
+    @DefaultStringValue("High")
+    String vmHighPriority();
+
+    @DefaultStringValue("Unknown")
+    String vmUnknownPriority();
+
+    @DefaultStringValue("Any Host in Cluster")
+    String anyHostInCluster();
 }
