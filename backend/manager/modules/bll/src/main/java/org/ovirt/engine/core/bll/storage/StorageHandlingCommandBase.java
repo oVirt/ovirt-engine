@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -20,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -29,8 +29,8 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.SyncronizeNumberOfAsyncOperations;
-import org.ovirt.engine.core.utils.linq.All;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -89,11 +89,13 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     protected boolean InitializeVds() {
         boolean returnValue = true;
         if (getVds() == null) {
-            VDS tempVar =
-                    LinqUtils.firstOrNull(getVdsDAO().getAllForStoragePoolAndStatus(getStoragePool().getId(),
-                            VDSStatus.Up),
-                            new All());
-            setVds(tempVar);
+            List<VDS> hosts = getVdsDAO().getAllForStoragePoolAndStatus(getStoragePool().getId(),
+                    VDSStatus.Up);
+            if (!hosts.isEmpty()) {
+                // select random host to avoid executing almost every time through the same one
+                // (as the db query will return the hosts in the same order on most times).
+                setVds(RandomUtils.instance().pickRandom(hosts));
+            }
             if (getVds() == null) {
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
