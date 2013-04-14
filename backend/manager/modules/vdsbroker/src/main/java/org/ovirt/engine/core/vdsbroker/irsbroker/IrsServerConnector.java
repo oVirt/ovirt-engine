@@ -46,8 +46,6 @@ public interface IrsServerConnector {
 
     public Map<String, Object> getFloppyList(String spUUID);
 
-    public Map<String, Object> extendVolume(String sdUUID, String spUUID, String imgGUID, String volUUID, int newSize);
-
     public Map<String, Object> activateStorageDomain(String sdUUID, String spUUID);
 
     public Map<String, Object> deactivateStorageDomain(String sdUUID, String spUUID, String msdUUID, int masterVersion);

@@ -114,14 +114,6 @@ public class IrsServerWrapper implements IIrsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc extendVolume(String sdUUID, String spUUID, String imgGUID, String volUUID,
-            int newSize) {
-        Map<String, Object> xmlRpcReturnValue = irsServer.extendVolume(sdUUID, spUUID, imgGUID, volUUID, newSize);
-        StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
-        return wrapper;
-    }
-
-    @Override
     public StorageStatusReturnForXmlRpc activateStorageDomain(String sdUUID, String spUUID) {
         Map<String, Object> xmlRpcReturnValue = irsServer.activateStorageDomain(sdUUID, spUUID);
         StorageStatusReturnForXmlRpc wrapper = new StorageStatusReturnForXmlRpc(xmlRpcReturnValue);

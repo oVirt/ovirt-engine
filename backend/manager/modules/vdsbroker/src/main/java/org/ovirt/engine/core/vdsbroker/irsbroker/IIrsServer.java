@@ -39,8 +39,6 @@ public interface IIrsServer {
 
     IsoListReturnForXmlRpc getFloppyList(String spUUID);
 
-    StatusOnlyReturnForXmlRpc extendVolume(String sdUUID, String spUUID, String imgGUID, String volUUID, int newSize);
-
     StorageStatusReturnForXmlRpc activateStorageDomain(String sdUUID, String spUUID);
 
     StatusOnlyReturnForXmlRpc deactivateStorageDomain(String sdUUID, String spUUID, String msdUUID, int masterVersion);
