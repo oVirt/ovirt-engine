@@ -650,4 +650,11 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String MigrationSupport___IMPLICITLY_NON_MIGRATABLE();
 
     String MigrationSupport___PINNED_TO_HOST();
+
+    String QuotaEnforcementTypeEnum___DISABLED();
+
+    String QuotaEnforcementTypeEnum___SOFT_ENFORCEMENT();
+
+    String QuotaEnforcementTypeEnum___HARD_ENFORCEMENT();
+
 }

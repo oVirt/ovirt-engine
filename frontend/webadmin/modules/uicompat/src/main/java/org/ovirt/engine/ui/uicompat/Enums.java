@@ -283,12 +283,6 @@ public interface Enums extends LocalizedEnums {
 
     String ImageStatus___ILLEGAL();
 
-    String QuotaEnforcementTypeEnum___DISABLED();
-
-    String QuotaEnforcementTypeEnum___SOFT_ENFORCEMENT();
-
-    String QuotaEnforcementTypeEnum___HARD_ENFORCEMENT();
-
     String DiskInterface___IDE();
 
     String DiskInterface___SCSI();
