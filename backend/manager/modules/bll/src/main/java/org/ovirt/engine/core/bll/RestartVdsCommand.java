@@ -60,6 +60,13 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
         } else {
             setSucceeded(false);
         }
+        if (!getSucceeded()) {
+            log.warnFormat("Restart host action failed, updating host {0} to {1}",
+                    vdsId,
+                    VDSStatus.NonResponsive.name());
+            runVdsCommand(VDSCommandType.SetVdsStatus, new SetVdsStatusVDSCommandParameters(vdsId,
+                    VDSStatus.NonResponsive));
+        }
     }
 
     private void executeFenceVdsManuallyAction(final Guid vdsId, String sessionId) {
@@ -80,17 +87,6 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
         params.setParentCommand(VdcActionType.RestartVds);
         params.setSessionId(sessionId);
         return Backend.getInstance().runInternalAction(action, params);
-    }
-
-    /**
-     * If failed to restart the host, move its status to NonResponsive
-     */
-    @Override
-    public void rollback() {
-        super.rollback();
-        final Guid vdsId = getVdsId();
-        log.warnFormat("Restart host action failed, updating host {0} to {1}", vdsId, VDSStatus.NonResponsive.name());
-        runVdsCommand(VDSCommandType.SetVdsStatus, new SetVdsStatusVDSCommandParameters(vdsId, VDSStatus.NonResponsive));
     }
 
     @Override
