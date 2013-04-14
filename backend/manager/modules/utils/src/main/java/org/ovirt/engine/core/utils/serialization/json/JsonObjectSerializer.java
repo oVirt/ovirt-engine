@@ -31,25 +31,34 @@ import org.ovirt.engine.core.utils.Serializer;
  */
 public class JsonObjectSerializer implements Serializer {
 
+    private static final ObjectMapper unformattedMapper = new ObjectMapper();
+    private static final ObjectMapper formattedMapper;
+    static {
+        formattedMapper = new ObjectMapper();
+        formattedMapper.getSerializationConfig().addMixInAnnotations(NGuid.class, JsonNGuidMixIn.class);
+        formattedMapper.getSerializationConfig().addMixInAnnotations(Guid.class, JsonNGuidMixIn.class);
+        formattedMapper.getSerializationConfig().addMixInAnnotations(VdcActionParametersBase.class,
+                JsonVdcActionParametersBaseMixIn.class);
+        formattedMapper.getSerializationConfig().addMixInAnnotations(IVdcQueryable.class, JsonIVdcQueryableMixIn.class);
+        formattedMapper.getSerializationConfig().addMixInAnnotations(VM.class, JsonVmMixIn.class);
+        formattedMapper.getSerializationConfig().addMixInAnnotations(ValueObjectMap.class,
+                JsonValueObjectMapMixIn.class);
+        formattedMapper.getSerializationConfig().addMixInAnnotations(VdsStatic.class, JsonVdsStaticMixIn.class);
+        formattedMapper.getSerializationConfig().addMixInAnnotations(VDS.class, JsonVDSMixIn.class);
+        formattedMapper.getSerializationConfig().addMixInAnnotations(AddVmTemplateParameters.class,
+                JsonAddVmTemplateParametersMixIn.class);
+        formattedMapper.getSerializationConfig().addMixInAnnotations(VmManagementParametersBase.class,
+                JsonVmManagementParametersBaseMixIn.class);
+        formattedMapper.getSerializationConfig().addMixInAnnotations(VmBase.class, JsonVmBaseMixIn.class);
+        formattedMapper.getSerializationConfig().addMixInAnnotations(VmStatic.class, JsonVmStaticMixIn.class);
+
+        formattedMapper.configure(Feature.INDENT_OUTPUT, true);
+        formattedMapper.enableDefaultTyping();
+    }
+
     @Override
     public String serialize(Object payload) throws SerializationExeption {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.getSerializationConfig().addMixInAnnotations(NGuid.class, JsonNGuidMixIn.class);
-        mapper.getSerializationConfig().addMixInAnnotations(Guid.class, JsonNGuidMixIn.class);
-        mapper.getSerializationConfig().addMixInAnnotations(VdcActionParametersBase.class, JsonVdcActionParametersBaseMixIn.class);
-        mapper.getSerializationConfig().addMixInAnnotations(IVdcQueryable.class, JsonIVdcQueryableMixIn.class);
-        mapper.getSerializationConfig().addMixInAnnotations(VM.class, JsonVmMixIn.class);
-        mapper.getSerializationConfig().addMixInAnnotations(ValueObjectMap.class, JsonValueObjectMapMixIn.class);
-        mapper.getSerializationConfig().addMixInAnnotations(VdsStatic.class, JsonVdsStaticMixIn.class);
-        mapper.getSerializationConfig().addMixInAnnotations(VDS.class, JsonVDSMixIn.class);
-        mapper.getSerializationConfig().addMixInAnnotations(AddVmTemplateParameters.class, JsonAddVmTemplateParametersMixIn.class);
-        mapper.getSerializationConfig().addMixInAnnotations(VmManagementParametersBase.class, JsonVmManagementParametersBaseMixIn.class);
-        mapper.getSerializationConfig().addMixInAnnotations(VmBase.class, JsonVmBaseMixIn.class);
-        mapper.getSerializationConfig().addMixInAnnotations(VmStatic.class, JsonVmStaticMixIn.class);
-
-        mapper.configure(Feature.INDENT_OUTPUT, true);
-        mapper.enableDefaultTyping();
-        return writeJsonAsString(payload, mapper);
+        return writeJsonAsString(payload, formattedMapper);
     }
 
     /**
@@ -82,7 +91,6 @@ public class JsonObjectSerializer implements Serializer {
      * @throws SerializationExeption
      */
     public String serializeUnformattedJson(Serializable payload) throws SerializationExeption {
-        ObjectMapper mapper = new ObjectMapper();
-        return writeJsonAsString(payload, mapper);
+        return writeJsonAsString(payload, unformattedMapper);
     }
 }

@@ -6,20 +6,14 @@ import org.ovirt.engine.core.utils.serialization.json.JsonObjectSerializer;
 
 public class SerializationFactory {
 
-    private static SerializationFactory factory;
-    static {
-        factory = new SerializationFactory();
+    private static final JsonObjectSerializer serializer = new JsonObjectSerializer();
+    private static final JsonObjectDeserializer deserializer = new JsonObjectDeserializer();
+
+    public static JsonObjectSerializer getSerializer() {
+        return serializer;
     }
 
-    public static SerializationFactory getFactory() {
-        return factory;
-    }
-
-    public Serializer createSerializer() {
-        return new JsonObjectSerializer();
-    }
-
-    public Deserializer createDeserializer() {
-        return new JsonObjectDeserializer();
+    public static JsonObjectDeserializer getDeserializer() {
+        return deserializer;
     }
 }

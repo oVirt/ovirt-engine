@@ -48,9 +48,9 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.utils.SerializationFactory;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.utils.serialization.json.JsonObjectSerializer;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 /**
@@ -354,7 +354,7 @@ public class VdsBrokerObjectsBuilder {
         Object[] vmDisksUsage = (Object[]) vmStruct.getItem(VdsProperties.VM_DISKS_USAGE);
         if (vmDisksUsage != null) {
             ArrayList<Object> disksUsageList = new ArrayList<Object>(Arrays.asList(vmDisksUsage));
-            vm.setDisksUsage(new JsonObjectSerializer().serializeUnformattedJson(disksUsageList));
+            vm.setDisksUsage(SerializationFactory.getSerializer().serializeUnformattedJson(disksUsageList));
         }
     }
 

@@ -19,10 +19,9 @@ import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
 import org.ovirt.engine.core.dal.dbbroker.DbEngineDialect;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.utils.ReflectionUtils;
+import org.ovirt.engine.core.utils.SerializationFactory;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
-import org.ovirt.engine.core.utils.serialization.json.JsonObjectSerializer;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -69,8 +68,9 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
             if (className == null) {
                 return null;
             }
-            Class<Serializable> actionParamsClass = (Class<Serializable>)ReflectionUtils.getClassFor(className);
-            return (VdcActionParametersBase)new JsonObjectDeserializer().deserialize(payload, actionParamsClass);
+            Class<Serializable> actionParamsClass = (Class<Serializable>) ReflectionUtils.getClassFor(className);
+            return (VdcActionParametersBase) SerializationFactory.getDeserializer().deserialize(payload,
+                    actionParamsClass);
         }
     }
 
@@ -91,7 +91,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
         }
 
         private static String serializeParameters(VdcActionParametersBase params) {
-            return new JsonObjectSerializer().serialize(params);
+            return SerializationFactory.getSerializer().serialize(params);
         }
     }
 

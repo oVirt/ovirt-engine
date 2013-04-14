@@ -256,7 +256,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         defaultContext.setCommandType(getClass().getName());
         defaultContext.setBusinessEntitySnapshotDAO(getBusinessEntitySnapshotDAO());
         defaultContext.setSnapshotSerializer(
-                SerializationFactory.getFactory().createSerializer());
+                SerializationFactory.getSerializer());
         return defaultContext;
     }
 
@@ -369,7 +369,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             @Override
             public Object runInTransaction() {
                 Deserializer deserializer =
-                        SerializationFactory.getFactory().createDeserializer();
+                        SerializationFactory.getDeserializer();
                 List<BusinessEntitySnapshot> entitySnapshots =
                         getBusinessEntitySnapshotDAO().getAllForCommandId(commandId);
                 log.debugFormat("Command [id={0}]: {1} compensation data.", commandId,

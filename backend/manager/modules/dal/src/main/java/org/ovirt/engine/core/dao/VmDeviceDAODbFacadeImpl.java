@@ -42,8 +42,8 @@ public class VmDeviceDAODbFacadeImpl extends
                 .addValue("address", entity.getAddress())
                 .addValue("boot_order", entity.getBootOrder())
                 .addValue("spec_params",
-                        entity.getSpecParams() == null ? null : SerializationFactory.getFactory()
-                                .createSerializer()
+                        entity.getSpecParams() == null ? null : SerializationFactory
+                                .getSerializer()
                                 .serialize(entity.getSpecParams()))
                 .addValue("is_managed", entity.getIsManaged())
                 .addValue("is_plugged", entity.getIsPlugged())
@@ -140,8 +140,8 @@ public class VmDeviceDAODbFacadeImpl extends
             if (StringUtils.isEmpty(specParams)) {
                 vmDevice.setSpecParams(new HashMap<String, Object>());
             } else {
-                vmDevice.setSpecParams(SerializationFactory.getFactory()
-                        .createDeserializer()
+                vmDevice.setSpecParams(SerializationFactory
+                        .getDeserializer()
                         .deserialize(specParams, HashMap.class));
             }
 
