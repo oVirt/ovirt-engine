@@ -50,15 +50,9 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
         boolean noImagesRemovedYet = true;
         for (final DiskImage image : images) {
             if (mImagesToBeRemoved.contains(image.getImageId())) {
-                RemoveImageParameters tempVar = new RemoveImageParameters(image.getImageId());
-                tempVar.setParentCommand(getParameters().getParentCommand());
-                tempVar.setParentParameters(getParameters().getParentParameters());
-                tempVar.setDiskImage(image);
-                tempVar.setEntityId(getParameters().getEntityId());
-                tempVar.setForceDelete(getParameters().getForceDelete());
                 VdcReturnValueBase vdcReturnValue =
                         Backend.getInstance().runInternalAction(VdcActionType.RemoveImage,
-                                tempVar,
+                                buildRemoveImageParameters(image),
                                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
                 if (vdcReturnValue.getSucceeded()) {
@@ -91,6 +85,16 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
         }
 
         setSucceeded(true);
+    }
+
+    private RemoveImageParameters buildRemoveImageParameters(DiskImage image) {
+        RemoveImageParameters result = new RemoveImageParameters(image.getImageId());
+        result.setParentCommand(getParameters().getParentCommand());
+        result.setParentParameters(getParameters().getParentParameters());
+        result.setDiskImage(image);
+        result.setEntityId(getParameters().getEntityId());
+        result.setForceDelete(getParameters().getForceDelete());
+        return result;
     }
 
     /**

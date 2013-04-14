@@ -256,22 +256,9 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     @Override
     protected void executeCommand() {
         if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
-            DiskImage diskImage = getDiskImage();
-            RemoveImageParameters p = new RemoveImageParameters(diskImage.getImageId());
-            p.setTransactionScopeOption(TransactionScopeOption.Suppress);
-            p.setDiskImage(diskImage);
-            p.setParentCommand(VdcActionType.RemoveDisk);
-            p.setRemoveDuringExecution(false);
-            p.setEntityId(getParameters().getEntityId());
-            p.setParentParameters(getParameters());
-            p.setStorageDomainId(getParameters().getStorageDomainId());
-            p.setForceDelete(getParameters().getForceDelete());
-            if (diskImage.getStorageIds().size() == 1) {
-                p.setRemoveFromDB(true);
-            }
             VdcReturnValueBase vdcReturnValue =
                             Backend.getInstance().runInternalAction(VdcActionType.RemoveImage,
-                                    p,
+                                    buildRemoveImageParameters(getDiskImage()),
                                     ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
             if (vdcReturnValue.getSucceeded()) {
                 getReturnValue().getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
@@ -280,6 +267,20 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         } else {
             removeLunDisk();
         }
+    }
+
+    private RemoveImageParameters buildRemoveImageParameters(DiskImage diskImage) {
+        RemoveImageParameters result = new RemoveImageParameters(diskImage.getImageId());
+        result.setTransactionScopeOption(TransactionScopeOption.Suppress);
+        result.setDiskImage(diskImage);
+        result.setParentCommand(VdcActionType.RemoveDisk);
+        result.setRemoveDuringExecution(false);
+        result.setEntityId(getParameters().getEntityId());
+        result.setParentParameters(getParameters());
+        result.setStorageDomainId(getParameters().getStorageDomainId());
+        result.setForceDelete(getParameters().getForceDelete());
+        result.setRemoveFromDB(diskImage.getStorageIds().size() == 1);
+        return result;
     }
 
     private void removeLunDisk() {

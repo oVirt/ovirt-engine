@@ -123,23 +123,10 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                     getCompensationContext());
 
             for (DiskImage image : getDisksList()) {
-                ImagesActionsParametersBase tempVar = new ImagesActionsParametersBase(image.getImageId());
-                tempVar.setDescription(getParameters().getDescription());
-                tempVar.setSessionId(getParameters().getSessionId());
-                tempVar.setQuotaId(image.getQuotaId());
-                tempVar.setVmSnapshotId(newActiveSnapshotId);
-                tempVar.setEntityId(getParameters().getEntityId());
-                VdcActionType parentCommand = getParameters().getParentCommand() != VdcActionType.Unknown ? getParameters()
-                        .getParentCommand() : VdcActionType.CreateAllSnapshotsFromVm;
-                tempVar.setParentCommand(parentCommand);
-                ImagesActionsParametersBase p = tempVar;
-
-                VdcActionParametersBase parrentParamsForTask = getParametersForTask(parentCommand, getParameters());
-                p.setParentParameters(parrentParamsForTask);
 
                 VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
                                 VdcActionType.CreateSnapshot,
-                                p,
+                                buildCreateSnapshotParameters(image, newActiveSnapshotId),
                                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
                 if (vdcReturnValue.getSucceeded()) {
@@ -151,6 +138,21 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             }
         }
         setSucceeded(true);
+    }
+
+    private ImagesActionsParametersBase buildCreateSnapshotParameters(DiskImage image, Guid snapshotId) {
+        VdcActionType parentCommand = getParameters().getParentCommand() != VdcActionType.Unknown ?
+                getParameters().getParentCommand() : VdcActionType.CreateAllSnapshotsFromVm;
+
+        ImagesActionsParametersBase result = new ImagesActionsParametersBase(image.getImageId());
+        result.setDescription(getParameters().getDescription());
+        result.setSessionId(getParameters().getSessionId());
+        result.setQuotaId(image.getQuotaId());
+        result.setVmSnapshotId(snapshotId);
+        result.setEntityId(getParameters().getEntityId());
+        result.setParentCommand(parentCommand);
+        result.setParentParameters(getParametersForTask(parentCommand, getParameters()));
+        return result;
     }
 
     /**
