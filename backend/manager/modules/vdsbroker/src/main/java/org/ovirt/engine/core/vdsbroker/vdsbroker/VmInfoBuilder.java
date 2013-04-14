@@ -243,7 +243,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 struct.add(VdsProperties.Device, vmDevice.getDevice());
                 switch (disk.getDiskInterface()) {
                 case IDE:
-                    struct.add(VdsProperties.INTERFACE, "ide");
+                    struct.add(VdsProperties.INTERFACE, VdsProperties.Ide);
                     break;
                 case VirtIO:
                     struct.add(VdsProperties.INTERFACE, VdsProperties.Virtio);
