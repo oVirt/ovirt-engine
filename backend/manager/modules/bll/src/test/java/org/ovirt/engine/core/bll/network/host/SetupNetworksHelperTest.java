@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -286,6 +287,23 @@ public class SetupNetworksHelperTest {
 
         validateAndExpectViolation(helper,
                 VdcBllMessages.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_ADDRESS_CANNOT_BE_CHANGED);
+    }
+
+    /* --- Tests for external networks --- */
+
+    @Test
+    public void externalNetworkAttached() {
+        Network net = createNetwork("net");
+        net.setProvidedBy(new ProviderNetwork());
+        mockExistingNetworks(net);
+        VdsNetworkInterface nic = createNic("nic0", null);
+        mockExistingIfaces(nic);
+
+        nic.setNetworkName(net.getName());
+        SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
+
+        validateAndExpectViolation(helper,
+                VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORKS_CANNOT_BE_PROVISIONED);
     }
 
     /* --- Tests for sync network functionality --- */

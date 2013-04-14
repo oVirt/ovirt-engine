@@ -282,6 +282,7 @@ public class SetupNetworksHelper {
             // check if network exists on cluster
             if (getExistingClusterNetworks().containsKey(networkName)) {
                 Network network = getExistingClusterNetworks().get(networkName);
+                validateNetworkInternal(network);
                 validateNetworkExclusiveOnIface(iface,
                         determineNetworkType(network.getVlanId(), network.isVmNetwork()));
 
@@ -366,6 +367,20 @@ public class SetupNetworksHelper {
         }
 
         networksOnIface.add(networkType);
+    }
+
+    /**
+     * Make sure the network is not an external network, which we can't set up.
+     *
+     * @param iface
+     *            The interface.
+     * @param network
+     *            The network to check.
+     */
+    private void validateNetworkInternal(Network network) {
+        if (network.getProvidedBy() != null) {
+            addViolation(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORKS_CANNOT_BE_PROVISIONED, network.getName());
+        }
     }
 
     /**

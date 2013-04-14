@@ -1240,6 +1240,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The following Network Interfaces were specified more than once: ${NETWORK_INTERFACES_ALREADY_SPECIFIED_LIST}.")
     String NETWORK_INTERFACES_ALREADY_SPECIFIED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The following external networks cannot be configured on host via 'Setup Networks': ${ACTION_TYPE_FAILED_EXTERNAL_NETWORKS_CANNOT_BE_PROVISIONED_LIST}")
+    String ACTION_TYPE_FAILED_EXTERNAL_NETWORKS_CANNOT_BE_PROVISIONED();
+
     @DefaultStringValue("Cannot ${action} ${type}. The following Logical Networks are attached to more than one Network Interface: ${NETWORKS_ALREADY_ATTACHED_TO_IFACES_LIST}.")
     String NETWORKS_ALREADY_ATTACHED_TO_IFACES();
 
