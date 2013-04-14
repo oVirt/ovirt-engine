@@ -163,10 +163,7 @@ public enum VdcActionType {
     // AttachNetworkToVdsGroup is taking over this functionality
     UpdateDisplayToVdsGroup(710, ActionGroup.EDIT_CLUSTER_CONFIGURATION, false, QuotaDependency.NONE),
     UpdateNetworkOnCluster(711, ActionGroup.CONFIGURE_CLUSTER_NETWORK, false, QuotaDependency.NONE),
-    /**
-     * 4.0
-     */
-    MigrateIrsSnapshotsToVdc(707, QuotaDependency.NONE),
+
     /**
      * MultiLevelAdministration
      */
