@@ -187,14 +187,21 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             return false;
         }
 
+        Network network = getNetworkFromDb(vm.getVdsGroupId(), getNetworkName());
         if (getNetworkName() != null) {
-            Network network = getNetworkFromDb(vm.getVdsGroupId());
 
             // check that the network exists in current cluster
             if (network == null) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
                 return false;
             } else if (!validate(nicValidator.portMirroringNotSetIfExternalNetwork(network))) {
+                return false;
+            }
+        }
+
+        if (getRequiredAction() == RequiredAction.UPDATE_VM_DEVICE) {
+            Network oldNetwork = getNetworkFromDb(vm.getVdsGroupId(), oldIface.getNetworkName());
+            if (!validate(nicValidator.hotUpdateDoneWithInternalNetwork(oldNetwork, network))) {
                 return false;
             }
         }
@@ -324,6 +331,20 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             return (!oldIface.getType().equals(getInterface().getType()))
                     || (!oldIface.getMacAddress().equals(getMacAddress()))
                     || (oldIface.isPortMirroring() != getInterface().isPortMirroring());
+        }
+
+        /**
+         * @param oldNetwork
+         *            The old network (can be <code>null</code>).
+         * @param newNetwork
+         *            The new network (can be <code>null</code>).
+         * @return An error if either the old or new network is an external network, otherwise hot update is allowed.
+         */
+        public ValidationResult hotUpdateDoneWithInternalNetwork(Network oldNetwork, Network newNetwork) {
+            return (oldNetwork == null || oldNetwork.getProvidedBy() == null)
+                    && (newNetwork == null || newNetwork.getProvidedBy() == null)
+                    ? ValidationResult.VALID
+                    : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_REWIRED);
         }
     }
 }

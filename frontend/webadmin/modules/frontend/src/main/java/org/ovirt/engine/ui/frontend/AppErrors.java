@@ -1294,6 +1294,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. External network cannot be used when port mirroring is set.")
     String ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_PORT_MIRRORED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. External network cannot be changed while the virtual machine is running")
+    String ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_REWIRED();
+
     @DefaultStringValue("Cannot ${action} ${type}. External network cannot have MTU set.")
     String ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_HAVE_MTU();
 

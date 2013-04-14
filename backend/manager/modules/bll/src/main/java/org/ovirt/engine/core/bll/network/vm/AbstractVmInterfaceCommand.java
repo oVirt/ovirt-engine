@@ -102,9 +102,13 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
                 : ValidationResult.VALID;
     }
 
-    protected Network getNetworkFromDb(Guid vdsGroupId) {
+    protected Network getNetworkFromDb(Guid vdsGroupId, String networkName) {
+        if (networkName == null) {
+            return null;
+        }
+
         for (Network network : getNetworkDAO().getAllForCluster(vdsGroupId)) {
-            if (network.getName().equals(getNetworkName())) {
+            if (network.getName().equals(networkName)) {
                 return network;
             }
         }

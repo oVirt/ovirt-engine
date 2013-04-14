@@ -140,7 +140,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
 
         if (getNetworkName() != null) {
             // check that the network exists in current cluster
-            Network interfaceNetwork = getNetworkFromDb(vm.getVdsGroupId());
+            Network interfaceNetwork = getNetworkFromDb(vm.getVdsGroupId(), getNetworkName());
 
             if (interfaceNetwork == null) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
