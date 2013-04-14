@@ -57,16 +57,21 @@ public class IsoDomainListSyncronizer {
     private static final ConcurrentMap<Object, Lock> syncDomainForFileTypeMap = new ConcurrentHashMap<Object, Lock>();
     private int isoDomainRefreshRate;
     RepoFileMetaDataDAO repoStorageDom;
+    public static final String TOOL_CLUSTER_LEVEL = "clusterLevel";
+    public static final String TOOL_VERSION = "toolVersion";
 
     // Not kept as static member to enable reloading the config value
     public static String getGuestToolsSetupIsoPrefix() {
         return Config.<String> GetValue(ConfigValues.GuestToolsSetupIsoPrefix);
     }
 
-    // Not kept as static member to enable reloading the config value
     public static String getRegexToolPattern() {
-        final String guestToolsSetupIsoPrefix = getGuestToolsSetupIsoPrefix();
-        return guestToolsSetupIsoPrefix + "([0-9]{1,}.[0-9])(_{1})([0-9]{1,}).[i|I][s|S][o|O]$";
+        String regexPattern =
+                String.format("%1$s(?<%2$s>[0-9]{1,}.[0-9])_{1}(?<%3$s>[0-9]{1,}).[i|I][s|S][o|O]$",
+                        getGuestToolsSetupIsoPrefix(),
+                        TOOL_CLUSTER_LEVEL,
+                        TOOL_VERSION);
+        return regexPattern;
     }
 
     /**

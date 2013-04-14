@@ -612,9 +612,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                         Pattern.compile(IsoDomainListSyncronizer.getRegexToolPattern()).matcher(fileName);
                 if (matchToolPattern.find()) {
                     // Get cluster version and tool version of Iso tool.
-                    // TODO: Should be group name string support in java7.
-                    Version clusterVer = new Version(matchToolPattern.group(1));
-                    int toolVersion = Integer.parseInt(matchToolPattern.group(3));
+                    Version clusterVer = new Version(matchToolPattern.group(IsoDomainListSyncronizer.TOOL_CLUSTER_LEVEL));
+                    int toolVersion = Integer.parseInt(matchToolPattern.group(IsoDomainListSyncronizer.TOOL_VERSION));
 
                     if (clusterVer.compareTo(getVm().getVdsGroupCompatibilityVersion()) <= 0) {
                         if ((bestClusterVer == null)
