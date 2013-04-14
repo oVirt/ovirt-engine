@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.network.host;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
@@ -16,14 +15,11 @@ public class CommitNetworkChangesCommand<T extends VdsActionParameters> extends 
 
     @Override
     protected void executeCommand() {
-        VDSReturnValue retVal = Backend
-                .getInstance()
-                .getResourceManager()
-                .RunVdsCommand(VDSCommandType.SetSafeNetworkConfig,
+        VDSReturnValue retVal =
+                runVdsCommand(VDSCommandType.SetSafeNetworkConfig,
                         new VdsIdVDSCommandParametersBase(getParameters().getVdsId()));
 
-        getVds().setNetConfigDirty(false);
-        getDbFacade().getVdsDynamicDao().update(getVds().getDynamicData());
+        getDbFacade().getVdsDynamicDao().updateNetConfigDirty(getParameters().getVdsId(), false);
         setSucceeded(retVal.getSucceeded());
     }
 
