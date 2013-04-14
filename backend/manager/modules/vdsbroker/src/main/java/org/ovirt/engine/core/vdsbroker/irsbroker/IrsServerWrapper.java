@@ -81,16 +81,6 @@ public class IrsServerWrapper implements IIrsServer {
     }
 
     @Override
-    public OneUuidReturnForXmlRpc exportCandidate(String sdUUID, String vmGUID, String[] volumesList, String vmMeta,
-            String templateGUID, String templateVolGUID, String templateMeta, String expPath, String collapse,
-            String force) {
-        Map<String, Object> xmlRpcReturnValue = irsServer.exportCandidate(sdUUID, vmGUID, volumesList, vmMeta,
-                templateGUID, templateVolGUID, templateMeta, expPath, collapse, force);
-        OneUuidReturnForXmlRpc wrapper = new OneUuidReturnForXmlRpc(xmlRpcReturnValue);
-        return wrapper;
-    }
-
-    @Override
     public OneUuidReturnForXmlRpc importCandidate(String sdUUID, String vmGUID, String templateGUID,
             String templateVolGUID, String path, String type, String force) {
         Map<String, Object> xmlRpcReturnValue = irsServer.importCandidate(sdUUID, vmGUID, templateGUID,

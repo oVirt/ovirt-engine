@@ -35,10 +35,6 @@ public interface IrsServerConnector {
 
     public Map<String, Object> getStats();
 
-    public Map<String, Object> exportCandidate(String sdUUID, String vmGUID, String[] volumesList, String vmMeta,
-            String templateGUID, String templateVolGUID, String templateMeta, String expPath, String collapse,
-            String force);
-
     public Map<String, Object> importCandidate(String sdUUID, String vmGUID, String templateGUID,
             String templateVolGUID, String path, String type, String force);
 
