@@ -327,7 +327,7 @@
 					<g:FlowPanel>
 						<g:Label addStyleNames="{style.sectionLabel}" text="{constants.runOnVmPopup}" />
 						<g:VerticalPanel addStyleNames="{style.runHostPanel}" verticalAlignment='ALIGN_MIDDLE'>
-							<e:EntityModelRadioButtonEditor width="150px" ui:field="isAutoAssignEditor"
+							<e:EntityModelRadioButtonEditor ui:field="isAutoAssignEditor"
 								addStyleNames="{style.radioButton}" />
                             <g:HorizontalPanel verticalAlignment='ALIGN_MIDDLE'>
                                 <g:RadioButton ui:field="specificHost" addStyleNames="{style.radioButtonSpecificHost}" />
