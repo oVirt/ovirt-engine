@@ -1278,31 +1278,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     {
         VM vm = (VM) getSelectedItem();
         RunOnceModel model = new WebadminRunOnceModel(vm,
-                getCustomPropertiesKeysList().get(vm.getVdsGroupCompatibilityVersion()));
+                getCustomPropertiesKeysList().get(vm.getVdsGroupCompatibilityVersion()),
+                this);
         setWindow(model);
         model.init();
-
-        model.getCommands().add(new UICommand("OnRunOnce", this) //$NON-NLS-1$
-           .setTitle(ConstantsManager.getInstance().getConstants().ok())
-           .setIsDefault(true));
-
-        model.getCommands().add(new UICommand("Cancel", this) //$NON-NLS-1$
-           .setTitle(ConstantsManager.getInstance().getConstants().cancel())
-           .setIsCancel(true));
-    }
-
-    private void OnRunOnce()
-    {
-        RunOnceModel model = (RunOnceModel) getWindow();
-
-        if (!model.Validate())
-        {
-            return;
-        }
-
-        Frontend.RunAction(VdcActionType.RunVmOnce, model.createRunVmOnceParams(), null, this);
-
-        Cancel();
     }
 
     private void NewTemplate()
@@ -2511,7 +2490,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRunOnce")) //$NON-NLS-1$
         {
-            OnRunOnce();
+            Cancel();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnNewTemplate")) //$NON-NLS-1$
         {

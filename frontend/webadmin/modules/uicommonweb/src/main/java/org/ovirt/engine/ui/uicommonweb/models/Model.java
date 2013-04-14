@@ -22,6 +22,8 @@ import org.ovirt.engine.ui.uicompat.ProvidePropertyChangedEvent;
 public class Model extends PropertyChangeNotifier implements IEventListener, ICommandTarget, IProvidePropertyChangedEvent
 {
 
+    public static final String CANCEL_COMMAND = "Cancel"; //$NON-NLS-1$
+
     private Event privatePropertyChangedEvent;
 
     @Override

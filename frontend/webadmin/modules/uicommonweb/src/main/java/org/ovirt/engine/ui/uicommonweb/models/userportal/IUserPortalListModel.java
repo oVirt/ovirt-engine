@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.HasConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -111,7 +112,7 @@ public abstract class IUserPortalListModel extends ListWithDetailsModel implemen
             editConsole();
         } else if (StringHelper.stringsEqual(command.getName(), "OnEditConsoleSave")) { //$NON-NLS-1$
             onEditConsoleSave();
-        } else if (StringHelper.stringsEqual(command.getName(), "Cancel")) {//$NON-NLS-1$
+        } else if (StringHelper.stringsEqual(command.getName(), Model.CANCEL_COMMAND)) {
             cancel();
         }
     }

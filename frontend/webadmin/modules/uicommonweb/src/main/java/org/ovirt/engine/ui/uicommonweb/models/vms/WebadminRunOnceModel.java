@@ -4,18 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class WebadminRunOnceModel extends RunOnceModel {
 
-    public WebadminRunOnceModel(VM vm, ArrayList<String> customPropertiesKeysList) {
-        super(vm, customPropertiesKeysList);
+    public WebadminRunOnceModel(VM vm, ArrayList<String> customPropertiesKeysList, ICommandTarget commandTarget) {
+        super(vm, customPropertiesKeysList, commandTarget);
     }
 
     @Override
@@ -59,7 +61,7 @@ public class WebadminRunOnceModel extends RunOnceModel {
     }
 
     @Override
-    public RunVmOnceParams createRunVmOnceParams() {
+    protected RunVmOnceParams createRunVmOnceParams() {
         RunVmOnceParams params = super.createRunVmOnceParams();
 
         if ((Boolean) getIsAutoAssign().getEntity()) {
@@ -79,5 +81,11 @@ public class WebadminRunOnceModel extends RunOnceModel {
         }
 
         return params;
+    }
+
+    @Override
+    protected void onRunOnce() {
+        Frontend.RunAction(VdcActionType.RunVmOnce, createRunVmOnceParams(), null, this);
+        commandTarget.ExecuteCommand(runOnceCommand);
     }
 }

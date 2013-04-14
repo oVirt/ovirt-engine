@@ -505,7 +505,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRunOnce")) //$NON-NLS-1$
         {
-            OnRunOnce();
+            cancel();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnChangeCD")) //$NON-NLS-1$
         {
@@ -690,40 +690,11 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         VM vm = (VM) selectedItem.getEntity();
 
         RunOnceModel model = new UserPortalRunOnceModel(vm,
-                getCustomPropertiesKeysList().get(vm.getVdsGroupCompatibilityVersion()));
+                getCustomPropertiesKeysList().get(vm.getVdsGroupCompatibilityVersion()),
+                this);
         setWindow(model);
 
         model.init();
-
-        model.getCommands().add(new UICommand("OnRunOnce", this) //$NON-NLS-1$
-           .setTitle(ConstantsManager.getInstance().getConstants().ok())
-           .setIsDefault(true));
-
-        model.getCommands().add(new UICommand("Cancel", this) //$NON-NLS-1$
-           .setTitle(ConstantsManager.getInstance().getConstants().cancel())
-           .setIsCancel(true));
-    }
-
-    private void OnRunOnce()
-    {
-        RunOnceModel model = (RunOnceModel) getWindow();
-
-        if (!model.Validate())
-        {
-            return;
-        }
-
-        getWindow().StartProgress(null);
-
-        Frontend.RunAction(VdcActionType.RunVmOnce, model.createRunVmOnceParams(),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void Executed(FrontendActionAsyncResult result) {
-                        stopProgress(result.getState());
-                        cancel();
-                    }
-                }, this);
-
     }
 
     private void UpdateActionAvailability()

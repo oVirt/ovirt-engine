@@ -17,7 +17,9 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -35,10 +37,18 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 @SuppressWarnings("unused")
 public abstract class RunOnceModel extends Model
 {
+
+    public static final String RUN_ONCE_COMMAND = "OnRunOnce"; //$NON-NLS-1$
+
     /** The VM that is about to run */
     protected final VM vm;
     /** Custom properties for the running */
     protected final ArrayList<String> customPropertiesKeysList;
+    /** Listener for events that are triggered by this model */
+    protected ICommandTarget commandTarget;
+
+    protected final UICommand runOnceCommand;
+    protected final UICommand cancelCommand;
 
     private EntityModel privateAttachFloppy;
 
@@ -439,10 +449,11 @@ public abstract class RunOnceModel extends Model
         privateCustomPropertiesKeysList = value;
     }
 
-    public RunOnceModel(VM vm, ArrayList<String> customPropertiesKeysList)
+    public RunOnceModel(VM vm, ArrayList<String> customPropertiesKeysList, ICommandTarget commandTarget)
     {
         this.vm = vm;
         this.customPropertiesKeysList = customPropertiesKeysList;
+        this.commandTarget = commandTarget;
 
         setAttachFloppy(new EntityModel());
         getAttachFloppy().getEntityChangedEvent().addListener(this);
@@ -494,6 +505,16 @@ public abstract class RunOnceModel extends Model
         setIsHostTabVisible(true);
 
         setIsCustomPropertiesSheetVisible(true);
+
+        runOnceCommand = new UICommand(RunOnceModel.RUN_ONCE_COMMAND, this)
+         .setTitle(ConstantsManager.getInstance().getConstants().ok())
+         .setIsDefault(true);
+
+        cancelCommand = new UICommand(Model.CANCEL_COMMAND, this)
+         .setTitle(ConstantsManager.getInstance().getConstants().cancel())
+         .setIsCancel(true);
+
+        getCommands().addAll(Arrays.asList(runOnceCommand, cancelCommand));
     }
 
     public void init() {
@@ -539,7 +560,7 @@ public abstract class RunOnceModel extends Model
                 vncProtocol : qxlProtocol);
     }
 
-    public RunVmOnceParams createRunVmOnceParams() {
+    protected RunVmOnceParams createRunVmOnceParams() {
         RunVmOnceParams params = new RunVmOnceParams();
         params.setVmId(vm.getId());
         params.setBootSequence(getBootSequence().getSequence());
@@ -885,4 +906,19 @@ public abstract class RunOnceModel extends Model
                 && customPropertyValidation;
     }
 
+    @Override
+    public void ExecuteCommand(UICommand command)
+    {
+        if (command == runOnceCommand)
+        {
+            if (Validate()) {
+                onRunOnce();
+            }
+        }
+        else if (command == cancelCommand)
+        {
+            commandTarget.ExecuteCommand(command);
+        }
+    }
+    protected abstract void onRunOnce();
 }
