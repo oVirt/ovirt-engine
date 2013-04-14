@@ -61,7 +61,7 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePoolParametersBase> {
     private boolean _fenceSucceeded = true;
     private boolean _vdsProxyFound;
-    private boolean _connectStorageSucceeded, _connectPoolSucceeded;
+    private boolean  _connectPoolSucceeded;
     private boolean _glusterPeerListSucceeded, _glusterPeerProbeSucceeded;
     private FenceStatusReturnValue _fenceStatusReturnValue;
 
@@ -133,17 +133,12 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         if (getStoragePool() == null || StoragePoolStatus.Uninitialized == getStoragePool().getstatus()
                 || StoragePoolStatus.Maintenance == getStoragePool().getstatus()) {
             returnValue = true;
-            _connectStorageSucceeded = true;
             _connectPoolSucceeded = true;
         } else {
             HostStoragePoolParametersBase params = new HostStoragePoolParametersBase(getStoragePool(), getVds());
-            if (Backend.getInstance()
-                    .runInternalAction(VdcActionType.ConnectHostToStoragePoolServers, params)
-                    .getSucceeded()) {
-                _connectStorageSucceeded = true;
-                returnValue = connectHostToPool();
-                _connectPoolSucceeded = returnValue;
-            }
+            Backend.getInstance().runInternalAction(VdcActionType.ConnectHostToStoragePoolServers, params);
+            returnValue = connectHostToPool();
+            _connectPoolSucceeded = returnValue;
         }
         return returnValue;
     }
@@ -243,9 +238,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             return type;
         }
 
-        if (!_connectStorageSucceeded) {
-            type = AuditLogType.CONNECT_STORAGE_SERVERS_FAILED;
-        } else if (!_connectPoolSucceeded) {
+        if (!_connectPoolSucceeded) {
             type = AuditLogType.CONNECT_STORAGE_POOL_FAILED;
         } else if (getVds().getpm_enabled() && _fenceSucceeded) {
             type = AuditLogType.VDS_FENCE_STATUS;

@@ -7,11 +7,13 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
 /**
  * Connect host to all Storage server connections in Storage pool. We
@@ -45,6 +47,10 @@ public class ConnectHostToStoragePoolServersCommand extends
                 log.infoFormat("Failed to connect host {0} to StoragePool {1} Export domain/s connections", getVds()
                         .getName(), getStoragePool().getname());
             }
+        }
+
+        if (!getSucceeded()) {
+           AuditLogDirector.log(this, AuditLogType.CONNECT_STORAGE_SERVERS_FAILED);
         }
     }
 
