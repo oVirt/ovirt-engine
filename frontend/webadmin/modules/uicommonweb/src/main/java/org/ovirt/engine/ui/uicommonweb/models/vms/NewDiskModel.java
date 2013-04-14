@@ -8,10 +8,12 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -157,6 +159,21 @@ public class NewDiskModel extends AbstractDiskModel
         }
 
         super.onSave();
+
+        boolean isInternal = (Boolean) getIsInternal().getEntity();
+        if (isInternal) {
+            DiskImage diskImage = (DiskImage) getDisk();
+            diskImage.setSizeInGigabytes(Integer.parseInt(getSize().getEntity().toString()));
+            diskImage.setVolumeType((VolumeType) getVolumeType().getSelectedItem());
+            diskImage.setvolumeFormat(getVolumeFormat());
+        }
+        else {
+            LunDisk lunDisk = (LunDisk) getDisk();
+            LUNs luns = (LUNs) getSanStorageModel().getAddedLuns().get(0).getEntity();
+            luns.setLunType((StorageType) getStorageType().getSelectedItem());
+            lunDisk.setLun(luns);
+        }
+
         StartProgress(null);
 
         AddDiskParameters parameters = new AddDiskParameters(getVmId(), getDisk());

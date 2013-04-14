@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -419,6 +418,10 @@ public abstract class AbstractDiskModel extends DiskModel
                         break;
                     }
                 }
+
+                if (!getIsNew()) {
+                    getIsBootable().setEntity(getDisk().isBoot());
+                }
             }
         }, getHash()), getVm().getId());
     }
@@ -680,18 +683,10 @@ public abstract class AbstractDiskModel extends DiskModel
             if (getQuota().getIsAvailable() && getQuota().getSelectedItem() != null) {
                 diskImage.setQuotaId(((Quota) getQuota().getSelectedItem()).getId());
             }
-            diskImage.setSizeInGigabytes(Integer.parseInt(getSize().getEntity().toString()));
-            diskImage.setVolumeType((VolumeType) getVolumeType().getSelectedItem());
-            diskImage.setvolumeFormat(getVolumeFormat());
-
             setDisk(diskImage);
         }
         else {
             LunDisk lunDisk = getLunDisk();
-            LUNs luns = (LUNs) getSanStorageModel().getAddedLuns().get(0).getEntity();
-            luns.setLunType((StorageType) getStorageType().getSelectedItem());
-            lunDisk.setLun(luns);
-
             setDisk(lunDisk);
         }
 

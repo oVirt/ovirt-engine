@@ -38,7 +38,6 @@ public class EditDiskModel extends AbstractDiskModel
         getIsInternal().setEntity(getDisk().getDiskStorageType() == DiskStorageType.IMAGE);
         getAlias().setEntity(getDisk().getDiskAlias());
         getDescription().setEntity(getDisk().getDiskDescription());
-        getIsBootable().setEntity(getDisk().isBoot());
         getIsShareable().setEntity(getDisk().isShareable());
         getIsWipeAfterDelete().setEntity(getDisk().isWipeAfterDelete());
 
