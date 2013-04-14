@@ -10,8 +10,6 @@ public interface VdsServerConnector {
 
     public Map<String, Object> shutdown(String vmId, String timeout, String message);
 
-    public Map<String, Object> shutdownHost(int reboot);
-
     public Map<String, Object> pause(String vmId);
 
     public Map<String, Object> hibernate(String vmId, String hiberVolHandle);

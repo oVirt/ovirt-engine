@@ -26,7 +26,6 @@ public enum VDSCommandType {
     IsVmDuringInitiating("org.ovirt.engine.core.vdsbroker"),
     StartSpice("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     RunVmHyperChannelCommand("org.ovirt.engine.core.vdsbroker.vdsbroker"),
-    ShutdownVds("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     UpdateVdsVMsCleared("org.ovirt.engine.core.vdsbroker"),
     AddNetwork("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     RemoveNetwork("org.ovirt.engine.core.vdsbroker.vdsbroker"),

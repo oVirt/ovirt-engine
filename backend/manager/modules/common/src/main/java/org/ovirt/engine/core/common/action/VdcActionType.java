@@ -59,7 +59,6 @@ public enum VdcActionType {
     ActivateVds(108, ActionGroup.MANIPUTLATE_HOST, QuotaDependency.NONE),
     InstallVds(109, QuotaDependency.NONE),
     ClearNonResponsiveVdsVms(110, QuotaDependency.NONE),
-    ShutdownVds(111, QuotaDependency.NONE),
     ApproveVds(112, ActionGroup.CREATE_HOST, QuotaDependency.NONE),
     HandleVdsCpuFlagsOrClusterChanged(114, QuotaDependency.NONE),
     InitVdsOnUp(115, QuotaDependency.NONE),

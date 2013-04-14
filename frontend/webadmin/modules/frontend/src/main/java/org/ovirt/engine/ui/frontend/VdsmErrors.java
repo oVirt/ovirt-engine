@@ -389,8 +389,6 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     String IRS_IMAGE_STATUS_ILLEGAL();
 
-    String VDS_SHUTDOWN_ERROR();
-
     String IRS_REPOSITORY_NOT_FOUND();
 
     String MAC_POOL_INITIALIZATION_FAILED();

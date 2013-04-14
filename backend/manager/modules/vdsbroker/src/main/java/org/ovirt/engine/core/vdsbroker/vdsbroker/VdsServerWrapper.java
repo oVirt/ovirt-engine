@@ -68,18 +68,6 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc shutdownHost(int reboot) {
-        try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.shutdownHost(reboot);
-            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
-            return wrapper;
-        } catch (UndeclaredThrowableException ute) {
-            throw new XmlRpcRunTimeException(ute);
-        }
-
-    }
-
-    @Override
     public OneVmReturnForXmlRpc pause(String vmId) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.pause(vmId);

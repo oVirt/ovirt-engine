@@ -910,12 +910,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot approve RHEV Hypervisor Host.\n-Host must be in \"Pending Approval\" or \"Install Failed\" status in order to be approved.")
     String VDS_APPROVE_VDS_IN_WRONG_STATUS();
 
-    @DefaultStringValue("Cannot shutdown Host. Host is unreachable.")
-    String VDS_SHUTDOWN_VDS_NOT_FOUND();
-
-    @DefaultStringValue("Cannot shutdown Host. Host is already Down or in Not Responding state.")
-    String VDS_SHUTDOWN_NO_RESPONSE();
-
     @DefaultStringValue("Cannot update Host properties. Mismatch between Cluster CPU and Host CPU.")
     String VDS_NEW_CLUSTER_ILLEGAL();
 

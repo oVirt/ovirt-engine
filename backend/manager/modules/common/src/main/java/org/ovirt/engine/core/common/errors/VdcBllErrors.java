@@ -385,7 +385,6 @@ public enum VdcBllErrors {
     IRS_IMAGE_STATUS_ILLEGAL(5006),
     // when trying to run vm from snapshot bt the snapshot does not belong to the VM's history
     RESOURCE_MANAGER_VM_SNAPSHOT_MISSMATCH(5007),
-    VDS_SHUTDOWN_ERROR(5008),
     IRS_REPOSITORY_NOT_FOUND(5009),
     MAC_POOL_INITIALIZATION_FAILED(5010),
     MAC_POOL_NOT_INITIALIZED(5011),
