@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -212,11 +211,18 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         }
 
         updateVmDisksFromDb();
-        Collection<DiskImage> diskImages =
+        List<DiskImage> diskImages =
                 ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), false, true);
         if (!diskImages.isEmpty()) {
-          if (!validate(new StoragePoolValidator(getStoragePool()).isUp())
-                  || !ImagesHandler.PerformImagesChecks(
+          if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {
+              return false;
+          }
+
+          if (!ImagesHandler.checkImagesIllegal(getReturnValue().getCanDoActionMessages(), diskImages)) {
+              return false;
+          }
+
+          if(!ImagesHandler.PerformImagesChecks(
                                     getReturnValue().getCanDoActionMessages(),
                                     getVm().getStoragePoolId(),
                                     Guid.Empty,
