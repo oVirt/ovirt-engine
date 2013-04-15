@@ -93,7 +93,7 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
                 "100px"); //$NON-NLS-1$
         getTable().ensureColumnPresent(AdvancedViewColumns.volumeColumn, constants.volumeEvent(),
                 advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly),
-                "100px"); //$NON-NLS-1$
+                "120px"); //$NON-NLS-1$
         getTable().ensureColumnPresent(AdvancedViewColumns.corrIdColumn, constants.eventCorrelationId(),
                 advancedViewEnabled,
                 "100px"); //$NON-NLS-1$
