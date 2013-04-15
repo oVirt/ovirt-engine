@@ -366,8 +366,11 @@ ERR_EXP_GET_CFG_IPS_CODES="Failed to get list of IP addresses"
 #validate fqdn
 ERR_EXP_CANT_FIND_IP="Could not find any configured IP address"
 ERR_DIDNT_RESOLVED_IP="%s did not resolve into an IP address"
-ERR_IPS_NOT_CONFIGED="Some or all of the IP addresses: (%s) which were resolved from the FQDN %s are not configured on any interface on this host"
-ERR_IPS_NOT_CONFIGED_ON_INT="The IP (%s) which was resolved from the FQDN %s is not configured on any interface on this host"
+ERR_IPS_NOT_CONFIGED="Some or all of the IP addresses: (%s) which were \
+resolved from the FQDN %s are not configured on any non loopback interface \
+on this host"
+ERR_IPS_NOT_CONFIGED_ON_INT="The IP (%s) which was resolved from the FQDN %s \
+is not configured on any non loopback interface on this host"
 ERR_IPS_HAS_NO_PTR="None of the IP addresses on this host(%s) holds a PTR record for the FQDN: %s"
 ERR_IP_HAS_NO_PTR="The IP %s does not hold a PTR record for the FQDN: %s"
 ERR_CANT_USE_IP_AS_FQDN="%s is an IP address and not a FQDN. A FQDN is needed \

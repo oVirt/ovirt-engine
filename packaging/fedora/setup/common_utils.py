@@ -576,26 +576,49 @@ def nslookup(address):
     output, rc = execCmd(cmdList=cmd)
     return output
 
+
 def getConfiguredIps():
+    interfaces = {}
+    addresses = {}
+    interfacere = re.compile(
+        '^\d+:\s+(?P<interface>\w+):\s+<(?P<options>[^>]+).*'
+    )
+    addressre = re.compile(
+        '\s+inet (?P<address>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}).+'
+        '\s+(?P<interface>\w+)$'
+    )
+    cmd = [
+        basedefs.EXEC_IP, "addr",
+    ]
     try:
-        iplist=set()
-        cmd = [
-            basedefs.EXEC_IP, "addr",
-        ]
-        output, rc = execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_EXP_GET_CFG_IPS_CODES)
-        ipaddrPattern=re.compile('\s+inet (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}).+')
-        list=output.splitlines()
-        for line in list:
-            foundIp = ipaddrPattern.search(line)
-            if foundIp:
-                if foundIp.group(1) != "127.0.0.1":
-                    ipAddr = foundIp.group(1)
-                    logging.debug("Found IP Address: %s"%(ipAddr))
-                    iplist.add(ipAddr)
-        return iplist
-    except:
+        output, rc = execCmd(
+            cmdList=cmd,
+            failOnError=True,
+            msg=output_messages.ERR_EXP_GET_CFG_IPS_CODES
+        )
+        for line in output.splitlines():
+            interfacematch = interfacere.match(line)
+            addressmatch = addressre.match(line)
+            if interfacematch is not None:
+                interfaces[interfacematch.group('interface')] = \
+                    'LOOPBACK' in interfacematch.group('options')
+            elif addressmatch is not None:
+                addresses.setdefault(
+                    addressmatch.group('interface'),
+                    []
+                ).append(
+                    addressmatch.group('address')
+                )
+    except Exception:
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_GET_CFG_IPS)
+
+    iplist = []
+    for interface, loopback in interfaces.iteritems():
+        if not loopback:
+            iplist.extend(addresses.get(interface, []))
+    return set(iplist)
+
 
 def getCurrentDateTime(isUtc=None):
     now = None
