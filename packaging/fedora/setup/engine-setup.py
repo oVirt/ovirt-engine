@@ -319,7 +319,7 @@ def initConfig():
                 "VALIDATION_FUNC" :validate.validateFQDN,
                 "DEFAULT_VALUE"   :socket.getfqdn(),
                 "MASK_INPUT"      : False,
-                "LOOSE_VALIDATION": True,
+                "LOOSE_VALIDATION": False,
                 "CONF_NAME"       : "HOST_FQDN",
                 "USE_DEFAULT"     : False,
                 "NEED_CONFIRM"    : False,

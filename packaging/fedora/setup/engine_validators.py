@@ -13,6 +13,8 @@ import os.path
 import tempfile
 import cracklib
 import uuid
+import socket
+
 from setup_controller import Controller
 
 def validateNFSMountPoint(param, options=[]):
@@ -340,7 +342,7 @@ def validateRemoteDB(param={}, options=[]):
 
 
 def validateFQDN(param, options=[]):
-    logging.info("Validating %s as a FQDN"%(param))
+    logging.info("Validating %s as a FQDN on non loopback devices" % (param))
     # Ensure that it isn't an IP address.
     if re.match("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", param):
         logging.error(output_messages.ERR_CANT_USE_IP_AS_FQDN % (param))
@@ -359,17 +361,29 @@ def validateFQDN(param, options=[]):
         #resolve fqdn
         pattern = 'Address: (\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'
         resolvedAddresses = _getPatternFromNslookup(param, pattern)
+        resolvedFromDNS = False
         if len(resolvedAddresses) < 1:
-            logging.error("Failed to resolve %s"%(param))
-            print output_messages.ERR_DIDNT_RESOLVED_IP%(param)
-            return False
-
+            logging.error("Failed to resolve %s using DNS."%(param))
+            try:
+                resolvedAddresses = set(socket.gethostbyname_ex(param)[2])
+            except socket.error:
+                #can't be resolved by /etc/hosts
+                print output_messages.ERR_DIDNT_RESOLVED_IP%(param)
+                return False
+            logging.warning('%s can be resolved only locally!' % param)
+        else:
+            resolvedFromDNS = True
         #string is generated here since we use it in all latter error messages
         prettyString = " ".join(["%s"%string for string in resolvedAddresses])
 
         #compare found IP with list of local IPs and match.
         if not resolvedAddresses.issubset(ipAddresses):
-            logging.error("the following address(es): %s are not configured on this host"%(prettyString))
+            logging.error(
+                (
+                    "the following address(es): %s can't be mapped to "
+                    "non loopback devices on this host"
+                ) %(prettyString)
+            )
             #different grammar for plural and single
             if len(resolvedAddresses) > 1:
                 print output_messages.ERR_IPS_NOT_CONFIGED%(prettyString, param)
@@ -378,27 +392,28 @@ def validateFQDN(param, options=[]):
             return False
 
         #reverse resolved IP and compare with given fqdn
-        counter = 0
-        pattern = '[\w\.-]+\s+name\s\=\s([\w\.\-]+)\.'
-        for address in resolvedAddresses:
-            addressSet = _getPatternFromNslookup(address, pattern)
-            reResolvedAddress = None
-            revResolved = False
-            if len(addressSet) > 0:
-                reResolvedAddress = addressSet.pop()
-                if reResolvedAddress.lower() == param.lower():
-                    counter += 1
-                    revResolved = True
-            if not revResolved:
-                logging.warn("%s did not reverse-resolve into %s"%(address,param))
-        if counter < 1:
-            logging.error("The following addresses: %s did not reverse resolve into %s"%(prettyString, param))
-            #different grammar for plural and single
-            if len(resolvedAddresses) > 1:
-                print output_messages.ERR_IPS_HAS_NO_PTR%(prettyString, param)
-            else:
-                print output_messages.ERR_IP_HAS_NO_PTR%(prettyString, param)
-            return False
+        if resolvedFromDNS:
+            counter = 0
+            pattern = '[\w\.-]+\s+name\s\=\s([\w\.\-]+)\.'
+            for address in resolvedAddresses:
+                addressSet = _getPatternFromNslookup(address, pattern)
+                reResolvedAddress = None
+                revResolved = False
+                if len(addressSet) > 0:
+                    reResolvedAddress = addressSet.pop()
+                    if reResolvedAddress.lower() == param.lower():
+                        counter += 1
+                        revResolved = True
+                if not revResolved:
+                    logging.warn("%s did not reverse-resolve into %s"%(address,param))
+            if counter < 1:
+                logging.error("The following addresses: %s did not reverse resolve into %s"%(prettyString, param))
+                #different grammar for plural and single
+                if len(resolvedAddresses) > 1:
+                    print output_messages.ERR_IPS_HAS_NO_PTR%(prettyString, param)
+                else:
+                    print output_messages.ERR_IP_HAS_NO_PTR%(prettyString, param)
+                return False
 
         #conditions passed
         return True
