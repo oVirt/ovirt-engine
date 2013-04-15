@@ -35,9 +35,6 @@ public class DbUser extends IVdcQueryable {
     @Size(max = BusinessEntitiesDefinitions.USER_ICON_PATH_SIZE)
     private String userIconPath = "";
 
-    @Size(max = BusinessEntitiesDefinitions.USER_DESKTOP_DEVICE_SIZE)
-    private String desktopDevice = "";
-
     @Size(max = BusinessEntitiesDefinitions.USER_EMAIL_SIZE)
     private String email;
 
@@ -61,32 +58,12 @@ public class DbUser extends IVdcQueryable {
     public DbUser() {
     }
 
-    public DbUser(String department, String desktop_device, String domain, String email, String groups, String name,
-            String note, String role, int status, String surname, String user_icon_path, Guid user_id, String username,
-            String groupIds) {
-        this.department = department;
-        this.desktopDevice = desktop_device;
-        this.domain = domain;
-        this.email = email;
-        this.groups = groups;
-        this.name = name;
-        this.note = note;
-        this.role = role;
-        this.status = status;
-        this.surname = surname;
-        this.userIconPath = user_icon_path;
-        this.id = user_id;
-        this.username = username;
-        this.setGroupIds(groupIds);
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((department == null) ? 0 : department.hashCode());
-        result = prime * result + ((desktopDevice == null) ? 0 : desktopDevice.hashCode());
         result = prime * result + ((domain == null) ? 0 : domain.hashCode());
         result = prime * result + ((email == null) ? 0 : email.hashCode());
         result = prime * result + ((groups == null) ? 0 : groups.hashCode());
@@ -115,7 +92,6 @@ public class DbUser extends IVdcQueryable {
         DbUser other = (DbUser) obj;
         return (ObjectUtils.objectsEqual(id, other.id)
                 && ObjectUtils.objectsEqual(department, other.department)
-                && ObjectUtils.objectsEqual(desktopDevice, other.desktopDevice)
                 && ObjectUtils.objectsEqual(domain, other.domain)
                 && ObjectUtils.objectsEqual(email, other.email)
                 && ObjectUtils.objectsEqual(groups, other.groups)
@@ -135,14 +111,6 @@ public class DbUser extends IVdcQueryable {
 
     public void setdepartment(String value) {
         this.department = value;
-    }
-
-    public String getdesktop_device() {
-        return this.desktopDevice;
-    }
-
-    public void setdesktop_device(String value) {
-        this.desktopDevice = value;
     }
 
     public String getdomain() {

@@ -27,7 +27,6 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION InsertUser(v_department VARCHAR(255) ,
-	v_desktop_device VARCHAR(255) ,
 	v_domain VARCHAR(255),
 	v_email VARCHAR(255) ,
 	v_groups VARCHAR,
@@ -43,8 +42,8 @@ Create or replace FUNCTION InsertUser(v_department VARCHAR(255) ,
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO users(department, desktop_device, domain, email, groups, name, note, role, status, surname, user_icon_path, user_id, username, group_ids)
-	VALUES(v_department, v_desktop_device, v_domain, v_email, v_groups, v_name, v_note, v_role, v_status, v_surname, v_user_icon_path, v_user_id, v_username, v_group_ids);
+INSERT INTO users(department, domain, email, groups, name, note, role, status, surname, user_icon_path, user_id, username, group_ids)
+	VALUES(v_department, v_domain, v_email, v_groups, v_name, v_note, v_role, v_status, v_surname, v_user_icon_path, v_user_id, v_username, v_group_ids);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -53,7 +52,6 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION UpdateUser(v_department VARCHAR(255) ,
-	v_desktop_device VARCHAR(255) ,
 	v_domain VARCHAR(255),
 	v_email VARCHAR(255) ,
 	v_groups VARCHAR(4000),
@@ -73,7 +71,7 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE users
-      SET department = v_department,desktop_device = v_desktop_device,domain = v_domain,
+      SET department = v_department,domain = v_domain,
       email = v_email,groups = v_groups,name = v_name,note = v_note,
       role = v_role,status = v_status,surname = v_surname,user_icon_path = v_user_icon_path,
       username = v_username,

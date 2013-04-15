@@ -24,7 +24,6 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
         public DbUser mapRow(ResultSet rs, int rowNum) throws SQLException {
             DbUser entity = new DbUser();
             entity.setdepartment(rs.getString("department"));
-            entity.setdesktop_device(rs.getString("desktop_device"));
             entity.setdomain(rs.getString("domain"));
             entity.setemail(rs.getString("email"));
             entity.setgroups(rs.getString("groups"));
@@ -48,7 +47,6 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
         public DbUserMapSqlParameterSource(DbUser user) {
             super(dialect);
             addValue("department", user.getdepartment());
-            addValue("desktop_device", user.getdesktop_device());
             addValue("domain", user.getdomain());
             addValue("email", user.getemail());
             addValue("groups", user.getgroups());

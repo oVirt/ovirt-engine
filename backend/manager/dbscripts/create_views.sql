@@ -720,12 +720,12 @@ CREATE OR REPLACE VIEW vdc_users
 AS
 
 SELECT     'user' as user_group, users_1.name as name, users_1.user_id as user_id, users_1.surname as surname, users_1.domain as domain, users_1.username as username, users_1.groups as groups, users_1.department as department,
-                      users_1.role as role, users_1.user_icon_path as user_icon_path, users_1.desktop_device as desktop_device, users_1.email as email, users_1.note as note, users_1.status as status, 0 as vm_admin,
+                      users_1.role as role, users_1.user_icon_path as user_icon_path, users_1.email as email, users_1.note as note, users_1.status as status, 0 as vm_admin,
                       users_1.session_count as session_count, users_1.last_admin_check_status as last_admin_check_status, users_1.group_ids as group_ids
 FROM         users AS users_1
 UNION
 SELECT     'group' as user_group, ad_groups.name as name, ad_groups.id as id, '' as surname, ad_groups.domain as domain, '' as username, '' as groups, '' as department, '' as role,
-                      '' as user_icon_path, '' as desktop_device, '' as email, '' as note, ad_groups.status as status, 1 as vm_admin, 0 as session_count, null as last_admin_check_status, '' as group_ids
+                      '' as user_icon_path, '' as email, '' as note, ad_groups.status as status, 1 as vm_admin, 0 as session_count, null as last_admin_check_status, '' as group_ids
 FROM         ad_groups;
 
 
@@ -735,7 +735,7 @@ CREATE OR REPLACE VIEW vdc_users_with_tags
 AS
 
 SELECT     users_1.user_group as user_group, users_1.name as name, permissions.object_id as vm_guid, users_1.user_id as user_id, users_1.surname as surname, users_1.domain as domain,
-                      users_1.username as username, users_1.groups as groups, users_1.department as department, users_1.role as role, roles1.name as mla_role, users_1.user_icon_path as user_icon_path, users_1.desktop_device as desktop_device, users_1.email as email,
+                      users_1.username as username, users_1.groups as groups, users_1.department as department, users_1.role as role, roles1.name as mla_role, users_1.user_icon_path as user_icon_path, users_1.email as email,
                       users_1.note as note, users_1.status as status, users_1.vm_admin as vm_admin, tags_user_map_view_1.tag_name as tag_name, tags_user_map_view_1.tag_id as tag_id, users_1.session_count as session_count, users_1.last_admin_check_status as last_admin_check_status, users_1.group_ids as group_ids,
                       pools.vm_pool_name as vm_pool_name
 FROM         vdc_users AS users_1 LEFT OUTER JOIN
@@ -747,7 +747,7 @@ roles AS roles1 ON roles1.id = permissions.role_id
 WHERE     (users_1.user_group = 'user')
 UNION
 SELECT     users_2.user_group as user_group, users_2.name as name, permissions_1.object_id as vm_guid, users_2.user_id as user_id, users_2.surname as surname, users_2.domain as domain,
-                      users_2.username as username, users_2.groups as groups, users_2.department as department, users_2.role as role, roles2.name as mla_role, users_2.user_icon_path as user_icon_path, users_2.desktop_device as desktop_device, users_2.email as email,
+                      users_2.username as username, users_2.groups as groups, users_2.department as department, users_2.role as role, roles2.name as mla_role, users_2.user_icon_path as user_icon_path, users_2.email as email,
                       users_2.note as note, users_2.status as status, users_2.vm_admin as vm_admin, tags_user_group_map_view.tag_name as tag_name, tags_user_group_map_view.tag_id as tag_id,
                       users_2.session_count as session_count, users_2.last_admin_check_status as last_admin_check_status, users_2.group_ids as group_ids , pools1.vm_pool_name as vm_pool_name
 FROM         vdc_users AS users_2 LEFT OUTER JOIN

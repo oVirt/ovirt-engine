@@ -2723,7 +2723,6 @@
       <column>department</column>
       <column>role</column>
       <column>user_icon_path</column>
-      <column>desktop_device</column>
       <column>email</column>
       <column>note</column>
       <column>status</column>
@@ -2741,7 +2740,6 @@
           <null />
           <null />
           <null />
-          <null />
           <value>2</value>
           <value>0</value>
           <value>35487601-05ef-43b0-932d-8663ea4c9495,fa63c7e0-d9d4-492f-9e4e-6ed8c4719364</value>
@@ -2753,7 +2751,6 @@
           <value>testportal.redhat.com</value>
           <value>userportal3@testportal.redhat.com</value>
           <value>qa-membersgroup@testportal.redhat.com/test-all-users,qb-membersgroup@testportal.redhat.com/test-all-users,qc-membersgroup@testportal.redhat.com/test-all-users,qd-membersgroup@testportal.redhat.com/test-all-users,qe-membersgroup@testportal.redhat.com/test-all-users,qf-membersgroup@testportal.redhat.com/test-all-users,qg-membersgroup@testportal.redhat.com/test-all-users,qh-membersgroup@testportal.redhat.com/test-all-users,qi-membersgroup@testportal.redhat.com/test-all-users</value>
-          <null />
           <null />
           <null />
           <null />
