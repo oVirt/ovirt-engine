@@ -330,6 +330,8 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         model.getAssignedVms().setEntity(pool.getAssignedVmsCount());
                         model.getPrestartedVms().setEntity(pool.getPrestartedVms());
                         model.setPrestartedVmsHint("0-" + pool.getAssignedVmsCount()); //$NON-NLS-1$
+                        model.getMaxAssignedVmsPerUser().setEntity(pool.getMaxAssignedVmsPerUser());
+
                     }
                 }));
     }
@@ -455,6 +457,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         pool.setVmPoolDescription((String) model.getDescription().getEntity());
                         pool.setVdsGroupId(((VDSGroup) model.getCluster().getSelectedItem()).getId());
                         pool.setPrestartedVms(model.getPrestartedVms().asConvertible().integer());
+                        pool.setMaxAssignedVmsPerUser(model.getMaxAssignedVmsPerUser().asConvertible().integer());
 
                         EntityModel poolTypeSelectedItem = (EntityModel) model.getPoolType().getSelectedItem();
                         pool.setVmPoolType((VmPoolType) poolTypeSelectedItem.getEntity());

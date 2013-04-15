@@ -96,6 +96,7 @@ public class UnitVmModel extends Model {
 
             getNumOfDesktops().setIsChangable(false);
             getPrestartedVms().setIsChangable(false);
+            getMaxAssignedVmsPerUser().setIsChangable(false);
 
             getTemplate().setIsChangable(false);
             getMemSize().setIsChangable(false);
@@ -1183,6 +1184,10 @@ public class UnitVmModel extends Model {
         getPrestartedVms().setEntity(0);
         getPrestartedVms().setIsAvailable(false);
 
+        setMaxAssignedVmsPerUser(new NotChangableForVmInPoolEntityModel());
+        getMaxAssignedVmsPerUser().setEntity(1);
+        getMaxAssignedVmsPerUser().setIsAvailable(false);
+
         setDisksAllocationModel(new DisksAllocationModel());
 
         setProvisioningClone_IsSelected(new NotChangableForVmInPoolEntityModel());
@@ -2171,6 +2176,16 @@ public class UnitVmModel extends Model {
             prestartedVmsHint = value;
             onPropertyChanged(new PropertyChangedEventArgs("PrestartedVmsHint")); //$NON-NLS-1$
         }
+    }
+
+    private NotChangableForVmInPoolEntityModel maxAssignedVmsPerUser;
+
+    public EntityModel getMaxAssignedVmsPerUser() {
+        return maxAssignedVmsPerUser;
+    }
+
+    public void setMaxAssignedVmsPerUser(NotChangableForVmInPoolEntityModel maxAssignedVmsPerUser) {
+        this.maxAssignedVmsPerUser = maxAssignedVmsPerUser;
     }
 
     private class NotChangableForVmInPoolListModel extends ListModel {

@@ -5,12 +5,12 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -321,16 +321,25 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                         new IntegerValidation(0, assignedVms)
                 });
 
+        getModel().getMaxAssignedVmsPerUser().validateEntity(
+                new IValidation[]
+                {
+                        new NotEmptyValidation(),
+                        new IntegerValidation(1, assignedVms)
+                });
+
         getModel().setIsGeneralTabValid(getModel().getIsGeneralTabValid()
                 && getModel().getName().getIsValid()
                 && getModel().getNumOfDesktops().getIsValid()
-                && getModel().getPrestartedVms().getIsValid());
+                && getModel().getPrestartedVms().getIsValid()
+                && getModel().getMaxAssignedVmsPerUser().getIsValid());
 
         getModel().setIsPoolTabValid(true);
 
         return super.validate()
                 && getModel().getName().getIsValid()
                 && getModel().getNumOfDesktops().getIsValid()
-                && getModel().getPrestartedVms().getIsValid();
+                && getModel().getPrestartedVms().getIsValid()
+                && getModel().getMaxAssignedVmsPerUser().getIsValid();
     }
 }

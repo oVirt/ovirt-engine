@@ -45,18 +45,23 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
 
         if (object.getIsNew()) {
             prestartedVmsEditor.setEnabled(false);
+            maxAssignedVmsPerUserEditor.setEnabled(false);
             object.getNumOfDesktops().setEntity("1"); //$NON-NLS-1$
 
             numOfVmsEditor.setVisible(true);
             newPoolEditVmsPanel.setVisible(true);
+            newPoolEditMaxAssignedVmsPerUserPanel.setVisible(true);
             editPoolEditVmsPanel.setVisible(false);
             editPoolIncraseNumOfVmsPanel.setVisible(false);
+            editPoolEditMaxAssignedVmsPerUserPanel.setVisible(false);
         } else {
             numOfVmsEditor.setVisible(false);
             newPoolEditVmsPanel.setVisible(false);
+            newPoolEditMaxAssignedVmsPerUserPanel.setVisible(false);
             editPoolEditVmsPanel.setVisible(true);
             prestartedVmsEditor.setEnabled(true);
             editPoolIncraseNumOfVmsPanel.setVisible(true);
+            editPoolEditMaxAssignedVmsPerUserPanel.setVisible(true);
         }
     }
 

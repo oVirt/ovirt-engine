@@ -1,13 +1,13 @@
 package org.ovirt.engine.ui.uicommonweb.models.pools;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmModelBehaviorBase;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-
-import java.util.ArrayList;
 
 public class PoolModel extends UnitVmModel {
 
@@ -31,6 +31,7 @@ public class PoolModel extends UnitVmModel {
         getAssignedVms().setIsAvailable(true);
         getNumOfDesktops().setIsAvailable(true);
         getPrestartedVms().setIsAvailable(true);
+        getMaxAssignedVmsPerUser().setIsAvailable(true);
 
         setIsPoolTabValid(true);
 

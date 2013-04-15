@@ -1081,6 +1081,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("VMs")
     String vms();
 
+    @DefaultStringValue("Maximum number of VMs per user")
+    String maxAssignedVmsPerUser();
+
     @DefaultStringValue("SPM Priority")
     String spmPriority();
 

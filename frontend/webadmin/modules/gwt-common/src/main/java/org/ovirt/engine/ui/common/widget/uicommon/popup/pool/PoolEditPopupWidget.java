@@ -78,6 +78,7 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
 
         editPrestartedVmsEditor.setEnabled(true);
         incraseNumOfVmsEditor.setEnabled(true);
+        editMaxAssignedVmsPerUserEditor.setEnabled(true);
     }
 
     @Override

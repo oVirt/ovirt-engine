@@ -196,14 +196,31 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @Ignore
     public InfoIcon editPoolPrestartedVmsIcon;
 
+    @UiField(provided = true)
+    @Ignore
+    public InfoIcon newPoolMaxAssignedVmsPerUserIcon;
+
+    @UiField(provided = true)
+    @Ignore
+    public InfoIcon editPoolMaxAssignedVmsPerUserIcon;
+
     @UiField
     @Path(value = "prestartedVms.entity")
     @WithElementId("prestartedVms")
     public EntityModelTextBoxOnlyEditor prestartedVmsEditor;
 
     @UiField
+    @Path("maxAssignedVmsPerUser.entity")
+    @WithElementId("maxAssignedVmsPerUser")
+    public EntityModelTextBoxOnlyEditor maxAssignedVmsPerUserEditor;
+
+    @UiField
     @Ignore
     public FlowPanel newPoolEditVmsPanel;
+
+    @UiField
+    @Ignore
+    public FlowPanel newPoolEditMaxAssignedVmsPerUserPanel;
 
     @UiField
     @Ignore
@@ -229,6 +246,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     public FlowPanel editPrestartedVmsPanel;
     @UiField
     @Ignore
+    public FlowPanel editPoolEditMaxAssignedVmsPerUserPanel;
+
+    @UiField
+    @Ignore
     public Label editPrestartedVmsLabel;
 
     @UiField
@@ -240,6 +261,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @Path("numOfDesktops.entity")
     @WithElementId("incraseNumOfVms")
     public EntityModelTextBoxOnlyEditor incraseNumOfVmsEditor;
+
+    @UiField
+    @Path("maxAssignedVmsPerUser.entity")
+    @WithElementId("editMaxAssignedVmsPerUser")
+    public EntityModelTextBoxOnlyEditor editMaxAssignedVmsPerUserEditor;
 
     @UiField(provided = true)
     @Path("assignedVms.entity")
@@ -550,6 +576,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
         poolNameIcon.setVisible(false);
 
+        newPoolMaxAssignedVmsPerUserIcon =
+                new InfoIcon(applicationTemplates.italicText(messages.maxAssignedVmsPerUserHelp()), resources);
+
+        editPoolMaxAssignedVmsPerUserIcon =
+                new InfoIcon(applicationTemplates.italicText(messages.maxAssignedVmsPerUserHelp()), resources);
+
         outOfxInPool = new ValueLabel<Object>(new AbstractRenderer<Object>() {
 
             @Override
@@ -574,8 +606,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     private void hidePoolSpecificFields() {
         numOfVmsEditor.setVisible(false);
         newPoolEditVmsPanel.setVisible(false);
+        newPoolEditMaxAssignedVmsPerUserPanel.setVisible(false);
         editPoolEditVmsPanel.setVisible(false);
         editPoolIncraseNumOfVmsPanel.setVisible(false);
+        editPoolEditMaxAssignedVmsPerUserPanel.setVisible(false);
     }
 
     protected abstract void generateIds();
@@ -739,6 +773,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
         prestartedLabel.setText(constants.prestartedPoolPopup());
         numOfVmsEditor.setLabel(constants.numOfVmsPoolPopup());
+        maxAssignedVmsPerUserEditor.setLabel(constants.maxAssignedVmsPerUser());
+        editMaxAssignedVmsPerUserEditor.setLabel(constants.maxAssignedVmsPerUser());
 
         // initial run Tab
         initialRunTab.setLabel(constants.initialRunVmPopup());
@@ -1086,6 +1122,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         prestartedVmsEditor.setTabIndex(nextTabIndex++);
         editPrestartedVmsEditor.setTabIndex(nextTabIndex++);
         incraseNumOfVmsEditor.setTabIndex(nextTabIndex++);
+        maxAssignedVmsPerUserEditor.setTabIndex(nextTabIndex++);
+        editMaxAssignedVmsPerUserEditor.setTabIndex(nextTabIndex++);
 
         templateEditor.setTabIndex(nextTabIndex++);
         memSizeEditor.setTabIndex(nextTabIndex++);

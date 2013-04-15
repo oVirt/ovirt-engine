@@ -162,33 +162,33 @@
 			padding-bottom: 35px;
         }
         
-        .prestartedVmsEditorContent,.nameEditorContent {
+        .prestartedVmsEditorContent,.nameEditorContent,.maxAssignedVmsPerUserEditorContent {
         	width: 230px;
         }
         
-        .prestartedVmsEditor,.nameEditor {
+        .prestartedVmsEditor,.nameEditor,.maxAssignedVmsPerUserEditor {
         	float: right;
         	width: 230px;
         }
         
-        .editPrestartedVmsEditor {
+        .editPrestartedVmsEditor,.editMaxAssignedVmsPerUserEditor {
         	float: left;
         	padding-right: 10px;
         }
         
-        .prestartedVmsIcon, .poolNameIcon {
+        .prestartedVmsIcon, .poolNameIcon, .maxAssignedVmsPerUserIcon {
         	float: left;
         	padding-top: 5px;
             padding-left: 2px;
         }
         
-        .prestartedLabelWithHelp,.increasePrestartedLabel {
+        .prestartedLabelWithHelp,.increasePrestartedLabel,.maxAssignedVmsPerUserLabel {
         	float: left;
         }
 
-        .editPrestartedVms,.editIncreaseVms {
+        .editPrestartedVms,.editIncreaseVms,.editMaxAssignedVmsPerUser {
             float: right;
-        	width: 230px;
+        	width: 250px;
         }
         
         .prestartedLabel, .nameLabel {
@@ -196,7 +196,7 @@
         	color: #333333;
         }
         
-        .increaseVmsInPoolVms {
+        .increaseVmsInPoolVms,.maxAssignedVmsPerUserVms {
         	float: left;
         }
 
@@ -240,6 +240,14 @@
 								<e:EntityModelTextBoxOnlyEditor ui:field="prestartedVmsEditor" addStyleNames="{style.prestartedVmsEditor}" contentWidgetStyleName="{style.prestartedVmsEditorContent}" />
                             </g:FlowPanel>
                             
+                            <g:FlowPanel ui:field="newPoolEditMaxAssignedVmsPerUserPanel" addStyleNames="{style.poolEditVms}">
+                                <g:FlowPanel addStyleNames="{style.maxAssignedVmsPerUserLabel}">
+                                    <g:Label text="{constants.maxAssignedVmsPerUser}" addStyleNames="{style.maxAssignedVmsPerUserLabel}" />
+                                    <d:InfoIcon ui:field="newPoolMaxAssignedVmsPerUserIcon" addStyleNames="{style.maxAssignedVmsPerUserIcon}" />
+                                </g:FlowPanel>
+                                <e:EntityModelTextBoxOnlyEditor ui:field="maxAssignedVmsPerUserEditor" addStyleNames="{style.maxAssignedVmsPerUserEditor}" contentWidgetStyleName="{style.maxAssignedVmsPerUserEditorContent}" />
+                            </g:FlowPanel>
+
 <!--                             Edit VM Pool -->
                             <g:FlowPanel addStyleNames="{style.poolEditVms}" ui:field="editPoolEditVmsPanel">
 								<g:FlowPanel addStyleNames="{style.prestartedLabelWithHelp}">
@@ -258,6 +266,17 @@
 									<e:EntityModelTextBoxOnlyEditor ui:field="incraseNumOfVmsEditor" addStyleNames="{style.editPrestartedVmsEditor}" contentWidgetStyleName="{style.textBox}" />
 									<g:Label text="{constants.vms}" addStyleNames="{style.increaseVmsInPoolVms}" />
 								</g:FlowPanel>
+                            </g:FlowPanel>
+
+                            <g:FlowPanel ui:field="editPoolEditMaxAssignedVmsPerUserPanel" addStyleNames="{style.poolEditVms}">
+                                <g:FlowPanel addStyleNames="{style.maxAssignedVmsPerUserLabel}">
+                                    <g:Label text="{constants.maxAssignedVmsPerUser}" addStyleNames="{style.maxAssignedVmsPerUserLabel}" />
+                                    <d:InfoIcon ui:field="editPoolMaxAssignedVmsPerUserIcon" addStyleNames="{style.maxAssignedVmsPerUserIcon}" />
+                                </g:FlowPanel>
+                                <g:FlowPanel addStyleNames="{style.editMaxAssignedVmsPerUser}">
+                                    <e:EntityModelTextBoxOnlyEditor ui:field="editMaxAssignedVmsPerUserEditor" addStyleNames="{style.editMaxAssignedVmsPerUserEditor}" contentWidgetStyleName="{style.textBox}" />
+                                    <g:Label text="{constants.vms}" addStyleNames="{style.maxAssignedVmsPerUserVms}" />
+                                </g:FlowPanel>
                             </g:FlowPanel>
                             <e:ListModelListBoxEditor ui:field="templateEditor"/>
                         </g:FlowPanel>
