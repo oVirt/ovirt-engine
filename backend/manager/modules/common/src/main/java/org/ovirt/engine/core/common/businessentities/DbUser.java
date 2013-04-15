@@ -32,9 +32,6 @@ public class DbUser extends IVdcQueryable {
     @Size(max = BusinessEntitiesDefinitions.USER_ROLE_SIZE)
     private String role = "";
 
-    @Size(max = BusinessEntitiesDefinitions.USER_ICON_PATH_SIZE)
-    private String userIconPath = "";
-
     @Size(max = BusinessEntitiesDefinitions.USER_EMAIL_SIZE)
     private String email;
 
@@ -73,7 +70,6 @@ public class DbUser extends IVdcQueryable {
         result = prime * result + ((role == null) ? 0 : role.hashCode());
         result = prime * result + status;
         result = prime * result + ((surname == null) ? 0 : surname.hashCode());
-        result = prime * result + ((userIconPath == null) ? 0 : userIconPath.hashCode());
         result = prime * result + ((username == null) ? 0 : username.hashCode());
         return result;
     }
@@ -101,7 +97,6 @@ public class DbUser extends IVdcQueryable {
                 && ObjectUtils.objectsEqual(role, other.role)
                 && status == other.status
                 && ObjectUtils.objectsEqual(surname, other.surname)
-                && ObjectUtils.objectsEqual(userIconPath, other.userIconPath)
                 && ObjectUtils.objectsEqual(username, other.username));
     }
 
@@ -175,14 +170,6 @@ public class DbUser extends IVdcQueryable {
 
     public void setsurname(String value) {
         this.surname = value;
-    }
-
-    public String getuser_icon_path() {
-        return this.userIconPath;
-    }
-
-    public void setuser_icon_path(String value) {
-        this.userIconPath = value;
     }
 
     public Guid getuser_id() {

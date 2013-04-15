@@ -75,7 +75,6 @@ public final class BusinessEntitiesDefinitions {
     public static final int USER_NOTE_SIZE = 255;
     public static final int USER_ROLE_SIZE = 255;
     public static final int USER_SURENAME_SIZE = 255;
-    public static final int USER_ICON_PATH_SIZE = 255;
     public static final int USER_USER_NAME_SIZE = 255;
 
     // General descriptions

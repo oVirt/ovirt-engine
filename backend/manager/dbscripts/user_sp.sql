@@ -35,15 +35,14 @@ Create or replace FUNCTION InsertUser(v_department VARCHAR(255) ,
 	v_role VARCHAR(255) ,
 	v_status INTEGER,
 	v_surname VARCHAR(255) ,
-	v_user_icon_path VARCHAR(255) ,
 	v_user_id UUID,
 	v_username VARCHAR(255),
 	v_group_ids VARCHAR(2048))
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO users(department, domain, email, groups, name, note, role, status, surname, user_icon_path, user_id, username, group_ids)
-	VALUES(v_department, v_domain, v_email, v_groups, v_name, v_note, v_role, v_status, v_surname, v_user_icon_path, v_user_id, v_username, v_group_ids);
+INSERT INTO users(department, domain, email, groups, name, note, role, status, surname, user_id, username, group_ids)
+	VALUES(v_department, v_domain, v_email, v_groups, v_name, v_note, v_role, v_status, v_surname, v_user_id, v_username, v_group_ids);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -60,7 +59,6 @@ Create or replace FUNCTION UpdateUser(v_department VARCHAR(255) ,
 	v_role VARCHAR(255) ,
 	v_status INTEGER,
 	v_surname VARCHAR(255) ,
-	v_user_icon_path VARCHAR(255) ,
 	v_user_id UUID,
 	v_username VARCHAR(255),
 	v_last_admin_check_status BOOLEAN,
@@ -73,7 +71,7 @@ BEGIN
       UPDATE users
       SET department = v_department,domain = v_domain,
       email = v_email,groups = v_groups,name = v_name,note = v_note,
-      role = v_role,status = v_status,surname = v_surname,user_icon_path = v_user_icon_path,
+      role = v_role,status = v_status,surname = v_surname,
       username = v_username,
       last_admin_check_status = v_last_admin_check_status,
       group_ids = v_group_ids
