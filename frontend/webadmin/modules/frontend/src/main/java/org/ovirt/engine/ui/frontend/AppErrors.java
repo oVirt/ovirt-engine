@@ -1084,6 +1084,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("The specified Logical Network doesn't exist.")
     String NETWORK_NOT_EXISTS();
 
+    @DefaultStringValue("The specified external network cannot be configured on the host's interface.")
+    String EXTERNAL_NETWORK_CANNOT_BE_PROVISIONED();
+
     @DefaultStringValue("Cannot recover Data Center with active Data Storage Domain in Data Center.")
     String ERROR_CANNOT_RECOVERY_STORAGE_POOL_THERE_IS_ACTIVE_DATA_DOMAINS();
 

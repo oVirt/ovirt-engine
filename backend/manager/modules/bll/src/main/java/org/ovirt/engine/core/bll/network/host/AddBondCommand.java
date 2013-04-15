@@ -132,13 +132,9 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
         }
 
         // check that the network exists in current cluster
-        List<Network> networks = getNetworkDAO().getAllForCluster(getVds().getVdsGroupId());
-        if (null == LinqUtils.firstOrNull(networks, new Predicate<Network>() {
-            @Override
-            public boolean eval(Network network) {
-                return network.getName().equals(getParameters().getNetwork().getName());
-            }
-        })) {
+        Network network =
+                getNetworkDAO().getByNameAndCluster(getParameters().getNetwork().getName(), getVds().getVdsGroupId());
+        if (network == null) {
             return failCanDoAction(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CLUSTER);
         }
 
@@ -146,6 +142,10 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
                 !NetworkUtils.isManagementNetwork(getParameters().getNetwork())) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_ATTACH_ILLEGAL_GATEWAY);
             return false;
+        }
+
+        if (network.getProvidedBy() != null) {
+            return failCanDoAction(VdcBllMessages.EXTERNAL_NETWORK_CANNOT_BE_PROVISIONED);
         }
 
         return true;

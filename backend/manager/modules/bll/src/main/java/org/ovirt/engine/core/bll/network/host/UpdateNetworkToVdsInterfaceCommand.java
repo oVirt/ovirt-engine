@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.UpdateNetworkToVdsParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
@@ -233,6 +234,11 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
                 addCanDoActionMessage(VdcBllMessages.NETWORK_ADDR_MANDATORY_IN_STATIC_IP);
                 return false;
             }
+        }
+
+        Network network = getNetworkDAO().getByNameAndCluster(getNetworkName(), vds.getVdsGroupId());
+        if (network != null && network.getProvidedBy() != null) {
+            return failCanDoAction(VdcBllMessages.EXTERNAL_NETWORK_CANNOT_BE_PROVISIONED);
         }
 
         return true;

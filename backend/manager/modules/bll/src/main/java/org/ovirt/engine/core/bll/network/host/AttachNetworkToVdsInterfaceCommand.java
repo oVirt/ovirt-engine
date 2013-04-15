@@ -131,6 +131,10 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
             logicalNetwork = networksByName.get(params.getNetwork().getName());
         }
 
+        if (logicalNetwork.getProvidedBy() != null) {
+            return failCanDoAction(VdcBllMessages.EXTERNAL_NETWORK_CANNOT_BE_PROVISIONED);
+        }
+
         if (!networkConfigurationSupported(iface, networksByName)) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_ALREADY_HAVE_NETWORK);
             return false;
