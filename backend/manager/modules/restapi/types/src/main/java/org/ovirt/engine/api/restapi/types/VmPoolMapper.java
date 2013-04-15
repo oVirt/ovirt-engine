@@ -34,6 +34,9 @@ public class VmPoolMapper {
         if (model.isSetPrestartedVms()) {
             entity.setPrestartedVms(model.getPrestartedVms());
         }
+        if (model.isSetMaxUserVms()) {
+            entity.setMaxAssignedVmsPerUser(model.getMaxUserVms());
+        }
         return entity;
     }
 
@@ -66,6 +69,7 @@ public class VmPoolMapper {
             model.setCluster(new Cluster());
             model.getCluster().setId(entity.getVdsGroupId().toString());
         }
+        model.setMaxUserVms(entity.getMaxAssignedVmsPerUser());
         return model;
     }
 }
