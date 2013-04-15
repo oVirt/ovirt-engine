@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
@@ -14,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -31,7 +31,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq.DiskByAliasComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -57,6 +57,7 @@ public class VmDiskListModel extends VmDiskListModelBase
 
     private UICommand privateEditCommand;
 
+    @Override
     public UICommand getEditCommand()
     {
         return privateEditCommand;
@@ -536,25 +537,10 @@ public class VmDiskListModel extends VmDiskListModelBase
 
         getUnPlugCommand().setIsExecutionAllowed(isPlugCommandAvailable(false));
 
-        if (systemTreeContext != null
-                && systemTreeContext.getSystemTreeSelectedItem() != null
-                && systemTreeContext.getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter
-                &&
-                ((storage_pool) systemTreeContext.getSystemTreeSelectedItem().getEntity()).getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
-            ArrayList<Disk> disks = getSelectedItems() != null ? (ArrayList<Disk>) getSelectedItems() : null;
-            getChangeQuotaCommand().setIsAvailable(true);
-            getChangeQuotaCommand().setIsExecutionAllowed(true);
-            if (disks != null && !disks.isEmpty()) {
-                for (Disk diskItem : disks) {
-                    if (diskItem.getDiskStorageType() != DiskStorageType.IMAGE) {
-                        getChangeQuotaCommand().setIsExecutionAllowed(false);
-                        break;
-                    }
-                }
-            } else {
-                getChangeQuotaCommand().setIsExecutionAllowed(false);
-            }
-        }
+        ChangeQuotaModel.updateChangeQuotaActionAvailability(getItems() != null ? (List<Disk>) getItems() : null,
+                getSelectedItems() != null ? (List<Disk>) getSelectedItems() : null,
+                getSystemTreeSelectedItem(),
+                getChangeQuotaCommand());
     }
 
     public boolean isVmDown() {
@@ -735,5 +721,12 @@ public class VmDiskListModel extends VmDiskListModelBase
     @Override
     protected String getListName() {
         return "VmDiskListModel"; //$NON-NLS-1$
+    }
+
+    public SystemTreeItemModel getSystemTreeSelectedItem() {
+        if (getSystemTreeContext() == null) {
+            return null;
+        }
+        return getSystemTreeContext().getSystemTreeSelectedItem();
     }
 }

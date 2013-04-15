@@ -80,7 +80,7 @@ LEFT JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images
 LEFT OUTER JOIN storage_domain_static_view ON image_storage_domain_map.storage_domain_id = storage_domain_static_view.id
 LEFT OUTER JOIN snapshots ON images.vm_snapshot_id = snapshots.snapshot_id
 LEFT OUTER JOIN quota ON images.quota_id = quota.id
-LEFT OUTER JOIN storage_pool ON storage_pool.id = quota.storage_pool_id
+LEFT OUTER JOIN storage_pool ON storage_pool.id = storage_domain_static_view.storage_pool_id
 WHERE images.image_guid != '00000000-0000-0000-0000-000000000000';
 
 

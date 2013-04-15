@@ -1,19 +1,17 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Disk;
-import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -27,7 +25,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -210,25 +208,10 @@ public class TemplateDiskListModel extends SearchableListModel
         getCopyCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
                 && isCopyCommandAvailable());
 
-        if (systemTreeContext != null
-                && systemTreeContext.getSystemTreeSelectedItem() != null
-                && systemTreeContext.getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter
-                &&
-                ((storage_pool) systemTreeContext.getSystemTreeSelectedItem().getEntity()).getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
-            ArrayList<Disk> disks = getSelectedItems() != null ? (ArrayList<Disk>) getSelectedItems() : null;
-            getChangeQuotaCommand().setIsAvailable(true);
-            getChangeQuotaCommand().setIsExecutionAllowed(true);
-            if (disks != null && !disks.isEmpty()) {
-                for (Disk diskItem : disks) {
-                    if (diskItem.getDiskStorageType() != DiskStorageType.IMAGE) {
-                        getChangeQuotaCommand().setIsExecutionAllowed(false);
-                        break;
-                    }
-                }
-            } else {
-                getChangeQuotaCommand().setIsExecutionAllowed(false);
-            }
-        }
+        ChangeQuotaModel.updateChangeQuotaActionAvailability(getItems() != null ? (List<Disk>) getItems() : null,
+                getSelectedItems() != null ? (List<Disk>) getSelectedItems() : null,
+                getSystemTreeSelectedItem(),
+                getChangeQuotaCommand());
     }
 
     private boolean isCopyCommandAvailable() {
@@ -352,4 +335,12 @@ public class TemplateDiskListModel extends SearchableListModel
                 },
                 this);
     }
+
+    public SystemTreeItemModel getSystemTreeSelectedItem() {
+        if (getSystemTreeContext() == null) {
+            return null;
+        }
+        return getSystemTreeContext().getSystemTreeSelectedItem();
+    }
+
 }

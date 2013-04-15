@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.disks;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
@@ -11,10 +12,8 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -30,7 +29,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaModel;
@@ -64,6 +62,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
 
     private UICommand privateEditCommand;
 
+    @Override
     public UICommand getEditCommand()
     {
         return privateEditCommand;
@@ -446,24 +445,11 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         getRemoveCommand().setIsExecutionAllowed(disks != null && disks.size() > 0 && isRemoveCommandAvailable());
         getMoveCommand().setIsExecutionAllowed(disks != null && disks.size() > 0 && isMoveCommandAvailable());
         getCopyCommand().setIsExecutionAllowed(disks != null && disks.size() > 0 && isCopyCommandAvailable());
-        getChangeQuotaCommand().setIsAvailable(false);
-        if (getSystemTreeSelectedItem() != null
-                && getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter
-                &&
-                ((storage_pool) getSystemTreeSelectedItem().getEntity()).getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
-            getChangeQuotaCommand().setIsAvailable(true);
-            getChangeQuotaCommand().setIsExecutionAllowed(true);
-            if (disks != null && !disks.isEmpty()) {
-                for (Disk diskItem : disks) {
-                    if (diskItem.getDiskStorageType() != DiskStorageType.IMAGE) {
-                        getChangeQuotaCommand().setIsExecutionAllowed(false);
-                        break;
-                    }
-                }
-            } else {
-                getChangeQuotaCommand().setIsExecutionAllowed(false);
-            }
-        }
+
+        ChangeQuotaModel.updateChangeQuotaActionAvailability(getItems() != null ? (List<Disk>) getItems() : null,
+                getSelectedItems() != null ? (List<Disk>) getSelectedItems() : null,
+                getSystemTreeSelectedItem(),
+                getChangeQuotaCommand());
     }
 
     private boolean isMoveCommandAvailable() {
