@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.common.widget.uicommon.template;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
+import org.ovirt.engine.ui.common.widget.form.FormItemWithDefaultValue;
+import org.ovirt.engine.ui.common.widget.form.FormItemWithDefaultValue.Condition;
 import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
@@ -84,7 +86,19 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
             }
         });
 
-        formBuilder.addFormItem(new FormItem(constants.quotaTemplateGeneral(), quotaName, 4, 2) {
+        formBuilder.addFormItem(new FormItemWithDefaultValue(constants.quotaTemplateGeneral(),
+                quotaName,
+                4,
+                2,
+                constants.notConfigured(),
+                new Condition() {
+
+                    @Override
+                    public boolean isTrue() {
+                        String quotaName = getModel().getQuotaName();
+                        return quotaName != null && quotaName != "";
+                    }
+                }) {
             @Override
             public boolean isVisible() {
                 return getModel().isQuotaAvailable();

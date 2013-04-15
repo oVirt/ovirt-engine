@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.common.widget.uicommon.vm;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
+import org.ovirt.engine.ui.common.widget.form.FormItemWithDefaultValue;
+import org.ovirt.engine.ui.common.widget.form.FormItemWithDefaultValue.Condition;
 import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
@@ -10,7 +12,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-
 public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralModel> {
 
     interface Driver extends SimpleBeanEditorDriver<VmGeneralModel, VmGeneralModelForm> {
@@ -85,7 +86,20 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
         formBuilder.addFormItem(new FormItem(constants.runOnVm(), defaultHost, 1, 2));
         formBuilder.addFormItem(new FormItem(constants.customPropertiesVm(), customProperties, 2, 2));
         formBuilder.addFormItem(new FormItem(constants.clusterCompatibilityVersionVm(), compatibilityVersion, 3, 2));
-        formBuilder.addFormItem(new FormItem(constants.quotaVm(), quotaName, 4, 2) {
+
+        formBuilder.addFormItem(new FormItemWithDefaultValue(constants.quotaVm(),
+                quotaName,
+                4,
+                2,
+                constants.notConfigured(),
+                new Condition() {
+
+                    @Override
+                    public boolean isTrue() {
+                        String quotaName = getModel().getQuotaName();
+                        return quotaName != null && quotaName != "";
+                    }
+                }) {
 
             @Override
             public boolean isVisible() {

@@ -1221,4 +1221,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Details")
     String details();
 
+    @DefaultStringValue("Not Configured")
+    String notConfigured();
 }
