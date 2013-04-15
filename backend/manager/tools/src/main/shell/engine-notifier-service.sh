@@ -23,7 +23,12 @@ export JAVA_HOME
 # Path to the engine-notifier launch script
 NOTIFIER_SCRIPT=/usr/share/ovirt-engine/bin/engine-notifier.sh
 
-cd $(getent passwd $ENGINE_USER | cut -d: -f6)
+startup_dir="$(getent passwd $ENGINE_USER | cut -d: -f6)"
+if [ -d "$startup_dir" ]; then
+    cd "$startup_dir"
+else
+    cd /
+fi
 
 if [ -z "$SHUTDOWN_WAIT" ]; then
     SHUTDOWN_WAIT=10
