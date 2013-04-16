@@ -1,12 +1,10 @@
 package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
-import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 import org.ovirt.engine.core.utils.cache.CacheManager;
 
-public abstract class TimeoutBase implements Serializable {
-    private static final long serialVersionUID = -4969034051659487755L;
+public abstract class TimeoutBase {
     private boolean mUseTimeout;
     private long mEndTime = 0L;
 
