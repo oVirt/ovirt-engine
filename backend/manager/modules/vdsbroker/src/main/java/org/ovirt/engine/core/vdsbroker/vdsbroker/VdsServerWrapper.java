@@ -445,20 +445,6 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public ServerConnectionStatusReturnForXmlRpc validateStorageServerConnection(int serverType, String spUUID,
-            Map<String, String>[] args) {
-        try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.validateStorageServerConnection(serverType, spUUID, args);
-            ServerConnectionStatusReturnForXmlRpc wrapper =
-                    new ServerConnectionStatusReturnForXmlRpc(xmlRpcReturnValue);
-            return wrapper;
-        } catch (UndeclaredThrowableException ute) {
-            throw new XmlRpcRunTimeException(ute);
-        }
-
-    }
-
-    @Override
     public ServerConnectionStatusReturnForXmlRpc disconnectStorageServer(int serverType, String spUUID,
             Map<String, String>[] args) {
         try {

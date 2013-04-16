@@ -80,8 +80,6 @@ public interface VdsServerConnector {
 
     public Map<String, Object> connectStorageServer(int serverType, String spUUID, Map<String, String>[] args);
 
-    public Map<String, Object> validateStorageServerConnection(int serverType, String spUUID, Map<String, String>[] args);
-
     public Map<String, Object> disconnectStorageServer(int serverType, String spUUID, Map<String, String>[] args);
 
     public Map<String, Object> getStorageConnectionsList(String spUUID);
