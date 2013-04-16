@@ -252,7 +252,7 @@ public final class AsyncDataProvider {
                     ArrayList<String> fileNameList = new ArrayList<String>();
                     for (RepoFileMetaData RepoFileMetaData : repoList)
                     {
-                        fileNameList.add(RepoFileMetaData.getRepoFileName());
+                        fileNameList.add(RepoFileMetaData.getRepoImageId());
                     }
 
                     Collections.sort(fileNameList, new Linq.CaseInsensitiveComparer());
@@ -278,7 +278,7 @@ public final class AsyncDataProvider {
                     ArrayList<String> fileNameList = new ArrayList<String>();
                     for (RepoFileMetaData RepoFileMetaData : repoList)
                     {
-                        fileNameList.add(RepoFileMetaData.getRepoFileName());
+                        fileNameList.add(RepoFileMetaData.getRepoImageId());
                     }
 
                     Collections.sort(fileNameList, new Linq.CaseInsensitiveComparer());

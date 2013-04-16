@@ -3886,13 +3886,15 @@
 
     <table name="repo_file_meta_data">
         <column>repo_domain_id</column>
-        <column>repo_file_name</column>
+        <column>repo_image_id</column>
+        <column>repo_image_name</column>
         <column>size</column>
         <column>last_refreshed</column>
         <column>file_type</column>
         <row>
             <value>d034f3b2-fb9c-414a-b1be-1e642cfe57ae</value>
             <value>iso1.iso</value>
+            <null />
             <value>0</value>
             <value>1300701900174</value>
             <value>1</value>
@@ -3900,6 +3902,7 @@
         <row>
             <value>d034f3b2-fb9c-414a-b1be-1e642cfe57ae</value>
             <value>floppy.vfd</value>
+            <null />
             <value>0</value>
             <value>1300701900174</value>
             <value>2</value>
@@ -3907,6 +3910,7 @@
         <row>
             <value>d034f3b2-fb9c-414a-b1be-1e642cfe57ae</value>
             <value>floppy2.vfd</value>
+            <null />
             <value>0</value>
             <value>1300701900172</value>
             <value>2</value>
@@ -3914,6 +3918,7 @@
         <row>
             <value>d034f3b2-fb9c-414a-b1be-1e642cfe57ae</value>
             <value>unknown.unknown</value>
+            <null />
             <value>0</value>
             <value>1300701900171</value>
             <value>0</value>

@@ -471,7 +471,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             ArrayList<RepoFileMetaData> repoList =
                     (ArrayList<RepoFileMetaData>) returnValues.get(8).getReturnValue();
             for (RepoFileMetaData RepoFileMetaData : repoList) {
-                isos.add(RepoFileMetaData.getRepoFileName());
+                isos.add(RepoFileMetaData.getRepoImageId());
             }
         }
 

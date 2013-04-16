@@ -2,7 +2,8 @@
 -- [repo_file_meta_data] Table
 --
 Create or replace FUNCTION InsertRepo_domain_file_meta_data(v_repo_domain_id UUID,
-    v_repo_file_name VARCHAR(256),
+    v_repo_image_id VARCHAR(256),
+    v_repo_image_name VARCHAR(256),
     v_size BIGINT,
     v_date_created TIMESTAMP WITH TIME ZONE,
     v_last_refreshed BIGINT,
@@ -11,8 +12,10 @@ RETURNS VOID
    AS $procedure$
 BEGIN
 
-INSERT INTO repo_file_meta_data(repo_domain_id, repo_file_name, size, date_created, last_refreshed, file_type)
-    VALUES(v_repo_domain_id, v_repo_file_name, v_size, v_date_created, v_last_refreshed, v_file_type);
+INSERT INTO repo_file_meta_data(repo_domain_id, repo_image_id, repo_image_name, size, date_created,
+        last_refreshed, file_type)
+    VALUES(v_repo_domain_id, v_repo_image_id, v_repo_image_name, v_size, v_date_created,
+        v_last_refreshed, v_file_type);
 
 END; $procedure$
 LANGUAGE plpgsql;

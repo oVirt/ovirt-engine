@@ -205,10 +205,8 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
 
         assertNotNull(listOfRepoFiles);
         assertSame(true, !listOfRepoFiles.isEmpty());
-        assertSame(
-                true,
-                listOfRepoFiles.get(0).getRepoFileName()
-                        .equals(newRepoFileMap.getRepoFileName()));
+        assertEquals(listOfRepoFiles.get(0).getRepoImageId(),
+                newRepoFileMap.getRepoImageId());
         assertSame(true,
                 listOfRepoFiles.get(0).getLastRefreshed() == newRepoFileMap
                         .getLastRefreshed());
@@ -237,9 +235,9 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
         assertNotSame(true, listOfRepoFiles.isEmpty());
         RepoFileMetaData repoFile = listOfRepoFiles.get(0);
         assertNotNull(repoFile);
-        String oldRepoFileName = repoFile.getRepoFileName();
-        newRepoFileMap.setRepoFileName("updatedFileName"
-                + newRepoFileMap.getRepoFileName());
+        String oldRepoImageId = repoFile.getRepoImageId();
+        newRepoFileMap.setRepoImageId("updatedFileName"
+                + newRepoFileMap.getRepoImageId());
 
         // Remove the file from cache table
         repoFileMetaDataDao.removeRepoDomainFileList(FixturesTool.STORAGE_DOAMIN_NFS_ISO, ImageFileType.ISO);
@@ -256,7 +254,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
         assertNotNull(repoFile);
 
         // Check if not same file name as in the old file.
-        assertNotSame(oldRepoFileName, newRepoFile.getRepoFileName());
+        assertNotSame(oldRepoImageId, newRepoFile.getRepoImageId());
     }
 
     /**
@@ -301,7 +299,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
     private static RepoFileMetaData getNewIsoRepoFile() {
         RepoFileMetaData newRepoFileMap = new RepoFileMetaData();
         newRepoFileMap.setFileType(ImageFileType.ISO);
-        newRepoFileMap.setRepoFileName("isoDomain.iso");
+        newRepoFileMap.setRepoImageId("isoDomain.iso");
         newRepoFileMap.setLastRefreshed(System.currentTimeMillis());
         newRepoFileMap.setSize(0);
         newRepoFileMap.setDateCreated(null);

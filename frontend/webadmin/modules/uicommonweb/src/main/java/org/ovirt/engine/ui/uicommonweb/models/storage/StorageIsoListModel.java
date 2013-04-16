@@ -170,7 +170,7 @@ public class StorageIsoListModel extends SearchableListModel
                 Collections.sort(repoFileList, new Comparator<RepoFileMetaData>() {
                     @Override
                     public int compare(RepoFileMetaData a, RepoFileMetaData b) {
-                        return a.getRepoFileName().compareToIgnoreCase(b.getRepoFileName());
+                        return a.getRepoImageId().compareToIgnoreCase(b.getRepoImageId());
                     }
                 });
 
@@ -178,8 +178,8 @@ public class StorageIsoListModel extends SearchableListModel
 
                 for (RepoFileMetaData repoFileItem : repoFileList) {
                     EntityModel entityItem = new EntityModel();
-                    entityItem.setHashName(repoFileItem.getRepoFileName());
-                    entityItem.setTitle(repoFileItem.getRepoFileName());
+                    entityItem.setHashName(repoFileItem.getRepoImageId());
+                    entityItem.setTitle(repoFileItem.getRepoImageTitle());
                     entityItem.setEntity(repoFileItem.getFileType());
                     entityList.add(entityItem);
                 }

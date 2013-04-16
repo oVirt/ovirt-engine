@@ -15,7 +15,8 @@ public class RepoFileMetaData extends IVdcQueryable implements Serializable {
     private VDSStatus vdsStatus;
     private Guid repoDomainId = new Guid();
     private StorageDomainStatus storageDomainStatus;
-    private String repoFileName;
+    private String repoImageId;
+    private String repoImageName;
     private long size = 0;
     private Date dateCreated = new Date();
     private long lastRefreshed;
@@ -103,18 +104,47 @@ public class RepoFileMetaData extends IVdcQueryable implements Serializable {
     }
 
     /**
-     * @param repoFileName
-     *            the repository file name to set
+     * @param repoImageId
+     *            the repository image id to set
      */
-    public void setRepoFileName(String repoFileName) {
-        this.repoFileName = repoFileName;
+    public void setRepoImageId(String repoImageId) {
+        this.repoImageId = repoImageId;
     }
 
     /**
-     * @return the repository file name.
+     * @return the repository image id
      */
-    public String getRepoFileName() {
-        return repoFileName;
+    public String getRepoImageId() {
+        return repoImageId;
+    }
+
+    /**
+     * @param repoImageName
+     *            the repository image name to set
+     */
+    public void setRepoImageName(String repoImageName) {
+        this.repoImageName = repoImageName;
+    }
+
+    /**
+     * @return the repository image name
+     */
+    public String getRepoImageName() {
+        return repoImageName;
+    }
+
+    /**
+     * @return the repository image title to be displayed
+     */
+    public String getRepoImageTitle() {
+        if (repoImageName != null) {
+            // To provide an hint about the image id and at the same time
+            // maintain the image title short we just report 7 characters
+            // of the id (similarly to what git does with hashes).
+            return repoImageName + " (" + repoImageId.substring(0, 7) + ")";
+        } else {
+            return repoImageId;
+        }
     }
 
     /**

@@ -338,7 +338,7 @@ public class VmRunHandler {
                 List<RepoFileMetaData> repoFileNameList = (List<RepoFileMetaData>) ret.getReturnValue();
                 if (repoFileNameList != null) {
                     for (RepoFileMetaData isoFileMetaData : (List<RepoFileMetaData>) ret.getReturnValue()) {
-                        if (isoFileMetaData.getRepoFileName().equals(runParams.getDiskPath())) {
+                        if (isoFileMetaData.getRepoImageId().equals(runParams.getDiskPath())) {
                             retValForIso = true;
                             break;
                         }
@@ -361,7 +361,7 @@ public class VmRunHandler {
                 if (repoFileNameList != null) {
 
                     for (RepoFileMetaData isoFileMetaData : (List<RepoFileMetaData>) ret.getReturnValue()) {
-                        if (isoFileMetaData.getRepoFileName().equals(runParams.getFloppyPath())) {
+                        if (isoFileMetaData.getRepoImageId().equals(runParams.getFloppyPath())) {
                             retValForFloppy = true;
                             break;
                         }

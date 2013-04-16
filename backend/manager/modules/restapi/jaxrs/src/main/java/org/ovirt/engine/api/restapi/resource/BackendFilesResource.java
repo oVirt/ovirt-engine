@@ -79,7 +79,7 @@ public class BackendFilesResource
                                     queryParams);
         List<String> fileNames = new LinkedList<String>();
         for (RepoFileMetaData file : files) {
-            fileNames.add(file.getRepoFileName());
+            fileNames.add(file.getRepoImageId());
         }
         return fileNames;
     }

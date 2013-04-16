@@ -40,7 +40,8 @@ public class RepoFileMetaDataDAODbFacadeImpl extends BaseDAODbFacade implements 
     public void addRepoFileMap(RepoFileMetaData map) {
         MapSqlParameterSource parameterSource =
                 getCustomMapSqlParameterSource().addValue("repo_domain_id", map.getRepoDomainId())
-                        .addValue("repo_file_name", map.getRepoFileName())
+                        .addValue("repo_image_id", map.getRepoImageId())
+                        .addValue("repo_image_name", map.getRepoImageName())
                         .addValue("size", map.getSize())
                         .addValue("date_created", map.getDateCreated())
                         .addValue("last_refreshed", map.getLastRefreshed())
@@ -108,7 +109,8 @@ public class RepoFileMetaDataDAODbFacadeImpl extends BaseDAODbFacade implements 
         public RepoFileMetaData mapRow(ResultSet rs, int rowNum) throws SQLException {
             RepoFileMetaData entity = new RepoFileMetaData();
             entity.setRepoDomainId(Guid.createGuidFromString(rs.getString("repo_domain_id")));
-            entity.setRepoFileName(rs.getString("repo_file_name"));
+            entity.setRepoImageId(rs.getString("repo_image_id"));
+            entity.setRepoImageName(rs.getString("repo_image_name"));
             entity.setSize(rs.getLong("size"));
             entity.setDateCreated((Date) rs.getObject("date_created"));
             entity.setLastRefreshed(rs.getLong("last_refreshed"));

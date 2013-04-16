@@ -515,7 +515,8 @@ public class IsoDomainListSyncronizer {
                                 repo_md.setSize(0);
                                 repo_md.setRepoDomainId(repoStorageDomainId);
                                 repo_md.setDateCreated(null);
-                                repo_md.setRepoFileName(isoFile);
+                                repo_md.setRepoImageId(isoFile);
+                                repo_md.setRepoImageName(null);
                                 repo_md.setFileType(imageType);
                                 repoFileMetaDataDao.addRepoFileMap(repo_md);
                             }

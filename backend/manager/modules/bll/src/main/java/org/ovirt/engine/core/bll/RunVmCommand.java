@@ -607,7 +607,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             Version bestClusterVer = null;
             int bestToolVer = 0;
             for (RepoFileMetaData map : repoFilesMap) {
-                String fileName = map.getRepoFileName() != null ? map.getRepoFileName() : "";
+                String fileName = StringUtils.defaultString(map.getRepoImageId(), "");
                 Matcher matchToolPattern =
                         Pattern.compile(IsoDomainListSyncronizer.getRegexToolPattern()).matcher(fileName);
                 if (matchToolPattern.find()) {

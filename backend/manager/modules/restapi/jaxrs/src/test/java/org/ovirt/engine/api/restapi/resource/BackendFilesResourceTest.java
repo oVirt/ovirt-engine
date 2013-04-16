@@ -197,7 +197,7 @@ public class BackendFilesResourceTest
         List<RepoFileMetaData> isos = new ArrayList<RepoFileMetaData>();
         for (int i = 0; i < NAMES.length; i++) {
             RepoFileMetaData file = new RepoFileMetaData();
-            file.setRepoFileName(NAMES[i]);
+            file.setRepoImageId(NAMES[i]);
             isos.add(file);
         }
         return isos;
