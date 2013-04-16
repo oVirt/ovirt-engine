@@ -28,4 +28,14 @@ public class GlusterFeatureSupported {
         return supportedInConfig(ConfigValues.GlusterRefreshHeavyWeight, version);
     }
 
+    /**
+     *
+     * @param version
+     *          Compatibility version to check for.
+     * @return <code>true</code> if gluster hooks management feature is enabled, <code>false</code> if it's not.
+     */
+    public static boolean glusterHooks(Version version) {
+        return supportedInConfig(ConfigValues.GlusterHooksEnabled, version);
+    }
+
 }

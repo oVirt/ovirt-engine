@@ -134,15 +134,18 @@ select fn_db_add_config_value('FreeSpaceCriticalLowInGB','5','general');
 select fn_db_add_config_value('FreeSpaceLow','10','general');
 
 -- Gluster related
+select fn_db_add_config_value('GlusterHooksEnabled', 'false', '3.0');
+select fn_db_add_config_value('GlusterHooksEnabled', 'false', '3.1');
+select fn_db_add_config_value('GlusterHooksEnabled', 'false', '3.2');
 select fn_db_add_config_value('GlusterRefreshHeavyWeight', 'false', '3.0');
 select fn_db_add_config_value('GlusterRefreshHeavyWeight', 'false', '3.1');
+select fn_db_add_config_value('GlusterRefreshRateHooks', '7200', 'general');
 select fn_db_add_config_value('GlusterRefreshRateLight', '5', 'general');
 select fn_db_add_config_value('GlusterRefreshRateHeavy', '300', 'general');
 select fn_db_add_config_value('GlusterSupport', 'false', '3.0');
 select fn_db_add_config_value('GlusterVolumeOptionGroupVirtValue','virt','general');
 select fn_db_add_config_value('GlusterVolumeOptionOwnerUserVirtValue','36','general');
 select fn_db_add_config_value('GlusterVolumeOptionOwnerGroupVirtValue','36','general');
-
 select fn_db_add_config_value('GuestToolsSetupIsoPrefix','RHEV-toolsSetup_','general');
 select fn_db_add_config_value('HardwareInfoEnabled','false','3.0');
 select fn_db_add_config_value('HardwareInfoEnabled','false','3.1');

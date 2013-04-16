@@ -113,7 +113,11 @@ public class GlusterHookEntity extends IVdcQueryable implements BusinessEntity<G
 
     public void setContentType(String contentType) {
         if (contentType != null) {
-            this.contentType = GlusterHookContentType.valueOf(contentType);
+            if (contentType.toLowerCase().contains("binary")) {
+                this.contentType = GlusterHookContentType.BINARY;
+            } else {
+                this.contentType = GlusterHookContentType.TEXT;
+            }
         }
     }
 
@@ -236,5 +240,8 @@ public class GlusterHookEntity extends IVdcQueryable implements BusinessEntity<G
         return getId();
     }
 
-
+    public String getHookKey() {
+        return new StringBuilder().append(glusterCommand).append("-")
+                .append(stage).append("-").append(name).toString();
+    }
 }

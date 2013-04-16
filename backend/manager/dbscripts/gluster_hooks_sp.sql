@@ -205,7 +205,7 @@ Create or replace FUNCTION InsertGlusterServerHook(v_hook_id UUID,
 RETURNS VOID
 AS $procedure$
 BEGIN
-    INSERT INTO gluster_server_hooks(hook_id, server_id, host_status, content_type, checksum)
+    INSERT INTO gluster_server_hooks(hook_id, server_id, hook_status, content_type, checksum)
     VALUES(v_hook_id, v_server_id, v_hook_status, v_content_type, v_checksum);
     UPDATE gluster_hooks
     SET _update_date = LOCALTIMESTAMP
@@ -235,7 +235,7 @@ RETURNS VOID
 AS $procedure$
 BEGIN
     UPDATE gluster_server_hooks
-    SET host_status = v_hook_status,
+    SET hook_status = v_hook_status,
         content_type = v_content_type,
         checksum = v_checksum,
         _update_date = LOCALTIMESTAMP

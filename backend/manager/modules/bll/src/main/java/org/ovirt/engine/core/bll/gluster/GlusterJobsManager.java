@@ -28,16 +28,24 @@ public class GlusterJobsManager {
                 "refreshLightWeightData",
                 new Class[0],
                 new Object[0],
-                getGlusterRefreshRateLight(),
-                getGlusterRefreshRateLight(),
+                getRefreshRate(ConfigValues.GlusterRefreshRateLight),
+                getRefreshRate(ConfigValues.GlusterRefreshRateLight),
                 TimeUnit.SECONDS);
 
         scheduler.scheduleAFixedDelayJob(GlusterSyncJob.getInstance(),
                 "refreshHeavyWeightData",
                 new Class[0],
                 new Object[0],
-                getGlusterRefreshRateHeavy(),
-                getGlusterRefreshRateHeavy(),
+                getRefreshRate(ConfigValues.GlusterRefreshRateHeavy),
+                getRefreshRate(ConfigValues.GlusterRefreshRateHeavy),
+                TimeUnit.SECONDS);
+
+        scheduler.scheduleAFixedDelayJob(GlusterHookSyncJob.getInstance(),
+                "refreshHooks",
+                new Class[0],
+                new Object[0],
+                getRefreshRate(ConfigValues.GlusterRefreshRateHooks),
+                getRefreshRate(ConfigValues.GlusterRefreshRateHooks),
                 TimeUnit.SECONDS);
 
     }
@@ -47,12 +55,8 @@ public class GlusterJobsManager {
         return ((appMode & ApplicationMode.GlusterOnly.getValue()) > 0);
     }
 
-    private static int getGlusterRefreshRateLight() {
-        return Config.<Integer> GetValue(ConfigValues.GlusterRefreshRateLight);
-    }
-
-    private static int getGlusterRefreshRateHeavy() {
-        return Config.<Integer> GetValue(ConfigValues.GlusterRefreshRateHeavy);
+    private static int getRefreshRate(ConfigValues refreshRateConfig) {
+        return Config.<Integer> GetValue(refreshRateConfig);
     }
 
 }

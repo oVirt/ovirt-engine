@@ -51,14 +51,14 @@ public final class AuditLogDirector {
         initHostSeverities();
         initStorageSeverities();
         initTaskSeverities();
-        initGlusterVolumeSeverities();
+        initGlusterSeverities();
         initDwhSeverities();
         initConfigSeverities();
         initUserAccountSeverities();
         initCommonSeverities();
     }
 
-    private static void initGlusterVolumeSeverities() {
+    private static void initGlusterSeverities() {
         severities.put(AuditLogType.GLUSTER_VOLUME_CREATE, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.GLUSTER_VOLUME_CREATE_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.GLUSTER_VOLUME_OPTION_SET, AuditLogSeverity.NORMAL);
@@ -106,6 +106,10 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.GLUSTER_HOOK_DISABLE, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.GLUSTER_HOOK_DISABLE_PARTIAL, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.GLUSTER_HOOK_DISABLE_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.GLUSTER_HOOK_LIST_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.GLUSTER_HOOK_CONFLICT_DETECTED, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.GLUSTER_HOOK_ADDED, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.GLUSTER_HOOK_REMOVED, AuditLogSeverity.NORMAL);
     }
 
     private static void initDefaultSeverities() {

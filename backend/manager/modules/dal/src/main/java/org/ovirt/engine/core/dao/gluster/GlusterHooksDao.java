@@ -57,6 +57,8 @@ public interface GlusterHooksDao extends DAO, SearchDAO<GlusterHookEntity>, Mass
 
     public void updateGlusterHookConflictStatus(Guid hookId, Integer conflictStatus);
 
+    public void saveOrUpdateGlusterServerHook(GlusterServerHook serverHook);
+
     public void saveGlusterServerHook(GlusterServerHook serverHook);
 
     public void updateGlusterServerHookChecksum(Guid hookId, Guid serverId, String checksum);

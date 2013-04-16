@@ -1348,6 +1348,14 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     GlusterRefreshHeavyWeight(423),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    GlusterHooksEnabled(424),
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("600")
+    GlusterRefreshRateHooks(425),
+
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Auto")
     ClientConsoleModeDefault(501),

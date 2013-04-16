@@ -75,6 +75,7 @@ public class GlusterHooksDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
         return glusterHook;
     }
 
+
     @Override
     public GlusterServerHook getGlusterServerHook(Guid hookId, Guid serverId) {
         GlusterServerHook serverHook = getCallsHandler().executeRead("GetGlusterServerHook",
@@ -163,10 +164,21 @@ public class GlusterHooksDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
                         .addValue("hook_id", serverHook.getHookId())
                         .addValue("server_id", serverHook.getServerId())
                         .addValue("hook_status", EnumUtils.nameOrNull(serverHook.getStatus()))
-                        .addValue("content_type", serverHook.getContentType())
+                        .addValue("content_type", EnumUtils.nameOrNull(serverHook.getContentType()))
                         .addValue("checksum", serverHook.getChecksum()));
 
     }
+
+    @Override
+    public void saveOrUpdateGlusterServerHook(GlusterServerHook serverHook) {
+        if (getGlusterServerHook(serverHook.getHookId(), serverHook.getServerId()) == null) {
+            saveGlusterServerHook(serverHook);
+        } else {
+            updateGlusterServerHook(serverHook);
+        }
+
+    }
+
 
     @Override
     public void updateGlusterServerHookChecksum(Guid hookId, Guid serverId, String checksum) {
