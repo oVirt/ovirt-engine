@@ -54,7 +54,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @LockIdNameAttribute
 public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmParameters> extends VmCommand<T> implements QuotaStorageDependent {
 
-    private static final long serialVersionUID = -2407757772735253053L;
     List<DiskImage> selectedActiveDisks;
 
     protected CreateAllSnapshotsFromVmCommand(Guid commandId) {

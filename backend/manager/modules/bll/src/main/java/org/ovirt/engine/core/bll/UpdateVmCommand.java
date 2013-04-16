@@ -50,7 +50,6 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationErro
 @LockIdNameAttribute
 public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T>
         implements QuotaVdsDependent, RenamedEntityInfoProvider{
-    private static final long serialVersionUID = -2444359305003244168L;
     private VM oldVm;
     private boolean quotaSanityOnly = false;
 

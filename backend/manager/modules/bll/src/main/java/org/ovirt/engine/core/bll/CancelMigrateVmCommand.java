@@ -10,8 +10,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class CancelMigrateVmCommand<T extends VmOperationParameterBase> extends VmCommand<T> {
 
-    private static final long serialVersionUID = -558126793809498909L;
-
     public CancelMigrateVmCommand(T param) {
         super(param);
     }

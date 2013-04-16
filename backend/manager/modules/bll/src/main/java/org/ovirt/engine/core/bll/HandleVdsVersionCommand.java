@@ -21,7 +21,6 @@ import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
-@SuppressWarnings("serial")
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsCommand<T> {

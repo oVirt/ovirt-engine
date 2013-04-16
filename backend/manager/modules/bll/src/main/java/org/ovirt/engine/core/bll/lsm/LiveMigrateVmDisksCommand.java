@@ -44,7 +44,6 @@ import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 @InternalCommandAttribute
 public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> extends CommandBase<T>
         implements TaskHandlerCommand<LiveMigrateVmDisksParameters>, QuotaStorageDependent {
-    private static final long serialVersionUID = -6216729539906812205L;
 
     private Map<Guid, DiskImage> diskImagesMap = new HashMap<Guid, DiskImage>();
     private Map<Guid, StorageDomain> storageDomainsMap = new HashMap<Guid, StorageDomain>();

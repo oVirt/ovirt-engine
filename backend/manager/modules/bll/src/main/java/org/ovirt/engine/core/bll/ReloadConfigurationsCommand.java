@@ -12,8 +12,6 @@ import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
 @NonTransactiveCommandAttribute
 public class ReloadConfigurationsCommand<T extends VdcActionParametersBase> extends CommandBase<T> {
 
-    private static final long serialVersionUID = -5150410775162894065L;
-
     public ReloadConfigurationsCommand(T parameters) {
         super(parameters);
     }

@@ -18,8 +18,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class AddPermissionCommand<T extends PermissionsOperationsParametes> extends PermissionsCommandBase<T> {
 
-    private static final long serialVersionUID = 6269302199550166497L;
-
     public AddPermissionCommand(T parameters) {
         super(parameters);
     }

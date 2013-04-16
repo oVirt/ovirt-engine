@@ -79,7 +79,7 @@ public class BackwardCompatibilityTaskCreationTest {
         when(dbFacade.getAsyncTaskDao()).thenReturn(asyncTaskDao);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes", "serial" })
+    @SuppressWarnings({ "unchecked", "rawtypes"})
     @DataPoints
     public static CommandBase<? extends VdcActionParametersBase>[] data() {
         return new CommandBase<?>[] {

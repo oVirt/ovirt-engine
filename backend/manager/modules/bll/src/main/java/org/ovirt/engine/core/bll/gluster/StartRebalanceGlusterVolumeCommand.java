@@ -16,8 +16,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 @NonTransactiveCommandAttribute
 public class StartRebalanceGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVolumeRebalanceParameters> {
 
-    private static final long serialVersionUID = -3036682247287725817L;
-
     public StartRebalanceGlusterVolumeCommand(GlusterVolumeRebalanceParameters params) {
         super(params);
     }

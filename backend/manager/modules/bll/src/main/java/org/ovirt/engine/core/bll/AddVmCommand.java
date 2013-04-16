@@ -69,7 +69,6 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.VMCustomProper
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationError;
 
 
-@SuppressWarnings("serial")
 @DisableInPrepareMode
 @LockIdNameAttribute
 @NonTransactiveCommandAttribute

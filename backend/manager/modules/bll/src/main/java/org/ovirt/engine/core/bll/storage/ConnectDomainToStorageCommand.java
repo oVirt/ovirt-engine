@@ -10,8 +10,6 @@ import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 @NonTransactiveCommandAttribute
 public class ConnectDomainToStorageCommand<T extends StorageDomainPoolParametersBase> extends StorageDomainCommandBase<T> {
 
-    private static final long serialVersionUID = -8725633529829678185L;
-
     public ConnectDomainToStorageCommand(T parameters) {
         super(parameters);
     }

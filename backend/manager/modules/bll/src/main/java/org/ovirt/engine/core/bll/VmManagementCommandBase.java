@@ -22,8 +22,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class VmManagementCommandBase<T extends VmManagementParametersBase> extends VmCommand<T> {
 
-    private static final long serialVersionUID = -5731227168422981908L;
-
     public VmManagementCommandBase(T parameters) {
         super(parameters);
         if (parameters.getVmStaticData() != null) {

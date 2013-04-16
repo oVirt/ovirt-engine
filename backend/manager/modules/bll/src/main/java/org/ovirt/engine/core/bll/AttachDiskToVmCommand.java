@@ -32,7 +32,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 @LockIdNameAttribute
 public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> extends AbstractDiskVmCommand<T> {
 
-    private static final long serialVersionUID = -1686587389737849288L;
     private List<PermissionSubject> permsList = null;
     private Disk disk;
 

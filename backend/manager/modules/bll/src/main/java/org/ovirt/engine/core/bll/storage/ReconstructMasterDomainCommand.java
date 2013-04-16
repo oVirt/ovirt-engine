@@ -31,7 +31,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 
-@SuppressWarnings("serial")
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameters> extends
         DeactivateStorageDomainCommand<T> {

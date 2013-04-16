@@ -25,8 +25,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute
 public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> extends VmCommand<T> {
 
-    private static final long serialVersionUID = 3577196516027044528L;
-
     public RemoveAllVmImagesCommand(T parameters) {
         super(parameters);
     }

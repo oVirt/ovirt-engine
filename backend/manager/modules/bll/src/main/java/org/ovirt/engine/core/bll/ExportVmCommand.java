@@ -56,7 +56,6 @@ import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-@SuppressWarnings("serial")
 @DisableInPrepareMode
 @LockIdNameAttribute
 @NonTransactiveCommandAttribute(forceCompensation = true)

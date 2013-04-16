@@ -14,7 +14,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class DetachDiskFromVmCommand<T extends AttachDettachVmDiskParameters> extends AbstractDiskVmCommand<T> {
 
-    private static final long serialVersionUID = -4424772106319982885L;
     private Disk disk;
     private VmDevice vmDevice;
 

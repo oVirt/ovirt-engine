@@ -41,7 +41,6 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-@SuppressWarnings("serial")
 public abstract class StorageDomainCommandBase<T extends StorageDomainParametersBase> extends
         StorageHandlingCommandBase<T> {
 

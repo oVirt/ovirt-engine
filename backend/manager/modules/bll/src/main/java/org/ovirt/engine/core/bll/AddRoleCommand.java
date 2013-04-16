@@ -11,7 +11,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class AddRoleCommand<T extends RolesOperationsParameters> extends RolesOperationCommandBase<T> {
-    private static final long serialVersionUID = 2431768094305319479L;
 
     public AddRoleCommand(T parameters) {
         super(parameters);

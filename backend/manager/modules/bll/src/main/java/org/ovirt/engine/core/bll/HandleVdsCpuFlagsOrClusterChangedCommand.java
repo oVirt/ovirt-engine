@@ -22,7 +22,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParameters> extends VdsCommand<T> {
 
     private boolean _hasFlags = true;
-    private static final long serialVersionUID = 8734106870574677571L;
 
     public HandleVdsCpuFlagsOrClusterChangedCommand(T parameters) {
         super(parameters);

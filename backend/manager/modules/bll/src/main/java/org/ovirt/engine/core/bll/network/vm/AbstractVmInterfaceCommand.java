@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
-@SuppressWarnings("serial")
 public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParameters> extends VmCommand<T> {
 
     public AbstractVmInterfaceCommand(T parameters) {

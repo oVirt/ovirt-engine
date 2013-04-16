@@ -18,8 +18,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 @LockIdNameAttribute(isWait = true)
 public class DeleteGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVolumeParameters> {
 
-    private static final long serialVersionUID = -4045244619084727618L;
-
     public DeleteGlusterVolumeCommand(GlusterVolumeParameters params) {
         super(params);
     }

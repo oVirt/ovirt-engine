@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class RolesOperationCommandBase<T extends RolesOperationsParameters> extends RolesCommandBase<T> {
-    private static final long serialVersionUID = -1384739316288406469L;
 
     /**
      * Constructor for command creation when compensation is applied on startup

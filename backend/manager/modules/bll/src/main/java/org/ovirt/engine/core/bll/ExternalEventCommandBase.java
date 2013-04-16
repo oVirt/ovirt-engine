@@ -12,8 +12,6 @@ import org.ovirt.engine.core.compat.Guid;
 
 public abstract class ExternalEventCommandBase<T extends VdcActionParametersBase> extends CommandBase<T> {
 
-    private static final long serialVersionUID = 1L;
-
     public ExternalEventCommandBase() {
         super();
     }

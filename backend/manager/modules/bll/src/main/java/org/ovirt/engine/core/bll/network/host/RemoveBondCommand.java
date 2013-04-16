@@ -26,8 +26,6 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCommand<T> {
 
-    private static final long serialVersionUID = -3746344133983175272L;
-
     public RemoveBondCommand(T parameters) {
         super(parameters);
     }

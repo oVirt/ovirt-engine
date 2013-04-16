@@ -44,7 +44,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends VmCommand<T>
         implements QuotaStorageDependent {
 
-    private static final long serialVersionUID = 3162100352844371734L;
     private List<DiskImage> _sourceImages = null;
 
     public RemoveSnapshotCommand(T parameters) {

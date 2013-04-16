@@ -15,8 +15,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 @NonTransactiveCommandAttribute
 public class ReplaceGlusterVolumeBrickCommand extends GlusterVolumeCommandBase<GlusterVolumeReplaceBrickActionParameters> {
 
-    private static final long serialVersionUID = 7453409042409619674L;
-
     public ReplaceGlusterVolumeBrickCommand(GlusterVolumeReplaceBrickActionParameters params) {
         super(params);
     }

@@ -55,7 +55,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBase<T>
         implements QuotaStorageDependent {
 
-    private static final long serialVersionUID = -4520874214339816607L;
     private Disk disk;
     private List<PermissionSubject> permsList = null;
     private List<VM> listVms;

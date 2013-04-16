@@ -8,8 +8,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class EnableGlusterHookCommand extends GlusterHookStatusChangeCommand {
 
-    private static final long serialVersionUID = 3885115530860632783L;
-
     public EnableGlusterHookCommand(GlusterHookParameters params) {
         super(params);
     }

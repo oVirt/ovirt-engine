@@ -46,7 +46,6 @@ public class CommandBaseTest {
     private String session = "";
 
     /** A dummy class for testing CommandBase's functionality */
-    @SuppressWarnings("serial")
     private class CommandBaseDummy extends CommandBase<VdcActionParametersBase> {
 
         /** A dummy constructor to pass parameters, since constructors aren't inherited in Java */
@@ -185,8 +184,6 @@ public class CommandBaseTest {
     @Test
     public void logRenamedEntity() {
         abstract class RenameCommand extends CommandBaseDummy implements RenamedEntityInfoProvider {
-
-            private static final long serialVersionUID = 1L;
 
             protected RenameCommand(VdcActionParametersBase params) {
                 super(params);

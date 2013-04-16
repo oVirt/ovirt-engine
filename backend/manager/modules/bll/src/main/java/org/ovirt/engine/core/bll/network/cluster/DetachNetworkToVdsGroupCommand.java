@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
-@SuppressWarnings("serial")
 public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupParameter> extends
         VdsGroupCommandBase<T> {
     public DetachNetworkToVdsGroupCommand(T parameters) {

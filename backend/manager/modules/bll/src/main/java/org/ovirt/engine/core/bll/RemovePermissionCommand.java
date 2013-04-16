@@ -13,7 +13,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class RemovePermissionCommand<T extends PermissionsOperationsParametes> extends PermissionsCommandBase<T> {
-    private static final long serialVersionUID = 1096724401612648520L;
 
     /**
      * Constructor for command creation when compensation is applied on startup

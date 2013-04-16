@@ -55,7 +55,6 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
  *
  * After server initialized - its will be moved to Up status.
  */
-@SuppressWarnings("serial")
 @NonTransactiveCommandAttribute
 public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePoolParametersBase> {
     private boolean _fenceSucceeded = true;

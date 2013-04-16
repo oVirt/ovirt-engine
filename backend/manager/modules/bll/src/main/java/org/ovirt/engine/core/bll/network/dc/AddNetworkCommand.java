@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
-@SuppressWarnings("serial")
 public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extends NetworkCommon<T> {
     public AddNetworkCommand(T parameters) {
         super(parameters);

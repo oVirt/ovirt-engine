@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
-@SuppressWarnings("serial")
 public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> extends CommandBase<T> {
     public NetworkCommon(T parameters) {
         super(parameters);

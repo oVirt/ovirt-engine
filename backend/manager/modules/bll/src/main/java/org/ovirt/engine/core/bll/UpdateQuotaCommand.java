@@ -19,11 +19,6 @@ import org.ovirt.engine.core.dao.QuotaDAO;
 
 public class UpdateQuotaCommand extends QuotaCRUDCommand {
 
-    /**
-     * Generated serialization UUID.
-     */
-    private static final long serialVersionUID = 8037593564998496651L;
-
     public UpdateQuotaCommand(QuotaCRUDParameters parameters) {
         super(parameters);
         setStoragePoolId(getParameters().getQuota() != null ? getParameters().getQuota().getStoragePoolId() : null);

@@ -17,8 +17,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 @LockIdNameAttribute(isWait = true)
 public class RemoveGlusterServerCommand extends GlusterCommandBase<RemoveGlusterServerParameters> {
 
-    private static final long serialVersionUID = -3658615659129620366L;
-
     public RemoveGlusterServerCommand(RemoveGlusterServerParameters params) {
         super(params);
         setVdsGroupId(getParameters().getClusterId());

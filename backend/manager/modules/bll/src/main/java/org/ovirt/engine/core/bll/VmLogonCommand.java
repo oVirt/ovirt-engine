@@ -9,8 +9,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 
 @InternalCommandAttribute
 public class VmLogonCommand<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> {
-    // Serialization id:
-    private static final long serialVersionUID = -6931460884833129361L;
 
     public VmLogonCommand(T parameters) {
         super(parameters);

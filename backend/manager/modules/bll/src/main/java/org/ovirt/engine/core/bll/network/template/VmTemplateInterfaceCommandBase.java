@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
-@SuppressWarnings("serial")
 public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInterfaceParameters>
         extends VmTemplateCommand<T> {
 

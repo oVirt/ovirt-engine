@@ -21,7 +21,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddRoleWithActionGroupsCommand<T extends RoleWithActionGroupsParameters> extends
         RolesOperationCommandBase<T> {
-    private static final long serialVersionUID = -114509092576083690L;
 
     /**
      * Constructor for command creation when compensation is applied on startup

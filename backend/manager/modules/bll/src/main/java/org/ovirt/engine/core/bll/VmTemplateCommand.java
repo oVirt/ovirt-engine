@@ -27,7 +27,6 @@ import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-@SuppressWarnings("serial")
 public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> extends CommandBase<T> {
 
     /**

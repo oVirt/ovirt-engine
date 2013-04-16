@@ -21,8 +21,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @LockIdNameAttribute
 public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends AbstractDiskVmCommand<T> {
 
-    private static final long serialVersionUID = 2022232044279588022L;
-
     protected Disk disk;
     private VmDevice oldVmDevice;
 

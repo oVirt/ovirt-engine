@@ -39,8 +39,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfVmParameters> extends VmCommand<T> {
 
-    private static final long serialVersionUID = 2636628918352438919L;
-
     private final SnapshotsManager snapshotsManager = new SnapshotsManager();
 
     /**

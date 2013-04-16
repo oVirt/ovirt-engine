@@ -17,8 +17,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 @LockIdNameAttribute(isWait = true)
 public class ResetGlusterVolumeOptionsCommand extends GlusterVolumeCommandBase<ResetGlusterVolumeOptionsParameters> {
 
-    private static final long serialVersionUID = 7051669924582153802L;
-
     public ResetGlusterVolumeOptionsCommand(ResetGlusterVolumeOptionsParameters params) {
         super(params);
     }

@@ -22,8 +22,6 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 @InternalCommandAttribute
 public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOperationCommandBase<T> {
-    // Serialization id:
-    private static final long serialVersionUID = -5403502087156599801L;
 
     // The log:
     private static final Log log = LogFactory.getLog(SetVmTicketCommand.class);

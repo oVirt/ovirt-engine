@@ -42,7 +42,6 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationError;
 
-@SuppressWarnings("serial")
 public abstract class VmCommand<T extends VmOperationParameterBase> extends CommandBase<T> {
 
     private static final int Kb = 1024;

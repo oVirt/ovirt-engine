@@ -35,7 +35,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssParameters> extends CommandBase<T> {
-    private static final long serialVersionUID = -5691756067222085075L;
     private final HashMap<Guid, VDS> vdssToMaintenance = new HashMap<Guid, VDS>();
     private ArrayList<Guid> _vdsGroupIds;
     private final List<PermissionSubject> inspectedEntitiesMap;

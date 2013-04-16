@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class UpdateRoleCommand<T extends RolesOperationsParameters> extends RolesOperationCommandBase<T> {
-    private static final long serialVersionUID = -803075031377664047L;
 
     public UpdateRoleCommand(T parameters) {
         super(parameters);

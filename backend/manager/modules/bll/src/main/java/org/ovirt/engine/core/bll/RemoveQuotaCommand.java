@@ -14,11 +14,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class RemoveQuotaCommand extends QuotaCRUDCommand {
 
-    /**
-     * Generated serialization UUID.
-     */
-    private static final long serialVersionUID = 8037593564997497667L;
-
     public RemoveQuotaCommand(QuotaCRUDParameters parameters) {
         super(parameters);
     }

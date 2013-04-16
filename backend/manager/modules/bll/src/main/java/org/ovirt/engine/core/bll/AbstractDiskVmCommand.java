@@ -37,8 +37,6 @@ import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 
 public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBase> extends VmCommand<T> {
 
-    private static final long serialVersionUID = -4596432908703489958L;
-
     public AbstractDiskVmCommand(T parameters) {
         super(parameters);
     }

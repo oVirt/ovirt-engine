@@ -19,8 +19,6 @@ import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 @LockIdNameAttribute(isWait = true)
 public class StopGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVolumeActionParameters> {
 
-    private static final long serialVersionUID = -7385050813049055828L;
-
     public StopGlusterVolumeCommand(GlusterVolumeActionParameters params) {
         super(params);
     }

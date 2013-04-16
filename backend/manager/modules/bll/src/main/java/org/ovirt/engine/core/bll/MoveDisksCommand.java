@@ -26,8 +26,6 @@ import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
 public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase<T> {
 
-    private static final long serialVersionUID = -4650248318102141136L;
-
     private List<VdcReturnValueBase> vdcReturnValues = new ArrayList<VdcReturnValueBase>();
     private List<MoveDiskParameters> moveParametersList = new ArrayList<MoveDiskParameters>();
     private Map<Guid, List<LiveMigrateDiskParameters>> vmsLiveMigrateParametersMap =

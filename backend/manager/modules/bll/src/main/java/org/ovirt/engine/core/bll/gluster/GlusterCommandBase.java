@@ -28,7 +28,6 @@ import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
  * Base class for all Gluster commands
  */
 public abstract class GlusterCommandBase<T extends VdcActionParametersBase> extends CommandBase<T> {
-    private static final long serialVersionUID = -7394070330293300587L;
     protected AuditLogType errorType;
     protected VDS upServer;
 

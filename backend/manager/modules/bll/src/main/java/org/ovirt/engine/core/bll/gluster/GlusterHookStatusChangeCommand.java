@@ -30,7 +30,6 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 @NonTransactiveCommandAttribute
 @LockIdNameAttribute(isWait = true)
 public abstract class GlusterHookStatusChangeCommand extends GlusterHookCommandBase<GlusterHookParameters> {
-    private static final long serialVersionUID = 1738006110968897175L;
     private GlusterHookEntity entity;
     protected List<String> errors = new ArrayList<String>();
 

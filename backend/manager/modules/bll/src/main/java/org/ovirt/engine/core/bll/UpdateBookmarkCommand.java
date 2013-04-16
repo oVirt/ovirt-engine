@@ -8,7 +8,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class UpdateBookmarkCommand<T extends BookmarksOperationParameters>
         extends BookmarkOperationCommand {
-    private static final long serialVersionUID = 1L;
 
     public UpdateBookmarkCommand(T parameters) {
         super(parameters);

@@ -61,8 +61,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmCommand<T>
         implements QuotaStorageDependent {
 
-    private static final long serialVersionUID = 4499428315430159917L;
-
     /**
      * Constructor for command creation when compensation is applied on startup
      *

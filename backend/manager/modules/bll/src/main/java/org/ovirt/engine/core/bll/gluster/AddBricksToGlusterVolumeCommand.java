@@ -22,8 +22,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 @LockIdNameAttribute(isWait = true)
 public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVolumeBricksActionParameters> {
 
-    private static final long serialVersionUID = 1798863209150948961L;
-
     public AddBricksToGlusterVolumeCommand(GlusterVolumeBricksActionParameters params) {
         super(params);
     }

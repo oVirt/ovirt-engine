@@ -14,8 +14,6 @@ import org.ovirt.engine.core.compat.Guid;
  */
 public abstract class GlusterHookCommandBase<T extends VdcActionParametersBase> extends GlusterCommandBase<T> {
 
-    private static final long serialVersionUID = 1L;
-
     public GlusterHookCommandBase(T params) {
         super(params);
     }

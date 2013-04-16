@@ -15,7 +15,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class AttachActionGroupsToRoleCommand<T extends ActionGroupsToRoleParameter> extends RolesCommandBase<T> {
-    private static final long serialVersionUID = -8023416661994574621L;
 
     public AttachActionGroupsToRoleCommand(T params) {
         super(params);

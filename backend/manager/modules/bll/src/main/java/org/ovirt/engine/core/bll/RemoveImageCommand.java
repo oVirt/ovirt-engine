@@ -40,7 +40,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 /**
  * This command responsible to removing image, contains all created snapshots.
  */
-@SuppressWarnings("serial")
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute(forceCompensation=true)
 public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseImagesCommand<T> {

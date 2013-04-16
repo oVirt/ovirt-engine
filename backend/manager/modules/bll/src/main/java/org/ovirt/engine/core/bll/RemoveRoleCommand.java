@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.action.RolesParameterBase;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class RemoveRoleCommand<T extends RolesParameterBase> extends RolesCommandBase<T> {
-    private static final long serialVersionUID = 429561242493669350L;
 
     public RemoveRoleCommand(T parameters) {
         super(parameters);

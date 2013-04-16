@@ -20,7 +20,6 @@ import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
-@SuppressWarnings("serial")
 public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends VmCommand<T> {
 
     private VDSGroup targetCluster;

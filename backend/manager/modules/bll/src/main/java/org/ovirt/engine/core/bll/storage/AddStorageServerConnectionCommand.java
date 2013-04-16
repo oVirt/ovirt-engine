@@ -22,7 +22,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-@SuppressWarnings("serial")
 @LockIdNameAttribute
 @InternalCommandAttribute
 public class AddStorageServerConnectionCommand<T extends StorageServerConnectionParametersBase> extends

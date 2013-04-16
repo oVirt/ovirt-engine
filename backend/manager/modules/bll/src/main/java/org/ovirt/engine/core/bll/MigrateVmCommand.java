@@ -27,7 +27,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmCommandBase<T> {
 
-    private static final long serialVersionUID = -89419649366187512L;
     private Guid _vdsDestinationId;
     protected boolean forcedMigrationForNonMigratableVM;
 

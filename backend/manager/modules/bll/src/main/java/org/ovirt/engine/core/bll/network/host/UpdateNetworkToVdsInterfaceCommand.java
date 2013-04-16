@@ -28,7 +28,6 @@ import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
-@SuppressWarnings("serial")
 public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsParameters> extends VdsNetworkCommand<T> {
 
     private List<VdsNetworkInterface> interfaces;

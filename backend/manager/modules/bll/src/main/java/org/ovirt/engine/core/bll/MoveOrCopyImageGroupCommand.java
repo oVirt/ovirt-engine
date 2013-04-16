@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
-@SuppressWarnings("serial")
 @InternalCommandAttribute
 public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> extends BaseImagesCommand<T> {
     public MoveOrCopyImageGroupCommand(T parameters) {

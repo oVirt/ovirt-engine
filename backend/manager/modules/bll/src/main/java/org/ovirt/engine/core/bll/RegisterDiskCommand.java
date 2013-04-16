@@ -17,7 +17,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class RegisterDiskCommand <T extends RegisterDiskParameters> extends BaseImagesCommand<T> implements QuotaStorageDependent {
 
-    private static final long serialVersionUID = -1201881996330878181L;
     private static final String DEFAULT_REGISTRATION_FORMAT = "RegisteredDisk_%1$tY-%1$tm-%1$td_%1$tH-%1$tM-%1$tS";
 
     public RegisterDiskCommand(T parameters) {

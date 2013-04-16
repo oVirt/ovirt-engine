@@ -14,7 +14,6 @@ import org.ovirt.engine.core.dao.gluster.GlusterOptionDao;
  * Base class for all Gluster Volume related commands
  */
 public abstract class GlusterVolumeCommandBase<T extends GlusterVolumeParameters> extends GlusterCommandBase<T> {
-    private static final long serialVersionUID = -7394070330293300587L;
 
     public GlusterVolumeCommandBase(T params) {
         super(params);

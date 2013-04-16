@@ -34,7 +34,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
-@SuppressWarnings("serial")
 public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extends
         VdsGroupOperationCommandBase<T>  implements RenamedEntityInfoProvider{
 

@@ -40,7 +40,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 @LockIdNameAttribute(isWait = true)
 public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGlusterVolumeParameters> {
 
-    private static final long serialVersionUID = 7432566785114684972L;
     private GlusterVolumeEntity volume;
 
     public CreateGlusterVolumeCommand(CreateGlusterVolumeParameters params) {

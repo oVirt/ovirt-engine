@@ -55,8 +55,6 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 @LockIdNameAttribute
 public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters> extends VmCommand<T> implements QuotaStorageDependent {
 
-    private static final long serialVersionUID = -461387501474222174L;
-
     private final Set<Guid> snapshotsToRemove = new HashSet<Guid>();
 
     /**

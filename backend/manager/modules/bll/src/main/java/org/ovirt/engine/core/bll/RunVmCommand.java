@@ -75,7 +75,6 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         implements QuotaVdsDependent {
 
-    private static final long serialVersionUID = 3317745769686161108L;
     private String _cdImagePath = "";
     private String _floppyImagePath = "";
     private boolean mResume;

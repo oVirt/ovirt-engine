@@ -13,7 +13,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 public class AddExternalEventCommand<T extends AddExternalEventParameters> extends ExternalEventCommandBase<T> {
-    private static final long serialVersionUID = 1L;
     private final String OVIRT="oVirt";
 
     public AddExternalEventCommand(T parameters) {

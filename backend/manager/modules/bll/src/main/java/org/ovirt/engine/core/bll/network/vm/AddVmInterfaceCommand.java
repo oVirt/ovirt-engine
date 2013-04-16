@@ -30,8 +30,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends AbstractVmInterfaceCommand<T> {
 
-    private static final long serialVersionUID = -835005784345476993L;
-
     public AddVmInterfaceCommand(T parameters) {
         super(parameters);
     }

@@ -15,11 +15,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class AddQuotaCommand extends QuotaCRUDCommand {
 
-    /**
-     * Generated serialization UUID.
-     */
-    private static final long serialVersionUID = 8037593564997496657L;
-
     public AddQuotaCommand(QuotaCRUDParameters parameters) {
         super(parameters);
         setStoragePoolId(getParameters().getQuota() != null ? getParameters().getQuota().getStoragePoolId() : null);

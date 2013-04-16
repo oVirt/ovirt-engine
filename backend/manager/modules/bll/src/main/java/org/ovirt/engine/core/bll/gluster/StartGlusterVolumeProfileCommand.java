@@ -14,8 +14,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 @NonTransactiveCommandAttribute
 public class StartGlusterVolumeProfileCommand extends GlusterVolumeCommandBase<GlusterVolumeParameters> {
 
-    private static final long serialVersionUID = 8083311388300152297L;
-
     public StartGlusterVolumeProfileCommand(GlusterVolumeParameters params) {
         super(params);
     }

@@ -30,7 +30,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 /**
  * Base class for all image handling commands
  */
-@SuppressWarnings("serial")
 public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> extends StorageDomainCommandBase<T> {
     private DiskImage _destinationImage;
     private DiskImage mImage;

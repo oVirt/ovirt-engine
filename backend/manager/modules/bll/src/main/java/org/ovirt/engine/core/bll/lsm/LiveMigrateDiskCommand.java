@@ -18,9 +18,6 @@ import org.ovirt.engine.core.compat.Guid;
 
 @NonTransactiveCommandAttribute
 public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends MoveOrCopyDiskCommand<T> implements TaskHandlerCommand<LiveMigrateDiskParameters> {
-    private static final long serialVersionUID = -6216729539906812205L;
-
-    /* Constructors */
 
     public LiveMigrateDiskCommand(T parameters) {
         super(parameters);

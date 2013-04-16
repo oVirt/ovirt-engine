@@ -43,7 +43,6 @@ import org.ovirt.engine.core.dao.VmDeviceDAO;
 public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> extends MoveOrCopyImageGroupCommand<T>
         implements QuotaStorageDependent {
 
-    private static final long serialVersionUID = -7219975636530710384L;
     private Map<String, Pair<String, String>> sharedLockMap;
     private List<PermissionSubject> permsList = null;
     private List<VM> listVms;

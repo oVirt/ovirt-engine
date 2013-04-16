@@ -25,7 +25,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
-@SuppressWarnings("serial")
 public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsParameters> extends VdsNetworkCommand<T> {
     private Network logicalNetwork;
 

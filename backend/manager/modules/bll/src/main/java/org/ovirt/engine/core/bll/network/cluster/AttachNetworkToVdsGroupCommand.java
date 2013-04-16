@@ -17,7 +17,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
-@SuppressWarnings("serial")
 public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupParameter> extends
         VdsGroupCommandBase<T> {
 

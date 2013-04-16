@@ -25,7 +25,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
-@SuppressWarnings("serial")
 public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParameters>
         extends VmTemplateInterfaceCommandBase<T> {
     public AddVmTemplateInterfaceCommand(T parameters) {

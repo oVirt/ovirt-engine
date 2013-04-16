@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class PermissionsCommandBase<T extends PermissionsOperationsParametes> extends CommandBase<T> {
-    private static final long serialVersionUID = -2515073672998232982L;
 
     /**
      * Constructor for command creation when compensation is applied on startup

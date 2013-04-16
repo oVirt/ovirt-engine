@@ -35,7 +35,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extends AbstractVmInterfaceCommand<T> {
 
-    private static final long serialVersionUID = -2404956975945588597L;
     private VmNetworkInterface oldIface;
     private VmDevice oldVmDevice;
     private boolean macShouldBeChanged;

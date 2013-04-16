@@ -15,8 +15,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 @InternalCommandAttribute
 public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> extends VmCommand<T> {
 
-    private static final long serialVersionUID = 6917252644139242325L;
-
     /**
      * Constructor for command creation when compensation is applied on startup
      *

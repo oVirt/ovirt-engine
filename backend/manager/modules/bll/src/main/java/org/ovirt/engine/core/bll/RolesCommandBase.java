@@ -13,7 +13,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public abstract class RolesCommandBase<T extends RolesParameterBase> extends CommandBase<T> {
-    private static final long serialVersionUID = -5335986165541561251L;
     private Role _role;
 
     /**

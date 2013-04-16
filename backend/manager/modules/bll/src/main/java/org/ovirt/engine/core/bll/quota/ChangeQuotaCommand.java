@@ -12,9 +12,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public abstract class ChangeQuotaCommand extends CommandBase<ChangeQuotaParameters> implements QuotaStorageDependent {
 
-
-    private static final long serialVersionUID = 2919605640067763395L;
-
     public ChangeQuotaCommand(ChangeQuotaParameters params) {
         super(params);
         setStoragePoolId(getParameters().getStoragePoolId());

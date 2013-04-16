@@ -240,8 +240,6 @@ public class MoveOrCopyDiskCommandTest {
      */
     private class MoveOrCopyDiskCommandDummy extends MoveOrCopyDiskCommand<MoveOrCopyImageGroupParameters> {
 
-        private static final long serialVersionUID = -1781827271090649224L;
-
         public MoveOrCopyDiskCommandDummy(MoveOrCopyImageGroupParameters parameters) {
             super(parameters);
         }

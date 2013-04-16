@@ -10,7 +10,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class DetachActionGroupsFromRoleCommand<T extends ActionGroupsToRoleParameter> extends RolesCommandBase<T> {
-    private static final long serialVersionUID = -6769273368646220254L;
 
     public DetachActionGroupsFromRoleCommand(T params) {
         super(params);

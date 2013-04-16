@@ -22,7 +22,6 @@ import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
-@SuppressWarnings("serial")
 public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsParameters> extends VdsNetworkCommand<T> {
     public DetachNetworkFromVdsInterfaceCommand(T paramenters) {
         super(paramenters);

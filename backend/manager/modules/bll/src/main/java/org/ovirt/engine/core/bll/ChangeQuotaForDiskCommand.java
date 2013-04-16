@@ -15,7 +15,6 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class ChangeQuotaForDiskCommand extends ChangeQuotaCommand {
 
-    private static final long serialVersionUID = 1165911489949172000L;
     private DiskImageBase disk;
 
     public ChangeQuotaForDiskCommand(ChangeQuotaParameters params) {

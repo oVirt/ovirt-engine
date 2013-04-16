@@ -19,7 +19,6 @@ import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
-@SuppressWarnings("serial")
 public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<T> {
 
     public AddBondCommand(T parameters) {

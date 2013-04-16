@@ -43,7 +43,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> implements QuotaStorageDependent{
 
-    private static final long serialVersionUID = -3202434016040084728L;
     private boolean hasImages;
     private final List<String> disksLeftInVm = new ArrayList<String>();
 

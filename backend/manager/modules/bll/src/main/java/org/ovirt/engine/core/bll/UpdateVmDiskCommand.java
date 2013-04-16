@@ -35,7 +35,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends AbstractDiskVmCommand<T>
         implements QuotaStorageDependent {
 
-    private static final long serialVersionUID = 5915267156998835363L;
     private List<PermissionSubject> listPermissionSubjects;
     protected final Disk oldDisk;
     protected final Disk newDisk;

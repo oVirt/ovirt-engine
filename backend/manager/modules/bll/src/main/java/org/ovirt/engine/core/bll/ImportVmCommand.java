@@ -84,7 +84,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @LockIdNameAttribute
 public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameters>
         implements QuotaStorageDependent {
-    private static final long serialVersionUID = -5500615685812075744L;
     private static final Log log = LogFactory.getLog(ImportVmCommand.class);
 
     private static VmStatic vmStaticForDefaultValues = new VmStatic();

@@ -12,7 +12,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class RemoveAdGroupCommand<T extends AdElementParametersBase> extends AdGroupsHandlingCommandBase<T> {
-    private static final long serialVersionUID = 250036567105148334L;
 
     /**
      * Constructor for command creation when compensation is applied on startup

@@ -15,8 +15,6 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
 
     private Quota quota;
 
-    private static final long serialVersionUID = 8037321564997412357L;
-
     public QuotaCRUDCommand(QuotaCRUDParameters parameters) {
         super(parameters);
     }

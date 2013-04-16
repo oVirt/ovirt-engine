@@ -34,7 +34,6 @@ import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-@SuppressWarnings("serial")
 @LockIdNameAttribute
 @NonTransactiveCommandAttribute
 public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsCommand<T> {

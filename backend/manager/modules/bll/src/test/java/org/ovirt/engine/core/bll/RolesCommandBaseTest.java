@@ -20,7 +20,6 @@ public class RolesCommandBaseTest extends AbstractRolesCommandTestBase {
     @Override
     protected RolesCommandBase<RolesParameterBase> generateCommand() {
         return new RolesCommandBase<RolesParameterBase>(getParams()) {
-            private static final long serialVersionUID = 4949793152063462580L;
 
             @Override
             protected void executeCommand() {

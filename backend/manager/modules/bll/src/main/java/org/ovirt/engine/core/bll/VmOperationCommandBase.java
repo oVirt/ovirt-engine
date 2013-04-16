@@ -9,8 +9,6 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.NGuid;
 
 public abstract class VmOperationCommandBase<T extends VmOperationParameterBase> extends VmCommand<T> {
-    // Serialization id:
-    private static final long serialVersionUID = -5440497411332483108L;
 
     // The log:
     private static final Log log = LogFactory.getLog(VmOperationCommandBase.class);

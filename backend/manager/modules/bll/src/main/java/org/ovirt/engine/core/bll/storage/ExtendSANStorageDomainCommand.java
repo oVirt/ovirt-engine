@@ -23,8 +23,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParameters> extends
         StorageDomainCommandBase<T> {
 
-    private static final long serialVersionUID = 5070823228078328883L;
-
     protected ExtendSANStorageDomainCommand(Guid commandId) {
         super(commandId);
     }
