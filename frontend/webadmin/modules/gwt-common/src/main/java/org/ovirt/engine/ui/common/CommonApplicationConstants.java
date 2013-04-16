@@ -1156,6 +1156,15 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Spice")
     String spice();
 
+    @DefaultStringValue("Auto")
+    String spiceImplAuto();
+
+    @DefaultStringValue("Native client")
+    String spiceImplNative();
+
+    @DefaultStringValue("Browser plugin")
+    String spiceImplPlugin();
+
     @DefaultStringValue("Pass Ctrl-Alt-Del to virtual machine")
     String ctrlAltDel();
 
@@ -1170,6 +1179,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Not supported for this client OS")
     String ctrlAltDeletIsNotSupportedOnWindows();
+
+    @DefaultStringValue("Your browser doesn't support SPICE plugin")
+    String pluginNotSupportedByBrowser();
 
     @DefaultStringValue("No SPICE proxy defined on system level")
     String spiceProxyCanBeEnabledOnlyWhenDefined();
@@ -1208,4 +1220,5 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Details")
     String details();
+
 }

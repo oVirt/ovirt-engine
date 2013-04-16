@@ -64,12 +64,12 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
     private ISpice privatespice;
     private ClientConsoleMode consoleMode;
 
-    public ISpice getspice() {
-        return privatespice;
-    }
-
     public void setspice(ISpice value) {
         privatespice = value;
+    }
+
+    public ClientConsoleMode getClientConsoleMode() {
+        return consoleMode;
     }
 
     static {
@@ -83,10 +83,16 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
     public SpiceConsoleModel() {
         setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
-        setSpiceImplementation();
+
+        setSpiceImplementation(
+                ClientConsoleMode.valueOf((String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ClientConsoleModeDefault)));
         getConfigurator().Configure(getspice());
 
         getspice().getConnectedEvent().addListener(this);
+    }
+
+    public ISpice getspice() {
+        return privatespice;
     }
 
     /**
@@ -99,9 +105,8 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
      * installed).
      *
      */
-    private void setSpiceImplementation() {
-        consoleMode =
-                ClientConsoleMode.valueOf((String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ClientConsoleModeDefault));
+    public void setSpiceImplementation(ClientConsoleMode consoleMode) {
+        this.consoleMode = consoleMode;
 
         switch (consoleMode) {
             case Native:

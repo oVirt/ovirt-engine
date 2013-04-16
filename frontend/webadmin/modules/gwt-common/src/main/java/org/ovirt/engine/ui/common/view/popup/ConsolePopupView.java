@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.common.widget.uicommon.popup.console.EntityModelValue
 import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel.ClientConsoleMode;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
@@ -61,6 +62,18 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     @UiField(provided = true)
     @WithElementId
     EntityModelRadioButtonEditor vncRadioButton;
+
+    @UiField(provided = true)
+    @WithElementId
+    EntityModelRadioButtonEditor spiceAutoImplRadioButton;
+
+    @UiField(provided = true)
+    @WithElementId
+    EntityModelRadioButtonEditor spiceNativeImplRadioButton;
+
+    @UiField(provided = true)
+    @WithElementId
+    EntityModelRadioButtonEditor spicePluginImplRadioButton;
 
     @UiField(provided = true)
     @WithElementId
@@ -116,6 +129,13 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
 
         spiceRadioButton = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
         spiceRadioButton.setLabel(constants.spice());
+
+        spiceAutoImplRadioButton = new EntityModelRadioButtonEditor("2"); //$NON-NLS-1$
+        spiceAutoImplRadioButton.setLabel(constants.spiceImplAuto());
+        spiceNativeImplRadioButton = new EntityModelRadioButtonEditor("2");// $NON-NLS-1$
+        spiceNativeImplRadioButton.setLabel(constants.spiceImplNative());
+        spicePluginImplRadioButton = new EntityModelRadioButtonEditor("2"); //$NON-NLS-1$
+        spicePluginImplRadioButton.setLabel(constants.spiceImplPlugin());
 
         disableSmartcard = new EntityModelValueCheckBoxEditor<ConsoleModel>(Align.RIGHT, new SpiceRenderer() {
 
@@ -286,12 +306,28 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
 
         if (spiceRadioButton.asRadioButton().getValue()) {
             setSelectedProtocol(ConsoleProtocol.SPICE);
+            setSelectedSpiceImpl();
         } else if (remoteDesktopRadioButton.asRadioButton().getValue()) {
             setSelectedProtocol(ConsoleProtocol.RDP);
         } else if (vncRadioButton.asRadioButton().getValue()) {
             setSelectedProtocol(ConsoleProtocol.VNC);
         }
 
+    }
+
+    private void setSelectedSpiceImpl() {
+        SpiceConsoleModel spiceModel = null;
+        if (model.getModel().getDefaultConsoleModel() instanceof SpiceConsoleModel) {
+            spiceModel = (SpiceConsoleModel) model.getModel().getDefaultConsoleModel();
+        }
+
+        if (spiceAutoImplRadioButton.asRadioButton().getValue()) {
+            spiceModel.setSpiceImplementation(ClientConsoleMode.Auto);
+        } else if (spiceNativeImplRadioButton.asRadioButton().getValue()) {
+            spiceModel.setSpiceImplementation(ClientConsoleMode.Native);
+        } else if (spicePluginImplRadioButton.asRadioButton().getValue()) {
+            spiceModel.setSpiceImplementation(ClientConsoleMode.Plugin);
+        }
     }
 
     private void setSelectedProtocol(ConsoleProtocol selectedProtocol) {
@@ -437,6 +473,50 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         if (!enabled) {
             enableSpiceProxy.setTitle(reason);
         }
+    }
+
+    @Override
+    public void setSpicePluginImplEnabled(boolean enabled, String reason) {
+        spicePluginImplRadioButton.setEnabled(enabled);
+        if (!enabled) {
+            spicePluginImplRadioButton.setTitle(reason);
+        }
+    }
+
+    @Override
+    public void selectSpiceImplementation(ClientConsoleMode consoleMode) {
+        switch (consoleMode) {
+        case Native:
+            spiceAutoImplRadioButton.asRadioButton().setValue(false);
+            spicePluginImplRadioButton.asRadioButton().setValue(false);
+            spiceNativeImplRadioButton.asRadioButton().setValue(true);
+            break;
+        case Plugin:
+            spiceAutoImplRadioButton.asRadioButton().setValue(false);
+            spicePluginImplRadioButton.asRadioButton().setValue(true);
+            spiceNativeImplRadioButton.asRadioButton().setValue(false);
+            break;
+        default:
+            spiceAutoImplRadioButton.asRadioButton().setValue(true);
+            spicePluginImplRadioButton.asRadioButton().setValue(false);
+            spiceNativeImplRadioButton.asRadioButton().setValue(false);
+            break;
+        }
+    }
+
+    @Override
+    public HasValueChangeHandlers<Boolean> getSpiceAutoImplRadioButton() {
+        return spiceAutoImplRadioButton.asRadioButton();
+    }
+
+    @Override
+    public HasValueChangeHandlers<Boolean> getSpiceNativeImplRadioButton() {
+        return spiceNativeImplRadioButton.asRadioButton();
+    }
+
+    @Override
+    public HasValueChangeHandlers<Boolean> getSpicePluginImplRadioButton() {
+        return spicePluginImplRadioButton.asRadioButton();
     }
 
 }

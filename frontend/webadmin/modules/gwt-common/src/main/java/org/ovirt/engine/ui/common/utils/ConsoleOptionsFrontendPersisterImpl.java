@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.HasConsoleModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel.ClientConsoleMode;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IRdp;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
@@ -19,6 +20,7 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
     private final ConsoleUtils consoleUtils;
 
     // spice options
+    private static final String SPICE_CLIENT_IMPLEMENTATION = "_spiceClientImplementation"; //$NON-NLS-1$
     private static final String CTRL_ALT_DEL = "_ctrlAltDel"; //$NON-NLS-1$
     private static final String OPEN_IN_FULL_SCREEN = "_openInFullScreen"; //$NON-NLS-1$
     private static final String SMARTCARD_ENABLED_OVERRIDDEN = "_smartcardEnabledOverridden"; //$NON-NLS-1$
@@ -53,7 +55,7 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
         clientStorage.setLocalItem(keyMaker.make(SELECTED_PROTOCOL), selectedProtocol.toString());
 
         if (selectedProtocol == ConsoleProtocol.SPICE) {
-            storeSpiceData(asSpice(model), keyMaker);
+            storeSpiceData(model, keyMaker);
         } else if (selectedProtocol == ConsoleProtocol.RDP) {
             storeRdpData(asRdp(model), keyMaker);
         }
@@ -89,7 +91,13 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
         return ((RdpConsoleModel) model.getAdditionalConsoleModel()).getrdp();
     }
 
-    protected void storeSpiceData(ISpice spice, KeyMaker keyMaker) {
+    protected void storeSpiceData(HasConsoleModel model, KeyMaker keyMaker) {
+        SpiceConsoleModel consoleModel = asSpiceConsoleModel(model);
+        ISpice spice = asSpice(model);
+
+        clientStorage.setLocalItem(keyMaker.make(SPICE_CLIENT_IMPLEMENTATION),
+                consoleModel.getClientConsoleMode().toString());
+
         storeBool(keyMaker.make(CTRL_ALT_DEL), spice.getSendCtrlAltDelete());
         storeBool(keyMaker.make(OPEN_IN_FULL_SCREEN), spice.isFullScreen());
         storeBool(keyMaker.make(SMARTCARD_ENABLED_OVERRIDDEN), spice.isSmartcardEnabledOverridden());
@@ -119,6 +127,12 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
 
         model.setSelectedProtocol(ConsoleProtocol.SPICE);
 
+        try {
+            ClientConsoleMode consoleMode = ClientConsoleMode.valueOf(clientStorage.getLocalItem(keyMaker.make(SPICE_CLIENT_IMPLEMENTATION)));
+            asSpiceConsoleModel(model).setSpiceImplementation(consoleMode);
+        } catch (Exception e) {
+        }
+
         ISpice spice = asSpice(model);
 
         if (consoleUtils.isCtrlAltDelEnabled()) {
@@ -139,7 +153,11 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
     }
 
     protected ISpice asSpice(HasConsoleModel model) {
-        return ((SpiceConsoleModel) model.getDefaultConsoleModel()).getspice();
+        return asSpiceConsoleModel(model).getspice();
+    }
+
+    protected SpiceConsoleModel asSpiceConsoleModel(HasConsoleModel model) {
+        return ((SpiceConsoleModel) model.getDefaultConsoleModel());
     }
 
     protected void storeRdpData(IRdp rdp, KeyMaker keyMaker) {

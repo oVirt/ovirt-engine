@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.HasConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel.ClientConsoleMode;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
@@ -44,6 +45,10 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         HasValueChangeHandlers<Boolean> getVncRadioButton();
 
+        HasValueChangeHandlers<Boolean> getSpiceAutoImplRadioButton();
+        HasValueChangeHandlers<Boolean> getSpiceNativeImplRadioButton();
+        HasValueChangeHandlers<Boolean> getSpicePluginImplRadioButton();
+
         void rdpSelected(boolean selected);
 
         void spiceSelected(boolean selected);
@@ -57,6 +62,10 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         void setAdditionalConsoleAvailable(boolean hasAdditionalConsole);
 
         void setSpiceConsoleAvailable(boolean available);
+
+        void selectSpiceImplementation(ClientConsoleMode consoleMode);
+
+        void setSpicePluginImplEnabled(boolean enabled, String reason);
 
         void selectWanOptionsEnabled(boolean selected);
 
@@ -186,6 +195,17 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
             }
         }
 
+        if (!consoleUtils.isBrowserPluginSupported()) {
+            getView().setSpicePluginImplEnabled(false, constants.pluginNotSupportedByBrowser());
+        }
+
+        SpiceConsoleModel spiceModel = extractSpiceModel(model);
+        if (spiceModel != null) {
+            getView().selectSpiceImplementation(spiceModel.getClientConsoleMode());
+        } else {
+            getView().selectSpiceImplementation(ClientConsoleMode.Auto);
+        }
+
         wanOptionsAvailable = consoleUtils.isWanOptionsAvailable(model.getModel());
         if (wanOptionsAvailable) {
             getView().setWanOptionsVisible(true);
@@ -259,16 +279,50 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
                 }
             }
         }));
+
+        registerHandler(getView().getSpiceAutoImplRadioButton()
+                .addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+                    @Override
+                    public void onValueChange(ValueChangeEvent<Boolean> event) {
+                        getView().selectSpiceImplementation(ClientConsoleMode.Auto);
+                    }
+                }));
+
+        registerHandler(getView().getSpiceNativeImplRadioButton()
+                .addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+                    @Override
+                    public void onValueChange(ValueChangeEvent<Boolean> event) {
+                        getView().selectSpiceImplementation(ClientConsoleMode.Native);
+                    }
+                }));
+        registerHandler(getView().getSpicePluginImplRadioButton()
+                .addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+                    @Override
+                    public void onValueChange(ValueChangeEvent<Boolean> event) {
+                        getView().selectSpiceImplementation(ClientConsoleMode.Plugin);
+                    }
+                }));
+
     }
 
     protected ISpice extractSpice(ConsolePopupModel model) {
-        ConsoleModel consoleModel = model.getModel().getDefaultConsoleModel();
-        if (!(consoleModel instanceof SpiceConsoleModel)) {
-            return null;
+        SpiceConsoleModel spiceModel = extractSpiceModel(model);
+
+        if (spiceModel != null) {
+            return spiceModel.getspice();
         }
 
-        ISpice spice = ((SpiceConsoleModel) consoleModel).getspice();
-        return spice;
+        return null;
+    }
+
+    protected SpiceConsoleModel extractSpiceModel(ConsolePopupModel model) {
+        ConsoleModel consoleModel = model.getModel().getDefaultConsoleModel();
+
+        if (consoleModel instanceof SpiceConsoleModel) {
+            return (SpiceConsoleModel) consoleModel;
+        }
+
+        return null;
     }
 
 }

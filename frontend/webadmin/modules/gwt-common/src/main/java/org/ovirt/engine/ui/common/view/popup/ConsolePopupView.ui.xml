@@ -43,6 +43,9 @@ xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.console">
 
 				<g:FlowPanel ui:field="spicePanel" addStyleNames="{style.fullWidth}">
 					<g:Label ui:field="spiceTitle" text="{constants.spiceOptions}" addStyleNames="{style.labelStyle}" />
+					<e:EntityModelRadioButtonEditor ui:field="spiceAutoImplRadioButton" />
+					<e:EntityModelRadioButtonEditor ui:field="spiceNativeImplRadioButton" />
+					<e:EntityModelRadioButtonEditor ui:field="spicePluginImplRadioButton" />
 					<w:EntityModelValueCheckBoxEditor ui:field="ctrlAltDel" />
 					<w:EntityModelValueCheckBoxEditor ui:field="enableUsbAutoshare" />
 					<w:EntityModelValueCheckBoxEditor ui:field="openInFullScreen" />

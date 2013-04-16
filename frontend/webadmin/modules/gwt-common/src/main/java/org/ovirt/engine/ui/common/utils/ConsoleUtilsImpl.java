@@ -233,6 +233,10 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
         return configurator.isSpiceProxyDefined();
     }
 
+    public boolean isBrowserPluginSupported() {
+        return configurator.isClientLinuxFirefox() || configurator.isClientWindowsExplorer();
+    }
+
     private native String getUserAgentString() /*-{
                                               var userAgent = navigator.userAgent;
                                               return userAgent;
