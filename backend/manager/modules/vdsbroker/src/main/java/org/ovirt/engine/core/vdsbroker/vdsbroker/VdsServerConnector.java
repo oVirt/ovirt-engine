@@ -232,4 +232,6 @@ public interface VdsServerConnector {
     public Map<String, Object> glusterHookDisable(String glusterCommand, String level, String hookName);
 
     public Map<String, Object> glusterHooksList();
+
+    public Map<String, Object> glusterHostUUIDGet();
 }

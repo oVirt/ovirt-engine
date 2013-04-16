@@ -243,4 +243,6 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc glusterHookDisable(String glusterCommand, String stage, String hookName);
 
     GlusterHooksListReturnForXmlRpc glusterHooksList();
+
+    OneUuidReturnForXmlRpc glusterHostUUIDGet();
 }

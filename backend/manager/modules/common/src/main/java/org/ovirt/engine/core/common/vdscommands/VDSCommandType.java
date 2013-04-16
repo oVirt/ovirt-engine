@@ -140,6 +140,7 @@ public enum VDSCommandType {
     EnableGlusterHook("org.ovirt.engine.core.vdsbroker.gluster"),
     DisableGlusterHook("org.ovirt.engine.core.vdsbroker.gluster"),
     GlusterHooksList("org.ovirt.engine.core.vdsbroker.gluster"),
+    GetGlusterHostUUID("org.ovirt.engine.core.vdsbroker.gluster"),
     ;
 
     String packageName;

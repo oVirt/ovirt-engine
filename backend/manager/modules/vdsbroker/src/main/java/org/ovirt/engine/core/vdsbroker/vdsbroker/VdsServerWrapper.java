@@ -1190,4 +1190,15 @@ public class VdsServerWrapper implements IVdsServer {
         }
     }
 
+    @Override
+    public OneUuidReturnForXmlRpc glusterHostUUIDGet() {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterHostUUIDGet();
+            OneUuidReturnForXmlRpc wrapper = new OneUuidReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
 }

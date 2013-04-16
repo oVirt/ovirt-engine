@@ -743,4 +743,8 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Failed to get gluster hook list")
     String GlusterHookListException();
+
+    @DefaultStringValue("Gluster host UUID not found")
+    String GlusterHostUUIDNotFound();
+
 }
