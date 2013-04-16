@@ -6,7 +6,7 @@ import javax.ejb.DependsOn;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
-import org.ovirt.engine.core.bll.gluster.GlusterManager;
+import org.ovirt.engine.core.bll.gluster.GlusterJobsManager;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
 import org.ovirt.engine.core.common.config.Config;
@@ -53,7 +53,8 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
         });
         StoragePoolStatusHandler.Init();
 
-        GlusterManager.getInstance().init();
+        GlusterJobsManager.init();
+
         try {
             log.info("Init VM custom properties utilities");
             VmPropertiesUtils.getInstance().init();

@@ -69,7 +69,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GlusterManagerTest {
+public class GlusterSyncJobTest {
 
     private static final String REPL_VOL_NAME = "repl-vol";
 
@@ -88,7 +88,7 @@ public class GlusterManagerTest {
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
 
-    private GlusterManager glusterManager;
+    private GlusterSyncJob glusterManager;
     private GlusterAuditLogUtil logUtil;
 
     private static final String OPTION_AUTH_ALLOW = "auth.allow";
@@ -214,7 +214,7 @@ public class GlusterManagerTest {
     @SuppressWarnings("unchecked")
     private void setupMocks() throws Exception {
         logUtil = Mockito.spy(GlusterAuditLogUtil.getInstance());
-        glusterManager = Mockito.spy(GlusterManager.getInstance());
+        glusterManager = Mockito.spy(GlusterSyncJob.getInstance());
         glusterManager.setLogUtil(logUtil);
         mockDaos();
 
