@@ -10,6 +10,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
+import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
+import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleModelsCache;
 import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
@@ -21,6 +23,8 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public abstract class IUserPortalListModel extends ListWithDetailsModel implements UserSelectedDisplayProtocolManager
 {
+    private static final ConsoleOptionsFrontendPersister frontendPersister = (ConsoleOptionsFrontendPersister) TypeResolver.getInstance().Resolve(ConsoleOptionsFrontendPersister.class);
+
     private boolean canConnectAutomatically;
 
     private UICommand editConsoleCommand;
@@ -162,6 +166,9 @@ public abstract class IUserPortalListModel extends ListWithDetailsModel implemen
 
             item.setDefaultConsole(consoleModelsCache.determineConsoleModelForVm(vm));
             item.setAdditionalConsole(consoleModelsCache.determineAdditionalConsoleModelForVm(vm));
+            if (item.getVM() != null && item.getDefaultConsoleModel() != null) {
+                frontendPersister.loadFromLocalStorage(item);
+            }
         }
     }
 
