@@ -126,15 +126,15 @@ public class BackendResource extends BaseBackendResource {
         }
     }
 
-    protected int getMaxResults() {
+    protected int getMaxResults() throws MalformedNumberException {
         if (getUriInfo()!=null && QueryHelper.hasMatrixParam(getUriInfo(), MAX)) {
             HashMap<String,String> matrixConstraints = QueryHelper.getMatrixConstraints(getUriInfo(), MAX);
             String maxString = matrixConstraints.get(MAX);
             try {
                 return Integer.valueOf(maxString);
             } catch (NumberFormatException e) {
-                LOG.error("Max number of results is not a valid number: '" + maxString + "'. Resorting to default behavior - no limit on number of query results.");
-                return NO_LIMIT;
+                LOG.error("Max number of results is not a valid number: " + maxString);
+                throw new MalformedNumberException("Max number of results is not a valid number: " + maxString);
             }
         } else {
             return NO_LIMIT;

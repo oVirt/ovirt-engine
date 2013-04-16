@@ -162,6 +162,13 @@ public class BaseBackendResource {
         }
     }
 
+    protected class MalformedNumberException extends BackendFailureException {
+        private static final long serialVersionUID = 394735369823915802L;
+        public MalformedNumberException(String msg) {
+            super(msg, Status.BAD_REQUEST);
+        }
+    }
+
     public class WebFaultException extends WebApplicationException {
 
         private static final long serialVersionUID = 394735369823915802L;

@@ -16,6 +16,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.model.TagParent;
+import org.ovirt.engine.api.restapi.resource.BaseBackendResource.WebFaultException;
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -52,14 +53,19 @@ public class BackendTagsResourceTest
         assertEquals(3, results.size());
     }
 
-    @Test
+    @Test(expected = WebFaultException.class)
     public void testList_LimitResults_BadFormat() throws Exception {
         UriInfo uriInfo = setUpUriExpectationsWithMax(true);
-        setUpQueryExpectations("");
+        setUpEntityQueryExpectations(VdcQueryType.GetAllTags,
+                                     VdcQueryParametersBase.class,
+                                     new String[] { },
+                                     new Object[] { },
+                                     setUpTags(),
+                                     null);
+        control.replay();
         collection.setUriInfo(uriInfo);
-        List<Tag> results = getCollection();
-        assertNotNull(collection);
-        assertEquals(4, results.size());
+        getCollection();
+        fail("Expected WebFaultException");
     }
 
     @Test

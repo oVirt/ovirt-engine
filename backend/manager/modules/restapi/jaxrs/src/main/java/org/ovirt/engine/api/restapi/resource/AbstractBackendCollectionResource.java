@@ -88,8 +88,12 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
             }
         }
 
-        if (QueryHelper.hasMatrixParam(getUriInfo(), MAX) && getMaxResults()!=NO_LIMIT) {
-            searchParams.setMaxCount(getMaxResults());
+        try {
+            if (QueryHelper.hasMatrixParam(getUriInfo(), MAX) && getMaxResults()!=NO_LIMIT) {
+                searchParams.setMaxCount(getMaxResults());
+            }
+        } catch (MalformedNumberException ex) {
+            handleError(ex, false);
         }
         return searchParams;
     }
