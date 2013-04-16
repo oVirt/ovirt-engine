@@ -165,10 +165,14 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                   client.DisableEffects = disableEffects;
                                                   client.ColorDepth = colorDepth;
                                                }
-                                               // set it only if the proxy is defined in VDC_OPTIONS
+
+                                               // only if the proxy is defined in VDC_OPTIONS
                                                if (spiceProxy != null) {
-                                                   client.Proxy = spiceProxy
+                                                  client.Proxy = spiceProxy;
+                                               } else {
+                                                  client.Proxy = '';
                                                }
+
                                                client.connect();
 
                                                connectedEvent.@org.ovirt.engine.ui.uicompat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/ui/uicompat/EventArgs;)(model, null);
@@ -317,9 +321,11 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                        client.ColorDepth = colorDepth;
                                                    }
 
-                                                    // only if the proxy is defined in VDC_OPTIONS
+                                                   // only if the proxy is defined in VDC_OPTIONS
                                                    if (spiceProxy != null) {
-                                                       client.Proxy = spiceProxy
+                                                       client.Proxy = spiceProxy;
+                                                   } else {
+                                                       client.Proxy = '';
                                                    }
 
                                                    client.attachEvent('ondisconnected', onDisconnected);
