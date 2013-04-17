@@ -191,7 +191,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     }
 
     protected boolean isGlusterSupportEnabled() {
-        return getVdsGroup().supportsGlusterService() && getParameters().isGlusterPeerProbeNeeded();
+        return getVdsGroup() != null && getVdsGroup().supportsGlusterService() && getParameters().isGlusterPeerProbeNeeded();
     }
 
     /**
