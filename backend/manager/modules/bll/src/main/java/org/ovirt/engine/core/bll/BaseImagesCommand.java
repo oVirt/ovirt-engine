@@ -15,8 +15,6 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -149,48 +147,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected void setImageGroupId(Guid value) {
         _imageGroupId = value;
-    }
-
-    @Override
-    protected void executeCommand() {
-        checkImageValidity();
-    }
-
-    /**
-     * Check if image is valid snapshot of vm
-     */
-    protected void checkImageValidity() {
-        try {
-            DiskImage diskImage = getImage();
-            Guid storagePoolId = diskImage.getStoragePoolId() != null ? diskImage.getStoragePoolId().getValue()
-                    : Guid.Empty;
-            Guid storageDomainId =
-                    getStorageDomainId() != null && !getStorageDomainId().getValue().equals(Guid.Empty)
-                            ? getStorageDomainId().getValue()
-                            : (diskImage.getStorageIds() != null && diskImage.getStorageIds().size() > 0
-                                    ? diskImage.getStorageIds().get(0)
-                                    : Guid.Empty);
-            Guid imageGroupId = diskImage.getId() != null ? diskImage.getId().getValue()
-                    : Guid.Empty;
-
-            DiskImage image = (DiskImage) runVdsCommand(
-                    VDSCommandType.GetImageInfo,
-                    new GetImageInfoVDSCommandParameters(storagePoolId, storageDomainId, imageGroupId,
-                            getImage().getImageId())).getReturnValue();
-
-            if (image.getImageStatus() != ImageStatus.OK) {
-                diskImage.setImageStatus(image.getImageStatus());
-                getImageDao().update(diskImage.getImage());
-                throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
-            }
-
-            diskImage.setLastModified(image.getLastModifiedDate());
-        } catch (RuntimeException ex) {
-            if (ex instanceof VdcBLLException) {
-                throw ex;
-            }
-            throw new VdcBLLException(VdcBllErrors.RESOURCE_MANAGER_VM_SNAPSHOT_MISSMATCH, ex);
-        }
     }
 
     /**

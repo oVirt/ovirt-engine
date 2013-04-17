@@ -29,8 +29,6 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
 
     @Override
     protected void executeCommand() {
-
-        super.executeCommand();
         if (removeImages()) {
             if (getParameters().getSnapshot().getType() != SnapshotType.REGULAR) {
                 getImage().setActive(true);

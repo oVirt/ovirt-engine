@@ -43,13 +43,6 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
     }
 
     @Override
-    protected void checkImageValidity() {
-        // don't do nothing, overriding base to avoid this check
-        // fails when creating vm from template on domain that the template
-        // doesn't exist on
-    }
-
-    @Override
     protected VDSReturnValue performImageVdsmOperation() {
         setDestinationImageId(Guid.NewGuid());
         mNewCreatedDiskImage = cloneDiskImage(getDestinationImageId());

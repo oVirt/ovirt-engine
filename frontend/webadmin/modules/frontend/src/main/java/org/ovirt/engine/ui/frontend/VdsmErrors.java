@@ -665,7 +665,6 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     String RESOURCE_MANAGER_VDS_NOT_FOUND();
 
-    String RESOURCE_MANAGER_VM_SNAPSHOT_MISSMATCH();
 
     String VM_TEMPLATE_CANT_LOCATE_DISKS_IN_DB();
 
