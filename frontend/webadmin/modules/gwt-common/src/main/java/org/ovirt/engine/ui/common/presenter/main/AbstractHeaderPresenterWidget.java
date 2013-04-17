@@ -78,7 +78,7 @@ public abstract class AbstractHeaderPresenterWidget<V extends AbstractHeaderPres
                 Configurator configurator = (Configurator) TypeResolver.getInstance().Resolve(Configurator.class);
                 if (configurator.isDocumentationAvailable()) {
                     String url = configurator.getDocumentationLibURL() + documentationGuidePath;
-                    WebUtils.openUrlInNewWindow(windowName, url);
+                    WebUtils.openUrlInNewWindow(windowName, url, WebUtils.OPTION_SCROLLBARS);
                 }
             }
         }));
