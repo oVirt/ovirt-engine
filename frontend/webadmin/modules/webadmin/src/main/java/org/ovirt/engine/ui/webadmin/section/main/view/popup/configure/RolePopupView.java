@@ -197,18 +197,17 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
 
     }
 
-    @SuppressWarnings("unchecked")
     private void updateTree(RoleModel model) {
         // Get tag node list
         ArrayList<SelectionTreeNodeModel> tagTreeNodes = model.getPermissionGroupModels();
 
         // Get tree view model
         ModelListTreeViewModel<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel> modelListTreeViewModel =
-                (ModelListTreeViewModel<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel>) tree.getTreeViewModel();
+                tree.getTreeViewModel();
 
         // Set root nodes
         List<SimpleSelectionTreeNodeModel> rootNodes = SimpleSelectionTreeNodeModel.fromList(tagTreeNodes);
-        modelListTreeViewModel.setRoot(rootNodes);
+        modelListTreeViewModel.setRoots(rootNodes);
 
         // Update tree data
         AsyncDataProvider<SimpleSelectionTreeNodeModel> asyncTreeDataProvider =

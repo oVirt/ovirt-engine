@@ -5,17 +5,23 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.ui.common.uicommon.model.TreeNodeModel;
+import org.ovirt.engine.ui.common.utils.ElementIdUtils;
+import org.ovirt.engine.ui.common.widget.tree.TreeModelWithElementId;
+
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.HasCell;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.HasData;
@@ -23,14 +29,14 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
-import com.google.gwt.view.client.TreeViewModel;
 
 /**
  * A TreeView Model for {@link TreeNodeModel<T>} Nodes
  */
-public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements TreeViewModel {
+public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements TreeModelWithElementId {
 
     private final class NodeSelectionHandler implements SelectionHandler<M> {
+
         private final HasData<M> display;
 
         private NodeSelectionHandler(HasData<M> display) {
@@ -43,6 +49,7 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
             display.getSelectionModel().setSelected(selectedItem,
                     selectedItem.getSelected());
         }
+
     }
 
     private final class CellLabel extends TextColumn<M> {
@@ -70,86 +77,95 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
         public Boolean getValue(M object) {
             return selectionModel.isSelected(object);
         }
+
+    }
+
+    interface ExCheckboxCellTemplate extends SafeHtmlTemplates {
+
+        /**
+         * An html string representation of a checked input box.
+         */
+        @Template("<input type=\"checkbox\" id=\"{0}\" tabindex=\"-1\" checked/>")
+        SafeHtml inputChecked(String elementId);
+
+        /**
+         * An html string representation of an unchecked input box.
+         */
+        @Template("<input type=\"checkbox\" id=\"{0}\" tabindex=\"-1\"/>")
+        SafeHtml inputUnchecked(String elementId);
+
+        /**
+         * An html string representation of a disabled checked input box.
+         */
+        @Template("<input type=\"checkbox\" id=\"{0}\" tabindex=\"-1\" checked disabled/>")
+        SafeHtml inputCheckedDisabled(String elementId);
+
+        /**
+         * An html string representation of a disabled unchecked input box.
+         */
+        @Template("<input type=\"checkbox\" id=\"{0}\" tabindex=\"-1\" disabled/>")
+        SafeHtml inputUncheckedDisabled(String elementId);
+
     }
 
     /**
      * A {@link CheckboxCell} that can be disabled
      */
     private final class ExCheckboxCell extends CheckboxCell {
-        /**
-         * An html string representation of a disabled checked input box.
-         */
-        private final SafeHtml INPUT_CHECKED_DISABLED =
-                SafeHtmlUtils.fromSafeConstant("<input type=\"checkbox\" tabindex=\"-1\" checked disabled/>"); //$NON-NLS-1$
-        /**
-         * An html string representation of a disabled unchecked input box.
-         */
-        private final SafeHtml INPUT_UNCHECKED_DISABLED =
-                SafeHtmlUtils.fromSafeConstant("<input type=\"checkbox\" tabindex=\"-1\" disabled/>"); //$NON-NLS-1$
 
-        private final SafeHtml INPUT_CHECKED_NULL_DISABLED =
-                SafeHtmlUtils.fromSafeConstant("<input type=\"checkbox\" tabindex=\"-1\" checked style=\"-moz-Field ! important; background-color: yellow;\" disabled/>"); //$NON-NLS-1$
-
-        private final SafeHtml INPUT_CHECKED_NULL =
-                SafeHtmlUtils.fromSafeConstant("<input type=\"checkbox\" tabindex=\"-1\" checked style=\"-moz-Field ! important; background-color: yellow;\"/>"); //$NON-NLS-1$
+        private final ExCheckboxCellTemplate template = GWT.create(ExCheckboxCellTemplate.class);
 
         private ExCheckboxCell(boolean dependsOnSelection, boolean handlesSelection) {
             super(dependsOnSelection, handlesSelection);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public void render(Context context, Boolean value, SafeHtmlBuilder sb) {
-            Object key = context.getKey();
             // TODO semi-checked checkbox (null value)
             // value = ((SimpleSelectionTreeNodeModel) context.getKey()).getIsSelectedNullable();
-            @SuppressWarnings("unchecked")
-            M model = (M) key;
-            if (!model.isEditable()) {
-                // disabled
-                Boolean viewData = getViewData(key);
-                if (viewData != null && viewData.equals(value)) {
-                    clearViewData(key);
-                    viewData = null;
-                }
-                // if (value == null) {
-                // sb.append(INPUT_CHECKED_NULL_DISABLED);
-                // } else
-                if (value != null && ((viewData != null) ? viewData : value)) {
-                    sb.append(INPUT_CHECKED_DISABLED);
-                } else {
-                    sb.append(INPUT_UNCHECKED_DISABLED);
-                }
+            Object key = context.getKey();
+            Boolean viewData = getViewData(key);
+
+            M nodeModel = (M) key;
+            String elementId = ElementIdUtils.createTreeCellElementId(
+                    elementIdPrefix, nodeModel, roots);
+
+            if (viewData != null && viewData.equals(value)) {
+                clearViewData(key);
+                viewData = null;
+            }
+
+            if (value != null && ((viewData != null) ? viewData : value)) {
+                // Checked state
+                sb.append(nodeModel.isEditable() ? template.inputChecked(elementId)
+                        : template.inputCheckedDisabled(elementId));
             } else {
-                // if (value == null) {
-                // Boolean viewData = getViewData(key);
-                // if (viewData != null && viewData.equals(value)) {
-                // clearViewData(key);
-                // viewData = null;
-                // }
-                // sb.append(INPUT_CHECKED_NULL);
-                // } else
-                // enabled
-                super.render(context, value, sb);
+                // Unchecked state
+                sb.append(nodeModel.isEditable() ? template.inputUnchecked(elementId)
+                        : template.inputUncheckedDisabled(elementId));
             }
         }
+
     }
 
     private final AsyncDataProvider<M> asyncTreeDataProvider;
 
     private final List<HasCell<M, ?>> cells = new ArrayList<HasCell<M, ?>>();
 
-    private List<M> root;
+    private List<M> roots;
 
     private final MultiSelectionModel<M> selectionModel = new MultiSelectionModel<M>();
 
     private NodeSelectionHandler nodeSelectionHandler;
+
+    private String elementIdPrefix = DOM.createUniqueId();
 
     public ModelListTreeViewModel() {
         cells.add(new CheckboxColumn());
         cells.add(new CellLabel());
 
         asyncTreeDataProvider = new AsyncDataProvider<M>() {
-
             @Override
             protected void onRangeChanged(HasData<M> display) {
                 // no-op
@@ -170,8 +186,8 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
                 Set<M> selectedSet = selectionModel.getSelectedSet();
-                HashSet<TreeNodeModel> removedSet = new HashSet<TreeNodeModel>();
-                for (TreeNodeModel<T, M> child : root) {
+                HashSet<TreeNodeModel<?, ?>> removedSet = new HashSet<TreeNodeModel<?, ?>>();
+                for (TreeNodeModel<T, M> child : roots) {
                     if (!selectedSet.contains(child) && child.getSelected()) {
                         selectedSet.remove(child);
                         removedSet.add(child);
@@ -192,7 +208,7 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
                 for (M m : selectedSet) {
                     m.setSelected(true);
                 }
-                for (TreeNodeModel treeNodeModel : removedSet) {
+                for (TreeNodeModel<?, ?> treeNodeModel : removedSet) {
                     treeNodeModel.setSelected(false);
                 }
             }
@@ -218,9 +234,9 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
         return asyncTreeDataProvider;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <N> NodeInfo<?> getNodeInfo(N value) {
-        @SuppressWarnings("unchecked")
         M model = (M) value;
         CompositeCell<M> composite = new CompositeCell<M>(cells);
         if (value == null) {
@@ -240,9 +256,9 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean isLeaf(Object value) {
-        @SuppressWarnings("unchecked")
         M model = (M) value;
         return model != null && model.getChildren() != null && model.getChildren().size() == 0;
     }
@@ -252,7 +268,13 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
      *
      * @param arrayList
      */
-    public void setRoot(List<M> arrayList) {
-        this.root = arrayList;
+    public void setRoots(List<M> arrayList) {
+        this.roots = arrayList;
     }
+
+    @Override
+    public void setElementIdPrefix(String elementIdPrefix) {
+        this.elementIdPrefix = elementIdPrefix;
+    }
+
 }

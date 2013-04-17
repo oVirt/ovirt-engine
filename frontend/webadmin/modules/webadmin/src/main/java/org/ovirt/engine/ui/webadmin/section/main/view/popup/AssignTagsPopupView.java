@@ -85,18 +85,17 @@ public class AssignTagsPopupView extends AbstractModelBoundPopupView<TagListMode
         });
     }
 
-    @SuppressWarnings("unchecked")
     private void updateTree(TagListModel model) {
         // Get tag node list
         ArrayList<SelectionTreeNodeModel> tagTreeNodes = model.getSelectionNodeList();
 
         // Get tree view model
         ModelListTreeViewModel<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel> modelListTreeViewModel =
-                (ModelListTreeViewModel<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel>) tree.getTreeViewModel();
+                tree.getTreeViewModel();
 
         // Set root nodes
         List<SimpleSelectionTreeNodeModel> rootNodes = SimpleSelectionTreeNodeModel.fromList(tagTreeNodes);
-        modelListTreeViewModel.setRoot(rootNodes);
+        modelListTreeViewModel.setRoots(rootNodes);
 
         // Update tree data
         AsyncDataProvider<SimpleSelectionTreeNodeModel> asyncTreeDataProvider =

@@ -51,11 +51,12 @@ public class ManageEventsPopupView extends AbstractModelBoundPopupView<EventNoti
 
     @UiField(provided = true)
     @Ignore
+    @WithElementId
     EntityModelCellTree<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel> tree;
 
     @UiField
     @Path(value = "email.entity")
-    @WithElementId
+    @WithElementId("email")
     EntityModelTextBoxEditor emailEditor;
 
     @UiField
@@ -64,10 +65,12 @@ public class ManageEventsPopupView extends AbstractModelBoundPopupView<EventNoti
 
     @UiField
     @Ignore
+    @WithElementId
     Button expandAllButton;
 
     @UiField
     @Ignore
+    @WithElementId
     Button collapseAllButton;
 
     private final Driver driver = GWT.create(Driver.class);
@@ -97,7 +100,6 @@ public class ManageEventsPopupView extends AbstractModelBoundPopupView<EventNoti
 
     private void initExpandButtons() {
         expandAllButton.addClickHandler(new ClickHandler() {
-
             @Override
             public void onClick(ClickEvent event) {
                 expandTree();
@@ -105,7 +107,6 @@ public class ManageEventsPopupView extends AbstractModelBoundPopupView<EventNoti
         });
 
         collapseAllButton.addClickHandler(new ClickHandler() {
-
             @Override
             public void onClick(ClickEvent event) {
                 collapseTree();
@@ -119,7 +120,6 @@ public class ManageEventsPopupView extends AbstractModelBoundPopupView<EventNoti
 
         // Listen to Properties
         object.getPropertyChangedEvent().addListener(new IEventListener() {
-
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 EventNotificationModel model = (EventNotificationModel) sender;
@@ -131,18 +131,17 @@ public class ManageEventsPopupView extends AbstractModelBoundPopupView<EventNoti
         });
     }
 
-    @SuppressWarnings("unchecked")
     private void updateTree(EventNotificationModel model) {
         // Get tag node list
         ArrayList<SelectionTreeNodeModel> tagTreeNodes = model.getEventGroupModels();
 
         // Get tree view model
         ModelListTreeViewModel<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel> modelListTreeViewModel =
-                (ModelListTreeViewModel<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel>) tree.getTreeViewModel();
+                tree.getTreeViewModel();
 
         // Set root nodes
         List<SimpleSelectionTreeNodeModel> rootNodes = SimpleSelectionTreeNodeModel.fromList(tagTreeNodes);
-        modelListTreeViewModel.setRoot(rootNodes);
+        modelListTreeViewModel.setRoots(rootNodes);
 
         // Update tree data
         AsyncDataProvider<SimpleSelectionTreeNodeModel> asyncTreeDataProvider =
@@ -181,12 +180,14 @@ public class ManageEventsPopupView extends AbstractModelBoundPopupView<EventNoti
     }
 
     interface AssignTagTreeResources extends CellTree.Resources {
+
         interface TableStyle extends CellTree.Style {
         }
 
         @Override
         @Source({ "org/ovirt/engine/ui/webadmin/css/AssignTagTree.css" })
         TableStyle cellTreeStyle();
+
     }
 
 }

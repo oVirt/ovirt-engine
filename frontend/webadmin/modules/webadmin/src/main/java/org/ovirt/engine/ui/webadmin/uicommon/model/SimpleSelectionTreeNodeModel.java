@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.uicommon.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.ui.common.uicommon.model.TreeNodeModel;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -40,24 +41,25 @@ public class SimpleSelectionTreeNodeModel implements TreeNodeModel<SelectionTree
     }
 
     private final ArrayList<SimpleSelectionTreeNodeModel> children;
+    private SimpleSelectionTreeNodeModel parent;
 
     private final EventBus eventBus;
-
     private final SelectionTreeNodeModel model;
 
-    protected SimpleSelectionTreeNodeModel(final SelectionTreeNodeModel model) {
+    protected SimpleSelectionTreeNodeModel(SelectionTreeNodeModel model) {
         this.eventBus = ClientGinjectorProvider.instance().getEventBus();
         this.model = model;
 
-        // Build children List
+        // Build children list using depth-first recursion
         this.children = new ArrayList<SimpleSelectionTreeNodeModel>();
         for (SelectionTreeNodeModel childModel : model.getChildren()) {
-            children.add(new SimpleSelectionTreeNodeModel(childModel));
+            SimpleSelectionTreeNodeModel child = new SimpleSelectionTreeNodeModel(childModel);
+            child.parent = this;
+            children.add(child);
         }
 
         // Add selection listener
         model.getPropertyChangedEvent().addListener(new IEventListener() {
-
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if ("IsSelectedNullable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
@@ -65,7 +67,6 @@ public class SimpleSelectionTreeNodeModel implements TreeNodeModel<SelectionTree
                 }
             }
         });
-
     }
 
     @Override
@@ -81,6 +82,27 @@ public class SimpleSelectionTreeNodeModel implements TreeNodeModel<SelectionTree
     @Override
     public ArrayList<SimpleSelectionTreeNodeModel> getChildren() {
         return children;
+    }
+
+    @Override
+    public SimpleSelectionTreeNodeModel getParent() {
+        return parent;
+    }
+
+    @Override
+    public int getIndex() {
+        if (parent == null) {
+            return 0;
+        }
+
+        ArrayList<SimpleSelectionTreeNodeModel> siblings = parent.getChildren();
+        for (int i = 0; i < siblings.size(); i++) {
+            if (model == siblings.get(i).model) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     @Override

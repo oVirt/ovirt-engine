@@ -15,6 +15,6 @@ public interface ColumnWithElementId {
      *            Column ID that will be part of the resulting DOM element ID, or {@code null} to use column index
      *            value.
      */
-    public void configureElementId(String elementIdPrefix, String columnId);
+    void configureElementId(String elementIdPrefix, String columnId);
 
 }
