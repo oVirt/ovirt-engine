@@ -131,7 +131,6 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                         getVm(),
                         getCompensationContext());
                 snapshotsManager.addActiveSnapshot(newActiveSnapshotId, getVm(), getCompensationContext());
-                snapshotsManager.removeAllIllegalDisks(previousActiveSnapshotId, getVm().getId());
                 //if there are no images there's no reason the save the compensation data to DB as
                 //the update is being executed in the same transaction so we can restore the vm config and end the command.
                 if (!images.isEmpty()) {
