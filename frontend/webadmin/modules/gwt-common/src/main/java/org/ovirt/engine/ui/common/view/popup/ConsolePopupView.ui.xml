@@ -77,6 +77,9 @@ xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.console">
 
 				<g:FlowPanel ui:field="rdpPanel" addStyleNames="{style.protocolPanel}">
 					<g:Label text="{constants.rdpOptions}" addStyleNames="{style.labelStyle}" />
+					<e:EntityModelRadioButtonEditor ui:field="rdpAutoImplRadioButton" />
+					<e:EntityModelRadioButtonEditor ui:field="rdpNativeImplRadioButton" />
+					<e:EntityModelRadioButtonEditor ui:field="rdpPluginImplRadioButton" />
 					<w:EntityModelValueCheckBoxEditor ui:field="useLocalDrives" />
 				</g:FlowPanel>
 

@@ -54,7 +54,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>GetAttachmentServlet</servlet-name>
-    <url-pattern>/console.vv</url-pattern>
+    <url-pattern>/console/*</url-pattern>
   </servlet-mapping>
 
   <!-- Documentation: -->

@@ -541,6 +541,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("RDP")
     String RDPTitle();
 
+    @DefaultStringValue("RDP is not supported in your browser")
+    String rdpIsNotSupportedInYourBrowser();
+
     @DefaultStringValue("Retrieving CDs...")
     String retrievingCDsTitle();
 

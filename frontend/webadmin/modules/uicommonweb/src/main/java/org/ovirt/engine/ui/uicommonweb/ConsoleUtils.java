@@ -35,7 +35,7 @@ public interface ConsoleUtils {
 
     public boolean isWanOptionsAvailable(HasConsoleModel item);
 
-    public boolean isBrowserPluginSupported();
+    public boolean isBrowserPluginSupported(ConsoleProtocol protocol);
 
     public boolean isSpiceProxyDefined();
 }

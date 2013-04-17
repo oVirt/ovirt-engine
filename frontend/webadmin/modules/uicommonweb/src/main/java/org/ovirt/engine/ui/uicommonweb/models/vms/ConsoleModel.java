@@ -29,9 +29,7 @@ import com.google.gwt.user.client.ui.TextArea;
 
 public abstract class ConsoleModel extends EntityModel {
     public static final String EjectLabel = "[" + ConstantsManager.getInstance().getConstants().eject() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
-    public static final String GET_ATTACHMENT_SERVLET_URL = "/console.vv"; //$NON-NLS-1$
-
-    public enum ClientConsoleMode { Native, Plugin, Auto };
+    public static final String GET_ATTACHMENT_SERVLET_URL = "/console/"; //$NON-NLS-1$
 
     public static EventDefinition ErrorEventDefinition;
     private Event privateErrorEvent;
@@ -279,13 +277,12 @@ public abstract class ConsoleModel extends EntityModel {
         formPanel.setMethod(FormPanel.METHOD_POST);
 
         final FlowPanel innerPanel = new FlowPanel();
-        innerPanel.add(buildTextArea("filename", fileName));//$NON-NLS-1$
         innerPanel.add(buildTextArea("contenttype", contentType));//$NON-NLS-1$
         innerPanel.add(buildTextArea("content", configFileContent));//$NON-NLS-1$
         innerPanel.add(buildTextArea("encodingtype", "plain"));//$NON-NLS-1$ $NON-NLS-2$
 
         formPanel.setWidget(innerPanel);
-        formPanel.setAction(GET_ATTACHMENT_SERVLET_URL);
+        formPanel.setAction(GET_ATTACHMENT_SERVLET_URL + fileName);
         formPanel.setVisible(false);
 
         final FormElement form = FormElement.as(formPanel.getElement());

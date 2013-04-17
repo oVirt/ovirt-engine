@@ -1,10 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import org.ovirt.engine.ui.uicompat.Event;
 
-public interface IRdp
-{
-    Event getDisconnectedEvent();
+public interface IRdp {
 
     String getAddress();
 

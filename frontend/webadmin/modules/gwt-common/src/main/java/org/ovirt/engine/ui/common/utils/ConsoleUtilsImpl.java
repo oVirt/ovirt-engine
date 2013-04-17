@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.utils;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
@@ -19,12 +20,14 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
     private Boolean rdpAvailable;
 
     private final CommonApplicationConstants constants;
+    private final ClientAgentType clientAgentType;
     private final Configurator configurator;
 
     @Inject
     public ConsoleUtilsImpl(Configurator configurator, CommonApplicationConstants constants) {
         this.configurator= configurator;
         this.constants = constants;
+        this.clientAgentType = new ClientAgentType();
     }
 
     //TODO consider refactoring it to use one parameter only if possible
@@ -37,9 +40,9 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
         boolean isSpiceAvailable =
                 selectedProtocol.equals(ConsoleProtocol.SPICE) && canOpenSpiceConsole(item);
         boolean isRdpAvailable =
-                (selectedProtocol.equals(ConsoleProtocol.RDP) && canOpenRDPConsole(item));
+                selectedProtocol.equals(ConsoleProtocol.RDP) && canOpenRDPConsole(item);
         boolean isVncAvailable =
-                (selectedProtocol.equals(ConsoleProtocol.VNC) && canOpenVNCConsole(item));
+                selectedProtocol.equals(ConsoleProtocol.VNC) && canOpenVNCConsole(item);
 
         return isSpiceAvailable || isRdpAvailable || isVncAvailable;
     }
@@ -50,7 +53,6 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
             return false;
 
         if (item.getAdditionalConsoleModel() != null &&
-                configurator.isClientWindowsExplorer() &&
                 item.getAdditionalConsoleModel().getConnectCommand().getIsAvailable() &&
                 item.getAdditionalConsoleModel().getConnectCommand().getIsExecutionAllowed()) {
             return true;
@@ -62,7 +64,7 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
     @Override
     public boolean isRDPAvailable() {
         if (rdpAvailable == null) {
-            rdpAvailable = configurator.isClientWindowsExplorer();
+            rdpAvailable = configurator.isClientWindows();
             GWT.log("Determining if RDP console is available on current platform, result:" + rdpAvailable); //$NON-NLS-1$
         }
         return rdpAvailable;
@@ -211,8 +213,29 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
     }
 
     @Override
-    public boolean isBrowserPluginSupported() {
-        return configurator.isClientLinuxFirefox() || configurator.isClientWindowsExplorer();
+    public boolean isBrowserPluginSupported(ConsoleProtocol protocol) {
+        switch (protocol) {
+        case SPICE:
+            if ((clientAgentType.os.equalsIgnoreCase("Windows")) //$NON-NLS-1$
+                    && (clientAgentType.browser.equalsIgnoreCase("Explorer")) //$NON-NLS-1$
+                    && (clientAgentType.version >= 7.0)) {
+                return true;
+            } else if ((clientAgentType.os.equalsIgnoreCase("Linux")) //$NON-NLS-1$
+                    && (clientAgentType.browser.equalsIgnoreCase("Firefox")) //$NON-NLS-1$
+                    && (clientAgentType.version >= 2.0)) {
+                return true;
+            }
+            return false;
+        case RDP:
+            if ((clientAgentType.os.equalsIgnoreCase("Windows"))//$NON-NLS-1$
+                    && (clientAgentType.browser.equalsIgnoreCase("Explorer"))//$NON-NLS-1$
+                    && (clientAgentType.version >= 7.0)) {
+                return true;
+            }
+            return false;
+        default:
+            return false;
+        }
     }
 
     private native String getUserAgentString() /*-{

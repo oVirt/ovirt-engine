@@ -9,8 +9,8 @@ import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.HasConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel.ClientConsoleMode;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
+import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -49,6 +49,10 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         HasValueChangeHandlers<Boolean> getSpiceNativeImplRadioButton();
         HasValueChangeHandlers<Boolean> getSpicePluginImplRadioButton();
 
+        HasValueChangeHandlers<Boolean> getRdpAutoImplRadioButton();
+        HasValueChangeHandlers<Boolean> getRdpNativeImplRadioButton();
+        HasValueChangeHandlers<Boolean> getRdpPluginImplRadioButton();
+
         void rdpSelected(boolean selected);
 
         void spiceSelected(boolean selected);
@@ -63,9 +67,11 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         void setSpiceConsoleAvailable(boolean available);
 
-        void selectSpiceImplementation(ClientConsoleMode consoleMode);
+        void selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode consoleMode);
 
         void setSpicePluginImplEnabled(boolean enabled, String reason);
+
+        void setRdpPluginImplEnabled(boolean enabled, String reason);
 
         void selectWanOptionsEnabled(boolean selected);
 
@@ -76,6 +82,8 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         void setCtrlAltDelEnabled(boolean enabled, String reason);
 
         void setSpiceProxyEnabled(boolean enabled, String reason);
+
+        void selectRdpImplementation(RdpConsoleModel.ClientConsoleMode consoleMode);
 
         void setVmName(String name);
 
@@ -195,16 +203,19 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
             }
         }
 
-        if (!consoleUtils.isBrowserPluginSupported()) {
-            getView().setSpicePluginImplEnabled(false, constants.pluginNotSupportedByBrowser());
+        if (!consoleUtils.isBrowserPluginSupported(ConsoleProtocol.SPICE)) {
+            getView().setSpicePluginImplEnabled(false, constants.spicePluginNotSupportedByBrowser());
+        }
+
+        if (!consoleUtils.isBrowserPluginSupported(ConsoleProtocol.RDP)) {
+            getView().setRdpPluginImplEnabled(false, constants.rdpPluginNotSupportedByBrowser());
         }
 
         SpiceConsoleModel spiceModel = extractSpiceModel(model);
-        if (spiceModel != null) {
-            getView().selectSpiceImplementation(spiceModel.getClientConsoleMode());
-        } else {
-            getView().selectSpiceImplementation(ClientConsoleMode.Auto);
-        }
+        getView().selectSpiceImplementation(spiceModel == null ? SpiceConsoleModel.ClientConsoleMode.Auto : spiceModel.getClientConsoleMode());
+
+        RdpConsoleModel rdpModel = extractRdpModel(model);
+        getView().selectRdpImplementation(rdpModel == null ? RdpConsoleModel.ClientConsoleMode.Auto : rdpModel.getClientConsoleMode());
 
         wanOptionsAvailable = consoleUtils.isWanOptionsAvailable(model.getModel());
         if (wanOptionsAvailable) {
@@ -284,7 +295,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
                 .addValueChangeHandler(new ValueChangeHandler<Boolean>() {
                     @Override
                     public void onValueChange(ValueChangeEvent<Boolean> event) {
-                        getView().selectSpiceImplementation(ClientConsoleMode.Auto);
+                        getView().selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Auto);
                     }
                 }));
 
@@ -292,17 +303,40 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
                 .addValueChangeHandler(new ValueChangeHandler<Boolean>() {
                     @Override
                     public void onValueChange(ValueChangeEvent<Boolean> event) {
-                        getView().selectSpiceImplementation(ClientConsoleMode.Native);
+                        getView().selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Native);
                     }
                 }));
         registerHandler(getView().getSpicePluginImplRadioButton()
                 .addValueChangeHandler(new ValueChangeHandler<Boolean>() {
                     @Override
                     public void onValueChange(ValueChangeEvent<Boolean> event) {
-                        getView().selectSpiceImplementation(ClientConsoleMode.Plugin);
+                        getView().selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Plugin);
                     }
                 }));
 
+        registerHandler(getView().getRdpAutoImplRadioButton()
+                .addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+                    @Override
+                    public void onValueChange(ValueChangeEvent<Boolean> event) {
+                        getView().selectRdpImplementation(RdpConsoleModel.ClientConsoleMode.Auto);
+                    }
+                }));
+
+        registerHandler(getView().getRdpNativeImplRadioButton()
+                .addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+                    @Override
+                    public void onValueChange(ValueChangeEvent<Boolean> event) {
+                        getView().selectRdpImplementation(RdpConsoleModel.ClientConsoleMode.Native);
+                    }
+                }));
+
+        registerHandler(getView().getRdpPluginImplRadioButton()
+                .addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+                    @Override
+                    public void onValueChange(ValueChangeEvent<Boolean> event) {
+                        getView().selectRdpImplementation(RdpConsoleModel.ClientConsoleMode.Plugin);
+                    }
+                }));
     }
 
     protected ISpice extractSpice(ConsolePopupModel model) {
@@ -320,6 +354,16 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         if (consoleModel instanceof SpiceConsoleModel) {
             return (SpiceConsoleModel) consoleModel;
+        }
+
+        return null;
+    }
+
+    protected RdpConsoleModel extractRdpModel(ConsolePopupModel model) {
+        ConsoleModel consoleModel = model.getModel().getAdditionalConsoleModel();
+
+        if (consoleModel instanceof RdpConsoleModel) {
+            return (RdpConsoleModel) consoleModel;
         }
 
         return null;

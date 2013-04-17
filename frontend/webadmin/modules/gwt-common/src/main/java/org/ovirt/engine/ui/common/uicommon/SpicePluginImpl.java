@@ -409,23 +409,4 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                  //return pluginFound;
                                                  }-*/;
 
-    public static boolean isBrowserSupported() {
-        ClientAgentType cat = new ClientAgentType();
-        logger.finer("Determining whether browser [" + cat.browser //$NON-NLS-1$
-                + "], version [" + cat.version + "] on OS [" + cat.os //$NON-NLS-1$ //$NON-NLS-2$
-                + "] is supported by spice"); //$NON-NLS-1$
-
-        if ((cat.os.equalsIgnoreCase("Windows")) //$NON-NLS-1$
-                && (cat.browser.equalsIgnoreCase("Explorer")) //$NON-NLS-1$
-                && (cat.version >= 7.0)) {
-            return true;
-        } else if ((cat.os.equalsIgnoreCase("Linux")) //$NON-NLS-1$
-                && (cat.browser.equalsIgnoreCase("Firefox")) //$NON-NLS-1$
-                && (cat.version >= 2.0)) {
-            return true;
-        }
-
-        return false;
-    }
-
 }

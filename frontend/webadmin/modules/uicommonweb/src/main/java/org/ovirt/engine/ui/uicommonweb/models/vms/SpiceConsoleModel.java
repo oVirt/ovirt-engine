@@ -49,8 +49,9 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
-public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultipleQueryAsyncCallback
-{
+public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultipleQueryAsyncCallback {
+
+    public enum ClientConsoleMode { Native, Plugin, Auto }
 
     public static EventDefinition SpiceDisconnectedEventDefinition;
     public static EventDefinition SpiceConnectedEventDefinition;
@@ -63,7 +64,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
     private ISpice privatespice;
     private ClientConsoleMode consoleMode;
 
-    public void setspice(ISpice value) {
+    private void setspice(ISpice value) {
         privatespice = value;
     }
 
@@ -84,7 +85,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
 
         setSpiceImplementation(
-                ClientConsoleMode.valueOf((String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ClientConsoleModeDefault)));
+                ClientConsoleMode.valueOf((String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ClientModeSpiceDefault)));
     }
 
     public ISpice getspice() {

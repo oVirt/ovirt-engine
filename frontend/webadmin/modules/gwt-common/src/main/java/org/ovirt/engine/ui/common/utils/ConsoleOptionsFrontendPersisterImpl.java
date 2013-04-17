@@ -5,7 +5,6 @@ import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.HasConsoleModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel.ClientConsoleMode;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IRdp;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
@@ -20,7 +19,7 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
     private final ConsoleUtils consoleUtils;
 
     // spice options
-    private static final String SPICE_CLIENT_IMPLEMENTATION = "_spiceClientImplementation"; //$NON-NLS-1$
+    private static final String SPICE_CLIENT_MODE = "_spiceClientMode"; //$NON-NLS-1$
     private static final String CTRL_ALT_DEL = "_ctrlAltDel"; //$NON-NLS-1$
     private static final String OPEN_IN_FULL_SCREEN = "_openInFullScreen"; //$NON-NLS-1$
     private static final String SMARTCARD_ENABLED_OVERRIDDEN = "_smartcardEnabledOverridden"; //$NON-NLS-1$
@@ -29,6 +28,7 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
     private static final String SPICE_PROXY_ENABLED = "_spiceProxyEnabled"; //$NON-NLS-1$
 
     // rdp options
+    private static final String RDP_CLIENT_MODE = "_rdpClientMode"; //$NON-NLS-1$
     private static final String USE_LOCAL_DRIVES = "_useLocalDrives"; //$NON-NLS-1$
 
     // common options
@@ -57,7 +57,7 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
         if (selectedProtocol == ConsoleProtocol.SPICE) {
             storeSpiceData(model, keyMaker);
         } else if (selectedProtocol == ConsoleProtocol.RDP) {
-            storeRdpData(asRdp(model), keyMaker);
+            storeRdpData(model, keyMaker);
         }
     }
 
@@ -87,15 +87,15 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
         }
     }
 
-    protected IRdp asRdp(HasConsoleModel model) {
-        return ((RdpConsoleModel) model.getAdditionalConsoleModel()).getrdp();
+    protected RdpConsoleModel asRdpConsoleModel(HasConsoleModel model) {
+        return (RdpConsoleModel) model.getAdditionalConsoleModel();
     }
 
     protected void storeSpiceData(HasConsoleModel model, KeyMaker keyMaker) {
         SpiceConsoleModel consoleModel = asSpiceConsoleModel(model);
         ISpice spice = asSpice(model);
 
-        clientStorage.setLocalItem(keyMaker.make(SPICE_CLIENT_IMPLEMENTATION),
+        clientStorage.setLocalItem(keyMaker.make(SPICE_CLIENT_MODE),
                 consoleModel.getClientConsoleMode().toString());
 
         storeBool(keyMaker.make(CTRL_ALT_DEL), spice.getSendCtrlAltDelete());
@@ -114,7 +114,14 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
 
         model.setSelectedProtocol(ConsoleProtocol.RDP);
 
-        IRdp rdp = asRdp(model);
+        try {
+            RdpConsoleModel.ClientConsoleMode consoleMode =
+                    RdpConsoleModel.ClientConsoleMode.valueOf(clientStorage.getLocalItem(keyMaker.make(RDP_CLIENT_MODE)));
+            asRdpConsoleModel(model).setRdpImplementation(consoleMode);
+        } catch (Exception e) {
+        }
+
+        IRdp rdp = asRdpConsoleModel(model).getrdp();
 
         rdp.setUseLocalDrives(readBool(keyMaker.make(USE_LOCAL_DRIVES)));
     }
@@ -128,7 +135,7 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
         model.setSelectedProtocol(ConsoleProtocol.SPICE);
 
         try {
-            ClientConsoleMode consoleMode = ClientConsoleMode.valueOf(clientStorage.getLocalItem(keyMaker.make(SPICE_CLIENT_IMPLEMENTATION)));
+            SpiceConsoleModel.ClientConsoleMode consoleMode = SpiceConsoleModel.ClientConsoleMode.valueOf(clientStorage.getLocalItem(keyMaker.make(SPICE_CLIENT_MODE)));
             asSpiceConsoleModel(model).setSpiceImplementation(consoleMode);
         } catch (Exception e) {
         }
@@ -160,8 +167,14 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
         return ((SpiceConsoleModel) model.getDefaultConsoleModel());
     }
 
-    protected void storeRdpData(IRdp rdp, KeyMaker keyMaker) {
-        storeBool(keyMaker.make(USE_LOCAL_DRIVES), rdp.getUseLocalDrives());
+    protected void storeRdpData(HasConsoleModel model, KeyMaker keyMaker) {
+        RdpConsoleModel consoleModel = asRdpConsoleModel(model);
+        IRdp rdpImpl = consoleModel.getrdp();
+
+        clientStorage.setLocalItem(keyMaker.make(RDP_CLIENT_MODE),
+                consoleModel.getClientConsoleMode().toString());
+
+        storeBool(keyMaker.make(USE_LOCAL_DRIVES), rdpImpl.getUseLocalDrives());
     }
 
     private boolean readBool(String key) {

@@ -21,6 +21,7 @@ PLEASE NOTE THAT THIS SCRIPT MUST REMAIN RE-ENTRANT!
 -- Rename existing configuration key names, values modifications are preserved
 ------------------------------------------------------------------------------------
 select fn_db_rename_config_key('AuditLogAgingThreashold', 'AuditLogAgingThreshold', 'general');
+select fn_db_rename_config_key('ClientConsoleModeDefault', 'ClientModeSpiceDefault', 'general');
 select fn_db_rename_config_key('PowerClientAutoApprovePatterns','AutoApprovePatterns','general');
 select fn_db_rename_config_key('PowerClientAutoRegistrationDefaultVdsGroupID','AutoRegistrationDefaultVdsGroupID','general');
 select fn_db_rename_config_key('PowerClientAutoInstallCertificateOnApprove','AutoInstallCertificateOnApprove','general');
@@ -517,8 +518,10 @@ select fn_db_add_config_value('WaitForVdsInitInSec','60','general');
 select fn_db_add_config_value('NetworkConnectivityCheckTimeoutInSeconds','120','general');
 -- AutoRecoveryConfiguration
 select fn_db_add_config_value('AutoRecoveryAllowedTypes','{\"storage domains\":\"true\",\"hosts\":\"true\"}','general');
--- Client console mode settings (Auto, Native, Plugin)
-select fn_db_add_config_value('ClientConsoleModeDefault','Auto','general');
+-- Spice client mode default settings (Auto, Native, Plugin)
+select fn_db_add_config_value('ClientModeSpiceDefault','Auto','general');
+-- Rdp client mode default settings (Auto, Native, Plugin)
+select fn_db_add_config_value('ClientModeRdpDefault','Auto','general');
 
 select fn_db_add_config_value('LogMaxPhysicalMemoryUsedThresholdInPercentage', '95', 'general');
 select fn_db_add_config_value('LogMaxCpuUsedThresholdInPercentage', '95', 'general');
@@ -750,6 +753,7 @@ select fn_db_delete_config_value('UseRtl8139_pv','2.2,3.0,3.1,3.2');
 select fn_db_delete_config_value('VdsFenceOptions','general');
 select fn_db_delete_config_value('VirtualMachineDomainName','general');
 select fn_db_delete_config_value('AuditLogAgingThreashold','general');
+select fn_db_delete_config_value('ClientConsoleModeDefault','general');
 select fn_db_delete_config_value('LiveStorageMigrationEnabled','3.0');
 select fn_db_delete_config_value('LiveStorageMigrationEnabled','3.1');
 select fn_db_delete_config_value('LiveStorageMigrationEnabled','3.2');

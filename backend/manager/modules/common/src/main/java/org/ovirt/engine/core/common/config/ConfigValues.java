@@ -1321,7 +1321,7 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Auto")
-    ClientConsoleModeDefault(501),
+    ClientModeSpiceDefault(501),
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
@@ -1341,6 +1341,10 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/usr/bin/vdsm-tool vdsm-id")
     GetVdsmIdByVdsmToolCommand(505),
+
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("Auto")
+    ClientModeRdpDefault(506),
 
     Invalid(65535);
 

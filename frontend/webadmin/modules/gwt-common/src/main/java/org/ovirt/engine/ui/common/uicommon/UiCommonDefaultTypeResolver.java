@@ -8,7 +8,8 @@ import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicommonweb.ILogger;
 import org.ovirt.engine.ui.uicommonweb.ITimer;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
-import org.ovirt.engine.ui.uicommonweb.models.vms.IRdp;
+import org.ovirt.engine.ui.uicommonweb.models.vms.IRdpNative;
+import org.ovirt.engine.ui.uicommonweb.models.vms.IRdpPlugin;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpiceNative;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpicePlugin;
 
@@ -49,8 +50,10 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver {
             return new SpicePluginImpl();
         } else if (type == ISpiceNative.class) {
             return new SpiceNativeImpl();
-        } else if (type == IRdp.class) {
-            return new IRdpImpl();
+        } else if (type == IRdpPlugin.class) {
+            return new RdpPluginImpl();
+        } else if (type == IRdpNative.class) {
+            return new RdpNativeImpl();
         } else if (type == ConsoleOptionsFrontendPersister.class) {
             return consoleOptionsFrontendPersister;
         } else if (type == ConsoleUtils.class) {
