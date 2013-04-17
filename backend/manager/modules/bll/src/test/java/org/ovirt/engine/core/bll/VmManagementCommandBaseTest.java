@@ -19,6 +19,19 @@ import static org.mockito.Mockito.spy;
 
 public class VmManagementCommandBaseTest {
 
+    @Test
+    public void isCpuPinningValidWithoutPinnedHost() {
+        VmManagementCommandBase<VmManagementParametersBase> test =
+                spy(new VmManagementCommandBase<VmManagementParametersBase>(Guid.Empty));
+        VmStatic vmStatic = new VmStatic();
+        vmStatic.setNumOfSockets(6);
+        vmStatic.setCpuPerSocket(2);
+        vmStatic.setDedicatedVmForVds(null);
+        Assert.assertFalse(test.isCpuPinningValid("0#0", vmStatic));
+        Assert.assertFalse(test.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_BE_PINNED_TO_CPU_WITH_UNDEFINED_HOST));
+    }
 
     @Test
     public void isCpuPinningValid() {
