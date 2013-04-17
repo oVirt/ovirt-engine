@@ -81,11 +81,11 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.aliasColumn, constants.aliasDisk(), all || images || luns,
-                "150px"); //$NON-NLS-1$
+                "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.idColumn, constants.idDisk(), all || images || luns,
-                "150px"); //$NON-NLS-1$
+                "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.bootableDiskColumn,
@@ -109,7 +109,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.storageDomainsColumn, constants.storageDomainsDisk(), images,
-                "125px"); //$NON-NLS-1$
+                "180px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.sizeColumn, constants.provisionedSizeDisk(), all || images || luns,
@@ -117,11 +117,11 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.allocationColumn, constants.allocationDisk(), images,
-                "100px"); //$NON-NLS-1$
+                "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.dateCreatedColumn, constants.creationDateDisk(), images,
-                "150px"); //$NON-NLS-1$
+                "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.statusColumn, constants.statusDisk(), images,
