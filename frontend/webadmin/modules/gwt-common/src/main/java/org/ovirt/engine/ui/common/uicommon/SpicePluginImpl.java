@@ -265,6 +265,8 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                    var disconnectedEvent = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getDisconnectedEvent()();
                                                    var connectedEvent = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getConnectedEvent()();
                                                    var wanOptionsEnabled = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::isWanOptionsEnabled()();
+                                                   // the !! is there to convert the value to boolean because it is returned as int
+                                                   var smartcardEnabled =  !!this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::passSmartcardOption()();
                                                    var colorDepth = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::colorDepthAsInt()();
                                                    var disableEffects = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::disableEffectsAsString()();
                                                    var spiceProxy = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getSpiceProxy()();
@@ -309,6 +311,7 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                    client.SendCtrlAltDelete = sendCtrlAltDelete;
                                                    client.UsbAutoShare = usbAutoShare;
                                                    client.SetUsbFilter(usbFilter);
+                                                   client.Smartcard = smartcardEnabled;
                                                    if (wanOptionsEnabled) {
                                                        client.DisableEffects = disableEffects;
                                                        client.ColorDepth = colorDepth;
