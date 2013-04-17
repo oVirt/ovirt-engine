@@ -63,7 +63,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
                 return object.getStorageDomainType();
             }
         };
-        getTable().addColumn(domainTypeColumn, constants.domainTypeStorage(), "140px"); //$NON-NLS-1$
+        getTable().addColumn(domainTypeColumn, constants.domainTypeStorage(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<StorageDomain> storageTypeColumn = new EnumColumn<StorageDomain, StorageType>() {
             @Override
@@ -71,7 +71,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
                 return object.getStorageType();
             }
         };
-        getTable().addColumn(storageTypeColumn, constants.storageTypeStorage(), "140px"); //$NON-NLS-1$
+        getTable().addColumn(storageTypeColumn, constants.storageTypeStorage(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<StorageDomain> formatColumn = new EnumColumn<StorageDomain, StorageFormatType>() {
             @Override
@@ -92,7 +92,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
                         }
                     }
                 };
-        getTable().addColumn(crossDataCenterStatusColumn, constants.crossDcStatusStorage(), "160px"); //$NON-NLS-1$
+        getTable().addColumn(crossDataCenterStatusColumn, constants.crossDcStatusStorage(), "210px"); //$NON-NLS-1$
 
         DiskSizeColumn<StorageDomain> freeSpaceColumn = new DiskSizeColumn<StorageDomain>(DiskSizeUnit.GIGABYTE) {
             @Override
