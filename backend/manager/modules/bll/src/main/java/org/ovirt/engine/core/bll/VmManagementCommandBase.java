@@ -138,6 +138,8 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
                         return failCanDoAction(VdcBllMessages.VM_PINNING_PCPU_DOES_NOT_EXIST);
                     }
                 }
+            } else {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_BE_PINNED_TO_CPU_WITH_UNDEFINED_HOST);
             }
         }
 
