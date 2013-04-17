@@ -1350,6 +1350,14 @@ public enum ConfigValues {
     @DefaultValueAttribute("Auto")
     ClientModeRdpDefault(506),
 
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("Off")
+    WebSocketProxy(507),
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("120")
+    WebSocketProxyTicketValiditySeconds(508),
+
     Invalid(65535);
 
     private int intValue;

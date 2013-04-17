@@ -8,10 +8,12 @@ import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicommonweb.ILogger;
 import org.ovirt.engine.ui.uicommonweb.ITimer;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
+import org.ovirt.engine.ui.uicommonweb.models.vms.INoVnc;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IRdpNative;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IRdpPlugin;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpiceNative;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpicePlugin;
+import org.ovirt.engine.ui.uicommonweb.models.vms.IVncNative;
 
 import com.google.inject.Inject;
 
@@ -54,6 +56,10 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver {
             return new RdpPluginImpl();
         } else if (type == IRdpNative.class) {
             return new RdpNativeImpl();
+        } else if (type == INoVnc.class) {
+            return new NoVncImpl();
+        } else if (type == IVncNative.class) {
+            return new VncNativeImpl();
         } else if (type == ConsoleOptionsFrontendPersister.class) {
             return consoleOptionsFrontendPersister;
         } else if (type == ConsoleUtils.class) {

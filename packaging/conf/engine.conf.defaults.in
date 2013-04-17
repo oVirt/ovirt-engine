@@ -34,6 +34,7 @@ ENGINE_DOC="@ENGINE_DOC@"
 ENGINE_VAR="@ENGINE_VAR@"
 ENGINE_CACHE="@ENGINE_CACHE@"
 SPICE_DIR="@SPICE_DIR@"
+ENGINE_NOVNC_DIR="/usr/share/novnc"
 
 #
 # Intervals for stoping the engine:

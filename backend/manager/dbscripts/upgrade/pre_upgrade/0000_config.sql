@@ -523,6 +523,10 @@ select fn_db_add_config_value('AutoRecoveryAllowedTypes','{\"storage domains\":\
 select fn_db_add_config_value('ClientModeSpiceDefault','Auto','general');
 -- Rdp client mode default settings (Auto, Native, Plugin)
 select fn_db_add_config_value('ClientModeRdpDefault','Auto','general');
+-- Websocket proxy configuration (Off, Engine, Host or ip/hostname:port of websockets proxy)
+select fn_db_add_config_value('WebSocketProxy','Off','general');
+-- Websocket ticket validity in seconds
+select fn_db_add_config_value('WebSocketProxyTicketValiditySeconds','120','general');
 
 select fn_db_add_config_value('LogMaxPhysicalMemoryUsedThresholdInPercentage', '95', 'general');
 select fn_db_add_config_value('LogMaxCpuUsedThresholdInPercentage', '95', 'general');

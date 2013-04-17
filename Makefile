@@ -127,6 +127,7 @@ ARTIFACTS = \
 	-e "s|@ENGINE_VARS@|$(PKG_SYSCONF_DIR)/engine.conf|g" \
 	-e "s|@ENGINE_NOTIFIER_DEFAULTS@|$(DATA_DIR)/conf/notifier.conf.defaults|g" \
 	-e "s|@ENGINE_NOTIFIER_VARS@|$(PKG_SYSCONF_DIR)/notifier/notifier.conf|g" \
+	-e "s|@ENGINE_WSPROXY_DEFAULT_FILE@|$(DATA_DIR)/conf/ovirt-websocket-proxy.conf.defaults|g" \
 	-e "s|@ENGINE_USER@|$(PKG_USER)|g" \
 	-e "s|@ENGINE_GROUP@|$(PKG_GROUP)|g" \
 	-e "s|@ENGINE_ETC@|$(PKG_SYSCONF_DIR)|g" \
@@ -151,6 +152,7 @@ GENERATED = \
 	packaging/bin/engine-prolog.sh \
 	packaging/conf/engine.conf.defaults \
 	packaging/conf/notifier.conf.defaults \
+	packaging/conf/ovirt-websocket-proxy.conf.defaults \
 	packaging/etc/engine-config/log4j.xml \
 	packaging/etc/engine-manage-domains/log4j.xml \
 	packaging/etc/engine-manage-domains/engine-manage-domains.conf \
@@ -160,6 +162,8 @@ GENERATED = \
 	packaging/services/ovirt-engine.sysv \
 	packaging/services/ovirt-engine-notifier.systemd \
 	packaging/services/ovirt-engine-notifier.sysv \
+	packaging/services/ovirt-websocket-proxy.systemd \
+	packaging/services/ovirt-websocket-proxy.sysv \
 	packaging/setup/ovirt_engine_setup/config.py \
 	ovirt-engine.spec \
 	$(NULL)
@@ -444,12 +448,16 @@ install_misc:
 	install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/engine.conf.d
 	install -m 755 packaging/resources/ovirtlogrot.sh ${DESTDIR}$(DATA_DIR)/scripts/
 	install -m 755 packaging/resources/ovirt-cron ${DESTDIR}$(SYSCONF_DIR)/cron.daily/
+	install -m 644 packaging/conf/ovirt-websocket-proxy.conf.defaults $(DESTDIR)$(DATA_DIR)/conf
 
 	# Service common
 	install -dm 755 $(DESTDIR)$(DATA_DIR)/services
 	install -m 644 packaging/services/__init__.py $(DESTDIR)$(DATA_DIR)/services
 	install -m 644 packaging/services/config.py $(DESTDIR)$(DATA_DIR)/services
 	install -m 644 packaging/services/service.py $(DESTDIR)$(DATA_DIR)/services
+	install -m 755 packaging/services/ovirt-websocket-proxy.py $(DESTDIR)$(DATA_DIR)/services
+	install -m 755 packaging/services/ovirt-websocket-proxy.systemd $(DESTDIR)$(DATA_DIR)/services
+	install -m 755 packaging/services/ovirt-websocket-proxy.sysv $(DESTDIR)$(DATA_DIR)/services
 
 	# USB filter:
 	install -m 644 packaging/etc/usbfilter.txt $(DESTDIR)$(PKG_SYSCONF_DIR)

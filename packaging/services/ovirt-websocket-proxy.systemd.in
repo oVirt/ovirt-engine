@@ -1,0 +1,13 @@
+[Unit]
+Description=oVirt Engine websockets proxy
+
+[Service]
+Type=simple
+User=@ENGINE_USER@
+Group=@ENGINE_GROUP@
+LimitNOFILE=65535
+LimitNPROC=2048
+ExecStart=@ENGINE_USR@/services/ovirt-websocket-proxy.py $EXTRA_ARGS start
+
+[Install]
+WantedBy=multi-user.target

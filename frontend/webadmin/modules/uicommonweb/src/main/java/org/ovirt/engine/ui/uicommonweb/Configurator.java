@@ -338,6 +338,10 @@ public abstract class Configurator {
         return clientOsType().equalsIgnoreCase("Linux") && clientBrowserType().equalsIgnoreCase("Firefox"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
+    public boolean isClientWindowExplorerWithWebsockets() {
+        return isClientWindowsExplorer();
+    }
+
     public boolean isClientWindowsExplorer() {
         return isClientWindows() && clientBrowserType().equalsIgnoreCase("Explorer"); //$NON-NLS-1$ //$NON-NLS-2$
     }

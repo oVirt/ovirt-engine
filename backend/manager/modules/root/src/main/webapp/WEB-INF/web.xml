@@ -71,6 +71,20 @@
     <url-pattern>/docs/*</url-pattern>
   </servlet-mapping>
 
+  <!-- noVNC: -->
+  <servlet>
+    <servlet-name>novnc</servlet-name>
+    <servlet-class>org.ovirt.engine.core.DocsServlet</servlet-class>
+    <init-param>
+      <param-name>file</param-name>
+      <param-value>%{ENGINE_NOVNC_DIR}</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>novnc</servlet-name>
+    <url-pattern>/ovirt-engine-novnc/*</url-pattern>
+  </servlet-mapping>
+
   <!-- SpiceX.cab -->
   <servlet>
     <servlet-name>SpiceX.cab</servlet-name>

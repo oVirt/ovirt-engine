@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -13,20 +14,46 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
+import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
-@SuppressWarnings("unused")
-public class VncConsoleModel extends ConsoleModel
-{
-    String otp64 = null;
-    private static final int seconds = 120;
+public class VncConsoleModel extends ConsoleModel {
 
-    public VncConsoleModel()
-    {
+    private static final int TICKET_VALIDITY_SECONDS = 120;
+
+    private String host;
+
+    private String otp64 = null;
+
+    private final IVnc vncImpl;
+
+    private String getPort() {
+        if (getEntity() == null && getEntity().getDisplay() == null) {
+            return null;
+        }
+
+        return getEntity().getDisplay().toString();
+    }
+
+    private String getHost() {
+        return host;
+    }
+
+    private String getOtp64() {
+        return otp64;
+    }
+
+    public VncConsoleModel() {
         setTitle(ConstantsManager.getInstance().getConstants().VNCTitle());
+
+        String noVncConfig = (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.WebSocketProxy);
+        this.vncImpl = StringHelper.isNullOrEmpty(noVncConfig) || noVncConfig.equals("Off") ? // $NON-NLS-1$
+            (IVnc) TypeResolver.getInstance().resolve(IVncNative.class) :
+            (IVnc) TypeResolver.getInstance().resolve(INoVnc.class);
     }
 
     @Override
@@ -50,7 +77,7 @@ public class VncConsoleModel extends ConsoleModel
     private void setVmTicket() {
         Frontend.RunAction(VdcActionType.SetVmTicket, new SetVmTicketParameters(getEntity().getId(),
                     null,
-                    seconds), new IFrontendActionAsyncCallback() {
+                    TICKET_VALIDITY_SECONDS), new IFrontendActionAsyncCallback() {
 
                 @Override
                 public void executed(FrontendActionAsyncResult result) {
@@ -70,7 +97,8 @@ public class VncConsoleModel extends ConsoleModel
                                 public void onSuccess(Object model, Object ReturnValue)
                                 {
                                     VncConsoleModel consoleModel = (VncConsoleModel) model;
-                                    consoleModel.postGetHost((String) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                                    VncConsoleModel.this.host = (String) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                                    consoleModel.setAndInvokeClient();
                                 }
                             };
 
@@ -78,23 +106,21 @@ public class VncConsoleModel extends ConsoleModel
                                     new IdQueryParameters(getEntity().getId()), _asyncQuery);
                         }
                         else {
-                            postGetHost(getEntity().getDisplayIp());
+                            VncConsoleModel.this.host = getEntity().getDisplayIp();
+                            setAndInvokeClient();
                         }
                     }
                 }
             });
     }
 
-    protected void postGetHost(String hostName) {
-        StringBuilder configBuilder = new StringBuilder("[virt-viewer]"); //$NON-NLS-1$
-        configBuilder.append("\ntype=vnc") //$NON-NLS-1$
-            .append("\nhost=").append(hostName) //$NON-NLS-1$
-            .append("\nport=").append(getEntity().getDisplay().toString()) //$NON-NLS-1$
-            .append("\npassword=").append(otp64) //$NON-NLS-1$
-            .append("\ndelete-this-file=1") //$NON-NLS-1$
-            .append("\ntitle=").append(getTitle()); //$NON-NLS-1$
+    private void setAndInvokeClient() {
+        vncImpl.setVncHost(getHost());
+        vncImpl.setVncPort(getPort());
+        vncImpl.setTicket(getOtp64());
+        vncImpl.setTitle(getTitle());
 
-        ConsoleModel.makeConsoleConfigRequest("console.vv", "application/x-virt-viewer; charset=UTF-8", configBuilder.toString()); //$NON-NLS-1$ $NON-NLS-2$
+        vncImpl.invokeClient();
     }
 
     @Override

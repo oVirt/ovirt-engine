@@ -27,6 +27,8 @@ public enum ConfigurationValues {
     SpiceProxyDefault(ConfigAuthType.User),
     ClientModeSpiceDefault(ConfigAuthType.User),
     ClientModeRdpDefault(ConfigAuthType.User),
+    WebSocketProxy(ConfigAuthType.User),
+    WebSocketProxyTicketValiditySeconds(ConfigAuthType.User),
     HighUtilizationForEvenlyDistribute(ConfigAuthType.User),
     SpiceUsbAutoShare(ConfigAuthType.User),
     ImportDefaultPath,

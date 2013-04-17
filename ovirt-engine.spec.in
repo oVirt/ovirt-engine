@@ -207,6 +207,7 @@ Requires: %{name} = %{version}-%{release}
 Requires: java
 Requires: openssh
 Requires: openssl
+Requires: novnc
 
 %if %{install_systemd}
 Requires(post): systemd
@@ -307,6 +308,39 @@ Requires(postun): systemd
 %systemd_preun ovirt-engine-notifier.service
 %endif
 
+
+%package websocket-proxy
+Summary: %{product_name_short} Websocket Proxy
+Group: Virtualization/Management
+Requires: python-websockify
+Requires: m2crypto
+Requires: ovirt-engine
+
+%if %{install_systemd}
+Requires(post): systemd
+Requires(preun): systemd
+Requires(postun): systemd
+%endif
+
+%description websocket-proxy
+%{product_name_short} Websocket Proxy
+
+%post websocket-proxy
+%if %{install_systemd}
+%systemd_post ovirt-websocket-proxy.service
+%endif
+
+%postun websocket-proxy
+%if %{install_systemd}
+%systemd_postun ovirt-websocket-proxy.service
+%endif
+
+%preun websocket-proxy
+%if %{install_systemd}
+%systemd_preun ovirt-websocket-proxy.service
+%endif
+
+
 %package setup-plugin-allinone
 Summary: All-in-one plugin for %{product_name_short}'s setup
 Group: Virtualization/Management
@@ -406,6 +440,7 @@ done
 install -dm 755 "%{buildroot}%{_unitdir}"
 cp "%{buildroot}%{engine_data}/services/ovirt-engine.systemd" "%{buildroot}%{_unitdir}/ovirt-engine.service"
 cp "%{buildroot}%{engine_data}/services/ovirt-engine-notifier.systemd" "%{buildroot}%{_unitdir}/ovirt-engine-notifier.service"
+cp "%{buildroot}%{engine_data}/services/ovirt-websocket-proxy.systemd" "%{buildroot}%{_unitdir}/ovirt-websocket-proxy.service"
 %endif
 
 # Install System V init scripts:
@@ -413,6 +448,7 @@ cp "%{buildroot}%{engine_data}/services/ovirt-engine-notifier.systemd" "%{buildr
 install -dm 755 "%{buildroot}%{_initddir}"
 cp "%{buildroot}%{engine_data}/services/ovirt-engine.sysv" "%{buildroot}%{_initddir}/ovirt-engine"
 cp "%{buildroot}%{engine_data}/services/ovirt-engine-notifier.sysv" "%{buildroot}%{_initddir}/ovirt-engine-notifier"
+cp "%{buildroot}%{engine_data}/services/ovirt-websocket-proxy.sysv" "%{buildroot}%{_unitdir}/ovirt-websocket-proxy"
 %endif
 
 # backward compatibly (pre-3.3.0)
@@ -748,6 +784,21 @@ fi
 
 %files webadmin-portal
 %{engine_ear}/webadmin.war
+
+
+%files websocket-proxy
+%{engine_data}/conf/ovirt-websocket-proxy.conf.defaults
+%{engine_data}/services/ovirt-websocket-proxy.*
+%{engine_data}/services/config.py*
+%{engine_data}/services/service.py*
+
+# Files needed by the service:
+%if %{install_systemd}
+%{_unitdir}/ovirt-websocket-proxy.service
+%endif
+%if %{install_systemv}
+%{_initddir}/ovirt-websocket-proxy
+%endif
 
 
 %files tools

@@ -1,0 +1,77 @@
+#! /bin/sh
+#
+# Start/stop oVirt Engine
+#
+# chkconfig: - 65 34
+# description: oVirt Engine
+# pidfile: /var/run/ovirt-engine.pid
+
+### BEGIN INIT INFO
+# Provides: ovirt-engine
+# Short-Description: oVirt Engine
+### END INIT INFO
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+NAME="ovirt-websocket-proxy"
+PROG="oVirt Engine websockets proxy"
+
+[ -f "/etc/sysconfig/${NAME}" ] && . "/etc/sysconfig/${NAME}"
+
+RETVAL=0
+LOCKFILE="/var/lock/subsys/${NAME}"
+PIDFILE="${PIDFILE:-/var/run/${NAME}.pid}"
+USER="@ENGINE_USER@"
+ENGINE_USR="@ENGINE_USR@"
+
+case "$1" in
+	start)
+		if [ `id -u` -ne 0 ]; then
+			echo $"Insufficient privilege" 1>&2
+			exit 4
+		fi
+		echo -n $"Starting $PROG: "
+		ulimit -n ${FILENO:-65535}
+		ulimit -n ${NPROC:-2048}
+		touch "${PIDFILE}"
+		chown "${USER}" "${PIDFILE}"
+		daemon --user "${USER}" --pidfile="${PIDFILE}" \
+			"${ENGINE_USR}/services/${NAME}.py" \
+				--pidfile="${PIDFILE}" \
+				--background \
+				${EXTRA_ARGS} \
+				start
+		RETVAL=$?
+		echo
+		if [ $RETVAL -eq 0 ]; then
+			touch "${LOCKFILE}"
+		else
+			if [ -f "${LOCKFILE}" ]; then
+				RETVAL=0
+			fi
+		fi
+		;;
+	stop)
+		echo -n $"Stopping $PROG: "
+		killproc -p "${PIDFILE}" -d 60
+		RETVAL=$?
+		echo
+		[ $RETVAL -eq 0 ] && rm -f "${LOCKFILE}"
+		;;
+	status)
+		status -p "${PIDFILE}"
+		RETVAL=$?
+		;;
+	restart)
+		$0 stop
+		$0 start
+		RETVAL=$?
+		;;
+	*)
+		echo $"Usage: $0 {start|stop|status|restart}"
+		exit 2
+		;;
+esac
+
+e
