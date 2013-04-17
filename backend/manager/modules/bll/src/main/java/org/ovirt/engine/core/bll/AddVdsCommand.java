@@ -50,6 +50,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.utils.gluster.GlusterUtil;
 import org.ovirt.engine.core.utils.ssh.SSHClient;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -82,6 +83,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
+        addCanDoActionMessage(String.format("$server %1$s", getParameters().getvds().getHostName()));
     }
 
     @Override
@@ -336,7 +338,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         }
         if (isGlusterSupportEnabled()) {
             if (clusterHasServers()) {
-                upServer = ClusterUtils.getInstance().getUpServer(getVdsGroupId());
+                upServer = getClusterUtils().getUpServer(getVdsGroupId());
                 if (upServer == null) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_GLUSTER_HOST_TO_PEER_PROBE);
                     returnValue = false;
@@ -352,31 +354,41 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     }
 
     private boolean clusterHasServers() {
-        return ClusterUtils.getInstance().hasServers(getVdsGroupId());
+        return getClusterUtils().hasServers(getVdsGroupId());
     }
 
-    public SSHClient getSSHClient() {
-        return new SSHClient();
+    protected ClusterUtils getClusterUtils() {
+        return ClusterUtils.getInstance();
+    }
+
+    public SSHClient getSSHClient(String hostname) {
+        Long timeout =
+                TimeUnit.SECONDS.toMillis(Config.<Integer> GetValue(ConfigValues.ConnectToServerTimeoutInSeconds));
+
+        SSHClient sshclient = new SSHClient();
+        sshclient.setHardTimeout(timeout);
+        sshclient.setSoftTimeout(timeout);
+        sshclient.setHost(hostname);
+        sshclient.setUser(USER_NAME);
+        sshclient.setPassword(getParameters().getRootPassword());
+        return sshclient;
     }
 
     protected boolean canConnect(VDS vds) {
-        boolean returnValue = true;
-
         // execute the connectivity and id uniqueness validation for VDS type hosts
         if (vds.getVdsType() == VDSType.VDS && Config.<Boolean> GetValue(ConfigValues.InstallVds)) {
             SSHClient sshclient = null;
             try {
-                Long timeout =
-                        TimeUnit.SECONDS.toMillis(Config.<Integer> GetValue(ConfigValues.ConnectToServerTimeoutInSeconds));
-
-                sshclient = getSSHClient();
-                sshclient.setHardTimeout(timeout);
-                sshclient.setSoftTimeout(timeout);
-                sshclient.setHost(vds.getHostName());
-                sshclient.setUser(USER_NAME);
-                sshclient.setPassword(getParameters().getRootPassword());
+                sshclient = getSSHClient(vds.getHostName());
                 sshclient.connect();
                 sshclient.authenticate();
+
+                if (isGlusterSupportEnabled()) {
+                    // Must not allow adding a server that already is part of another gluster cluster
+                    if (getGlusterUtil().hasPeers(sshclient)) {
+                        return failCanDoAction(VdcBllMessages.SERVER_ALREADY_PART_OF_ANOTHER_CLUSTER);
+                    }
+                }
             } catch (AuthenticationException e) {
                 log.errorFormat(
                         "Failed to authenticate session with host {0}",
@@ -384,8 +396,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                         e
                         );
 
-                addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_AUTHENTICATE_TO_SERVER);
-                returnValue = false;
+                return failCanDoAction(VdcBllMessages.VDS_CANNOT_AUTHENTICATE_TO_SERVER);
             } catch (Exception e) {
                 log.errorFormat(
                         "Failed to establish session with host {0}",
@@ -393,8 +404,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                         e
                         );
 
-                addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_CONNECT_TO_SERVER);
-                returnValue = false;
+                return failCanDoAction(VdcBllMessages.VDS_CANNOT_CONNECT_TO_SERVER);
             } finally {
                 if (sshclient != null) {
                     sshclient.disconnect();
@@ -402,7 +412,11 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             }
         }
 
-        return returnValue;
+        return true;
+    }
+
+    protected GlusterUtil getGlusterUtil() {
+        return GlusterUtil.getInstance();
     }
 
     protected boolean validateSingleHostAttachedToLocalStorage() {

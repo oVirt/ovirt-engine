@@ -3,6 +3,7 @@ package org.ovirt.engine.core.utils.gluster;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -33,6 +34,7 @@ public class GlusterUtilTest {
             "<cliOutput><peerStatus><peer><uuid>85c42b0d-c2b7-424a-ae72-5174c25da40b</uuid><hostname>testserver1</hostname><connected>1</connected><state>3</state></peer>"
                     +
                     "<peer><uuid>85c42b0d-c2b7-424a-ae72-5174c25da40b</uuid><hostname>testserver2</hostname><connected>1</connected><state>3</state></peer></peerStatus></cliOutput>";
+    private static final String OUTPUT_XML_NO_PEERS = "<cliOutput><peerStatus/></cliOutput>";
 
     @Mock
     private SSHClient client;
@@ -76,5 +78,16 @@ public class GlusterUtilTest {
     @Test(expected = AuthenticationException.class)
     public void testGetPeersWithWrongPassword() throws AuthenticationException {
         glusterUtil.getPeers(SERVER_NAME1, WRONG_PASSWORD);
+    }
+
+    @Test
+    public void testHasPeersTrue() {
+        assertTrue(glusterUtil.hasPeers(client));
+    }
+
+    @Test
+    public void testHasPeersFalse() {
+        doReturn(OUTPUT_XML_NO_PEERS).when(glusterUtil).executePeerStatusCommand(client);
+        assertFalse(glusterUtil.hasPeers(client));
     }
 }

@@ -68,6 +68,20 @@ public class GlusterUtil {
     }
 
     /**
+     * Given an SSHClient (already connected and authenticated), execute the "gluster peer status" command, check if the
+     * server has any peers and return true if it has at least one. Note that this method does <b>not</b> close the
+     * connection, and it is the responsibility of the calling code to do the same.
+     *
+     * @param client
+     *            The already connected and authenticated SSHClient object
+     * @return true if the server has at least one peer, else false
+     */
+    public boolean hasPeers(SSHClient client) {
+        String serversXml = executePeerStatusCommand(client);
+        return extractServers(serversXml).size() > 0;
+    }
+
+    /**
      * Fetches gluster peers of the given server
      *
      * @param server

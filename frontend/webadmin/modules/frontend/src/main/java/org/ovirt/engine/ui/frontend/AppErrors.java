@@ -2245,6 +2245,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("One or more servers are already part of an existing cluster")
     String SERVER_ALREADY_EXISTS_IN_ANOTHER_CLUSTER();
 
+    @DefaultStringValue("Server ${server} is already part of another cluster.")
+    String SERVER_ALREADY_PART_OF_ANOTHER_CLUSTER();
+
     @DefaultStringValue("SSH Authentication failed. Please make sure password is correct.")
     String SSH_AUTHENTICATION_FAILED();
 
