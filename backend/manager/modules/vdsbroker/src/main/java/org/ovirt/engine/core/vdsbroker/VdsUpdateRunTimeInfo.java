@@ -1805,7 +1805,8 @@ public class VdsUpdateRunTimeInfo {
             }
         }
 
-        vm.setUsageNetworkPercent((vm.getUsageNetworkPercent() > 100) ? 100 : vm.getUsageNetworkPercent());
+        Integer maxPercent = 100;
+        vm.setUsageNetworkPercent((vm.getUsageNetworkPercent() > maxPercent) ? maxPercent : vm.getUsageNetworkPercent());
         addVmInterfaceStatisticsToList(vm.getInterfaces());
     }
 

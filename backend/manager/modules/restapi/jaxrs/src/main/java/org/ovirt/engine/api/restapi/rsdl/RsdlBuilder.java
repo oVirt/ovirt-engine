@@ -441,7 +441,7 @@ public class RsdlBuilder {
                 if (value != null) {
                     ParamData paramData = (ParamData) value;
                     header.setValue(paramData.getValue());
-                    header.setRequired(paramData.getRequired() == null ? false : paramData.getRequired());
+                    header.setRequired(paramData.getRequired() == null ? Boolean.FALSE : paramData.getRequired());
                 }
 
                 link.getRequest().getHeaders().getHeaders().add(header);
@@ -462,7 +462,7 @@ public class RsdlBuilder {
                     param.setType(urlParamData.getType());
                     param.setContext(urlParamData.getContext());
                     param.setValue(urlParamData.getValue());
-                    param.setRequired(urlParamData.getRequired()==null ? false : urlParamData.getRequired());
+                    param.setRequired(urlParamData.getRequired()==null ? Boolean.FALSE : urlParamData.getRequired());
                 }
                 ps.getParameters().add(param);
             }

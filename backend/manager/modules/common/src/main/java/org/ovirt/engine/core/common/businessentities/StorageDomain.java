@@ -201,7 +201,7 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntity<Guid>
     }
 
     public void setTotalDiskSize(Integer value) {
-        value = (value == null) ? 0 : value;
+        value = (value == null) ? Integer.valueOf(0) : value;
         if (!totalDiskSize.equals(value)) {
             totalDiskSize = value;
         }

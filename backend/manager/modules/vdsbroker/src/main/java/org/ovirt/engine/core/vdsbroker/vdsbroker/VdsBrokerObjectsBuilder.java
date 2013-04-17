@@ -682,7 +682,7 @@ public class VdsBrokerObjectsBuilder {
      */
     private static Double assignDoubleValueWithNullProtection(XmlRpcStruct input, String name) {
         Double doubleValue = AssignDoubleValue(input, name);
-        return (doubleValue == null ? 0.0 : doubleValue);
+        return (doubleValue == null ? Double.valueOf(0.0) : doubleValue);
     }
 
     private static Integer AssignIntValue(XmlRpcStruct input, String name) {

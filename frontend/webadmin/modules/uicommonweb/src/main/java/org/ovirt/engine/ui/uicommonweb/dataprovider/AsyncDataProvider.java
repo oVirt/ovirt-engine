@@ -775,7 +775,7 @@ public final class AsyncDataProvider {
                 {
                     return 100;
                 }
-                return ((Integer) source).intValue();
+                return source;
             }
         };
         GetConfigFromCache(

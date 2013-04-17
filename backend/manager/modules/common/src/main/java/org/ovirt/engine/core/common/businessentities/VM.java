@@ -1182,7 +1182,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         setCpuSys(vmStatistics.getcpu_sys());
         setCpuUser(vmStatistics.getcpu_user());
         if ((getCpuSys() != null) && (getCpuUser() != null)) {
-            Double percent = (getCpuSys() + getCpuUser()) / new Double(vm.getNumOfCpus());
+            Double percent = (getCpuSys() + getCpuUser()) / vm.getNumOfCpus();
             setUsageCpuPercent(percent.intValue());
             if (getUsageCpuPercent() != null && getUsageCpuPercent() > 100) {
                 setUsageCpuPercent(100);

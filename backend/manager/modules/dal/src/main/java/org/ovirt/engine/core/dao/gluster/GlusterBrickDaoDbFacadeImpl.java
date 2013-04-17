@@ -94,7 +94,7 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
                 .addValue("volume_id", brick.getVolumeId())
                 .addValue("server_id", brick.getServerId())
                 .addValue("brick_dir", brick.getBrickDirectory())
-                .addValue("brick_order", (brick.getBrickOrder() == null) ? 0 : brick.getBrickOrder())
+                .addValue("brick_order", (brick.getBrickOrder() == null) ? Integer.valueOf(0) : brick.getBrickOrder())
                 .addValue("status", EnumUtils.nameOrNull(brick.getStatus()));
     }
 

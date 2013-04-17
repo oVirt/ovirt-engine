@@ -177,7 +177,7 @@ public class MultipleActionsRunner {
             ExecutionHandler.prepareCommandForMonitoring(command,
                     command.getActionType(),
                     command.isInternalExecution(),
-                    new Boolean(hasCorrelationIdMap.get(command.getCommandId())));
+                    hasCorrelationIdMap.get(command.getCommandId()));
         }
         ThreadLocalParamsContainer.setCorrelationId(command.getCorrelationId());
         command.executeAction();
