@@ -401,6 +401,8 @@ public class QuotaManager {
     private boolean validateAndSetClusterQuota(QuotaConsumptionParametersWrapper parameters,
             Pair<AuditLogType, AuditLogableBase> auditLogPair) {
         boolean result = true;
+
+        List<QuotaVdsGroupConsumptionParameter> executed = new ArrayList<QuotaVdsGroupConsumptionParameter>();
         for (QuotaConsumptionParameter parameter : parameters.getParameters()) {
             QuotaVdsGroupConsumptionParameter vdsGroupConsumptionParameter;
             if (parameter.getParameterType() != QuotaConsumptionParameter.ParameterType.VDS_GROUP) {
@@ -435,7 +437,7 @@ public class QuotaManager {
                     vdsGroupConsumptionParameter.getQuotaAction() == QuotaConsumptionParameter.QuotaAction.CONSUME ?
                     vdsGroupConsumptionParameter.getRequestedCpu() : -vdsGroupConsumptionParameter.getRequestedCpu();
 
-            if (!checkQuotaClusterLimits(
+            if (checkQuotaClusterLimits(
                     parameters.getAuditLogable().getStoragePool().getQuotaEnforcementType(),
                     quota,
                     quotaVdsGroup,
@@ -443,11 +445,49 @@ public class QuotaManager {
                     requestedCpu,
                     parameters.getCanDoActionMessages(),
                     auditLogPair)) {
+                executed.add(vdsGroupConsumptionParameter);
+            } else {
                 result = false;
                 break;
             }
         }
+
+        //if result is false (one or more parameters did not pass) - roll back the parameters that did pass
+        if(!result) {
+            rollBackVdsGroupConsumptionParameters(executed);
+        }
+
         return result;
+    }
+
+    private void rollBackVdsGroupConsumptionParameters(List<QuotaVdsGroupConsumptionParameter> executed) {
+        for (QuotaVdsGroupConsumptionParameter parameter : executed) {
+            long requestedMemory =
+                    parameter.getQuotaAction() == QuotaConsumptionParameter.QuotaAction.CONSUME ?
+                            -parameter.getRequestedMemory() : parameter.getRequestedMemory();
+            int requestedCpu =
+                    parameter.getQuotaAction() == QuotaConsumptionParameter.QuotaAction.CONSUME ?
+                            -parameter.getRequestedCpu() : parameter.getRequestedCpu();
+
+            QuotaVdsGroup quotaVdsGroup = null;
+            Quota quota = parameter.getQuota();
+            if (quota.getGlobalQuotaVdsGroup() != null) { // global cluster quota
+                quotaVdsGroup = quota.getGlobalQuotaVdsGroup();
+            } else {
+                for (QuotaVdsGroup vdsGroup : quota.getQuotaVdsGroups()) {
+                    if (vdsGroup.getVdsGroupId().equals(parameter.getVdsGroupId())) {
+                        quotaVdsGroup = vdsGroup;
+                        break;
+                    }
+                }
+            }
+
+            if (quotaVdsGroup != null) {
+                long newMemory = requestedMemory + quotaVdsGroup.getMemSizeMBUsage();
+                int newVcpu = requestedCpu + quotaVdsGroup.getVirtualCpuUsage();
+                cacheNewValues(quotaVdsGroup, newMemory, newVcpu);
+            }
+        }
     }
 
     /**
