@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.bookmarks;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -32,7 +33,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 public class BookmarkListModel extends SearchableListModel
 {
 
-    private static class BookmarksComparator implements Comparator<Bookmark> {
+    private static class BookmarksComparator implements Comparator<Bookmark>, Serializable {
 
         @Override
         public int compare(Bookmark o1, Bookmark o2) {

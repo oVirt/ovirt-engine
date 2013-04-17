@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.resources;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,7 +26,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 public class ResourcesModel extends SearchableListModel
 {
 
-    private static class ResourceComparator implements Comparator<VM> {
+    private static class ResourceComparator implements Comparator<VM>, Serializable {
 
         @Override
         public int compare(VM o1, VM o2) {

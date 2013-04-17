@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +36,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendAssignedPermissionsResource
         extends AbstractBackendCollectionResource<Permission, permissions>
-        implements AssignedPermissionsResource {
+        implements AssignedPermissionsResource, Serializable {
 
     private Guid targetId;
     private VdcQueryType queryType;
@@ -87,7 +88,7 @@ public class BackendAssignedPermissionsResource
         return inheritedPermissions;
     }
 
-    static class PermissionsComparator implements Comparator<permissions> {
+    static class PermissionsComparator implements Comparator<permissions>, Serializable {
         @Override
         public int compare(permissions o1, permissions o2) {
             String id1 = o1.getId().toString();

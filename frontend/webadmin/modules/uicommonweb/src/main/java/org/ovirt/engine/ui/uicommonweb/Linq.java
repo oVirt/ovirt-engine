@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -54,7 +55,7 @@ import org.ovirt.engine.ui.uicompat.IEqualityComparer;
 @SuppressWarnings("unused")
 public final class Linq
 {
-    public static class AuditLogComparer implements Comparator<AuditLog>
+    public static class AuditLogComparer implements Comparator<AuditLog>, Serializable
     {
         @Override
         public int compare(AuditLog x, AuditLog y)
@@ -66,7 +67,7 @@ public final class Linq
         }
     }
 
-    public static class VmAndPoolByNameComparer implements Comparator
+    public static class VmAndPoolByNameComparer implements Comparator, Serializable
     {
         @Override
         public int compare(Object x, Object y)
@@ -96,7 +97,7 @@ public final class Linq
      * @param host
      * @return
      */
-    public static class VdsGroupByNameComparer implements Comparator<VDSGroup>
+    public static class VdsGroupByNameComparer implements Comparator<VDSGroup>, Serializable
     {
 
         @Override
@@ -107,7 +108,7 @@ public final class Linq
 
     }
 
-    public static class VmTemplateByNameComparer implements Comparator<VmTemplate>
+    public static class VmTemplateByNameComparer implements Comparator<VmTemplate>, Serializable
     {
 
         @Override
@@ -118,7 +119,7 @@ public final class Linq
 
     }
 
-    public static class DiskImageByLastModifiedComparer implements Comparator<DiskImage>
+    public static class DiskImageByLastModifiedComparer implements Comparator<DiskImage>, Serializable
     {
 
         @Override
@@ -139,7 +140,7 @@ public final class Linq
 
     }
 
-    public static class DiskImageByLastModifiedTimeOfDayComparer implements Comparator<DiskImage>
+    public static class DiskImageByLastModifiedTimeOfDayComparer implements Comparator<DiskImage>, Serializable
     {
 
         @Override
@@ -151,7 +152,7 @@ public final class Linq
 
     }
 
-    public static class StorageDomainByNameComparer implements Comparator<StorageDomain>
+    public static class StorageDomainByNameComparer implements Comparator<StorageDomain>, Serializable
     {
 
         @Override
@@ -162,7 +163,7 @@ public final class Linq
 
     }
 
-    public static class StorageDomainModelByNameComparer implements Comparator<StorageDomainModel>
+    public static class StorageDomainModelByNameComparer implements Comparator<StorageDomainModel>, Serializable
     {
 
         @Override
@@ -173,7 +174,7 @@ public final class Linq
 
     }
 
-    public static class DiskByAliasComparer implements Comparator<Disk>
+    public static class DiskByAliasComparer implements Comparator<Disk>, Serializable
     {
 
         @Override
@@ -197,7 +198,7 @@ public final class Linq
 
     }
 
-    public static class DiskModelByAliasComparer implements Comparator<DiskModel>
+    public static class DiskModelByAliasComparer implements Comparator<DiskModel>, Serializable
     {
         @Override
         public int compare(DiskModel x, DiskModel y)
@@ -221,7 +222,7 @@ public final class Linq
         }
     }
 
-    public static class NetworkByNameComparer implements Comparator<Network>
+    public static class NetworkByNameComparer implements Comparator<Network>, Serializable
     {
         @Override
         public int compare(Network x, Network y)
@@ -230,7 +231,7 @@ public final class Linq
         }
     }
 
-    public static class SanTargetModelComparer implements Comparator<SanTargetModel>
+    public static class SanTargetModelComparer implements Comparator<SanTargetModel>, Serializable
     {
         @Override
         public int compare(SanTargetModel x, SanTargetModel y)
@@ -239,7 +240,7 @@ public final class Linq
         }
     }
 
-    public static class CaseInsensitiveComparer implements Comparator<String>
+    public static class CaseInsensitiveComparer implements Comparator<String>, Serializable
     {
 
         @Override
@@ -250,7 +251,7 @@ public final class Linq
 
     }
 
-    public static class DiskImageByCreationDateComparer implements Comparator<DiskImage>
+    public static class DiskImageByCreationDateComparer implements Comparator<DiskImage>, Serializable
     {
 
         @Override
@@ -271,7 +272,7 @@ public final class Linq
 
     }
 
-    public static class RpmVersionComparer implements Comparator<RpmVersion> {
+    public static class RpmVersionComparer implements Comparator<RpmVersion>, Serializable {
 
         @Override
         public int compare(RpmVersion x, RpmVersion y) {
@@ -279,7 +280,7 @@ public final class Linq
         }
     }
 
-    public static class SnapshotByCreationDateCommparer implements Comparator<Snapshot>
+    public static class SnapshotByCreationDateCommparer implements Comparator<Snapshot>, Serializable
     {
 
         @Override
@@ -290,7 +291,7 @@ public final class Linq
 
     }
 
-    public static class StoragePoolByNameComparer implements Comparator<storage_pool> {
+    public static class StoragePoolByNameComparer implements Comparator<storage_pool>, Serializable {
 
         @Override
         public int compare(storage_pool x, storage_pool y) {
@@ -1262,7 +1263,7 @@ public final class Linq
     }
 
 
-    public final static class RoleNameComparer implements Comparator<Role>{
+    public final static class RoleNameComparer implements Comparator<Role>, Serializable {
         @Override
         public int compare(Role left, Role right) {
             return left.getname().compareTo(right.getname());

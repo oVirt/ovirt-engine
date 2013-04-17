@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.utils;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
@@ -18,7 +19,7 @@ import java.util.Comparator;
  * It is assumed that a string always begins with a nondigit sequence; if it actually begins with a digit sequence, the
  * behaviour is as if it started with an empty nondigit sequence.
  */
-public class LexoNumericComparator implements Comparator<String> {
+public class LexoNumericComparator implements Comparator<String>, Serializable {
 
     @Override
     public int compare(String str1, String str2) {
