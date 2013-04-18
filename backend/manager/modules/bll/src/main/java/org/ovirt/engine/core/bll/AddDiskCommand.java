@@ -152,7 +152,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             returnValue =
                     validate(new StoragePoolValidator(sp).isUp()) &&
                     isStoragePoolMatching(vm) &&
-                    performImagesChecks(vm.getStoragePoolId()) &&
                     isVmNotLocked() &&
                     isVmNotInPreviewSnapshot();
         }
@@ -197,17 +196,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 getStorageDomain().getStorageStaticData(),
                 getDiskImageInfo(),
                 getReturnValue().getCanDoActionMessages());
-    }
-
-    protected boolean performImagesChecks(Guid spId) {
-        return ImagesHandler.PerformImagesChecks(
-                getReturnValue().getCanDoActionMessages(),
-                spId,
-                true,
-                false,
-                false,
-                false,
-                Collections.<DiskImage> emptyList());
     }
 
     private double getRequestDiskSpace() {

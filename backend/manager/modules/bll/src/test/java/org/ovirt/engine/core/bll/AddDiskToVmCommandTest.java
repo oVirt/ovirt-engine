@@ -328,7 +328,6 @@ public class AddDiskToVmCommandTest {
         doReturn(vmDAO).when(command).getVmDAO();
         doNothing().when(command).updateDisksFromDb();
         doReturn(true).when(command).checkImageConfiguration();
-        doReturn(true).when(command).performImagesChecks(any(Guid.class));
         doReturn(mockSnapshotValidator()).when(command).getSnapshotsValidator();
     }
 
