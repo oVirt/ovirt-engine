@@ -94,16 +94,16 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase> extends Abs
                 DisksViewColumns.sizeColumn, constants.provisionedSizeDisk(), all || images || luns, "100px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.actualSizeColumn, constants.sizeDisk(), images, "100px"); //$NON-NLS-1$
+                DisksViewColumns.actualSizeColumn, constants.sizeDisk(), images, "120px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.allocationColumn, constants.allocationDisk(), images, "100px"); //$NON-NLS-1$
+                DisksViewColumns.allocationColumn, constants.allocationDisk(), images, "125px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.storageDomainsColumn, constants.storageDomainDisk(), images, "120px"); //$NON-NLS-1$
+                DisksViewColumns.storageDomainsColumn, constants.storageDomainDisk(), images, "165px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.dateCreatedColumn, constants.creationDateDisk(), images, "150px"); //$NON-NLS-1$
+                DisksViewColumns.dateCreatedColumn, constants.creationDateDisk(), images, "120px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.lunIdColumn, constants.lunIdSanStorage(), luns);
@@ -118,13 +118,13 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase> extends Abs
                 DisksViewColumns.lunProductIdColumn, constants.productIdSanStorage(), luns);
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.diskContainersColumn, constants.attachedToDisk(), all || images || luns, "120px"); //$NON-NLS-1$
+                DisksViewColumns.diskContainersColumn, constants.attachedToDisk(), all || images || luns, "110px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.interfaceColumn, constants.interfaceDisk(), all || images || luns, "100px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.statusColumn, constants.statusDisk(), images, "100px"); //$NON-NLS-1$
+                DisksViewColumns.statusColumn, constants.statusDisk(), images, "90px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.descriptionColumn, constants.descriptionDisk(), all || images || luns);
