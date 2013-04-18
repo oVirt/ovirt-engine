@@ -20,18 +20,19 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
@@ -80,6 +81,9 @@ public class RestoreAllSnapshotCommandTest {
 
     @Mock
     private VmNetworkInterfaceDao vmNetworkInterfaceDAO;
+
+    @Mock
+    private MultipleStorageDomainsValidator storageValidator;
 
     private Guid vmId = Guid.NewGuid();
     private Guid diskImageId = Guid.NewGuid();
@@ -148,8 +152,11 @@ public class RestoreAllSnapshotCommandTest {
         RestoreAllSnapshotsParameters parameters = new RestoreAllSnapshotsParameters(vmId, dstSnapshotId);
         List<DiskImage> diskImageList = createDiskImageList();
         parameters.setImagesList(diskImageList);
+        doReturn(ValidationResult.VALID).when(storageValidator).allDomainsExistAndActive();
+        doReturn(ValidationResult.VALID).when(storageValidator).allDomainsWithinThresholds();
         spyCommand = spy(new RestoreAllSnapshotsCommand<RestoreAllSnapshotsParameters>(parameters));
         doReturn(true).when(spyCommand).performImagesChecks();
+        doReturn(storageValidator).when(spyCommand).createStorageDomainValidator();
     }
 
     private void mockDaos() {

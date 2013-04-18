@@ -19,6 +19,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -210,22 +211,21 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
-        for (Guid srcStorageDomainId : sourceImageDomainsImageMap.keySet()) {
-            boolean checkIsValid = true;
-            if (!ImagesHandler.PerformImagesChecks(
-                    getReturnValue().getCanDoActionMessages(),
-                    getVm().getStoragePoolId(),
-                    srcStorageDomainId,
-                    false,
-                    true,
-                    true,
-                    true,
-                    true,
-                    checkIsValid,
-                    sourceImageDomainsImageMap.get(srcStorageDomainId))) {
-                return false;
-            }
-            checkIsValid = false;
+        MultipleStorageDomainsValidator storageDomainsValidator =
+                new MultipleStorageDomainsValidator(getStoragePoolId(), sourceImageDomainsImageMap.keySet());
+        if (!validate(storageDomainsValidator.allDomainsExistAndActive())) {
+            return false;
+        }
+
+        if (!ImagesHandler.PerformImagesChecks(
+                getReturnValue().getCanDoActionMessages(),
+                getVm().getStoragePoolId(),
+                true,
+                true,
+                true,
+                true,
+                mImages)) {
+            return false;
         }
 
         Map<Guid, StorageDomain> storageDomains = new HashMap<Guid, StorageDomain>();

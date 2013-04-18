@@ -6,11 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
+import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.VdcActionUtils;
@@ -133,6 +135,10 @@ public class VmRunHandler {
                         }
 
                         if (retValue) {
+                            retValue = performStorageDomainChecks(vm, message, runParams, vmImages);
+                        }
+
+                        if (retValue) {
                             retValue = performImageChecksForRunningVm(vm, message, runParams, vmImages);
                         }
 
@@ -218,7 +224,7 @@ public class VmRunHandler {
         return validate(new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(sizeRequested), message);
     }
 
-    protected boolean validate(ValidationResult validationResult, ArrayList<String> message) {
+    protected boolean validate(ValidationResult validationResult, List<String> message) {
         if (!validationResult.isValid()) {
             message.add(validationResult.getMessage().name());
             if (validationResult.getVariableReplacements() != null) {
@@ -249,14 +255,47 @@ public class VmRunHandler {
     }
 
     /**
-     * Check isValid, storageDomain and diskSpace only if VM is not HA VM
+     * Check storage domains. Storage domain status and disk space are checked only for non-HA VMs.
+     *
+     * @param vm
+     *            The VM to run
+     * @param message
+     *            The error messages to append to
+     * @param runParams
+     *            The parameters for runnign the VM
+     * @param vmImages
+     *            The VM's image disks
+     * @return <code>true</code> if the VM can be run, <code>false</code> if not
+     */
+    protected boolean performStorageDomainChecks(VM vm,
+            List<String> message,
+            RunVmParams runParams,
+            List<DiskImage> vmImages) {
+        if (!vm.isAutoStartup() || !runParams.getIsInternal()) {
+            Set<Guid> storageDomainIds = ImagesHandler.getAllStorageIdsForImageIds(vmImages);
+            MultipleStorageDomainsValidator storageDomainValidator =
+                    new MultipleStorageDomainsValidator(vm.getStoragePoolId(), storageDomainIds);
+            if (!validate(storageDomainValidator.allDomainsExistAndActive(), message)) {
+                return false;
+            }
+
+            if (!vm.isAutoStartup()
+                    && !validate(storageDomainValidator.allDomainsWithinThresholds(), message)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Check isValid only if VM is not HA VM
      */
     protected boolean performImageChecksForRunningVm
             (VM vm, List<String> message, RunVmParams runParams, List<DiskImage> vmDisks) {
         return ImagesHandler.PerformImagesChecks(message,
-                vm.getStoragePoolId(), Guid.Empty, !vm.isAutoStartup(),
+                vm.getStoragePoolId(),
                 true, false, false,
-                !vm.isAutoStartup() || !runParams.getIsInternal(),
                 !vm.isAutoStartup() || !runParams.getIsInternal(),
                 vmDisks);
     }

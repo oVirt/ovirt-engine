@@ -321,7 +321,10 @@ public class RunVmCommandTest {
         doReturn(spDao).when(vmRunHandler).getStoragePoolDAO();
 
         doReturn(vmRunHandler).when(command).getVmRunHandler();
-
+        doReturn(true).when(vmRunHandler).performStorageDomainChecks(any(VM.class),
+                anyListOf(String.class),
+                any(RunVmParams.class),
+                anyListOf(DiskImage.class));
         doReturn(true).when(vmRunHandler).performImageChecksForRunningVm(any(VM.class),
                 anyListOf(String.class),
                 any(RunVmParams.class),

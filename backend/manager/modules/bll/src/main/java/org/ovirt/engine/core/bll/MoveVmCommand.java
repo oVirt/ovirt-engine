@@ -75,12 +75,9 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
                 ImagesHandler.PerformImagesChecks(
                                 getReturnValue().getCanDoActionMessages(),
                                 getVm().getStoragePoolId(),
-                                Guid.Empty,
-                                false,
                                 true,
                                 true,
                                 true,
-                                false,
                                 true,
                                 diskImages);
 

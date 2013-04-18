@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -162,15 +163,14 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                 && validate(snapshotValidator.vmNotDuringSnapshot(getVmId()))
                 && validate(snapshotValidator.vmNotInPreview(getVmId()))
                 && validate(new VmValidator(getVm()).vmDown())
+                && validate(new MultipleStorageDomainsValidator(getVm().getStoragePoolId(),
+                        ImagesHandler.getAllStorageIdsForImageIds(getDisksBasedOnImage())).allDomainsExistAndActive())
                 && ImagesHandler.PerformImagesChecks(
                         getReturnValue().getCanDoActionMessages(),
                         getVm().getStoragePoolId(),
-                        Guid.Empty,
-                        false,
                         true,
                         false,
                         false,
-                        true,
                         true,
                         getDisksBasedOnImage()))) {
             return false;

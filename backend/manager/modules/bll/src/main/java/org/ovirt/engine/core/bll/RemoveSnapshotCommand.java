@@ -192,7 +192,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_ACTIVE_IMAGE);
             }
 
-            if (!isEnoughSpaceToMergeSnapshots()) {
+            if (!validateStorageDomains()) {
                 return false;
             }
         }
@@ -201,24 +201,33 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     }
 
     /**
-     * Validates if each storage domain has enough free space to perform removeSnapshot. <BR/>
-     * The remove snapshot logic in VDSM include creating a new temporary volume which might be large as the disk's
+     * Validates the storage domains.
+     *
+     * Each domain is validated for status and for enough free space to perform removeSnapshot. <BR/>
+     * The remove snapshot logic in VDSM includes creating a new temporary volume which might be as large as the disk's
      * actual size. <BR/>
      * Hence, as part of the validation, we sum up all the disks virtual sizes, for each storage domain.
      *
      * @return True if there is enough space in all relevant storage domains. False otherwise.
      */
-    protected boolean isEnoughSpaceToMergeSnapshots() {
+    protected boolean validateStorageDomains() {
         for (final Entry<Guid, List<DiskImage>> storageToDiskEntry : getStorageToDiskMap().entrySet()) {
             Guid storageDomainId = storageToDiskEntry.getKey();
+            StorageDomain storageDomain =
+                    getStorageDomainDAO().getForStoragePool(storageDomainId, getStoragePoolId());
+            StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
+
+            if (!validate(validator.isDomainExistAndActive())) {
+                return false;
+            }
+
             List<DiskImage> diskImages = storageToDiskEntry.getValue();
             long sizeRequested = 0l;
             for (DiskImage diskImage : diskImages) {
                 sizeRequested += diskImage.getActualSize();
             }
-            StorageDomain storageDomain =
-                    getStorageDomainDAO().getForStoragePool(storageDomainId, getStoragePoolId());
-            if (!validate(new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(sizeRequested, false))) {
+
+            if (!validate(validator.isDomainHasSpaceForRequest(sizeRequested, false))) {
                 return false;
             }
         }
@@ -253,8 +262,8 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     protected boolean validateImages() {
         return ImagesHandler.PerformImagesChecks(getReturnValue().getCanDoActionMessages(),
-                getVm().getStoragePoolId(), Guid.Empty,
-                false, true, true, true, true, true, getDiskDao().getAllForVm(getVmId()));
+                getVm().getStoragePoolId(),
+                true, true, true, true, getDiskDao().getAllForVm(getVmId()));
     }
 
     protected boolean validateImageNotInTemplate() {

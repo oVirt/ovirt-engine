@@ -128,7 +128,7 @@ public class RemoveSnapshotCommandTest {
         when(diskImageDAO.get(mockSourceImage())).thenReturn(new DiskImage());
         mockStorageDomainDAOGetForStoragePool(10, STORAGE_DOMAIN_ID);
         assertTrue("Validation should succeed. Free space minus threshold should be bigger then disk size",
-                cmd.isEnoughSpaceToMergeSnapshots());
+                cmd.validateStorageDomains());
     }
 
     @Test
@@ -136,7 +136,7 @@ public class RemoveSnapshotCommandTest {
         when(diskImageDAO.get(mockSourceImage())).thenReturn(new DiskImage());
         mockStorageDomainDAOGetForStoragePool(3, STORAGE_DOMAIN_ID);
         assertFalse("Validation should fail. Free space minus threshold should be smaller then disk size",
-                cmd.isEnoughSpaceToMergeSnapshots());
+                cmd.validateStorageDomains());
     }
 
     @Test
@@ -145,7 +145,7 @@ public class RemoveSnapshotCommandTest {
         doReturn(imagesDisks).when(cmd).getSourceImages();
         mockStorageDomainDAOGetForStoragePool(22, STORAGE_DOMAIN_ID);
         assertTrue("Validation should succeed. Free space minus threshold should be bigger then summarize all disks size",
-                cmd.isEnoughSpaceToMergeSnapshots());
+                cmd.validateStorageDomains());
     }
 
     @Test
@@ -154,7 +154,7 @@ public class RemoveSnapshotCommandTest {
         doReturn(imagesDisks).when(cmd).getSourceImages();
         mockStorageDomainDAOGetForStoragePool(15, STORAGE_DOMAIN_ID);
         assertFalse("Validation should fail. Free space minus threshold should be smaller then summarize all disks size",
-                cmd.isEnoughSpaceToMergeSnapshots());
+                cmd.validateStorageDomains());
     }
 
     @Test
@@ -165,7 +165,7 @@ public class RemoveSnapshotCommandTest {
         mockStorageDomainDAOGetForStoragePool(22, STORAGE_DOMAIN_ID);
         mockStorageDomainDAOGetForStoragePool(22, STORAGE_DOMAIN_ID2);
         assertTrue("Validation should succeed. Free space minus threshold should be bigger then summarize all disks size for each domain",
-                cmd.isEnoughSpaceToMergeSnapshots());
+                cmd.validateStorageDomains());
     }
 
     @Test
@@ -176,7 +176,7 @@ public class RemoveSnapshotCommandTest {
         mockStorageDomainDAOGetForStoragePool(15, STORAGE_DOMAIN_ID);
         mockStorageDomainDAOGetForStoragePool(22, STORAGE_DOMAIN_ID2);
         assertFalse("Validation should fail. First domain should not have enough free space for request.",
-                cmd.isEnoughSpaceToMergeSnapshots());
+                cmd.validateStorageDomains());
     }
 
     @Test
@@ -187,7 +187,7 @@ public class RemoveSnapshotCommandTest {
         mockStorageDomainDAOGetForStoragePool(22, STORAGE_DOMAIN_ID);
         mockStorageDomainDAOGetForStoragePool(10, STORAGE_DOMAIN_ID2);
         assertFalse("Validation should fail. Second domain should not have enough free space for request.",
-                cmd.isEnoughSpaceToMergeSnapshots());
+                cmd.validateStorageDomains());
     }
 
     @Test
@@ -198,7 +198,7 @@ public class RemoveSnapshotCommandTest {
         mockStorageDomainDAOGetForStoragePool(10, STORAGE_DOMAIN_ID);
         mockStorageDomainDAOGetForStoragePool(10, STORAGE_DOMAIN_ID2);
         assertFalse("Validation should fail. Second domain should not have enough free space for request.",
-                cmd.isEnoughSpaceToMergeSnapshots());
+                cmd.validateStorageDomains());
     }
 
     @Test

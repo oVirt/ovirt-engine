@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -302,7 +303,13 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         SnapshotsValidator snapshotValidator = createSnapshotValidator();
         VmValidator vmValidator = new VmValidator(getVm());
         if (!validate(snapshotValidator.snapshotExists(getVmId(), getParameters().getDstSnapshotId())) ||
-                !validate(new StoragePoolValidator(getStoragePool()).isUp()) ||
+                !validate(new StoragePoolValidator(getStoragePool()).isUp())) {
+            return false;
+        }
+
+        MultipleStorageDomainsValidator storageValidator = createStorageDomainValidator();
+        if (!validate(storageValidator.allDomainsExistAndActive()) ||
+                !validate(storageValidator.allDomainsWithinThresholds()) ||
                 !performImagesChecks() ||
                 !validate(vmValidator.vmDown())) {
             return false;
@@ -327,16 +334,18 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         return new SnapshotsValidator();
     }
 
+    protected MultipleStorageDomainsValidator createStorageDomainValidator() {
+        Set<Guid> storageIds = ImagesHandler.getAllStorageIdsForImageIds(getImagesList());
+        return new MultipleStorageDomainsValidator(getStoragePoolId(), storageIds);
+    }
+
     protected boolean performImagesChecks() {
         return ImagesHandler.PerformImagesChecks
                 (getReturnValue().getCanDoActionMessages(),
                         getVm().getStoragePoolId(),
-                        Guid.Empty,
-                        true,
                         true,
                         false,
                         false,
-                        true,
                         true,
                         getImagesList());
     }

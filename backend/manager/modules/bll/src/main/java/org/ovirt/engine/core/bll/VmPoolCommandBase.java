@@ -169,10 +169,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         if (!ImagesHandler.PerformImagesChecks(
                             messages,
                             vm.getStoragePoolId(),
-                            storageDomainId,
-                            false,
                             true,
-                            false,
                             false,
                             false,
                             true,

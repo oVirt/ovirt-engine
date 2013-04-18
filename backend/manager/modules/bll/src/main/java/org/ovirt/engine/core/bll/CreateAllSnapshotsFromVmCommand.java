@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
+import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -302,6 +303,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         if (result && disksList.size() > 0) {
             StoragePoolValidator spValidator = new StoragePoolValidator(getStoragePool());
             SnapshotsValidator snapshotValidator = new SnapshotsValidator();
+            MultipleStorageDomainsValidator sdValidator =
+                    new MultipleStorageDomainsValidator(getVm().getStoragePoolId(),
+                            ImagesHandler.getAllStorageIdsForImageIds(disksList));
             result = validate(spValidator.isUp())
                     && validate(snapshotValidator.vmNotDuringSnapshot(getVmId()))
                     && validate(snapshotValidator.vmNotInPreview(getVmId()))
@@ -311,15 +315,14 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                     && ImagesHandler.PerformImagesChecks(
                             getReturnValue().getCanDoActionMessages(),
                             getVm().getStoragePoolId(),
-                            Guid.Empty,
-                            true,
-                            true,
                             true,
                             true,
                             true,
                             true,
                             disksList)
-                    && validate(vmValidator.vmNotLocked());
+                    && validate(vmValidator.vmNotLocked())
+                    && validate(sdValidator.allDomainsExistAndActive())
+                    && validate(sdValidator.allDomainsWithinThresholds());
         }
 
         return result;

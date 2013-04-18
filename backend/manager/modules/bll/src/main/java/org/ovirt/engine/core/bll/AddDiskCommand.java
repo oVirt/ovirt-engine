@@ -203,14 +203,11 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         return ImagesHandler.PerformImagesChecks(
                 getReturnValue().getCanDoActionMessages(),
                 spId,
-                getStorageDomainId().getValue(),
-                false,
                 true,
                 false,
                 false,
                 false,
-                true,
-                Collections.<Disk> emptyList());
+                Collections.<DiskImage> emptyList());
     }
 
     private double getRequestDiskSpace() {

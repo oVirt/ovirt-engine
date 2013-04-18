@@ -88,8 +88,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
                                 .getAllForVm(vmTemplate.getId()), false, false);
             }
             if (vmtImages.size() > 0
-                    && !ImagesHandler.isImagesExists(vmtImages, vmtImages.get(0).getStoragePoolId().getValue(),
-                            storageDomainId)) {
+                    && !ImagesHandler.isImagesExists(vmtImages, vmtImages.get(0).getStoragePoolId().getValue())) {
                 reasons.add(VdcBllMessages.TEMPLATE_IMAGE_NOT_EXIST.toString());
                 returnValue = false;
             }

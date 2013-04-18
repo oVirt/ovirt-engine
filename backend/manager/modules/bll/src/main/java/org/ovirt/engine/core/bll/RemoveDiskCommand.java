@@ -218,10 +218,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             if (!ImagesHandler.PerformImagesChecks(
                     getReturnValue().getCanDoActionMessages(),
                     storagePoolId,
-                    getParameters().getStorageDomainId(),
-                    false,
                     true,
-                    false,
                     false,
                     false,
                     true,

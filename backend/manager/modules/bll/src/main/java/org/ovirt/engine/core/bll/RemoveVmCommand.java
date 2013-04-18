@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -15,6 +16,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
@@ -156,18 +158,23 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
         Collection<Disk> vmDisks = getVm().getDiskMap().values();
         List<DiskImage> vmImages = ImagesHandler.filterImageDisks(vmDisks, true, false);
-        if (!vmImages.isEmpty() && !ImagesHandler.PerformImagesChecks(
+        if (!vmImages.isEmpty()) {
+            Set<Guid> storageIds = ImagesHandler.getAllStorageIdsForImageIds(vmImages);
+            MultipleStorageDomainsValidator storageValidator = new MultipleStorageDomainsValidator(getVm().getStoragePoolId(), storageIds);
+            if (!validate(storageValidator.allDomainsExistAndActive())) {
+                return false;
+            }
+
+            if (!ImagesHandler.PerformImagesChecks(
                 getReturnValue().getCanDoActionMessages(),
                 getVm().getStoragePoolId(),
-                Guid.Empty,
-                false,
                 !getParameters().getForce(),
                 false,
                 false,
                 true,
-                true,
                 vmImages)) {
-            return false;
+                return false;
+            }
         }
 
         // Handle VM status with ImageLocked

@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -381,17 +380,15 @@ public final class ImagesHandler {
         return String.format("%1$s/%2$s", isoPrefix, fileName);
     }
 
-    public static boolean isImagesExists(Iterable<DiskImage> images, Guid storagePoolId, Guid storageDomainId) {
-        return isImagesExists(images, storagePoolId, storageDomainId, new ArrayList<DiskImage>());
+    public static boolean isImagesExists(Iterable<DiskImage> images, Guid storagePoolId) {
+        return isImagesExists(images, storagePoolId, new ArrayList<DiskImage>());
     }
 
-    private static boolean isImagesExists(Iterable<DiskImage> images, Guid storagePoolId, Guid domainId,
-            ArrayList<DiskImage> irsImages) {
+    private static boolean isImagesExists(Iterable<DiskImage> images, Guid storagePoolId, ArrayList<DiskImage> irsImages) {
         boolean returnValue = true;
 
         for (DiskImage image : images) {
-            Guid storageDomainId = !Guid.Empty.equals(domainId) ? domainId : image.getStorageIds().get(0);
-            DiskImage fromIrs = isImageExist(storagePoolId, storageDomainId, image);
+            DiskImage fromIrs = isImageExist(storagePoolId, image);
             if (fromIrs == null) {
                 returnValue = false;
                 break;
@@ -402,14 +399,10 @@ public final class ImagesHandler {
         return returnValue;
     }
 
-    private static DiskImage isImageExist(Guid storagePoolId,
-            Guid domainId,
-            DiskImage image) {
+    private static DiskImage isImageExist(Guid storagePoolId, DiskImage image) {
         DiskImage fromIrs = null;
         try {
-            Guid storageDomainId =
-                    image.getStorageIds() != null && !image.getStorageIds().isEmpty() ? image.getStorageIds()
-                            .get(0) : domainId;
+            Guid storageDomainId = image.getStorageIds().get(0);
             Guid imageGroupId = image.getId() != null ? image.getId() : Guid.Empty;
             fromIrs = (DiskImage) Backend
                     .getInstance()
@@ -456,12 +449,9 @@ public final class ImagesHandler {
     public static boolean PerformImagesChecks(
             List<String> messages,
             Guid storagePoolId,
-            Guid storageDomainId,
-            boolean diskSpaceCheck,
             boolean checkImagesLocked,
             boolean checkImagesIllegalInVdsm,
             boolean checkImagesExist,
-            boolean checkStorageDomain,
             boolean checkIsValid,
             Collection<? extends Disk> diskImageList) {
 
@@ -476,11 +466,8 @@ public final class ImagesHandler {
                 returnValue = returnValue &&
                         checkDiskImages(messages,
                                 storagePoolId,
-                                storageDomainId,
-                                diskSpaceCheck,
                                 checkImagesIllegalInVdsm,
                                 checkImagesExist,
-                                checkStorageDomain,
                                 images);
             } else if (checkImagesExist) {
                 returnValue = false;
@@ -531,43 +518,14 @@ public final class ImagesHandler {
 
     private static boolean checkDiskImages(List<String> messages,
             Guid storagePoolId,
-            Guid storageDomainId,
-            boolean diskSpaceCheck,
             boolean checkImagesIllegalInVdsm,
             boolean checkImagesExist,
-            boolean checkStorageDomain,
             List<DiskImage> images) {
         boolean returnValue = true;
         ArrayList<DiskImage> irsImages = new ArrayList<DiskImage>();
 
-        if (diskSpaceCheck || checkStorageDomain) {
-            Set<Guid> domainsIds;
-            if (!Guid.Empty.equals(storageDomainId)) {
-                domainsIds = Collections.singleton(storageDomainId);
-            } else {
-                domainsIds = getAllStorageIdsForImageIds(images);
-            }
-
-            for (Guid domainId : domainsIds) {
-                StorageDomain domain = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
-                        domainId, storagePoolId);
-                if (checkStorageDomain) {
-                    StorageDomainValidator storageDomainValidator =
-                            new StorageDomainValidator(domain);
-                    ValidationResult res = storageDomainValidator.isDomainExistAndActive();
-                    returnValue = res.isValid();
-                    if (!returnValue) {
-                        messages.add(res.getMessage().toString());
-                    }
-                }
-                if (diskSpaceCheck && returnValue && !isStorageDomainWithinThresholds(domain, messages, true)) {
-                    return false;
-                }
-            }
-        }
-
         if (returnValue && checkImagesExist) {
-            boolean isImagesExist = isImagesExists(images, storagePoolId, storageDomainId, irsImages);
+            boolean isImagesExist = isImagesExists(images, storagePoolId, irsImages);
             if (!isImagesExist) {
                 returnValue = false;
                 ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST.toString());

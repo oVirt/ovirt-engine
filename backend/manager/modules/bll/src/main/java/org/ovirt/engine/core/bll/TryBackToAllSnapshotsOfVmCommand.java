@@ -3,11 +3,13 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
+import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -221,15 +223,18 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
               return false;
           }
 
-          if(!ImagesHandler.PerformImagesChecks(
+          Set<Guid> storageIds = ImagesHandler.getAllStorageIdsForImageIds(diskImages);
+          MultipleStorageDomainsValidator storageValidator =
+                    new MultipleStorageDomainsValidator(getVm().getStoragePoolId(), storageIds);
+          if (!validate(new StoragePoolValidator(getStoragePool()).isUp())
+                  || !validate(storageValidator.allDomainsExistAndActive())
+                  || !validate(storageValidator.allDomainsWithinThresholds())
+                  || !ImagesHandler.PerformImagesChecks(
                                     getReturnValue().getCanDoActionMessages(),
                                     getVm().getStoragePoolId(),
-                                    Guid.Empty,
-                                    true,
                                     true,
                                     false,
                                     false,
-                                    true,
                                     true,
                                     diskImages)) {
               return false;
