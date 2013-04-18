@@ -70,6 +70,11 @@ public class Snapshot extends IVdcQueryable implements BusinessEntity<Guid> {
      */
     private String appList;
 
+    /**
+     * The volume that contains the memory state of the VM
+     */
+    private String memoryVolume = "";
+
     public Snapshot() {
         vmConfigurationAvailable = true;
     }
@@ -95,6 +100,19 @@ public class Snapshot extends IVdcQueryable implements BusinessEntity<Guid> {
         this.description = description;
         this.creationDate = creationDate;
         this.appList = appList;
+    }
+
+    public Snapshot(Guid id,
+            SnapshotStatus status,
+            Guid vmId,
+            String vmConfiguration,
+            SnapshotType type,
+            String description,
+            Date creationDate,
+            String appList,
+            String memoryVolume) {
+        this(id, status, vmId, vmConfiguration, type, description, creationDate, appList);
+        setMemoryVolume(memoryVolume);
     }
 
     @Override
@@ -172,6 +190,14 @@ public class Snapshot extends IVdcQueryable implements BusinessEntity<Guid> {
         this.appList = appList;
     }
 
+    public String getMemoryVolume() {
+        return memoryVolume;
+    }
+
+    public void setMemoryVolume(String memoryVolume) {
+        this.memoryVolume = memoryVolume == null ? "" : memoryVolume;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -180,6 +206,7 @@ public class Snapshot extends IVdcQueryable implements BusinessEntity<Guid> {
         result = prime * result + ((appList == null) ? 0 : appList.hashCode());
         result = prime * result + ((creationDate == null) ? 0 : creationDate.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + ((memoryVolume == null) ? 0 : memoryVolume.hashCode());
         result = prime * result + ((status == null) ? 0 : status.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((vmConfiguration == null) ? 0 : vmConfiguration.hashCode());
@@ -203,6 +230,7 @@ public class Snapshot extends IVdcQueryable implements BusinessEntity<Guid> {
                 && ObjectUtils.objectsEqual(appList, other.appList)
                 && ObjectUtils.objectsEqual(creationDate, other.creationDate)
                 && ObjectUtils.objectsEqual(description, other.description)
+                && ObjectUtils.objectsEqual(memoryVolume, other.memoryVolume)
                 && status == other.status
                 && type == other.type
                 && ObjectUtils.objectsEqual(vmConfiguration, other.vmConfiguration)

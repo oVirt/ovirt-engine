@@ -38,7 +38,8 @@ public class SnapshotDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Snapshot,
                 .addValue("description", entity.getDescription())
                 .addValue("creation_date", entity.getCreationDate())
                 .addValue("app_list", entity.getAppList())
-                .addValue("vm_configuration", entity.getVmConfiguration());
+                .addValue("vm_configuration", entity.getVmConfiguration())
+                .addValue("memory_volume", getNullableRepresentation(entity.getMemoryVolume()));
     }
 
     @Override
@@ -155,6 +156,7 @@ public class SnapshotDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Snapshot,
             snapshot.setCreationDate(new Date(rs.getTimestamp("creation_date").getTime()));
             snapshot.setAppList(rs.getString("app_list"));
             snapshot.setVmConfiguration(rs.getString("vm_configuration"));
+            snapshot.setMemoryVolume(rs.getString("memory_volume"));
 
             return snapshot;
         }
@@ -197,5 +199,9 @@ public class SnapshotDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Snapshot,
         return getCallsHandler().executeRead("GetSnapshotByVmIdAndType",
                 createEntityRowMapper(),
                 parameterSource);
+    }
+
+    private String getNullableRepresentation(String memoryVolume) {
+        return memoryVolume.isEmpty() ? null : memoryVolume;
     }
 }

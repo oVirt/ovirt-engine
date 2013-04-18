@@ -15,7 +15,8 @@ Create or replace FUNCTION InsertSnapshot(
     v_description VARCHAR(4000),
     v_creation_date TIMESTAMP WITH TIME ZONE,
     v_app_list TEXT,
-    v_vm_configuration TEXT)
+    v_vm_configuration TEXT,
+    v_memory_volume VARCHAR(255))
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -27,7 +28,8 @@ BEGIN
         description,
         creation_date,
         app_list,
-        vm_configuration)
+        vm_configuration,
+        memory_volume)
     VALUES(
         v_snapshot_id,
         v_status,
@@ -36,7 +38,8 @@ BEGIN
         v_description,
         v_creation_date,
         v_app_list,
-        v_vm_configuration);
+        v_vm_configuration,
+        v_memory_volume);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -52,7 +55,8 @@ Create or replace FUNCTION UpdateSnapshot(
     v_description VARCHAR(4000),
     v_creation_date TIMESTAMP WITH TIME ZONE,
     v_app_list TEXT,
-    v_vm_configuration TEXT)
+    v_vm_configuration TEXT,
+    v_memory_volume VARCHAR(255))
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -64,6 +68,7 @@ BEGIN
            creation_date = v_creation_date,
            app_list = v_app_list,
            vm_configuration = v_vm_configuration,
+           memory_volume = v_memory_volume,
            _update_date = NOW()
     WHERE  snapshot_id = v_snapshot_id;
 END; $procedure$
@@ -154,7 +159,7 @@ LANGUAGE plpgsql;
 
 
 DROP TYPE IF EXISTS GetAllFromSnapshotsByVmId_rs CASCADE;
-CREATE TYPE GetAllFromSnapshotsByVmId_rs AS (snapshot_id UUID, vm_id UUID, snapshot_type VARCHAR(32), status VARCHAR(32), description VARCHAR(4000), creation_date TIMESTAMP WITH TIME ZONE, app_list TEXT, vm_configuration TEXT, vm_configuration_available BOOLEAN);
+CREATE TYPE GetAllFromSnapshotsByVmId_rs AS (snapshot_id UUID, vm_id UUID, snapshot_type VARCHAR(32), status VARCHAR(32), description VARCHAR(4000), creation_date TIMESTAMP WITH TIME ZONE, app_list TEXT, memory_volume VARCHAR(255), vm_configuration TEXT, vm_configuration_available BOOLEAN);
 Create or replace FUNCTION GetAllFromSnapshotsByVmId(
     v_vm_id UUID,
     v_user_id UUID,
@@ -170,6 +175,7 @@ BEGIN
            description,
            creation_date,
            app_list,
+           memory_volume,
            CASE WHEN v_fill_configuration = TRUE THEN vm_configuration ELSE NULL END,
            vm_configuration IS NOT NULL AND LENGTH(vm_configuration) > 0
     FROM   snapshots

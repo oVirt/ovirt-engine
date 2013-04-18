@@ -156,7 +156,8 @@ public class SnapshotsManager {
                 snapshotType,
                 description,
                 new Date(),
-                vm.getAppList());
+                vm.getAppList(),
+                StringUtils.EMPTY);
 
         getSnapshotDao().save(snapshot);
         compensationContext.snapshotNewEntity(snapshot);
