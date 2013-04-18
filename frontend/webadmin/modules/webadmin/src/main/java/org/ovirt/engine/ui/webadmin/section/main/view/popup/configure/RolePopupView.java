@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.configure;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
@@ -44,12 +46,18 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<RolePopupView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @UiField
     @Path(value = "name.entity")
+    @WithElementId("name")
     EntityModelTextBoxEditor nameEditor;
 
     @UiField
     @Path(value = "description.entity")
+    @WithElementId("description")
     EntityModelTextBoxEditor descriptionEditor;
 
     @UiField
@@ -58,10 +66,12 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
 
     @UiField
     @Ignore
+    @WithElementId("userRadioButton")
     RadioButton userRadioButtonEditor;
 
     @UiField
     @Ignore
+    @WithElementId("adminRadioButton")
     RadioButton adminRadioButtonEditor;
 
     @UiField
@@ -70,14 +80,17 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
 
     @UiField
     @Ignore
+    @WithElementId
     Button expandAllButton;
 
     @UiField
     @Ignore
+    @WithElementId
     Button collapseAllButton;
 
     @UiField(provided = true)
     @Ignore
+    @WithElementId
     EntityModelCellTree<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel> tree;
 
     private final Driver driver = GWT.create(Driver.class);
@@ -89,6 +102,7 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
         super(eventBus, resources);
         initTree();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
         localize(constants);
         initExpandButtons();
@@ -97,7 +111,6 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
 
     private void initRadioButtons() {
         userRadioButtonEditor.addClickHandler(new ClickHandler() {
-
             @Override
             public void onClick(ClickEvent event) {
                 if (userRadioButtonEditor.getValue()) {
@@ -105,9 +118,7 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
                 }
             }
         });
-
         adminRadioButtonEditor.addClickHandler(new ClickHandler() {
-
             @Override
             public void onClick(ClickEvent event) {
                 if (adminRadioButtonEditor.getValue()) {
@@ -115,26 +126,21 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
                 }
             }
         });
-
     }
 
     private void initExpandButtons() {
         expandAllButton.addClickHandler(new ClickHandler() {
-
             @Override
             public void onClick(ClickEvent event) {
                 expandTree();
             }
         });
-
         collapseAllButton.addClickHandler(new ClickHandler() {
-
             @Override
             public void onClick(ClickEvent event) {
                 collapseTree();
             }
         });
-
     }
 
     private void initTree() {
@@ -158,9 +164,9 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
         this.roleModel = object;
         driver.edit(object);
         final EntityModel adminRole = object.getIsAdminRole();
+
         // Listen to Properties
         object.getPropertyChangedEvent().addListener(new IEventListener() {
-
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 RoleModel model = (RoleModel) sender;
@@ -172,7 +178,6 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
         });
 
         object.getIsAdminRole().getEntityChangedEvent().addListener(new IEventListener() {
-
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if ((Boolean) adminRole.getEntity() == true) {
@@ -185,7 +190,6 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
         });
 
         object.getIsAdminRole().getPropertyChangedEvent().addListener(new IEventListener() {
-
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if (!adminRole.getIsChangable()) {
@@ -194,7 +198,6 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
                 }
             }
         });
-
     }
 
     private void updateTree(RoleModel model) {
@@ -221,15 +224,6 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
         return driver.flush();
     }
 
-    interface AssignTagTreeResources extends CellTree.Resources {
-        interface TableStyle extends CellTree.Style {
-        }
-
-        @Override
-        @Source({ "org/ovirt/engine/ui/webadmin/css/RoleTree.css" })
-        TableStyle cellTreeStyle();
-    }
-
     private void expandTree() {
         if (tree != null) {
             expandTree(tree.getRootTreeNode(), true);
@@ -252,6 +246,17 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
                 expandTree(node.setChildOpen(i, collapse), collapse);
             }
         }
+    }
+
+    interface AssignTagTreeResources extends CellTree.Resources {
+
+        interface TableStyle extends CellTree.Style {
+        }
+
+        @Override
+        @Source({ "org/ovirt/engine/ui/webadmin/css/RoleTree.css" })
+        TableStyle cellTreeStyle();
+
     }
 
 }

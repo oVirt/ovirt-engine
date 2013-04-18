@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
@@ -45,6 +46,7 @@ public class AssignTagsPopupView extends AbstractModelBoundPopupView<TagListMode
 
     @UiField(provided = true)
     @Ignore
+    @WithElementId
     EntityModelCellTree<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel> tree;
 
     private final Driver driver = GWT.create(Driver.class);
@@ -73,7 +75,6 @@ public class AssignTagsPopupView extends AbstractModelBoundPopupView<TagListMode
 
         // Listen to Properties
         object.getPropertyChangedEvent().addListener(new IEventListener() {
-
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 TagListModel model = (TagListModel) sender;
@@ -131,12 +132,14 @@ public class AssignTagsPopupView extends AbstractModelBoundPopupView<TagListMode
     }
 
     interface AssignTagTreeResources extends CellTree.Resources {
+
         interface TableStyle extends CellTree.Style {
         }
 
         @Override
         @Source({ "org/ovirt/engine/ui/webadmin/css/AssignTagTree.css" })
         TableStyle cellTreeStyle();
+
     }
 
 }
