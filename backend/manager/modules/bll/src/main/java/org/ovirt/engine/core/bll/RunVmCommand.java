@@ -609,7 +609,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             for (RepoFileMetaData map : repoFilesMap) {
                 String fileName = StringUtils.defaultString(map.getRepoImageId(), "");
                 Matcher matchToolPattern =
-                        Pattern.compile(IsoDomainListSyncronizer.getRegexToolPattern()).matcher(fileName);
+                        Pattern.compile(IsoDomainListSyncronizer.REGEX_TOOL_PATTERN).matcher(fileName);
                 if (matchToolPattern.find()) {
                     // Get cluster version and tool version of Iso tool.
                     Version clusterVer = new Version(matchToolPattern.group(IsoDomainListSyncronizer.TOOL_CLUSTER_LEVEL));
