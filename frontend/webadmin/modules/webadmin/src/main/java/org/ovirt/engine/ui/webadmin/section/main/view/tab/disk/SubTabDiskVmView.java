@@ -42,7 +42,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
             @Override
             public ImageResource getValue(VM object) {
                 boolean isDiskPlugged = getDetailModel().isDiskPluggedToVm(object);
-                setTitle(isDiskPlugged ? constants.activeDisk() : constants.inactiveDisk());
+                setTitle(isDiskPlugged ? constants.active() : constants.inactive());
                 return isDiskPlugged ? getCommonResources().upImage() : getCommonResources().downImage();
             }
         };

@@ -268,4 +268,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("{0} ({1} Running VM(s))")
     String hostNumberOfRunningVms(String hostName, int runningVms);
 
+    @DefaultMessage("{0} ({1})")
+    String commonMessageWithBrackets(String subject, String inBrackets);
+
 }

@@ -1808,4 +1808,16 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Any Host in Cluster")
     String anyHostInCluster();
+
+    @DefaultStringValue("Unsupported")
+    String unsupported();
+
+    @DefaultStringValue("Unknown")
+    String unknown();
+
+    @DefaultStringValue("SMT Disabled")
+    String smtDisabled();
+
+    @DefaultStringValue("SMT Enabled")
+    String smtEnabled();
 }

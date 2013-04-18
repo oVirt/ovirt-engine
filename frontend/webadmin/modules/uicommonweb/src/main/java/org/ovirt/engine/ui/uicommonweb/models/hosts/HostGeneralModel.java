@@ -34,11 +34,14 @@ import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.Messages;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
 public class HostGeneralModel extends EntityModel
 {
+    private static final Constants constants = ConstantsManager.getInstance().getConstants();
+    private static final Messages messages = ConstantsManager.getInstance().getMessages();
 
     public static EventDefinition RequestEditEventDefinition;
     private Event privateRequestEditEvent;
@@ -297,7 +300,6 @@ public class HostGeneralModel extends EntityModel
     }
 
     private void updateSpmPriority() {
-        Constants constants = ConstantsManager.getInstance().getConstants();
         if (spmPriorityValue == null) {
             setSpmPriority(null);
         }
@@ -314,7 +316,7 @@ public class HostGeneralModel extends EntityModel
             setSpmPriority(constants.neverTitle());
         }
         else {
-            setSpmPriority(ConstantsManager.getInstance().getMessages().customSpmPriority(spmPriorityValue));
+            setSpmPriority(messages.customSpmPriority(spmPriorityValue));
         }
     }
 
@@ -784,7 +786,7 @@ public class HostGeneralModel extends EntityModel
     {
         setRequestEditEvent(new Event(RequestEditEventDefinition));
         setRequestGOToEventsTabEvent(new Event(RequestGOToEventsTabEventDefinition));
-        setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
+        setTitle(constants.generalTitle());
         setHashName("general"); //$NON-NLS-1$
 
         setSaveNICsConfigCommand(new UICommand("SaveNICsConfig", this)); //$NON-NLS-1$
@@ -814,7 +816,7 @@ public class HostGeneralModel extends EntityModel
 
         InstallModel model = new InstallModel();
         setWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().installHostTitle());
+        model.setTitle(constants.installHostTitle());
         model.setHashName("install_host"); //$NON-NLS-1$
         model.getOVirtISO().setIsAvailable(false);
         model.getRootPassword().setIsAvailable(false);
@@ -841,8 +843,7 @@ public class HostGeneralModel extends EntityModel
                             model.getHostVersion().setIsAvailable(true);
 
                             if (isos.isEmpty()) {
-                                model.setMessage(ConstantsManager.getInstance()
-                                        .getConstants()
+                                model.setMessage(constants
                                         .thereAreNoISOversionsVompatibleWithHostCurrentVerMsg());
                             }
 
@@ -873,14 +874,14 @@ public class HostGeneralModel extends EntityModel
         if (!isOnlyClose) {
 
             UICommand command = new UICommand("OnInstall", this); //$NON-NLS-1$
-            command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+            command.setTitle(constants.ok());
             command.setIsDefault(true);
             model.getCommands().add(command);
         }
 
         UICommand command = new UICommand("Cancel", this); //$NON-NLS-1$
-        command.setTitle(isOnlyClose ? ConstantsManager.getInstance().getConstants().close()
-                : ConstantsManager.getInstance().getConstants().cancel());
+        command.setTitle(isOnlyClose ? constants.close()
+                : constants.cancel());
         command.setIsCancel(true);
         model.getCommands().add(command);
     }
@@ -1002,12 +1003,15 @@ public class HostGeneralModel extends EntityModel
         if (vds.getVdsGroupCompatibilityVersion() != null
                 && Version.v3_2.compareTo(vds.getVdsGroupCompatibilityVersion()) > 0) {
             // Members of pre-3.2 clusters don't support SMT; here we act like a 3.1 engine
-            setThreadsPerCore("Unsupported"); //$NON-NLS-1$
+            setThreadsPerCore(constants.unsupported());
         } else if (vds.getCpuThreads() == null || vds.getCpuCores() == null) {
-            setThreadsPerCore("Unknown"); //$NON-NLS-1$
+            setThreadsPerCore(constants.unknown());
         } else {
             Integer threads = vds.getCpuThreads() / vds.getCpuCores();
-            setThreadsPerCore(threads.toString() + (threads > 1 ? " (SMT Enabled)" : " (SMT Disabled)")); //$NON-NLS-1$ //$NON-NLS-2$
+            setThreadsPerCore(messages
+                    .commonMessageWithBrackets(threads.toString(),
+                            threads > 1 ? constants.smtEnabled()
+                                    : constants.smtDisabled()));
         }
 
         setPhysicalMemory(vds.getPhysicalMemMb());
@@ -1092,8 +1096,7 @@ public class HostGeneralModel extends EntityModel
                                 {
                                     hostGeneralModel.getInstallCommand()
                                             .getExecuteProhibitionReasons()
-                                            .add(ConstantsManager.getInstance()
-                                                    .getConstants()
+                                            .add(constants
                                                     .switchToMaintenanceModeToEnableUpgradeReason());
                                 }
                                 hostGeneralModel.getInstallCommand().setIsExecutionAllowed(executionAllowed);

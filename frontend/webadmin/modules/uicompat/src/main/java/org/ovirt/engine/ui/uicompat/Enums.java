@@ -309,12 +309,6 @@ public interface Enums extends LocalizedEnums {
 
     String VdsSpmStatus___SPM();
 
-    String VdsTransparentHugePagesState___Never();
-
-    String VdsTransparentHugePagesState___MAdvise();
-
-    String VdsTransparentHugePagesState___Always();
-
     String LunStatus___Free();
 
     String LunStatus___Used();

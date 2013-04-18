@@ -665,4 +665,9 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String QuotaEnforcementTypeEnum___HARD_ENFORCEMENT();
 
+    String VdsTransparentHugePagesState___Never();
+
+    String VdsTransparentHugePagesState___MAdvise();
+
+    String VdsTransparentHugePagesState___Always();
 }

@@ -20,7 +20,7 @@ public class DiskStatusColumn extends ImageResourceColumn<Disk> {
         }
 
         boolean isDiskPlugged = disk.getPlugged() != null && disk.getPlugged().booleanValue();
-        setTitle(isDiskPlugged ? getCommonConstants().activeDisk() : getCommonConstants().inactiveDisk());
+        setTitle(isDiskPlugged ? getCommonConstants().active() : getCommonConstants().inactive());
         return isDiskPlugged ? getCommonResources().upImage() : getCommonResources().downImage();
     }
 }

@@ -619,10 +619,10 @@ public interface CommonApplicationConstants extends Constants {
     String deactivateDisk();
 
     @DefaultStringValue("Active")
-    String activeDisk();
+    String active();
 
     @DefaultStringValue("Inactive")
-    String inactiveDisk();
+    String inactive();
 
     @DefaultStringValue("Move")
     String moveDisk();

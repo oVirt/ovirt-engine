@@ -47,6 +47,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
 
     // We need this in order to find the icon for alert messages:
     private final ApplicationResources resources;
+    private final ApplicationConstants constants = GWT.create(ApplicationConstants.class);
 
     TextBoxLabel oS = new TextBoxLabel();
     TextBoxLabel kvmVersion = new TextBoxLabel();
@@ -59,10 +60,10 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
     TextBoxLabel threadsPerCore = new TextBoxLabel();
     VersionLabel vdsmVersion = new VersionLabel();
     PercentLabel<Integer> sharedMemory = new PercentLabel<Integer>();
-    BooleanLabel memoryPageSharing = new BooleanLabel("Active", "Inactive"); //$NON-NLS-1$ //$NON-NLS-2$
+    BooleanLabel memoryPageSharing = new BooleanLabel(constants.active(), constants.inactive());
     NullableNumberLabel<Integer> activeVms = new NullableNumberLabel<Integer>();
-    NullableNumberLabel<Integer> numberOfSockets = new NullableNumberLabel<Integer>("Unknown"); //$NON-NLS-1$
-    NullableNumberLabel<Integer> coresPerSocket = new NullableNumberLabel<Integer>("Unknown"); //$NON-NLS-1$
+    NullableNumberLabel<Integer> numberOfSockets = new NullableNumberLabel<Integer>(constants.unknown());
+    NullableNumberLabel<Integer> coresPerSocket = new NullableNumberLabel<Integer>(constants.unknown());
     TextBoxLabel spmPriority = new TextBoxLabel();
 
     MemorySizeLabel<Integer> physicalMemory;
@@ -76,11 +77,15 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
 
     @Ignore
     DetailsLabel<ArrayList<ValueLabel<Integer>>, Integer> physicalMemoryDetails =
-            new DetailsLabel<ArrayList<ValueLabel<Integer>>, Integer>("total", "used", "free"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            new DetailsLabel<ArrayList<ValueLabel<Integer>>, Integer>(constants.total(),
+                    constants.used(),
+                    constants.free());
 
     @Ignore
     DetailsLabel<ArrayList<ValueLabel<Long>>, Long> swapSizeDetails =
-            new DetailsLabel<ArrayList<ValueLabel<Long>>, Long>("total", "used", "free"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            new DetailsLabel<ArrayList<ValueLabel<Long>>, Long>(constants.total(),
+                    constants.used(),
+                    constants.free());
 
     @Ignore
     EnumLabel<VdsTransparentHugePagesState> automaticLargePage = new EnumLabel<VdsTransparentHugePagesState>();
@@ -110,12 +115,12 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
 
     @Inject
     public SubTabHostGeneralView(DetailModelProvider<HostListModel, HostGeneralModel> modelProvider,
-            ApplicationResources resources, ApplicationConstants constants) {
+            ApplicationResources resources) {
         super(modelProvider);
-        initMemorySizeLabels(constants);
 
         // Inject a reference to the resources:
         this.resources = resources;
+        initMemorySizeLabels();
 
         // Init form panel:
         formPanel = new GeneralFormPanel();
@@ -180,7 +185,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         }
     }
 
-    void initMemorySizeLabels(ApplicationConstants constants) {
+    void initMemorySizeLabels() {
         this.physicalMemory = new MemorySizeLabel<Integer>(constants);
         this.usedMemory = new MemorySizeLabel<Integer>(constants);
         this.freeMemory = new MemorySizeLabel<Integer>(constants);

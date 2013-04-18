@@ -2606,4 +2606,16 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Cluster Node Type")
     String clusterType();
+
+    @DefaultStringValue("used")
+    String used();
+
+    @DefaultStringValue("total")
+    String total();
+
+    @DefaultStringValue("free")
+    String free();
+
+    @DefaultStringValue("Unknown")
+    String unknown();
 }
