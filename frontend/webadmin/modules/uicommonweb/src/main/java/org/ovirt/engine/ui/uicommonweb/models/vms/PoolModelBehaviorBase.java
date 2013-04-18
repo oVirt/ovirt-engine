@@ -174,8 +174,6 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             getModel().getKernel_parameters().setEntity(vmBase.getKernelParams());
             getModel().getInitrd_path().setEntity(vmBase.getInitrdUrl());
 
-            getModel().setIsDisksAvailable(true);
-
             if (!vmBase.getId().equals(Guid.Empty))
             {
                 getModel().getStorageDomain().setIsChangable(true);
@@ -296,6 +294,8 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     @Override
     public void UpdateIsDisksAvailable()
     {
+        getModel().setIsDisksAvailable(getModel().getDisks() != null
+                && getModel().getProvisioning().getIsChangable());
     }
 
     @Override
