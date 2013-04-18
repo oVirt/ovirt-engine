@@ -51,13 +51,13 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
                 DisksViewColumns.sizeColumn, constants.provisionedSizeDisk(), true, "100px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.actualSizeColumn, constants.sizeDisk(), true, "100px"); //$NON-NLS-1$
+                DisksViewColumns.actualSizeColumn, constants.sizeDisk(), true, "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.allocationColumn, constants.allocationDisk(), true, "100px"); //$NON-NLS-1$
+                DisksViewColumns.allocationColumn, constants.allocationDisk(), true, "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.storageDomainsColumn, constants.storageDomainDisk(), true, "120px"); //$NON-NLS-1$
+                DisksViewColumns.storageDomainsColumn, constants.storageDomainDisk(), true, "170px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.dateCreatedColumn, constants.creationDateDisk(), true, "150px"); //$NON-NLS-1$
@@ -67,9 +67,6 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.diskContainersColumn, constants.attachedToDisk(), true, "120px"); //$NON-NLS-1$
-
-        getTable().ensureColumnPresent(
-                DisksViewColumns.interfaceColumn, constants.interfaceDisk(), true, "100px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.statusColumn, constants.statusDisk(), true, "100px"); //$NON-NLS-1$
