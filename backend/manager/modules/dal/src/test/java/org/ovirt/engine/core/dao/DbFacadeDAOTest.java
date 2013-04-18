@@ -12,6 +12,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import javax.sql.DataSource;
 
 import org.junit.After;
@@ -126,9 +129,11 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
         Properties properties = new Properties();
         Config.setConfigUtils(new DBConfigUtils(false));
 
+        InputStream is = null;
         try {
-            properties.load(super.getClass().getResourceAsStream(
-                    "/test-database.properties"));
+            is = super.getClass().getResourceAsStream(
+            "/test-database.properties");
+            properties.load(is);
             ClassLoader.getSystemClassLoader().loadClass(
                     properties.getProperty("database.driver"));
             result = new SingleConnectionDataSource(
@@ -152,6 +157,15 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
             // If this exception is thrown we fail the test
         } catch (Exception undesiredException) {
             fail();
+        }
+        finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
         }
     }
 

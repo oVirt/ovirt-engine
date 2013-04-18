@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.dao;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Properties;
@@ -101,6 +103,7 @@ public abstract class BaseDAOTestCase {
 
         Config.setConfigUtils(new DBConfigUtils(false));
 
+        InputStream is = null;
         try {
             String job = System.getProperty("JOB_NAME");
             if (job == null)
@@ -109,8 +112,10 @@ public abstract class BaseDAOTestCase {
             if (number == null)
                 number = "";
             String schemaNamePostfix = job + number;
-            properties.load(BaseDAOTestCase.class.getResourceAsStream(
-                    "/test-database.properties"));
+            is = BaseDAOTestCase.class.getResourceAsStream(
+            "/test-database.properties");
+            properties.load(is);
+
             ClassLoader.getSystemClassLoader().loadClass(
                     properties.getProperty("database.driver"));
             String dbUrl = properties.getProperty("database.url") + schemaNamePostfix;
@@ -130,6 +135,15 @@ public abstract class BaseDAOTestCase {
         } catch (Exception error) {
             error.printStackTrace();
             throw new RuntimeException("Cannot create data source", error);
+        }
+        finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
         }
 
         return result;

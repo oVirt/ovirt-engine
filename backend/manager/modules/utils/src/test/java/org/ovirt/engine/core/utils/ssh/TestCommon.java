@@ -81,14 +81,25 @@ public class TestCommon {
                 String p12 = System.getProperty("ssh-test-p12");
                 String p12_password = System.getProperty("ssh-test-p12-password", "password");
 
+                FileInputStream fis = null;
                 try {
                     KeyStore keyStore = KeyStore.getInstance("PKCS12");
-                    keyStore.load(new FileInputStream(p12), p12_password.toCharArray());
+                    fis = new FileInputStream(p12);
+                    keyStore.load(fis, p12_password.toCharArray());
                     KeyStore.PrivateKeyEntry entry = (KeyStore.PrivateKeyEntry)keyStore.getEntry("1", new KeyStore.PasswordProtection(p12_password.toCharArray()));
                     keyPair = new KeyPair(entry.getCertificate().getPublicKey(), entry.getPrivateKey());
                 }
                 catch(Throwable t) {
                     throw new RuntimeException(t);
+                }
+                finally {
+                    if (fis != null) {
+                        try {
+                            fis.close();
+                        } catch (IOException e) {
+                            // ignore
+                        }
+                    }
                 }
         }
 

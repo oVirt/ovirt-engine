@@ -54,9 +54,10 @@ public class TarTest {
         else {
             MessageDigest fmd = MessageDigest.getInstance(md.getAlgorithm());
             InputStream fis = null;
+            InputStream is = null;
             try {
                 fis = new FileInputStream(fullFile);
-                InputStream is = new DigestInputStream(fis, fmd);
+                is = new DigestInputStream(fis, fmd);
                 StringBuffer content = new StringBuffer(1024);
                 byte buf[] = new byte[1024];
                 int n;
@@ -69,6 +70,13 @@ public class TarTest {
                         fis.close();
                     }
                     catch (IOException e) {
+                        // ignore
+                    }
+                }
+                if (is != null) {
+                    try {
+                        is.close();
+                    } catch (IOException e) {
                         // ignore
                     }
                 }

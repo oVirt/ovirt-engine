@@ -37,11 +37,22 @@ public class TransferTest {
         catch(NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
-        InputStream is = new FileInputStream(file);
-        byte buffer[] = new byte[1024];
-        int n;
-        while ((n = is.read(buffer)) != -1) {
-            digest.update(buffer, 0, n);
+        InputStream is = null;
+        try {
+            is = new FileInputStream(file);
+            byte buffer[] = new byte[1024];
+            int n;
+            while ((n = is.read(buffer)) != -1) {
+                digest.update(buffer, 0, n);
+            }
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
         }
         return digest.digest();
     }
