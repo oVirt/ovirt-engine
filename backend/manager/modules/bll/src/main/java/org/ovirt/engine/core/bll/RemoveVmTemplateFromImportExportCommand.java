@@ -101,6 +101,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
         Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.RemoveVM, tempVar);
 
         List<DiskImage> images = getParameters().getImages();
+        setSucceeded(true);
         if (!images.isEmpty()) {
             for (DiskImage image : images) {
                 ArrayList<Guid> storageIds = new ArrayList<Guid>();
@@ -119,34 +120,31 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
                             ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
             if (vdcRetValue.getSucceeded()) {
                 getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
-                setSucceeded(true);
             } else {
                 getReturnValue().setFault(vdcRetValue.getFault());
+                setSucceeded(false);
             }
         }
-
-        setCommandShouldBeLogged(false);
-        setSucceeded(true);
     }
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        switch (getActionState()) {
-        case EXECUTE:
-            return getSucceeded() ? AuditLogType.IMPORTEXPORT_REMOVE_TEMPLATE
-                    : AuditLogType.IMPORTEXPORT_REMOVE_TEMPLATE_FAILED;
-        default:
-            return AuditLogType.UNASSIGNED;
-        }
+        return getSucceeded() ? AuditLogType.IMPORTEXPORT_REMOVE_TEMPLATE
+                : AuditLogType.IMPORTEXPORT_REMOVE_TEMPLATE_FAILED;
     }
 
     @Override
     protected void endSuccessfully() {
-        setSucceeded(true);
+        endRemoveTemplate();
     }
 
     @Override
     protected void endWithFailure() {
+        endRemoveTemplate();
+    }
+
+    protected void endRemoveTemplate() {
+        setCommandShouldBeLogged(false);
         setSucceeded(true);
     }
 
