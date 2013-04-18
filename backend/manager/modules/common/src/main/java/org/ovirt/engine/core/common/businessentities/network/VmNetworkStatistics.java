@@ -36,4 +36,29 @@ public class VmNetworkStatistics extends NetworkStatistics implements Comparable
     public int compareTo(VmNetworkStatistics o) {
         return BusinessEntityGuidComparator.<VmNetworkStatistics>newInstance().compare(this,o);
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((getVmId() == null) ? 0 : getVmId().hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (!(obj instanceof VmNetworkStatistics))
+            return false;
+        VmNetworkStatistics other = (VmNetworkStatistics) obj;
+        if (getVmId() == null) {
+            if (other.getVmId() != null)
+                return false;
+        } else if (!getVmId().equals(other.getVmId()))
+            return false;
+        return true;
+    }
 }

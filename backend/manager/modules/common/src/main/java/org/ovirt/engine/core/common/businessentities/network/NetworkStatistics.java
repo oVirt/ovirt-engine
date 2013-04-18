@@ -135,4 +135,56 @@ public abstract class NetworkStatistics implements BusinessEntity<Guid> {
     public Double getTransmitRate() {
         return transmitRate;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
+        result = prime * result + ((getReceiveDropRate() == null) ? 0 : getReceiveDropRate().hashCode());
+        result = prime * result + ((getReceiveRate() == null) ? 0 : getReceiveRate().hashCode());
+        result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
+        result = prime * result + ((getTransmitDropRate() == null) ? 0 : getTransmitDropRate().hashCode());
+        result = prime * result + ((getTransmitRate() == null) ? 0 : getTransmitRate().hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof NetworkStatistics))
+            return false;
+        NetworkStatistics other = (NetworkStatistics) obj;
+        if (getId() == null) {
+            if (other.getId() != null)
+                return false;
+        } else if (!getId().equals(other.getId()))
+            return false;
+        if (getReceiveDropRate() == null) {
+            if (other.getReceiveDropRate() != null)
+                return false;
+        } else if (!getReceiveDropRate().equals(other.getReceiveDropRate()))
+            return false;
+        if (getReceiveRate() == null) {
+            if (other.getReceiveRate() != null)
+                return false;
+        } else if (!getReceiveRate().equals(other.getReceiveRate()))
+            return false;
+        if (getStatus() != other.getStatus())
+            return false;
+        if (getTransmitDropRate() == null) {
+            if (other.getTransmitDropRate() != null)
+                return false;
+        } else if (!getTransmitDropRate().equals(other.getTransmitDropRate()))
+            return false;
+        if (getTransmitRate() == null) {
+            if (other.getTransmitRate() != null)
+                return false;
+        } else if (!getTransmitRate().equals(other.getTransmitRate()))
+            return false;
+        return true;
+    }
 }

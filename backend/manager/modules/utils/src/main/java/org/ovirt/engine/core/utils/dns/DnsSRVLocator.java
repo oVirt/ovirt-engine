@@ -149,6 +149,46 @@ public class DnsSRVLocator {
             }
             return 0;
         }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((getAddress() == null) ? 0 : getAddress().hashCode());
+            result = prime * result + getPriority();
+            result = prime * result + getSum();
+            result = prime * result + (isUsed() ? 1231 : 1237);
+            result = prime * result + (isValid() ? 1231 : 1237);
+            result = prime * result + getWeight();
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (!(obj instanceof DnsSRVLocator))
+                return false;
+            SrvRecord other = (SrvRecord) obj;
+            if (getAddress() == null) {
+                if (other.getAddress() != null)
+                    return false;
+            } else if (!getAddress().equals(other.getAddress()))
+                return false;
+            if (getPriority() != other.getPriority())
+                return false;
+            if (getSum() != other.getSum())
+                return false;
+            if (isUsed() != other.isUsed())
+                return false;
+            if (isValid() != other.isValid())
+                return false;
+            if (getWeight() != other.getWeight())
+                return false;
+            return true;
+        }
     }
 
     public static class DnsSRVResult {
