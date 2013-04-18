@@ -133,7 +133,10 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
     private void clearTreeItems(TreeItem node) {
         int nodeCount = node.getChildCount();
         for (int i = 0; i < nodeCount; i++) {
-            clearTreeItems((VmTreeItem) node.getChild(i));
+            TreeItem child = node.getChild(i);
+            if (child instanceof VmTreeItem) {
+                clearTreeItems((VmTreeItem) child);
+            }
         }
         if (node instanceof VmTreeItem) {
             ((VmTreeItem) node).reset();
