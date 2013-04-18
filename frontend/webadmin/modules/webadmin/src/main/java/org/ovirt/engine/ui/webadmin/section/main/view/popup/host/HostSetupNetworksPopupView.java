@@ -35,6 +35,7 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.inject.Inject;
 
 public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<HostSetupNetworksModel> implements HostSetupNetworksPopupPresenterWidget.ViewDef {
@@ -54,6 +55,9 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
 
     @UiField
     AnimatedVerticalPanel nicList;
+
+    @UiField
+    SimplePanel statusPanel;
 
     @UiField(provided = true)
     @Ignore
@@ -90,7 +94,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
         checkConnInfo = new InfoIcon(templates.italicTwoLines(constants.checkConnectivityInfoPart1(), constants.checkConnectivityInfoPart2()), resources);
         commitChangesInfo = new InfoIcon(templates.italicTwoLines(constants.commitChangesInfoPart1(), constants.commitChangesInfoPart2()), resources);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        status.setStylePrimaryName(style.statusLabel());
+        setStatusStyle(true);
         checkConnectivity.setContentWidgetStyleName(style.checkCon());
         commitChanges.setContentWidgetStyleName(style.commitChanges());
         initUnassignedNetworksPanel();
@@ -106,6 +110,16 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     private void localize(){
         checkConnectivity.setLabel(constants.checkConHostPopup()); //$NON-NLS-1$
         commitChanges.setLabel(constants.saveNetConfigHostPopup());
+    }
+
+    private void setStatusStyle(boolean valid) {
+        if (valid) {
+            statusPanel.setStylePrimaryName(style.statusPanel());
+            status.setStylePrimaryName(style.statusLabel());
+        } else {
+            statusPanel.setStylePrimaryName(style.errorPanel());
+            status.setStylePrimaryName(style.errorLabel());
+        }
     }
 
     @Override
@@ -133,7 +147,11 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
                 NetworkOperation candidate = evtArgs.getCandidate();
                 NetworkItemModel<?> op1 = evtArgs.getOp1();
                 NetworkItemModel<?> op2 = evtArgs.getOp2();
-                status.setFadeText(candidate != null ? candidate.getMessage(op1, op2) : constants.noValidActionSetupNetwork());
+                boolean drop = evtArgs.isDrop();
+                if (!drop) {
+                    status.setFadeText(candidate != null ? candidate.getMessage(op1, op2) : constants.noValidActionSetupNetwork());
+                }
+                setStatusStyle(!drop || !candidate.isNullOperation());
             }
         });
 

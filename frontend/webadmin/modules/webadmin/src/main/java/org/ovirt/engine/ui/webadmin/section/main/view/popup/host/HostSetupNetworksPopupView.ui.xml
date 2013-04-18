@@ -36,6 +36,14 @@
 			padding-top: 5px;
 		}
 
+		.errorLabel {
+			font-size: 15px;
+			font-weight: bold;
+			color: red;
+			padding-left: 20px;
+			padding-top: 5px;
+		}
+
 		.itemPanel {
 			border-width: 1px;
 			border-style: solid;
@@ -143,6 +151,12 @@
 			border-bottom: 1px solid #C5C5C5;
 		}
 
+		.errorPanel{
+			background-color: pink;
+			height: 30px;
+			border-bottom: 1px solid #C5C5C5;
+		}
+
 		.checkBoxesPanel{
 			border-top: 1px solid #C5C5C5;
 			width: 100%;
@@ -175,7 +189,7 @@
 	<d:SimpleDialogPanel width="900px" height="600px">
 		<d:content>
 			<g:HTMLPanel>
-				<g:SimplePanel styleName="{style.statusPanel}">
+				<g:SimplePanel ui:field="statusPanel">
 					<f:StatusLabel ui:field="status"/>
 				</g:SimplePanel>
 				<g:HorizontalPanel spacing="10" width="100%" height="79%" verticalAlignment="ALIGN_TOP">

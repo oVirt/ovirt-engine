@@ -189,14 +189,14 @@ public class HostSetupNetworksModel extends EntityModel {
 
         if (drop) {
             onOperation(candidate, candidate.getCommand(op1, op2, allNics));
-        } else {
-            // raise the candidate event only if it was changed
-            if (!candidate.equals(currentCandidate) || !equals(op1, currentOp1) || !equals(op2, currentOp2)) {
-                currentCandidate = candidate;
-                currentOp1 = op1;
-                currentOp2 = op2;
-                getOperationCandidateEvent().raise(this, new OperationCadidateEventArgs(candidate, op1, op2));
-            }
+        }
+
+        // raise the candidate event only if it was changed or if a drop occured
+        if (drop || !candidate.equals(currentCandidate) || !equals(op1, currentOp1) || !equals(op2, currentOp2)) {
+            currentCandidate = candidate;
+            currentOp1 = op1;
+            currentOp2 = op2;
+            getOperationCandidateEvent().raise(this, new OperationCadidateEventArgs(candidate, op1, op2, drop));
         }
         return !candidate.isNullOperation();
     }
