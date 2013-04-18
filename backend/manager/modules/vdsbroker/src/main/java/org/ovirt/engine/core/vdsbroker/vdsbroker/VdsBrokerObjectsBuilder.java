@@ -499,9 +499,8 @@ public class VdsBrokerObjectsBuilder {
         vds.setUsageMemPercent(AssignIntValue(xmlRpcStruct, VdsProperties.mem_usage));
 
         // ------------- vds network statistics ---------------------
-        Map<String, Object> interfaces = (Map<String, Object>) ((xmlRpcStruct
-                .get(VdsProperties.NETWORK) instanceof Map) ? xmlRpcStruct.get(VdsProperties.NETWORK)
-                : null);
+        Map<String, Object> interfaces = (Map<String, Object>) xmlRpcStruct
+                .get(VdsProperties.NETWORK);
         if (interfaces != null) {
             int networkUsage = 0;
             for (String name : interfaces.keySet()) {
@@ -514,11 +513,7 @@ public class VdsBrokerObjectsBuilder {
                 }
                 if (iface != null) {
                     iface.setVdsId(vds.getId());
-                    Map<String, Object> dictTemp =
-                            (Map<String, Object>) ((interfaces.get(name) instanceof Map) ? interfaces
-                                    .get(name)
-                                    : null);
-                    Map<String, Object> dict = dictTemp;
+                    Map<String, Object> dict = (Map<String, Object>) interfaces.get(name);
                     Double rx_rate = AssignDoubleValue(dict, VdsProperties.rx_rate);
                     Double rx_dropped = AssignDoubleValue(dict, VdsProperties.rx_dropped);
                     Double tx_rate = AssignDoubleValue(dict, VdsProperties.tx_rate);
@@ -1048,7 +1043,7 @@ public class VdsBrokerObjectsBuilder {
                     }
 
                     Map<String, Object> config =
-                            (Map<String, Object>) ((bond.get("cfg") instanceof Map) ? bond.get("cfg") : null);
+                            (Map<String, Object>) bond.get("cfg");
 
                     if (config != null && config.get("BONDING_OPTS") != null) {
                         iface.setBondOptions(config.get("BONDING_OPTS").toString());
@@ -1204,8 +1199,7 @@ public class VdsBrokerObjectsBuilder {
             setGatewayIfManagementNetwork(iface, net.getGateway());
 
             if (bridgedNetwork) {
-                Map<String, Object> networkConfig =
-                        (Map<String, Object>) ((network.get("cfg") instanceof Map) ? network.get("cfg") : null);
+                Map<String, Object> networkConfig = (Map<String, Object>) network.get("cfg");
                 addBootProtocol(networkConfig, iface);
             }
         }
