@@ -40,12 +40,12 @@
 	</ui:style>
 
 	<g:SplitLayoutPanel addStyleNames="{style.container}">
-		<g:center>
+		<g:west size="500">
 			<g:SimplePanel ui:field="snapshotsTableContainer"/>
-		</g:center>
-		<g:east size="660">
+		</g:west>
+		<g:center>
 			<g:SimplePanel ui:field="snapshotInfoContainer"/>
-		</g:east>
+		</g:center>
 	</g:SplitLayoutPanel>
 
 </ui:UiBinder>
