@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.vdsbroker;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -10,7 +10,6 @@ import org.ovirt.engine.core.dal.VdcCommandBase;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSExceptionBase;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSRecoveringException;
 
 public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCommandBase {
     private P _parameters;
@@ -89,13 +88,7 @@ public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCom
             }
         }
 
-        if (ex instanceof VDSRecoveringException) {
-            log.errorFormat("Command {0} execution failed. Error: {1}",
-                    getCommandName(),
-                    ExceptionUtils.getMessage(ex));
-        } else {
-            logException(ex);
-        }
+        logException(ex);
     }
 
     protected void setVdsNetworkError(VDSNetworkException ex) {
@@ -107,10 +100,14 @@ public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCom
         tempVar2.setCode(VdcBllErrors.VDS_NETWORK_ERROR);
         tempVar2.setMessage(ex.getMessage());
         getVDSReturnValue().setVdsError((tempVar != null) ? tempVar : tempVar2);
+        logException(ex);
     }
 
     private void logException(RuntimeException ex) {
         log.errorFormat("Command {0} execution failed. Exception: {1}", getCommandName(), ExceptionUtils.getMessage(ex));
+        if (log.isDebugEnabled()) {
+            log.debugFormat("Detailed stacktrace:", ex);
+        }
     }
 
     protected String getAdditionalInformation() {
