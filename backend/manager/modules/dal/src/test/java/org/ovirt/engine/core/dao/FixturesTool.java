@@ -356,4 +356,14 @@ public class FixturesTool {
     public static final Guid NEW_HOOK_ID = new Guid("d2cb2f73-fab3-4a42-93f0-d5e4c069a43f");
 
     public static final Guid CLUSTER_ID = new Guid("ae956031-6be2-43d6-bb8f-5191c9253314");
+
+    /**
+     * Gluster Server UUID(s)
+     */
+
+    public static final Guid GLUSTER_SERVER_UUID1 = new Guid("da9e2f09-2835-4530-9bf5-576c52b11941");
+
+    public static final Guid GLUSTER_SERVER_UUID2 = new Guid("da9e2f09-2835-4530-9bf5-576c52b11942");
+
+    public static final Guid GLUSTER_SERVER_UUID_NEW = new Guid("da9e2f09-2835-4530-9bf5-576c52b11943");
 }

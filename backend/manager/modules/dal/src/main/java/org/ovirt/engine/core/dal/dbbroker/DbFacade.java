@@ -101,6 +101,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterOptionDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
+import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -916,6 +917,15 @@ public class DbFacade {
      */
     public GlusterHooksDao getGlusterHooksDao() {
         return getDao(GlusterHooksDao.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link GlusterServerDao}.
+     *
+     * @return the dao
+     */
+    public GlusterServerDao getGlusterServerDao() {
+        return getDao(GlusterServerDao.class);
     }
 
     public void setOnStartConnectionTimeout(int onStartConnectionTimeout) {

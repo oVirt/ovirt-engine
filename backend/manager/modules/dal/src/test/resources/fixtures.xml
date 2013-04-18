@@ -4648,6 +4648,15 @@
         </row>
     </table>
 
+    <table name="gluster_server">
+        <column>server_id</column>
+        <column>gluster_server_uuid</column>
+        <row>
+            <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
+            <value>da9e2f09-2835-4530-9bf5-576c52b11941</value>
+        </row>
+    </table>
+
     <table name="object_column_white_list">
         <column>object_name</column>
         <column>column_name</column>
