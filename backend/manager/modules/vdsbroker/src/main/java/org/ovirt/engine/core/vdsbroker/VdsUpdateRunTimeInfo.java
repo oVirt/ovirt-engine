@@ -644,43 +644,15 @@ public class VdsUpdateRunTimeInfo {
         if (_vds.getStatus() != VDSStatus.Up) {
             return;
         }
-        Map<String, Boolean> bondsWithStatus = new HashMap<String, Boolean>();
-        List<Network> clusterNetworks = getDbFacade().getNetworkDao()
-                .getAllForCluster(_vds.getVdsGroupId());
+
         List<String> networks = new ArrayList<String>();
         List<String> brokenNics = new ArrayList<String>();
-        Map<String, List<String>> bondsWithListOfNics = new HashMap<String, List<String>>();
-
-        List<VdsNetworkInterface> interfaces = _vds.getInterfaces();
-        Map<String, Network> networksByName = NetworkUtils.networksByName(clusterNetworks);
 
         try {
-            for (VdsNetworkInterface iface : interfaces) {
-
-                // Handle nics that are non bonded and not vlan over bond
-                if (isRequiredInterfaceDown(networksByName, iface)) {
-                    brokenNics.add(iface.getName());
-                    networks.add(iface.getNetworkName());
-                }
-
-                // Handle bond nics
-                if (iface.getBondName() != null) {
-                    populate(bondsWithStatus, clusterNetworks, networks, bondsWithListOfNics, iface);
-                }
-            }
-
-            // check the bond statuses, if one is down we set the host to down
-            // only if we didn't already set the host to down
-            if (brokenNics.isEmpty()) {
-                for (String key : bondsWithStatus.keySet()) {
-                    if (!bondsWithStatus.get(key)) {
-                        // add the nics name for audit log
-                        for (String name : bondsWithListOfNics.get(key)) {
-                            brokenNics.add(name);
-                        }
-                    }
-                }
-            }
+            Pair<List<String>, List<String>> problematicNics = determineProblematicNics(_vds.getInterfaces(),
+                    getDbFacade().getNetworkDao().getAllForCluster(_vds.getVdsGroupId()));
+            brokenNics.addAll(problematicNics.getFirst());
+            networks.addAll(problematicNics.getSecond());
         } catch (Exception e) {
             log.error(String.format("Failure on checkInterfaces on update runtimeinfo for vds: %s", _vds.getName()),
                     e);
@@ -741,13 +713,64 @@ public class VdsUpdateRunTimeInfo {
         }
     }
 
-    private void populate(Map<String, Boolean> bondsWithStatus,
+    /**
+     * Determine which of the given NICs is problematic - a problematic NIC is considered to be a NIC which it's state
+     * is down and it is the underlying interface of a required network.
+     *
+     * @param interfaces
+     *            The NICs to check.
+     * @param clusterNetworks
+     *            The cluster's networks.
+     * @return A pair of a list of the names of the NICs which are problematic, and a list of the names of the networks
+     *         which are required by these NICs.
+     */
+    public static Pair<List<String>, List<String>> determineProblematicNics(List<VdsNetworkInterface> interfaces,
+            List<Network> clusterNetworks) {
+        Map<String, Boolean> bondsWithStatus = new HashMap<String, Boolean>();
+        List<String> networks = new ArrayList<String>();
+        List<String> brokenNics = new ArrayList<String>();
+        Map<String, List<String>> bondsWithListOfNics = new HashMap<String, List<String>>();
+
+        Map<String, Network> networksByName = NetworkUtils.networksByName(clusterNetworks);
+
+        for (VdsNetworkInterface iface : interfaces) {
+
+            // Handle nics that are non bonded and not vlan over bond
+            if (isRequiredInterfaceDown(networksByName, interfaces, iface)) {
+                brokenNics.add(iface.getName());
+                networks.add(iface.getNetworkName());
+            }
+
+            // Handle bond nics
+            if (iface.getBondName() != null) {
+                populate(bondsWithStatus, interfaces, clusterNetworks, networks, bondsWithListOfNics, iface);
+            }
+        }
+
+        // check the bond statuses, if one is down we mark it as broken
+        // only if we didn't already mark a NIC as broken
+        if (brokenNics.isEmpty()) {
+            for (String key : bondsWithStatus.keySet()) {
+                if (!bondsWithStatus.get(key)) {
+                    // add the nics name for audit log
+                    for (String name : bondsWithListOfNics.get(key)) {
+                        brokenNics.add(name);
+                    }
+                }
+            }
+        }
+
+        return new Pair<List<String>, List<String>>(brokenNics, networks);
+    }
+
+    private static void populate(Map<String, Boolean> bondsWithStatus,
+            List<VdsNetworkInterface> interfaces,
             List<Network> clusterNetworks,
             List<String> networks,
             Map<String, List<String>> bondsWithListOfNics,
             VdsNetworkInterface iface) {
         Pair<Boolean, String> retVal =
-                isRequiredNetworkInCluster(iface.getBondName(), clusterNetworks);
+                isRequiredNetworkInCluster(iface.getBondName(), interfaces, clusterNetworks);
         String networkName = retVal.getSecond();
         if (retVal.getFirst()) {
             if (!bondsWithStatus.containsKey(iface.getBondName())) {
@@ -780,16 +803,18 @@ public class VdsUpdateRunTimeInfo {
      * @param networksByName
      * @param iface
      */
-    private boolean isRequiredInterfaceDown(Map<String, Network> networksByName, VdsNetworkInterface iface) {
+    private static boolean isRequiredInterfaceDown(Map<String, Network> networksByName,
+            List<VdsNetworkInterface> interfaces,
+            VdsNetworkInterface iface) {
         if (iface.getStatistics().getStatus() != InterfaceStatus.UP
                 && iface.getNetworkName() != null
                 && iface.getBonded() == null
-                && !isBondOrVlanOverBond(iface)
+                && !isBondOrVlanOverBond(iface, interfaces)
                 && networksByName.containsKey(iface.getNetworkName())) {
 
             Network net = networksByName.get(iface.getNetworkName());
             if (net.getCluster().getStatus() == NetworkStatus.OPERATIONAL && net.getCluster().isRequired()
-                    && (iface.getVlanId() == null || !isVlanInterfaceUp(iface))) {
+                    && (iface.getVlanId() == null || !isVlanInterfaceUp(iface, interfaces))) {
                 return true;
             }
         }
@@ -799,15 +824,18 @@ public class VdsUpdateRunTimeInfo {
     // method get bond name, list of cluster network - checks if the specified
     // bonds network is in the clusterNetworks,
     // if so return true and networkName of the bonds
-    private Pair<Boolean, String> isRequiredNetworkInCluster(String bondName, List<Network> clusterNetworks) {
+    private static Pair<Boolean, String> isRequiredNetworkInCluster(String bondName,
+            List<VdsNetworkInterface> interfaces,
+            List<Network> clusterNetworks) {
         Pair<Boolean, String> retVal = new Pair<Boolean, String>();
-        for (VdsNetworkInterface iface : _vds.getInterfaces()) {
+        for (VdsNetworkInterface iface : interfaces) {
             if (iface.getName().equals(bondName)) {
                 for (Network net : clusterNetworks) {
                     // If this is the network on the bond, or on a vlan over the bond, and the network is required
                     // we want to check this network
                     if ((net.getName().equals(iface.getNetworkName())
-                            || isVlanOverBondNetwork(bondName, net.getName())) && net.getCluster().isRequired()) {
+                            || isVlanOverBondNetwork(bondName, net.getName(), interfaces))
+                            && net.getCluster().isRequired()) {
                         retVal.setFirst(true);
                         retVal.setSecond(net.getName());
                         return retVal;
@@ -824,7 +852,7 @@ public class VdsUpdateRunTimeInfo {
     // IsBond return true if the interface is bond,
     // it also check if it's vlan over bond and return true in that case
     // i.e. it return true in case of bond0 and bond0.5
-    private boolean isBondOrVlanOverBond(VdsNetworkInterface iface) {
+    private static boolean isBondOrVlanOverBond(VdsNetworkInterface iface, List<VdsNetworkInterface> interfaces) {
         if (iface.getBonded() != null && iface.getBonded() == true) {
             return true;
         }
@@ -835,7 +863,7 @@ public class VdsUpdateRunTimeInfo {
             return false;
         }
 
-        for (VdsNetworkInterface i : _vds.getInterfaces()) {
+        for (VdsNetworkInterface i : interfaces) {
             if (name.equals(i.getName())) {
                 return (i.getBonded() != null && i.getBonded() == true);
             }
@@ -848,8 +876,10 @@ public class VdsUpdateRunTimeInfo {
     // bond0 and bond0.5
     // bond0 is not connectet to network just the bond0.5 is connected to network
     // and this method check for that case
-    private boolean isVlanOverBondNetwork(String bondName, String networkName) {
-        for (VdsNetworkInterface iface : _vds.getInterfaces()) {
+    private static boolean isVlanOverBondNetwork(String bondName,
+            String networkName,
+            List<VdsNetworkInterface> interfaces) {
+        for (VdsNetworkInterface iface : interfaces) {
             String name = NetworkUtils.getVlanInterfaceName(iface.getName());
             // this if check if the interface is vlan
             if (name == null) {
@@ -863,7 +893,7 @@ public class VdsUpdateRunTimeInfo {
     }
 
     // If vlan we search if the interface is up (i.e. not eth2.5 we look for eth2)
-    private boolean isVlanInterfaceUp(VdsNetworkInterface vlan) {
+    private static boolean isVlanInterfaceUp(VdsNetworkInterface vlan, List<VdsNetworkInterface> interfaces) {
         String[] tokens = vlan.getName().split("[.]");
         if (tokens.length == 1) {
             // not vlan
@@ -876,7 +906,7 @@ public class VdsUpdateRunTimeInfo {
                     .append(".");
         }
         String ifaceName = StringUtils.stripEnd(sb.toString(), ".");
-        for (VdsNetworkInterface iface : _vds.getInterfaces()) {
+        for (VdsNetworkInterface iface : interfaces) {
             if (iface.getName().equals(ifaceName)) {
                 return iface.getStatistics().getStatus() == InterfaceStatus.UP;
             }

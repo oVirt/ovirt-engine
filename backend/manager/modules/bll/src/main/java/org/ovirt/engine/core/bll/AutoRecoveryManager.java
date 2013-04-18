@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -9,10 +10,11 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.AutoRecoverDAO;
@@ -20,6 +22,7 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
+import org.ovirt.engine.core.vdsbroker.VdsUpdateRunTimeInfo;
 
 /**
  * Runs scheduled autorecovery jobs.
@@ -62,6 +65,22 @@ public class AutoRecoveryManager {
                 params.setRunSilent(true);
                 return params;
             }
+        }, new FilterClosure<VDS>() {
+            @Override
+            public List<VDS> filter(List<VDS> list) {
+                        List<VDS> filtered = new ArrayList<>(list.size());
+
+                        for (VDS vds : list) {
+                            Pair<List<String>, List<String>> problematicNics =
+                                    VdsUpdateRunTimeInfo.determineProblematicNics(getDbFacade().getInterfaceDao()
+                                            .getAllInterfacesForVds(vds.getId()), getDbFacade().getNetworkDao()
+                                            .getAllForCluster(vds.getVdsGroupId()));
+                            if (problematicNics.getFirst().isEmpty()) {
+                                filtered.add(vds);
+                            }
+                        }
+                        return filtered;
+            }
         }, "hosts");
         check(dbFacade.getStorageDomainDao(),
                 VdcActionType.ConnectDomainToStorage,
@@ -73,6 +92,11 @@ public class AutoRecoveryManager {
                 params.setRunSilent(true);
                 return params;
             }
+        }, new FilterClosure<StorageDomain>() {
+            @Override
+            public List<StorageDomain> filter(List<StorageDomain> list) {
+                return list;
+            }
         }, "storage domains");
     }
 
@@ -81,18 +105,20 @@ public class AutoRecoveryManager {
      * @param dao               the dao to get the list of failing resources from
      * @param actionType        autorecovery action
      * @param paramsCallback    a closure to create the parameters for the autorecovery action
+     * @param filter            a filter to select the recoverable resources
      * @param logMsg            a user-readable name for the failing resource type
      */
     <T extends BusinessEntity<Guid>> void check(final AutoRecoverDAO<T> dao,
             final VdcActionType actionType,
             final DoWithClosure<T, VdcActionParametersBase> paramsCallback,
+            final FilterClosure<T> filter,
             final String logMsg) {
         if (!shouldPerformRecoveryOnType(logMsg)) {
             log.info("Autorecovering " + logMsg + " is disabled, skipping");
             return;
         }
         log.debugFormat("Checking autorecoverable {0}" , logMsg);
-        final List<T> fails = dao.listFailedAutorecoverables();
+        final List<T> fails = filter.filter(dao.listFailedAutorecoverables());
         if (fails.size() > 0) {
             final BackendInternal backend = getBackend();
             log.info("Autorecovering " + fails.size() + " " + logMsg);
@@ -123,6 +149,10 @@ public class AutoRecoveryManager {
 
     private interface DoWithClosure<T, R> {
         R doWith(T arg);
+    }
+
+    private interface FilterClosure<T> {
+        List<T> filter(List<T> list);
     }
 
     private static boolean shouldPerformRecoveryOnType(String type) {

@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,14 +26,18 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -69,6 +74,15 @@ public class AutoRecoveryManagerTest {
         final StorageDomainDAO storageDomainDaoMock = mock(StorageDomainDAO.class);
         when(storageDomainDaoMock.listFailedAutorecoverables()).thenReturn(storageDomains);
         when(dbFacadeMock.getStorageDomainDao()).thenReturn(storageDomainDaoMock);
+
+        final InterfaceDao interfaceDaoMock = mock(InterfaceDao.class);
+        doReturn(interfaceDaoMock).when(dbFacadeMock).getInterfaceDao();
+        when(interfaceDaoMock.getAllInterfacesForVds(any(Guid.class)))
+                .thenReturn(Collections.<VdsNetworkInterface> emptyList());
+
+        final NetworkDao networkDaoMock = mock(NetworkDao.class);
+        doReturn(networkDaoMock).when(dbFacadeMock).getNetworkDao();
+        when(networkDaoMock.getAllForCluster(any(Guid.class))).thenReturn(Collections.<Network> emptyList());
     }
 
     @Test
