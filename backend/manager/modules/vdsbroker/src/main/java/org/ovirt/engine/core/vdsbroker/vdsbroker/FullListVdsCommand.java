@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class FullListVdsCommand<P extends FullListVDSCommandParameters> extends VdsBrokerCommand<P> {
     private VMListReturnForXmlRpc fullVmListReturn;
@@ -18,7 +18,7 @@ public class FullListVdsCommand<P extends FullListVDSCommandParameters> extends 
         String[] vmIdsArray = vmIds.toArray(new String[vmIds.size()]);
         fullVmListReturn = getBroker().list(Boolean.TRUE.toString(), vmIdsArray);
         ProceedProxyReturnValue();
-        XmlRpcStruct[] struct = fullVmListReturn.mVmList;
+        Map<String, Object>[] struct = fullVmListReturn.mVmList;
         setReturnValue(struct);
     }
 

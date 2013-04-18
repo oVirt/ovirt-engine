@@ -1,21 +1,23 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends VmReturnVdsBrokerCommand<P> {
     protected VM vm;
-    protected XmlRpcStruct createInfo;
+    protected Map<String, Object> createInfo;
     protected VmInfoBuilderBase builder;
 
     public CreateVDSCommand(P parameters) {
         super(parameters, parameters.getVm().getId());
         vm = parameters.getVm();
-        createInfo = new XmlRpcStruct();
+        createInfo = new HashMap<String, Object>();
         builder = createBuilder();
     }
 
@@ -37,11 +39,11 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
         final char SEP = ',';
         StringBuilder info = new StringBuilder();
         String sep = "";
-        for (String o : createInfo.getKeys()) {
+        for (String o : createInfo.keySet()) {
             info.append(sep);
             info.append(o);
             info.append(EQUAL);
-            info.append(createInfo.getItem(o));
+            info.append(createInfo.get(o));
             sep = (new Character(SEP)).toString();
         }
         log.infoFormat("{0} {1}", getClass().getName(), info.toString());

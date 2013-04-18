@@ -1,11 +1,12 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.common.vdscommands.GetVmsInfoVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 @Logged(returnLevel = LogLevel.TRACE)
 public class GetVmsInfoVDSCommand<P extends GetVmsInfoVDSCommandParameters> extends IrsBrokerCommand<P> {
@@ -30,10 +31,10 @@ public class GetVmsInfoVDSCommand<P extends GetVmsInfoVDSCommandParameters> exte
         _vmsInfo = getIrsProxy().getVmsInfo(storagePoolId, storageDomainId, ids.toArray(new String[] {}));
         ProceedProxyReturnValue();
 
-        XmlRpcStruct xmlRpcStruct = _vmsInfo.vmlist;
+        Map<String, Object> xmlRpcStruct = _vmsInfo.vmlist;
         java.util.ArrayList<String> retVal = new java.util.ArrayList<String>();
-        for (String key : xmlRpcStruct.getKeys()) {
-            retVal.add(xmlRpcStruct.getItem(key).toString());
+        for (String key : xmlRpcStruct.keySet()) {
+            retVal.add(xmlRpcStruct.get(key).toString());
         }
         setReturnValue(retVal);
 

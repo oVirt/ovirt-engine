@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -11,7 +13,6 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.IRSUnicodeArgumentException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsOperationFailedNoFailoverException;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcObjectDescriptor;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDSCommandBase<P> {
     public BrokerCommandBase(P parameters) {
@@ -225,12 +226,13 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
         return "";
     }
 
+    @SuppressWarnings("unchecked")
     protected void PrintReturnValue() {
         if (getReturnValueFromBroker() != null && getIsPrintReturnValue()) {
             String returnValue;
             StringBuilder builder = new StringBuilder();
-            if (getReturnValueFromBroker() instanceof XmlRpcStruct) {
-                XmlRpcObjectDescriptor.ToStringBuilder((XmlRpcStruct) getReturnValueFromBroker(), builder);
+            if (getReturnValueFromBroker() instanceof Map) {
+                XmlRpcObjectDescriptor.ToStringBuilder((Map<String, ?>) getReturnValueFromBroker(), builder);
                 returnValue = builder.toString();
             } else {
                 returnValue = getReturnValueFromBroker().toString();

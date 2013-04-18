@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.SANState;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -12,7 +13,6 @@ import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfoVDSCommandParameters>
         extends VdsBrokerCommand<P> {
@@ -31,31 +31,31 @@ public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfo
         setReturnValue(pairSdStatic);
     }
 
-    private static Pair<StorageDomainStatic, SANState> BuildStorageStaticFromXmlRpcStruct(XmlRpcStruct xmlRpcStruct) {
+    private static Pair<StorageDomainStatic, SANState> BuildStorageStaticFromXmlRpcStruct(Map<String, Object>  xmlRpcStruct) {
         Pair<StorageDomainStatic, SANState> returnValue = new Pair<StorageDomainStatic, SANState>();
         StorageDomainStatic sdStatic = new StorageDomainStatic();
-        if (xmlRpcStruct.contains("name")) {
-            sdStatic.setStorageName(xmlRpcStruct.getItem("name").toString());
+        if (xmlRpcStruct.containsKey("name")) {
+            sdStatic.setStorageName(xmlRpcStruct.get("name").toString());
         }
-        if (xmlRpcStruct.contains("type")) {
-            sdStatic.setStorageType(EnumUtils.valueOf(StorageType.class, xmlRpcStruct.getItem("type").toString(),
+        if (xmlRpcStruct.containsKey("type")) {
+            sdStatic.setStorageType(EnumUtils.valueOf(StorageType.class, xmlRpcStruct.get("type").toString(),
                     true));
         }
-        if (xmlRpcStruct.contains("class")) {
-            String domainType = xmlRpcStruct.getItem("class").toString();
+        if (xmlRpcStruct.containsKey("class")) {
+            String domainType = xmlRpcStruct.get("class").toString();
             if ("backup".equalsIgnoreCase(domainType)) {
                 sdStatic.setStorageDomainType(StorageDomainType.ImportExport);
             } else {
                 sdStatic.setStorageDomainType(EnumUtils.valueOf(StorageDomainType.class, domainType, true));
             }
         }
-        if (xmlRpcStruct.contains("version")) {
+        if (xmlRpcStruct.containsKey("version")) {
             sdStatic.setStorageFormat(
-                    StorageFormatType.forValue(xmlRpcStruct.getItem("version").toString()));
+                    StorageFormatType.forValue(xmlRpcStruct.get("version").toString()));
         }
         if (sdStatic.getStorageType() != StorageType.UNKNOWN) {
-            if (sdStatic.getStorageType() == StorageType.NFS && xmlRpcStruct.contains("remotePath")) {
-                String path = xmlRpcStruct.getItem("remotePath").toString();
+            if (sdStatic.getStorageType() == StorageType.NFS && xmlRpcStruct.containsKey("remotePath")) {
+                String path = xmlRpcStruct.get("remotePath").toString();
                 List<StorageServerConnections> connections = DbFacade.getInstance()
                         .getStorageServerConnectionDao().getAllForStorage(path);
                 if (connections.isEmpty()) {
@@ -66,12 +66,12 @@ public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfo
                     sdStatic.setStorage(connections.get(0).getid());
                     sdStatic.setConnection(connections.get(0));
                 }
-            } else if (sdStatic.getStorageType() != StorageType.NFS && (xmlRpcStruct.contains("vguuid"))) {
-                sdStatic.setStorage(xmlRpcStruct.getItem("vguuid").toString());
+            } else if (sdStatic.getStorageType() != StorageType.NFS && (xmlRpcStruct.containsKey("vguuid"))) {
+                sdStatic.setStorage(xmlRpcStruct.get("vguuid").toString());
             }
         }
-        if (xmlRpcStruct.contains("state")) {
-            returnValue.setSecond(EnumUtils.valueOf(SANState.class, xmlRpcStruct.getItem("state")
+        if (xmlRpcStruct.containsKey("state")) {
+            returnValue.setSecond(EnumUtils.valueOf(SANState.class, xmlRpcStruct.get("state")
                     .toString()
                     .toUpperCase(),
                     false));

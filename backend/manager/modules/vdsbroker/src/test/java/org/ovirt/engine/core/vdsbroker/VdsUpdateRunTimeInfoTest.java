@@ -31,7 +31,6 @@ import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VdsUpdateRunTimeInfoTest {
@@ -40,7 +39,7 @@ public class VdsUpdateRunTimeInfoTest {
     public static MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
 
     private VDS vds;
-    XmlRpcStruct[] vmInfo;
+    HashMap[] vmInfo;
 
     VdsUpdateRunTimeInfo updater;
 
@@ -80,7 +79,7 @@ public class VdsUpdateRunTimeInfoTest {
             }
 
             @Override
-            protected XmlRpcStruct[] getVmInfo(List<String> vmsToUpdate) {
+            protected Map[] getVmInfo(List<String> vmsToUpdate) {
                 return vmInfo;
             }
 
@@ -100,8 +99,8 @@ public class VdsUpdateRunTimeInfoTest {
         Guid vmGuid = Guid.NewGuid();
         when(vmDeviceDAO.getVmDeviceByVmId(vmGuid)).thenReturn(Collections.<VmDevice> emptyList());
 
-        XmlRpcStruct vm = new XmlRpcStruct();
-        vm.add(VdsProperties.vm_guid, vmGuid.toString());
+        HashMap vm = new HashMap();
+        vm.put(VdsProperties.vm_guid, vmGuid.toString());
 
         Map<String, Object> deviceProperties = new HashMap<String, Object>();
         Guid deviceID = Guid.NewGuid();
@@ -110,8 +109,8 @@ public class VdsUpdateRunTimeInfoTest {
         deviceProperties.put(VdsProperties.Device, "aDevice");
         deviceProperties.put(VdsProperties.Type, "aType");
 
-        vm.add(VdsProperties.Devices, new XmlRpcStruct[] { new XmlRpcStruct(deviceProperties) });
-        vmInfo = new XmlRpcStruct[] { vm };
+        vm.put(VdsProperties.Devices, new HashMap[] { new HashMap(deviceProperties) });
+        vmInfo = new HashMap[] { vm };
 
         updater.updateVmDevices(Collections.singletonList(vmGuid.toString()));
 

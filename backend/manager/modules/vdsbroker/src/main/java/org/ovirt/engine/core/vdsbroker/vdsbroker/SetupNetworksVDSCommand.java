@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameters;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters> extends FutureVDSCommand<T> {
 
@@ -30,8 +29,8 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
         httpTask = getBroker().setupNetworks(generateNetworks(), generateBonds(), generateOptions());
     }
 
-    private XmlRpcStruct generateNetworks() {
-        XmlRpcStruct networks = new XmlRpcStruct();
+    private Map<String, Object> generateNetworks() {
+        Map<String, Object> networks = new HashMap<String, Object>();
         for (Network network : getParameters().getNetworks()) {
             Map<String, String> opts = new HashMap<String, String>();
             VdsNetworkInterface iface =
@@ -57,11 +56,11 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
                 opts.put(VdsProperties.STP, network.getStp() ? "yes" : "no");
             }
 
-            networks.add(network.getName(), opts);
+            networks.put(network.getName(), opts);
         }
 
         for (String net : getParameters().getRemovedNetworks()) {
-            networks.add(net, REMOVE_OBJ);
+            networks.put(net, REMOVE_OBJ);
         }
 
         return networks;
@@ -86,34 +85,34 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
         return net.getVlanId() != null;
     }
 
-    private XmlRpcStruct generateBonds() {
-        XmlRpcStruct bonds = new XmlRpcStruct();
+    private Map<String, Object> generateBonds() {
+        Map<String, Object> bonds = new HashMap<String, Object>();
 
         for (VdsNetworkInterface bond : getParameters().getBonds()) {
-            XmlRpcStruct opts = new XmlRpcStruct();
-            opts.add(SLAVES, getBondNics(bond, getParameters().getInterfaces()));
+            Map<String, Object> opts = new HashMap<String, Object>();
+            opts.put(SLAVES, getBondNics(bond, getParameters().getInterfaces()));
 
             if (!StringUtils.isEmpty(bond.getBondOptions())) {
-                opts.add(BONDING_OPTIONS, bond.getBondOptions());
+                opts.put(BONDING_OPTIONS, bond.getBondOptions());
             }
-            bonds.add(bond.getName(), opts);
+            bonds.put(bond.getName(), opts);
         }
 
         for (String bond : getParameters().getRemovedBonds()) {
-            bonds.add(bond, REMOVE_OBJ);
+            bonds.put(bond, REMOVE_OBJ);
         }
 
         return bonds;
     }
 
-    private XmlRpcStruct generateOptions() {
-        XmlRpcStruct options = new XmlRpcStruct();
+    private Map<String, Object> generateOptions() {
+        Map<String, Object> options = new HashMap<String, Object>();
 
-        options.add(VdsProperties.CONNECTIVITY_CHECK, Boolean.toString(getParameters().isCheckConnectivity()));
+        options.put(VdsProperties.CONNECTIVITY_CHECK, Boolean.toString(getParameters().isCheckConnectivity()));
 
         // VDSM uses the connectivity timeout only if 'connectivityCheck' is set to true
         if (getParameters().isCheckConnectivity()) {
-            options.add(VdsProperties.CONNECTIVITY_TIMEOUT, getParameters().getConectivityTimeout());
+            options.put(VdsProperties.CONNECTIVITY_TIMEOUT, getParameters().getConectivityTimeout());
         }
         return options;
     }

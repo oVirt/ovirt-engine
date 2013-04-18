@@ -3,7 +3,6 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 import java.util.Map;
 
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcObjectDescriptor;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 //-----------------------------------------------------
 //
@@ -15,7 +14,7 @@ public final class OneImageInfoReturnForXmlRpc extends StatusReturnForXmlRpc {
     // We are ignoring missing fields after the status, because on failure it is
     // not sent.
     // [XmlRpcMissingMapping(MappingAction.Ignore), XmlRpcMember("info")]
-    public XmlRpcStruct mInfo;
+    public Map<String, Object> mInfo;
 
     @Override
     public String toString() {
@@ -30,10 +29,7 @@ public final class OneImageInfoReturnForXmlRpc extends StatusReturnForXmlRpc {
     @SuppressWarnings("unchecked")
     public OneImageInfoReturnForXmlRpc(Map<String, Object> innerMap) {
         super(innerMap);
-        Object temp = innerMap.get(INFO);
-        if (temp != null) {
-            mInfo = new XmlRpcStruct((Map<String, Object>) temp);
-        }
+        mInfo = (Map<String, Object>) innerMap.get(INFO);
     }
 
 }

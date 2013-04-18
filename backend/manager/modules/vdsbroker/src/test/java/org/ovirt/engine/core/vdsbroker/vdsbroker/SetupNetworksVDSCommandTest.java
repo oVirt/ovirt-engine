@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,20 +29,19 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.utils.RandomUtils;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 @RunWith(MockitoJUnitRunner.class)
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked" , "rawtypes"})
 public class SetupNetworksVDSCommandTest {
 
     @Mock
     private IVdsServer server;
 
     @Captor
-    private ArgumentCaptor<XmlRpcStruct> bondingCaptor;
+    private ArgumentCaptor<Map> bondingCaptor;
 
     @Captor
-    private ArgumentCaptor<XmlRpcStruct> networksCaptor;
+    private ArgumentCaptor<Map> networksCaptor;
 
     @Test
     public void vlanOverNic() {
@@ -139,7 +139,7 @@ public class SetupNetworksVDSCommandTest {
      * Verify that the method on the host was called, capturing the sent arguments for tests done later.
      */
     private void verifyMethodPassedToHost() {
-        verify(server).setupNetworks(networksCaptor.capture(), bondingCaptor.capture(), any(XmlRpcStruct.class));
+        verify(server).setupNetworks(networksCaptor.capture(), bondingCaptor.capture(), any(HashMap.class));
     }
 
     /**
@@ -152,8 +152,8 @@ public class SetupNetworksVDSCommandTest {
      * @return The bond's Map (which is what we send to Host) for further testing.
      */
     private Map<String, Object> assertBondWasSent(VdsNetworkInterface bond, List<VdsNetworkInterface> slaves) {
-        XmlRpcStruct bondingStruct = bondingCaptor.getValue();
-        Map<String, Object> bondMap = (Map<String, Object>) bondingStruct.getItem(bond.getName());
+        Map bondingStruct = bondingCaptor.getValue();
+        Map<String, Object> bondMap = (Map<String, Object>) bondingStruct.get(bond.getName());
         assertNotNull("Bond " + bond.getName() + " should've been sent but wasn't.", bondMap);
 
         List<String> nicsInStruct = (List<String>) bondMap.get(SetupNetworksVDSCommand.SLAVES);
@@ -173,8 +173,8 @@ public class SetupNetworksVDSCommandTest {
      * @return The network's XML/RPC struct for further testing.
      */
     private Map<String, String> assertNeworkWasSent(Network net) {
-        XmlRpcStruct networksStruct = networksCaptor.getValue();
-        Map<String, String> networkStruct = (Map<String, String>) networksStruct.getItem(net.getName());
+        Map networksStruct = networksCaptor.getValue();
+        Map<String, String> networkStruct = (Map<String, String>) networksStruct.get(net.getName());
         assertNotNull("Network " + net.getName() + " should've been sent but wasn't.", networkStruct);
         return networkStruct;
     }

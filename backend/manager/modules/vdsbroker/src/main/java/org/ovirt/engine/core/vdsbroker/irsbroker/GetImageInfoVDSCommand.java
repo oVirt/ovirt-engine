@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
@@ -16,7 +17,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> extends IrsBrokerCommand<P> {
     protected OneImageInfoReturnForXmlRpc imageInfoReturn;
@@ -76,47 +76,47 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
     /**
      * <exception>VdcDAL.IrsBrokerIRSErrorException.
      */
-    public DiskImage buildImageEntity(XmlRpcStruct xmlRpcStruct) {
+    public DiskImage buildImageEntity(Map<String, Object> xmlRpcStruct) {
         DiskImage newImage = new DiskImage();
         try {
-            newImage.setImageId(new Guid((String) xmlRpcStruct.getItem(IrsProperties.uuid)));
+            newImage.setImageId(new Guid((String) xmlRpcStruct.get(IrsProperties.uuid)));
 
-            newImage.setParentId(new Guid((String) xmlRpcStruct.getItem(IrsProperties.parent)));
-            newImage.setDescription((String) xmlRpcStruct.getItem(IrsProperties.description));
+            newImage.setParentId(new Guid((String) xmlRpcStruct.get(IrsProperties.parent)));
+            newImage.setDescription((String) xmlRpcStruct.get(IrsProperties.description));
             newImage.setImageStatus(EnumUtils.valueOf(ImageStatus.class,
-                    (String) xmlRpcStruct.getItem(IrsProperties.ImageStatus), true));
-            if (xmlRpcStruct.contains(IrsProperties.size)) {
-                newImage.setSize(Long.parseLong(xmlRpcStruct.getItem(IrsProperties.size).toString()) * 512);
+                    (String) xmlRpcStruct.get(IrsProperties.ImageStatus), true));
+            if (xmlRpcStruct.containsKey(IrsProperties.size)) {
+                newImage.setSize(Long.parseLong(xmlRpcStruct.get(IrsProperties.size).toString()) * 512);
             }
-            if (xmlRpcStruct.contains("apparentsize")) {
-                newImage.setActualSizeFromDiskImage(Long.parseLong(xmlRpcStruct.getItem("apparentsize").toString()) * 512);
+            if (xmlRpcStruct.containsKey("apparentsize")) {
+                newImage.setActualSizeFromDiskImage(Long.parseLong(xmlRpcStruct.get("apparentsize").toString()) * 512);
             }
-            if (xmlRpcStruct.contains("capacity")) {
-                newImage.setSize(Long.parseLong(xmlRpcStruct.getItem("capacity").toString()));
+            if (xmlRpcStruct.containsKey("capacity")) {
+                newImage.setSize(Long.parseLong(xmlRpcStruct.get("capacity").toString()));
             }
-            if (xmlRpcStruct.contains("truesize")) {
-                newImage.setActualSizeFromDiskImage(Long.parseLong(xmlRpcStruct.getItem("truesize").toString()));
+            if (xmlRpcStruct.containsKey("truesize")) {
+                newImage.setActualSizeFromDiskImage(Long.parseLong(xmlRpcStruct.get("truesize").toString()));
             }
-            if (xmlRpcStruct.contains("ctime")) {
-                long secsSinceEpoch = Long.parseLong(xmlRpcStruct.getItem("ctime").toString());
+            if (xmlRpcStruct.containsKey("ctime")) {
+                long secsSinceEpoch = Long.parseLong(xmlRpcStruct.get("ctime").toString());
                 newImage.setCreationDate(MakeDTFromCTime(secsSinceEpoch));
             }
-            if (xmlRpcStruct.contains("mtime")) {
-                long secsSinceEpoch = Long.parseLong(xmlRpcStruct.getItem("mtime").toString());
+            if (xmlRpcStruct.containsKey("mtime")) {
+                long secsSinceEpoch = Long.parseLong(xmlRpcStruct.get("mtime").toString());
                 newImage.setLastModifiedDate(MakeDTFromCTime(secsSinceEpoch));
             }
-            if (xmlRpcStruct.contains("domain")) {
-                newImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(new Guid(xmlRpcStruct.getItem("domain").toString()))));
+            if (xmlRpcStruct.containsKey("domain")) {
+                newImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(new Guid(xmlRpcStruct.get("domain").toString()))));
             }
-            if (xmlRpcStruct.contains("image")) {
-                newImage.setimage_group_id(new Guid(xmlRpcStruct.getItem("image").toString()));
+            if (xmlRpcStruct.containsKey("image")) {
+                newImage.setimage_group_id(new Guid(xmlRpcStruct.get("image").toString()));
             }
-            if (xmlRpcStruct.contains("type")) {
-                newImage.setVolumeType(EnumUtils.valueOf(VolumeType.class, xmlRpcStruct.getItem("type").toString(),
+            if (xmlRpcStruct.containsKey("type")) {
+                newImage.setVolumeType(EnumUtils.valueOf(VolumeType.class, xmlRpcStruct.get("type").toString(),
                         true));
             }
-            if (xmlRpcStruct.contains("format")) {
-                newImage.setvolumeFormat(EnumUtils.valueOf(VolumeFormat.class, xmlRpcStruct.getItem("format")
+            if (xmlRpcStruct.containsKey("format")) {
+                newImage.setvolumeFormat(EnumUtils.valueOf(VolumeFormat.class, xmlRpcStruct.get("format")
                         .toString(), true));
             }
         } catch (RuntimeException ex) {

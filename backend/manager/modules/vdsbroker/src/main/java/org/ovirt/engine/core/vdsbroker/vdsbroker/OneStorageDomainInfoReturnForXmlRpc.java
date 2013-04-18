@@ -4,22 +4,19 @@ import java.util.Map;
 
 import org.ovirt.engine.core.vdsbroker.irsbroker.*;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcObjectDescriptor;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
+@SuppressWarnings("unchecked")
 public final class OneStorageDomainInfoReturnForXmlRpc extends StatusReturnForXmlRpc {
     private static final String INFO = "info";
 
     // We are ignoring missing fields after the status, because on failure it is
     // not sent.
     // [XmlRpcMissingMapping(MappingAction.Ignore), XmlRpcMember("info")]
-    public XmlRpcStruct mStorageInfo;
+    public Map<String, Object> mStorageInfo;
 
     public OneStorageDomainInfoReturnForXmlRpc(Map<String, Object> innerMap) {
         super(innerMap);
-        Object temp = innerMap.get(INFO);
-        if (temp != null) {
-            mStorageInfo = new XmlRpcStruct((Map<String, Object>) temp);
-        }
+        mStorageInfo = (Map<String, Object>) innerMap.get(INFO);
     }
 
     @Override

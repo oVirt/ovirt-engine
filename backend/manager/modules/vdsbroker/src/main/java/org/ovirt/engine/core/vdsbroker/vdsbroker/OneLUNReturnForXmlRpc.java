@@ -4,15 +4,15 @@ import java.util.Map;
 
 import org.ovirt.engine.core.vdsbroker.irsbroker.*;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcObjectDescriptor;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
+@SuppressWarnings("unchecked")
 public final class OneLUNReturnForXmlRpc extends StatusReturnForXmlRpc {
     private static final String INFO = "info";
 
     // We are ignoring missing fields after the status, because on failure it is
     // not sent.
     // [XmlRpcMissingMapping(MappingAction.Ignore), XmlRpcMember("info")]
-    public XmlRpcStruct lunInfo;
+    public Map<String, Object> lunInfo;
 
     @Override
     public String toString() {
@@ -24,10 +24,9 @@ public final class OneLUNReturnForXmlRpc extends StatusReturnForXmlRpc {
         return builder.toString();
     }
 
-    @SuppressWarnings("unchecked")
     public OneLUNReturnForXmlRpc(Map<String, Object> innerMap) {
         super(innerMap);
-        lunInfo = (innerMap.get(INFO) == null) ? null : new XmlRpcStruct((Map<String, Object>) innerMap.get(INFO));
+        lunInfo = (Map<String, Object>) innerMap.get(INFO);
     }
 
 }

@@ -1,8 +1,11 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
+import java.util.Map;
+
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.vdscommands.GetStorageConnectionsListVDSCommandParameters;
+
 
 public class GetStorageConnectionsListVDSCommand<P extends GetStorageConnectionsListVDSCommandParameters>
         extends VdsBrokerCommand<P> {
@@ -21,13 +24,13 @@ public class GetStorageConnectionsListVDSCommand<P extends GetStorageConnections
         // parse result to storage_server_connections
         java.util.ArrayList<StorageServerConnections> connections =
                 new java.util.ArrayList<StorageServerConnections>();
-        for (XmlRpcStruct x : _result.mConnectionList) {
+        for (Map<String, Object> x : _result.mConnectionList) {
             StorageServerConnections storageCon = new StorageServerConnections();
-            if (x.contains("serverType")) {
-                storageCon.setstorage_type((StorageType) x.getItem("serverType"));
+            if (x.containsKey("serverType")) {
+                storageCon.setstorage_type((StorageType) x.get("serverType"));
             }
-            if (x.contains("target")) {
-                storageCon.setconnection(x.getItem("target").toString());
+            if (x.containsKey("target")) {
+                storageCon.setconnection(x.get("target").toString());
             }
             connections.add(storageCon);
         }

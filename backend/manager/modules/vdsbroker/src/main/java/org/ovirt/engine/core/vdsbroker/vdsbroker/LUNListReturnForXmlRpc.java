@@ -4,14 +4,13 @@ import java.util.Map;
 
 import org.ovirt.engine.core.vdsbroker.irsbroker.*;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcObjectDescriptor;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public final class LUNListReturnForXmlRpc extends StatusReturnForXmlRpc {
     private static final String DEV_LIST = "devList";
     // We are ignoring missing fields after the status, because on failure it is
     // not sent.
     // [XmlRpcMissingMapping(MappingAction.Ignore), XmlRpcMember("devList")]
-    public XmlRpcStruct[] lunList;
+    public Map<String, Object>[] lunList;
 
     @Override
     public String toString() {
@@ -31,9 +30,9 @@ public final class LUNListReturnForXmlRpc extends StatusReturnForXmlRpc {
             lunList = null;
         } else {
             Object[] tempArray = (Object[]) temp;
-            lunList = new XmlRpcStruct[tempArray.length];
+            lunList = new Map[tempArray.length];
             for (int i = 0; i < tempArray.length; i++) {
-                lunList[i] = new XmlRpcStruct((Map<String, Object>) tempArray[i]);
+                lunList[i] = (Map<String, Object>) tempArray[i];
             }
         }
     }

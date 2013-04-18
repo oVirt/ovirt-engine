@@ -15,8 +15,8 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.GlusterVolumeStatusReturnForXml
 import org.ovirt.engine.core.vdsbroker.irsbroker.IsoListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class VdsServerWrapper implements IVdsServer {
 
     private final VdsServerConnector vdsServer;
@@ -32,9 +32,9 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public OneVmReturnForXmlRpc create(XmlRpcStruct createInfo) {
+    public OneVmReturnForXmlRpc create(Map createInfo) {
         try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.create(createInfo.getInnerMap());
+            Map<String, Object> xmlRpcReturnValue = vdsServer.create(createInfo);
             OneVmReturnForXmlRpc wrapper = new OneVmReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {
@@ -845,9 +845,9 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc hotplugDisk(XmlRpcStruct info) {
+    public StatusOnlyReturnForXmlRpc hotplugDisk(Map info) {
         try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.hotplugDisk(info.getInnerMap());
+            Map<String, Object> xmlRpcReturnValue = vdsServer.hotplugDisk(info);
             StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {
@@ -856,9 +856,9 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc hotunplugDisk(XmlRpcStruct info) {
+    public StatusOnlyReturnForXmlRpc hotunplugDisk(Map info) {
         try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.hotunplugDisk(info.getInnerMap());
+            Map<String, Object> xmlRpcReturnValue = vdsServer.hotunplugDisk(info);
             StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {
@@ -867,9 +867,9 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc hotPlugNic(XmlRpcStruct info) {
+    public StatusOnlyReturnForXmlRpc hotPlugNic(Map info) {
         try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.hotplugNic(info.getInnerMap());
+            Map<String, Object> xmlRpcReturnValue = vdsServer.hotplugNic(info);
             StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {
@@ -878,9 +878,9 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc hotUnplugNic(XmlRpcStruct info) {
+    public StatusOnlyReturnForXmlRpc hotUnplugNic(Map info) {
         try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.hotunplugNic(info.getInnerMap());
+            Map<String, Object> xmlRpcReturnValue = vdsServer.hotunplugNic(info);
             StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {
@@ -889,10 +889,10 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public Future<Map<String, Object>> setupNetworks(XmlRpcStruct networks,
-            XmlRpcStruct bonds,
-            XmlRpcStruct options) {
-        return vdsServer.futureSetupNetworks(networks.getInnerMap(), bonds.getInnerMap(), options.getInnerMap());
+    public Future<Map<String, Object>> setupNetworks(Map networks,
+            Map bonds,
+            Map options) {
+        return vdsServer.futureSetupNetworks(networks, bonds, options);
     }
 
     @Override
@@ -1063,10 +1063,10 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc diskReplicateStart(String vmUUID, XmlRpcStruct srcDisk, XmlRpcStruct dstDisk) {
+    public StatusOnlyReturnForXmlRpc diskReplicateStart(String vmUUID, Map srcDisk, Map dstDisk) {
         try {
             Map<String, Object> xmlRpcReturnValue =
-                    vdsServer.diskReplicateStart(vmUUID, srcDisk.getInnerMap(), dstDisk.getInnerMap());
+                    vdsServer.diskReplicateStart(vmUUID, srcDisk, dstDisk);
             StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {
@@ -1075,10 +1075,10 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc diskReplicateFinish(String vmUUID, XmlRpcStruct srcDisk, XmlRpcStruct dstDisk) {
+    public StatusOnlyReturnForXmlRpc diskReplicateFinish(String vmUUID, Map srcDisk, Map dstDisk) {
         try {
             Map<String, Object> xmlRpcReturnValue =
-                    vdsServer.diskReplicateFinish(vmUUID, srcDisk.getInnerMap(), dstDisk.getInnerMap());
+                    vdsServer.diskReplicateFinish(vmUUID, srcDisk, dstDisk);
             StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {
@@ -1143,10 +1143,10 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc vmUpdateDevice(String vmId, XmlRpcStruct device) {
+    public StatusOnlyReturnForXmlRpc vmUpdateDevice(String vmId, Map device) {
         try {
             Map<String, Object> xmlRpcReturnValue =
-                    vdsServer.vmUpdateDevice(vmId, device.getInnerMap());
+                    vdsServer.vmUpdateDevice(vmId, device);
             StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {

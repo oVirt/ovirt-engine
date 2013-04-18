@@ -12,11 +12,10 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.GlusterVolumeProfileInfoReturnF
 import org.ovirt.engine.core.vdsbroker.irsbroker.GlusterVolumeStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IsoListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 
 public interface IVdsServer {
-    OneVmReturnForXmlRpc create(XmlRpcStruct createInfo);
+    OneVmReturnForXmlRpc create(Map createInfo);
 
     StatusOnlyReturnForXmlRpc destroy(String vmId);
 
@@ -79,9 +78,9 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc editNetwork(String oldBridge, String newBridge, String vlan, String bond, String[] nics,
             Map<String, String> options);
 
-    Future<Map<String, Object>> setupNetworks(XmlRpcStruct networks,
-            XmlRpcStruct bonding,
-            XmlRpcStruct options);
+    Future<Map<String, Object>> setupNetworks(Map networks,
+            Map bonding,
+            Map options);
 
     StatusOnlyReturnForXmlRpc setSafeNetworkConfig();
 
@@ -169,15 +168,15 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc revertTask(String taskUUID);
 
-    StatusOnlyReturnForXmlRpc hotplugDisk(XmlRpcStruct info);
+    StatusOnlyReturnForXmlRpc hotplugDisk(Map info);
 
-    StatusOnlyReturnForXmlRpc hotunplugDisk(XmlRpcStruct info);
+    StatusOnlyReturnForXmlRpc hotunplugDisk(Map info);
 
-    StatusOnlyReturnForXmlRpc hotPlugNic(XmlRpcStruct info);
+    StatusOnlyReturnForXmlRpc hotPlugNic(Map info);
 
-    StatusOnlyReturnForXmlRpc hotUnplugNic(XmlRpcStruct info);
+    StatusOnlyReturnForXmlRpc hotUnplugNic(Map info);
 
-    StatusOnlyReturnForXmlRpc vmUpdateDevice(String vmId, XmlRpcStruct device);
+    StatusOnlyReturnForXmlRpc vmUpdateDevice(String vmId, Map device);
 
     FutureTask<Map<String, Object>> poll();
 
@@ -221,9 +220,9 @@ public interface IVdsServer {
 
     GlusterServersListReturnForXmlRpc glusterServersList();
 
-    StatusOnlyReturnForXmlRpc diskReplicateStart(String vmUUID, XmlRpcStruct srcDisk, XmlRpcStruct dstDisk);
+    StatusOnlyReturnForXmlRpc diskReplicateStart(String vmUUID, Map srcDisk, Map dstDisk);
 
-    StatusOnlyReturnForXmlRpc diskReplicateFinish(String vmUUID, XmlRpcStruct srcDisk, XmlRpcStruct dstDisk);
+    StatusOnlyReturnForXmlRpc diskReplicateFinish(String vmUUID, Map srcDisk, Map dstDisk);
 
     StatusOnlyReturnForXmlRpc glusterVolumeProfileStart(String volumeName);
 

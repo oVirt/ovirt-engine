@@ -19,32 +19,32 @@ import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
+@SuppressWarnings("unchecked")
 public class VmOldInfoBuilder extends VmInfoBuilderBase {
 
-    public VmOldInfoBuilder(VM vm, XmlRpcStruct createInfo) {
+    public VmOldInfoBuilder(VM vm, Map<String, Object> createInfo) {
         this.vm = vm;
         this.createInfo = createInfo;
     }
 
     @Override
     protected void buildVmVideoCards() {
-        createInfo.add(VdsProperties.display, vm.getDisplayType().toString()); // vnc,qxl
-        createInfo.add(VdsProperties.num_of_monitors, String.valueOf(vm.getNumOfMonitors()));
+        createInfo.put(VdsProperties.display, vm.getDisplayType().toString()); // vnc,qxl
+        createInfo.put(VdsProperties.num_of_monitors, String.valueOf(vm.getNumOfMonitors()));
     }
 
     @Override
     protected void buildVmCD() {
         if (!StringUtils.isEmpty(vm.getCdPath())) {
-            createInfo.add(VdsProperties.CDRom, vm.getCdPath());
+            createInfo.put(VdsProperties.CDRom, vm.getCdPath());
         }
     }
 
     @Override
     protected void buildVmFloppy() {
         if (!StringUtils.isEmpty(vm.getFloppyPath())) {
-            createInfo.add(VdsProperties.Floppy, vm.getFloppyPath());
+            createInfo.put(VdsProperties.Floppy, vm.getFloppyPath());
         }
     }
 
@@ -98,9 +98,8 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
             }
         }
 
-        @SuppressWarnings("unchecked")
         Map<String, String>[] drivesArray = new Map[drives.size()];
-        createInfo.add("drives", drives.toArray(drivesArray));
+        createInfo.put("drives", drives.toArray(drivesArray));
     }
 
     private static final String UTF8_CHARSET_ENCODING = "UTF8";
@@ -115,7 +114,7 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
             throw new RuntimeException("Unsupported charset while building VM sysprep", e);
         }
 
-        createInfo.add(VdsProperties.sysprepInf, binarySysPrep);
+        createInfo.put(VdsProperties.sysprepInf, binarySysPrep);
     }
 
     /**
@@ -169,16 +168,16 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
             }
         }
         if (!StringUtils.isEmpty(macs.toString().trim())) {
-            createInfo.add(VdsProperties.MAC_ADDR, macs.toString());
-            createInfo.add(VdsProperties.NIC_TYPE, nics.toString());
-            createInfo.add(VdsProperties.BRIDGE, networks.toString());
+            createInfo.put(VdsProperties.MAC_ADDR, macs.toString());
+            createInfo.put(VdsProperties.NIC_TYPE, nics.toString());
+            createInfo.put(VdsProperties.BRIDGE, networks.toString());
         }
     }
 
     @Override
     protected void buildVmSoundDevices() {
         if (vm.getVmType() == VmType.Desktop) {
-            createInfo.add(VdsProperties.soundDevice, getSoundDevice(vm.getStaticData(), vm.getVdsGroupCompatibilityVersion()));
+            createInfo.put(VdsProperties.soundDevice, getSoundDevice(vm.getStaticData(), vm.getVdsGroupCompatibilityVersion()));
         }
     }
 
@@ -192,10 +191,10 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
         String bootSeqInBE = vm.getBootSequence().toString().toLowerCase();
         // TODO : find another way to distinguish run vs. run-once
         if (bootSeqInBE.equals(bootSeqInDB))
-            createInfo.add(VdsProperties.Boot, bootSeqInDB);
+            createInfo.put(VdsProperties.Boot, bootSeqInDB);
         else
             // run once
-            createInfo.add(VdsProperties.Boot, bootSeqInBE);
+            createInfo.put(VdsProperties.Boot, bootSeqInBE);
 
     }
 

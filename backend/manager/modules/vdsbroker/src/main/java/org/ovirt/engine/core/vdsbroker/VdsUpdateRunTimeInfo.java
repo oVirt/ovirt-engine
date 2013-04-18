@@ -79,9 +79,8 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSRecoveringException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
-@SuppressWarnings({ "synthetic-access", "unchecked" })
+@SuppressWarnings({ "synthetic-access", "unchecked" ,"rawtypes"})
 public class VdsUpdateRunTimeInfo {
     private Map<Guid, VmInternalData> _runningVms;
     private final Map<Guid, VmDynamic> _vmDynamicToSave = new HashMap<Guid, VmDynamic>();
@@ -1054,9 +1053,9 @@ public class VdsUpdateRunTimeInfo {
      * @param vmsToUpdate
      */
     protected void updateVmDevices(List<String> vmsToUpdate) {
-        XmlRpcStruct[] vms = getVmInfo(vmsToUpdate);
+        Map[] vms = getVmInfo(vmsToUpdate);
         if (vms != null) {
-            for (XmlRpcStruct vm : vms) {
+            for (Map vm : vms) {
                 processVmDevices(vm);
             }
         }
@@ -1067,8 +1066,8 @@ public class VdsUpdateRunTimeInfo {
      * @param vmsToUpdate
      * @return
      */
-    protected XmlRpcStruct[] getVmInfo(List<String> vmsToUpdate) {
-        return (XmlRpcStruct[]) (new FullListVdsCommand<FullListVDSCommandParameters>(
+    protected Map[] getVmInfo(List<String> vmsToUpdate) {
+        return (Map[]) (new FullListVdsCommand<FullListVDSCommandParameters>(
                 new FullListVDSCommandParameters(_vds.getId(), vmsToUpdate)).executeWithReturnValue());
     }
 
@@ -1076,12 +1075,12 @@ public class VdsUpdateRunTimeInfo {
         return !StringUtils.equalsIgnoreCase(deviceType, VmDeviceType.FLOPPY.getName());
     }
 
-    private void logDeviceInformation(Guid vmId, XmlRpcStruct device) {
+    private void logDeviceInformation(Guid vmId, Map device) {
         String message = "Received a {0} Device without an address when processing VM {1} devices, skipping device";
         String deviceType = getDeviceType(device);
 
         if (shouldLogDeviceDetails(deviceType)) {
-            Map<String,Object> deviceInfo = device.getInnerMap();
+            Map<String,Object> deviceInfo = device;
             log.infoFormat(message + ": {2}", StringUtils.defaultString(deviceType), vmId, deviceInfo);
         } else {
             log.infoFormat(message, StringUtils.defaultString(deviceType), vmId);
@@ -1092,20 +1091,20 @@ public class VdsUpdateRunTimeInfo {
      * Actually process the VM device update in DB.
      * @param vm
      */
-    private void processVmDevices(XmlRpcStruct vm) {
-        if (vm == null || vm.getItem(VdsProperties.vm_guid) == null) {
+    private void processVmDevices(Map vm) {
+        if (vm == null || vm.get(VdsProperties.vm_guid) == null) {
             log.error("Received NULL VM or VM id when processing VM devices, abort.");
             return;
         }
 
-        Guid vmId = new Guid((String) vm.getItem(VdsProperties.vm_guid));
+        Guid vmId = new Guid((String) vm.get(VdsProperties.vm_guid));
         Set<Guid> processedDevices = new HashSet<Guid>();
         List<VmDevice> devices = getDbFacade().getVmDeviceDao().getVmDeviceByVmId(vmId);
         Map<VmDeviceId, VmDevice> deviceMap = Entities.businessEntitiesById(devices);
 
-        for (Object o : (Object[]) vm.getItem(VdsProperties.Devices)) {
-            XmlRpcStruct device = new XmlRpcStruct((Map<String, Object>) o);
-            if (device.getItem(VdsProperties.Address) == null) {
+        for (Object o : (Object[]) vm.get(VdsProperties.Devices)) {
+            Map device = (Map<String, Object>) o;
+            if (device.get(VdsProperties.Address) == null) {
                 logDeviceInformation(vmId, device);
                 continue;
             }
@@ -1115,8 +1114,8 @@ public class VdsUpdateRunTimeInfo {
             if (deviceId == null || vmDevice == null) {
                 deviceId = addNewVmDevice(vmId, device);
             } else {
-                vmDevice.setAddress(((Map<String, String>) device.getItem(VdsProperties.Address)).toString());
-                vmDevice.setAlias(StringUtils.defaultString((String) device.getItem(VdsProperties.Alias)));
+                vmDevice.setAddress(((Map<String, String>) device.get(VdsProperties.Address)).toString());
+                vmDevice.setAlias(StringUtils.defaultString((String) device.get(VdsProperties.Alias)));
                 addVmDeviceToList(vmDevice);
             }
 
@@ -1164,18 +1163,18 @@ public class VdsUpdateRunTimeInfo {
      * @param vmId
      * @param device
      */
-    private Guid addNewVmDevice(Guid vmId, XmlRpcStruct device) {
+    private Guid addNewVmDevice(Guid vmId, Map device) {
         Guid newDeviceId = Guid.Empty;
-        String typeName = (String) device.getItem(VdsProperties.Type);
-        String deviceName = (String) device.getItem(VdsProperties.Device);
+        String typeName = (String) device.get(VdsProperties.Type);
+        String deviceName = (String) device.get(VdsProperties.Device);
 
         // do not allow null or empty device or type values
         if (StringUtils.isEmpty(typeName) || StringUtils.isEmpty(deviceName)) {
             log.errorFormat("Empty or NULL values were passed for a VM {0} device, Device is skipped", vmId);
         } else {
-            String address = ((Map<String, String>) device.getItem(VdsProperties.Address)).toString();
-            String alias = StringUtils.defaultString((String) device.getItem(VdsProperties.Alias));
-            Object o = device.getItem(VdsProperties.SpecParams);
+            String address = ((Map<String, String>) device.get(VdsProperties.Address)).toString();
+            String alias = StringUtils.defaultString((String) device.get(VdsProperties.Alias));
+            Object o = device.get(VdsProperties.SpecParams);
             newDeviceId = Guid.NewGuid();
             VmDeviceId id = new VmDeviceId(newDeviceId, vmId);
             VmDevice newDevice = new VmDevice(id, typeName, deviceName, address,
@@ -1197,8 +1196,8 @@ public class VdsUpdateRunTimeInfo {
      * @param device
      * @return
      */
-    private static Guid getDeviceId(XmlRpcStruct device) {
-        String deviceId = (String) device.getItem(VdsProperties.DeviceId);
+    private static Guid getDeviceId(Map device) {
+        String deviceId = (String) device.get(VdsProperties.DeviceId);
         return deviceId == null ? null : new Guid(deviceId);
     }
 
@@ -1207,8 +1206,8 @@ public class VdsUpdateRunTimeInfo {
      * @param device
      * @return
      */
-    private static String getDeviceType(XmlRpcStruct device) {
-        return (String) device.getItem(VdsProperties.Device);
+    private static String getDeviceType(Map device) {
+        return (String) device.get(VdsProperties.Device);
     }
 
     // if not statistics check if status changed and add to running list

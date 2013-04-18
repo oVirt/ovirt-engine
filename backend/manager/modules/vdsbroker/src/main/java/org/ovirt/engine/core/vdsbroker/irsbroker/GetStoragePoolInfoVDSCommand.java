@@ -2,6 +2,7 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -14,7 +15,6 @@ import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.GetStorageDomainStatsVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 @Logged(executionLevel = LogLevel.DEBUG)
 public class GetStoragePoolInfoVDSCommand<P extends GetStoragePoolInfoVDSCommandParameters>
@@ -32,7 +32,7 @@ public class GetStoragePoolInfoVDSCommand<P extends GetStoragePoolInfoVDSCommand
         storage_pool sp = VdsBrokerObjectsBuilder.buildStoragePool(_result.mStoragePoolInfo);
         Guid masterId = Guid.Empty;
         if (_result.mStoragePoolInfo.containsKey("master_uuid")) {
-            masterId = new Guid(_result.mStoragePoolInfo.getItem("master_uuid").toString());
+            masterId = new Guid(_result.mStoragePoolInfo.get("master_uuid").toString());
         }
         sp.setId(getParameters().getStoragePoolId());
         ArrayList<StorageDomain> domList = ParseStorageDomainList(_result.mDomainsList, masterId);
@@ -43,11 +43,12 @@ public class GetStoragePoolInfoVDSCommand<P extends GetStoragePoolInfoVDSCommand
         setReturnValue(list);
     }
 
-    private java.util.ArrayList<StorageDomain> ParseStorageDomainList(XmlRpcStruct xmlRpcStruct, Guid masterId) {
+    @SuppressWarnings("unchecked")
+    private java.util.ArrayList<StorageDomain> ParseStorageDomainList(Map<String, Object> xmlRpcStruct, Guid masterId) {
         java.util.ArrayList<StorageDomain> domainsList = new java.util.ArrayList<StorageDomain>(
-                xmlRpcStruct.getCount());
-        for (String domain : xmlRpcStruct.getKeys()) {
-            XmlRpcStruct domainAsStruct = new XmlRpcStruct((java.util.Map) xmlRpcStruct.getItem(domain));
+                xmlRpcStruct.size());
+        for (String domain : xmlRpcStruct.keySet()) {
+            Map<String, Object> domainAsStruct = (Map<String, Object>) xmlRpcStruct.get(domain);
             StorageDomain sd = GetStorageDomainStatsVDSCommand.BuildStorageDynamicFromXmlRpcStruct(domainAsStruct);
             sd.setStoragePoolId(getParameters().getStoragePoolId());
             sd.setId(new Guid(domain));

@@ -3,7 +3,9 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,78 +30,77 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public abstract class VmInfoBuilderBase {
 
     protected static final Log log = LogFactory.getLog(VmInfoBuilderBase.class);
-    protected XmlRpcStruct createInfo;
+    protected Map<String, Object> createInfo;
     protected VM vm;
     // IDE supports only 4 slots , slot 2 is preserved by VDSM to the CDROM
     protected int[] ideIndexSlots = new int[] { 0, 1, 3 };
 
     protected void buildVmProperties() {
-        createInfo.add(VdsProperties.vm_guid, vm.getId().toString());
-        createInfo.add(VdsProperties.vm_name, vm.getName());
-        createInfo.add(VdsProperties.mem_size_mb, vm.getVmMemSizeMb());
-        createInfo.add(VdsProperties.smartcardEnabled, Boolean.toString(vm.isSmartcardEnabled()));
-        createInfo.add(VdsProperties.num_of_cpus,
+        createInfo.put(VdsProperties.vm_guid, vm.getId().toString());
+        createInfo.put(VdsProperties.vm_name, vm.getName());
+        createInfo.put(VdsProperties.mem_size_mb, vm.getVmMemSizeMb());
+        createInfo.put(VdsProperties.smartcardEnabled, Boolean.toString(vm.isSmartcardEnabled()));
+        createInfo.put(VdsProperties.num_of_cpus,
                 (new Integer(vm.getNumOfCpus())).toString());
         if (Config.<Boolean> GetValue(ConfigValues.SendSMPOnRunVm)) {
-            createInfo.add(VdsProperties.cores_per_socket,
+            createInfo.put(VdsProperties.cores_per_socket,
                     (Integer.toString(vm.getCpuPerSocket())));
         }
         final String compatibilityVersion = vm.getVdsGroupCompatibilityVersion().toString();
         addCpuPinning(compatibilityVersion);
-        createInfo.add(VdsProperties.emulatedMachine, Config.<String> GetValue(
+        createInfo.put(VdsProperties.emulatedMachine, Config.<String> GetValue(
                 ConfigValues.EmulatedMachine, compatibilityVersion));
         // send cipher suite and spice secure channels parameters only if ssl
         // enabled.
         if (Config.<Boolean> GetValue(ConfigValues.SSLEnabled)) {
-            createInfo.add(VdsProperties.spiceSslCipherSuite,
+            createInfo.put(VdsProperties.spiceSslCipherSuite,
                     Config.<String> GetValue(ConfigValues.CipherSuite));
-            createInfo.add(VdsProperties.SpiceSecureChannels, Config.<String> GetValue(
+            createInfo.put(VdsProperties.SpiceSecureChannels, Config.<String> GetValue(
                     ConfigValues.SpiceSecureChannels, compatibilityVersion));
         }
-        createInfo.add(VdsProperties.kvmEnable, vm.getKvmEnable().toString()
+        createInfo.put(VdsProperties.kvmEnable, vm.getKvmEnable().toString()
                 .toLowerCase());
-        createInfo.add(VdsProperties.acpiEnable, vm.getAcpiEnable().toString()
+        createInfo.put(VdsProperties.acpiEnable, vm.getAcpiEnable().toString()
                 .toLowerCase());
 
-        createInfo.add(VdsProperties.Custom,
+        createInfo.put(VdsProperties.Custom,
                 VmPropertiesUtils.getInstance().getVMProperties(vm.getVdsGroupCompatibilityVersion(),
                         vm.getStaticData()));
-        createInfo.add(VdsProperties.vm_type, "kvm"); // "qemu", "kvm"
+        createInfo.put(VdsProperties.vm_type, "kvm"); // "qemu", "kvm"
         if (vm.isRunAndPause()) {
-            createInfo.add(VdsProperties.launch_paused_param, "true");
+            createInfo.put(VdsProperties.launch_paused_param, "true");
         }
         if(vm.isUseHostCpuFlags()) {
-            createInfo.add(VdsProperties.cpuType,
+            createInfo.put(VdsProperties.cpuType,
                     "hostPassthrough");
         } else if (vm.getVdsGroupCpuFlagsData() != null) {
-            createInfo.add(VdsProperties.cpuType,
+            createInfo.put(VdsProperties.cpuType,
                     vm.getVdsGroupCpuFlagsData());
         }
-        createInfo.add(VdsProperties.niceLevel,
+        createInfo.put(VdsProperties.niceLevel,
                 (new Integer(vm.getNiceLevel())).toString());
         if (vm.getStatus() == VMStatus.Suspended
                 && !StringUtils.isEmpty(vm.getHibernationVolHandle())) {
-            createInfo.add(VdsProperties.hiberVolHandle,
+            createInfo.put(VdsProperties.hiberVolHandle,
                     vm.getHibernationVolHandle());
         }
         String keyboardLayout = vm.getVncKeyboardLayout(); // if set per VM use that value
         if (keyboardLayout == null) { // otherwise fall back to global setting
             keyboardLayout = Config.<String> GetValue(ConfigValues.VncKeyboardLayout);
         }
-        createInfo.add(VdsProperties.KeyboardLayout, keyboardLayout);
+        createInfo.put(VdsProperties.KeyboardLayout, keyboardLayout);
         if (vm.getVmOs().isLinux()) {
-            createInfo.add(VdsProperties.PitReinjection, "false");
+            createInfo.put(VdsProperties.PitReinjection, "false");
         }
 
         if (vm.getDisplayType() == DisplayType.vnc) {
-            createInfo.add(VdsProperties.TabletEnable, "true");
+            createInfo.put(VdsProperties.TabletEnable, "true");
         }
-        createInfo.add(VdsProperties.transparent_huge_pages,
+        createInfo.put(VdsProperties.transparent_huge_pages,
                 vm.isTransparentHugePages() ? "true" : "false");
     }
 
@@ -108,12 +109,12 @@ public abstract class VmInfoBuilderBase {
         if (StringUtils.isNotEmpty(cpuPinning)
                 && Boolean.TRUE.equals(Config.<Boolean> GetValue(ConfigValues.CpuPinningEnabled,
                         compatibilityVersion))) {
-            final XmlRpcStruct pinDict = new XmlRpcStruct();
+            final Map<String, Object> pinDict = new HashMap<String, Object>();
             for (String pin : cpuPinning.split("_")) {
                 final String[] split = pin.split("#");
-                pinDict.add(split[0], split[1]);
+                pinDict.put(split[0], split[1]);
             }
-            createInfo.add(VdsProperties.cpuPinning, pinDict);
+            createInfo.put(VdsProperties.cpuPinning, pinDict);
         }
     }
 
@@ -139,7 +140,7 @@ public abstract class VmInfoBuilderBase {
                 }
             }
             if (net != null) {
-                createInfo.add(VdsProperties.DISPLAY_NETWORK, net.getName());
+                createInfo.put(VdsProperties.DISPLAY_NETWORK, net.getName());
             }
         }
     }
@@ -147,13 +148,13 @@ public abstract class VmInfoBuilderBase {
     protected void buildVmBootOptions() {
         // Boot Options
         if (!StringUtils.isEmpty(vm.getInitrdUrl())) {
-            createInfo.add(VdsProperties.InitrdUrl, vm.getInitrdUrl());
+            createInfo.put(VdsProperties.InitrdUrl, vm.getInitrdUrl());
         }
         if (!StringUtils.isEmpty(vm.getKernelUrl())) {
-            createInfo.add(VdsProperties.KernelUrl, vm.getKernelUrl());
+            createInfo.put(VdsProperties.KernelUrl, vm.getKernelUrl());
 
             if (!StringUtils.isEmpty(vm.getKernelParams())) {
-                createInfo.add(VdsProperties.KernelParams,
+                createInfo.put(VdsProperties.KernelParams,
                         vm.getKernelParams());
             }
         }
@@ -162,7 +163,7 @@ public abstract class VmInfoBuilderBase {
     protected void buildVmTimeZone() {
         // send vm_dynamic.utc_diff if exist, if not send vm_static.time_zone
         if (vm.getUtcDiff() != null) {
-            createInfo.add(VdsProperties.utc_diff, vm.getUtcDiff().toString());
+            createInfo.put(VdsProperties.utc_diff, vm.getUtcDiff().toString());
         } else {
             // get vm timezone
             String timeZone = TimeZoneInfo.Local.getId();
@@ -184,7 +185,7 @@ public abstract class VmInfoBuilderBase {
                 offset = (TimeZone.getTimeZone(javaZoneId).getOffset(
                         new Date().getTime()) / 1000);
             }
-            createInfo.add(VdsProperties.utc_diff, "" + offset);
+            createInfo.put(VdsProperties.utc_diff, "" + offset);
         }
     }
 

@@ -13,7 +13,6 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcObjectDescriptor;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSCommandParameters>
         extends VdsBrokerCommand<P> {
@@ -37,14 +36,15 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
         return _result.mStatus;
     }
 
-    public static StorageDomain BuildStorageDynamicFromXmlRpcStruct(XmlRpcStruct xmlRpcStruct) {
+    @SuppressWarnings("unchecked")
+    public static StorageDomain BuildStorageDynamicFromXmlRpcStruct(Map<String, Object> xmlRpcStruct) {
         try {
             StorageDomain domain = new StorageDomain();
-            if (xmlRpcStruct.contains("status")) {
-                if ("Attached".equals(xmlRpcStruct.getItem("status").toString())) {
+            if (xmlRpcStruct.containsKey("status")) {
+                if ("Attached".equals(xmlRpcStruct.get("status").toString())) {
                     domain.setStatus(StorageDomainStatus.InActive);
                 } else {
-                    domain.setStatus(EnumUtils.valueOf(StorageDomainStatus.class, xmlRpcStruct.getItem("status")
+                    domain.setStatus(EnumUtils.valueOf(StorageDomainStatus.class, xmlRpcStruct.get("status")
                             .toString(), true));
                 }
             }
@@ -53,13 +53,13 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
             size = IrsBrokerCommand.AssignLongValue(xmlRpcStruct, "disktotal");
             domain.setUsedDiskSize((size == null || domain.getAvailableDiskSize() == null) ? null :
                     (int) (size / IrsBrokerCommand.BYTES_TO_GB) - domain.getAvailableDiskSize());
-            if (xmlRpcStruct.contains("alerts")) {
-                Object[] rawAlerts = (Object[]) xmlRpcStruct.getItem("alerts");
+            if (xmlRpcStruct.containsKey("alerts")) {
+                Object[] rawAlerts = (Object[]) xmlRpcStruct.get("alerts");
                 Set<VdcBllErrors> alerts = new HashSet<VdcBllErrors>(rawAlerts.length);
 
                 for (Object rawAlert : rawAlerts) {
-                    XmlRpcStruct alert = new XmlRpcStruct((Map<String, Object>) rawAlert);
-                    Integer alertCode = (Integer) alert.getItem("code");
+                    Map<String, Object> alert = (Map<String, Object>) rawAlert;
+                    Integer alertCode = (Integer) alert.get("code");
                     if (alertCode == null || VdcBllErrors.forValue(alertCode) == null) {
                         log.warnFormat("Unrecognized alert code: {0}.", alertCode);
                         StringBuilder alertStringBuilder = new StringBuilder();

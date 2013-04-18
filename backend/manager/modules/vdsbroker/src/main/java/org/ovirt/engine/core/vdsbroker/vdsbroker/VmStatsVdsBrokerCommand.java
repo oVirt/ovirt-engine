@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public abstract class VmStatsVdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> extends VdsBrokerCommand<P> {
     protected VMInfoListReturnForXmlRpc mVmListReturn;
@@ -28,7 +29,7 @@ public abstract class VmStatsVdsBrokerCommand<P extends VdsIdVDSCommandParameter
         return mVmListReturn;
     }
 
-    protected VmInternalData createVmInternalData(XmlRpcStruct xmlRpcStruct) {
+    protected VmInternalData createVmInternalData(Map<String, Object> xmlRpcStruct) {
         VmDynamic vmDynamic = new ExtendedVmDynamic(getVds());
         VdsBrokerObjectsBuilder.updateVMDynamicData(vmDynamic, xmlRpcStruct);
         return new VmInternalData(vmDynamic,

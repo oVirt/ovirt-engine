@@ -77,7 +77,6 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.BrokerCommandBase;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSExceptionBase;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
 
 @Logged(errorLevel = LogLevel.ERROR)
@@ -962,8 +961,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     try {
                         StoragePoolInfoReturnForXmlRpc returnValue = getIrsProxy().getStoragePoolInfo(
                                 _storagePoolId.toString());
-                        if (returnValue.mStoragePoolInfo.contains(IrsProperties.isoPrefix)) {
-                            mIsoPrefix = returnValue.mStoragePoolInfo.getItem(IrsProperties.isoPrefix).toString();
+                        if (returnValue.mStoragePoolInfo.containsKey(IrsProperties.isoPrefix)) {
+                            mIsoPrefix = returnValue.mStoragePoolInfo.get(IrsProperties.isoPrefix).toString();
                         }
                     } catch (Exception ex) {
                         log.errorFormat("IrsBroker::IsoPrefix Failed to get IRS statistics.");
@@ -1654,13 +1653,13 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         log.errorFormat("IrsBroker::Failed::{0} due to: {1}", getCommandName(), ExceptionUtils.getMessage(ex));
     }
 
-    public static Long AssignLongValue(XmlRpcStruct input, String name) {
+    public static Long AssignLongValue(Map<String, Object> input, String name) {
         Long returnValue = null;
         if (input.containsKey(name)) {
             String stringValue = null;
             try {
-                if (input.getItem(name) instanceof String) {
-                    stringValue = (String) input.getItem(name);
+                if (input.get(name) instanceof String) {
+                    stringValue = (String) input.get(name);
                     returnValue = Long.parseLong(stringValue);
                 }
             } catch (NumberFormatException nfe) {

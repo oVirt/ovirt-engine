@@ -5,14 +5,13 @@ import java.util.Map;
 
 import org.ovirt.engine.core.vdsbroker.irsbroker.*;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcObjectDescriptor;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public final class ServerConnectionStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
     private static final String STATUS_LIST = "statuslist";
     // We are ignoring missing fields after the status, because on failure it is
     // not sent.
     // [XmlRpcMissingMapping(MappingAction.Ignore), XmlRpcMember("statuslist")]
-    public XmlRpcStruct[] mStatusList;
+    public Map<String, Object>[] mStatusList;
 
     @Override
     public String toString() {
@@ -24,6 +23,7 @@ public final class ServerConnectionStatusReturnForXmlRpc extends StatusReturnFor
         return builder.toString();
     }
 
+    @SuppressWarnings("unchecked")
     public ServerConnectionStatusReturnForXmlRpc(Map<String, Object> innerMap) {
         super(innerMap);
         Object temp = innerMap.get(STATUS_LIST);
@@ -31,18 +31,18 @@ public final class ServerConnectionStatusReturnForXmlRpc extends StatusReturnFor
             mStatusList = null;
         } else {
             Object[] tempArray = (Object[]) temp;
-            mStatusList = new XmlRpcStruct[tempArray.length];
+            mStatusList = new Map[tempArray.length];
             for (int i = 0; i < tempArray.length; i++) {
-                mStatusList[i] = new XmlRpcStruct((Map<String, Object>) tempArray[i]);
+                mStatusList[i] = (Map<String, Object>) tempArray[i];
             }
         }
     }
 
     public Map<String, String> convertToStatusList() {
         HashMap<String, String> result = new HashMap<String, String>();
-        for (XmlRpcStruct st : this.mStatusList) {
-            String status = st.getItem("status").toString();
-            String id = st.getItem("id").toString();
+        for (Map<String, Object> st : this.mStatusList) {
+            String status = st.get("status").toString();
+            String id = st.get("id").toString();
             result.put(id, status);
         }
         return result;

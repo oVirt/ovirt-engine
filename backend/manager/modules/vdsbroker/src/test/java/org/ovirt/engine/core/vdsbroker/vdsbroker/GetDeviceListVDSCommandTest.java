@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class GetDeviceListVDSCommandTest {
 
@@ -41,8 +40,8 @@ public class GetDeviceListVDSCommandTest {
      *            The value that the XML RPC will hold.
      */
     private static void testParseLunFromXmlRpcForDevtypeField(StorageType expectedStorageType, String mockDevtype) {
-        XmlRpcStruct xlun = new XmlRpcStruct();
-        xlun.add(GetDeviceListVDSCommand.DEVTYPE_FIELD, mockDevtype);
+        Map<String, Object> xlun = new HashMap<String, Object>();
+        xlun.put(GetDeviceListVDSCommand.DEVTYPE_FIELD, mockDevtype);
 
         LUNs lun = GetDeviceListVDSCommand.ParseLunFromXmlRpc(xlun);
 
@@ -51,7 +50,7 @@ public class GetDeviceListVDSCommandTest {
 
     @Test
     public void parseLunFromXmlRpcReturnsUnknownForNoField() throws Exception {
-        XmlRpcStruct xlun = new XmlRpcStruct();
+        Map<String, Object> xlun = new HashMap<String, Object>();
         LUNs lun = GetDeviceListVDSCommand.ParseLunFromXmlRpc(xlun);
 
         assertEquals(StorageType.UNKNOWN, lun.getLunType());
@@ -65,19 +64,19 @@ public class GetDeviceListVDSCommandTest {
 
         // Randomize some devices
         String physicalDevicePrefix = "physical";
-        List<XmlRpcStruct> paths = new ArrayList<XmlRpcStruct>(numPaths);
+        List<Map<String, Object>> paths = new ArrayList<Map<String, Object>>(numPaths);
         for (int i = 0; i < numPaths; ++i) {
-            XmlRpcStruct path = new XmlRpcStruct();
-            path.add(GetDeviceListVDSCommand.LUN_FIELD, String.valueOf(i));
-            path.add(GetDeviceListVDSCommand.PHYSICAL_DEVICE_FIELD, physicalDevicePrefix + i);
-            path.add(GetDeviceListVDSCommand.DEVICE_STATE_FIELD,
+            Map<String, Object> path = new HashMap<String, Object>();
+            path.put(GetDeviceListVDSCommand.LUN_FIELD, String.valueOf(i));
+            path.put(GetDeviceListVDSCommand.PHYSICAL_DEVICE_FIELD, physicalDevicePrefix + i);
+            path.put(GetDeviceListVDSCommand.DEVICE_STATE_FIELD,
                     i < numActivePaths ?
                             GetDeviceListVDSCommand.DEVICE_ACTIVE_VALUE : RandomUtils.instance().nextString(10));
             paths.add(path);
         }
 
-        XmlRpcStruct xlun = new XmlRpcStruct();
-        xlun.add(GetDeviceListVDSCommand.PATHSTATUS, paths.toArray(new XmlRpcStruct[paths.size()]));
+        Map<String, Object> xlun = new HashMap<String, Object>();
+        xlun.put(GetDeviceListVDSCommand.PATHSTATUS, paths.toArray(new Map[paths.size()]));
 
         // Parse the XmlRpc
         LUNs lun = GetDeviceListVDSCommand.ParseLunFromXmlRpc(xlun);

@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.vdscommands.VmReplicateDiskParameters;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public abstract class VmReplicateDiskVDSCommand<P extends VmReplicateDiskParameters> extends VdsBrokerCommand<P> {
 
@@ -9,23 +11,23 @@ public abstract class VmReplicateDiskVDSCommand<P extends VmReplicateDiskParamet
         super(parameters);
     }
 
-    protected XmlRpcStruct getDstDiskXmlRpc() {
-        XmlRpcStruct dstDisk = new XmlRpcStruct();
-        dstDisk.add(VdsProperties.Device, "disk");
-        dstDisk.add(VdsProperties.PoolId, getParameters().getStoragePoolId().toString());
-        dstDisk.add(VdsProperties.DomainId, getParameters().getTargetStorageDomainId().toString());
-        dstDisk.add(VdsProperties.ImageId, getParameters().getImageGroupId().toString());
-        dstDisk.add(VdsProperties.VolumeId, getParameters().getImageId().toString());
+    protected Map<String, Object> getDstDiskXmlRpc() {
+        Map<String, Object> dstDisk = new HashMap<String, Object>();
+        dstDisk.put(VdsProperties.Device, "disk");
+        dstDisk.put(VdsProperties.PoolId, getParameters().getStoragePoolId().toString());
+        dstDisk.put(VdsProperties.DomainId, getParameters().getTargetStorageDomainId().toString());
+        dstDisk.put(VdsProperties.ImageId, getParameters().getImageGroupId().toString());
+        dstDisk.put(VdsProperties.VolumeId, getParameters().getImageId().toString());
         return dstDisk;
     }
 
-    protected XmlRpcStruct getSrcDiskXmlRpc() {
-        XmlRpcStruct srcDisk = new XmlRpcStruct();
-        srcDisk.add(VdsProperties.Device, "disk");
-        srcDisk.add(VdsProperties.PoolId, getParameters().getStoragePoolId().toString());
-        srcDisk.add(VdsProperties.DomainId, getParameters().getSrcStorageDomainId().toString());
-        srcDisk.add(VdsProperties.ImageId, getParameters().getImageGroupId().toString());
-        srcDisk.add(VdsProperties.VolumeId, getParameters().getImageId().toString());
+    protected Map<String, Object> getSrcDiskXmlRpc() {
+        Map<String, Object> srcDisk = new HashMap<String, Object>();
+        srcDisk.put(VdsProperties.Device, "disk");
+        srcDisk.put(VdsProperties.PoolId, getParameters().getStoragePoolId().toString());
+        srcDisk.put(VdsProperties.DomainId, getParameters().getSrcStorageDomainId().toString());
+        srcDisk.put(VdsProperties.ImageId, getParameters().getImageGroupId().toString());
+        srcDisk.put(VdsProperties.VolumeId, getParameters().getImageId().toString());
         return srcDisk;
     }
 }

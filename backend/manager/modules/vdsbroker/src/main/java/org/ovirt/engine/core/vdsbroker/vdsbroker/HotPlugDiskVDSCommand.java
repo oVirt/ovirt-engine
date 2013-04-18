@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -9,11 +12,10 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends VdsBrokerCommand<P> {
 
-    protected XmlRpcStruct sendInfo = new XmlRpcStruct();
+    protected Map<String, Object> sendInfo = new HashMap<String, Object>();
 
     public HotPlugDiskVDSCommand(P parameters) {
         super(parameters);
@@ -27,46 +29,46 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
     }
 
     protected void buildSendDataToVdsm() {
-        sendInfo.add("vmId", getParameters().getVmId().toString());
-        sendInfo.add("drive", initDriveData());
+        sendInfo.put("vmId", getParameters().getVmId().toString());
+        sendInfo.put("drive", initDriveData());
     }
 
-    private XmlRpcStruct initDriveData() {
-        XmlRpcStruct drive = new XmlRpcStruct();
+    private Map<String, Object> initDriveData() {
+        Map<String, Object> drive = new HashMap<String, Object>();
         Disk disk = getParameters().getDisk();
         VmDevice vmDevice = getParameters().getVmDevice();
 
-        drive.add(VdsProperties.Type, "disk");
-        drive.add(VdsProperties.Device, "disk");
+        drive.put(VdsProperties.Type, "disk");
+        drive.put(VdsProperties.Device, "disk");
         addAddress(drive, getParameters().getVmDevice().getAddress());
-        drive.add(VdsProperties.INTERFACE, disk.getDiskInterface().toString().toLowerCase());
-        drive.add(VdsProperties.Shareable, String.valueOf(disk.isShareable()));
-        drive.add(VdsProperties.Optional, Boolean.FALSE.toString());
-        drive.add(VdsProperties.ReadOnly, String.valueOf(vmDevice.getIsReadOnly()));
-        drive.add(VdsProperties.DeviceId, vmDevice.getId().getDeviceId().toString());
+        drive.put(VdsProperties.INTERFACE, disk.getDiskInterface().toString().toLowerCase());
+        drive.put(VdsProperties.Shareable, String.valueOf(disk.isShareable()));
+        drive.put(VdsProperties.Optional, Boolean.FALSE.toString());
+        drive.put(VdsProperties.ReadOnly, String.valueOf(vmDevice.getIsReadOnly()));
+        drive.put(VdsProperties.DeviceId, vmDevice.getId().getDeviceId().toString());
 
         if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
             DiskImage diskImage = (DiskImage) disk;
-            drive.add(VdsProperties.Format, diskImage.getVolumeFormat().toString().toLowerCase());
-            drive.add(VdsProperties.DomainId, diskImage.getStorageIds().get(0).toString());
-            drive.add(VdsProperties.PoolId, diskImage.getStoragePoolId().toString());
-            drive.add(VdsProperties.VolumeId, diskImage.getImageId().toString());
-            drive.add(VdsProperties.ImageId, diskImage.getId().toString());
-            drive.add(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString().toLowerCase());
+            drive.put(VdsProperties.Format, diskImage.getVolumeFormat().toString().toLowerCase());
+            drive.put(VdsProperties.DomainId, diskImage.getStorageIds().get(0).toString());
+            drive.put(VdsProperties.PoolId, diskImage.getStoragePoolId().toString());
+            drive.put(VdsProperties.VolumeId, diskImage.getImageId().toString());
+            drive.put(VdsProperties.ImageId, diskImage.getId().toString());
+            drive.put(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString().toLowerCase());
         } else {
             LunDisk lunDisk = (LunDisk) disk;
-            drive.add(VdsProperties.Guid, lunDisk.getLun().getLUN_id());
-            drive.add(VdsProperties.Format, VolumeFormat.RAW.toString().toLowerCase());
-            drive.add(VdsProperties.PropagateErrors, PropagateErrors.Off.toString()
+            drive.put(VdsProperties.Guid, lunDisk.getLun().getLUN_id());
+            drive.put(VdsProperties.Format, VolumeFormat.RAW.toString().toLowerCase());
+            drive.put(VdsProperties.PropagateErrors, PropagateErrors.Off.toString()
                     .toLowerCase());
         }
 
         return drive;
     }
 
-    private void addAddress(XmlRpcStruct map, String address) {
+    private void addAddress(Map<String, Object> map, String address) {
         if (org.apache.commons.lang.StringUtils.isNotBlank(address)) {
-            map.add("address", XmlRpcStringUtils.string2Map(getParameters().getVmDevice().getAddress()));
+            map.put("address", XmlRpcStringUtils.string2Map(getParameters().getVmDevice().getAddress()));
         }
     }
 }
