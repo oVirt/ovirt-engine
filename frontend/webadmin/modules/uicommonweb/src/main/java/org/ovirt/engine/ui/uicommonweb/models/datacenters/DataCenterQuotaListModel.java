@@ -47,7 +47,6 @@ public class DataCenterQuotaListModel extends QuotaListModel
         if (getEntity() == null) {
             return;
         }
-        super.SyncSearch();
         AsyncQuery asyncQuery = new AsyncQuery();
         asyncQuery.Model = this;
         asyncQuery.asyncCallback = new INewAsyncCallback() {
