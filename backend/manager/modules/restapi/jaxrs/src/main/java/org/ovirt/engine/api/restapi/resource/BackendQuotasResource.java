@@ -9,9 +9,6 @@ import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.Quotas;
 import org.ovirt.engine.api.resource.QuotaResource;
 import org.ovirt.engine.api.resource.QuotasResource;
-import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.queries.GetQuotaByQuotaIdQueryParameters;
 import org.ovirt.engine.core.common.queries.GetQuotaByStoragePoolIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -33,21 +30,8 @@ public class BackendQuotasResource extends AbstractBackendCollectionResource<Quo
     }
 
     @Override
-    public Response add(Quota quota) {
-        validateParameters(quota, "name");
-        org.ovirt.engine.core.common.businessentities.Quota entity = map(quota);
-        entity.setStoragePoolId(dataCenterId);
-        return performCreate(VdcActionType.AddQuota,
-                new QuotaCRUDParameters(entity),
-                new QueryIdResolver<Guid>(VdcQueryType.GetQuotaByQuotaId, GetQuotaByQuotaIdQueryParameters.class));
-    }
-
-    @Override
     protected Response performRemove(String id) {
-        QuotaCRUDParameters removeParams = new QuotaCRUDParameters();
-        removeParams.setQuotaId(asGuid(id));
-        removeParams.setStoragePoolId(dataCenterId);
-        return performAction(VdcActionType.RemoveQuota, removeParams);
+        throw new UnsupportedOperationException();
     }
 
     @Override
