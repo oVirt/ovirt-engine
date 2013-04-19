@@ -35,6 +35,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.Find
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.FindSingleStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.NewDataCenterNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.RecoveryStoragePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -242,10 +243,22 @@ public class DataCenterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<AuditLog, DataCenterListModel, DataCenterEventListModel> getDataCenterEventListProvider(ClientGinjector ginjector) {
+    public SearchableDetailModelProvider<AuditLog, DataCenterListModel, DataCenterEventListModel> getDataCenterEventListProvider(ClientGinjector ginjector,
+            final Provider<EventPopupPresenterWidget> eventPopupProvider) {
         return new SearchableDetailTabModelProvider<AuditLog, DataCenterListModel, DataCenterEventListModel>(ginjector,
                 DataCenterListModel.class,
-                DataCenterEventListModel.class);
+                DataCenterEventListModel.class) {
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(DataCenterEventListModel source,
+                    UICommand lastExecutedCommand,
+                    Model windowModel) {
+                if (lastExecutedCommand.equals(getModel().getDetailsCommand())) {
+                    return eventPopupProvider.get();
+                } else {
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                }
+            }
+        };
     }
 
     @Override

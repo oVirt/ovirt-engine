@@ -26,6 +26,7 @@ import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaUserListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaVmListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.QuotaPopupPresenterWidget;
 
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -166,10 +167,22 @@ public class QuotaModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<AuditLog, QuotaListModel, QuotaEventListModel> getQuotaEventListProvider(ClientGinjector ginjector) {
+    public SearchableDetailModelProvider<AuditLog, QuotaListModel, QuotaEventListModel> getQuotaEventListProvider(ClientGinjector ginjector,
+            final Provider<EventPopupPresenterWidget> eventPopupProvider) {
         return new SearchableDetailTabModelProvider<AuditLog, QuotaListModel, QuotaEventListModel>(ginjector,
                 QuotaListModel.class,
-                QuotaEventListModel.class);
+                QuotaEventListModel.class) {
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(QuotaEventListModel source,
+                    UICommand lastExecutedCommand,
+                    Model windowModel) {
+                if (lastExecutedCommand.equals(getModel().getDetailsCommand())) {
+                    return eventPopupProvider.get();
+                } else {
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                }
+            }
+        };
     }
 
     @Override

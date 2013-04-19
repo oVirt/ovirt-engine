@@ -36,6 +36,7 @@ import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
@@ -273,10 +274,22 @@ public class VirtualMachineModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<AuditLog, VmListModel, VmEventListModel> getVmEventListProvider(ClientGinjector ginjector) {
+    public SearchableDetailModelProvider<AuditLog, VmListModel, VmEventListModel> getVmEventListProvider(ClientGinjector ginjector,
+            final Provider<EventPopupPresenterWidget> eventPopupProvider) {
         return new SearchableDetailTabModelProvider<AuditLog, VmListModel, VmEventListModel>(ginjector,
                 VmListModel.class,
-                VmEventListModel.class);
+                VmEventListModel.class) {
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VmEventListModel source,
+                    UICommand lastExecutedCommand,
+                    Model windowModel) {
+                if (lastExecutedCommand.equals(getModel().getDetailsCommand())) {
+                    return eventPopupProvider.get();
+                } else {
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                }
+            }
+        };
     }
 
     @Provides
