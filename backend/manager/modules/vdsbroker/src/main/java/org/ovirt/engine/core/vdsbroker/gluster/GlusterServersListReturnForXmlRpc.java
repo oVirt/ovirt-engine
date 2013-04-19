@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.vdsbroker.irsbroker;
+package org.ovirt.engine.core.vdsbroker.gluster;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
 
 public final class GlusterServersListReturnForXmlRpc extends StatusReturnForXmlRpc {
 

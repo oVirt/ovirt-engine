@@ -1,10 +1,11 @@
-package org.ovirt.engine.core.vdsbroker.irsbroker;
+package org.ovirt.engine.core.vdsbroker.gluster;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionInfo;
+import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
 
 public final class GlusterVolumeOptionsInfoReturnForXmlRpc extends StatusReturnForXmlRpc {
     private static final String VOLUME_OPTIONS_DEFAULT = "volumeSetOptions";

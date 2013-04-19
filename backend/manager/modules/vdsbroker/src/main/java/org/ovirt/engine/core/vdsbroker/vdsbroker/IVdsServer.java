@@ -5,11 +5,11 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterServersListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeOptionsInfoReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeProfileInfoReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.irsbroker.GlusterServersListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.irsbroker.GlusterVolumeOptionsInfoReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.irsbroker.GlusterVolumeProfileInfoReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.irsbroker.GlusterVolumeStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IsoListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
 

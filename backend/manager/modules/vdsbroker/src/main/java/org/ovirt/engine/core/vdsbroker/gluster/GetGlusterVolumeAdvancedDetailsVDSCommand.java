@@ -3,7 +3,6 @@ package org.ovirt.engine.core.vdsbroker.gluster;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeStatusOption;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeAdvancedDetailsVDSParameters;
-import org.ovirt.engine.core.vdsbroker.irsbroker.GlusterVolumeStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
 
 public class GetGlusterVolumeAdvancedDetailsVDSCommand<P extends GlusterVolumeAdvancedDetailsVDSParameters> extends AbstractGlusterBrokerCommand<P> {
