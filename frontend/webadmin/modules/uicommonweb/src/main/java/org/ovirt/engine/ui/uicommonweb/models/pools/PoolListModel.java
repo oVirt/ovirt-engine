@@ -44,7 +44,9 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExistingPoolModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewPoolModelBehavior;
@@ -57,7 +59,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class PoolListModel extends ListWithDetailsModel
+public class PoolListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
 {
 
     private UICommand privateNewCommand;
@@ -105,6 +107,19 @@ public class PoolListModel extends ListWithDetailsModel
 
     private void setCustomPropertiesKeysList(HashMap<Version, ArrayList<String>> value) {
         privateCustomPropertiesKeysList = value;
+    }
+
+    private SystemTreeItemModel systemTreeSelectedItem;
+
+    @Override
+    public SystemTreeItemModel getSystemTreeSelectedItem() {
+        return systemTreeSelectedItem;
+    }
+
+    @Override
+    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
+        systemTreeSelectedItem = value;
+        OnPropertyChanged(new PropertyChangedEventArgs("SystemTreeSelectedItem")); //$NON-NLS-1$
     }
 
     protected Object[] getSelectedKeys()
@@ -212,7 +227,7 @@ public class PoolListModel extends ListWithDetailsModel
         model.setTitle(ConstantsManager.getInstance().getConstants().newPoolTitle());
         model.setHashName("new_pool"); //$NON-NLS-1$
         model.setVmType(VmType.Desktop);
-        model.Initialize(null);
+        model.Initialize(getSystemTreeSelectedItem());
 
         UICommand command = new UICommand("OnSave", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -310,7 +325,7 @@ public class PoolListModel extends ListWithDetailsModel
                         model.setTitle(ConstantsManager.getInstance().getConstants().editPoolTitle());
                         model.setHashName("edit_pool"); //$NON-NLS-1$
                         model.setVmType(VmType.Desktop);
-                        model.Initialize(null);
+                        model.Initialize(getSystemTreeSelectedItem());
                         model.getName().setEntity(pool.getName());
                         model.getDescription().setEntity(pool.getVmPoolDescription());
                         model.getAssignedVms().setEntity(pool.getAssignedVmsCount());
@@ -618,4 +633,5 @@ public class PoolListModel extends ListWithDetailsModel
     protected String getListName() {
         return "PoolListModel"; //$NON-NLS-1$
     }
+
 }

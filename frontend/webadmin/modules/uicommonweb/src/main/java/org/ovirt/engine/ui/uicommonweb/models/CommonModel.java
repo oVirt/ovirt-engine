@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Regex;
@@ -426,11 +426,7 @@ public class CommonModel extends ListModel
         storageList.setIsAvailable(!getHasSelectedTags());
         vmList.setIsAvailable(true);
         volumeList.setIsAvailable(true);
-
-        if (poolList != null)
-        {
-            poolList.setIsAvailable(!getHasSelectedTags());
-        }
+        poolList.setIsAvailable(!getHasSelectedTags());
 
         templateList.setIsAvailable(!getHasSelectedTags());
         userList.setIsAvailable(true);
@@ -558,10 +554,10 @@ public class CommonModel extends ListModel
                 || model.getType() == SystemTreeItemType.VMs
                 || model.getType() == SystemTreeItemType.System);
 
-        if (poolList != null)
-        {
-            poolList.setIsAvailable(model.getType() == SystemTreeItemType.System);
-        }
+        poolList.setIsAvailable(model.getType() == SystemTreeItemType.System
+                || model.getType() == SystemTreeItemType.DataCenter
+                || model.getType() == SystemTreeItemType.Cluster
+                || model.getType() == SystemTreeItemType.Cluster_Gluster);
 
         templateList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
                 || model.getType() == SystemTreeItemType.Cluster
@@ -576,6 +572,7 @@ public class CommonModel extends ListModel
                 vmList.setIsAvailable(false);
                 templateList.setIsAvailable(false);
                 storageList.setIsAvailable(false);
+                poolList.setIsAvailable(false);
             }
         }
 
@@ -1047,6 +1044,10 @@ public class CommonModel extends ListModel
                 {
                     prefix.argvalue = "Network: datacenter = " + model.getTitle(); //$NON-NLS-1$
                 }
+                else if (poolList.IsSearchStringMatch(source))
+                {
+                    prefix.argvalue = "Pools: datacenter = " + model.getTitle(); //$NON-NLS-1$
+                }
             }
                 break;
             case Clusters: {
@@ -1090,6 +1091,10 @@ public class CommonModel extends ListModel
                 else if (networkList.IsSearchStringMatch(source))
                 {
                     prefix.argvalue = "Network: Cluster_network.cluster_name = " + model.getTitle(); //$NON-NLS-1$
+                }
+                else if (poolList.IsSearchStringMatch(source))
+                {
+                    prefix.argvalue = "Pools: cluster = " + model.getTitle(); //$NON-NLS-1$
                 }
             }
                 break;

@@ -1817,20 +1817,21 @@ public class UnitVmModel extends Model {
                 model.getDataCenter().setInfo("Cannot choose Data Center in tree context"); //$NON-NLS-1$
                 break;
             case Cluster:
+            case Cluster_Gluster:
             case VMs:
                 VDSGroup cluster = (VDSGroup) model.getBehavior().getSystemTreeSelectedItem().getEntity();
-                for (storage_pool dc : list)
-                {
-                    if (dc.getId().equals(cluster.getStoragePoolId()))
-                    {
-                        model.getDataCenter()
-                                .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { dc })));
-                        model.getDataCenter().setSelectedItem(dc);
-                        break;
+                if (cluster.supportsVirtService()) {
+                    for (storage_pool dc : list) {
+                        if (dc.getId().equals(cluster.getStoragePoolId())) {
+                            model.getDataCenter()
+                                    .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { dc })));
+                            model.getDataCenter().setSelectedItem(dc);
+                            break;
+                        }
                     }
+                    model.getDataCenter().setIsChangable(false);
+                    model.getDataCenter().setInfo("Cannot choose Data Center in tree context"); //$NON-NLS-1$
                 }
-                model.getDataCenter().setIsChangable(false);
-                model.getDataCenter().setInfo("Cannot choose Data Center in tree context"); //$NON-NLS-1$
                 break;
             case Host:
                 VDS host = (VDS) model.getBehavior().getSystemTreeSelectedItem().getEntity();
