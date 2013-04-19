@@ -347,7 +347,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                         false,
                         false,
                         true,
-                        getImagesList());
+                        ImagesHandler.filterImageDisks(getImagesList(), true, false));
     }
 
     @Override

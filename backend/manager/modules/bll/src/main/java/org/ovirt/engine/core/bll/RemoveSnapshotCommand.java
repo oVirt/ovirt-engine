@@ -261,9 +261,12 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     }
 
     protected boolean validateImages() {
+        List<DiskImage> imagesToValidate =
+                ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(getVmId()), true, false);
+
         return ImagesHandler.PerformImagesChecks(getReturnValue().getCanDoActionMessages(),
                 getVm().getStoragePoolId(),
-                true, true, true, true, getDiskDao().getAllForVm(getVmId()));
+                true, true, true, true, imagesToValidate);
     }
 
     protected boolean validateImageNotInTemplate() {

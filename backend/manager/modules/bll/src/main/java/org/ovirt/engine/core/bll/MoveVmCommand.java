@@ -79,7 +79,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
                                 true,
                                 true,
                                 true,
-                                diskImages);
+                                ImagesHandler.filterImageDisks(diskImages, true, false));
 
         ensureDomainMap(diskImages, getParameters().getStorageDomainId());
         for(DiskImage disk : diskImages) {

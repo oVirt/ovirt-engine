@@ -453,22 +453,21 @@ public final class ImagesHandler {
             boolean checkImagesIllegalInVdsm,
             boolean checkImagesExist,
             boolean checkIsValid,
-            Collection<? extends Disk> diskImageList) {
+            List<DiskImage> diskImageList) {
 
         boolean returnValue = true;
-        List<DiskImage> images = filterImageDisks(diskImageList, true, false);
-        if (returnValue && checkImagesLocked) {
-            returnValue = checkImagesLocked(messages, images);
+        if (checkImagesLocked) {
+            returnValue = checkImagesLocked(messages, diskImageList);
         }
 
         if (returnValue && checkIsValid) {
-            if (images.size() > 0) {
+            if (diskImageList.size() > 0) {
                 returnValue = returnValue &&
                         checkDiskImages(messages,
                                 storagePoolId,
                                 checkImagesIllegalInVdsm,
                                 checkImagesExist,
-                                images);
+                                diskImageList);
             } else if (checkImagesExist) {
                 returnValue = false;
                 ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_NO_DISKS.toString());

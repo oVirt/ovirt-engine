@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -276,7 +275,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         moveOrCopyAllImageGroups(getVm().getId(), getDisksBasedOnImage());
     }
 
-    private Collection<DiskImage> getDisksBasedOnImage() {
+    private List<DiskImage> getDisksBasedOnImage() {
         if (disksImages == null) {
             disksImages = ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), true, false);
         }

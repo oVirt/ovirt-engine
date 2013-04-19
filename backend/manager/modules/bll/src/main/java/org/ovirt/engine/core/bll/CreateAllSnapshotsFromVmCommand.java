@@ -82,7 +82,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     private List<DiskImage> getDisksList() {
         if (selectedActiveDisks == null) {
             selectedActiveDisks = ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(getVmId()),
-                    false,
+                    true,
                     true);
         }
         return selectedActiveDisks;

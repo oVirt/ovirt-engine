@@ -224,7 +224,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 true,
                 true,
                 true,
-                mImages)) {
+                ImagesHandler.filterImageDisks(mImages, true, false))) {
             return false;
         }
 

@@ -206,8 +206,6 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     }
 
     private boolean canRemoveVmImageDisk() {
-        List<Disk> diskList = Arrays.asList(getDisk());
-
         if (!listVms.isEmpty()) {
             Guid storagePoolId = listVms.get(0).getStoragePoolId();
             storage_pool sp = getStoragePoolDAO().get(storagePoolId);
@@ -215,6 +213,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                 return false;
             }
 
+            List<Disk> diskList = Arrays.asList(getDisk());
             if (!ImagesHandler.PerformImagesChecks(
                     getReturnValue().getCanDoActionMessages(),
                     storagePoolId,
@@ -222,7 +221,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                     false,
                     false,
                     true,
-                    diskList)) {
+                    ImagesHandler.filterImageDisks(diskList, true, false))) {
                 return false;
             }
         }

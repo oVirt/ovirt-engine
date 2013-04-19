@@ -213,7 +213,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
         updateVmDisksFromDb();
         List<DiskImage> diskImages =
-                ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), false, true);
+                ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), true, true);
         if (!diskImages.isEmpty()) {
           if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {
               return false;

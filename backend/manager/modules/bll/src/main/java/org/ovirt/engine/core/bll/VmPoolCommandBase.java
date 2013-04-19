@@ -173,7 +173,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                             false,
                             false,
                             true,
-                            disks)) {
+                            vmImages)) {
             return failVmFree(messages);
         }
 
