@@ -39,6 +39,7 @@ import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
+import org.ovirt.engine.core.bll.tasks.interfaces.Command;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -96,7 +97,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.springframework.dao.DataAccessException;
 
 public abstract class CommandBase<T extends VdcActionParametersBase> extends AuditLogableBase implements
-        RollbackHandler, TransactionMethod<Object> {
+        RollbackHandler, TransactionMethod<Object>, Command<T> {
 
     /* Multiplier used to convert GB to bytes or vice versa. */
     protected static final long BYTES_IN_GB = 1024 * 1024 * 1024;

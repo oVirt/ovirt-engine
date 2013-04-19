@@ -8,4 +8,5 @@ import org.ovirt.engine.core.compat.Guid;
 
 public interface EndActionCallBack {
     public VdcReturnValueBase endAction(Guid stepId, VdcActionType actionType, AsyncTasks dbAsyncTask, ExecutionContext context);
+    public VdcReturnValueBase endAction(SPMTask task, ExecutionContext context);
 }

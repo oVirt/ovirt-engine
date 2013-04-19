@@ -31,7 +31,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
     private static final Map<Guid, CommandMultiAsyncTasks> _multiTasksByCommandIds =
             new HashMap<Guid, CommandMultiAsyncTasks>();
 
-    private CommandMultiAsyncTasks GetCommandMultiAsyncTasks() {
+    public CommandMultiAsyncTasks GetCommandMultiAsyncTasks() {
         CommandMultiAsyncTasks entityInfo = null;
         synchronized (_lockObject) {
             entityInfo = _multiTasksByCommandIds.get(getCommandId());
@@ -146,9 +146,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
                 if (stepId != null) {
                     context = ExecutionHandler.createFinalizingContext(stepId);
                 }
-
-                vdcReturnValue = coco.endAction(stepId, getEndActionType(dbAsyncTask), dbAsyncTask, context);
-
+                vdcReturnValue = coco.endAction(this, context);
             } catch (VdcBLLException ex) {
                 log.error(getErrorMessage());
                 log.error(ex.toString());

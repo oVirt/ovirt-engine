@@ -38,15 +38,11 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public class CommandCoordinatorImpl extends CommandCoordinator {
 
+    private static final String EXECUTION_CONTEXT_MAP_NAME = "executionContext";
     private static final Log log = LogFactory.getLog(CommandCoordinator.class);
     private CommandsCache commandsCache = new CommandsCacheImpl();
 
-    CommandCoordinatorImpl() {
-    }
-
-    public Step addTaskStep(ExecutionContext context, StepEnum stepName, String description) {
-        return ExecutionHandler.getInstance().addTaskStep(context, stepName, description);
-    }
+    CommandCoordinatorImpl() {}
 
     public <P extends VdcActionParametersBase> CommandBase<P> createCommand(VdcActionType action, P parameters) {
         return CommandsFactory.createCommand(action, parameters);
@@ -264,6 +260,23 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters);
         command.setContext(new CommandContext(context));
         return command.endAction();
+    }
+
+    public VdcReturnValueBase endAction(SPMTask task, ExecutionContext context) {
+        AsyncTasks dbAsyncTask = task.getParameters().getDbAsyncTask();
+        VdcActionType actionType = getEndActionType(dbAsyncTask);
+        VdcActionParametersBase parameters = dbAsyncTask.getActionParameters();
+        CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters);
+        command.setContext(new CommandContext(context));
+        return new DecoratedCommand(command).endAction();
+    }
+
+    private VdcActionType getEndActionType(AsyncTasks dbAsyncTask) {
+        VdcActionType commandType = dbAsyncTask.getActionParameters().getCommandType();
+        if (!VdcActionType.Unknown.equals(commandType)) {
+            return commandType;
+        }
+        return dbAsyncTask.getaction_type();
     }
 
     private AsyncTaskManager getAsyncTaskManager() {
