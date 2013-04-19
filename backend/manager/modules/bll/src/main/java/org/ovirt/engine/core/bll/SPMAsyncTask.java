@@ -53,8 +53,8 @@ public class SPMAsyncTask {
         privateParameters = value;
     }
 
-    public Guid getTaskID() {
-        return getParameters().getTaskID();
+    public Guid getVdsmTaskId() {
+        return getParameters().getVdsmTaskId();
     }
 
     public Guid getStoragePoolID() {
@@ -123,7 +123,7 @@ public class SPMAsyncTask {
         if (state != AsyncTaskState.AttemptingEndAction
                 && state != AsyncTaskState.Cleared
                 && state != AsyncTaskState.ClearFailed) {
-            log.infoFormat("BaseAsyncTask::StartPollingTask: Starting to poll task '{0}'.", getTaskID());
+            log.infoFormat("BaseAsyncTask::StartPollingTask: Starting to poll task '{0}'.", getVdsmTaskId());
             ConcreteStartPollingTask();
         }
     }
@@ -146,7 +146,7 @@ public class SPMAsyncTask {
                 System.currentTimeMillis() - taskStartTime > prePollingPeriod;
 
         log.infoFormat("task id {0} {1}. Pre-polling period is {2} millis. ",
-                parameters.getTaskID(),
+                parameters.getVdsmTaskId(),
                 idlePeriodPassed ? "has passed pre-polling period time and should be polled"
                         : "is in pre-polling  period and should not be polled", prePollingPeriod);
         return idlePeriodPassed;
@@ -194,7 +194,7 @@ public class SPMAsyncTask {
             log.error(
                     String.format(
                             "BaseAsyncTask::PollAndUpdateTask: Handling task '%1$s' (State: %2$s, Parent Command: %3$s, Parameters Type: %4$s) threw an exception",
-                            getTaskID(),
+                            getVdsmTaskId(),
                             getState(),
                             (getParameters().getDbAsyncTask()
                                     .getaction_type()),
@@ -234,15 +234,15 @@ public class SPMAsyncTask {
 
     protected void RemoveTaskFromDB() {
         try {
-            if (DbFacade.getInstance().getAsyncTaskDao().remove(getTaskID()) != 0) {
-                log.infoFormat("BaseAsyncTask::RemoveTaskFromDB: Removed task {0} from DataBase", getTaskID());
+            if (DbFacade.getInstance().getAsyncTaskDao().removeByVdsmTaskId(getVdsmTaskId()) != 0) {
+                log.infoFormat("BaseAsyncTask::RemoveTaskFromDB: Removed task {0} from DataBase", getVdsmTaskId());
             }
         }
 
         catch (RuntimeException e) {
             log.error(String.format(
                     "BaseAsyncTask::RemoveTaskFromDB: Removing task %1$s from DataBase threw an exception.",
-                    getTaskID()), e);
+                    getVdsmTaskId()), e);
         }
     }
 
@@ -266,7 +266,7 @@ public class SPMAsyncTask {
     protected void LogEndTaskSuccess() {
         log.infoFormat(
                 "BaseAsyncTask::OnTaskEndSuccess: Task '{0}' (Parent Command {1}, Parameters Type {2}) ended successfully.",
-                getTaskID(),
+                getVdsmTaskId(),
                 (getParameters().getDbAsyncTask().getaction_type()),
                 getParameters()
                         .getClass().getName());
@@ -281,7 +281,7 @@ public class SPMAsyncTask {
         log.errorFormat(
                 "BaseAsyncTask::LogEndTaskFailure: Task '{0}' (Parent Command {1}, Parameters Type {2}) ended with failure:"
                         + "\r\n" + "-- Result: '{3}'" + "\r\n" + "-- Message: '{4}'," + "\r\n" + "-- Exception: '{5}'",
-                getTaskID(),
+                getVdsmTaskId(),
                 (getParameters().getDbAsyncTask().getaction_type()),
                 getParameters()
                         .getClass().getName(),
@@ -299,7 +299,7 @@ public class SPMAsyncTask {
     protected void LogTaskDoesntExist() {
         log.errorFormat(
                 "BaseAsyncTask::LogTaskDoesntExist: Task '{0}' (Parent Command {1}, Parameters Type {2}) does not exist.",
-                getTaskID(),
+                getVdsmTaskId(),
                 (getParameters().getDbAsyncTask().getaction_type()),
                 getParameters()
                         .getClass().getName());
@@ -322,7 +322,7 @@ public class SPMAsyncTask {
 
             log.errorFormat("SPMAsyncTask::PollTask: Task '{0}' (Parent Command {1}, Parameters Type {2}) " +
                         "was not found in VDSM, will change its status to unknown.",
-                        getTaskID(), (getParameters().getDbAsyncTask().getaction_type()),
+                        getVdsmTaskId(), (getParameters().getDbAsyncTask().getaction_type()),
                         getParameters().getClass().getName());
         } else {
             returnedStatusTask = cachedStatusTask;
@@ -346,7 +346,7 @@ public class SPMAsyncTask {
         if (cachedStatusTask.getTaskIsInUnusualState()) {
             log.warnFormat(
                     formatString,
-                    getTaskID(),
+                    getVdsmTaskId(),
                     (getParameters().getDbAsyncTask()
                             .getaction_type()),
                     getParameters().getClass().getName(),
@@ -359,7 +359,7 @@ public class SPMAsyncTask {
         else {
             log.infoFormat(
                     formatString,
-                    getTaskID(),
+                    getVdsmTaskId(),
                     (getParameters().getDbAsyncTask()
                             .getaction_type()),
                     getParameters().getClass().getName(),
@@ -380,17 +380,17 @@ public class SPMAsyncTask {
             try {
                 log.infoFormat(
                         "SPMAsyncTask::StopTask: Attempting to stop task '{0}' (Parent Command {1}, Parameters Type {2}).",
-                        getTaskID(),
+                        getVdsmTaskId(),
                         (getParameters().getDbAsyncTask().getaction_type()),
                         getParameters().getClass().getName());
 
                 Backend.getInstance()
                         .getResourceManager()
                         .RunVdsCommand(VDSCommandType.SPMStopTask,
-                                new SPMTaskGuidBaseVDSCommandParameters(getStoragePoolID(), getTaskID()));
+                                new SPMTaskGuidBaseVDSCommandParameters(getStoragePoolID(), getVdsmTaskId()));
             } catch (RuntimeException e) {
                 log.error(
-                        String.format("SPMAsyncTask::StopTask: Stopping task '%1$s' threw an exception.", getTaskID()),
+                        String.format("SPMAsyncTask::StopTask: Stopping task '%1$s' threw an exception.", getVdsmTaskId()),
                         e);
             } finally {
                 if (forceFinish) {
@@ -412,17 +412,17 @@ public class SPMAsyncTask {
         VDSReturnValue vdsReturnValue = null;
 
         try {
-            log.infoFormat("SPMAsyncTask::ClearAsyncTask: Attempting to clear task '{0}'", getTaskID());
+            log.infoFormat("SPMAsyncTask::ClearAsyncTask: Attempting to clear task '{0}'", getVdsmTaskId());
             vdsReturnValue = Backend
                     .getInstance()
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.SPMClearTask,
-                            new SPMTaskGuidBaseVDSCommandParameters(getStoragePoolID(), getTaskID()));
+                            new SPMTaskGuidBaseVDSCommandParameters(getStoragePoolID(), getVdsmTaskId()));
         }
 
         catch (RuntimeException e) {
             log.error(String.format("SPMAsyncTask::ClearAsyncTask: Clearing task '%1$s' threw an exception.",
-                    getTaskID()), e);
+                    getVdsmTaskId()), e);
         }
 
         boolean shouldGracefullyDeleteTask = false;
@@ -453,7 +453,7 @@ public class SPMAsyncTask {
                 && vdsReturnValue.getVdsError().getCode() == VdcBllErrors.TaskStateError) {
             log.infoFormat(
                     "SPMAsyncTask::ClearAsyncTask: At time of attemp to clear task '{0}' the response code was {2} and message was {3}. Task will not be cleaned",
-                    getTaskID(),
+                    getVdsmTaskId(),
                     vdsReturnValue.getVdsError().getCode(),
                     vdsReturnValue.getVdsError().getMessage());
             return true;
@@ -466,7 +466,7 @@ public class SPMAsyncTask {
     }
 
     protected void LogTaskCleanFailure() {
-        log.errorFormat("SPMAsyncTask::ClearAsyncTask: Clearing task '{0}' failed.", getTaskID());
+        log.errorFormat("SPMAsyncTask::ClearAsyncTask: Clearing task '{0}' failed.", getVdsmTaskId());
     }
 
     private static final Log log = LogFactory.getLog(SPMAsyncTask.class);

@@ -28,13 +28,13 @@ public final class AsyncTaskFactory {
      * @return
      */
     public static SPMAsyncTask Construct(AsyncTaskCreationInfo creationInfo) {
-        AsyncTasks asyncTask = DbFacade.getInstance().getAsyncTaskDao().get(creationInfo.getTaskID());
+        AsyncTasks asyncTask = DbFacade.getInstance().getAsyncTaskDao().getByVdsmTaskId(creationInfo.getVdsmTaskId());
         if (asyncTask == null || asyncTask.getActionParameters() == null) {
             asyncTask =
                     new AsyncTasks(VdcActionType.Unknown,
                             AsyncTaskResultEnum.success,
                             AsyncTaskStatusEnum.running,
-                            creationInfo.getTaskID(),
+                            creationInfo.getVdsmTaskId(),
                             new VdcActionParametersBase(),
                             new VdcActionParametersBase(),
                             creationInfo.getStepId(),

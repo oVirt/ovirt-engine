@@ -54,7 +54,7 @@ public class HSMGetAllTasksInfoVDSCommand<P extends VdsIdVDSCommandParametersBas
             }
 
             AsyncTaskCreationInfo tempVar = new AsyncTaskCreationInfo();
-            tempVar.setTaskID(taskID);
+            tempVar.setVdsmTaskId(taskID);
             tempVar.setTaskType(taskType);
             AsyncTaskCreationInfo task = tempVar;
 

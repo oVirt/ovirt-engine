@@ -38,11 +38,11 @@ public class EntityMultiAsyncTasks {
 
     public void AttachTask(EntityAsyncTask asyncTask) {
         synchronized (_listTasks) {
-            if (!_listTasks.containsKey(asyncTask.getTaskID())) {
+            if (!_listTasks.containsKey(asyncTask.getVdsmTaskId())) {
                 log.infoFormat("EntityMultiAsyncTasks::AttachTask: Attaching task '{0}' to entity '{1}'.",
-                        asyncTask.getTaskID(), getContainerId());
+                        asyncTask.getVdsmTaskId(), getContainerId());
 
-                _listTasks.put(asyncTask.getTaskID(), asyncTask);
+                _listTasks.put(asyncTask.getVdsmTaskId(), asyncTask);
             }
         }
     }
@@ -70,7 +70,7 @@ public class EntityMultiAsyncTasks {
             for (EntityAsyncTask task : CurrentActionTypeTasks) {
                 if (task.getState() != AsyncTaskState.Ended) {
                     log.infoFormat("Task ID: '{0}' is in state {1}. End action for entity {2} will proceed when all the entity's tasks are completed.",
-                            task.getTaskID(),
+                            task.getVdsmTaskId(),
                             task.getState(),
                             getContainerId());
                     return false;
@@ -173,11 +173,11 @@ public class EntityMultiAsyncTasks {
                     log.infoFormat(
                             "EntityMultiAsyncTasks::StartPollingNextTask: Starting to poll next task " +
                             "(task ID: '{0}', action type '{1}')",
-                            task.getTaskID(),
+                            task.getVdsmTaskId(),
                             task.getParameters().getDbAsyncTask().getaction_type());
 
                     setActionType(VdcActionType.Unknown);
-                    StartPollingTask(task.getTaskID());
+                    StartPollingTask(task.getVdsmTaskId());
                     break;
                 }
             }
@@ -207,7 +207,7 @@ public class EntityMultiAsyncTasks {
                                 && task.getParameters().getDbAsyncTask().getaction_type() == getActionType()
                                 && (task.getState() == AsyncTaskState.Initializing || task.getState() == AsyncTaskState.WaitForPoll)) {
                             log.debugFormat("Task id {0} changed its state from {1} to {2}.",
-                                    task.getTaskID(),
+                                    task.getVdsmTaskId(),
                                     task.getState(),
                                     AsyncTaskState.Polling);
                             task.setState(AsyncTaskState.Polling);
@@ -226,7 +226,7 @@ public class EntityMultiAsyncTasks {
                                 && task.getParameters().getDbAsyncTask().getaction_type() == currTaskActionType
                                 && task.getState() == AsyncTaskState.Initializing) {
                             log.debugFormat("Task id {0} changed its state from {1} to {2}.",
-                                    task.getTaskID(),
+                                    task.getVdsmTaskId(),
                                     task.getState(),
                                     AsyncTaskState.WaitForPoll);
                             task.setState(AsyncTaskState.WaitForPoll);
@@ -247,7 +247,7 @@ public class EntityMultiAsyncTasks {
                 if (!taskWasCleared(task)) {
                     log.infoFormat("[within thread]: Some of the tasks related to entity id {0} were not cleared yet (Task id {1} is in state {2}).",
                             getContainerId(),
-                            task.getTaskID(),
+                            task.getVdsmTaskId(),
                             task.getState());
                     return false;
                 }

@@ -35,8 +35,8 @@ public class AsyncTaskParameters implements Serializable {
         return getCreationInfo().getStoragePoolID();
     }
 
-    public Guid getTaskID() {
-        return getCreationInfo().getTaskID();
+    public Guid getVdsmTaskId() {
+        return getCreationInfo().getVdsmTaskId();
     }
 
     private Object _entityId;

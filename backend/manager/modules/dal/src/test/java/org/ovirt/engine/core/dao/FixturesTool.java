@@ -383,6 +383,8 @@ public class FixturesTool {
 
     public static final Guid GLUSTER_SERVER_UUID_NEW = new Guid("da9e2f09-2835-4530-9bf5-576c52b11943");
 
+    public static final Guid EXISTING_VDSM_TASK_ID = new Guid("140fd52b-3400-4cdd-8d3f-C9d03704b0aa");
+
     /**
      * A test provider that exists.
      */

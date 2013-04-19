@@ -51,7 +51,8 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
             entity.setaction_type(VdcActionType.forValue(rs.getInt("action_type")));
             entity.setresult(AsyncTaskResultEnum.forValue(rs.getInt("result")));
             entity.setstatus(AsyncTaskStatusEnum.forValue(rs.getInt("status")));
-            entity.settask_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("task_id")));
+            entity.setTaskId(Guid.createGuidFromStringDefaultEmpty(rs.getString("task_id")));
+            entity.setVdsmTaskId(Guid.createGuidFromString(rs.getString("vdsm_task_id")));
             entity.setActionParameters(deserializeParameters(rs.getString("action_parameters"),rs.getString("action_params_class")));
             entity.setTaskParameters(deserializeParameters(rs.getString("task_parameters"),rs.getString("task_params_class")));
             entity.setStepId(Guid.createGuidFromString(rs.getString("step_id")));
@@ -80,7 +81,8 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
             addValue("action_type", task.getaction_type());
             addValue("result", task.getresult());
             addValue("status", task.getstatus());
-            addValue("task_id", task.gettask_id());
+            addValue("vdsm_task_id", task.getVdsmTaskId());
+            addValue("task_id", task.getTaskId());
             addValue("action_parameters", serializeParameters(task.getActionParameters()));
             addValue("action_params_class",task.getActionParameters().getClass().getName());
             addValue("task_parameters", serializeParameters(task.getTaskParameters()));
@@ -100,6 +102,13 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
                 .addValue("task_id", id);
 
         return getCallsHandler().executeRead("Getasync_tasksBytask_id", AsyncTaskRowMapper.instance, parameterSource);
+    }
+
+    @Override
+    public AsyncTasks getByVdsmTaskId(Guid vdsmTaskId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vdsm_task_id", vdsmTaskId);
+        return getCallsHandler().executeRead("GetAsyncTasksByVdsmTaskId", AsyncTaskRowMapper.instance, parameterSource);
     }
 
     @Override
@@ -169,6 +178,12 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
                 .addValue("task_id", id);
 
         return getCallsHandler().executeModificationReturnResult("Deleteasync_tasks", parameterSource);
+    }
+
+    public int removeByVdsmTaskId(Guid vdsmTaskId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vdsm_task_id", vdsmTaskId);
+        return getCallsHandler().executeModificationReturnResult("DeleteAsyncTasksByVdsmTaskId", parameterSource);
     }
 
     @Override

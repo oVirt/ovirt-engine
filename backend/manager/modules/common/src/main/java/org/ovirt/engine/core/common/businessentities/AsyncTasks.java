@@ -17,23 +17,19 @@ public class AsyncTasks implements Serializable {
     public AsyncTasks() {
     }
 
-    public AsyncTasks(VdcActionType action_type, AsyncTaskResultEnum result, AsyncTaskStatusEnum status, Guid task_id,
-            VdcActionParametersBase parentParameters,
-            VdcActionParametersBase taskParameters,
-            Guid stepId,
-            Guid commandId,
-            Guid storagePoolId,
-            AsyncTaskType taskType) {
+    public AsyncTasks(VdcActionType action_type, AsyncTaskResultEnum result, AsyncTaskStatusEnum status, Guid vdsmTaskId,
+            VdcActionParametersBase parentParameters, VdcActionParametersBase taskParameters, Guid stepId, Guid commandId, Guid storagePoolId, AsyncTaskType taskType) {
         this.actionType = action_type;
         this.result = result;
         this.status = status;
-        this.taskId = task_id;
+        this.vdsmTaskId = vdsmTaskId;
         this.actionParameters = parentParameters;
         this.taskParameters = taskParameters;
         this.stepId = stepId;
         this.startTime = new Date();
         this.commandId = commandId;
         this.storagePoolId = storagePoolId;
+        this.taskId = Guid.newGuid();
         this.taskType = taskType;
     }
 
@@ -79,13 +75,23 @@ public class AsyncTasks implements Serializable {
         this.status = value;
     }
 
-    private Guid taskId = Guid.Empty;
+    private Guid vdsmTaskId = Guid.Empty;
 
-    public Guid gettask_id() {
+    public Guid getVdsmTaskId() {
+        return this.vdsmTaskId;
+    }
+
+    public void setVdsmTaskId(Guid value) {
+        this.vdsmTaskId = value;
+    }
+
+    private Guid taskId;
+
+    public Guid getTaskId() {
         return this.taskId;
     }
 
-    public void settask_id(Guid value) {
+    public void setTaskId(Guid value) {
         this.taskId = value;
     }
 
@@ -153,7 +159,7 @@ public class AsyncTasks implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int results = 1;
-        results = prime * results + ((taskId == null) ? 0 : taskId.hashCode());
+        results = prime * results + ((vdsmTaskId == null) ? 0 : vdsmTaskId.hashCode());
         results = prime * results + ((stepId == null) ? 0 : stepId.hashCode());
         results = prime * results + ((commandId == null) ? 0 : commandId.hashCode());
         results = prime * results + ((actionParameters == null) ? 0 : actionParameters.hashCode());
@@ -178,7 +184,8 @@ public class AsyncTasks implements Serializable {
             return false;
         }
         AsyncTasks other = (AsyncTasks) obj;
-        return (ObjectUtils.objectsEqual(taskId, other.taskId)
+        return (ObjectUtils.objectsEqual(vdsmTaskId, other.vdsmTaskId)
+                && ObjectUtils.objectsEqual(taskId, other.taskId)
                 && ObjectUtils.objectsEqual(stepId, other.stepId)
                 && ObjectUtils.objectsEqual(commandId, other.commandId)
                 && ObjectUtils.objectsEqual(actionParameters, other.actionParameters)

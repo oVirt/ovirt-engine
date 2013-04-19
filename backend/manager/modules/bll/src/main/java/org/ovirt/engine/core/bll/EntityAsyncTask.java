@@ -71,7 +71,7 @@ public class EntityAsyncTask extends SPMAsyncTask {
     @Override
     protected void ConcreteStartPollingTask() {
         EntityMultiAsyncTasks entityInfo = GetEntityMultiAsyncTasks();
-        entityInfo.StartPollingTask(getTaskID());
+        entityInfo.StartPollingTask(getVdsmTaskId());
     }
 
     @Override
@@ -86,7 +86,7 @@ public class EntityAsyncTask extends SPMAsyncTask {
             log.warnFormat(
                     "EntityAsyncTask::EndActionIfNecessary: No info is available for entity '{0}', current task ('{1}') was probably created while other tasks were in progress, clearing task.",
                     getContainerId(),
-                    getTaskID());
+                    getVdsmTaskId());
 
             clearAsyncTask();
         }

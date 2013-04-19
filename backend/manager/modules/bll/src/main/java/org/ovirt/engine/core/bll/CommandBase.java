@@ -1382,7 +1382,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         task.setAssociatedEntities(entityIds);
         AsyncTaskUtils.addOrUpdateTaskInDB(task);
         getAsyncTaskManager().lockAndAddTaskToManager(task);
-        Guid taskId = task.getTaskID();
+        Guid taskId = task.getVdsmTaskId();
         ExecutionHandler.updateStepExternalId(taskStep, taskId, ExternalSystemType.VDSM);
         return taskId;
     }
@@ -1404,7 +1404,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 new AsyncTaskParameters(asyncTaskCreationInfo, new AsyncTasks(parentCommand,
                         AsyncTaskResultEnum.success,
                         AsyncTaskStatusEnum.running,
-                        asyncTaskCreationInfo.getTaskID(),
+                        asyncTaskCreationInfo.getVdsmTaskId(),
                         parentParameters,
                         getParameters(),
                         asyncTaskCreationInfo.getStepId(),

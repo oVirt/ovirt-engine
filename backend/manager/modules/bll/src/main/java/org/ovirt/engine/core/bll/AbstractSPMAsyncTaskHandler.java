@@ -61,10 +61,10 @@ public abstract class AbstractSPMAsyncTaskHandler<C extends TaskHandlerCommand<?
                 getTaskObjectType(),
                 getTaskObjects())
                 );
-        Guid taskId = taskCreationInfo.getTaskID();
-        getReturnValue().getTaskIdList().add(taskId);
+        Guid vdsmTaskId = taskCreationInfo.getVdsmTaskId();
+        getReturnValue().getTaskIdList().add(vdsmTaskId);
         if (isRevertedTask) {
-            log.infoFormat("Reverting task {0} with ID {1} on DataCenter {2}.", taskCreationInfo.getTaskType().name(), taskId, taskCreationInfo.getStoragePoolID());
+            log.infoFormat("Reverting task {0} with ID {1} on DataCenter {2}.", taskCreationInfo.getTaskType().name(), vdsmTaskId, taskCreationInfo.getStoragePoolID());
         }
     }
 

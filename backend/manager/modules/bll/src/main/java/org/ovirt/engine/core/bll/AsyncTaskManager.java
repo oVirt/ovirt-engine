@@ -266,7 +266,7 @@ public final class AsyncTaskManager {
                 // If the storage pool id exists
                 if (asyncTasksForPoolMap != null) {
                     AsyncTaskStatus cachedAsyncTaskStatus = asyncTasksForPoolMap
-                            .get(task.getTaskID());
+                            .get(task.getVdsmTaskId());
 
                     // task found in VDSM.
                     task.UpdateTask(cachedAsyncTaskStatus);
@@ -345,7 +345,7 @@ public final class AsyncTaskManager {
         ConcurrentMap<Guid, SPMAsyncTask> activeTaskMap = new ConcurrentHashMap<Guid, SPMAsyncTask>();
         for (SPMAsyncTask task : _tasks.values()) {
             if (!CachingOver(task)) {
-                activeTaskMap.put(task.getTaskID(), task);
+                activeTaskMap.put(task.getVdsmTaskId(), task);
                 poolsOfActiveTasks.add(task.getStoragePoolID());
             } else {
                 poolsOfClearedAndOldTasks.add(task.getStoragePoolID());
@@ -373,10 +373,10 @@ public final class AsyncTaskManager {
         }
 
         else {
-            if (!_tasks.containsKey(task.getTaskID())) {
+            if (!_tasks.containsKey(task.getVdsmTaskId())) {
                 log.infoFormat(
                         "Adding task '{0}' (Parent Command {1}, Parameters Type {2}), {3}.",
-                        task.getTaskID(),
+                        task.getVdsmTaskId(),
                         (task.getParameters().getDbAsyncTask().getaction_type()),
                         task.getParameters().getClass().getName(),
                         (task.getShouldPoll() ? "polling started."
@@ -384,19 +384,19 @@ public final class AsyncTaskManager {
 
                 // Set the indication to true for logging _tasks status on next
                 // quartz execution.
-                AddTaskToMap(task.getTaskID(), task);
+                AddTaskToMap(task.getVdsmTaskId(), task);
             } else {
-                SPMAsyncTask existingTask = _tasks.get(task.getTaskID());
+                SPMAsyncTask existingTask = _tasks.get(task.getVdsmTaskId());
                 if (existingTask.getParameters().getDbAsyncTask().getaction_type() == VdcActionType.Unknown
                         && task.getParameters().getDbAsyncTask().getaction_type() != VdcActionType.Unknown) {
                     log.infoFormat(
                             "Task '{0}' already exists with action type 'Unknown', now overriding it with action type '{1}'",
-                            task.getTaskID(),
+                            task.getVdsmTaskId(),
                             task.getParameters().getDbAsyncTask().getaction_type());
 
                     // Set the indication to true for logging _tasks status on
                     // next quartz execution.
-                    AddTaskToMap(task.getTaskID(), task);
+                    AddTaskToMap(task.getVdsmTaskId(), task);
                 }
             }
         }
@@ -438,21 +438,21 @@ public final class AsyncTaskManager {
         return AsyncTaskFactory.Construct(taskType, taskParameters, false);
     }
 
-    public synchronized void StartPollingTask(Guid taskID) {
-        if (_tasks.containsKey(taskID)) {
-            _tasks.get(taskID).StartPollingTask();
+    public synchronized void StartPollingTask(Guid vdsmTaskId) {
+        if (_tasks.containsKey(vdsmTaskId)) {
+            _tasks.get(vdsmTaskId).StartPollingTask();
         }
     }
 
-    public synchronized ArrayList<AsyncTaskStatus> PollTasks(java.util.ArrayList<Guid> taskIdList) {
+    public synchronized ArrayList<AsyncTaskStatus> PollTasks(java.util.ArrayList<Guid> vdsmTaskIdList) {
         ArrayList<AsyncTaskStatus> returnValue = new ArrayList<AsyncTaskStatus>();
 
-        if (taskIdList != null && taskIdList.size() > 0) {
-            for (Guid taskId : taskIdList) {
-                if (_tasks.containsKey(taskId)) {
+        if (vdsmTaskIdList != null && vdsmTaskIdList.size() > 0) {
+            for (Guid vdsmTaskId : vdsmTaskIdList) {
+                if (_tasks.containsKey(vdsmTaskId)) {
                     // task is still running or is still in the cache:
-                    _tasks.get(taskId).setLastStatusAccessTime();
-                    returnValue.add(_tasks.get(taskId).getLastTaskStatus());
+                    _tasks.get(vdsmTaskId).setLastStatusAccessTime();
+                    returnValue.add(_tasks.get(vdsmTaskId).getLastTaskStatus());
                 }
 
                 else
@@ -461,7 +461,7 @@ public final class AsyncTaskManager {
                 {
                     log.warnFormat(
                             "Polling tasks. Task ID '{0}' doesn't exist in the manager -> assuming 'finished'.",
-                            taskId);
+                            vdsmTaskId);
 
                     AsyncTaskStatus tempVar = new AsyncTaskStatus();
                     tempVar.setStatus(AsyncTaskStatusEnum.finished);
@@ -501,14 +501,14 @@ public final class AsyncTaskManager {
 
                 for (AsyncTaskCreationInfo creationInfo : currPoolTasks) {
                     creationInfo.setStoragePoolID(sp.getId());
-                    if (!_tasks.containsKey(creationInfo.getTaskID())) {
+                    if (!_tasks.containsKey(creationInfo.getVdsmTaskId())) {
                         try {
                             SPMAsyncTask task = AsyncTaskFactory.Construct(creationInfo);
                             addTaskToManager(task);
                             newlyAddedTasks.add(task);
                         } catch (Exception e) {
                             log.errorFormat("Failed to load task of type {0} with id {1}, due to: {2}.",
-                                       creationInfo.getTaskType(), creationInfo.getTaskID(),
+                                       creationInfo.getTaskType(), creationInfo.getVdsmTaskId(),
                                        ExceptionUtils.getRootCauseMessage(e));
                         }
                     }
@@ -526,7 +526,7 @@ public final class AsyncTaskManager {
                 });
 
                 for (SPMAsyncTask task : newlyAddedTasks) {
-                    StartPollingTask(task.getTaskID());
+                    StartPollingTask(task.getVdsmTaskId());
                 }
 
                 log.infoFormat(
@@ -546,8 +546,8 @@ public final class AsyncTaskManager {
         List<AsyncTasks> tasksInDForStoragePool = tasksInDbAfterRestart.get(sp.getId());
         if (tasksInDForStoragePool != null) {
             for (AsyncTasks task : tasksInDForStoragePool) {
-                if (!_tasks.containsKey(task.gettask_id())) {
-                    DbFacade.getInstance().getAsyncTaskDao().remove(task.gettask_id());
+                if (!_tasks.containsKey(task.getVdsmTaskId())) {
+                    DbFacade.getInstance().getAsyncTaskDao().removeByVdsmTaskId(task.getVdsmTaskId());
                 }
             }
         }
@@ -582,20 +582,20 @@ public final class AsyncTaskManager {
     /**
      * Stops all tasks, and set them to polling state, for clearing them up later.
      *
-     * @param taskList
+     * @param vdsmTaskList
      *            - List of tasks to stop.
      */
-    public synchronized void CancelTasks(List<Guid> taskList) {
-        for (Guid taskID : taskList) {
-            CancelTask(taskID);
+    public synchronized void CancelTasks(List<Guid> vdsmTaskList) {
+        for (Guid vdsmTaskId : vdsmTaskList) {
+            CancelTask(vdsmTaskId);
         }
     }
 
-    public synchronized void CancelTask(Guid taskID) {
-        if (_tasks.containsKey(taskID)) {
-            log.infoFormat("Attempting to cancel task '{0}'.", taskID);
-            _tasks.get(taskID).stopTask();
-            _tasks.get(taskID).ConcreteStartPollingTask();
+    public synchronized void CancelTask(Guid vdsmTaskId) {
+        if (_tasks.containsKey(vdsmTaskId)) {
+            log.infoFormat("Attempting to cancel task '{0}'.", vdsmTaskId);
+            _tasks.get(vdsmTaskId).stopTask();
+            _tasks.get(vdsmTaskId).ConcreteStartPollingTask();
         }
     }
 

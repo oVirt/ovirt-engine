@@ -157,7 +157,7 @@ public class BackwardCompatibilityTaskCreationTest {
 
         SPMAsyncTask spmAsyncTask = cmd.concreteCreateTask(info, cmd.getParameters().getParentCommand());
         assertEquals("wrong storage pool ID", info.getStoragePoolID(), spmAsyncTask.getStoragePoolID());
-        assertEquals("wrong task ID", info.getTaskID(), spmAsyncTask.getTaskID());
+        assertEquals("wrong task ID", info.getVdsmTaskId(), spmAsyncTask.getVdsmTaskId());
         assertEquals("wrong task result", AsyncTaskResultEnum.success, spmAsyncTask.getLastTaskStatus().getResult());
         assertEquals("wrong task status", AsyncTaskStatusEnum.init, spmAsyncTask.getLastTaskStatus().getStatus());
         assertEquals("wrong task state", AsyncTaskState.Initializing, spmAsyncTask.getState());
@@ -185,7 +185,7 @@ public class BackwardCompatibilityTaskCreationTest {
         AsyncTaskCreationInfo info = new AsyncTaskCreationInfo();
         info.setStepId(Guid.newGuid());
         info.setStoragePoolID(Guid.newGuid());
-        info.setTaskID(Guid.newGuid());
+        info.setVdsmTaskId(Guid.newGuid());
         info.setTaskType(RandomUtils.instance().nextEnum(AsyncTaskType.class));
         return info;
     }

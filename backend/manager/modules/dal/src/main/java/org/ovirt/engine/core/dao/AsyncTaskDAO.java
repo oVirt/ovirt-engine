@@ -21,6 +21,12 @@ public interface AsyncTaskDAO extends DAO {
     AsyncTasks get(Guid id);
 
     /**
+     * Retrieves the task with the specified VDSM taskId
+     * @param vdsmTaskId id of the task as reported by VDSM
+     * @return the task
+     */
+    AsyncTasks getByVdsmTaskId(Guid vdsmTaskId);
+    /**
      * Gets async task Ids by a given entity Id.
      * @param entityId the Id of the entity to return the tasks for
      * @return
@@ -81,4 +87,11 @@ public interface AsyncTaskDAO extends DAO {
      * @param task the task to save
      */
     void save(AsyncTasks newAsyncTask);
+
+    /**
+     * Removes the specified task according to its VDSM task id.
+     * @param vdsmTaskId the VDSM task id.
+     * @return the number of tasks deleted
+     */
+    int removeByVdsmTaskId(Guid vdsmTaskId);
 }
