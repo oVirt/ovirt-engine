@@ -299,6 +299,10 @@ public class TagListModel extends SearchableListModel
         model.setChildren(children);
         model.getSelectionChangedEvent().addListener(this);
 
+        for (TagModel child : children) {
+            child.setParent(model);
+        }
+
         return model;
     }
 
@@ -326,6 +330,10 @@ public class TagListModel extends SearchableListModel
         model.setSelection(false);
         model.setParentId(tag.getparent_id() == null ? NGuid.Empty : tag.getparent_id().getValue());
         model.setChildren(children);
+
+        for (TagModel child : children) {
+            child.setParent(model);
+        }
 
         model.getSelectionChangedEvent().addListener(this);
 
@@ -489,6 +497,7 @@ public class TagListModel extends SearchableListModel
         model.setIsNew(false);
         model.getName().setEntity(getSelectedItem().getName().getEntity());
         model.getDescription().setEntity(getSelectedItem().getDescription().getEntity());
+        model.setParent(getSelectedItem());
         model.setParentId(getSelectedItem().getParentId());
 
         UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$

@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.common.uicommon.model;
 
 import java.util.List;
 
+import org.ovirt.engine.ui.uicommonweb.TreeNodeInfo;
+
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 
 /**
@@ -12,22 +14,13 @@ import com.google.gwt.event.logical.shared.HasSelectionHandlers;
  * @param <M>
  *            The TreeNodeModel Type
  */
-public interface TreeNodeModel<T, M extends TreeNodeModel<T, M>> extends HasSelectionHandlers<M> {
+public interface TreeNodeModel<T, M extends TreeNodeModel<T, M>> extends TreeNodeInfo, HasSelectionHandlers<M> {
 
-    /**
-     * Get the Node direct children
-     */
-    List<M> getChildren();
-
-    /**
-     * Returns the parent node, or {@code null} in case of root node.
-     */
+    @Override
     M getParent();
 
-    /**
-     * Returns the index of this node relative to the parent node, or 0 in case of root node.
-     */
-    int getIndex();
+    @Override
+    List<M> getChildren();
 
     /**
      * The Node name

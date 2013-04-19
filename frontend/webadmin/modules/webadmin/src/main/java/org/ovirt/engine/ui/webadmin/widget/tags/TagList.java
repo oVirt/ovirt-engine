@@ -3,8 +3,12 @@ package org.ovirt.engine.ui.webadmin.widget.tags;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.action.AbstractActionStackPanelItem;
 import org.ovirt.engine.ui.common.widget.action.SimpleActionPanel;
+import org.ovirt.engine.ui.common.widget.tree.ElementIdCellTree;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
@@ -14,6 +18,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.cellview.client.CellTree;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.TreeNode;
 import com.google.gwt.user.client.ui.Widget;
 
 public class TagList extends AbstractActionStackPanelItem<TagModelProvider, TagListModel, CellTree> {
@@ -22,27 +27,25 @@ public class TagList extends AbstractActionStackPanelItem<TagModelProvider, TagL
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
-    interface ViewIdHandler extends ElementIdHandler<TagList> {
-        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    interface WidgetIdHandler extends ElementIdHandler<TagList> {
+        WidgetIdHandler idHandler = GWT.create(WidgetIdHandler.class);
     }
+
+    private static final TagTreeResources res = GWT.create(TagTreeResources.class);
 
     public TagList(TagModelProvider modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        ViewIdHandler.idHandler.generateAndSetIds(this);
+        WidgetIdHandler.idHandler.generateAndSetIds(this);
         addActionButtons(modelProvider, constants);
+        addModelListeners(modelProvider);
     }
 
     @Override
     protected CellTree createDataDisplayWidget(TagModelProvider modelProvider) {
-        TagTreeResources res = GWT.create(TagTreeResources.class);
-
-        CellTree display = new CellTree(modelProvider, null, res);
+        CellTree display = new ElementIdCellTree<TagModelProvider>(modelProvider, null, res);
         display.setAnimationEnabled(true);
         display.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
-
-        modelProvider.setDisplay(display);
-
         return display;
     }
 
@@ -76,13 +79,40 @@ public class TagList extends AbstractActionStackPanelItem<TagModelProvider, TagL
         });
     }
 
+    private void addModelListeners(final TagModelProvider modelProvider) {
+        modelProvider.getModel().getItemsChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                expandTree(getDataDisplayWidget().getRootTreeNode());
+            }
+        });
+        modelProvider.getModel().getResetRequestedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                expandTree(getDataDisplayWidget().getRootTreeNode());
+            }
+        });
+    }
+
+    private void expandTree(TreeNode node) {
+        if (node == null) {
+            return;
+        }
+
+        for (int i = 0; i < node.getChildCount(); i++) {
+            expandTree(node.setChildOpen(i, true));
+        }
+    }
+
     interface TagTreeResources extends CellTree.Resources {
+
         interface TableStyle extends CellTree.Style {
         }
 
         @Override
         @Source({ CellTree.Style.DEFAULT_CSS, "org/ovirt/engine/ui/webadmin/css/TagTree.css" })
         TableStyle cellTreeStyle();
+
     }
 
 }

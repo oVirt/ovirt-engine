@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.table;
 
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
+import org.ovirt.engine.ui.common.idhandler.ProvidesElementId;
 import org.ovirt.engine.ui.common.widget.table.column.ColumnWithElementId;
 import org.ovirt.engine.ui.common.widget.table.resize.ColumnResizeCellTable;
 
@@ -18,7 +19,7 @@ import com.google.gwt.view.client.ProvidesKey;
  * @param <T>
  *            Table row data type.
  */
-public class ElementIdCellTable<T> extends ColumnResizeCellTable<T> implements HasElementId {
+public class ElementIdCellTable<T> extends ColumnResizeCellTable<T> implements HasElementId, ProvidesElementId {
 
     private String elementId = DOM.createUniqueId();
 
@@ -81,6 +82,7 @@ public class ElementIdCellTable<T> extends ColumnResizeCellTable<T> implements H
         this.elementId = elementId;
     }
 
+    @Override
     public String getElementId() {
         return elementId;
     }

@@ -5,13 +5,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.uicommon.model.DataBoundTabModelProvider;
+import org.ovirt.engine.ui.common.widget.tree.TreeModelWithElementId;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.widget.tree.SystemTreeItemCell;
 
@@ -22,20 +21,19 @@ import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 
-public class SystemTreeModelProvider extends DataBoundTabModelProvider<SystemTreeItemModel, SystemTreeModel> implements SearchableTreeModelProvider<SystemTreeItemModel, SystemTreeModel> {
+public class SystemTreeModelProvider extends DataBoundTabModelProvider<SystemTreeItemModel, SystemTreeModel>
+        implements SearchableTreeModelProvider<SystemTreeItemModel, SystemTreeModel>, TreeModelWithElementId {
 
     private final DefaultSelectionEventManager<SystemTreeItemModel> selectionManager =
             DefaultSelectionEventManager.createDefaultManager();
     private final SingleSelectionModel<SystemTreeItemModel> selectionModel;
 
-    private final ApplicationResources resources;
-    private final ApplicationTemplates templates;
+    private final SystemTreeItemCell cell;
 
     @Inject
     public SystemTreeModelProvider(ClientGinjector ginjector) {
         super(ginjector);
-        this.resources = ginjector.getApplicationResources();
-        this.templates = ginjector.getApplicationTemplates();
+        this.cell = new SystemTreeItemCell(ginjector.getApplicationResources(), ginjector.getApplicationTemplates());
 
         // Create selection model
         selectionModel = new SingleSelectionModel<SystemTreeItemModel>();
@@ -89,8 +87,6 @@ public class SystemTreeModelProvider extends DataBoundTabModelProvider<SystemTre
 
     @Override
     public <T> NodeInfo<?> getNodeInfo(T parent) {
-        SystemTreeItemCell cell = new SystemTreeItemCell(resources, templates);
-
         if (parent != null) {
             // Not a root node
             SystemTreeItemModel parentModel = (SystemTreeItemModel) parent;
@@ -116,6 +112,11 @@ public class SystemTreeModelProvider extends DataBoundTabModelProvider<SystemTre
         }
 
         return false;
+    }
+
+    @Override
+    public void setElementIdPrefix(String elementIdPrefix) {
+        cell.setElementIdPrefix(elementIdPrefix);
     }
 
 }

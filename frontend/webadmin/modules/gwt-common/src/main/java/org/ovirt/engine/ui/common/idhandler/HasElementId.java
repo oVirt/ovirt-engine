@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.common.idhandler;
 
 /**
- * Interface typically implemented by custom UI objects that provides an abstract way of setting DOM element IDs.
+ * Interface typically implemented by custom UI objects providing abstraction for setting DOM element IDs.
  *
  * @see WithElementId
  */

@@ -34,8 +34,8 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
-    interface ViewIdHandler extends ElementIdHandler<BookmarkList> {
-        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    interface WidgetIdHandler extends ElementIdHandler<BookmarkList> {
+        WidgetIdHandler idHandler = GWT.create(WidgetIdHandler.class);
     }
 
     @UiField
@@ -47,7 +47,7 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
         super(modelProvider);
         this.constants = constants;
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        ViewIdHandler.idHandler.generateAndSetIds(this);
+        WidgetIdHandler.idHandler.generateAndSetIds(this);
         addActionButtons(modelProvider);
         addScrollEventHandler(scrollPanel);
         setProperVisibleRange();

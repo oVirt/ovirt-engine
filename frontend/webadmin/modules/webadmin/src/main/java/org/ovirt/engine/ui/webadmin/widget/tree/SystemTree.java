@@ -1,7 +1,9 @@
 package org.ovirt.engine.ui.webadmin.widget.tree;
 
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.action.AbstractActionStackPanelItem;
 import org.ovirt.engine.ui.common.widget.action.SimpleActionPanel;
+import org.ovirt.engine.ui.common.widget.tree.ElementIdCellTree;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
@@ -25,6 +27,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProvider, SystemTreeModel, CellTree> {
 
+    private static final SystemTreeResources res = GWT.create(SystemTreeResources.class);
+
     private static final int ALL_LEVELS = Integer.MAX_VALUE;
     private static final int ITEM_LEVEL = 2;
 
@@ -32,11 +36,14 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
-    private CellTree display;
+    interface WidgetIdHandler extends ElementIdHandler<SystemTree> {
+        WidgetIdHandler idHandler = GWT.create(WidgetIdHandler.class);
+    }
 
     public SystemTree(SystemTreeModelProvider modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
+        WidgetIdHandler.idHandler.generateAndSetIds(this);
         addActionButtons(modelProvider, constants);
         addModelListeners(modelProvider);
     }
@@ -49,14 +56,14 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
     }
 
     private void addActionButtons(final SystemTreeModelProvider modelProvider, final ApplicationConstants constants) {
-
         actionPanel.addActionButton(new WebAdminButtonDefinition<SystemTreeModel>(constants.treeExpandAll()) {
             @Override
             protected UICommand resolveCommand() {
                 return new UICommand(constants.treeExpandAll(), new BaseCommandTarget() {
                     @Override
                     public void executeCommand(UICommand command) {
-                        TreeNode expandNode = findNode(display.getRootTreeNode(), modelProvider.getSelectionModel().getSelectedObject());
+                        TreeNode expandNode = findNode(getDataDisplayWidget().getRootTreeNode(),
+                                modelProvider.getSelectionModel().getSelectedObject());
                         if (expandNode != null) {
                             expandTree(expandNode);
                         }
@@ -64,14 +71,14 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
                 });
             }
         });
-
         actionPanel.addActionButton(new WebAdminButtonDefinition<SystemTreeModel>(constants.treeCollapseAll()) {
             @Override
             protected UICommand resolveCommand() {
                 return new UICommand(constants.treeCollapseAll(), new BaseCommandTarget() {
                     @Override
                     public void executeCommand(UICommand command) {
-                        TreeNode collapseNode = findNode(display.getRootTreeNode(), modelProvider.getSelectionModel().getSelectedObject());
+                        TreeNode collapseNode = findNode(getDataDisplayWidget().getRootTreeNode(),
+                                modelProvider.getSelectionModel().getSelectedObject());
                         if (collapseNode != null) {
                             collapseTree(collapseNode);
                         }
@@ -79,7 +86,6 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
                 });
             }
         });
-
     }
 
     private void addModelListeners(final SystemTreeModelProvider modelProvider) {
@@ -87,22 +93,19 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 // Reset selection in the model
-                SystemTreeItemModel lastSelectedItem = modelProvider
-                                .getSelectionModel().getSelectedObject();
-                modelProvider.getSelectionModel().setSelected(
-                                lastSelectedItem, false);
-                expandTree(display.getRootTreeNode(), ITEM_LEVEL);
+                SystemTreeItemModel lastSelectedItem = modelProvider.getSelectionModel().getSelectedObject();
+                modelProvider.getSelectionModel().setSelected(lastSelectedItem, false);
+                expandTree(getDataDisplayWidget().getRootTreeNode(), ITEM_LEVEL);
             }
         });
     }
 
     @Override
     protected CellTree createDataDisplayWidget(SystemTreeModelProvider modelProvider) {
-        SystemTreeResources res = GWT.create(SystemTreeResources.class);
-        display = new CellTree(modelProvider, null, res) {
+        CellTree display = new ElementIdCellTree<SystemTreeModelProvider>(modelProvider, null, res) {
             @Override
             protected void onLoad() {
-                expandTree(display.getRootTreeNode(), ITEM_LEVEL);
+                expandTree(getDataDisplayWidget().getRootTreeNode(), ITEM_LEVEL);
             }
         };
         display.setAnimationEnabled(true);
@@ -145,22 +148,25 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
                 result = node.setChildOpen(i, true);
                 break;
             }
-            //Only check open nodes, otherwise they couldn't have been selected.
+            // Only check open nodes, otherwise they couldn't have been selected.
             if (node.isChildOpen(i)) {
                 result = findNode(node.setChildOpen(i, true), model);
             }
             i++;
         }
+
         return result;
     }
 
     public interface SystemTreeResources extends CellTree.Resources {
+
         interface TableStyle extends CellTable.Style {
         }
 
         @Override
         @Source({ CellTree.Style.DEFAULT_CSS, "org/ovirt/engine/ui/webadmin/css/SystemTree.css" })
         Style cellTreeStyle();
+
     }
 
 }

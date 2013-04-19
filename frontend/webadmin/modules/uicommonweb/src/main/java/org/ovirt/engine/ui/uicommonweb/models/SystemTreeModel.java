@@ -32,9 +32,7 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-@SuppressWarnings("unused")
-public class SystemTreeModel extends SearchableListModel implements IFrontendMultipleQueryAsyncCallback
-{
+public class SystemTreeModel extends SearchableListModel implements IFrontendMultipleQueryAsyncCallback {
 
     public static EventDefinition ResetRequestedEventDefinition;
     private Event privateResetRequestedEvent;
@@ -408,6 +406,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             dataCenterItem.setType(SystemTreeItemType.DataCenter);
             dataCenterItem.setApplicationMode(ApplicationMode.VirtOnly);
             dataCenterItem.setTitle(getDataCenters().get(count).getname());
+            dataCenterItem.setParent(systemItem);
             dataCenterItem.setEntity(getDataCenters().get(count));
             systemItem.getChildren().add(dataCenterItem);
 
@@ -427,7 +426,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                     storageItem.setType(SystemTreeItemType.Storage);
                     storageItem.setApplicationMode(ApplicationMode.VirtOnly);
                     storageItem.setTitle(storage.getStorageName());
-                    storageItem.setParent(dataCenterItem);
+                    storageItem.setParent(storagesItem);
                     storageItem.setEntity(storage);
                     storagesItem.getChildren().add(storageItem);
                 }
@@ -450,7 +449,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                     networkItem.setType(SystemTreeItemType.Network);
                     networkItem.setApplicationMode(ApplicationMode.VirtOnly);
                     networkItem.setTitle(network.getName());
-                    networkItem.setParent(dataCenterItem);
+                    networkItem.setParent(networksItem);
                     networkItem.setEntity(network);
                     networksItem.getChildren().add(networkItem);
                 }
@@ -480,7 +479,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                     clusterItem.setType(cluster.supportsGlusterService() ? SystemTreeItemType.Cluster_Gluster
                             : SystemTreeItemType.Cluster);
                     clusterItem.setTitle(cluster.getname());
-                    clusterItem.setParent(dataCenterItem);
+                    clusterItem.setParent(clustersItem);
                     clusterItem.setEntity(cluster);
                     clustersItem.getChildren().add(clusterItem);
 
@@ -498,7 +497,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                             SystemTreeItemModel hostItem = new SystemTreeItemModel();
                             hostItem.setType(SystemTreeItemType.Host);
                             hostItem.setTitle(host.getName());
-                            hostItem.setParent(clusterItem);
+                            hostItem.setParent(hostsItem);
                             hostItem.setEntity(host);
                             hostsItem.getChildren().add(hostItem);
                         }

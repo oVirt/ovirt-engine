@@ -3,12 +3,12 @@ package org.ovirt.engine.ui.uicommonweb.models;
 import java.util.List;
 
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.ui.uicommonweb.TreeNodeInfo;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-@SuppressWarnings("unused")
-public class SystemTreeItemModel extends EntityModel
-{
+public class SystemTreeItemModel extends EntityModel implements TreeNodeInfo {
+
     private SystemTreeItemType type = SystemTreeItemType.values()[0];
     private ApplicationMode applicationMode = ApplicationMode.AllModes;
 
@@ -93,4 +93,5 @@ public class SystemTreeItemModel extends EntityModel
 
         return root;
     }
+
 }

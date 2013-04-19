@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.widget.tree;
 
+import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
@@ -9,12 +10,15 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class SystemTreeItemCell extends AbstractCell<SystemTreeItemModel> {
 
     private final ApplicationResources applicationResources;
     private final ApplicationTemplates templates;
+
+    private String elementIdPrefix = DOM.createUniqueId();
 
     public SystemTreeItemCell(ApplicationResources applicationResources, ApplicationTemplates templates) {
         this.applicationResources = applicationResources;
@@ -72,7 +76,6 @@ public class SystemTreeItemCell extends AbstractCell<SystemTreeItemModel> {
         case Networks:
             imageResource = applicationResources.networksTreeImage();
             break;
-
         default:
             imageResource = applicationResources.questionMarkImage();
         }
@@ -81,7 +84,12 @@ public class SystemTreeItemCell extends AbstractCell<SystemTreeItemModel> {
         SafeHtml imageHtml = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(imageResource).getHTML());
 
         // apply to template
-        sb.append(templates.treeItem(imageHtml, value.getTitle()));
+        sb.append(templates.treeItem(imageHtml, value.getTitle(),
+                ElementIdUtils.createTreeCellElementId(elementIdPrefix, value, null)));
+    }
+
+    public void setElementIdPrefix(String elementIdPrefix) {
+        this.elementIdPrefix = elementIdPrefix;
     }
 
 }

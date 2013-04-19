@@ -44,6 +44,8 @@ public class AssignTagsPopupView extends AbstractModelBoundPopupView<TagListMode
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private static final CellTree.Resources res = GWT.create(AssignTagTreeResources.class);
+
     @UiField(provided = true)
     @Ignore
     @WithElementId
@@ -65,7 +67,6 @@ public class AssignTagsPopupView extends AbstractModelBoundPopupView<TagListMode
     }
 
     private void initTree() {
-        CellTree.Resources res = GWT.create(AssignTagTreeResources.class);
         tree = new EntityModelCellTree<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel>(res);
     }
 

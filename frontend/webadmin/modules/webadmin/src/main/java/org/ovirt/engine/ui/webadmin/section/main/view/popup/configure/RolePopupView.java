@@ -50,6 +50,8 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private static final CellTree.Resources res = GWT.create(AssignTagTreeResources.class);
+
     @UiField
     @Path(value = "name.entity")
     @WithElementId("name")
@@ -144,7 +146,6 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
     }
 
     private void initTree() {
-        CellTree.Resources res = GWT.create(AssignTagTreeResources.class);
         tree = new EntityModelCellTree<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel>(res);
     }
 

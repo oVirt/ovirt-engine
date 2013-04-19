@@ -40,7 +40,7 @@ public class SimpleSelectionTreeNodeModel implements TreeNodeModel<SelectionTree
         return new SimpleSelectionTreeNodeModel(model);
     }
 
-    private final ArrayList<SimpleSelectionTreeNodeModel> children;
+    private final List<SimpleSelectionTreeNodeModel> children;
     private SimpleSelectionTreeNodeModel parent;
 
     private final EventBus eventBus;
@@ -80,29 +80,13 @@ public class SimpleSelectionTreeNodeModel implements TreeNodeModel<SelectionTree
     }
 
     @Override
-    public ArrayList<SimpleSelectionTreeNodeModel> getChildren() {
+    public List<SimpleSelectionTreeNodeModel> getChildren() {
         return children;
     }
 
     @Override
     public SimpleSelectionTreeNodeModel getParent() {
         return parent;
-    }
-
-    @Override
-    public int getIndex() {
-        if (parent == null) {
-            return 0;
-        }
-
-        ArrayList<SimpleSelectionTreeNodeModel> siblings = parent.getChildren();
-        for (int i = 0; i < siblings.size(); i++) {
-            if (model == siblings.get(i).model) {
-                return i;
-            }
-        }
-
-        return -1;
     }
 
     @Override

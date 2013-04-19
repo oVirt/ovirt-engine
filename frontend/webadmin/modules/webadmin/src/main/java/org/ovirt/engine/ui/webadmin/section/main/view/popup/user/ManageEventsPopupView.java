@@ -49,6 +49,8 @@ public class ManageEventsPopupView extends AbstractModelBoundPopupView<EventNoti
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private static final CellTree.Resources res = GWT.create(AssignTagTreeResources.class);
+
     @UiField(provided = true)
     @Ignore
     @WithElementId
@@ -94,7 +96,6 @@ public class ManageEventsPopupView extends AbstractModelBoundPopupView<EventNoti
     }
 
     private void initTree() {
-        CellTree.Resources res = GWT.create(AssignTagTreeResources.class);
         tree = new EntityModelCellTree<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel>(res);
     }
 

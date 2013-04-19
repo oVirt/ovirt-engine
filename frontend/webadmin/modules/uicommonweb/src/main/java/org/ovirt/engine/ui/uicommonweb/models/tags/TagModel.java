@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.tags;
 
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.uicommonweb.TreeNodeInfo;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -15,9 +16,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import java.util.ArrayList;
 import java.util.Map;
 
-@SuppressWarnings("unused")
-public class TagModel extends Model
-{
+public class TagModel extends Model implements TreeNodeInfo {
 
     public static EventDefinition SelectionChangedEventDefinition;
     private Event privateSelectionChangedEvent;
@@ -90,6 +89,18 @@ public class TagModel extends Model
     public void setParentId(Guid value)
     {
         privateParentId = value;
+    }
+
+    private TagModel privateParent;
+
+    public TagModel getParent()
+    {
+        return privateParent;
+    }
+
+    public void setParent(TagModel value)
+    {
+        privateParent = value;
     }
 
     private ArrayList<TagModel> privateChildren;

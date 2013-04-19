@@ -19,6 +19,7 @@ public abstract class AbstractActionStackPanelItem<M, T, W extends Widget> exten
     public AbstractActionPanel<T> actionPanel;
 
     @UiField(provided = true)
+    @WithElementId("display")
     public W dataDisplayWidget;
 
     public AbstractActionStackPanelItem(M modelProvider) {

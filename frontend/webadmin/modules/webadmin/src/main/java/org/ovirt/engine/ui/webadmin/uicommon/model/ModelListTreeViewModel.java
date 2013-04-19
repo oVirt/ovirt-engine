@@ -151,9 +151,9 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
 
     private final AsyncDataProvider<M> asyncTreeDataProvider;
 
-    private final List<HasCell<M, ?>> cells = new ArrayList<HasCell<M, ?>>();
-
     private List<M> roots;
+
+    private final CompositeCell<M> compositeCell;
 
     private final MultiSelectionModel<M> selectionModel = new MultiSelectionModel<M>();
 
@@ -162,8 +162,10 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
     private String elementIdPrefix = DOM.createUniqueId();
 
     public ModelListTreeViewModel() {
+        List<HasCell<M, ?>> cells = new ArrayList<HasCell<M, ?>>();
         cells.add(new CheckboxColumn());
         cells.add(new CellLabel());
+        this.compositeCell = new CompositeCell<M>(cells);
 
         asyncTreeDataProvider = new AsyncDataProvider<M>() {
             @Override
@@ -238,19 +240,17 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
     @Override
     public <N> NodeInfo<?> getNodeInfo(N value) {
         M model = (M) value;
-        CompositeCell<M> composite = new CompositeCell<M>(cells);
+
         if (value == null) {
             // root node
             return new DefaultNodeInfo<M>(asyncTreeDataProvider,
-                    composite,
-                    selectionModel,
+                    compositeCell, selectionModel,
                     DefaultSelectionEventManager.<M> createCheckboxManager(),
                     null);
         } else {
             // child nodes
             return new DefaultNodeInfo<M>(new ListDataProvider<M>(model.getChildren()),
-                    composite,
-                    selectionModel,
+                    compositeCell, selectionModel,
                     DefaultSelectionEventManager.<M> createCheckboxManager(),
                     null);
         }

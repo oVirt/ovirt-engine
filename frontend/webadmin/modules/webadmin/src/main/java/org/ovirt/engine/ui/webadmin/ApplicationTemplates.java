@@ -29,8 +29,8 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
      * @return
      */
     @Template("<span style='position: relative; bottom: 1px;'>{0}</span>" +
-            "<span style='position: relative; bottom: 7px;'>{1}</span>")
-    SafeHtml treeItem(SafeHtml imageHtml, String text);
+            "<span style='position: relative; bottom: 7px;' id='{2}'>{1}</span>")
+    SafeHtml treeItem(SafeHtml imageHtml, String text, String id);
 
     /**
      * Creates a bookmark-item HTML
@@ -52,8 +52,8 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
      */
     @Template("<span style='position: relative; border: 1px solid {3}; " +
             "bottom: 4px; padding: 0 3px; margin: 0 1px;  white-space: nowrap; background-color: {2};'>" +
-            "<span style='position: relative; top: 1px;'>{0}</span> {1}</span>")
-    SafeHtml tagItem(SafeHtml imageHtml, String text, String backgroundColor, String borderColor);
+            "<span style='position: relative; top: 1px;' id='{4}'>{0}</span> {1}</span>")
+    SafeHtml tagItem(SafeHtml imageHtml, String text, String backgroundColor, String borderColor, String id);
 
     /**
      * Creates a tag-button HTML
@@ -63,8 +63,8 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
      * @return
      */
     @Template("<span style='position: relative; border: 1px solid {2}; visibility: {3};" +
-            " bottom: 4px; padding: 0 3px; background-color: {1};'>{0}</span>")
-    SafeHtml tagButton(SafeHtml imageHtml, String backgroundColor, String borderColor, String visibility);
+            " bottom: 4px; padding: 0 3px; background-color: {1};' id='{4}'>{0}</span>")
+    SafeHtml tagButton(SafeHtml imageHtml, String backgroundColor, String borderColor, String visibility, String id);
 
     @Template("<span style='position: relative; white-space: nowrap;'><span>{0}</span>{1} Alerts</span>")
     SafeHtml alertFooterHeader(SafeHtml imageHtml, int alertCount);

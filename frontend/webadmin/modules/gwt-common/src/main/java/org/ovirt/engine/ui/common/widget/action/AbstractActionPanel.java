@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
+import org.ovirt.engine.ui.common.idhandler.ProvidesElementId;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
@@ -46,7 +47,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @param <T>
  *            Action panel item type.
  */
-public abstract class AbstractActionPanel<T> extends Composite implements ActionPanel<T>, HasElementId {
+public abstract class AbstractActionPanel<T> extends Composite implements ActionPanel<T>, HasElementId, ProvidesElementId {
 
     @UiField
     public FlowPanel actionPanel;
@@ -87,6 +88,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
         this.elementId = elementId;
     }
 
+    @Override
     public String getElementId() {
         return elementId;
     }

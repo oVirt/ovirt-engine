@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.common.idhandler.ProvidesElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
@@ -24,10 +25,7 @@ import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
 public class MainTabBasicListPresenterWidget extends PresenterWidget<MainTabBasicListPresenterWidget.ViewDef> implements DataChangeListener<UserPortalItemModel> {
 
-    public interface ViewDef extends View {
-
-        String getElementId();
-
+    public interface ViewDef extends View, ProvidesElementId {
     }
 
     @ContentSlot
