@@ -36,7 +36,9 @@ public abstract class AbstractSPMAsyncTaskHandler<C extends TaskHandlerCommand<?
         if (getEnclosingCommand().getParameters().getTaskGroupSuccess()) {
             getReturnValue().setSucceeded(false);
             beforeTask();
-            addTask(Backend.getInstance().getResourceManager()
+            Guid taskId = getEnclosingCommand().persistAsyncTaskPlaceHolder(getEnclosingCommand().getActionType());
+
+            addTask(taskId, Backend.getInstance().getResourceManager()
                     .RunVdsCommand(getVDSCommandType(), getVDSParameters()), false);
         }
         ExecutionHandler.setAsyncJob(getEnclosingCommand().getExecutionContext(), true);
@@ -48,14 +50,16 @@ public abstract class AbstractSPMAsyncTaskHandler<C extends TaskHandlerCommand<?
         revertTask();
         VDSCommandType revertCommandType = getRevertVDSCommandType();
         if (revertCommandType != null) {
-            addTask(Backend.getInstance().getResourceManager()
+            addTask(Guid.Empty,
+                    Backend.getInstance().getResourceManager()
                     .RunVdsCommand(getRevertVDSCommandType(), getRevertVDSParameters()), true);
         }
     }
 
-    private void addTask(VDSReturnValue vdsReturnValue, boolean isRevertedTask) {
+    private void addTask(Guid taskId, VDSReturnValue vdsReturnValue, boolean isRevertedTask) {
         AsyncTaskCreationInfo taskCreationInfo = vdsReturnValue.getCreationInfo();
         getReturnValue().getInternalTaskIdList().add(cmd.createTask(
+                taskId,
                 taskCreationInfo,
                 cmd.getActionType(),
                 getTaskObjectType(),

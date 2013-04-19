@@ -71,6 +71,8 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
     }
 
     protected boolean processImageInIrs() {
+        Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
+
         VDSReturnValue vdsReturnValue = runVdsCommand(
                         VDSCommandType.CreateImage,
                         new CreateImageVDSCommandParameters(getParameters().getStoragePoolId(), getParameters()
@@ -81,7 +83,8 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
         if (vdsReturnValue.getSucceeded()) {
             getParameters().setTaskIds(new ArrayList<Guid>());
             getParameters().getTaskIds().add(
-                    createTask(vdsReturnValue.getCreationInfo(),
+                    createTask(taskId,
+                            vdsReturnValue.getCreationInfo(),
                             getParameters().getParentCommand(),
                             VdcObjectType.Storage,
                             getParameters().getStorageDomainId()));

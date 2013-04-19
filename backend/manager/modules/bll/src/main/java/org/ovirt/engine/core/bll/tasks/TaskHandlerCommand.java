@@ -24,13 +24,17 @@ public interface TaskHandlerCommand<T extends VdcActionParametersBase> {
 
     void setExecutionContext(ExecutionContext executionContext);
 
-    Guid createTask(AsyncTaskCreationInfo asyncTaskCreationInfo,
+    Guid createTask(Guid taskId,
+            AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand,
             VdcObjectType entityType,
             Guid... entityIds);
 
-    Guid createTask(AsyncTaskCreationInfo asyncTaskCreationInfo,
+    Guid createTask(Guid taskId,
+            AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand);
+
+    Guid persistAsyncTaskPlaceHolder(VdcActionType parentCommand);
 
     ArrayList<Guid> getTaskIdList();
 }

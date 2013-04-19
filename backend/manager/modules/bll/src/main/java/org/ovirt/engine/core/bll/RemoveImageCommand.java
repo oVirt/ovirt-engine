@@ -77,9 +77,12 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     protected void executeCommand() {
         if (getDiskImage() != null) {
             try {
+                Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
+
                 VDSReturnValue vdsReturnValue = performImageVdsmOperation();
                 getReturnValue().getInternalTaskIdList().add(
-                        createTask(vdsReturnValue.getCreationInfo(),
+                        createTask(taskId,
+                                vdsReturnValue.getCreationInfo(),
                                 getParameters().getParentCommand(),
                                 VdcObjectType.Storage,
                                 getStorageDomainId()));

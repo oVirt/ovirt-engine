@@ -52,6 +52,8 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
 
         VDSReturnValue vdsReturnValue = null;
         try {
+            Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.AddVmFromTemplate);
+
             vdsReturnValue = Backend
                     .getInstance()
                     .getResourceManager()
@@ -67,7 +69,10 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
 
             if (vdsReturnValue.getSucceeded()) {
                 getReturnValue().getInternalTaskIdList().add(
-                        createTask(vdsReturnValue.getCreationInfo(), VdcActionType.AddVmFromTemplate,VdcObjectType.Storage,
+                        createTask(taskId,
+                                vdsReturnValue.getCreationInfo(),
+                                VdcActionType.AddVmFromTemplate,
+                                VdcObjectType.Storage,
                                 getParameters().getStorageDomainId(),
                                 getDestinationStorageDomainId()));
             }

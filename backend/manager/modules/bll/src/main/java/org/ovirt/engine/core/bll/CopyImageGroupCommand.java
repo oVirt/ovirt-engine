@@ -53,6 +53,9 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
 
         Guid sourceDomainId = getParameters().getSourceDomainId() != null ? getParameters().getSourceDomainId()
                 : getDiskImage().getStorageIds().get(0);
+
+        Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
+
         if (getParameters().getUseCopyCollapse()) {
             vdsReturnValue = runVdsCommand(
                     VDSCommandType.CopyImage,
@@ -95,7 +98,8 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         if (vdsReturnValue.getSucceeded()) {
             AsyncTaskCreationInfo taskCreationInfo = vdsReturnValue.getCreationInfo();
             getReturnValue().getInternalTaskIdList().add(
-                    createTask(taskCreationInfo,
+                    createTask(taskId,
+                            taskCreationInfo,
                             getParameters().getParentCommand(),
                             VdcObjectType.Storage,
                             sourceDomainId,

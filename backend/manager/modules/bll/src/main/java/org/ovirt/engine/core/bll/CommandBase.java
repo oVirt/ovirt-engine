@@ -1277,6 +1277,20 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         _returnValue.setFault(fault);
     }
 
+    public Guid persistAsyncTaskPlaceHolder(VdcActionType parentCommand) {
+        Guid retValue = Guid.Empty;
+
+        try {
+            AsyncTasks task = createAsyncTask(new AsyncTaskCreationInfo(), parentCommand);
+            retValue = task.getTaskId();
+            AsyncTaskUtils.addOrUpdateTaskInDB(task, null, EMPTY_GUID_ARRAY);
+        } catch (RuntimeException ex) {
+            log.errorFormat("Error during persistAsyncTaskPlaceHolders for command: {0}. Exception {1}", getClass().getName(), ex);
+        }
+
+        return retValue;
+    }
+
     /**
      * Use this method in order to create task in the AsyncTaskManager in a safe way. If you use this method within a
      * certain command, make sure that the command implemented the ConcreteCreateTask method.
@@ -1291,11 +1305,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *            Ids of entities to be associated with task
      * @return Guid of the created task.
      */
-    protected Guid createTask(AsyncTaskCreationInfo asyncTaskCreationInfo,
+    protected Guid createTask(Guid taskId,
+            AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand,
             VdcObjectType entityType,
             Guid... entityIds) {
-        return createTask(asyncTaskCreationInfo, parentCommand, null, entityType, entityIds);
+        return createTask(taskId, asyncTaskCreationInfo, parentCommand, null, entityType, entityIds);
     }
 
     /**
@@ -1309,11 +1324,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *
      * @see {@link #createTask(AsyncTaskCreationInfo, VdcActionType, VdcObjectType, Guid...)}
      */
-    protected Guid createTaskInCurrentTransaction(AsyncTaskCreationInfo asyncTaskCreationInfo,
+    protected Guid createTaskInCurrentTransaction(Guid taskId,
+            AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand,
             VdcObjectType entityType,
             Guid... entityIds) {
-        return createTaskImpl(asyncTaskCreationInfo, parentCommand, null, entityType, entityIds);
+        return createTaskImpl(taskId, asyncTaskCreationInfo, parentCommand, null, entityType, entityIds);
     }
 
     /**
@@ -1330,9 +1346,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *            Ids of entities to be associated with task
      * @return Guid of the created task.
      */
-    protected Guid createTask(AsyncTaskCreationInfo asyncTaskCreationInfo,
+    protected Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
-        return createTask(asyncTaskCreationInfo, parentCommand, null, null, EMPTY_GUID_ARRAY);
+        return createTask(taskId, asyncTaskCreationInfo, parentCommand, null, null, EMPTY_GUID_ARRAY);
     }
 
     /**
@@ -1351,14 +1367,14 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *            Ids of entities to be associated with task
      * @return Guid of the created task.
      */
-    protected Guid createTask(AsyncTaskCreationInfo asyncTaskCreationInfo,
+    protected Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand,
             String description, VdcObjectType entityType, Guid... entityIds) {
 
         Transaction transaction = TransactionSupport.suspend();
 
         try {
-            return createTaskImpl(asyncTaskCreationInfo, parentCommand, description, entityType, entityIds);
+            return createTaskImpl(taskId, asyncTaskCreationInfo, parentCommand, description, entityType, entityIds);
         } catch (RuntimeException ex) {
             log.errorFormat("Error during CreateTask for command: {0}. Exception {1}", getClass().getName(), ex);
         } finally {
@@ -1368,7 +1384,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return Guid.Empty;
     }
 
-    private Guid createTaskImpl(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand,
+    private Guid createTaskImpl(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand,
             String description, VdcObjectType entityType, Guid... entityIds) {
         Step taskStep =
                 ExecutionHandler.addTaskStep(getExecutionContext(),
@@ -1377,41 +1393,79 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         if (taskStep != null) {
             asyncTaskCreationInfo.setStepId(taskStep.getId());
         }
-        SPMAsyncTask task = concreteCreateTask(asyncTaskCreationInfo, parentCommand);
+        SPMAsyncTask task = concreteCreateTask(taskId, asyncTaskCreationInfo, parentCommand);
         task.setEntityType(entityType);
         task.setAssociatedEntities(entityIds);
         AsyncTaskUtils.addOrUpdateTaskInDB(task);
         getAsyncTaskManager().lockAndAddTaskToManager(task);
-        Guid taskId = task.getVdsmTaskId();
-        ExecutionHandler.updateStepExternalId(taskStep, taskId, ExternalSystemType.VDSM);
-        return taskId;
+        Guid vdsmTaskId = task.getVdsmTaskId();
+        ExecutionHandler.updateStepExternalId(taskStep, vdsmTaskId, ExternalSystemType.VDSM);
+        return vdsmTaskId;
     }
 
     /**
      * Create the {@link SPMAsyncTask} object to be run
+     * @param taskId the id of the async task place holder in the database
      * @param asyncTaskCreationInfo Info on how to create the task
      * @param parentCommand The type of command issuing the task
      * @return An {@link SPMAsyncTask} object representing the task to be run
      */
-    protected SPMAsyncTask concreteCreateTask
-            (AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
+    public SPMAsyncTask concreteCreateTask(
+            Guid taskId,
+            AsyncTaskCreationInfo asyncTaskCreationInfo,
+            VdcActionType parentCommand) {
+        AsyncTaskParameters p =
+                new AsyncTaskParameters(asyncTaskCreationInfo,
+                getAsyncTask(taskId, asyncTaskCreationInfo, parentCommand));
+        p.setEntityId(getParameters().getEntityId());
+        return CreateTask(internalGetTaskType(), p);
+    }
 
+    public SPMAsyncTask CreateTask(AsyncTaskType taskType, AsyncTaskParameters taskParameters) {
+        return AsyncTaskFactory.Construct(taskType, taskParameters, false);
+    }
+
+    private AsyncTasks getAsyncTask(
+            Guid taskId,
+            AsyncTaskCreationInfo asyncTaskCreationInfo,
+            VdcActionType parentCommand) {
+        AsyncTasks asyncTask = null;
+        if (!taskId.equals(Guid.Empty)) {
+            asyncTask = DbFacade.getInstance().getAsyncTaskDao().get(taskId);
+        }
+        if (asyncTask != null) {
+            asyncTask.setVdsmTaskId(asyncTaskCreationInfo.getVdsmTaskId());
+            asyncTask.setActionParameters(getParentParameters(parentCommand));
+            asyncTask.setTaskParameters(getParameters());
+            asyncTask.setStepId(asyncTaskCreationInfo.getStepId());
+            asyncTask.setStoragePoolId(asyncTaskCreationInfo.getStoragePoolID());
+            asyncTask.setTaskType(asyncTaskCreationInfo.getTaskType());
+        } else {
+            asyncTask = createAsyncTask(asyncTaskCreationInfo, parentCommand);
+        }
+        return asyncTask;
+    }
+
+    private VdcActionParametersBase getParentParameters(VdcActionType parentCommand) {
         VdcActionParametersBase parentParameters = getParametersForTask(parentCommand, getParameters());
         if (parentParameters.getParametersCurrentUser() == null && getCurrentUser() != null) {
             parentParameters.setParametersCurrentUser(getCurrentUser());
         }
-        AsyncTaskParameters p =
-                new AsyncTaskParameters(asyncTaskCreationInfo, new AsyncTasks(parentCommand,
-                        AsyncTaskResultEnum.success,
-                        AsyncTaskStatusEnum.running,
-                        asyncTaskCreationInfo.getVdsmTaskId(),
-                        parentParameters,
-                        getParameters(),
-                        asyncTaskCreationInfo.getStepId(),
-                        getCommandId(),asyncTaskCreationInfo.getStoragePoolID(),
-                        asyncTaskCreationInfo.getTaskType()));
-        p.setEntityId(getParameters().getEntityId());
-        return AsyncTaskManager.getInstance().CreateTask(internalGetTaskType(), p);
+        return parentParameters;
+    }
+
+    private AsyncTasks createAsyncTask(
+            AsyncTaskCreationInfo asyncTaskCreationInfo,
+            VdcActionType parentCommand) {
+        return new AsyncTasks(parentCommand,
+                AsyncTaskResultEnum.success,
+                AsyncTaskStatusEnum.running,
+                asyncTaskCreationInfo.getVdsmTaskId(),
+                getParentParameters(parentCommand),
+                getParameters(),
+                asyncTaskCreationInfo.getStepId(),
+                getCommandId(), asyncTaskCreationInfo.getStoragePoolID(),
+                asyncTaskCreationInfo.getTaskType());
     }
 
     /** @return The type of task that should be created for this command. Commands that do not create async tasks should throw a {@link UnsupportedOperationException} */

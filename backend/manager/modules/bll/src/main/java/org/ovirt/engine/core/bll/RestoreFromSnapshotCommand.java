@@ -104,6 +104,8 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
             Guid imageGroupId = getDiskImage().getimage_group_id() != null ? getDiskImage().getimage_group_id()
                     : Guid.Empty;
 
+            Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.RestoreAllSnapshots);
+
             vdsReturnValue = runVdsCommand(
                             VDSCommandType.DestroyImage,
                             new DestroyImageVDSCommandParameters(storagePoolId, storageDomainId, imageGroupId,
@@ -112,7 +114,8 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
 
             if (vdsReturnValue.getSucceeded()) {
                 getReturnValue().getInternalTaskIdList().add(
-                        createTask(vdsReturnValue.getCreationInfo(),
+                        createTask(taskId,
+                                vdsReturnValue.getCreationInfo(),
                                 VdcActionType.RestoreAllSnapshots,
                                 VdcObjectType.Storage,
                                 storageDomainId));

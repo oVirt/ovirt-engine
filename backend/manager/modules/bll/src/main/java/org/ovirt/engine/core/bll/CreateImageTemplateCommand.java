@@ -47,6 +47,8 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         DiskImage newImage = cloneDiskImage(getDestinationImageId());
         fillVolumeInformation(newImage);
 
+        Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.AddVmTemplate);
+
         VDSReturnValue vdsReturnValue = Backend
                 .getInstance()
                 .getResourceManager()
@@ -61,8 +63,11 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
                                         .toString()));
 
         getReturnValue().getInternalTaskIdList().add(
-                createTask(vdsReturnValue.getCreationInfo(), VdcActionType.AddVmTemplate,
-                        VdcObjectType.Storage, getParameters().getStorageDomainId(),
+                createTask(taskId,
+                        vdsReturnValue.getCreationInfo(),
+                        VdcActionType.AddVmTemplate,
+                        VdcObjectType.Storage,
+                        getParameters().getStorageDomainId(),
                         getParameters().getDestinationStorageDomainId()));
 
         newImage.setId(destinationImageGroupID);

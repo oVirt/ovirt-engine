@@ -33,6 +33,8 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
         Guid imageGroupId = getDiskImage().getimage_group_id() != null ? getDiskImage().getimage_group_id()
                 : Guid.Empty;
 
+        Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.RemoveSnapshot);
+
         VDSReturnValue vdsReturnValue = Backend
                 .getInstance()
                 .getResourceManager()
@@ -45,7 +47,8 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
 
         if (vdsReturnValue != null && vdsReturnValue.getCreationInfo() != null) {
             getReturnValue().getInternalTaskIdList().add(
-                    createTask(vdsReturnValue.getCreationInfo(),
+                    createTask(taskId,
+                            vdsReturnValue.getCreationInfo(),
                             VdcActionType.RemoveSnapshot,
                             ExecutionMessageDirector.resolveStepMessage(StepEnum.MERGE_SNAPSHOTS, getJobMessageProperties()),
                             VdcObjectType.Storage,

@@ -68,7 +68,9 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
                     "Failed to create image for vm configuration!");
         }
 
+        Guid taskId = enclosingCommand.persistAsyncTaskPlaceHolder(enclosingCommand.getActionType());
         Guid guid = enclosingCommand.createTask(
+                taskId,
                 retVal.getCreationInfo(),
                 enclosingCommand.getActionType());
         enclosingCommand.getTaskIdList().add(guid);
@@ -97,8 +99,10 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
                     "Failed to create image for memory!");
         }
 
+        Guid taskId = enclosingCommand.persistAsyncTaskPlaceHolder(enclosingCommand.getActionType());
         Guid guid =
-                enclosingCommand.createTask(retVal.getCreationInfo(),
+                enclosingCommand.createTask(taskId,
+                        retVal.getCreationInfo(),
                         enclosingCommand.getActionType(),
                         VdcObjectType.Storage,
                         storageDomainId);

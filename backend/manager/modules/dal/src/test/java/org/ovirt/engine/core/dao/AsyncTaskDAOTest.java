@@ -245,14 +245,14 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         dao.saveOrUpdate(existingAsyncTask, VdcObjectType.Disk);
         tasks = dao.getAll();
         assertEquals(tasksNumber, tasks.size());
-        AsyncTasks taskFromDb = dao.get(existingAsyncTask.getVdsmTaskId());
+        AsyncTasks taskFromDb = dao.get(existingAsyncTask.getTaskId());
         assertNotNull(taskFromDb);
         assertEquals(taskFromDb,existingAsyncTask);
         dao.saveOrUpdate(newAsyncTask, VdcObjectType.Disk, Guid.newGuid());
         tasks = dao.getAll();
         assertNotNull(tasks);
         assertEquals(tasksNumber+1, tasks.size());
-        taskFromDb = dao.get(newAsyncTask.getVdsmTaskId());
+        taskFromDb = dao.get(newAsyncTask.getTaskId());
         assertEquals(taskFromDb, newAsyncTask);
 
     }

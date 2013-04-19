@@ -282,6 +282,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                                 }
                             }).size() > 0;
 
+            Guid taskId1 = persistAsyncTaskPlaceHolder(parentCommand);
+
             // delete first image
             // the next 'DeleteImageGroup' command should also take care of the image removal:
             VDSReturnValue vdsRetValue1 = runVdsCommand(
@@ -294,9 +296,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             }
 
             Guid guid1 =
-                    createTask(vdsRetValue1.getCreationInfo(), parentCommand, VdcObjectType.Storage, guids[0]);
+                    createTask(taskId1, vdsRetValue1.getCreationInfo(), parentCommand, VdcObjectType.Storage, guids[0]);
             getTaskIdList().add(guid1);
 
+            Guid taskId2 = persistAsyncTaskPlaceHolder(parentCommand);
             // delete second image
             // the next 'DeleteImageGroup' command should also take care of the image removal:
             VDSReturnValue vdsRetValue2 = runVdsCommand(
@@ -311,7 +314,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                 return false;
             }
 
-            Guid guid2 = createTask(vdsRetValue2.getCreationInfo(), parentCommand);
+            Guid guid2 = createTask(taskId2, vdsRetValue2.getCreationInfo(), parentCommand);
             getTaskIdList().add(guid2);
 
             if (startPollingTasks) {

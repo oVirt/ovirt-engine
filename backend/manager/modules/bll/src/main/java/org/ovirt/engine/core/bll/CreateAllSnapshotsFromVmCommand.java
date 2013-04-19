@@ -547,16 +547,18 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         super.setExecutionContext(executionContext);
     }
 
-    public Guid createTask(AsyncTaskCreationInfo asyncTaskCreationInfo,
+    public Guid createTask(Guid taskId,
+            AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand,
             VdcObjectType entityType,
             Guid... entityIds) {
-        return super.createTask(asyncTaskCreationInfo, parentCommand,
+        return super.createTask(taskId,
+                asyncTaskCreationInfo, parentCommand,
                 entityType, entityIds);
     }
 
-    public Guid createTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
-        return super.createTask(asyncTaskCreationInfo, parentCommand);
+    public Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
+        return super.createTask(taskId, asyncTaskCreationInfo, parentCommand);
     }
 
     public ArrayList<Guid> getTaskIdList() {

@@ -155,7 +155,7 @@ public class BackwardCompatibilityTaskCreationTest {
 
         AsyncTaskCreationInfo info = nextAsyncTaskCreationInfo();
 
-        SPMAsyncTask spmAsyncTask = cmd.concreteCreateTask(info, cmd.getParameters().getParentCommand());
+        SPMAsyncTask spmAsyncTask = cmd.concreteCreateTask(Guid.Empty, info, cmd.getParameters().getParentCommand());
         assertEquals("wrong storage pool ID", info.getStoragePoolID(), spmAsyncTask.getStoragePoolID());
         assertEquals("wrong task ID", info.getVdsmTaskId(), spmAsyncTask.getVdsmTaskId());
         assertEquals("wrong task result", AsyncTaskResultEnum.success, spmAsyncTask.getLastTaskStatus().getResult());
@@ -177,7 +177,7 @@ public class BackwardCompatibilityTaskCreationTest {
         PermissionsOperationsParametes params = new PermissionsOperationsParametes();
         AddPermissionCommand<PermissionsOperationsParametes> cmd = spy(
                 new AddPermissionCommand<PermissionsOperationsParametes>(params));
-        cmd.concreteCreateTask(nextAsyncTaskCreationInfo(), VdcActionType.Unknown);
+        cmd.concreteCreateTask(Guid.Empty, nextAsyncTaskCreationInfo(), VdcActionType.Unknown);
     }
 
     /** @return A randomly generated {@link AsyncTaskCreationInfo} object */

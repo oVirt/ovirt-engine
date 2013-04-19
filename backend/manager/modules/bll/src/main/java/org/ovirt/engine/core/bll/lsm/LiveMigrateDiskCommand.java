@@ -76,11 +76,17 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     }
 
     @Override
-    public Guid createTask(AsyncTaskCreationInfo asyncTaskCreationInfo,
+    public Guid persistAsyncTaskPlaceHolder(VdcActionType parentCommand) {
+        return super.persistAsyncTaskPlaceHolder(parentCommand);
+    }
+
+    @Override
+    public Guid createTask(Guid taskId,
+            AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand,
             VdcObjectType entityType,
             Guid... entityIds) {
-        return super.createTask(asyncTaskCreationInfo, parentCommand, entityType, entityIds);
+        return super.createTask(taskId, asyncTaskCreationInfo, parentCommand, entityType, entityIds);
     }
 
     @Override
@@ -89,8 +95,8 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     }
 
     @Override
-    public Guid createTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
-        return super.createTask(asyncTaskCreationInfo, parentCommand);
+    public Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
+        return super.createTask(taskId, asyncTaskCreationInfo, parentCommand);
     }
 
     @Override

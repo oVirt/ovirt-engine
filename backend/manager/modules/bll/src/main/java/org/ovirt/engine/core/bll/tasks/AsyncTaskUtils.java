@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.bll.tasks;
 
 import org.ovirt.engine.core.bll.SPMAsyncTask;
+import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.businessentities.AsyncTasks;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -28,6 +31,25 @@ public class AsyncTaskUtils {
             log.error(String.format(
                     "Adding/Updating task %1$s to DataBase threw an exception.",
                     asyncTask.getVdsmTaskId()), e);
+        }
+    }
+
+    public static void addOrUpdateTaskInDB(
+            AsyncTasks task,
+            VdcObjectType entityType,
+            Guid... entityIds) {
+        try {
+            if (task != null) {
+                DbFacade.getInstance()
+                        .getAsyncTaskDao()
+                        .saveOrUpdate(task,
+                                entityType,
+                                entityIds);
+            }
+        } catch (RuntimeException e) {
+            log.error(String.format(
+                    "Adding/Updating task %1$s to DataBase threw an exception.",
+                    task.getTaskId()), e);
         }
     }
 

@@ -88,7 +88,9 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
         VDSReturnValue vdsReturnValue = null;
 
         try {
-           vdsReturnValue =
+            Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
+
+            vdsReturnValue =
                     Backend
                             .getInstance()
                             .getResourceManager()
@@ -109,11 +111,12 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
             if (vdsReturnValue.getSucceeded()) {
                 getParameters().setTaskIds(new java.util.ArrayList<Guid>());
                 getParameters().getTaskIds().add(
-                        createTask(vdsReturnValue.getCreationInfo(),
-                                getParameters().getParentCommand(),
-                                VdcObjectType.Storage,
-                                getParameters().getStorageDomainId(),
-                                getParameters().getDestinationImageId()));
+                        createTask(taskId,
+                        vdsReturnValue.getCreationInfo(),
+                        getParameters().getParentCommand(),
+                        VdcObjectType.Storage,
+                        getParameters().getStorageDomainId(),
+                        getParameters().getDestinationImageId()));
                 getReturnValue().getInternalTaskIdList().add(getParameters().getTaskIds().get(0));
 
                 // Shouldn't happen anymore:

@@ -105,6 +105,8 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                         }
                     });
 
+            final Guid taskId1 = persistAsyncTaskPlaceHolder(VdcActionType.HibernateVm);
+
             Guid image1GroupId = Guid.newGuid();
             // this is temp code until SPM will implement the new verb that does
             // it for us:
@@ -137,6 +139,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                         public Guid runInTransaction() {
                             getCompensationContext().resetCompensation();
                             return createTaskInCurrentTransaction(
+                                    taskId1,
                                     ret1.getCreationInfo(),
                                     VdcActionType.HibernateVm,
                                     VdcObjectType.Storage,
@@ -145,6 +148,8 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                     });
 
             getReturnValue().getTaskIdList().add(guid1);
+
+            Guid taskId2 = persistAsyncTaskPlaceHolder(VdcActionType.HibernateVm);
 
             // second vol should be 10kb
             Guid image2GroupId = Guid.newGuid();
@@ -170,7 +175,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
             if (!ret2.getSucceeded()) {
                 return;
             }
-            Guid guid2 = createTask(ret2.getCreationInfo(), VdcActionType.HibernateVm);
+            Guid guid2 = createTask(taskId2, ret2.getCreationInfo(), VdcActionType.HibernateVm);
             getReturnValue().getTaskIdList().add(guid2);
 
             // this is the new param that should be passed to the hibernate

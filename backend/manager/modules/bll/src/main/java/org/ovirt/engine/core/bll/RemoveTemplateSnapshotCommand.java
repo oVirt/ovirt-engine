@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * This command is responsible for removing a template image.
@@ -19,6 +20,8 @@ public class RemoveTemplateSnapshotCommand<T extends ImagesContainterParametersB
 
     @Override
     protected void executeCommand() {
+        Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.RemoveVmTemplate);
+
         VDSReturnValue vdsReturnValue = Backend
                 .getInstance()
                 .getResourceManager()
@@ -30,7 +33,8 @@ public class RemoveTemplateSnapshotCommand<T extends ImagesContainterParametersB
 
         if (vdsReturnValue.getSucceeded()) {
             getReturnValue().getInternalTaskIdList().add(
-                    createTask(vdsReturnValue.getCreationInfo(),
+                    createTask(taskId,
+                            vdsReturnValue.getCreationInfo(),
                             VdcActionType.RemoveVmTemplate,
                             VdcObjectType.Storage,
                             getParameters().getStorageDomainId()));

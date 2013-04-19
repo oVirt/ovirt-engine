@@ -18,8 +18,8 @@ public class AsyncTaskCreationInfo implements Serializable {
     public AsyncTaskCreationInfo() {
     }
 
-    public AsyncTaskCreationInfo(Guid taskID, AsyncTaskType taskType, Guid storagePoolID) {
-        setVdsmTaskId(taskID);
+    public AsyncTaskCreationInfo(Guid vdsmTaskID, AsyncTaskType taskType, Guid storagePoolID) {
+        setVdsmTaskId(vdsmTaskID);
         setTaskType(taskType);
         setStoragePoolID(storagePoolID);
     }
