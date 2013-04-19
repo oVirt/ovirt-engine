@@ -100,19 +100,21 @@ public class BackendVmPoolResource
         @Override
         public VdcActionParametersBase getParameters(VmPool incoming,
                 org.ovirt.engine.core.common.businessentities.VmPool current) {
-            int currentVmCount = current.getAssignedVmsCount();
-            org.ovirt.engine.core.common.businessentities.VmPool entity = map(incoming, current);
+            final int currentVmCount = current.getAssignedVmsCount();
 
-            VM vm = mapToVM(map(entity));
+            int size = 0;
+            if (incoming.isSetSize()) {
+                // in case the value is negative, the backend command will fail on canDoAction
+                size = incoming.getSize() - currentVmCount;
+            }
 
-            int size = incoming.isSetSize() && incoming.getSize() > currentVmCount
-                       ? incoming.getSize() - currentVmCount
-                       : 0;
+            final org.ovirt.engine.core.common.businessentities.VmPool entity = map(incoming, current);
+            final VM vm = mapToVM(map(entity));
 
             if (incoming.isSetTemplate()) {
                 vm.setVmtGuid(new Guid(incoming.getTemplate().getId()));
             } else {
-                VM existing = currentVmCount > 0
+                final VM existing = currentVmCount > 0
                               ? getEntity(VM.class, SearchType.VM, "Vms: pool=" + incoming.getName())
                               : null;
                 if (existing != null) {
@@ -121,14 +123,14 @@ public class BackendVmPoolResource
             }
 
             if (vm.getVmtGuid() != null) {
-                VmTemplate template = getEntity(VmTemplate.class,
+                final VmTemplate template = getEntity(VmTemplate.class,
                                                 VdcQueryType.GetVmTemplate,
                                                 new GetVmTemplateParameters(vm.getId()),
                                                 vm.getId().toString());
                 vm.getStaticData().setMemSizeMb(template.getMemSizeMb());
             }
 
-            AddVmPoolWithVmsParameters parameters = new AddVmPoolWithVmsParameters(entity, vm, size, -1);
+            final AddVmPoolWithVmsParameters parameters = new AddVmPoolWithVmsParameters(entity, vm, size, -1);
             parameters.setStorageDomainId(getStorageDomainId(vm.getVmtGuid()));
             return parameters;
         }
