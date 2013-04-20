@@ -327,6 +327,11 @@ done <<'.'
 %{restapi_war}/WEB-INF/lib/restapi-types.jar
 .
 
+# Needed for compatibility if package is different than the directory structure
+%if "%{name}" != "%{engine_name}"
+ln -s "%{engine_name}" "%{buildroot}%{engine_java}/../%{name}"
+%endif
+
 # Register poms
 %if !%{install_poms}
 rm -fr "%{buildroot}%{_mavenpomdir}"
@@ -345,11 +350,6 @@ do
     %add_maven_depmap "${jpppom}"
   fi
 done
-%endif
-
-# Needed for compatibility if package is different than the directory structure
-%if "%{name}" != "%{engine_name}"
-ln -s "%{engine_name}" "%{buildroot}%{engine_java}/../%{name}"
 %endif
 
 # Install the systemd files:
