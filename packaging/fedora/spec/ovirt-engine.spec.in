@@ -13,6 +13,22 @@
 %global require_maven 0
 %endif
 
+%if 0%{?ovirt_build_quick}
+%global ovirt_build_gwt 0
+%global ovirt_build_locales 0
+%global __jar_repack 0
+%endif
+%if 0%{?ovirt_build_minimal}
+%global ovirt_build_locales 0
+%global EXTRA_BUILD_FLAGS -D gwt.userAgent=gecko1_8
+%endif
+%if 0%{!?ovirt_build_gwt:1}
+%global ovirt_build_gwt 1
+%endif
+%if 0%{!?ovirt_build_locales:1}
+%global ovirt_build_locales 1
+%endif
+
 # Settings
 %global product_name oVirt Engine
 %global product_name_short oVirt Engine
@@ -72,6 +88,8 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 
 %global make_common_opts \\\
 	-j1 \\\
+	BUILD_GWT=%{ovirt_build_gwt} \\\
+	BUILD_LOCALES=%{ovirt_build_locales} \\\
 	PACKAGE_NAME=%{name} \\\
 	RPM_VERSION=%{version} \\\
 	RPM_RELEASE=%{release} \\\

@@ -31,9 +31,18 @@ PACKAGE_VERSION=$(APP_VERSION)$(if $(MILESTONE),_$(MILESTONE))
 PACKAGE_NAME=ovirt-engine
 DISPLAY_VERSION=$(PACKAGE_VERSION)
 
+BUILD_GWT=1
+BUILD_LOCALES=0
+
 MVN=mvn
 EXTRA_BUILD_FLAGS=
-BUILD_FLAGS=-P gwt-admin,gwt-user
+BUILD_FLAGS:=
+ifneq ($(BUILD_GWT),0)
+BUILD_FLAGS:=$(BUILD_FLAGS) -P gwt-admin,gwt-user
+endif
+ifneq ($(BUILD_LOCALES),0)
+BUILD_FLAGS:=$(BUILD_FLAGS) -P all-langs
+endif
 ENGINE_NAME=$(PACKAGE_NAME)
 PREFIX=/usr/local
 LOCALSTATE_DIR=$(PREFIX)/var
@@ -217,9 +226,7 @@ rpm:	srpm
 rpm-quick:
 	$(MAKE) \
 		rpm \
-		RPMBUILD_EXTRA_ARGS='--define="__jar_repack 0" \
-			--define="BUILD_FLAGS -D dummy" \
-			--define="EXTRA_BUILD_FLAGS -D skipTests=true -D gwt.userAgent=gecko1_8"'
+		RPMBUILD_EXTRA_ARGS='--define="ovirt_build_quick 1"'
 	@echo
 	@echo WARNING:
 	@echo rpms produces from quick are partial!
