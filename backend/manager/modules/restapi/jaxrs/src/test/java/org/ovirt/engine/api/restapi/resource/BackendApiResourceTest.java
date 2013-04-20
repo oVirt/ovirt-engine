@@ -311,6 +311,7 @@ public class BackendApiResourceTest extends Assert {
         assertContainsBlankTemplate(api.getSpecialObjects());
         assertNotNull(api.getProductInfo());
         assertNotNull(api.getProductInfo().getVersion());
+        assertNotNull(api.getProductInfo().getFullVersion());
         assertEquals(MAJOR,    api.getProductInfo().getVersion().getMajor().intValue());
         assertEquals(MINOR,    api.getProductInfo().getVersion().getMinor().intValue());
         assertEquals(BUILD,    api.getProductInfo().getVersion().getBuild().intValue());
@@ -408,6 +409,8 @@ public class BackendApiResourceTest extends Assert {
         VdcQueryReturnValue queryResult = createMock(VdcQueryReturnValue.class);
 
         expect(backend.RunQuery(eq(VdcQueryType.GetConfigurationValue), queryVdcVersionParams())).andReturn(queryResult);
+        expect(backend.RunQuery(eq(VdcQueryType.GetConfigurationValue),
+                queryProductRPMVersionParams())).andReturn(queryResult);
 
         expect(queryResult.getSucceeded()).andReturn(true).anyTimes();
         expect(queryResult.getReturnValue()).andReturn(SYSTEM_VERSION).anyTimes();
@@ -422,6 +425,12 @@ public class BackendApiResourceTest extends Assert {
         expect(queryResult.getReturnValue()).andReturn(setUpStats()).anyTimes();
 
         replayAll();
+    }
+
+    protected VdcQueryParametersBase queryProductRPMVersionParams() {
+        return eqQueryParams(GetConfigurationValueParameters.class,
+                             new String[] { "SessionId"},
+                             new Object[] { getSessionId() });
     }
 
     protected VdcQueryParametersBase queryVdcVersionParams() {

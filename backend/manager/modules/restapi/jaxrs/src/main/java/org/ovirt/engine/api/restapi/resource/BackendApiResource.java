@@ -379,9 +379,12 @@ public class BackendApiResource
     }
 
     private API addSystemVersion(API api) {
+        String productVersion = getConfigurationValueDefault(String.class,
+                ConfigurationValues.ProductRPMVersion);
         api.setProductInfo(new ProductInfo());
         api.getProductInfo().setName("oVirt Engine");
         api.getProductInfo().setVendor("ovirt.org");
+        api.getProductInfo().setFullVersion(productVersion);
         api.getProductInfo().setVersion(VersionHelper.parseVersion(getConfigurationValueDefault(String.class, ConfigurationValues.VdcVersion)));
         return api;
     }
