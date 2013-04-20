@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import static org.ovirt.engine.core.common.businessentities.NonOperationalReason.VM_NETWORK_IS_BRIDGELESS;
 import static org.ovirt.engine.core.common.businessentities.network.NetworkStatus.OPERATIONAL;
 
 import java.util.ArrayList;
@@ -78,9 +77,9 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
      * @param skipManagementNetwork
      *            if <code>true</code> skip validations for the management network (existence on the host or configured
      *            properly)
-     * @return
+     * @return The reason for non-operability of the host or <code>NonOperationalReason.NONE</code>
      */
-    public static boolean persistAndEnforceNetworkCompliance(VDS vds, boolean skipManagementNetwork) {
+    public static NonOperationalReason persistAndEnforceNetworkCompliance(VDS vds, boolean skipManagementNetwork) {
         persistTopology(vds);
 
         if (vds.getStatus() != VDSStatus.Maintenance) {
@@ -100,7 +99,7 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
                 customLogValues.put("Networks", networks);
 
                 setNonOperationl(vds, NonOperationalReason.NETWORK_UNREACHABLE, customLogValues);
-                return true;
+                return NonOperationalReason.NETWORK_UNREACHABLE;
             }
 
             // Check that VM networks are implemented above a bridge.
@@ -109,13 +108,13 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
                 customLogValues = new HashMap<String, String>();
                 customLogValues.put("Networks", networks);
 
-                setNonOperationl(vds, VM_NETWORK_IS_BRIDGELESS, customLogValues);
-                return true;
+                setNonOperationl(vds, NonOperationalReason.VM_NETWORK_IS_BRIDGELESS, customLogValues);
+                return NonOperationalReason.VM_NETWORK_IS_BRIDGELESS;
             }
 
             logUnsynchronizedNetworks(vds, Entities.entitiesByName(clusterNetworks));
         }
-        return false;
+        return NonOperationalReason.NONE;
     }
 
     private static void skipManagementNetworkCheck(List<VdsNetworkInterface> ifaces, List<Network> clusterNetworks) {

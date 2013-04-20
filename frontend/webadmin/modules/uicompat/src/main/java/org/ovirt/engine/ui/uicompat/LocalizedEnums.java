@@ -14,6 +14,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String NonOperationalReason___NETWORK_UNREACHABLE();
 
+	String NonOperationalReason___VM_NETWORK_IS_BRIDGELESS();
+
 	String NonOperationalReason___VERSION_INCOMPATIBLE_WITH_CLUSTER();
 
 	String NonOperationalReason___KVM_NOT_RUNNING();

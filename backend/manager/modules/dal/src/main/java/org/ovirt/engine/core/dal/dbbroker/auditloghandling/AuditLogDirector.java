@@ -301,7 +301,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.VDS_LOW_DISK_SPACE_ERROR, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VDS_ACTIVATE_ASYNC, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.VDS_ACTIVATE_FAILED_ASYNC, AuditLogSeverity.NORMAL);
-        severities.put(AuditLogType.VDS_SET_NON_OPERATIONAL_VM_NETWORK_IS_BRIDGELESS, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.VDS_SET_NON_OPERATIONAL_VM_NETWORK_IS_BRIDGELESS, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.VDS_TIME_DRIFT_ALERT, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.PROXY_HOST_SELECTION, AuditLogSeverity.NORMAL);
     }

@@ -19,6 +19,7 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
  * This command will try to migrate all the vds vms (if needed) and move the vds
  * to Non-Operational state
  */
+@SuppressWarnings("serial")
 @NonTransactiveCommandAttribute
 public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameters> extends MaintenanceVdsCommand<T> {
 
@@ -56,6 +57,8 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
                     case HA_ONLY:
                         MigrateAllVms(getExecutionContext(), true);
                         break;
+                    default:
+                        break;
                     }
                 }
             });
@@ -63,6 +66,11 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
 
         if (getParameters().getNonOperationalReason() == NonOperationalReason.NETWORK_UNREACHABLE) {
             log.errorFormat("Host '{0}' is set to Non-Operational, it is missing the following networks: '{1}'",
+                    getVds().getName(), getParameters().getCustomLogValues().get("Networks"));
+        }
+
+        if (getParameters().getNonOperationalReason() == NonOperationalReason.VM_NETWORK_IS_BRIDGELESS) {
+            log.errorFormat("Host '{0}' is set to Non-Operational, the following networks are implemented as non-VM instead of a VM networks: '{1}'",
                     getVds().getName(), getParameters().getCustomLogValues().get("Networks"));
         }
 

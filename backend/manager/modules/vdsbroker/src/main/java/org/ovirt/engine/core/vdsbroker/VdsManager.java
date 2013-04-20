@@ -548,21 +548,22 @@ public class VdsManager {
             }
 
             VDSStatus returnStatus = vds.getStatus();
-            boolean isSetNonOperational =
+            NonOperationalReason nonOperationalReason =
                     CollectVdsNetworkDataVDSCommand.persistAndEnforceNetworkCompliance(vds, skipMgmtNet);
-            if (isSetNonOperational) {
-                setIsSetNonOperationalExecuted(true);
-            }
 
-            if (isSetNonOperational && returnStatus != VDSStatus.NonOperational) {
-                if (log.isDebugEnabled()) {
-                    log.debugFormat(
-                            "refreshCapabilities:GetCapabilitiesVDSCommand vds {0} networks do not match its cluster networks, vds will be moved to NonOperational",
-                            vds.getStaticData().getId());
+            if (nonOperationalReason != NonOperationalReason.NONE) {
+                setIsSetNonOperationalExecuted(true);
+
+                if (returnStatus != VDSStatus.NonOperational) {
+                    if (log.isDebugEnabled()) {
+                        log.debugFormat(
+                                "refreshCapabilities:GetCapabilitiesVDSCommand vds {0} networks do not match its cluster networks, vds will be moved to NonOperational",
+                                vds.getStaticData().getId());
+                    }
+                    vds.setStatus(VDSStatus.NonOperational);
+                    vds.setNonOperationalReason(nonOperationalReason);
+                    returnStatus = vds.getStatus();
                 }
-                vds.setStatus(VDSStatus.NonOperational);
-                vds.setNonOperationalReason(NonOperationalReason.NETWORK_UNREACHABLE);
-                returnStatus = vds.getStatus();
             }
 
             // We process the software capabilities.
