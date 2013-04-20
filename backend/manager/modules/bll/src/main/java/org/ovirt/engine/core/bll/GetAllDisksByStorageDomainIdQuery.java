@@ -25,7 +25,7 @@ public class GetAllDisksByStorageDomainIdQuery<P extends StorageDomainQueryParam
         // Get active diskImages
         for (DiskImage diskImage : diskImages) {
             if (diskImage.getActive()) {
-                diskImage.getSnapshots().add(diskImage);
+                diskImage.getSnapshots().add(DiskImage.copyOf(diskImage));
                 diskImagesMap.put(diskImage.getId(), diskImage);
             }
         }
