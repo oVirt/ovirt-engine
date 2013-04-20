@@ -16,8 +16,8 @@ public class VmValidationUtils {
      *
      * @return Is the memory within the configured limits or not.
      */
-    public static boolean isMemorySizeLegal(VmOsType osType, int memSizeInMB, String clsuter_version) {
-        return memSizeInMB >= getMinMemorySizeInMb() && memSizeInMB <= getMaxMemorySizeInMb(osType, clsuter_version);
+    public static boolean isMemorySizeLegal(VmOsType osType, int memSizeInMB, String clusterVersion) {
+        return memSizeInMB >= getMinMemorySizeInMb() && memSizeInMB <= getMaxMemorySizeInMb(osType, clusterVersion);
     }
 
     /**
@@ -36,10 +36,10 @@ public class VmValidationUtils {
      *
      * @return The maximum VM memory setting for this OS (as per configuration).
      */
-    public static Integer getMaxMemorySizeInMb(VmOsType osType, String clsuter_version) {
+    public static Integer getMaxMemorySizeInMb(VmOsType osType, String clusterVersion) {
         if ((osType == VmOsType.Other || osType == VmOsType.OtherLinux)
                 || osType.name().toLowerCase().endsWith(X64BIT)) {
-            return Config.<Integer> GetValue(ConfigValues.VM64BitMaxMemorySizeInMB, clsuter_version);
+            return Config.<Integer> GetValue(ConfigValues.VM64BitMaxMemorySizeInMB, clusterVersion);
         }
         return Config.<Integer> GetValue(ConfigValues.VM32BitMaxMemorySizeInMB);
     }

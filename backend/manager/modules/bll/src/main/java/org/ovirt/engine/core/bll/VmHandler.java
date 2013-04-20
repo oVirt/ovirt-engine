@@ -337,13 +337,13 @@ public class VmHandler {
     public static boolean isMemorySizeLegal(VmOsType osType,
             int memSizeInMB,
             List<String> reasons,
-            String clsuter_version) {
-        boolean result = VmValidationUtils.isMemorySizeLegal(osType, memSizeInMB, clsuter_version);
+            String clusterVersion) {
+        boolean result = VmValidationUtils.isMemorySizeLegal(osType, memSizeInMB, clusterVersion);
         if (!result) {
             reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_MEMORY_SIZE.toString());
             reasons.add(String.format("$minMemorySize %s", VmValidationUtils.getMinMemorySizeInMb()));
             reasons.add(String.format("$maxMemorySize %s",
-                    VmValidationUtils.getMaxMemorySizeInMb(osType, clsuter_version)));
+                    VmValidationUtils.getMaxMemorySizeInMb(osType, clusterVersion)));
         }
         return result;
     }

@@ -160,7 +160,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
                 AuditLogType.VM_WAS_SET_DOWN_DUE_TO_HOST_REBOOT_OR_MANUAL_FENCE);
     }
 
-    protected boolean IsPowerManagementLegal(VdsStatic vdsStatic, String clsuterCompatibilityVersion) {
+    protected boolean IsPowerManagementLegal(VdsStatic vdsStatic, String clusterCompatibilityVersion) {
         boolean result = true;
 
         if (vdsStatic.isPmEnabled()) {
@@ -169,7 +169,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_PM_ENABLED_WITHOUT_AGENT);
                 result = false;
             } else if (!Regex.IsMatch(Config.<String> GetValue(ConfigValues.VdsFenceType,
-                    clsuterCompatibilityVersion), String.format("(,|^)%1$s(,|$)",
+                    clusterCompatibilityVersion), String.format("(,|^)%1$s(,|$)",
                     vdsStatic.getPmType()))) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_AGENT_NOT_SUPPORTED);
                 result = false;
