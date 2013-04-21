@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -7,6 +8,9 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
+import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
@@ -35,7 +39,9 @@ import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 
 @LockIdNameAttribute
 public class AttachUserToVmFromPoolAndRunCommand<T extends VmPoolUserParameters> extends
-VmPoolUserCommandBase<T> {
+VmPoolUserCommandBase<T> implements QuotaVdsDependent {
+    private Guid vmToAttach = null;
+
     protected AttachUserToVmFromPoolAndRunCommand(Guid commandId) {
         super(commandId);
     }
@@ -81,13 +87,15 @@ VmPoolUserCommandBase<T> {
         return returnValue;
     }
 
-    private static Guid getVmToAttach(NGuid poolId) {
-        Guid vmGuid = Guid.Empty;
-        vmGuid = getPrestartedVmToAttach(poolId);
-        if (vmGuid == null || Guid.Empty.equals(vmGuid)) {
-            vmGuid = getNonPrestartedVmToAttach(poolId);
+    private Guid getVmToAttach(NGuid poolId) {
+        if (vmToAttach == null) {
+            Guid vmGuid = getPrestartedVmToAttach(poolId);
+            if (vmGuid == null || Guid.Empty.equals(vmGuid)) {
+                vmGuid = getNonPrestartedVmToAttach(poolId);
+            }
+            vmToAttach = vmGuid;
         }
-        return vmGuid;
+        return vmToAttach;
     }
 
     private static Guid getPrestartedVmToAttach(NGuid vmPoolId) {
@@ -303,5 +311,23 @@ VmPoolUserCommandBase<T> {
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getAdUserId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.USER_VM_POOL, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+    }
+
+    @Override
+    public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
+        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        if (vmToAttach != null) {
+            VM vm = getVmDAO().get(vmToAttach);
+
+            setStoragePoolId(vm.getStoragePoolId());
+
+            list.add(new QuotaVdsGroupConsumptionParameter(vm.getQuotaId(),
+                    null,
+                    QuotaConsumptionParameter.QuotaAction.CONSUME,
+                    vm.getVdsGroupId(),
+                    vm.getCpuPerSocket() * vm.getNumOfSockets(),
+                    vm.getMemSizeMb()));
+        }
+        return list;
     }
 }
