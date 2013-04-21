@@ -2499,8 +2499,8 @@ actions:
     body:
       parameterType: NIC
       signatures:
-      - mandatoryArguments: {nic.network.id|name: 'xs:string', nic.name: 'xs:string'}
-        optionalArguments: {nic.linked: 'xs:boolean', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}}
+      - mandatoryArguments: {nic.name: 'xs:string'}
+        optionalArguments: {nic.network.id|name: 'xs:string', nic.linked: 'xs:boolean', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}

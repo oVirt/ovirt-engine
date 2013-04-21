@@ -67,7 +67,7 @@ public class BackendTemplateNicsResource
     @Override
     protected VmNetworkInterface setNetwork(NIC device, VmNetworkInterface ni) {
         if (device.isSetNetwork()) {
-            if (device.isSetId() || device.isSetName()) {
+            if (device.getNetwork().isSetId() || device.getNetwork().isSetName()) {
                 Guid clusterId = getEntity(VmTemplate.class,
                         VdcQueryType.GetVmTemplate,
                         new GetVmTemplateParameters(parentId), "id").getVdsGroupId();
