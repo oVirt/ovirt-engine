@@ -23,13 +23,15 @@ public class SubTabDataCenterClusterView extends AbstractSubTabTableView<storage
     }
 
     void initTable(ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         TextColumnWithTooltip<VDSGroup> nameColumn = new TextColumnWithTooltip<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
                 return object.getname();
             }
         };
-        getTable().addColumn(nameColumn, constants.nameCluster());
+        getTable().addColumn(nameColumn, constants.nameCluster(), "300px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VDSGroup> versionColumn = new TextColumnWithTooltip<VDSGroup>() {
             @Override
@@ -37,7 +39,7 @@ public class SubTabDataCenterClusterView extends AbstractSubTabTableView<storage
                 return object.getcompatibility_version().getValue();
             }
         };
-        getTable().addColumn(versionColumn, constants.comptVersCluster());
+        getTable().addColumn(versionColumn, constants.comptVersCluster(), "300px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VDSGroup> descColumn = new TextColumnWithTooltip<VDSGroup>() {
             @Override

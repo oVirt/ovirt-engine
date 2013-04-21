@@ -30,7 +30,7 @@ public class PermissionWithInheritedPermissionListModelTable<P extends Permissio
                 };
             }
         };
-        getTable().addColumn(permissionColumn, constants.inheritedPermission());
+        getTable().addColumn(permissionColumn, constants.inheritedPermission(), "300px"); //$NON-NLS-1$
     }
 
 }

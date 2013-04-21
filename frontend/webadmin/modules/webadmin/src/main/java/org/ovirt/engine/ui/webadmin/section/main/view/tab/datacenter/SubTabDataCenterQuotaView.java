@@ -33,6 +33,8 @@ public class SubTabDataCenterQuotaView extends AbstractSubTabTableView<storage_p
     }
 
     void initTable(ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         getTable().addColumn(new QuotaDcStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         getTable().addColumn(new TextColumnWithTooltip<Quota>() {
@@ -40,14 +42,14 @@ public class SubTabDataCenterQuotaView extends AbstractSubTabTableView<storage_p
             public String getValue(Quota object) {
                 return object.getQuotaName() == null ? "" : object.getQuotaName(); //$NON-NLS-1$
             }
-        }, constants.nameQuota());
+        }, constants.nameQuota(), "400px"); //$NON-NLS-1$
 
         getTable().addColumn(new TextColumnWithTooltip<Quota>() {
             @Override
             public String getValue(Quota object) {
                 return object.getDescription() == null ? "" : object.getDescription(); //$NON-NLS-1$
             }
-        }, constants.descriptionQuota());
+        }, constants.descriptionQuota(), "400px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.addQuota()) {
             @Override

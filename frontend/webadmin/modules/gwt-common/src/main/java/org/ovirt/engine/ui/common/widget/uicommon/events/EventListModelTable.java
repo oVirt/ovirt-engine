@@ -30,6 +30,8 @@ public class EventListModelTable<T extends EventListModel> extends AbstractModel
 
     @Override
     public void initTable(CommonApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         getTable().addColumn(new AuditLogSeverityColumn(), constants.empty(), "20px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<AuditLog> logTimeColumn = new FullDateTimeColumn<AuditLog>() {
@@ -46,7 +48,7 @@ public class EventListModelTable<T extends EventListModel> extends AbstractModel
                 return object.getmessage();
             }
         };
-        getTable().addColumn(messageColumn, constants.messageEvent());
+        getTable().addColumn(messageColumn, constants.messageEvent(), "600px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<AuditLog> correlationIdColumn = new TextColumnWithTooltip<AuditLog>() {
             @Override

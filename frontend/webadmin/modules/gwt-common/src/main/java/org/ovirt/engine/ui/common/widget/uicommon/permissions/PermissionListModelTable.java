@@ -23,6 +23,8 @@ public class PermissionListModelTable<P extends PermissionListModel> extends Abs
 
     @Override
     public void initTable(CommonApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         getTable().addColumn(new PermissionTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<permissions> userColumn = new TextColumnWithTooltip<permissions>() {
@@ -31,7 +33,7 @@ public class PermissionListModelTable<P extends PermissionListModel> extends Abs
                 return object.getOwnerName();
             }
         };
-        getTable().addColumn(userColumn, constants.userPermission());
+        getTable().addColumn(userColumn, constants.userPermission(), "300px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<permissions> roleColumn = new TextColumnWithTooltip<permissions>() {
             @Override
@@ -39,7 +41,7 @@ public class PermissionListModelTable<P extends PermissionListModel> extends Abs
                 return object.getRoleName();
             }
         };
-        getTable().addColumn(roleColumn, constants.rolePermission());
+        getTable().addColumn(roleColumn, constants.rolePermission(), "300px"); //$NON-NLS-1$
 
         getTable().addActionButton(new UiCommandButtonDefinition<permissions>(getEventBus(), constants.addPermission()) {
             @Override

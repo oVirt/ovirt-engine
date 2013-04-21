@@ -39,6 +39,8 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<storage
     }
 
     void initTable(ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         getTable().addColumn(new StorageDomainStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<StorageDomain> nameColumn = new TextColumnWithTooltip<StorageDomain>() {
@@ -47,7 +49,7 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<storage
                 return object.getStorageName();
             }
         };
-        getTable().addColumn(nameColumn, constants.domainNameStorage());
+        getTable().addColumn(nameColumn, constants.domainNameStorage(), "160px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<StorageDomain> typeColumn = new EnumColumn<StorageDomain, StorageDomainType>() {
             @Override
@@ -55,7 +57,7 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<storage
                 return object.getStorageDomainType();
             }
         };
-        getTable().addColumn(typeColumn, constants.domainTypeStorage());
+        getTable().addColumn(typeColumn, constants.domainTypeStorage(), "160px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<StorageDomain> statusColumn = new EnumColumn<StorageDomain, StorageDomainStatus>() {
             @Override
@@ -63,7 +65,7 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<storage
                 return object.getStatus();
             }
         };
-        getTable().addColumn(statusColumn, constants.statusStorage());
+        getTable().addColumn(statusColumn, constants.statusStorage(), "160px"); //$NON-NLS-1$
 
         DiskSizeColumn<StorageDomain> freeColumn = new DiskSizeColumn<StorageDomain>(DiskSizeUnit.GIGABYTE) {
             @Override
@@ -72,7 +74,7 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<storage
                 return (long) availableDiskSize;
             }
         };
-        getTable().addColumn(freeColumn, constants.freeSpaceStorage());
+        getTable().addColumn(freeColumn, constants.freeSpaceStorage(), "160px"); //$NON-NLS-1$
 
         DiskSizeColumn<StorageDomain> usedColumn = new DiskSizeColumn<StorageDomain>(DiskSizeUnit.GIGABYTE) {
             @Override
@@ -81,7 +83,7 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<storage
                 return (long) usedDiskSize;
             }
         };
-        getTable().addColumn(usedColumn, constants.usedSpaceStorage());
+        getTable().addColumn(usedColumn, constants.usedSpaceStorage(), "160px"); //$NON-NLS-1$
 
         DiskSizeColumn<StorageDomain> totalColumn = new DiskSizeColumn<StorageDomain>(DiskSizeUnit.GIGABYTE) {
             @Override
@@ -90,7 +92,7 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<storage
                 return (long) totalDiskSize;
             }
         };
-        getTable().addColumn(totalColumn, constants.totalSpaceStorage());
+        getTable().addColumn(totalColumn, constants.totalSpaceStorage(), "160px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<StorageDomain> descriptionColumn = new TextColumnWithTooltip<StorageDomain>() {
             @Override
@@ -98,7 +100,7 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<storage
                 return object.getDescription();
             }
         };
-        getTable().addColumn(descriptionColumn, constants.domainDescriptionStorage());
+        getTable().addColumn(descriptionColumn, constants.domainDescriptionStorage(), "160px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.attachDataStorage()) {
             @Override
