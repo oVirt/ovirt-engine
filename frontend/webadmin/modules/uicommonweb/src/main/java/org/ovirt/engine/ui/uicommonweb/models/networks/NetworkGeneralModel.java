@@ -59,7 +59,7 @@ public class NetworkGeneralModel extends EntityModel
         if (extendedNetwork.isVmNetwork()) {
             if (!role.equals("")) //$NON-NLS-1$
             {
-                role = role.concat(" ,"); //$NON-NLS-1$
+                role = role.concat(", "); //$NON-NLS-1$
             }
             role = role.concat(ConstantsManager.getInstance().getConstants().vmNetworkRole());
         }
