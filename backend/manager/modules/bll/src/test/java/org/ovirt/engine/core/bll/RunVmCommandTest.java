@@ -325,9 +325,8 @@ public class RunVmCommandTest {
                 anyListOf(String.class),
                 any(RunVmParams.class),
                 anyListOf(DiskImage.class));
-        doReturn(true).when(vmRunHandler).performImageChecksForRunningVm(any(VM.class),
+        doReturn(true).when(vmRunHandler).performImageChecksForRunningVm(
                 anyListOf(String.class),
-                any(RunVmParams.class),
                 anyListOf(DiskImage.class));
     }
 

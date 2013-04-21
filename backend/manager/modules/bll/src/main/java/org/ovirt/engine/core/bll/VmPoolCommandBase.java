@@ -178,16 +178,6 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
             return failVmFree(messages, messagesToAdd);
         }
 
-        if (!ImagesHandler.PerformImagesChecks(
-                            messages,
-                            vm.getStoragePoolId(),
-                            false,
-                            false,
-                            true,
-                            vmImages)) {
-            return failVmFree(messages);
-        }
-
         ValidationResult vmNotLockResult = new VmValidator(vm).vmNotLocked();
         if (!vmNotLockResult.isValid()) {
             return failVmFree(messages, vmNotLockResult.getMessage().name());

@@ -231,14 +231,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                     new MultipleStorageDomainsValidator(getVm().getStoragePoolId(), storageIds);
           if (!validate(new StoragePoolValidator(getStoragePool()).isUp())
                   || !validate(storageValidator.allDomainsExistAndActive())
-                  || !validate(storageValidator.allDomainsWithinThresholds())
-                  || !ImagesHandler.PerformImagesChecks(
-                                    getReturnValue().getCanDoActionMessages(),
-                                    getVm().getStoragePoolId(),
-                                    false,
-                                    false,
-                                    true,
-                                    diskImages)) {
+                    || !validate(storageValidator.allDomainsWithinThresholds())) {
               return false;
           }
         }

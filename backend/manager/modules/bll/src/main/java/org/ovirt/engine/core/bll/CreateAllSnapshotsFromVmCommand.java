@@ -320,7 +320,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                             getVm().getStoragePoolId(),
                             true,
                             true,
-                            true,
                             disksList)
                     && validate(vmValidator.vmNotLocked())
                     && validate(sdValidator.allDomainsExistAndActive())

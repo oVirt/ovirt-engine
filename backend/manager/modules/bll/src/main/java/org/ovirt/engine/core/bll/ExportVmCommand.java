@@ -166,14 +166,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                 && validate(snapshotValidator.vmNotInPreview(getVmId()))
                 && validate(new VmValidator(getVm()).vmDown())
                 && validate(new MultipleStorageDomainsValidator(getVm().getStoragePoolId(),
-                        ImagesHandler.getAllStorageIdsForImageIds(getDisksBasedOnImage())).allDomainsExistAndActive())
-                && ImagesHandler.PerformImagesChecks(
-                        getReturnValue().getCanDoActionMessages(),
-                        getVm().getStoragePoolId(),
-                        false,
-                        false,
-                        true,
-                        getDisksBasedOnImage()))) {
+                ImagesHandler.getAllStorageIdsForImageIds(getDisksBasedOnImage())).allDomainsExistAndActive()))) {
             return false;
         }
 

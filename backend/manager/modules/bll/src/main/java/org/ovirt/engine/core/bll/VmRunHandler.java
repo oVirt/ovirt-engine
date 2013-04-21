@@ -140,7 +140,7 @@ public class VmRunHandler {
                         }
 
                         if (retValue) {
-                            retValue = performImageChecksForRunningVm(vm, message, runParams, vmImages);
+                            retValue = performImageChecksForRunningVm(message, vmImages);
                         }
 
                         // Check if iso and floppy path exists
@@ -292,15 +292,9 @@ public class VmRunHandler {
     /**
      * Check isValid only if VM is not HA VM
      */
-    protected boolean performImageChecksForRunningVm
-            (VM vm, List<String> message, RunVmParams runParams, List<DiskImage> vmDisks) {
+    protected boolean performImageChecksForRunningVm(List<String> message, List<DiskImage> vmDisks) {
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(vmDisks);
-        return validate(diskImagesValidator.diskImagesNotLocked(), message) &&
-                ImagesHandler.PerformImagesChecks(message,
-                vm.getStoragePoolId(),
-                false, false,
-                !vm.isAutoStartup() || !runParams.getIsInternal(),
-                vmDisks);
+        return validate(diskImagesValidator.diskImagesNotLocked(), message);
     }
 
     /**

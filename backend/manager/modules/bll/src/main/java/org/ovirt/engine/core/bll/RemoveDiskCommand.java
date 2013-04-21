@@ -216,14 +216,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
             List<DiskImage> diskList = ImagesHandler.filterImageDisks(Arrays.asList(getDisk()), true, false);
             DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskList);
-            if (!validate(diskImagesValidator.diskImagesNotLocked()) ||
-                    !ImagesHandler.PerformImagesChecks(
-                    getReturnValue().getCanDoActionMessages(),
-                    storagePoolId,
-                    false,
-                    false,
-                    true,
-                    diskList)) {
+            if (!validate(diskImagesValidator.diskImagesNotLocked())) {
                 return false;
             }
         }

@@ -170,16 +170,6 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             if (!getParameters().getForce() && !validate(diskImagesValidator.diskImagesNotLocked())) {
                 return false;
             }
-
-            if (!ImagesHandler.PerformImagesChecks(
-                getReturnValue().getCanDoActionMessages(),
-                getVm().getStoragePoolId(),
-                false,
-                false,
-                true,
-                vmImages)) {
-                return false;
-            }
         }
 
         // Handle VM status with ImageLocked

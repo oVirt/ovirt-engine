@@ -344,14 +344,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         List<DiskImage> diskImagesToCheck =
                 ImagesHandler.filterImageDisks(getImagesList(), true, false);
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskImagesToCheck);
-        return validate(diskImagesValidator.diskImagesNotLocked()) &&
-                ImagesHandler.PerformImagesChecks
-                (getReturnValue().getCanDoActionMessages(),
-                        getVm().getStoragePoolId(),
-                        false,
-                        false,
-                        true,
-                        diskImagesToCheck);
+        return validate(diskImagesValidator.diskImagesNotLocked());
     }
 
     @Override

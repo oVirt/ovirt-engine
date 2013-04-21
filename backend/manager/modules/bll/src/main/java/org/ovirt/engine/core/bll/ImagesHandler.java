@@ -451,22 +451,18 @@ public final class ImagesHandler {
             Guid storagePoolId,
             boolean checkImagesIllegalInVdsm,
             boolean checkImagesExist,
-            boolean checkIsValid,
             List<DiskImage> diskImageList) {
 
         boolean returnValue = true;
-        if (checkIsValid) {
-            if (diskImageList.size() > 0) {
-                returnValue = returnValue &&
-                        checkDiskImages(messages,
-                                storagePoolId,
-                                checkImagesIllegalInVdsm,
-                                checkImagesExist,
-                                diskImageList);
-            } else if (checkImagesExist) {
-                returnValue = false;
-                ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_NO_DISKS.toString());
-            }
+        if (diskImageList.size() > 0) {
+            returnValue = checkDiskImages(messages,
+                            storagePoolId,
+                            checkImagesIllegalInVdsm,
+                            checkImagesExist,
+                            diskImageList);
+        } else if (checkImagesExist) {
+            returnValue = false;
+            ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_NO_DISKS.toString());
         }
         return returnValue;
     }

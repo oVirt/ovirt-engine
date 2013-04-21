@@ -81,7 +81,6 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
                                 getVm().getStoragePoolId(),
                                 true,
                                 true,
-                                true,
                         diskImagesToValidate);
 
         ensureDomainMap(diskImages, getParameters().getStorageDomainId());

@@ -269,7 +269,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         return validate(diskImagesValidator.diskImagesNotLocked()) &&
                 ImagesHandler.PerformImagesChecks(getReturnValue().getCanDoActionMessages(),
                 getVm().getStoragePoolId(),
-                true, true, true, imagesToValidate);
+                true, true, imagesToValidate);
     }
 
     protected boolean validateImageNotInTemplate() {

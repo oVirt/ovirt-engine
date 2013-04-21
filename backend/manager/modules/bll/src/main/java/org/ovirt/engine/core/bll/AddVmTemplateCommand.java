@@ -226,7 +226,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 getVm().getStoragePoolId(),
                 true,
                 true,
-                true,
                 diskImagesToCheck)) {
             return false;
         }
