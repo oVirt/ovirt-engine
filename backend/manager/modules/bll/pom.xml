@@ -72,6 +72,24 @@
     </dependency>
 
     <dependency>
+      <groupId>com.woorea</groupId>
+      <artifactId>keystone-client</artifactId>
+      <version>${openstack-client.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.woorea</groupId>
+      <artifactId>quantum-client</artifactId>
+      <version>${openstack-client.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.woorea</groupId>
+      <artifactId>resteasy-connector</artifactId>
+      <version>${openstack-client.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.jboss.spec.javax.ejb</groupId>
       <artifactId>jboss-ejb-api_3.1_spec</artifactId>
     </dependency>
