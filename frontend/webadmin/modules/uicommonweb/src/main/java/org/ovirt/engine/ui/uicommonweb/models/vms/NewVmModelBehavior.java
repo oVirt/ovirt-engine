@@ -179,6 +179,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
             } else {
                 getModel().getMinAllocatedMemory().setEntity(template.getMinAllocatedMem());
             }
+            updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
         }
     }
 
@@ -189,7 +190,10 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
         updateCustomPropertySheet();
         UpdateMinAllocatedMemory();
         UpdateNumOfSockets();
-        updateQuotaByCluster(null, "");
+        if (getModel().getTemplate().getSelectedItem() != null) {
+            VmTemplate template = (VmTemplate) getModel().getTemplate().getSelectedItem();
+            updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
+        }
         updateCpuPinningVisibility();
     }
 

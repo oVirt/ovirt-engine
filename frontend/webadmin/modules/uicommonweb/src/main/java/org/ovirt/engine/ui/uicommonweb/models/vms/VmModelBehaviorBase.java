@@ -670,7 +670,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                     if (quotaList != null && !quotaList.isEmpty()) {
                                         vmModel.getQuota().setItems(quotaList);
                                     }
-                                    if (defaultQuota != null) {
+                                    if (defaultQuota != null && !Guid.Empty.equals(defaultQuota)) {
                                         boolean hasQuotaInList = false;
                                         for (Quota quota : quotaList) {
                                             if (quota.getId().equals(defaultQuota)) {
