@@ -9,6 +9,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
@@ -278,7 +279,8 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
         List<DiskImage> disksToCheck =
                 ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(getSourceVmFromDb().getId()), true, false);
-        if (!ImagesHandler.checkImagesLocked(getReturnValue().getCanDoActionMessages(), disksToCheck)) {
+        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(disksToCheck);
+        if (!validate(diskImagesValidator.diskImagesNotLocked())) {
             return false;
         }
 

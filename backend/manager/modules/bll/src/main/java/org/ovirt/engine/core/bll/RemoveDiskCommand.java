@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -213,15 +214,16 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                 return false;
             }
 
-            List<Disk> diskList = Arrays.asList(getDisk());
-            if (!ImagesHandler.PerformImagesChecks(
+            List<DiskImage> diskList = ImagesHandler.filterImageDisks(Arrays.asList(getDisk()), true, false);
+            DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskList);
+            if (!validate(diskImagesValidator.diskImagesNotLocked()) ||
+                    !ImagesHandler.PerformImagesChecks(
                     getReturnValue().getCanDoActionMessages(),
                     storagePoolId,
-                    true,
                     false,
                     false,
                     true,
-                    ImagesHandler.filterImageDisks(diskList, true, false))) {
+                    diskList)) {
                 return false;
             }
         }

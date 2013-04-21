@@ -19,6 +19,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -207,7 +208,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
-        if (!ImagesHandler.checkImagesIllegal(getReturnValue().getCanDoActionMessages(), mImages)) {
+        List<DiskImage> diskImagesToCheck = ImagesHandler.filterImageDisks(mImages, true, false);
+        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskImagesToCheck);
+        if (!validate(diskImagesValidator.diskImagesNotIllegal()) ||
+                !validate(diskImagesValidator.diskImagesNotLocked())) {
             return false;
         }
 
@@ -223,8 +227,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 true,
                 true,
                 true,
-                true,
-                ImagesHandler.filterImageDisks(mImages, true, false))) {
+                diskImagesToCheck)) {
             return false;
         }
 

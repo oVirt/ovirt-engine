@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
+import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -219,7 +220,9 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
               return false;
           }
 
-          if (!ImagesHandler.checkImagesIllegal(getReturnValue().getCanDoActionMessages(), diskImages)) {
+          DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskImages);
+            if (!validate(diskImagesValidator.diskImagesNotIllegal()) ||
+                    !validate(diskImagesValidator.diskImagesNotLocked())) {
               return false;
           }
 
@@ -232,7 +235,6 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                   || !ImagesHandler.PerformImagesChecks(
                                     getReturnValue().getCanDoActionMessages(),
                                     getVm().getStoragePoolId(),
-                                    true,
                                     false,
                                     false,
                                     true,

@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
+import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -293,9 +294,11 @@ public class VmRunHandler {
      */
     protected boolean performImageChecksForRunningVm
             (VM vm, List<String> message, RunVmParams runParams, List<DiskImage> vmDisks) {
-        return ImagesHandler.PerformImagesChecks(message,
+        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(vmDisks);
+        return validate(diskImagesValidator.diskImagesNotLocked(), message) &&
+                ImagesHandler.PerformImagesChecks(message,
                 vm.getStoragePoolId(),
-                true, false, false,
+                false, false,
                 !vm.isAutoStartup() || !runParams.getIsInternal(),
                 vmDisks);
     }

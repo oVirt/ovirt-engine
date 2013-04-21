@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -96,7 +97,9 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         // load the disks of vm from database
         VmHandler.updateDisksFromDb(getVm());
 
-        if (!ImagesHandler.checkImagesIllegal(getReturnValue().getCanDoActionMessages(), getVm().getDiskList())) {
+        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(getDisksBasedOnImage());
+        if (!validate(diskImagesValidator.diskImagesNotIllegal()) ||
+                !validate(diskImagesValidator.diskImagesNotLocked())) {
             return false;
         }
 
@@ -167,7 +170,6 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                 && ImagesHandler.PerformImagesChecks(
                         getReturnValue().getCanDoActionMessages(),
                         getVm().getStoragePoolId(),
-                        true,
                         false,
                         false,
                         true,

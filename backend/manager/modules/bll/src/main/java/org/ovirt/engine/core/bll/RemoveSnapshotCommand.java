@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
+import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -263,10 +264,12 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     protected boolean validateImages() {
         List<DiskImage> imagesToValidate =
                 ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(getVmId()), true, false);
+        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(imagesToValidate);
 
-        return ImagesHandler.PerformImagesChecks(getReturnValue().getCanDoActionMessages(),
+        return validate(diskImagesValidator.diskImagesNotLocked()) &&
+                ImagesHandler.PerformImagesChecks(getReturnValue().getCanDoActionMessages(),
                 getVm().getStoragePoolId(),
-                true, true, true, true, imagesToValidate);
+                true, true, true, imagesToValidate);
     }
 
     protected boolean validateImageNotInTemplate() {

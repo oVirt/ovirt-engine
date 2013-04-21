@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
+import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -306,16 +307,17 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             MultipleStorageDomainsValidator sdValidator =
                     new MultipleStorageDomainsValidator(getVm().getStoragePoolId(),
                             ImagesHandler.getAllStorageIdsForImageIds(disksList));
+            DiskImagesValidator diskImagesValidator = new DiskImagesValidator(disksList);
             result = validate(spValidator.isUp())
                     && validate(snapshotValidator.vmNotDuringSnapshot(getVmId()))
                     && validate(snapshotValidator.vmNotInPreview(getVmId()))
                     && validate(vmValidator.vmNotDuringMigration())
                     && validate(vmValidator.vmNotRunningStateless())
                     && validate(vmValidator.vmNotIlegal())
+                    && validate(diskImagesValidator.diskImagesNotLocked())
                     && ImagesHandler.PerformImagesChecks(
                             getReturnValue().getCanDoActionMessages(),
                             getVm().getStoragePoolId(),
-                            true,
                             true,
                             true,
                             true,

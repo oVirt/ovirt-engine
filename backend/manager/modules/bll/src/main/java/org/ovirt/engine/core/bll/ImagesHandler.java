@@ -449,18 +449,13 @@ public final class ImagesHandler {
     public static boolean PerformImagesChecks(
             List<String> messages,
             Guid storagePoolId,
-            boolean checkImagesLocked,
             boolean checkImagesIllegalInVdsm,
             boolean checkImagesExist,
             boolean checkIsValid,
             List<DiskImage> diskImageList) {
 
         boolean returnValue = true;
-        if (checkImagesLocked) {
-            returnValue = checkImagesLocked(messages, diskImageList);
-        }
-
-        if (returnValue && checkIsValid) {
+        if (checkIsValid) {
             if (diskImageList.size() > 0) {
                 returnValue = returnValue &&
                         checkDiskImages(messages,
@@ -473,33 +468,6 @@ public final class ImagesHandler {
                 ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_NO_DISKS.toString());
             }
         }
-        return returnValue;
-    }
-
-    public static boolean checkImagesLocked(List<String> messages, List<DiskImage> images) {
-        return checkImagesNotInStatus(messages, images, ImageStatus.LOCKED, VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED);
-    }
-
-    public static boolean checkImagesIllegal(List<String> messages, List<DiskImage> images) {
-        return checkImagesNotInStatus(messages, images, ImageStatus.ILLEGAL, VdcBllMessages.ACTION_TYPE_FAILED_DISKS_ILLEGAL);
-    }
-
-    private static boolean checkImagesNotInStatus(List<String> messages, List<DiskImage> images, ImageStatus status, VdcBllMessages failMessage) {
-        boolean returnValue = true;
-        List<String> disksInStatus = new ArrayList<String>();
-        for (DiskImage diskImage : images) {
-            if (diskImage.getImageStatus() == status) {
-                disksInStatus.add(diskImage.getDiskAlias());
-                returnValue = false;
-            }
-        }
-
-        if (disksInStatus.size() > 0) {
-            ListUtils.nullSafeAdd(messages, failMessage.toString());
-            ListUtils.nullSafeAdd(messages,
-                    String.format("$%1$s %2$s", "diskAliases", StringUtils.join(disksInStatus, ", ")));
-        }
-
         return returnValue;
     }
 

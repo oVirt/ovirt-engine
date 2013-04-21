@@ -1,11 +1,14 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -166,10 +169,18 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
             }
         }
 
+        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(vmImages);
+        ValidationResult disksNotLockedResult = diskImagesValidator.diskImagesNotLocked();
+        if (!disksNotLockedResult.isValid()) {
+            List<String> messagesToAdd = new LinkedList<String>();
+            messagesToAdd.add(disksNotLockedResult.getMessage().name());
+            messagesToAdd.addAll(disksNotLockedResult.getVariableReplacements());
+            return failVmFree(messages, messagesToAdd);
+        }
+
         if (!ImagesHandler.PerformImagesChecks(
                             messages,
                             vm.getStoragePoolId(),
-                            true,
                             false,
                             false,
                             true,
@@ -189,7 +200,11 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         for (String messageToAdd : messagesToAdd) {
             messages.add(messageToAdd);
         }
+        return failVmFree(messages, Arrays.asList(messagesToAdd));
+    }
 
+    private static boolean failVmFree(List<String> messages, List<String> messagesToAdd) {
+        messages.addAll(messagesToAdd);
         messages.add(VdcBllMessages.VAR__TYPE__DESKTOP_POOL.toString());
         messages.add(VdcBllMessages.VAR__ACTION__ATTACH_DESKTOP_TO.toString());
         return false;

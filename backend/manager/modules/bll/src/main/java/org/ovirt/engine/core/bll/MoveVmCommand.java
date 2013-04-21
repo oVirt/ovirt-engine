@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
+import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -70,16 +71,18 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         // CheckTemplateInStorageDomain later
         VmHandler.updateDisksFromDb(getVm());
         List<DiskImage> diskImages = ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), false, false);
+        List<DiskImage> diskImagesToValidate = ImagesHandler.filterImageDisks(diskImages, true, false);
+        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskImagesToValidate);
         retValue = retValue &&
                 validate(new StoragePoolValidator(getStoragePool()).isUp()) &&
+                validate(diskImagesValidator.diskImagesNotLocked()) &&
                 ImagesHandler.PerformImagesChecks(
                                 getReturnValue().getCanDoActionMessages(),
                                 getVm().getStoragePoolId(),
                                 true,
                                 true,
                                 true,
-                                true,
-                                ImagesHandler.filterImageDisks(diskImages, true, false));
+                        diskImagesToValidate);
 
         ensureDomainMap(diskImages, getParameters().getStorageDomainId());
         for(DiskImage disk : diskImages) {

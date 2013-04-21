@@ -19,6 +19,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
@@ -219,7 +220,8 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
     protected boolean checkImagesStatus() {
         List<DiskImage> disksToCheck = ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(getVmId()), true, false);
-        return ImagesHandler.checkImagesLocked(getReturnValue().getCanDoActionMessages(), disksToCheck);
+        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(disksToCheck);
+        return validate(diskImagesValidator.diskImagesNotLocked());
     }
 
     private boolean isDiskNotShareable(Guid imageId) {

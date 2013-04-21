@@ -16,6 +16,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -165,10 +166,14 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                 return false;
             }
 
+            DiskImagesValidator diskImagesValidator = new DiskImagesValidator(vmImages);
+            if (!getParameters().getForce() && !validate(diskImagesValidator.diskImagesNotLocked())) {
+                return false;
+            }
+
             if (!ImagesHandler.PerformImagesChecks(
                 getReturnValue().getCanDoActionMessages(),
                 getVm().getStoragePoolId(),
-                !getParameters().getForce(),
                 false,
                 false,
                 true,

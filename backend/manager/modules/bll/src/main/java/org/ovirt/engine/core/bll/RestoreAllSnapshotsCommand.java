@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -340,14 +341,17 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     }
 
     protected boolean performImagesChecks() {
-        return ImagesHandler.PerformImagesChecks
+        List<DiskImage> diskImagesToCheck =
+                ImagesHandler.filterImageDisks(getImagesList(), true, false);
+        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskImagesToCheck);
+        return validate(diskImagesValidator.diskImagesNotLocked()) &&
+                ImagesHandler.PerformImagesChecks
                 (getReturnValue().getCanDoActionMessages(),
                         getVm().getStoragePoolId(),
-                        true,
                         false,
                         false,
                         true,
-                        ImagesHandler.filterImageDisks(getImagesList(), true, false));
+                        diskImagesToCheck);
     }
 
     @Override
