@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
@@ -120,6 +121,10 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         }
 
         return vm;
+    }
+
+    protected DiskDao getDiskDao() {
+        return getDbFacade().getDiskDao();
     }
 
     protected DiskImageDAO getDiskImageDao() {
@@ -213,7 +218,8 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     }
 
     protected boolean checkImagesStatus() {
-        return ImagesHandler.checkImagesLocked(getVmId(), getReturnValue().getCanDoActionMessages());
+        List<DiskImage> disksToCheck = ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(getVmId()), true, false);
+        return ImagesHandler.checkImagesLocked(getReturnValue().getCanDoActionMessages(), disksToCheck);
     }
 
     private boolean isDiskNotShareable(Guid imageId) {

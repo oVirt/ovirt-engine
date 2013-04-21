@@ -276,7 +276,9 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
             return false;
         }
 
-        if (!ImagesHandler.checkImagesLocked(getSourceVmFromDb().getId(), getReturnValue().getCanDoActionMessages())) {
+        List<DiskImage> disksToCheck =
+                ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(getSourceVmFromDb().getId()), true, false);
+        if (!ImagesHandler.checkImagesLocked(getReturnValue().getCanDoActionMessages(), disksToCheck)) {
             return false;
         }
 

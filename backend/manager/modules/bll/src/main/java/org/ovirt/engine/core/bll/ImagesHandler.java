@@ -476,11 +476,7 @@ public final class ImagesHandler {
         return returnValue;
     }
 
-    public static boolean checkImagesLocked(Guid vmId, List<String> messages) {
-        return checkImagesLocked(messages, getImages(vmId, null));
-    }
-
-    private static boolean checkImagesLocked(List<String> messages, List<DiskImage> images) {
+    public static boolean checkImagesLocked(List<String> messages, List<DiskImage> images) {
         return checkImagesNotInStatus(messages, images, ImageStatus.LOCKED, VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED);
     }
 
@@ -505,14 +501,6 @@ public final class ImagesHandler {
         }
 
         return returnValue;
-    }
-
-    private static List<DiskImage> getImages(Guid vmId, Collection<? extends Disk> diskImageList) {
-        if (diskImageList == null) {
-            return filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(vmId), true, false);
-        }
-
-        return filterImageDisks(diskImageList, true, false);
     }
 
     private static boolean checkDiskImages(List<String> messages,
