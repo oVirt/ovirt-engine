@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -25,6 +26,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.EditNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel;
@@ -101,6 +103,15 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
     }
 
     private void initDcList(final NetworkModel networkModel) {
+        SystemTreeItemModel treeSelectedDc = SystemTreeItemModel.FindAncestor(SystemTreeItemType.DataCenter, getSystemTreeSelectedItem());
+        if (treeSelectedDc != null) {
+            storage_pool dc = (storage_pool) treeSelectedDc.getEntity();
+            networkModel.getDataCenters().setItems(Arrays.asList(dc));
+            networkModel.getDataCenters().setSelectedItem(dc);
+            networkModel.getDataCenters().setIsChangable(false);
+            return;
+        }
+
         // Get all data centers
         AsyncDataProvider.GetDataCenterList(new AsyncQuery(NetworkListModel.this, new INewAsyncCallback() {
 
