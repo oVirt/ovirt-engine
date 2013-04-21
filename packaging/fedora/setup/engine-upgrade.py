@@ -821,6 +821,7 @@ def clearZombieTasks():
         "-p", SERVER_PORT,
         "-d", basedefs.DB_NAME,
         "-z",
+        "-R",
         "-A",
         "-J",
         "-q",
