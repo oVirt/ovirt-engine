@@ -216,11 +216,11 @@ run_file() {
    local execFile=${1}
    isShellScript=$(file $execFile | grep "shell" | wc -l)
    if [ $isShellScript -gt 0 ]; then
-       echo "Running $2 upgrade shell script $execFile ..."
+       echo "Running upgrade shell script $execFile ..."
        export  DATABASE="${DATABASE}" SERVERNAME="${SERVERNAME}" PORT="${PORT}" USERNAME="${USERNAME}"
       ./$execFile
    else
-      echo "Running $2 upgrade sql script $execFile ..."
+      echo "Running upgrade sql script $execFile ..."
       execute_file $execFile ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
    fi
 }
