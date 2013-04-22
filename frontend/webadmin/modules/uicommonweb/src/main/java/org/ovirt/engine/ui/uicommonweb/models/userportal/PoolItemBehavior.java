@@ -18,7 +18,6 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -81,25 +80,8 @@ public class PoolItemBehavior extends ItemBehavior
                         PoolItemBehavior behavior = (PoolItemBehavior) result.getState();
                         VdcReturnValueBase returnValueBase = result.getReturnValue();
                         Guid Guid = (Guid) returnValueBase.getActionReturnValue();
-                        behavior.PostTakeVm(Guid);
-
                     }
                 }, this);
-    }
-
-    public void PostTakeVm(Guid vmId)
-    {
-        AsyncDataProvider.GetVmById(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-
-                        PoolItemBehavior behavior = (PoolItemBehavior) target;
-                        UserPortalItemModel model = behavior.getItem();
-                        model.setEntity(returnValue);
-
-                    }
-                }), vmId);
     }
 
     private void UpdateProperties()
