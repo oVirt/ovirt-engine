@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.constants.gluster;
 
 public class GlusterConstants {
+    public static final int CODE_SUCCESS = 0;
     public static final String ON = "on";
     public static final String OFF = "off";
 

@@ -234,4 +234,6 @@ public interface VdsServerConnector {
     public Map<String, Object> glusterHooksList();
 
     public Map<String, Object> glusterHostUUIDGet();
+
+    public Map<String, Object> glusterServicesGet(String[] serviceNames);
 }

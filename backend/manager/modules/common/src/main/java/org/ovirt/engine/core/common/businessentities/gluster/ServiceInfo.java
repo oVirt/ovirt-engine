@@ -2,6 +2,8 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.compat.Guid;
+
 /**
  * The Volume status service info.
  *
@@ -13,10 +15,13 @@ public class ServiceInfo implements Serializable {
     private static final long serialVersionUID = 108478798053613345L;
 
     private ServiceType serviceType;
+    private String serviceName;
+    private Guid serverId;
     private String hostName;
     private int port;
     private int pid;
-    private GlusterStatus status;
+    private GlusterServiceStatus status;
+    private String message;
 
     public ServiceType getServiceType() {
         return serviceType;
@@ -50,11 +55,35 @@ public class ServiceInfo implements Serializable {
         this.pid = pid;
     }
 
-    public GlusterStatus getStatus() {
+    public GlusterServiceStatus getStatus() {
         return status;
     }
 
-    public void setStatus(GlusterStatus status) {
+    public void setStatus(GlusterServiceStatus status) {
         this.status = status;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Guid getServerId() {
+        return serverId;
+    }
+
+    public void setServerId(Guid hostId) {
+        this.serverId = hostId;
     }
 }

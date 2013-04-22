@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.BrickDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickProperties;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterClientInfo;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -119,7 +120,7 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
         if (volumeServiceInfo.containsKey(STATUS)) {
             String brickStatus = (String) volumeServiceInfo.get(STATUS);
             if (brickStatus.toUpperCase().equals(ONLINE)) {
-                serviceInfo.setStatus(GlusterStatus.UP);
+                serviceInfo.setStatus(GlusterServiceStatus.RUNNING);
                 // parse the port and pid only if the brick is online.
                 if (volumeServiceInfo.containsKey(PORT)) {
                     serviceInfo.setPort(Integer.parseInt((String) volumeServiceInfo.get(PORT)));
@@ -129,7 +130,7 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
                     serviceInfo.setPid(Integer.parseInt((String) volumeServiceInfo.get(PID)));
                 }
             } else {
-                serviceInfo.setStatus(GlusterStatus.DOWN);
+                serviceInfo.setStatus(GlusterServiceStatus.STOPPED);
             }
         }
         return serviceInfo;

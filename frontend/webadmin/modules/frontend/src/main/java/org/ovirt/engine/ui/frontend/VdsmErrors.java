@@ -744,4 +744,6 @@ public interface VdsmErrors extends ConstantsWithLookup {
     @DefaultStringValue("Gluster host UUID not found")
     String GlusterHostUUIDNotFound();
 
+    @DefaultStringValue("Failed to fetch statuses of services.")
+    String GlusterServicesListFailed();
 }
