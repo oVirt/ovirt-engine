@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.SetStoragePoolDescriptionVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpgradeStoragePoolVDSCommandParameters;
@@ -27,6 +28,7 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -125,10 +127,15 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         });
 
         if (_oldStoragePool.getstatus() == StoragePoolStatus.Up) {
-            // No need to worry about "reupgrading" as VDSM will silently ignore
-            // the request.
-            runVdsCommand(VDSCommandType.UpgradeStoragePool,
-                new UpgradeStoragePoolVDSCommandParameters(spId, targetFormat));
+            try {
+                // No need to worry about "reupgrading" as VDSM will silently ignore
+                // the request.
+                runVdsCommand(VDSCommandType.UpgradeStoragePool,
+                    new UpgradeStoragePoolVDSCommandParameters(spId, targetFormat));
+            } catch (VdcBLLException e) {
+                log.warnFormat("Upgrade procees of Storage Pool {0} has encountered a problem due to following reason: {1}", spId, e.getMessage());
+                AuditLogDirector.log(this,AuditLogType.UPGRADE_STORAGE_POOL_ENCOUNTERED_PROBLEMS);
+            }
         }
     }
 

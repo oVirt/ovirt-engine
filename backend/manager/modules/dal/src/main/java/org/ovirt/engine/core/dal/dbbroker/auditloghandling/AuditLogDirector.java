@@ -396,6 +396,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_ACTIVATE_STORAGE_DOMAIN_FAILED_ASYNC, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.STORAGE_DOMAIN_TASKS_ERROR, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.UPDATE_OVF_FOR_STORAGE_POOL_FAILED, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.UPGRADE_STORAGE_POOL_ENCOUNTERED_PROBLEMS, AuditLogSeverity.WARNING);
     }
 
     private static void initQuotaSeverities() {
