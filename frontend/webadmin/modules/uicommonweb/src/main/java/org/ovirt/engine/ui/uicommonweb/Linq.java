@@ -1270,7 +1270,7 @@ public final class Linq
         }
     }
 
-    public final static class InterfaceComparator implements Comparator<VdsNetworkInterface> {
+    public final static class InterfaceComparator implements Comparator<VdsNetworkInterface>, Serializable {
 
         LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
@@ -1281,7 +1281,7 @@ public final class Linq
 
     }
 
-    public final static class NetworkComparator implements Comparator<Network> {
+    public final static class NetworkComparator implements Comparator<Network>, Serializable {
 
         private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
@@ -1298,7 +1298,7 @@ public final class Linq
         }
     }
 
-    public final static class ClusterNetworkModelComparator implements Comparator<ClusterNetworkModel> {
+    public final static class ClusterNetworkModelComparator implements Comparator<ClusterNetworkModel>, Serializable {
 
         private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
