@@ -15,7 +15,7 @@ public class VmLogoffVDSCommand<P extends VmLogoffVDSCommandParameters> extends 
 
     @Override
     protected void ExecuteVdsBrokerCommand() {
-        status = getBroker().desktopLogoff(mVmId.toString(), (new Boolean(mForce)).toString());
+        status = getBroker().desktopLogoff(mVmId.toString(), String.valueOf(mForce));
         ProceedProxyReturnValue();
     }
 }

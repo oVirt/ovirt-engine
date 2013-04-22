@@ -161,7 +161,7 @@ public abstract class OvfWriter implements IOvfBuilder {
                 _writer.WriteAttributeString(OVF_URI, "disk-description", image.getDiskDescription());
             }
             _writer.WriteAttributeString(OVF_URI, "wipe-after-delete",
-                    (new Boolean(image.isWipeAfterDelete())).toString());
+                    String.valueOf(image.isWipeAfterDelete()));
             _writer.WriteEndElement();
         }
         _writer.WriteEndElement();

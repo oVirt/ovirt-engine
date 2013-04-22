@@ -26,7 +26,7 @@ public class SpmStartVDSCommand<P extends SpmStartVDSCommandParameters> extends 
         _result = getBroker().spmStart(getParameters().getStoragePoolId().toString(),
                     getParameters().getPrevId(), getParameters().getPrevLVER(),
                     getParameters().getRecoveryMode().getValue(),
-                    (new Boolean(getParameters().getSCSIFencing())).toString().toLowerCase(),
+                    String.valueOf(getParameters().getSCSIFencing()).toLowerCase(),
                     Config.<Integer> GetValue(ConfigValues.MaxNumberOfHostsInStoragePool), getParameters().getStoragePoolFormatType().getValue());
         ProceedProxyReturnValue();
         Guid taskId = new Guid(_result.mUuid);

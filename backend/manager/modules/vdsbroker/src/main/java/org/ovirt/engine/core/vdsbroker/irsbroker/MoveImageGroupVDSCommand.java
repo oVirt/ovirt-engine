@@ -18,8 +18,8 @@ public class MoveImageGroupVDSCommand<P extends MoveImageGroupVDSCommandParamete
                                              getParameters().getImageGroupId().toString(),
                                              getParameters().getVmId().toString(),
                                              getParameters().getOp().getValue(),
-                                             (new Boolean(getParameters().getPostZero())).toString().toLowerCase(),
-                                             (new Boolean(getParameters().getForce())).toString().toLowerCase());
+                                             String.valueOf(getParameters().getPostZero()).toLowerCase(),
+                                             String.valueOf(getParameters().getForce()).toLowerCase());
         ProceedProxyReturnValue();
 
         Guid taskID = new Guid(uuidReturn.mUuid);

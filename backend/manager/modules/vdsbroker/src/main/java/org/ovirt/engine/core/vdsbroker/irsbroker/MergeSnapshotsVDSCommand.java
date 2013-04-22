@@ -19,7 +19,7 @@ public class MergeSnapshotsVDSCommand<P extends MergeSnapshotsVDSCommandParamete
                                                   getParameters().getImageGroupId().toString(),
                                                   getParameters().getImageId().toString(),
                                                   getParameters().getImageId2().toString(),
-                                                  (new Boolean(getParameters().getPostZero())).toString().toLowerCase());
+                                                  String.valueOf(getParameters().getPostZero()).toLowerCase());
 
         ProceedProxyReturnValue();
 
