@@ -7,7 +7,6 @@ public enum ImageStatus implements Identifiable {
     Unassigned(0),
     OK(1),
     LOCKED(2),
-    INVALID(3),
     ILLEGAL(4);
 
     private int intValue;

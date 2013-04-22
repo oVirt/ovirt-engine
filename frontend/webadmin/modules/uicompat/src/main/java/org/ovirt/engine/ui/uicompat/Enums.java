@@ -279,8 +279,6 @@ public interface Enums extends LocalizedEnums {
 
     String ImageStatus___LOCKED();
 
-    String ImageStatus___INVALID();
-
     String ImageStatus___ILLEGAL();
 
     String DiskInterface___IDE();
