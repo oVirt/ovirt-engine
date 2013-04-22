@@ -213,56 +213,56 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     @Override
     protected boolean canDoAction() {
-        return canMigrateVm(getVmId(), getReturnValue().getCanDoActionMessages());
+        return canMigrateVm(getVm());
     }
 
-    protected boolean canMigrateVm(@SuppressWarnings("unused") Guid vmGuid, List<String> reasons) {
-        boolean retValue = true;
-        VM vm = getVm();
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__MIGRATE);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
+    }
+
+    protected boolean canMigrateVm(VM vm) {
         if (vm == null) {
-            retValue = false;
-            reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND.name());
-        } else {
-            // If VM is pinned to host, no migration can occur
-            if (vm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST) {
-                retValue = false;
-                reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_PINNED_TO_HOST.name());
-            } else if (vm.getMigrationSupport() == MigrationSupport.IMPLICITLY_NON_MIGRATABLE
-                    && !forcedMigrationForNonMigratableVM) {
-                retValue = false;
-                reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NON_MIGRTABLE_AND_IS_NOT_FORCED_BY_USER_TO_MIGRATE
-                        .toString());
-            } else if (vm.getStatus() == VMStatus.MigratingFrom) {
-                retValue = false;
-                reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS.name());
-            } else if (vm.getStatus() == VMStatus.NotResponding) {
-                retValue = false;
-                reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL.name());
-            } else if (vm.getStatus() == VMStatus.Paused) {
-                retValue = false;
-                reasons.add(VdcBllMessages.MIGRATE_PAUSED_VM_IS_UNSUPPORTED.name());
-            } else if (!vm.isQualifyToMigrate()) {
-                retValue = false;
-                reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING.name());
-            } else if (getDestinationVds() != null && getDestinationVds().getStatus() != VDSStatus.Up) {
-                retValue = false;
-                reasons.add(VdcBllMessages.VAR__HOST_STATUS__UP.name());
-                reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL.name());
-            }
-
-            retValue = retValue
-                    // This check was added to prevent migration of VM while its disks are being
-                    // migrated or snapshot is taken for them. TODO: replace it with a better solution
-                    && validate(new DiskImagesValidator(ImagesHandler.getPluggedImagesForVm(vm.getId())).diskImagesNotLocked())
-                    && validate(new SnapshotsValidator().vmNotDuringSnapshot(vm.getId()))
-                    && getVdsSelector().canFindVdsToRunOn(reasons, true);
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+        }
+        // If VM is pinned to host, no migration can occur
+        if (vm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_PINNED_TO_HOST);
         }
 
-        if (!retValue) {
-            reasons.add(VdcBllMessages.VAR__ACTION__MIGRATE.toString());
-            reasons.add(VdcBllMessages.VAR__TYPE__VM.toString());
+        if (vm.getMigrationSupport() == MigrationSupport.IMPLICITLY_NON_MIGRATABLE
+                && !forcedMigrationForNonMigratableVM) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NON_MIGRTABLE_AND_IS_NOT_FORCED_BY_USER_TO_MIGRATE);
         }
-        return retValue;
+
+        if (vm.getStatus() == VMStatus.MigratingFrom) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS);
+        }
+
+        if (vm.getStatus() == VMStatus.NotResponding) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
+        }
+
+        if (vm.getStatus() == VMStatus.Paused) {
+            return failCanDoAction(VdcBllMessages.MIGRATE_PAUSED_VM_IS_UNSUPPORTED);
+        }
+
+        if (!vm.isQualifyToMigrate()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING);
+        }
+
+        if (getDestinationVds() != null && getDestinationVds().getStatus() != VDSStatus.Up) {
+            addCanDoActionMessage(VdcBllMessages.VAR__HOST_STATUS__UP);
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
+        }
+
+        return
+                // This check was added to prevent migration of VM while its disks are being migrated
+                // TODO: replace it with a better solution
+                validate(new DiskImagesValidator(ImagesHandler.getPluggedImagesForVm(vm.getId())).diskImagesNotLocked())
+                && validate(new SnapshotsValidator().vmNotDuringSnapshot(vm.getId()))
+                && getVdsSelector().canFindVdsToRunOn(getReturnValue().getCanDoActionMessages(), true);
     }
 
     @Override

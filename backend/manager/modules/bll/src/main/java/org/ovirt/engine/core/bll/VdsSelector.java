@@ -136,7 +136,7 @@ public class VdsSelector {
             log.infoFormat("Checking for a specific VDS only - id:{0}, name:{1}, host_name(ip):{2}",
                     getDestinationVdsId(), target_vds.getName(), target_vds.getHostName());
             VmHandler.UpdateVmGuestAgentVersion(getVm());
-            result = getVdsToRunOn(new ArrayList<VDS>(Arrays.asList(new VDS[] { target_vds })), isMigrate);
+            result = getVdsToRunOn(Arrays.asList(target_vds), isMigrate);
         }
         return result;
     }
@@ -153,8 +153,7 @@ public class VdsSelector {
             VDS target_vds = DbFacade.getInstance().getVdsDao().get(getDestinationVdsId());
             log.infoFormat("Checking for a specific VDS only - id:{0}, name:{1}, host_name(ip):{2}",
                     getDestinationVdsId(), target_vds.getName(), target_vds.getHostName());
-            returnValue = canFindVdsToRun(messages, isMigrate,
-                    new ArrayList<VDS>(Arrays.asList(target_vds)));
+            returnValue = canFindVdsToRun(messages, isMigrate, Arrays.asList(target_vds));
         }
         return returnValue;
     }
