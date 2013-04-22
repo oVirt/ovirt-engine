@@ -63,7 +63,7 @@ public final class Linq
             long xid = x.getaudit_log_id();
             long yid = y.getaudit_log_id();
 
-            return (new Long(xid)).compareTo(yid);
+            return (Long.valueOf(xid)).compareTo(yid);
         }
     }
 

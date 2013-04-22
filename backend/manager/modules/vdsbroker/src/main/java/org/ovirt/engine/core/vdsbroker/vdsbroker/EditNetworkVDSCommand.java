@@ -57,7 +57,7 @@ public class EditNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ex
         if (getParameters().getCheckConnectivity()) {
             options.put(VdsProperties.CONNECTIVITY_CHECK, "true");
             options.put(VdsProperties.CONNECTIVITY_TIMEOUT,
-                    (new Integer(getParameters().getConnectionTimeout())).toString());
+                    String.valueOf(getParameters().getConnectionTimeout()));
         }
 
         status = getBroker().editNetwork(oldNetwork, networkName, vlanId, bond, nics, options);

@@ -138,7 +138,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
         assertEquals(true, quotaVdsGroup.getVirtualCpuUsage() > 0);
 
         // Check if the global variable returns when null is initialization.
-        assertEquals(new Integer(100), quotaVdsGroup.getVirtualCpu());
+        assertEquals(Integer.valueOf(100), quotaVdsGroup.getVirtualCpu());
     }
 
     /**
@@ -157,7 +157,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
         assertEquals(true, quotaVdsGroup.getMemSizeMBUsage() > 0);
 
         // Check if the global variable returns when null is initialization.
-        assertEquals(new Integer(100), quotaVdsGroup.getVirtualCpu());
+        assertEquals(Integer.valueOf(100), quotaVdsGroup.getVirtualCpu());
     }
 
     /**
@@ -194,7 +194,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
         assertEquals(true, quotaVdsGroupList.size() == 1);
 
         // Check if the global variable returns when null is initialization.
-        assertEquals(quotaVdsGroup.getVirtualCpu(), new Integer(10));
+        assertEquals(quotaVdsGroup.getVirtualCpu(), Integer.valueOf(10));
     }
 
     /**

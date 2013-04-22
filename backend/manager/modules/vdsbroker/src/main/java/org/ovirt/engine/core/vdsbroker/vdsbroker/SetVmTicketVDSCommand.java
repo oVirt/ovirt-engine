@@ -28,11 +28,11 @@ public class SetVmTicketVDSCommand<P extends SetVmTicketVDSCommandParameters> ex
             Map<String, String> params = new HashMap<String, String>();
             params.put("userName", getParameters().getUserName());
             params.put("userId", getParameters().getUserId().toString());
-            status = getBroker().setVmTicket(mVmId.toString(), mTicket, (new Integer(mValidTime)).toString(),
+            status = getBroker().setVmTicket(mVmId.toString(), mTicket, String.valueOf(mValidTime),
                     connectionAction, params);
         }
         else {
-            status = getBroker().setVmTicket(mVmId.toString(), mTicket, (new Integer(mValidTime)).toString());
+            status = getBroker().setVmTicket(mVmId.toString(), mTicket, String.valueOf(mValidTime));
         }
 
         ProceedProxyReturnValue();

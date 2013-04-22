@@ -37,7 +37,7 @@ public class CreateImageVDSCommand<P extends CreateImageVDSCommandParameters> ex
                                                 getParameters().getStorageDomainId().toString(),
                                                 getParameters().getStoragePoolId().toString(),
                                                 getParameters().getImageGroupId().toString(),
-                                                (new Long(getParameters().getImageSizeInBytes())).toString(),
+                                                (Long.valueOf(getParameters().getImageSizeInBytes())).toString(),
                                                 getParameters().getVolumeFormat().getValue(),
                                                 getParameters().getImageType().getValue(),
                                                 2,

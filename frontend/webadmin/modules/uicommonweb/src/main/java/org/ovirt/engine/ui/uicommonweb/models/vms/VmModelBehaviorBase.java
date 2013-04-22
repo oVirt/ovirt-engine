@@ -357,9 +357,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         {
             for (EntityModel item : items)
             {
-                int val1 = (Integer) item.getEntity();
-                int val2 = (Integer) oldPriority.getEntity();
-                if ((new Integer(val1)).equals(val2))
+                Integer val1 = (Integer)item.getEntity();
+                Integer val2 = (Integer)oldPriority.getEntity();
+                if (val1 != null && val1.equals(val2))
                 {
                     getModel().getPriority().setSelectedItem(item);
                     break;

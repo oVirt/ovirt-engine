@@ -294,7 +294,7 @@ public class SchedulerUtilQuartsImplTest {
 
         Object[] input = new Object[2];
         input[0] = "msg1";
-        input[1] = new Integer(5);
+        input[1] = Integer.valueOf(5);
         scheduler.scheduleAOneTimeJob(pj, "onTimerWithParam", inputType, input, 1, TimeUnit.MILLISECONDS);
         try {
             Thread.sleep(50);

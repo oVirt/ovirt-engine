@@ -62,9 +62,9 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         vds.setCpuSpeedMh(5.5);
         Host host = HostMapper.map(vds, (Host) null);
         assertNotNull(host.getCpu());
-        assertEquals(new Integer(host.getCpu().getTopology().getCores()), new Integer(2));
-        assertEquals(new Integer(host.getCpu().getTopology().getSockets()), new Integer(3));
-        assertEquals(new Integer(host.getCpu().getTopology().getThreads()), new Integer(2));
+        assertEquals(Integer.valueOf(host.getCpu().getTopology().getCores()), Integer.valueOf(2));
+        assertEquals(Integer.valueOf(host.getCpu().getTopology().getSockets()), Integer.valueOf(3));
+        assertEquals(Integer.valueOf(host.getCpu().getTopology().getThreads()), Integer.valueOf(2));
         assertEquals(host.getCpu().getName(), "some cpu model");
         assertEquals(host.getCpu().getSpeed(), new BigDecimal(5.5));
     }
@@ -77,9 +77,9 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         vds.setVmActive(1);
         vds.setVmMigrating(1);
         Host host = HostMapper.map(vds, (Host) null);
-        assertEquals(host.getSummary().getTotal(), new Integer(2));
-        assertEquals(host.getSummary().getActive(), new Integer(1));
-        assertEquals(host.getSummary().getMigrating(), new Integer(1));
+        assertEquals(host.getSummary().getTotal(), Integer.valueOf(2));
+        assertEquals(host.getSummary().getActive(), Integer.valueOf(1));
+        assertEquals(host.getSummary().getMigrating(), Integer.valueOf(1));
     }
 
     @Test
@@ -89,7 +89,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         vds.setPhysicalMemMb(4000);
         Host host = HostMapper.map(vds, (Host) null);
         assertNotNull(host.getMemory());
-        assertEquals(new Long(host.getMemory()), new Long(4194304000L));
+        assertEquals(Long.valueOf(host.getMemory()), Long.valueOf(4194304000L));
     }
 
     @Test
@@ -119,8 +119,8 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         assertTrue(host.getOs().isSetVersion());
         assertEquals(host.getOs().getType(), "Fedora");
         assertEquals(host.getOs().getVersion().getFullVersion(), "17 - 1");
-        assertEquals(new Long(host.getOs().getVersion().getMajor()), new Long(17));
-        assertEquals(new Long(host.getOs().getVersion().getMinor()), new Long(1));
+        assertEquals(Long.valueOf(host.getOs().getVersion().getMajor()), Long.valueOf(17));
+        assertEquals(Long.valueOf(host.getOs().getVersion().getMinor()), Long.valueOf(1));
     }
 
     @Test
@@ -130,10 +130,10 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         vds.setVersion(new RpmVersion("vdsm-4.10.0-10.fc17", "vdsm-", true));
         Host host = HostMapper.map(vds, (Host) null);
         assertNotNull(host.getVersion());
-        assertEquals(new Long(host.getVersion().getMajor()), new Long(4));
-        assertEquals(new Long(host.getVersion().getMinor()), new Long(10));
-        assertEquals(new Long(host.getVersion().getRevision()), new Long(0));
-        assertEquals(new Long(host.getVersion().getBuild()), new Long(0));
+        assertEquals(Long.valueOf(host.getVersion().getMajor()), Long.valueOf(4));
+        assertEquals(Long.valueOf(host.getVersion().getMinor()), Long.valueOf(10));
+        assertEquals(Long.valueOf(host.getVersion().getRevision()), Long.valueOf(0));
+        assertEquals(Long.valueOf(host.getVersion().getBuild()), Long.valueOf(0));
         assertEquals(host.getVersion().getFullVersion(), "vdsm-4.10.0-10.fc17");
     }
 
@@ -189,10 +189,10 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         vds.setLibvirtVersion(new RpmVersion("libvirt-0.9.10-21.el6_3.4", "libvirt-", true));
         Host host = HostMapper.map(vds, (Host) null);
         assertNotNull(host.getLibvirtVersion());
-        assertEquals(new Long(host.getLibvirtVersion().getMajor()), new Long(0));
-        assertEquals(new Long(host.getLibvirtVersion().getMinor()), new Long(9));
-        assertEquals(new Long(host.getLibvirtVersion().getRevision()), new Long(0));
-        assertEquals(new Long(host.getLibvirtVersion().getBuild()), new Long(10));
+        assertEquals(Long.valueOf(host.getLibvirtVersion().getMajor()), Long.valueOf(0));
+        assertEquals(Long.valueOf(host.getLibvirtVersion().getMinor()), Long.valueOf(9));
+        assertEquals(Long.valueOf(host.getLibvirtVersion().getRevision()), Long.valueOf(0));
+        assertEquals(Long.valueOf(host.getLibvirtVersion().getBuild()), Long.valueOf(10));
         assertEquals(host.getLibvirtVersion().getFullVersion(), "libvirt-0.9.10-21.el6_3.4");
     }
 }

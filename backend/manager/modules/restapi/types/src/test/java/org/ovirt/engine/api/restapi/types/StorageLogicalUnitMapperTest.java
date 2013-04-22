@@ -50,7 +50,7 @@ public class StorageLogicalUnitMapperTest extends AbstractInvertibleMappingTest<
         assertEquals(entity.getVendorId(), "vendor_id_1");
         assertEquals(entity.getProductId(), "product_id_1");
         assertEquals(entity.getSerial(), "some_serial");
-        assertEquals(entity.getLunMapping(), new Integer(5));
+        assertEquals(entity.getLunMapping(), Integer.valueOf(5));
         assertEquals(entity.getVolumeGroupId(), "volume_group_id_1");
         assertEquals(entity.getStorageDomainId(), Guid.Empty.toString());
         assertEquals(entity.getDiskId(), Guid.Empty.toString());

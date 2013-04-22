@@ -49,7 +49,7 @@ public class ReapedMapTest extends Assert {
         map.reapable("one");
         assertSizes(1, 2);
         assertExpected(1, 2, 3);
-        assertEquals(new Integer(3), map.remove("three"));
+        assertEquals(Integer.valueOf(3), map.remove("three"));
         assertSizes(1, 1);
         assertExpected(1, 2);
         assertNull(map.get("three"));

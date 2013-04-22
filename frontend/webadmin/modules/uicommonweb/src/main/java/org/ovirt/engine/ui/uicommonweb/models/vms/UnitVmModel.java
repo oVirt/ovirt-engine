@@ -1753,7 +1753,7 @@ public class UnitVmModel extends Model {
         ArrayList<BootSequence> items = new ArrayList<BootSequence>();
         for (char a : value.toString().toCharArray())
         {
-            items.add(BootSequence.valueOf((new Character(a)).toString()));
+            items.add(BootSequence.valueOf(String.valueOf(a)));
         }
 
         Object firstBootDevice = null;

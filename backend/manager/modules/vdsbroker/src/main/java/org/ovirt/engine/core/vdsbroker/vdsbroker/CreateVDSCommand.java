@@ -36,7 +36,7 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
      */
     private void logCommandInfo() {
         final char EQUAL = '=';
-        final char SEP = ',';
+        final String SEP = ",";
         StringBuilder info = new StringBuilder();
         String sep = "";
         for (String o : createInfo.keySet()) {
@@ -44,7 +44,7 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
             info.append(o);
             info.append(EQUAL);
             info.append(createInfo.get(o));
-            sep = (new Character(SEP)).toString();
+            sep = SEP;
         }
         log.infoFormat("{0} {1}", getClass().getName(), info.toString());
     }

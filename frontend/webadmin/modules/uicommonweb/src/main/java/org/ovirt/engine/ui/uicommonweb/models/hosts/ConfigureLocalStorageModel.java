@@ -790,7 +790,7 @@ public class ConfigureLocalStorageModel extends Model {
         }
 
         if (i > 0) {
-            commonName = getCommonName() + (new Integer(i)).toString();
+            commonName = getCommonName() + String.valueOf(i);
         }
 
         return commonName;

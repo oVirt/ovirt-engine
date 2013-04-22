@@ -13,7 +13,7 @@ public class DestroyVDSCommand<P extends DestroyVmVDSCommandParameters> extends 
     protected void ExecuteVdsBrokerCommand() {
         if (getParameters().getGracefully()) {
             status = getBroker().shutdown(getParameters().getVmId().toString(),
-                    (new Integer(getParameters().getSecondsToWait())).toString(),
+                    String.valueOf(getParameters().getSecondsToWait()),
                     Config.<String> GetValue(ConfigValues.VmGracefulShutdownMessage));
         } else {
             status = getBroker().destroy(getParameters().getVmId().toString());

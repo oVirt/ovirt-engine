@@ -45,7 +45,7 @@ public abstract class VmInfoBuilderBase {
         createInfo.put(VdsProperties.mem_size_mb, vm.getVmMemSizeMb());
         createInfo.put(VdsProperties.smartcardEnabled, Boolean.toString(vm.isSmartcardEnabled()));
         createInfo.put(VdsProperties.num_of_cpus,
-                (new Integer(vm.getNumOfCpus())).toString());
+                String.valueOf(vm.getNumOfCpus()));
         if (Config.<Boolean> GetValue(ConfigValues.SendSMPOnRunVm)) {
             createInfo.put(VdsProperties.cores_per_socket,
                     (Integer.toString(vm.getCpuPerSocket())));
@@ -82,7 +82,7 @@ public abstract class VmInfoBuilderBase {
                     vm.getVdsGroupCpuFlagsData());
         }
         createInfo.put(VdsProperties.niceLevel,
-                (new Integer(vm.getNiceLevel())).toString());
+                String.valueOf(vm.getNiceLevel()));
         if (vm.getStatus() == VMStatus.Suspended
                 && !StringUtils.isEmpty(vm.getHibernationVolHandle())) {
             createInfo.put(VdsProperties.hiberVolHandle,
