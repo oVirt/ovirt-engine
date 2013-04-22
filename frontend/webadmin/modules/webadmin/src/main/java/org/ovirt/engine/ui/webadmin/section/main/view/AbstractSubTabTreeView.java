@@ -105,7 +105,7 @@ public abstract class AbstractSubTabTreeView<E extends AbstractSubTabTree, I, T,
                 ListModel model = (ListModel) sender;
                 Iterable<M> items = model.getItems();
                 if (model.getItems() == null || (items instanceof List && ((List<M>) items).isEmpty())) {
-                    table.setEmptyTableWidget(new NoItemsLabel(model.getTitle()));
+                    table.setEmptyTableWidget(new NoItemsLabel());
                 } else {
                     table.setEmptyTableWidget(null);
                 }

@@ -218,7 +218,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         this.selectionModel.setDataDisplay(table);
 
         //Default to 'no items to display'
-        this.table.setEmptyTableWidget(new NoItemsLabel(dataProvider.getModel().getTitle()));
+        this.table.setEmptyTableWidget(new NoItemsLabel());
     }
 
     protected void updateTableControls() {

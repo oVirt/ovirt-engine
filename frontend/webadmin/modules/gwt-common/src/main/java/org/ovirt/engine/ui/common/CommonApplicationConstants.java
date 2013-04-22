@@ -1226,4 +1226,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Not Configured")
     String notConfigured();
+
+    @DefaultStringValue("No items to display")
+    String noItemsToDisplay();
 }

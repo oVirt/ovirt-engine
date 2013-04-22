@@ -80,9 +80,6 @@ public interface CommonApplicationMessages extends Messages {
     @DefaultMessage("Clone VM from Snapshot is supported only for Clusters of version {0} and above")
     String cloneVmNotSupported(String minimalClusterVersion);
 
-    @DefaultMessage("No {0} to display")
-    String noItemsToDisplay(String items);
-
     @DefaultMessage("{0} ({1} GB free of {2} GB)")
     String storageDomainFreeSpace(String name, int free, int total);
 
