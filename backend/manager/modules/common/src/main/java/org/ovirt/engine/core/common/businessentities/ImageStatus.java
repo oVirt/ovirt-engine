@@ -1,20 +1,34 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public enum ImageStatus implements Identifiable {
-    // FIXME add ids and remove the ordinal impl of getValue
-    Unassigned,
-    OK,
-    LOCKED,
-    INVALID,
-    ILLEGAL;
+    Unassigned(0),
+    OK(1),
+    LOCKED(2),
+    INVALID(3),
+    ILLEGAL(4);
+
+    private int intValue;
+    private static Map<Integer, ImageStatus> mappings = new HashMap<Integer, ImageStatus>();
+
+    static {
+        for (ImageStatus imageStatus : values()) {
+            mappings.put(imageStatus.getValue(), imageStatus);
+        }
+    }
+
+    private ImageStatus(int value) {
+        intValue = value;
+    }
 
     @Override
     public int getValue() {
-        return this.ordinal();
+        return intValue;
     }
 
     public static ImageStatus forValue(int value) {
-        return values()[value];
+        return mappings.get(value);
     }
-
 }
