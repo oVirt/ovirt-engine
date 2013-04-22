@@ -7,7 +7,7 @@ Type=simple
 User=@ENGINE_USER@
 Group=@ENGINE_GROUP@
 LimitNOFILE=65535
-ExecStart=/usr/share/ovirt-engine/service/engine-service.py $OVIRT_ENGINE_EXTRA_ARGS start
+ExecStart=/usr/share/ovirt-engine/services/engine-service.py $OVIRT_ENGINE_EXTRA_ARGS start
 EnvironmentFile=-/etc/sysconfig/ovirt-engine
 
 [Install]

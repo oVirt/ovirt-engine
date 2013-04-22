@@ -422,7 +422,7 @@ install_service:
 	@echo "*** Deploying service"
 
 	# Install the files:
-	install -dm 755 $(DESTDIR)$(DATA_DIR)/service
-	install -m 644 packaging/services/engine-service.xml.in $(DESTDIR)$(DATA_DIR)/service
-	install -m 644 packaging/services/engine-service-logging.properties.in $(DESTDIR)$(DATA_DIR)/service
-	install -m 755 packaging/services/engine-service.py $(DESTDIR)$(DATA_DIR)/service
+	install -dm 755 $(DESTDIR)$(DATA_DIR)/services
+	install -m 644 packaging/services/engine-service.xml.in $(DESTDIR)$(DATA_DIR)/services
+	install -m 644 packaging/services/engine-service-logging.properties.in $(DESTDIR)$(DATA_DIR)/services
+	install -m 755 packaging/services/engine-service.py $(DESTDIR)$(DATA_DIR)/services

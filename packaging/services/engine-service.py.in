@@ -415,7 +415,7 @@ class EngineDaemon(Base):
         self._check(
             os.path.join(
                 self._config.getString('ENGINE_USR'),
-                'service',
+                'services',
             ),
             directory=True,
         )
@@ -695,7 +695,7 @@ class EngineDaemon(Base):
             jbossBootLoggingFile = self._processTemplate(
                 os.path.join(
                     self._config.getString('ENGINE_USR'),
-                    'service',
+                    'services',
                     'engine-service-logging.properties.in'
                 ),
             )
@@ -703,7 +703,7 @@ class EngineDaemon(Base):
             jbossConfigFile = self._processTemplate(
                 os.path.join(
                     self._config.getString('ENGINE_USR'),
-                    'service',
+                    'services',
                     'engine-service.xml.in',
                 ),
             )

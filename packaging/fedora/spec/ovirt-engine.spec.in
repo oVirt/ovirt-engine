@@ -505,7 +505,7 @@ fi
 %dir %{engine_data}/ui-plugins
 
 # Files needed by the service:
-%{engine_data}/service
+%{engine_data}/services
 %if %{install_systemd}
 %{_unitdir}/%{engine_name}.service
 %endif
