@@ -169,7 +169,7 @@ public class DnsSRVLocator {
                 return true;
             if (obj == null)
                 return false;
-            if (!(obj instanceof DnsSRVLocator))
+            if (!(obj instanceof SrvRecord))
                 return false;
             SrvRecord other = (SrvRecord) obj;
             if (getAddress() == null) {
