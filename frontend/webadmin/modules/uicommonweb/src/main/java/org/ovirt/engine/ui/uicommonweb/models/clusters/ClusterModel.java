@@ -728,7 +728,7 @@ public class ClusterModel extends EntityModel
 
                         temp = clusterModel1.getOptimizationForDesktop();
                         temp.setEntity(clusterModel1.getDesktopOverCommit());
-                        temp = temp = clusterModel1.getOptimizationForDesktop_IsSelected();
+                        temp = clusterModel1.getOptimizationForDesktop_IsSelected();
                         temp.setEntity(clusterModel1.getDesktopOverCommit() == clusterModel1.getDefaultMemoryOvercommit());
 
                         temp = clusterModel1.getOptimizationCustom();
