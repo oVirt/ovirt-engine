@@ -221,15 +221,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
-        if (!ImagesHandler.PerformImagesChecks(
-                getReturnValue().getCanDoActionMessages(),
-                getVm().getStoragePoolId(),
-                true,
-                true,
-                diskImagesToCheck)) {
-            return false;
-        }
-
         Map<Guid, StorageDomain> storageDomains = new HashMap<Guid, StorageDomain>();
         Set<Guid> destImageDomains = getStorageGuidSet();
         destImageDomains.removeAll(sourceImageDomainsImageMap.keySet());

@@ -446,29 +446,6 @@ public final class ImagesHandler {
         return result;
     }
 
-    public static boolean PerformImagesChecks(
-            List<String> messages,
-            Guid storagePoolId,
-            boolean checkImagesIllegalInVdsm,
-            boolean checkImagesExist,
-            List<DiskImage> diskImageList) {
-
-        boolean returnValue = true;
-        ArrayList<DiskImage> irsImages = new ArrayList<DiskImage>();
-
-        if (returnValue && checkImagesExist) {
-            boolean isImagesExist = isImagesExists(diskImageList, storagePoolId, irsImages);
-            if (!isImagesExist) {
-                returnValue = false;
-                ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST.toString());
-            }
-        }
-        if (returnValue && checkImagesIllegalInVdsm) {
-            returnValue = checkImagesLegalityInVdsm(messages, diskImageList, irsImages);
-        }
-        return returnValue;
-    }
-
     /**
      * @return A unique {@link Set} of all the storage domain IDs relevant to all the given images
      * @param images The images to get the storage domain IDs for
@@ -512,26 +489,6 @@ public final class ImagesHandler {
             }
         }
         return validationResult.isValid();
-    }
-
-    private static boolean checkImagesLegalityInVdsm
-            (List<String> messages, List<DiskImage> images, List<DiskImage> irsImages) {
-        boolean returnValue = true;
-        int i = 0;
-        for (DiskImage diskImage : images) {
-            if (diskImage != null) {
-                DiskImage image = irsImages.get(i++);
-                if (image.getImageStatus() != ImageStatus.OK) {
-                    diskImage.setImageStatus(image.getImageStatus());
-                    DbFacade.getInstance().getImageDao().update(diskImage.getImage());
-                    returnValue = false;
-                    ListUtils.nullSafeAdd(messages,
-                            VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL.toString());
-                    break;
-                }
-            }
-        }
-        return returnValue;
     }
 
     public static void fillImagesBySnapshots(VM vm) {

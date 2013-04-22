@@ -76,12 +76,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         retValue = retValue &&
                 validate(new StoragePoolValidator(getStoragePool()).isUp()) &&
                 validate(diskImagesValidator.diskImagesNotLocked()) &&
-                ImagesHandler.PerformImagesChecks(
-                                getReturnValue().getCanDoActionMessages(),
-                                getVm().getStoragePoolId(),
-                                true,
-                                true,
-                        diskImagesToValidate);
+                validate(diskImagesValidator.diskImagesNotIllegal());
 
         ensureDomainMap(diskImages, getParameters().getStorageDomainId());
         for(DiskImage disk : diskImages) {

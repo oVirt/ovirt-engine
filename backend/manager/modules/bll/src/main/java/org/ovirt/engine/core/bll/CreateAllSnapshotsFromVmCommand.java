@@ -315,12 +315,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                     && validate(vmValidator.vmNotRunningStateless())
                     && validate(vmValidator.vmNotIlegal())
                     && validate(diskImagesValidator.diskImagesNotLocked())
-                    && ImagesHandler.PerformImagesChecks(
-                            getReturnValue().getCanDoActionMessages(),
-                            getVm().getStoragePoolId(),
-                            true,
-                            true,
-                            disksList)
+                    && validate(diskImagesValidator.diskImagesNotIllegal())
                     && validate(vmValidator.vmNotLocked())
                     && validate(sdValidator.allDomainsExistAndActive())
                     && validate(sdValidator.allDomainsWithinThresholds());

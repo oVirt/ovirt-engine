@@ -267,9 +267,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(imagesToValidate);
 
         return validate(diskImagesValidator.diskImagesNotLocked()) &&
-                ImagesHandler.PerformImagesChecks(getReturnValue().getCanDoActionMessages(),
-                getVm().getStoragePoolId(),
-                true, true, imagesToValidate);
+                validate(diskImagesValidator.diskImagesNotIllegal());
     }
 
     protected boolean validateImageNotInTemplate() {
