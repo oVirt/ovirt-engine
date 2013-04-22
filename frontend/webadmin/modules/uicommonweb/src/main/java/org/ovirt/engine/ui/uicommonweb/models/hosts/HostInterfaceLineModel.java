@@ -35,7 +35,7 @@ public class HostInterfaceLineModel extends Model
         if (isBonded != value)
         {
             isBonded = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsBonded")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsBonded")); //$NON-NLS-1$
         }
     }
 
@@ -51,7 +51,7 @@ public class HostInterfaceLineModel extends Model
         if (!StringHelper.stringsEqual(bondName, value))
         {
             bondName = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("BondName")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("BondName")); //$NON-NLS-1$
         }
     }
 
@@ -67,7 +67,7 @@ public class HostInterfaceLineModel extends Model
         if (!StringHelper.stringsEqual(address, value))
         {
             address = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Address")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Address")); //$NON-NLS-1$
         }
     }
 
@@ -83,7 +83,7 @@ public class HostInterfaceLineModel extends Model
         if (interfaces != value)
         {
             interfaces = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Interfaces")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Interfaces")); //$NON-NLS-1$
         }
     }
 
@@ -99,7 +99,7 @@ public class HostInterfaceLineModel extends Model
         if (vLans != value)
         {
             vLans = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("VLans")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("VLans")); //$NON-NLS-1$
         }
     }
 
@@ -119,7 +119,7 @@ public class HostInterfaceLineModel extends Model
         if (!StringHelper.stringsEqual(networkName, value))
         {
             networkName = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("NetworkName")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("NetworkName")); //$NON-NLS-1$
         }
     }
 
@@ -135,7 +135,7 @@ public class HostInterfaceLineModel extends Model
         if (isManagement != value)
         {
             isManagement = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsManagement")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsManagement")); //$NON-NLS-1$
         }
     }
 

@@ -120,7 +120,7 @@ public class TagListModel extends SearchableListModel
             items = value;
             ItemsChanged();
             getItemsChangedEvent().raise(this, EventArgs.Empty);
-            OnPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
         }
     }
 
@@ -136,7 +136,7 @@ public class TagListModel extends SearchableListModel
         if (selectionNodeList != value)
         {
             selectionNodeList = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("SelectionNodeList")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("SelectionNodeList")); //$NON-NLS-1$
         }
     }
 
@@ -153,7 +153,7 @@ public class TagListModel extends SearchableListModel
         {
             attachedTagsToEntities = value;
             AttachedTagsToEntitiesChanged();
-            OnPropertyChanged(new PropertyChangedEventArgs("AttachedTagsToEntities")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("AttachedTagsToEntities")); //$NON-NLS-1$
         }
     }
 

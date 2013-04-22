@@ -76,7 +76,7 @@ public class ClusterGeneralModel extends EntityModel {
         if (hasAnyAlert != value)
         {
             hasAnyAlert = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasAnyAlert")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("HasAnyAlert")); //$NON-NLS-1$
         }
     }
 
@@ -92,7 +92,7 @@ public class ClusterGeneralModel extends EntityModel {
         if (hasGlusterHostsAlert != value)
         {
             hasGlusterHostsAlert = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasNewGlusterHostsAlert")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("HasNewGlusterHostsAlert")); //$NON-NLS-1$
         }
     }
 
@@ -133,7 +133,7 @@ public class ClusterGeneralModel extends EntityModel {
     public void setConsoleAddressPartiallyOverridden(Boolean consoleAddressPartiallyOverridden) {
         if (this.consoleAddressPartiallyOverridden != consoleAddressPartiallyOverridden) {
             this.consoleAddressPartiallyOverridden = consoleAddressPartiallyOverridden;
-            OnPropertyChanged(new PropertyChangedEventArgs("consoleAddressPartiallyOverridden")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("consoleAddressPartiallyOverridden")); //$NON-NLS-1$
         }
     }
 

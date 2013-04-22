@@ -230,7 +230,7 @@ public class CommonModel extends ListModel
         {
             searchStringPrefix = value;
             SearchStringPrefixChanged();
-            OnPropertyChanged(new PropertyChangedEventArgs("SearchStringPrefix")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("SearchStringPrefix")); //$NON-NLS-1$
         }
     }
 
@@ -246,7 +246,7 @@ public class CommonModel extends ListModel
         if (hasSearchStringPrefix != value)
         {
             hasSearchStringPrefix = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasSearchStringPrefix")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("HasSearchStringPrefix")); //$NON-NLS-1$
         }
     }
 
@@ -268,7 +268,7 @@ public class CommonModel extends ListModel
         {
             searchString = value;
             SearchStringChanged();
-            OnPropertyChanged(new PropertyChangedEventArgs("SearchString")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("SearchString")); //$NON-NLS-1$
         }
     }
 
@@ -284,7 +284,7 @@ public class CommonModel extends ListModel
         if (loggedInUser != value)
         {
             loggedInUser = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("LoggedInUser")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("LoggedInUser")); //$NON-NLS-1$
         }
     }
 
@@ -312,7 +312,7 @@ public class CommonModel extends ListModel
         if (lastEvent != value)
         {
             lastEvent = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("LastEvent")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("LastEvent")); //$NON-NLS-1$
         }
     }
 
@@ -328,7 +328,7 @@ public class CommonModel extends ListModel
         if (lastAlert != value)
         {
             lastAlert = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("LastAlert")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("LastAlert")); //$NON-NLS-1$
         }
     }
 
@@ -344,7 +344,7 @@ public class CommonModel extends ListModel
         if (hasSelectedTags != value)
         {
             hasSelectedTags = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasSelectedTags")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("HasSelectedTags")); //$NON-NLS-1$
         }
     }
 

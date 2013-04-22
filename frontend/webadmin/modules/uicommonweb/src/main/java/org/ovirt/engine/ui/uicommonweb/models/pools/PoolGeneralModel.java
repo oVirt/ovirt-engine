@@ -74,7 +74,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(name, value))
         {
             name = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
         }
     }
 
@@ -90,7 +90,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(description, value))
         {
             description = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
         }
     }
 
@@ -106,7 +106,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(os, value))
         {
             os = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("OS")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("OS")); //$NON-NLS-1$
         }
     }
 
@@ -122,7 +122,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(defaultDisplayType, value))
         {
             defaultDisplayType = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("DefaultDisplayType")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("DefaultDisplayType")); //$NON-NLS-1$
         }
     }
 
@@ -138,7 +138,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(origin, value))
         {
             origin = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Origin")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Origin")); //$NON-NLS-1$
         }
     }
 
@@ -154,7 +154,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(template, value))
         {
             template = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Template")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Template")); //$NON-NLS-1$
         }
     }
 
@@ -170,7 +170,7 @@ public class PoolGeneralModel extends EntityModel
         if (cpuCount != value)
         {
             cpuCount = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("CpuCount")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("CpuCount")); //$NON-NLS-1$
         }
     }
 
@@ -186,7 +186,7 @@ public class PoolGeneralModel extends EntityModel
         if (monitorCount != value)
         {
             monitorCount = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("MonitorCount")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("MonitorCount")); //$NON-NLS-1$
         }
     }
 
@@ -202,7 +202,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(definedMemory, value))
         {
             definedMemory = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("DefinedMemory")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("DefinedMemory")); //$NON-NLS-1$
         }
     }
 
@@ -218,7 +218,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(minAllocatedMemory, value))
         {
             minAllocatedMemory = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("MinAllocatedMemory")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("MinAllocatedMemory")); //$NON-NLS-1$
         }
     }
 
@@ -234,7 +234,7 @@ public class PoolGeneralModel extends EntityModel
         if (hasDomain != value)
         {
             hasDomain = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasDomain")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("HasDomain")); //$NON-NLS-1$
         }
     }
 
@@ -250,7 +250,7 @@ public class PoolGeneralModel extends EntityModel
         if (hasStorageDomain != value)
         {
             hasStorageDomain = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasStorageDomain")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("HasStorageDomain")); //$NON-NLS-1$
         }
     }
 
@@ -266,7 +266,7 @@ public class PoolGeneralModel extends EntityModel
         if (hasTimeZone != value)
         {
             hasTimeZone = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasTimeZone")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("HasTimeZone")); //$NON-NLS-1$
         }
     }
 
@@ -282,7 +282,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(usbPolicy, value))
         {
             usbPolicy = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("UsbPolicy")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("UsbPolicy")); //$NON-NLS-1$
         }
     }
 
@@ -298,7 +298,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(domain, value))
         {
             domain = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Domain")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Domain")); //$NON-NLS-1$
         }
     }
 
@@ -314,7 +314,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(storageDomain, value))
         {
             storageDomain = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("StorageDomain")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("StorageDomain")); //$NON-NLS-1$
         }
     }
 
@@ -330,7 +330,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(timeZone, value))
         {
             timeZone = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("TimeZone")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("TimeZone")); //$NON-NLS-1$
         }
     }
 
@@ -346,7 +346,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(cpuInfo, value))
         {
             cpuInfo = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("CpuInfo")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("CpuInfo")); //$NON-NLS-1$
         }
     }
 
@@ -362,7 +362,7 @@ public class PoolGeneralModel extends EntityModel
         if (hasDefaultHost != value)
         {
             hasDefaultHost = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasDefaultHost")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("HasDefaultHost")); //$NON-NLS-1$
         }
     }
 
@@ -378,7 +378,7 @@ public class PoolGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(defaultHost, value))
         {
             defaultHost = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("DefaultHost")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("DefaultHost")); //$NON-NLS-1$
         }
     }
 
@@ -394,7 +394,7 @@ public class PoolGeneralModel extends EntityModel
         if (isStateless != value)
         {
             isStateless = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsStateless")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsStateless")); //$NON-NLS-1$
         }
     }
 

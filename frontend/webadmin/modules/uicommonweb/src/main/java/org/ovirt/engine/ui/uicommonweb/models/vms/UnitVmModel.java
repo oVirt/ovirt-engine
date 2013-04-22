@@ -187,7 +187,7 @@ public class UnitVmModel extends Model {
         if (isBlankTemplate != value)
         {
             isBlankTemplate = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsBlankTemplate")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsBlankTemplate")); //$NON-NLS-1$
         }
     }
 
@@ -203,7 +203,7 @@ public class UnitVmModel extends Model {
         if (isWindowsOS != value)
         {
             isWindowsOS = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsWindowsOS")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsWindowsOS")); //$NON-NLS-1$
         }
     }
 
@@ -219,7 +219,7 @@ public class UnitVmModel extends Model {
         if (isLinuxOS != value)
         {
             isLinuxOS = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsLinuxOS")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsLinuxOS")); //$NON-NLS-1$
         }
     }
 
@@ -235,7 +235,7 @@ public class UnitVmModel extends Model {
         if (!StringHelper.stringsEqual(cpuNotification, value))
         {
             cpuNotification = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("CPUNotification")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("CPUNotification")); //$NON-NLS-1$
         }
     }
 
@@ -251,7 +251,7 @@ public class UnitVmModel extends Model {
         if (isCPUsAmountValid != value)
         {
             isCPUsAmountValid = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsCPUsAmountValid")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsCPUsAmountValid")); //$NON-NLS-1$
         }
     }
 
@@ -267,7 +267,7 @@ public class UnitVmModel extends Model {
         if (isGeneralTabValid != value)
         {
             isGeneralTabValid = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsGeneralTabValid")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsGeneralTabValid")); //$NON-NLS-1$
         }
     }
 
@@ -283,7 +283,7 @@ public class UnitVmModel extends Model {
         if (isFirstRunTabValid != value)
         {
             isFirstRunTabValid = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsFirstRunTabValid")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsFirstRunTabValid")); //$NON-NLS-1$
         }
     }
 
@@ -299,7 +299,7 @@ public class UnitVmModel extends Model {
         if (isDisplayTabValid != value)
         {
             isDisplayTabValid = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsDisplayTabValid")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsDisplayTabValid")); //$NON-NLS-1$
         }
     }
 
@@ -315,7 +315,7 @@ public class UnitVmModel extends Model {
         if (isAllocationTabValid != value)
         {
             isAllocationTabValid = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsAllocationTabValid")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsAllocationTabValid")); //$NON-NLS-1$
         }
     }
 
@@ -331,7 +331,7 @@ public class UnitVmModel extends Model {
         if (isHostTabValid != value)
         {
             isHostTabValid = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsHostTabValid")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsHostTabValid")); //$NON-NLS-1$
         }
     }
 
@@ -347,7 +347,7 @@ public class UnitVmModel extends Model {
         if (isBootSequenceTabValid != value)
         {
             isBootSequenceTabValid = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsBootSequenceTabValid")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsBootSequenceTabValid")); //$NON-NLS-1$
         }
     }
 
@@ -363,7 +363,7 @@ public class UnitVmModel extends Model {
         if (isCustomPropertiesTabValid != value)
         {
             isCustomPropertiesTabValid = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsCustomPropertiesTabValid")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsCustomPropertiesTabValid")); //$NON-NLS-1$
         }
     }
 
@@ -899,7 +899,7 @@ public class UnitVmModel extends Model {
         if (disks != value)
         {
             disks = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Disks")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Disks")); //$NON-NLS-1$
         }
     }
 
@@ -927,7 +927,7 @@ public class UnitVmModel extends Model {
         if (isDisksAvailable != value)
         {
             isDisksAvailable = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsDisksAvailable")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsDisksAvailable")); //$NON-NLS-1$
         }
     }
 
@@ -943,7 +943,7 @@ public class UnitVmModel extends Model {
         if (isHostAvailable != value)
         {
             isHostAvailable = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsHostAvailable")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsHostAvailable")); //$NON-NLS-1$
         }
     }
 
@@ -959,7 +959,7 @@ public class UnitVmModel extends Model {
         if (isCustomPropertiesTabAvailable != value)
         {
             isCustomPropertiesTabAvailable = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsCustomPropertiesTabAvailable")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsCustomPropertiesTabAvailable")); //$NON-NLS-1$
         }
     }
 
@@ -979,7 +979,7 @@ public class UnitVmModel extends Model {
         if (isDatacenterAvailable == null || !isDatacenterAvailable.equals(value))
         {
             isDatacenterAvailable = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsDatacenterAvailable")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsDatacenterAvailable")); //$NON-NLS-1$
         }
     }
 
@@ -2146,7 +2146,7 @@ public class UnitVmModel extends Model {
         if (isPoolTabValid != value)
         {
             isPoolTabValid = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsPoolTabValid")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsPoolTabValid")); //$NON-NLS-1$
         }
     }
 
@@ -2169,7 +2169,7 @@ public class UnitVmModel extends Model {
     public void setPrestartedVmsHint(String value) {
         if (prestartedVmsHint != value) {
             prestartedVmsHint = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("PrestartedVmsHint")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("PrestartedVmsHint")); //$NON-NLS-1$
         }
     }
 

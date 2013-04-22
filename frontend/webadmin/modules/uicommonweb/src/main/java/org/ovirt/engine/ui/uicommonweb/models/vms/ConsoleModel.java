@@ -93,7 +93,7 @@ public abstract class ConsoleModel extends EntityModel {
         if (isConnected != value)
         {
             isConnected = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsConnected")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsConnected")); //$NON-NLS-1$
         }
     }
 
@@ -109,7 +109,7 @@ public abstract class ConsoleModel extends EntityModel {
         if (forceVmStatusUp != value)
         {
             forceVmStatusUp = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("ForceVmStatusUp")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("ForceVmStatusUp")); //$NON-NLS-1$
         }
     }
 

@@ -40,7 +40,7 @@ public class HostHardwareGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(hardwareManufacturer, value))
         {
             hardwareManufacturer = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("manufacturer")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("manufacturer")); //$NON-NLS-1$
         }
     }
 
@@ -56,7 +56,7 @@ public class HostHardwareGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(hardwareProductName, value))
         {
             hardwareProductName = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("productName")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("productName")); //$NON-NLS-1$
         }
     }
 
@@ -72,7 +72,7 @@ public class HostHardwareGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(hardwareSerialNumber, value))
         {
             hardwareSerialNumber = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("serialNumber")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("serialNumber")); //$NON-NLS-1$
         }
     }
 
@@ -88,7 +88,7 @@ public class HostHardwareGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(hardwareVersion, value))
         {
             hardwareVersion = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("hardwareVersion")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("hardwareVersion")); //$NON-NLS-1$
         }
     }
 
@@ -104,7 +104,7 @@ public class HostHardwareGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(hardwareUUID, value))
         {
             hardwareUUID = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("uuid")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("uuid")); //$NON-NLS-1$
         }
     }
 
@@ -120,7 +120,7 @@ public class HostHardwareGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(hardwareFamily, value))
         {
             hardwareFamily = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("family")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("family")); //$NON-NLS-1$
         }
     }
 

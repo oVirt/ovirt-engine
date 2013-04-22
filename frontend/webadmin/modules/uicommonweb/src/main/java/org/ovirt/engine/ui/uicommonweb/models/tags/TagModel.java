@@ -145,7 +145,7 @@ public class TagModel extends Model
         {
             selection = value;
             getSelectionChangedEvent().raise(this, EventArgs.Empty);
-            OnPropertyChanged(new PropertyChangedEventArgs("Selection")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Selection")); //$NON-NLS-1$
         }
     }
 
@@ -161,7 +161,7 @@ public class TagModel extends Model
         if (type != value)
         {
             type = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Type")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Type")); //$NON-NLS-1$
         }
     }
 

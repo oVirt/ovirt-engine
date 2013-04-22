@@ -122,7 +122,7 @@ public class HostManagementNetworkModel extends EntityModel
         {
             bootProtocol = value;
             BootProtocolChanged();
-            OnPropertyChanged(new PropertyChangedEventArgs("BootProtocol")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("BootProtocol")); //$NON-NLS-1$
         }
     }
 
@@ -138,7 +138,7 @@ public class HostManagementNetworkModel extends EntityModel
         if (noneBootProtocolAvailable != value)
         {
             noneBootProtocolAvailable = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("NoneBootProtocolAvailable")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("NoneBootProtocolAvailable")); //$NON-NLS-1$
         }
     }
 
@@ -155,7 +155,7 @@ public class HostManagementNetworkModel extends EntityModel
         {
             bootProtocolsAvailable = value;
             UpdateCanSpecify();
-            OnPropertyChanged(new PropertyChangedEventArgs("BootProtocolsAvailable")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("BootProtocolsAvailable")); //$NON-NLS-1$
         }
     }
 
@@ -196,7 +196,7 @@ public class HostManagementNetworkModel extends EntityModel
     public void setBondingOptionsOverrideNotification(boolean value)
     {
         setbondingOptionsOverrideNotification(value);
-        OnPropertyChanged(new PropertyChangedEventArgs("BondingOptionsOverrideNotification")); //$NON-NLS-1$
+        onPropertyChanged(new PropertyChangedEventArgs("BondingOptionsOverrideNotification")); //$NON-NLS-1$
     }
 
     private EntityModel isToSync;

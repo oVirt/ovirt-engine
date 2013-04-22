@@ -28,7 +28,7 @@ public class UserGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(domain, value))
         {
             domain = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Domain")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Domain")); //$NON-NLS-1$
         }
     }
 
@@ -44,7 +44,7 @@ public class UserGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(email, value))
         {
             email = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Email")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Email")); //$NON-NLS-1$
         }
     }
 
@@ -60,7 +60,7 @@ public class UserGeneralModel extends EntityModel
         if (status != value)
         {
             status = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Status")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Status")); //$NON-NLS-1$
         }
     }
 

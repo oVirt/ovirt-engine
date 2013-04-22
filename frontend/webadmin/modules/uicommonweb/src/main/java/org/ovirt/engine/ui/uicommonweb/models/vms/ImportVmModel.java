@@ -303,7 +303,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                                         .importSparseDiskToBlockDeviceMustCollapseSnapshots());
                         ((ImportVmData) item).getCollapseSnapshots().setIsChangable(false);
 
-                        OnPropertyChanged(new PropertyChangedEventArgs(ON_DISK_LOAD));
+                        onPropertyChanged(new PropertyChangedEventArgs(ON_DISK_LOAD));
                     }
                 }
             }
@@ -435,7 +435,7 @@ public class ImportVmModel extends ListWithDetailsModel {
 
     public void onDataLoad() {
         checkIfDefaultStorageApplicableForAllDisks();
-        OnPropertyChanged(new PropertyChangedEventArgs(ON_DISK_LOAD));
+        onPropertyChanged(new PropertyChangedEventArgs(ON_DISK_LOAD));
     }
 
     private ArrayList<StorageDomain> getStorageDomainsByIds(ArrayList<Guid> getstorage_ids) {

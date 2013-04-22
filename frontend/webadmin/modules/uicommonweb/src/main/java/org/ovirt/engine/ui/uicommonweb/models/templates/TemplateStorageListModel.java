@@ -109,7 +109,7 @@ public class TemplateStorageListModel extends SearchableListModel
             items = storageDomainModels;
             ItemsChanged();
             getItemsChangedEvent().raise(this, EventArgs.Empty);
-            OnPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
             storageDomainModels = null;
         }
         else

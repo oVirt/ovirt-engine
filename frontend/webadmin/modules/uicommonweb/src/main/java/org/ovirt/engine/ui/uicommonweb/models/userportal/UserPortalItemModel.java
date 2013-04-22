@@ -146,7 +146,7 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
         if (!StringHelper.stringsEqual(name, value))
         {
             name = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
         }
     }
 
@@ -162,7 +162,7 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
         if (!StringHelper.stringsEqual(description, value))
         {
             description = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
         }
     }
 
@@ -179,7 +179,7 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
         if (isPool != value)
         {
             isPool = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsPool")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsPool")); //$NON-NLS-1$
         }
     }
 
@@ -195,7 +195,7 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
         if (isServer != value)
         {
             isServer = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsServer")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsServer")); //$NON-NLS-1$
         }
     }
 
@@ -211,7 +211,7 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
         if (isFromPool != value)
         {
             isFromPool = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsFromPool")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsFromPool")); //$NON-NLS-1$
         }
     }
 
@@ -227,7 +227,7 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
         if (poolType != value)
         {
             poolType = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("PoolType")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("PoolType")); //$NON-NLS-1$
         }
     }
 
@@ -243,7 +243,7 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
         if (status != value)
         {
             status = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Status")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Status")); //$NON-NLS-1$
         }
     }
 
@@ -260,7 +260,7 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
         if (defaultConsole != value)
         {
             defaultConsole = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("DefaultConsole")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("DefaultConsole")); //$NON-NLS-1$
         }
     }
 
@@ -277,7 +277,7 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
         if (additionalConsole != value)
         {
             additionalConsole = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("AdditionalConsole")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("AdditionalConsole")); //$NON-NLS-1$
         }
     }
 
@@ -293,7 +293,7 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
         if (cdImages != value)
         {
             cdImages = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("CdImages")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("CdImages")); //$NON-NLS-1$
         }
     }
 
@@ -309,7 +309,7 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
         if (osType != value)
         {
             osType = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("OsType")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("OsType")); //$NON-NLS-1$
         }
     }
 
@@ -322,7 +322,7 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
     public void setSpiceDriverVersion(Version spiceDriverVersion) {
         if (this.spiceDriverVersion != spiceDriverVersion) {
             this.spiceDriverVersion = spiceDriverVersion;
-            OnPropertyChanged(new PropertyChangedEventArgs("spiceDriverVersion")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("spiceDriverVersion")); //$NON-NLS-1$
         }
     }
 

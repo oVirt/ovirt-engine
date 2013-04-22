@@ -41,7 +41,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         if (allDisks != value)
         {
             allDisks = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("All Disks")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("All Disks")); //$NON-NLS-1$
         }
     }
 
@@ -57,7 +57,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         if (diskImages != value)
         {
             diskImages = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Disk Images")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Disk Images")); //$NON-NLS-1$
         }
     }
 

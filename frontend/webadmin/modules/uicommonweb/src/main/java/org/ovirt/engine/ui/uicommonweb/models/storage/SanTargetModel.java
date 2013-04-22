@@ -52,7 +52,7 @@ public class SanTargetModel extends EntityModel
         if (!StringHelper.stringsEqual(address, value))
         {
             address = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Address")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Address")); //$NON-NLS-1$
         }
     }
 
@@ -68,7 +68,7 @@ public class SanTargetModel extends EntityModel
         if (!StringHelper.stringsEqual(port, value))
         {
             port = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Port")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Port")); //$NON-NLS-1$
         }
     }
 
@@ -84,7 +84,7 @@ public class SanTargetModel extends EntityModel
         if (!StringHelper.stringsEqual(name, value))
         {
             name = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
         }
     }
 
@@ -100,7 +100,7 @@ public class SanTargetModel extends EntityModel
         if (isLoggedIn != value)
         {
             isLoggedIn = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsLoggedIn")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsLoggedIn")); //$NON-NLS-1$
         }
     }
 
@@ -116,7 +116,7 @@ public class SanTargetModel extends EntityModel
         if (luns != value)
         {
             luns = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Luns")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Luns")); //$NON-NLS-1$
             getLunsList().setItems(luns);
         }
     }
@@ -133,7 +133,7 @@ public class SanTargetModel extends EntityModel
         if (lunsList != value)
         {
             lunsList = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("LunsList")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("LunsList")); //$NON-NLS-1$
         }
     }
 

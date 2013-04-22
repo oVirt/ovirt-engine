@@ -24,7 +24,7 @@ public class DiskGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(privateAlias, value))
         {
             privateAlias = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Alias")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Alias")); //$NON-NLS-1$
         }
     }
 
@@ -40,7 +40,7 @@ public class DiskGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(privateDescription, value))
         {
             privateDescription = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
         }
     }
 
@@ -56,7 +56,7 @@ public class DiskGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(privateStorageDomain, value))
         {
             privateStorageDomain = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Storage Domain")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Storage Domain")); //$NON-NLS-1$
         }
     }
 
@@ -72,7 +72,7 @@ public class DiskGeneralModel extends EntityModel
         if (diskId != value)
         {
             diskId = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("ID")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("ID")); //$NON-NLS-1$
         }
     }
 
@@ -88,7 +88,7 @@ public class DiskGeneralModel extends EntityModel
         if (privateLunId != value)
         {
             privateLunId = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("LUN ID")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("LUN ID")); //$NON-NLS-1$
         }
     }
 
@@ -104,7 +104,7 @@ public class DiskGeneralModel extends EntityModel
         if (privateQuotaName != value)
         {
             privateQuotaName = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Quota Name")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Quota Name")); //$NON-NLS-1$
         }
     }
 

@@ -155,7 +155,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         if (privateIsDiskHotPlugSupported != value)
         {
             privateIsDiskHotPlugSupported = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsDiskHotPlugSupported")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsDiskHotPlugSupported")); //$NON-NLS-1$
         }
     }
 
@@ -171,7 +171,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         if (isLiveStorageMigrationEnabled != value)
         {
             isLiveStorageMigrationEnabled = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsLiveStorageMigrationEnabled")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsLiveStorageMigrationEnabled")); //$NON-NLS-1$
         }
     }
 

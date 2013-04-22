@@ -45,7 +45,7 @@ public class SnapshotModel extends EntityModel
         if (vm != value)
         {
             vm = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("VM")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("VM")); //$NON-NLS-1$
         }
     }
 
@@ -61,7 +61,7 @@ public class SnapshotModel extends EntityModel
         if (disks != value)
         {
             disks = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Disks")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Disks")); //$NON-NLS-1$
         }
     }
 
@@ -77,7 +77,7 @@ public class SnapshotModel extends EntityModel
         if (nics != value)
         {
             nics = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Nics")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Nics")); //$NON-NLS-1$
         }
     }
 
@@ -93,7 +93,7 @@ public class SnapshotModel extends EntityModel
         if (apps != value)
         {
             apps = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Apps")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Apps")); //$NON-NLS-1$
         }
     }
 

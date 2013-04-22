@@ -43,7 +43,7 @@ public class EntityModel extends Model
             OnEntityChanged();
             // EntityChanged(this, EventArgs.Empty);
             getEntityChangedEvent().raise(this, EventArgs.Empty);
-            OnPropertyChanged(new PropertyChangedEventArgs("Entity")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Entity")); //$NON-NLS-1$
         }
     }
 

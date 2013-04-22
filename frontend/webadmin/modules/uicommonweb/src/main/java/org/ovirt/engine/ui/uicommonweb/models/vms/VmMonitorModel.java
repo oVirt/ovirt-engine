@@ -38,7 +38,7 @@ public class VmMonitorModel extends EntityModel
         if (cpuUsage != value)
         {
             cpuUsage = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("CpuUsage")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("CpuUsage")); //$NON-NLS-1$
         }
     }
 
@@ -54,7 +54,7 @@ public class VmMonitorModel extends EntityModel
         if (memoryUsage != value)
         {
             memoryUsage = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("MemoryUsage")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("MemoryUsage")); //$NON-NLS-1$
         }
     }
 
@@ -70,7 +70,7 @@ public class VmMonitorModel extends EntityModel
         if (networkUsage != value)
         {
             networkUsage = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("NetworkUsage")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("NetworkUsage")); //$NON-NLS-1$
         }
     }
 

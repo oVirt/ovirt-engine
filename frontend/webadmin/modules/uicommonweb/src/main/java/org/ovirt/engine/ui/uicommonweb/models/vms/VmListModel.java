@@ -344,7 +344,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         if ((isoImages == null && value != null) || (isoImages != null && !isoImages.equals(value)))
         {
             isoImages = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsoImages")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsoImages")); //$NON-NLS-1$
         }
     }
 
@@ -2564,7 +2564,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     public void setSystemTreeSelectedItem(SystemTreeItemModel value)
     {
         systemTreeSelectedItem = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("SystemTreeSelectedItem")); //$NON-NLS-1$
+        onPropertyChanged(new PropertyChangedEventArgs("SystemTreeSelectedItem")); //$NON-NLS-1$
     }
 
     @Override

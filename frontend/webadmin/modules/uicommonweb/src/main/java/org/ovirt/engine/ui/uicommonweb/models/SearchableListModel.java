@@ -203,7 +203,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         {
             AsyncResultChanging(value, asyncResult);
             asyncResult = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("AsyncResult")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("AsyncResult")); //$NON-NLS-1$
         }
     }
 
@@ -220,7 +220,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         {
             searchString = value;
             SearchStringChanged();
-            OnPropertyChanged(new PropertyChangedEventArgs("SearchString")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("SearchString")); //$NON-NLS-1$
         }
     }
 
@@ -718,7 +718,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
             items = value;
             UpdatePagingAvailability();
             getItemsChangedEvent().raise(this, EventArgs.Empty);
-            OnPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
 
             selectedItem = null;
 

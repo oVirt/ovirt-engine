@@ -251,7 +251,7 @@ public class VolumeModel extends Model {
     public void setBricks(ListModel bricks) {
 
         this.bricks = bricks;
-        OnPropertyChanged(new PropertyChangedEventArgs("Bricks")); //$NON-NLS-1$
+        onPropertyChanged(new PropertyChangedEventArgs("Bricks")); //$NON-NLS-1$
     }
 
     public EntityModel getGluster_accecssProtocol() {

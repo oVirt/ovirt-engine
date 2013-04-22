@@ -44,7 +44,7 @@ public class ConfirmationModel extends ListModel
         if (!StringHelper.stringsEqual(note, value))
         {
             note = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Note")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Note")); //$NON-NLS-1$
         }
     }
 

@@ -33,7 +33,7 @@ public class HostVLan extends Model
         if (!StringHelper.stringsEqual(name, value))
         {
             name = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
         }
     }
 
@@ -49,7 +49,7 @@ public class HostVLan extends Model
         if (!StringHelper.stringsEqual(networkName, value))
         {
             networkName = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("NetworkName")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("NetworkName")); //$NON-NLS-1$
         }
     }
 
@@ -65,7 +65,7 @@ public class HostVLan extends Model
         if (!StringHelper.stringsEqual(address, value))
         {
             address = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Address")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Address")); //$NON-NLS-1$
         }
     }
 

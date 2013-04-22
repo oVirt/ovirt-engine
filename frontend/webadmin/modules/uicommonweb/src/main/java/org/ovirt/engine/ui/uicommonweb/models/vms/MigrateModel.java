@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -8,8 +10,6 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
-import java.util.ArrayList;
 
 @SuppressWarnings("unused")
 public class MigrateModel extends Model
@@ -64,7 +64,7 @@ public class MigrateModel extends Model
         {
             isAutoSelect = value;
             getHosts().setIsChangable(!isAutoSelect);
-            OnPropertyChanged(new PropertyChangedEventArgs("IsAutoSelect")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsAutoSelect")); //$NON-NLS-1$
             setIsSameVdsMessageVisible(!value);
             privateSelectHostAutomatically_IsSelected.setEntity(value);
             privateSelectDestinationHost_IsSelected.setEntity(!value);
@@ -84,7 +84,7 @@ public class MigrateModel extends Model
         if (isHostSelAvailable != value)
         {
             isHostSelAvailable = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsHostSelAvailable")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsHostSelAvailable")); //$NON-NLS-1$
         }
     }
 
@@ -100,7 +100,7 @@ public class MigrateModel extends Model
         if (noSelAvailable != value)
         {
             noSelAvailable = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("NoSelAvailable")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("NoSelAvailable")); //$NON-NLS-1$
         }
     }
 
@@ -114,10 +114,10 @@ public class MigrateModel extends Model
     public void setIsSameVdsMessageVisible(boolean value)
     {
         isSameVdsMessageVisible = value & gethasSameVdsMessage() & !getIsAutoSelect();
-        OnPropertyChanged(new PropertyChangedEventArgs("IsSameVdsMessageVisible")); //$NON-NLS-1$
+        onPropertyChanged(new PropertyChangedEventArgs("IsSameVdsMessageVisible")); //$NON-NLS-1$
     }
 
-    // OnPropertyChanged(new PropertyChangedEventArgs("IsSameVdsMessageVisible"));
+    // onPropertyChanged(new PropertyChangedEventArgs("IsSameVdsMessageVisible"));
     private boolean privatehasSameVdsMessage;
 
     public boolean gethasSameVdsMessage()

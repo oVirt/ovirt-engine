@@ -40,7 +40,7 @@ public class StorageIsoListModel extends SearchableListModel
             ItemsChanging(value, items);
             items = value;
             getItemsChangedEvent().raise(this, EventArgs.Empty);
-            OnPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
 
             selectedItem = null;
             if (getSelectedItems() != null)

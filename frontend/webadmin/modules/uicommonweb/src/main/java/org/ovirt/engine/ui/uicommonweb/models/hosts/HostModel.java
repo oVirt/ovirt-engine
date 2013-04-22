@@ -437,7 +437,7 @@ public class HostModel extends Model
         if (isGeneralTabValid != value)
         {
             isGeneralTabValid = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsGeneralTabValid")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsGeneralTabValid")); //$NON-NLS-1$
         }
     }
 
@@ -453,7 +453,7 @@ public class HostModel extends Model
         if (isPowerManagementTabValid != value)
         {
             isPowerManagementTabValid = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsPowerManagementTabValid")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsPowerManagementTabValid")); //$NON-NLS-1$
         }
     }
 
@@ -469,7 +469,7 @@ public class HostModel extends Model
         if (isPowerManagementTabSelected != value)
         {
             isPowerManagementTabSelected = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsPowerManagementTabSelected")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsPowerManagementTabSelected")); //$NON-NLS-1$
         }
     }
 

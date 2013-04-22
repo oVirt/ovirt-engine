@@ -127,7 +127,7 @@ public class AdElementListModel extends SearchableListModel
         if (isRoleListHidden != value)
         {
             isRoleListHidden = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsRoleListHidden")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsRoleListHidden")); //$NON-NLS-1$
         }
         if (getIsRoleListHiddenModel() != null)
         {
@@ -147,7 +147,7 @@ public class AdElementListModel extends SearchableListModel
         if (isEveryoneSelected != value)
         {
             isEveryoneSelected = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsEveryoneSelected")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsEveryoneSelected")); //$NON-NLS-1$
         }
     }
 

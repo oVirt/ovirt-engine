@@ -348,7 +348,7 @@ public abstract class RunOnceModel extends Model
         if (hwAcceleration != value)
         {
             hwAcceleration = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HwAcceleration")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("HwAcceleration")); //$NON-NLS-1$
         }
     }
 
@@ -364,7 +364,7 @@ public abstract class RunOnceModel extends Model
         if (bootSequence != value)
         {
             bootSequence = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("BootSequence")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("BootSequence")); //$NON-NLS-1$
         }
     }
 
@@ -377,7 +377,7 @@ public abstract class RunOnceModel extends Model
     public void setIsHostTabVisible(boolean value) {
         if (isHostTabVisible != value) {
             isHostTabVisible = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsHostTabVisible")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsHostTabVisible")); //$NON-NLS-1$
         }
     }
 
@@ -390,7 +390,7 @@ public abstract class RunOnceModel extends Model
     public void setIsCustomPropertiesSheetVisible(boolean value) {
         if (isCustomPropertiesSheetVisible != value) {
             isCustomPropertiesSheetVisible = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsCustomPropertiesSheetVisible")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsCustomPropertiesSheetVisible")); //$NON-NLS-1$
         }
     }
 

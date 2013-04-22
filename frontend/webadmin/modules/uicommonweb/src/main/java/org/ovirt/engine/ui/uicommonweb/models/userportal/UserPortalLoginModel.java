@@ -96,7 +96,7 @@ public class UserPortalLoginModel extends LoginModel
         if (isChangingPassword != value)
         {
             isChangingPassword = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsChangingPassword")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsChangingPassword")); //$NON-NLS-1$
         }
     }
 

@@ -47,7 +47,7 @@ public abstract class IUserPortalListModel extends ListWithDetailsModel implemen
         if (canConnectAutomatically != value)
         {
             canConnectAutomatically = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("CanConnectAutomatically")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("CanConnectAutomatically")); //$NON-NLS-1$
         }
     }
 

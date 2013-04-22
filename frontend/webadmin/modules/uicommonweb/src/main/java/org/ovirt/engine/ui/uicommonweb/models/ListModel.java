@@ -72,7 +72,7 @@ public class ListModel extends EntityModel
             selectedItems = value;
             SelectedItemsChanged();
             getSelectedItemsChangedEvent().raise(this, EventArgs.Empty);
-            OnPropertyChanged(new PropertyChangedEventArgs("SelectedItems")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("SelectedItems")); //$NON-NLS-1$
         }
     }
 
@@ -91,7 +91,7 @@ public class ListModel extends EntityModel
             selectedItem = value;
             OnSelectedItemChanged();
             getSelectedItemChangedEvent().raise(this, EventArgs.Empty);
-            OnPropertyChanged(new PropertyChangedEventArgs("SelectedItem")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("SelectedItem")); //$NON-NLS-1$
         }
     }
 
@@ -110,7 +110,7 @@ public class ListModel extends EntityModel
             items = value;
             ItemsChanged();
             getItemsChangedEvent().raise(this, EventArgs.Empty);
-            OnPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
         }
     }
 
@@ -130,7 +130,7 @@ public class ListModel extends EntityModel
         if (isEmpty != value)
         {
             isEmpty = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsEmpty")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsEmpty")); //$NON-NLS-1$
         }
     }
 

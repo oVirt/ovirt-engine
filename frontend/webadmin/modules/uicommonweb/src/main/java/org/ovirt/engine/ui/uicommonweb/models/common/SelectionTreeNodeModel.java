@@ -22,7 +22,7 @@ public class SelectionTreeNodeModel extends EntityModel
         if (!StringHelper.stringsEqual(description, value))
         {
             description = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
         }
     }
 
@@ -42,7 +42,7 @@ public class SelectionTreeNodeModel extends EntityModel
         if (isSelectedNullable == null || !isSelectedNullable.equals(value))
         {
             isSelectedNullable = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsSelectedNullable")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsSelectedNullable")); //$NON-NLS-1$
             if (!getIsSelectedNotificationPrevent())
             {
                 IsSelectedChanged();
@@ -60,7 +60,7 @@ public class SelectionTreeNodeModel extends EntityModel
     public void setIsExpanded(boolean value)
     {
         isExpanded = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("IsExpanded")); //$NON-NLS-1$
+        onPropertyChanged(new PropertyChangedEventArgs("IsExpanded")); //$NON-NLS-1$
     }
 
     private boolean isSelectedNotificationPrevent;
@@ -75,7 +75,7 @@ public class SelectionTreeNodeModel extends EntityModel
         if (isSelectedNotificationPrevent != value)
         {
             isSelectedNotificationPrevent = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsSelectedNotificationPrevent")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsSelectedNotificationPrevent")); //$NON-NLS-1$
         }
     }
 
@@ -91,7 +91,7 @@ public class SelectionTreeNodeModel extends EntityModel
         if (parent != value)
         {
             parent = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Parent")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Parent")); //$NON-NLS-1$
         }
     }
 
@@ -107,7 +107,7 @@ public class SelectionTreeNodeModel extends EntityModel
         if ((children == null && value != null) || (children != null && !children.equals(value)))
         {
             children = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Children")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Children")); //$NON-NLS-1$
         }
     }
 
@@ -123,7 +123,7 @@ public class SelectionTreeNodeModel extends EntityModel
         if (!StringHelper.stringsEqual(tooltip, value))
         {
             tooltip = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Tooltip")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Tooltip")); //$NON-NLS-1$
         }
     }
 

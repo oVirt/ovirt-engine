@@ -124,7 +124,7 @@ public class HostBondInterfaceModel extends Model
         {
             bootProtocol = value;
             BootProtocolChanged();
-            OnPropertyChanged(new PropertyChangedEventArgs("BootProtocol")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("BootProtocol")); //$NON-NLS-1$
         }
     }
 
@@ -152,7 +152,7 @@ public class HostBondInterfaceModel extends Model
         if (noneBootProtocolAvailable != value)
         {
             noneBootProtocolAvailable = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("NoneBootProtocolAvailable")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("NoneBootProtocolAvailable")); //$NON-NLS-1$
         }
     }
 
@@ -168,7 +168,7 @@ public class HostBondInterfaceModel extends Model
         if (bootProtocolAvailable != value)
         {
             bootProtocolAvailable = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("BootProtocolAvailable")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("BootProtocolAvailable")); //$NON-NLS-1$
         }
     }
 

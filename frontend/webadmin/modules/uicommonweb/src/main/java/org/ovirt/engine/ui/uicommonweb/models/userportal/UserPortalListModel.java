@@ -306,7 +306,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             ItemsChanging(value, items);
             items = value;
             getItemsChangedEvent().raise(this, EventArgs.Empty);
-            OnPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
 
             UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
             if (items != null && selectedItem != null) {

@@ -43,7 +43,7 @@ public class ClusterPolicyModel extends EntityModel {
         if (hasOverCommitLowLevel != value)
         {
             hasOverCommitLowLevel = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasOverCommitLowLevel")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("HasOverCommitLowLevel")); //$NON-NLS-1$
         }
     }
 
@@ -59,7 +59,7 @@ public class ClusterPolicyModel extends EntityModel {
         if (hasOverCommitHighLevel != value)
         {
             hasOverCommitHighLevel = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasOverCommitHighLevel")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("HasOverCommitHighLevel")); //$NON-NLS-1$
         }
     }
 
@@ -77,7 +77,7 @@ public class ClusterPolicyModel extends EntityModel {
         {
             selectionAlgorithm = value;
             SelectionAlgorithmChanged();
-            OnPropertyChanged(new PropertyChangedEventArgs("SelectionAlgorithm")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("SelectionAlgorithm")); //$NON-NLS-1$
         }
     }
 
@@ -93,7 +93,7 @@ public class ClusterPolicyModel extends EntityModel {
         if (overCommitLowLevel != value)
         {
             overCommitLowLevel = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("OverCommitLowLevel")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("OverCommitLowLevel")); //$NON-NLS-1$
         }
     }
 
@@ -109,7 +109,7 @@ public class ClusterPolicyModel extends EntityModel {
         if (overCommitHighLevel != value)
         {
             overCommitHighLevel = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("OverCommitHighLevel")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("OverCommitHighLevel")); //$NON-NLS-1$
         }
     }
 

@@ -24,7 +24,7 @@ public class LunModel extends EntityModel
         if (!StringHelper.stringsEqual(lunId, value))
         {
             lunId = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("LunId")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("LunId")); //$NON-NLS-1$
         }
     }
 
@@ -40,7 +40,7 @@ public class LunModel extends EntityModel
         if (!StringHelper.stringsEqual(vendorId, value))
         {
             vendorId = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("VendorId")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("VendorId")); //$NON-NLS-1$
         }
     }
 
@@ -56,7 +56,7 @@ public class LunModel extends EntityModel
         if (!StringHelper.stringsEqual(productId, value))
         {
             productId = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("ProductId")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("ProductId")); //$NON-NLS-1$
         }
     }
 
@@ -72,7 +72,7 @@ public class LunModel extends EntityModel
         if (!StringHelper.stringsEqual(serial, value))
         {
             serial = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Serial")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Serial")); //$NON-NLS-1$
         }
     }
 
@@ -88,7 +88,7 @@ public class LunModel extends EntityModel
         if (size != value)
         {
             size = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Size")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Size")); //$NON-NLS-1$
         }
     }
 
@@ -104,7 +104,7 @@ public class LunModel extends EntityModel
         if (multipathing != value)
         {
             multipathing = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Multipathing")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Multipathing")); //$NON-NLS-1$
         }
     }
 
@@ -120,7 +120,7 @@ public class LunModel extends EntityModel
         if (isAccessible != value)
         {
             isAccessible = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsAccessible")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsAccessible")); //$NON-NLS-1$
         }
     }
 
@@ -136,7 +136,7 @@ public class LunModel extends EntityModel
         if (isIncluded != value)
         {
             isIncluded = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsIncluded")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsIncluded")); //$NON-NLS-1$
         }
     }
 
@@ -152,7 +152,7 @@ public class LunModel extends EntityModel
         if (isGrayedOut != value)
         {
             isGrayedOut = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsGrayedOut")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsGrayedOut")); //$NON-NLS-1$
         }
     }
 
@@ -168,7 +168,7 @@ public class LunModel extends EntityModel
         if (grayedOutReasons != value)
         {
             grayedOutReasons = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("GrayedOutReasons")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("GrayedOutReasons")); //$NON-NLS-1$
         }
     }
 
@@ -184,7 +184,7 @@ public class LunModel extends EntityModel
         if (targets != value)
         {
             targets = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Targets")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Targets")); //$NON-NLS-1$
             getTargetsList().setItems(targets);
         }
     }
@@ -201,7 +201,7 @@ public class LunModel extends EntityModel
         if (targetsList != value)
         {
             targetsList = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("TargetsList")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("TargetsList")); //$NON-NLS-1$
         }
     }
 

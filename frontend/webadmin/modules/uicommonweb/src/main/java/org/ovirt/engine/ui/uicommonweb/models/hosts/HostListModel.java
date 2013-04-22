@@ -262,7 +262,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         if (isPowerManagementEnabled != value)
         {
             isPowerManagementEnabled = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("isPowerManagementEnabled")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("isPowerManagementEnabled")); //$NON-NLS-1$
         }
     }
 

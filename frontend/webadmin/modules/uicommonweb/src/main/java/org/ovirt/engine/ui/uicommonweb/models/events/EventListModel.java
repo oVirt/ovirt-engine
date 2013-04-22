@@ -63,7 +63,7 @@ public class EventListModel extends ListWithDetailsModel
         if (lastEvent != value)
         {
             lastEvent = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("LastEvent")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("LastEvent")); //$NON-NLS-1$
         }
     }
 
@@ -79,7 +79,7 @@ public class EventListModel extends ListWithDetailsModel
         if (isAdvancedView != value)
         {
             isAdvancedView = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsAdvancedView")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsAdvancedView")); //$NON-NLS-1$
         }
     }
 
@@ -261,7 +261,7 @@ public class EventListModel extends ListWithDetailsModel
         // If there are no data for this entity, the LastEvent has to be fired in order
         // to stop the progress animation (SearchableTabModelProvider).
         if (Linq.FirstOrDefault(list) == null) {
-            OnPropertyChanged(new PropertyChangedEventArgs("LastEvent")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("LastEvent")); //$NON-NLS-1$
         }
     }
 

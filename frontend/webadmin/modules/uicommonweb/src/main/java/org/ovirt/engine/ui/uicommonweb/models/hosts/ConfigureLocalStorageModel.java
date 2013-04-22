@@ -119,7 +119,7 @@ public class ConfigureLocalStorageModel extends Model {
 
         if (isGeneralTabValid != value) {
             isGeneralTabValid = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsGeneralTabValid")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsGeneralTabValid")); //$NON-NLS-1$
         }
     }
 

@@ -159,7 +159,7 @@ public class VmSnapshotListModel extends SearchableListModel
     public void setSystemTreeSelectedItem(SystemTreeItemModel value)
     {
         systemTreeSelectedItem = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("SystemTreeSelectedItem")); //$NON-NLS-1$
+        onPropertyChanged(new PropertyChangedEventArgs("SystemTreeSelectedItem")); //$NON-NLS-1$
     }
 
     private HashMap<Version, ArrayList<String>> privateCustomPropertiesKeysList;
@@ -184,7 +184,7 @@ public class VmSnapshotListModel extends SearchableListModel
     public void setSnapshotsMap(HashMap<Guid, SnapshotModel> value)
     {
         snapshotsMap = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("SnapshotsMap")); //$NON-NLS-1$
+        onPropertyChanged(new PropertyChangedEventArgs("SnapshotsMap")); //$NON-NLS-1$
     }
 
     private boolean isCloneVmSupported;
@@ -199,7 +199,7 @@ public class VmSnapshotListModel extends SearchableListModel
         if (isCloneVmSupported != value)
         {
             isCloneVmSupported = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsCloneVmSupported")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsCloneVmSupported")); //$NON-NLS-1$
         }
     }
 

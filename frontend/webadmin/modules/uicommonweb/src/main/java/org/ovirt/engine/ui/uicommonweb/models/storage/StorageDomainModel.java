@@ -36,7 +36,7 @@ public class StorageDomainModel extends EntityModel
         if (disks != value)
         {
             disks = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Disks")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Disks")); //$NON-NLS-1$
         }
     }
 

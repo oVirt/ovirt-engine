@@ -46,7 +46,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
         {
             isGrouppedByTarget = value;
             IsGrouppedByTargetChanged();
-            OnPropertyChanged(new PropertyChangedEventArgs("IsGrouppedByTarget")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsGrouppedByTarget")); //$NON-NLS-1$
         }
     }
 
@@ -62,7 +62,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
         if (!StringHelper.stringsEqual(getLUNsFailure, value))
         {
             getLUNsFailure = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("GetLUNsFailure")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("GetLUNsFailure")); //$NON-NLS-1$
         }
     }
 

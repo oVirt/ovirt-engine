@@ -59,7 +59,7 @@ public abstract class ManageBackupModel extends SearchableListModel
         if (isRefreshing != value)
         {
             isRefreshing = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsRefreshing")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsRefreshing")); //$NON-NLS-1$
         }
     }
 

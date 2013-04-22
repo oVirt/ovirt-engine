@@ -28,7 +28,7 @@ public class StorageGeneralModel extends EntityModel
         if (isNfs != value)
         {
             isNfs = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsNfs")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsNfs")); //$NON-NLS-1$
         }
     }
 
@@ -44,7 +44,7 @@ public class StorageGeneralModel extends EntityModel
         if (isLocalS != value)
         {
             isLocalS = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsLocalS")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsLocalS")); //$NON-NLS-1$
         }
     }
 
@@ -60,7 +60,7 @@ public class StorageGeneralModel extends EntityModel
         if (isPosix != value)
         {
             isPosix = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("isPosix")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("isPosix")); //$NON-NLS-1$
         }
     }
 
@@ -76,7 +76,7 @@ public class StorageGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(path, value))
         {
             path = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Path")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Path")); //$NON-NLS-1$
         }
     }
 
@@ -89,7 +89,7 @@ public class StorageGeneralModel extends EntityModel
     public void setVfsType(String vfsType) {
         if (!StringHelper.stringsEqual(this.vfsType, vfsType)) {
             this.vfsType = vfsType;
-            OnPropertyChanged(new PropertyChangedEventArgs("VfsType")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("VfsType")); //$NON-NLS-1$
         }
     }
 
@@ -102,7 +102,7 @@ public class StorageGeneralModel extends EntityModel
     public void setMountOptions(String mountOptions) {
         if (!StringHelper.stringsEqual(this.mountOptions, mountOptions)) {
             this.mountOptions = mountOptions;
-            OnPropertyChanged(new PropertyChangedEventArgs("MountOptions")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("MountOptions")); //$NON-NLS-1$
         }
     }
 
@@ -115,7 +115,7 @@ public class StorageGeneralModel extends EntityModel
     public void setNfsVersion(NfsVersion nfsVersion) {
         if (this.nfsVersion != nfsVersion) {
             this.nfsVersion = nfsVersion;
-            OnPropertyChanged(new PropertyChangedEventArgs("NfsVersion")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("NfsVersion")); //$NON-NLS-1$
         }
     }
 
@@ -128,7 +128,7 @@ public class StorageGeneralModel extends EntityModel
     public void setTimeout(Short timeout) {
         if (!isShortsEqual(this.timeout, timeout)) {
             this.timeout = timeout;
-            OnPropertyChanged(new PropertyChangedEventArgs("Timeout")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Timeout")); //$NON-NLS-1$
         }
     }
 
@@ -141,7 +141,7 @@ public class StorageGeneralModel extends EntityModel
     public void setRetransmissions(Short retransmissions) {
         if (!isShortsEqual(this.retransmissions, retransmissions)) {
             this.retransmissions = retransmissions;
-            OnPropertyChanged(new PropertyChangedEventArgs("Retransmissions")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Retransmissions")); //$NON-NLS-1$
         }
     }
 

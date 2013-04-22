@@ -81,7 +81,7 @@ public class NetworkGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(name, value))
         {
             name = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
         }
     }
 
@@ -93,7 +93,7 @@ public class NetworkGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(role, value))
         {
             role = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Role")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Role")); //$NON-NLS-1$
         }
     }
 
@@ -109,7 +109,7 @@ public class NetworkGeneralModel extends EntityModel
         if (vlan == null || !vlan.equals(value))
         {
             vlan = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Vlan")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Vlan")); //$NON-NLS-1$
         }
     }
 
@@ -125,7 +125,7 @@ public class NetworkGeneralModel extends EntityModel
         if (mtu == null || !mtu.equals(value))
         {
             mtu = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Mtu")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Mtu")); //$NON-NLS-1$
         }
     }
 
@@ -138,7 +138,7 @@ public class NetworkGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(description, value))
         {
             description = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Description")); //$NON-NLS-1$
         }
     }
 
@@ -150,7 +150,7 @@ public class NetworkGeneralModel extends EntityModel
         if ((id == null && value != null) || (id != null && !id.equals(value)))
         {
             id = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Id")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("Id")); //$NON-NLS-1$
         }
     }
 }

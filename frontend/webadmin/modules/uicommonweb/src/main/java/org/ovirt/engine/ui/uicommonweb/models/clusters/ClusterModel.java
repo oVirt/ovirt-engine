@@ -202,7 +202,7 @@ public class ClusterModel extends EntityModel
         if (allowClusterWithVirtGlusterEnabled != value)
         {
             allowClusterWithVirtGlusterEnabled = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("AllowClusterWithVirtGlusterEnabled")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("AllowClusterWithVirtGlusterEnabled")); //$NON-NLS-1$
         }
     }
 
@@ -446,7 +446,7 @@ public class ClusterModel extends EntityModel
         if (isGeneralTabValid != value)
         {
             isGeneralTabValid = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsGeneralTabValid")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsGeneralTabValid")); //$NON-NLS-1$
         }
     }
 
@@ -506,7 +506,7 @@ public class ClusterModel extends EntityModel
             default:
                 break;
             }
-            OnPropertyChanged(new PropertyChangedEventArgs("MigrateOnErrorOption")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("MigrateOnErrorOption")); //$NON-NLS-1$
         }
     }
 
@@ -532,7 +532,7 @@ public class ClusterModel extends EntityModel
         if (getisResiliencePolicyTabAvailable() != value)
         {
             setisResiliencePolicyTabAvailable(value);
-            OnPropertyChanged(new PropertyChangedEventArgs("IsResiliencePolicyTabAvailable")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsResiliencePolicyTabAvailable")); //$NON-NLS-1$
         }
     }
 

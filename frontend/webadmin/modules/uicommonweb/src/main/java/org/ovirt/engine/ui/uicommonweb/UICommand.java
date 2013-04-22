@@ -37,7 +37,7 @@ public class UICommand extends Model implements ICommand
                 getExecuteProhibitionReasons().clear();
             }
 
-            OnPropertyChanged(new PropertyChangedEventArgs("IsExecutionAllowed")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsExecutionAllowed")); //$NON-NLS-1$
         }
     }
 

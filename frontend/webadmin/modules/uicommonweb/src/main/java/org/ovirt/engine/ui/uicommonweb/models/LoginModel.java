@@ -111,7 +111,7 @@ public class LoginModel extends Model
         if (isConnecting != value)
         {
             isConnecting = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsConnecting")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsConnecting")); //$NON-NLS-1$
         }
     }
 

@@ -143,7 +143,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
     public void setSystemTreeSelectedItem(SystemTreeItemModel value)
     {
         systemTreeSelectedItem = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("SystemTreeSelectedItem")); //$NON-NLS-1$
+        onPropertyChanged(new PropertyChangedEventArgs("SystemTreeSelectedItem")); //$NON-NLS-1$
     }
 
     private ListModel diskVmListModel;

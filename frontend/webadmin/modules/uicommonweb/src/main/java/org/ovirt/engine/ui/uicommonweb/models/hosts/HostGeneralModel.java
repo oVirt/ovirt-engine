@@ -150,7 +150,7 @@ public class HostGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(os, value))
         {
             os = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("OS")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("OS")); //$NON-NLS-1$
         }
     }
 
@@ -166,7 +166,7 @@ public class HostGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(kernelVersion, value))
         {
             kernelVersion = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("KernelVersion")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("KernelVersion")); //$NON-NLS-1$
         }
     }
 
@@ -182,7 +182,7 @@ public class HostGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(kvmVersion, value))
         {
             kvmVersion = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("KvmVersion")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("KvmVersion")); //$NON-NLS-1$
         }
     }
 
@@ -195,7 +195,7 @@ public class HostGeneralModel extends EntityModel
     public void setLibvirtVersion(RpmVersion value) {
         if (Version.OpInequality(libvirtVersion, value)) {
             libvirtVersion = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("LibvirtVersion")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("LibvirtVersion")); //$NON-NLS-1$
         }
     }
 
@@ -211,7 +211,7 @@ public class HostGeneralModel extends EntityModel
         if (Version.OpInequality(vdsmVersion, value))
         {
             vdsmVersion = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("VdsmVersion")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("VdsmVersion")); //$NON-NLS-1$
         }
     }
 
@@ -227,7 +227,7 @@ public class HostGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(spiceVersion, value))
         {
             spiceVersion = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("SpiceVersion")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("SpiceVersion")); //$NON-NLS-1$
         }
     }
 
@@ -243,7 +243,7 @@ public class HostGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(iScsiInitiatorName, value))
         {
             iScsiInitiatorName = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IScsiInitiatorName")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IScsiInitiatorName")); //$NON-NLS-1$
         }
     }
 
@@ -329,7 +329,7 @@ public class HostGeneralModel extends EntityModel
     public void setSpmPriority(String spmPriority) {
         if (this.spmPriority == null || !this.spmPriority.equals(spmPriority)) {
             this.spmPriority = spmPriority;
-            OnPropertyChanged(new PropertyChangedEventArgs("SpmPriority")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("SpmPriority")); //$NON-NLS-1$
         }
     }
 
@@ -350,7 +350,7 @@ public class HostGeneralModel extends EntityModel
         if (activeVms == null || !activeVms.equals(value))
         {
             activeVms = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("ActiveVms")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("ActiveVms")); //$NON-NLS-1$
         }
     }
 
@@ -366,7 +366,7 @@ public class HostGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(cpuName, value))
         {
             cpuName = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("CpuName")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("CpuName")); //$NON-NLS-1$
         }
     }
 
@@ -382,7 +382,7 @@ public class HostGeneralModel extends EntityModel
         if (!StringHelper.stringsEqual(cpuType, value))
         {
             cpuType = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("CpuType")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("CpuType")); //$NON-NLS-1$
         }
     }
 
@@ -402,7 +402,7 @@ public class HostGeneralModel extends EntityModel
         if (numberOfSockets == null || !numberOfSockets.equals(value))
         {
             numberOfSockets = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("NumberOfSockets")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("NumberOfSockets")); //$NON-NLS-1$
         }
     }
 
@@ -422,7 +422,7 @@ public class HostGeneralModel extends EntityModel
         if (coresPerSocket == null || !coresPerSocket.equals(value))
         {
             coresPerSocket = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("CoresPerSocket")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("CoresPerSocket")); //$NON-NLS-1$
         }
     }
 
@@ -442,7 +442,7 @@ public class HostGeneralModel extends EntityModel
         if (threadsPerCore == null || !threadsPerCore.equals(value))
         {
             threadsPerCore = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("ThreadsPerCore")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("ThreadsPerCore")); //$NON-NLS-1$
         }
     }
 
@@ -464,7 +464,7 @@ public class HostGeneralModel extends EntityModel
         if (sharedMemory == null || !sharedMemory.equals(value))
         {
             sharedMemory = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("SharedMemory")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("SharedMemory")); //$NON-NLS-1$
         }
     }
 
@@ -484,7 +484,7 @@ public class HostGeneralModel extends EntityModel
         if (physicalMemory == null || !physicalMemory.equals(value))
         {
             physicalMemory = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("PhysicalMemory")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("PhysicalMemory")); //$NON-NLS-1$
         }
     }
 
@@ -504,7 +504,7 @@ public class HostGeneralModel extends EntityModel
         if (swapTotal == null || !swapTotal.equals(value))
         {
             swapTotal = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("SwapTotal")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("SwapTotal")); //$NON-NLS-1$
         }
     }
 
@@ -524,7 +524,7 @@ public class HostGeneralModel extends EntityModel
         if (swapFree == null || !swapFree.equals(value))
         {
             swapFree = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("SwapFree")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("SwapFree")); //$NON-NLS-1$
         }
     }
 
@@ -544,7 +544,7 @@ public class HostGeneralModel extends EntityModel
         if (freeMemory == null || !freeMemory.equals(value))
         {
             freeMemory = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("FreeMemory")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("FreeMemory")); //$NON-NLS-1$
         }
     }
 
@@ -564,7 +564,7 @@ public class HostGeneralModel extends EntityModel
         if (usedMemory == null || !usedMemory.equals(value))
         {
             usedMemory = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("UsedMemory")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("UsedMemory")); //$NON-NLS-1$
         }
     }
 
@@ -584,7 +584,7 @@ public class HostGeneralModel extends EntityModel
         if (usedSwap == null || !usedSwap.equals(value))
         {
             usedSwap = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("UsedSwap")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("UsedSwap")); //$NON-NLS-1$
         }
     }
 
@@ -610,7 +610,7 @@ public class HostGeneralModel extends EntityModel
         if (memoryPageSharing == null || !memoryPageSharing.equals(value))
         {
             memoryPageSharing = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("MemoryPageSharing")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("MemoryPageSharing")); //$NON-NLS-1$
         }
     }
 
@@ -626,7 +626,7 @@ public class HostGeneralModel extends EntityModel
         if (automaticLargePage != value)
         {
             automaticLargePage = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("AutomaticLargePage")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("AutomaticLargePage")); //$NON-NLS-1$
         }
     }
 
@@ -644,7 +644,7 @@ public class HostGeneralModel extends EntityModel
         if (hasAnyAlert != value)
         {
             hasAnyAlert = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasAnyAlert")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("HasAnyAlert")); //$NON-NLS-1$
         }
     }
 
@@ -660,7 +660,7 @@ public class HostGeneralModel extends EntityModel
         if (hasUpgradeAlert != value)
         {
             hasUpgradeAlert = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasUpgradeAlert")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("HasUpgradeAlert")); //$NON-NLS-1$
         }
     }
 
@@ -676,7 +676,7 @@ public class HostGeneralModel extends EntityModel
         if (hasManualFenceAlert != value)
         {
             hasManualFenceAlert = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasManualFenceAlert")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("HasManualFenceAlert")); //$NON-NLS-1$
         }
     }
 
@@ -692,7 +692,7 @@ public class HostGeneralModel extends EntityModel
         if (hasNoPowerManagementAlert != value)
         {
             hasNoPowerManagementAlert = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasNoPowerManagementAlert")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("HasNoPowerManagementAlert")); //$NON-NLS-1$
         }
     }
 
@@ -708,7 +708,7 @@ public class HostGeneralModel extends EntityModel
         if (hasReinstallAlertNonResponsive != value)
         {
             hasReinstallAlertNonResponsive = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasReinstallAlertNonResponsive")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("HasReinstallAlertNonResponsive")); //$NON-NLS-1$
         }
     }
 
@@ -724,7 +724,7 @@ public class HostGeneralModel extends EntityModel
         if (hasReinstallAlertInstallFailed != value)
         {
             hasReinstallAlertInstallFailed = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasReinstallAlertInstallFailed")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("HasReinstallAlertInstallFailed")); //$NON-NLS-1$
         }
     }
 
@@ -740,7 +740,7 @@ public class HostGeneralModel extends EntityModel
         if (hasReinstallAlertMaintenance != value)
         {
             hasReinstallAlertMaintenance = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasReinstallAlertMaintenance")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("HasReinstallAlertMaintenance")); //$NON-NLS-1$
         }
     }
 
@@ -756,7 +756,7 @@ public class HostGeneralModel extends EntityModel
         if (hasNICsAlert != value)
         {
             hasNICsAlert = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasNICsAlert")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("HasNICsAlert")); //$NON-NLS-1$
         }
     }
 
@@ -772,7 +772,7 @@ public class HostGeneralModel extends EntityModel
         if (nonOperationalReasonEntity != value)
         {
             nonOperationalReasonEntity = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("NonOperationalReasonEntity")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("NonOperationalReasonEntity")); //$NON-NLS-1$
         }
     }
 

@@ -101,7 +101,7 @@ public class RoleModel extends Model
         if (permissionGroupModels != value)
         {
             permissionGroupModels = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("PermissionGroupModels")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("PermissionGroupModels")); //$NON-NLS-1$
         }
     }
 

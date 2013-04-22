@@ -37,7 +37,7 @@ public class VolumeGeneralModel extends EntityModel {
 
     public void setVolumeType(String volumeType) {
         this.volumeType = volumeType;
-        OnPropertyChanged(new PropertyChangedEventArgs("VolumeType")); //$NON-NLS-1$
+        onPropertyChanged(new PropertyChangedEventArgs("VolumeType")); //$NON-NLS-1$
     }
 
     public void setVolumeTypeSilently(String volumeType) {

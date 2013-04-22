@@ -177,7 +177,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         if (proposeDiscoverTargets != value)
         {
             proposeDiscoverTargets = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("ProposeDiscoverTargets")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("ProposeDiscoverTargets")); //$NON-NLS-1$
         }
     }
 
@@ -194,7 +194,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         {
             isAllLunsSelected = value;
             IsAllLunsSelectedChanged();
-            OnPropertyChanged(new PropertyChangedEventArgs("IsAllLunsSelected")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IsAllLunsSelected")); //$NON-NLS-1$
         }
     }
 
@@ -210,7 +210,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         if (ignoreGrayedOut != value)
         {
             ignoreGrayedOut = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IgnoreGrayedOut")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("IgnoreGrayedOut")); //$NON-NLS-1$
         }
     }
 
@@ -226,7 +226,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         if (multiSelection != value)
         {
             multiSelection = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("MultiSelection")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("MultiSelection")); //$NON-NLS-1$
         }
     }
 
@@ -242,7 +242,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         if (!StringHelper.stringsEqual(selectedLunWarning, value))
         {
             selectedLunWarning = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("SelectedLunWarning")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("SelectedLunWarning")); //$NON-NLS-1$
         }
     }
 

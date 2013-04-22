@@ -88,7 +88,7 @@ public class EventNotificationModel extends Model
                 || (eventGroupModels != null && !eventGroupModels.equals(value)))
         {
             eventGroupModels = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("EventGroupModels")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs("EventGroupModels")); //$NON-NLS-1$
         }
     }
 
