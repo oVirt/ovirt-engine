@@ -373,13 +373,13 @@ done
 # Install the systemd files:
 %if %{install_systemd}
 install -dm 755 %{buildroot}%{_unitdir}
-install -m 644 packaging/fedora/engine-service.systemd %{buildroot}%{_unitdir}/%{engine_name}.service
+install -m 644 packaging/services/engine-service.systemd %{buildroot}%{_unitdir}/%{engine_name}.service
 %endif
 
 # Install System V init scripts:
 %if %{install_systemv}
 install -dm 755 %{buildroot}%{_sysconfdir}/rc.d/init.d
-install -m 755 packaging/fedora/engine-service.sysv %{buildroot}%{_sysconfdir}/rc.d/init.d/ovirt-engine
+install -m 755 packaging/services/engine-service.sysv %{buildroot}%{_sysconfdir}/rc.d/init.d/ovirt-engine
 %endif
 
 # backward compatibly (pre-3.3.0)

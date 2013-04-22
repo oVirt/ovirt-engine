@@ -132,9 +132,9 @@ GENERATED = \
 	backend/manager/tools/src/main/conf/engine-config-log4j.xml \
 	backend/manager/tools/src/main/conf/engine-manage-domains-log4j.xml \
 	backend/manager/tools/src/main/conf/engine-notifier-log4j.xml \
-	packaging/fedora/engine-service.py \
-	packaging/fedora/engine-service.systemd \
-	packaging/fedora/engine-service.sysv \
+	packaging/services/engine-service.py \
+	packaging/services/engine-service.systemd \
+	packaging/services/engine-service.sysv \
 	packaging/fedora/spec/ovirt-engine.spec \
 	$(NULL)
 
@@ -144,8 +144,8 @@ all: \
 	$(NULL)
 
 generated-files:	$(GENERATED)
-	chmod a+x packaging/fedora/engine-service.sysv
-	chmod a+x packaging/fedora/engine-service.py
+	chmod a+x packaging/services/engine-service.sysv
+	chmod a+x packaging/services/engine-service.py
 
 $(BUILD_FILE):
 	-[ "$(MAVEN_OUTPUT_DIR_DEFAULT)" = "$(MAVEN_OUTPUT_DIR)" ] && rm -fr "$(MAVEN_OUTPUT_DIR)"
@@ -423,6 +423,6 @@ install_service:
 
 	# Install the files:
 	install -dm 755 $(DESTDIR)$(DATA_DIR)/service
-	install -m 644 packaging/fedora/engine-service.xml.in $(DESTDIR)$(DATA_DIR)/service
-	install -m 644 packaging/fedora/engine-service-logging.properties.in $(DESTDIR)$(DATA_DIR)/service
-	install -m 755 packaging/fedora/engine-service.py $(DESTDIR)$(DATA_DIR)/service
+	install -m 644 packaging/services/engine-service.xml.in $(DESTDIR)$(DATA_DIR)/service
+	install -m 644 packaging/services/engine-service-logging.properties.in $(DESTDIR)$(DATA_DIR)/service
+	install -m 755 packaging/services/engine-service.py $(DESTDIR)$(DATA_DIR)/service
