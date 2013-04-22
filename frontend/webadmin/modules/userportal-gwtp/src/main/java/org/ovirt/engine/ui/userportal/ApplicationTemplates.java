@@ -20,7 +20,7 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
             "                <th style=\"text-align:right; padding: 3px;\" >{1}</th>\n" +
             "          </tr>\n" +
             "          <tr style=\"background-color: #b5cadc; padding: 3px;\">\n" +
-            "                <td style=\"padding: 3px;\">{2} Usage</td>\n" +
+            "                <td style=\"padding: 3px;\">{2}</td>\n" +
             "                <td style=\"text-align:right; padding: 3px; padding-left: 18px; \" >{3}%</td>\n" +
             "                <td style=\"text-align:right; padding: 3px; padding-left: 18px; \" >{4}</td>\n" +
             "          </tr>\n" +
