@@ -162,7 +162,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
             AsyncDataProvider.GetDataCenterList(new AsyncQuery(this, new INewAsyncCallback() {
 
                 @Override
-                public void OnSuccess(Object model, Object returnValue) {
+                public void onSuccess(Object model, Object returnValue) {
                     ArrayList<storage_pool> dataCenterList = (ArrayList<storage_pool>) returnValue;
                     if (dataCenterList == null || dataCenterList.size() == 0) {
                         return;
@@ -196,7 +196,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                 }
                 AsyncDataProvider.GetClusterList(new AsyncQuery(this, new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object model, Object returnValue) {
+                    public void onSuccess(Object model, Object returnValue) {
                         ArrayList<VDSGroup> clusterList = (ArrayList<VDSGroup>) returnValue;
                         if (clusterList == null || clusterList.size() == 0) {
                             qModel.getAllDataCenterClusters().setItems(new ArrayList<QuotaVdsGroup>());
@@ -221,7 +221,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                 AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
 
                     @Override
-                    public void OnSuccess(Object model, Object returnValue) {
+                    public void onSuccess(Object model, Object returnValue) {
                         ArrayList<StorageDomain> storageList = (ArrayList<StorageDomain>) returnValue;
                         if (storageList == null || storageList.size() == 0) {
                             qModel.getAllDataCenterStorages().setItems(new ArrayList<QuotaStorage>());
@@ -401,7 +401,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         asyncQuery.asyncCallback = new INewAsyncCallback() {
 
             @Override
-            public void OnSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object model, Object returnValue) {
                 final QuotaListModel outer_quotaListModel = (QuotaListModel) model;
                 final Quota quota = (Quota) ((VdcQueryReturnValue) returnValue).getReturnValue();
                 qModel.setEntity(quota);
@@ -432,7 +432,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                         AsyncDataProvider.GetClusterList(new AsyncQuery(this, new INewAsyncCallback() {
 
                             @Override
-                            public void OnSuccess(Object model, Object returnValue) {
+                            public void onSuccess(Object model, Object returnValue) {
                                 ArrayList<VDSGroup> clusterList = (ArrayList<VDSGroup>) returnValue;
                                 if (clusterList == null || clusterList.size() == 0) {
                                     qModel.getAllDataCenterClusters().setItems(new ArrayList<QuotaVdsGroup>());
@@ -477,7 +477,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                         AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
 
                             @Override
-                            public void OnSuccess(Object model, Object returnValue) {
+                            public void onSuccess(Object model, Object returnValue) {
                                 ArrayList<StorageDomain> storageList = (ArrayList<StorageDomain>) returnValue;
 
                                 if (storageList == null || storageList.size() == 0) {

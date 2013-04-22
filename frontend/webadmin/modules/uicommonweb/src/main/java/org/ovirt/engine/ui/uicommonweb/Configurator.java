@@ -249,7 +249,7 @@ public abstract class Configurator {
         AsyncDataProvider.GetDocumentationBaseURL(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         String documentationBaseURL = (String) returnValue;
                         boolean isDocumentationAvailable = !documentationBaseURL.equals(""); //$NON-NLS-1$
 
@@ -317,7 +317,7 @@ public abstract class Configurator {
         // Get 'EnableUSBAsDefault' value from database
         AsyncDataProvider.IsUSBEnabledByDefault(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
                 // Update IsUsbEnabled value
                 setIsUsbEnabled((Boolean) returnValue);
             }
@@ -328,7 +328,7 @@ public abstract class Configurator {
         AsyncDataProvider.GetSpiceUsbAutoShare(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         spice.setUsbAutoShare((Boolean) returnValue);
                     }
                 }));

@@ -215,7 +215,7 @@ public class Frontend {
                     getEventsHandler().runQueryFailed(null);
                     failureEventHandler(caught);
                     if (callback.isHandleFailure()) {
-                        callback.asyncCallback.OnSuccess(callback.getModel(), null);
+                        callback.asyncCallback.onSuccess(callback.getModel(), null);
                     }
                     raiseQueryCompleteEvent(queryType, callback.getContext());
                 } finally {
@@ -241,16 +241,16 @@ public class Frontend {
                             handleNotLoggedInEvent(errorMessage);
                         }
                         if (callback.isHandleFailure()) {
-                            callback.getDel().OnSuccess(callback.getModel(), result);
+                            callback.getDel().onSuccess(callback.getModel(), result);
                         }
                     } else {
                         callback.setOriginalReturnValue(result);
                         if (callback.getConverter() != null) {
-                            callback.getDel().OnSuccess(callback.getModel(),
+                            callback.getDel().onSuccess(callback.getModel(),
                                     callback.getConverter().Convert(result.getReturnValue(), callback));
                         }
                         else {
-                            callback.getDel().OnSuccess(callback.getModel(), result);
+                            callback.getDel().onSuccess(callback.getModel(), result);
                         }
                     }
 
@@ -300,7 +300,7 @@ public class Frontend {
                 getEventsHandler().runQueryFailed(null);
                 failureEventHandler(caught);
                 if (callback.isHandleFailure()) {
-                    callback.asyncCallback.OnSuccess(callback.getModel(), null);
+                    callback.asyncCallback.onSuccess(callback.getModel(), null);
                 }
             }
 
@@ -319,19 +319,19 @@ public class Frontend {
                         // if (getEventsHandler().isRaiseErrorModalPanel(queryType))
                         failureEventHandler(result.getExceptionString());
                         if (callback.isHandleFailure()) {
-                            callback.getDel().OnSuccess(callback.getModel(), result);
+                            callback.getDel().onSuccess(callback.getModel(), result);
                         }
                     }
                     if (callback.isHandleFailure()) {
-                        callback.getDel().OnSuccess(callback.getModel(), result);
+                        callback.getDel().onSuccess(callback.getModel(), result);
                     }
                 } else {
                     if (callback.getConverter() != null) {
-                        callback.getDel().OnSuccess(callback.getModel(),
+                        callback.getDel().onSuccess(callback.getModel(),
                                 callback.getConverter().Convert(result.getReturnValue(), callback));
                     }
                     else {
-                        callback.getDel().OnSuccess(callback.getModel(), result);
+                        callback.getDel().onSuccess(callback.getModel(), result);
                     }
                 }
             }
@@ -635,7 +635,7 @@ public class Frontend {
                 List<VdcReturnValueBase> failed = new ArrayList<VdcReturnValueBase>();
                 failed.add(result);
                 translateErrors(failed);
-                callback.asyncCallback.OnSuccess(callback.getModel(), result);
+                callback.asyncCallback.onSuccess(callback.getModel(), result);
                 if (getLoginHandler() != null && result.getSucceeded()) {
                     getLoginHandler().onLoginSuccess(userName, password, domain);
                 }
@@ -651,7 +651,7 @@ public class Frontend {
                 failureEventHandler(caught);
                 if (callback.isHandleFailure()) {
                     setLoggedInUser(null);
-                    callback.asyncCallback.OnSuccess(callback.getModel(), null);
+                    callback.asyncCallback.onSuccess(callback.getModel(), null);
                 }
             }
         });
@@ -665,7 +665,7 @@ public class Frontend {
             @Override
             public void onSuccess(VdcReturnValueBase result) {
                 logger.finer("Succesful returned result from Logoff."); //$NON-NLS-1$
-                callback.asyncCallback.OnSuccess(callback.getModel(), result);
+                callback.asyncCallback.onSuccess(callback.getModel(), result);
                 if (getLoginHandler() != null) {
                     getLoginHandler().onLogout();
                 }
@@ -679,7 +679,7 @@ public class Frontend {
                 logger.log(Level.SEVERE, "Failed to execute Logoff: " + caught, caught); //$NON-NLS-1$
                 getEventsHandler().runQueryFailed(null);
                 failureEventHandler(caught);
-                callback.asyncCallback.OnSuccess(callback.getModel(), null);
+                callback.asyncCallback.onSuccess(callback.getModel(), null);
             }
         });
     }
@@ -701,13 +701,13 @@ public class Frontend {
                 }
                 logger.log(Level.SEVERE, "Failed to execute sync getIsUserLoggedIn: " + caught, caught); //$NON-NLS-1$
                 failureEventHandler(caught);
-                callback.OnFailure(null);
+                callback.onFailure(null);
             }
 
             @Override
             public void onSuccess(VdcUser result) {
                 logger.finer("Sucessfully executed sync getIsUserLoggedIn!"); //$NON-NLS-1$
-                callback.OnSuccess(result);
+                callback.onSuccess(result);
             }
         });
     }

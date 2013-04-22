@@ -52,7 +52,7 @@ public class DataCenterQuotaListModel extends QuotaListModel
         asyncQuery.asyncCallback = new INewAsyncCallback() {
 
             @Override
-            public void OnSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object model, Object returnValue) {
                 DataCenterQuotaListModel quotaListModel = (DataCenterQuotaListModel) model;
                 quotaListModel.setItems((ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue());
 

@@ -199,7 +199,7 @@ public class ClusterGeneralModel extends EntityModel {
         AsyncQuery query = new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         boolean isConsistent = (Boolean) ((VdcQueryReturnValue) returnValue).getReturnValue();
                         setConsoleAddressPartiallyOverridden(!isConsistent);
                     }
@@ -240,7 +240,7 @@ public class ClusterGeneralModel extends EntityModel {
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 Map<String, String> hostMap = (Map<String, String>) result;
 
@@ -356,7 +356,7 @@ public class ClusterGeneralModel extends EntityModel {
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 Map<String, String> hostMap = (Map<String, String>) result;
 
@@ -413,7 +413,7 @@ public class ClusterGeneralModel extends EntityModel {
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 ClusterGeneralModel innerGeneralModel = (ClusterGeneralModel) model;
                 ArrayList<GlusterVolumeEntity> volumeList = (ArrayList<GlusterVolumeEntity>) result;
@@ -446,7 +446,7 @@ public class ClusterGeneralModel extends EntityModel {
             _asyncQuery.setModel(this);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object model, Object result)
+                public void onSuccess(Object model, Object result)
                 {
                     ClusterGeneralModel innerGeneralModel = (ClusterGeneralModel) model;
                     Map<String, String> serverMap = (Map<String, String>) result;

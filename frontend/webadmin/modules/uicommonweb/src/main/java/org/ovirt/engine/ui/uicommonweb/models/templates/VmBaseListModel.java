@@ -47,7 +47,7 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
         AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         VmBaseListModel vmListModel = (VmBaseListModel) target;
                         List<StorageDomain> storageDomains =
                                 (List<StorageDomain>) returnValue;
@@ -144,7 +144,7 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
         AsyncDataProvider.GetDataCentersByStorageDomain(new AsyncQuery(new Object[] { this, model },
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         Object[] array = (Object[]) target;
                         VmBaseListModel vmListModel = (VmBaseListModel) array[0];
                         ExportVmModel exportVmModel = (ExportVmModel) array[1];
@@ -164,7 +164,7 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
             _asyncQuery.setModel(this);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object model, Object result) {
+                public void onSuccess(Object model, Object result) {
                     VmBaseListModel listModel = (VmBaseListModel) model;
                     ExportVmModel windowModel = (ExportVmModel) listModel.getWindow();
                     List<T> foundVms = new ArrayList<T>();

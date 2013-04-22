@@ -50,7 +50,7 @@ public class AddClusterRM extends IEnlistmentNotification {
             AsyncDataProvider.GetClusterListByName(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object model, Object returnValue) {
+                        public void onSuccess(Object model, Object returnValue) {
 
                             context.clusterFoundByName = Linq.FirstOrDefault((Iterable<VDSGroup>) returnValue);
                             prepare2();

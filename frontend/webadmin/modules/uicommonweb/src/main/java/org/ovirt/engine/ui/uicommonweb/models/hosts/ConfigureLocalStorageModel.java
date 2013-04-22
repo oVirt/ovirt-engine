@@ -406,7 +406,7 @@ public class ConfigureLocalStorageModel extends Model {
         AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         context.storageList = (ArrayList<StorageDomain>) returnValue;
                         SetDefaultNames8();
@@ -495,7 +495,7 @@ public class ConfigureLocalStorageModel extends Model {
         AsyncDataProvider.GetDataCenterListByName(new AsyncQuery(null,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         context.dataCenterList = (ArrayList<storage_pool>) returnValue;
                         SetDefaultNames5();
@@ -511,7 +511,7 @@ public class ConfigureLocalStorageModel extends Model {
         AsyncDataProvider.GetClusterList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         context.clusterList = (ArrayList<VDSGroup>) returnValue;
                         SetDefaultNames4();
@@ -529,7 +529,7 @@ public class ConfigureLocalStorageModel extends Model {
             AsyncDataProvider.GetClusterById(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
 
                             context.hostCluster = (VDSGroup) returnValue;
                             SetDefaultNames3();
@@ -551,7 +551,7 @@ public class ConfigureLocalStorageModel extends Model {
             AsyncDataProvider.GetDataCenterById(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
 
                             context.hostDataCenter = (storage_pool) returnValue;
                             SetDefaultNames2();

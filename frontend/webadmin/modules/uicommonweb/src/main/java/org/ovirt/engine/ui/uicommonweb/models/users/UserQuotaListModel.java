@@ -50,7 +50,7 @@ public class UserQuotaListModel extends SearchableListModel
         asyncQuery.asyncCallback = new INewAsyncCallback() {
 
             @Override
-            public void OnSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object model, Object returnValue) {
                 UserQuotaListModel quotaListModel = (UserQuotaListModel) model;
                 quotaListModel.setItems((ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue());
 

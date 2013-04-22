@@ -54,7 +54,7 @@ public class VmGuideModel extends GuideModel
         AsyncDataProvider.GetVmNicList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         VmGuideModel vmGuideModel = (VmGuideModel) target;
                         ArrayList<VmNetworkInterface> nics =
                                 (ArrayList<VmNetworkInterface>) returnValue;
@@ -65,7 +65,7 @@ public class VmGuideModel extends GuideModel
         AsyncDataProvider.GetVmDiskList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         VmGuideModel vmGuideModel = (VmGuideModel) target;
                         ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
                         vmGuideModel.disks = disks;
@@ -134,7 +134,7 @@ public class VmGuideModel extends GuideModel
         AsyncDataProvider.GetVmNicList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         VmGuideModel vmGuideModel = (VmGuideModel) target;
                         ArrayList<VmNetworkInterface> nics =
                                 (ArrayList<VmNetworkInterface>) returnValue;

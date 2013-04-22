@@ -231,7 +231,7 @@ public abstract class ConsoleModel extends EntityModel {
         query.setModel(this);
         query.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 boolean returnValue = ((Boolean) ((VdcQueryReturnValue)result).getReturnValue());
                 if (returnValue) {

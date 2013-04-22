@@ -116,7 +116,7 @@ public class NetworkTemplateListModel extends SearchableListModel
         asyncQuery.setModel(this);
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object ReturnValue)
+            public void onSuccess(Object model, Object ReturnValue)
             {
                 NetworkTemplateListModel.this.setItems((List<PairQueryable<VmNetworkInterface, VmTemplate>>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
             }

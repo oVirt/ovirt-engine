@@ -401,7 +401,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         AsyncDataProvider.IsTemplateNameUnique(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         TemplateListModel templateListModel = (TemplateListModel) target;
                         boolean isNameUnique = (Boolean) returnValue;

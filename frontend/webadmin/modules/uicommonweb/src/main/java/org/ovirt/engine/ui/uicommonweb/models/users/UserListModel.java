@@ -170,7 +170,7 @@ public class UserListModel extends ListWithDetailsModel
             AsyncDataProvider.GetAttachedTagsToUser(new AsyncQuery(new Object[] { this, model },
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
 
                             Object[] array = (Object[]) target;
                             UserListModel userListModel = (UserListModel) array[0];
@@ -191,7 +191,7 @@ public class UserListModel extends ListWithDetailsModel
             AsyncDataProvider.GetAttachedTagsToUserGroup(new AsyncQuery(new Object[] { this, model },
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
 
                             Object[] array = (Object[]) target;
                             UserListModel userListModel = (UserListModel) array[0];

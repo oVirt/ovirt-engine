@@ -53,7 +53,7 @@ public class NewNetworkModel extends NetworkModel {
         AsyncDataProvider.GetClusterList(new AsyncQuery(NewNetworkModel.this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object model, Object ReturnValue)
+                    public void onSuccess(Object model, Object ReturnValue)
                     {
                         onGetClusterList((ArrayList<VDSGroup>) ReturnValue);
                     }

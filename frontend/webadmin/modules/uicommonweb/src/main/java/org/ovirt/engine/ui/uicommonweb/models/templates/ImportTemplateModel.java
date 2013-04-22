@@ -76,7 +76,7 @@ public class ImportTemplateModel extends ImportVmModel
                 new AsyncQuery(this, new INewAsyncCallback() {
 
                     @Override
-                    public void OnSuccess(Object model, Object returnValue) {
+                    public void onSuccess(Object model, Object returnValue) {
                         List<VmTemplate> vmtList =
                                 (List<VmTemplate>) ((VdcQueryReturnValue) returnValue).getReturnValue();
 

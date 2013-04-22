@@ -83,7 +83,7 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
         AsyncDataProvider.GetWANDisableEffects(new AsyncQuery(this, new INewAsyncCallback() {
             @SuppressWarnings("unchecked")
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
                 spice.setWANDisableEffects((List<WANDisableEffects>) returnValue);
             }
         }));
@@ -92,7 +92,7 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
     private void updateWanColorDepthOptions(final ISpice spice) {
         AsyncDataProvider.GetWANColorDepth(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
                 spice.setWANColorDepth((WanColorDepth) returnValue);
             }
         }));

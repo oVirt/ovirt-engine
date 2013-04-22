@@ -163,7 +163,7 @@ public class LoginModel extends Model
         _asyncQuery.setHandleFailure(true);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object ReturnValue)
+            public void onSuccess(Object model, Object ReturnValue)
             {
 
                 setIsConnecting(false);
@@ -251,7 +251,7 @@ public class LoginModel extends Model
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 LoginModel loginModel = (LoginModel) model;
                 VdcUser user = null;

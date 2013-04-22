@@ -220,7 +220,7 @@ public class ResourcesModel extends SearchableListModel
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object ReturnValue)
+            public void onSuccess(Object model, Object ReturnValue)
             {
                 ResourcesModel resourcesModel = (ResourcesModel) model;
                 final ArrayList<VM> list =
@@ -317,7 +317,7 @@ public class ResourcesModel extends SearchableListModel
                 Frontend.RunQuery(VdcQueryType.GetQuotasConsumptionForCurrentUser, parameters, new AsyncQuery(this,
                         new INewAsyncCallback() {
                             @Override
-                            public void OnSuccess(Object model, Object ReturnValue) {
+                            public void onSuccess(Object model, Object ReturnValue) {
                                 Map<Guid, QuotaUsagePerUser> quotaPerUserUsageEntityMap =
                                         (HashMap<Guid, QuotaUsagePerUser>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
 

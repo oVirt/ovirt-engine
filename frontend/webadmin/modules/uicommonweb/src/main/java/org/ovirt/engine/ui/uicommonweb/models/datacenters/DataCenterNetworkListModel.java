@@ -120,7 +120,7 @@ public class DataCenterNetworkListModel extends SearchableListModel
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object ReturnValue)
+            public void onSuccess(Object model, Object ReturnValue)
             {
                 ArrayList<Network> newItems = (ArrayList<Network>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 Collections.sort(newItems, new Linq.NetworkComparator());

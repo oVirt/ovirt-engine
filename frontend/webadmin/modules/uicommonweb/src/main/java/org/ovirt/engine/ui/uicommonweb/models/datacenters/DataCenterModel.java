@@ -164,7 +164,7 @@ public class DataCenterModel extends Model
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 DataCenterModel dataCenterModel = (DataCenterModel) model;
                 dataCenterModel.setMaxNameLength((Integer) result);
@@ -191,7 +191,7 @@ public class DataCenterModel extends Model
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 DataCenterModel dataCenterModel = (DataCenterModel) model;
                 ArrayList<Version> versions = (ArrayList<Version>) result;

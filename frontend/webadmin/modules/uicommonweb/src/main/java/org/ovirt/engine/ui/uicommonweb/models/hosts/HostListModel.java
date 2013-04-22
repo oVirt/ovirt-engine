@@ -362,7 +362,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             AsyncDataProvider.GetAttachedTagsToHost(new AsyncQuery(new Object[] { this, model },
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
 
                             Object[] array = (Object[]) target;
                             HostListModel hostListModel = (HostListModel) array[0];
@@ -537,7 +537,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         AsyncDataProvider.GetDefaultPmProxyPreferences(new AsyncQuery(null, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object model, Object returnValue) {
 
                 hostModel.setPmProxyPreferences((String) returnValue);
             }
@@ -581,7 +581,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 HostListModel hostListModel = (HostListModel) model;
                 HostModel innerHostModel = (HostModel) hostListModel.getWindow();
@@ -670,7 +670,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 HostListModel hostListModel = (HostListModel) model;
                 ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) result;
@@ -687,7 +687,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 } else {
                     AsyncDataProvider.GetDefaultPmProxyPreferences(new AsyncQuery(null, new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object model, Object returnValue) {
+                        public void onSuccess(Object model, Object returnValue) {
 
                             hostModel.setPmProxyPreferences((String) returnValue);
                         }
@@ -973,7 +973,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             model.StartProgress(null);
             AsyncDataProvider.GetClusterById(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object target, Object returnValue) {
+                public void onSuccess(Object target, Object returnValue) {
                     VDSGroup cluster = (VDSGroup) returnValue;
                     if (cluster != null && cluster.supportsGlusterService() && !cluster.supportsVirtService()) {
                         model.getForce().setIsAvailable(true);
@@ -1119,7 +1119,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 HostListModel hostListModel = (HostListModel) model;
                 HostModel innerHostModel = (HostModel) hostListModel.getWindow();
@@ -1699,7 +1699,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                     new AsyncQuery(this, new INewAsyncCallback() {
 
                         @Override
-                        public void OnSuccess(Object model, Object returnValue) {
+                        public void onSuccess(Object model, Object returnValue) {
                             VdcQueryReturnValue response = (VdcQueryReturnValue) returnValue;
                             if (response == null || !response.getSucceeded()) {
                                 hasAdminSystemPermission = false;

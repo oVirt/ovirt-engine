@@ -51,7 +51,7 @@ public class NewDiskModel extends AbstractDiskModel
     private void updateSuggestedDiskAlias() {
         AsyncDataProvider.GetNextAvailableDiskAliasNameByVMId(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object model, Object returnValue) {
                 String suggestedDiskAlias = (String) returnValue;
                 DiskModel diskModel = (DiskModel) model;
                 diskModel.getAlias().setEntity(suggestedDiskAlias);

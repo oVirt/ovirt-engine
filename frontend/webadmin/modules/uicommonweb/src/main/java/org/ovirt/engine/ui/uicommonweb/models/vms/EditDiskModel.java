@@ -50,7 +50,7 @@ public class EditDiskModel extends AbstractDiskModel
 
             AsyncDataProvider.GetStorageDomainById(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object target, Object returnValue) {
+                public void onSuccess(Object target, Object returnValue) {
                     DiskModel diskModel = (DiskModel) target;
                     StorageDomain storageDomain = (StorageDomain) returnValue;
 

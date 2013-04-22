@@ -299,7 +299,7 @@ public abstract class AbstractDiskModel extends DiskModel
     private void updateStorageDomains(final storage_pool datacenter) {
         AsyncDataProvider.GetPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
                 DiskModel diskModel = (DiskModel) target;
                 ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
 
@@ -336,7 +336,7 @@ public abstract class AbstractDiskModel extends DiskModel
     private void updateHosts(storage_pool datacenter) {
         AsyncDataProvider.GetHostListByDataCenter(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
                 AbstractDiskModel diskModel = (AbstractDiskModel) target;
                 Iterable<VDS> hosts = (Iterable<VDS>) returnValue;
                 ArrayList<VDS> filteredHosts = new ArrayList<VDS>();
@@ -360,7 +360,7 @@ public abstract class AbstractDiskModel extends DiskModel
         if (isInVm) {
             AsyncDataProvider.GetDataCenterById((new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object target, Object returnValue) {
+                public void onSuccess(Object target, Object returnValue) {
                     AbstractDiskModel diskModel = (AbstractDiskModel) target;
                     storage_pool dataCenter = (storage_pool) returnValue;
                     ArrayList<storage_pool> dataCenters = new ArrayList<storage_pool>();
@@ -381,7 +381,7 @@ public abstract class AbstractDiskModel extends DiskModel
         else {
             AsyncDataProvider.GetDataCenterList(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object target, Object returnValue) {
+                public void onSuccess(Object target, Object returnValue) {
                     AbstractDiskModel diskModel = (AbstractDiskModel) target;
                     ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) returnValue;
                     ArrayList<storage_pool> filteredDataCenters = new ArrayList<storage_pool>();
@@ -405,7 +405,7 @@ public abstract class AbstractDiskModel extends DiskModel
     private void updateBootableDiskAvailable() {
         AsyncDataProvider.GetVmDiskList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
                 AbstractDiskModel diskModel = (AbstractDiskModel) target;
                 ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
 
@@ -485,7 +485,7 @@ public abstract class AbstractDiskModel extends DiskModel
         Frontend.RunQuery(VdcQueryType.GetAllRelevantQuotasForStorage, parameters, new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object innerModel, Object innerReturnValue) {
+                    public void onSuccess(Object innerModel, Object innerReturnValue) {
                         ArrayList<Quota> quotaList =
                                 (ArrayList<Quota>) ((VdcQueryReturnValue) innerReturnValue).getReturnValue();
                         if (quotaList != null && !quotaList.isEmpty()) {
@@ -567,7 +567,7 @@ public abstract class AbstractDiskModel extends DiskModel
             // Get internal attachable disks
             AsyncDataProvider.GetAllAttachableDisks(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object target, Object returnValue) {
+                public void onSuccess(Object target, Object returnValue) {
                     AbstractDiskModel model = (AbstractDiskModel) target;
                     ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
                     Linq.Sort(disks, new Linq.DiskByAliasComparer());
@@ -581,7 +581,7 @@ public abstract class AbstractDiskModel extends DiskModel
             // Get external attachable disks
             AsyncDataProvider.GetAllAttachableDisks(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object target, Object returnValue) {
+                public void onSuccess(Object target, Object returnValue) {
                     AbstractDiskModel model = (AbstractDiskModel) target;
                     ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
                     Linq.Sort(disks, new Linq.DiskByAliasComparer());

@@ -33,7 +33,7 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
 
         AsyncDataProvider.GetDiskList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
                 CopyDiskModel copyDiskModel = (CopyDiskModel) target;
                 ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
 
@@ -52,7 +52,7 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
 
         AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
                 CopyDiskModel copyDiskModel = (CopyDiskModel) target;
                 ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
 

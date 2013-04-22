@@ -79,7 +79,7 @@ public class QuotaUserListModel extends SearchableListModel {
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object ReturnValue)
+            public void onSuccess(Object model, Object ReturnValue)
             {
                 SearchableListModel searchableListModel = (SearchableListModel) model;
                 ArrayList<permissions> list =

@@ -621,7 +621,7 @@ public class HostSetupNetworksModel extends EntityModel {
         asyncQuery.setModel(this);
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object returnValue)
+            public void onSuccess(Object model, Object returnValue)
             {
                 List<VdsNetworkInterface> bonds =
                         (List<VdsNetworkInterface>) ((VdcQueryReturnValue) returnValue).getReturnValue();
@@ -639,7 +639,7 @@ public class HostSetupNetworksModel extends EntityModel {
         asyncQuery.setModel(this);
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object returnValueObj)
+            public void onSuccess(Object model, Object returnValueObj)
             {
                 VdcQueryReturnValue returnValue = (VdcQueryReturnValue) returnValueObj;
                 Object returnValue2 = returnValue.getReturnValue();
@@ -662,7 +662,7 @@ public class HostSetupNetworksModel extends EntityModel {
         asyncQuery.setModel(this);
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object returnValue)
+            public void onSuccess(Object model, Object returnValue)
             {
                 List<Network> networks = (List<Network>) returnValue;
                 allNetworks = networks;
@@ -745,7 +745,7 @@ public class HostSetupNetworksModel extends EntityModel {
         AsyncDataProvider.GetNetworkConnectivityCheckTimeoutInSeconds(new AsyncQuery(sourceListModel,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         getConnectivityTimeout().setEntity(returnValue);
                         postOnSetupNetworks();
                     }

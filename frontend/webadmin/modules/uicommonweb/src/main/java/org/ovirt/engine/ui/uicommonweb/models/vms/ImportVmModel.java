@@ -126,7 +126,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                             new INewAsyncCallback() {
 
                                 @Override
-                                public void OnSuccess(Object model, Object returnValue) {
+                                public void onSuccess(Object model, Object returnValue) {
                                     ImportVmModel importVmModel = (ImportVmModel) model;
                                     ArrayList<Quota> quotaList =
                                             (ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue();
@@ -165,7 +165,7 @@ public class ImportVmModel extends ListWithDetailsModel {
         AsyncDataProvider.GetDataCentersByStorageDomain(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
-            public void OnSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object model, Object returnValue) {
                 ArrayList<storage_pool> pools = (ArrayList<storage_pool>) returnValue;
                 if (pools == null || pools.size() != 1) {
                     return;
@@ -185,7 +185,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                 if (dataCenter != null) {
                     AsyncDataProvider.GetClusterByServiceList(new AsyncQuery(ImportVmModel.this, new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object model, Object returnValue) {
+                        public void onSuccess(Object model, Object returnValue) {
                             ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
                             getCluster().setItems(clusters);
                             getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
@@ -194,7 +194,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                                     new INewAsyncCallback() {
 
                                         @Override
-                                        public void OnSuccess(Object model, Object returnValue) {
+                                        public void onSuccess(Object model, Object returnValue) {
                                             ArrayList<StorageDomain> storageDomains =
                                                     (ArrayList<StorageDomain>) returnValue;
                                             // filter storage domains
@@ -381,7 +381,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                 new INewAsyncCallback() {
 
                     @Override
-                    public void OnSuccess(Object model, Object returnValue) {
+                    public void onSuccess(Object model, Object returnValue) {
                         Map<VmTemplate, DiskImageList> dictionary =
                                 (HashMap<VmTemplate, DiskImageList>) ((VdcQueryReturnValue) returnValue).getReturnValue();
                         Map<Guid, Guid> tempMap = new HashMap<Guid, Guid>();
@@ -554,7 +554,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                 new AsyncQuery(this, new INewAsyncCallback() {
 
                     @Override
-                    public void OnSuccess(Object model, Object returnValue) {
+                    public void onSuccess(Object model, Object returnValue) {
                         List<VM> vmList =
                                 (List<VM>) ((VdcQueryReturnValue) returnValue).getReturnValue();
 

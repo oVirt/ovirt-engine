@@ -92,7 +92,7 @@ public class PoolItemBehavior extends ItemBehavior
         AsyncDataProvider.GetVmById(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         PoolItemBehavior behavior = (PoolItemBehavior) target;
                         UserPortalItemModel model = behavior.getItem();
@@ -122,7 +122,7 @@ public class PoolItemBehavior extends ItemBehavior
                 new AsyncQuery(this,
                         new INewAsyncCallback() {
                             @Override
-                            public void OnSuccess(Object target, Object returnValue) {
+                            public void onSuccess(Object target, Object returnValue) {
 
                                 PoolItemBehavior behavior = (PoolItemBehavior) target;
                                 if (returnValue != null)

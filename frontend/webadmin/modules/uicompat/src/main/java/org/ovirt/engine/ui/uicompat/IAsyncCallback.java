@@ -2,6 +2,6 @@ package org.ovirt.engine.ui.uicompat;
 
 public interface IAsyncCallback<T>
 {
-	void OnSuccess(T result);
-	void OnFailure(T result);
+	void onSuccess(T result);
+	void onFailure(T result);
 }

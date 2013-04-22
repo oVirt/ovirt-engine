@@ -224,7 +224,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
             AsyncDataProvider.GetClusterById(new AsyncQuery(this, new INewAsyncCallback() {
 
                 @Override
-                public void OnSuccess(Object listModel, Object returnValue) {
+                public void onSuccess(Object listModel, Object returnValue) {
                     cluster = (VDSGroup) returnValue;
                     isLinkStateChangeable =
                             (Boolean) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.NetworkLinkingSupported,

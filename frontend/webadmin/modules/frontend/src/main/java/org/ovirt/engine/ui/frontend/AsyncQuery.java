@@ -9,7 +9,7 @@ public class AsyncQuery {
      */
     private static final INewAsyncCallback EMPTY_CALLBACK = new INewAsyncCallback() {
         @Override
-        public void OnSuccess(Object model, Object returnValue) {
+        public void onSuccess(Object model, Object returnValue) {
             // Empty
         }
     };

@@ -124,7 +124,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         if (!getActiveStorageDomains().isEmpty()) {
             AsyncDataProvider.GetDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object target, Object returnValue) {
+                public void onSuccess(Object target, Object returnValue) {
                     MoveOrCopyDiskModel model = (MoveOrCopyDiskModel) target;
                     storage_pool dataCenter = (storage_pool) returnValue;
 

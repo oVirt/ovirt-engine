@@ -32,7 +32,7 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
                 AsyncDataProvider.GetIsoDomainByDataCenterId(new AsyncQuery(new Object[] { this, item },
                         new INewAsyncCallback() {
                             @Override
-                            public void OnSuccess(Object target, Object returnValue) {
+                            public void onSuccess(Object target, Object returnValue) {
 
                                 Object[] array = (Object[]) target;
                                 NewEditStorageModelBehavior behavior = (NewEditStorageModelBehavior) array[0];
@@ -47,7 +47,7 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
                 AsyncDataProvider.GetExportDomainByDataCenterId(new AsyncQuery(new Object[] { this, item },
                         new INewAsyncCallback() {
                             @Override
-                            public void OnSuccess(Object target, Object returnValue) {
+                            public void onSuccess(Object target, Object returnValue) {
 
                                 Object[] array = (Object[]) target;
                                 NewEditStorageModelBehavior behavior = (NewEditStorageModelBehavior) array[0];

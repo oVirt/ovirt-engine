@@ -221,7 +221,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         AsyncDataProvider.GetClusterById(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         ClusterListModel clusterListModel = (ClusterListModel) target;
                         ClusterGuideModel model = (ClusterGuideModel) clusterListModel.getWindow();
                         model.setEntity((VDSGroup) returnValue);
@@ -309,7 +309,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 ClusterListModel clModel = (ClusterListModel) model;
                 ClusterModel cModel = (ClusterModel) clModel.getWindow();
@@ -378,13 +378,13 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
         AsyncDataProvider.GetAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object model, Object returnValue) {
                 final boolean isVirtGlusterAllowed = (Boolean) returnValue;
                 AsyncQuery asyncQuery = new AsyncQuery();
                 asyncQuery.setModel(clusterModel);
                 asyncQuery.asyncCallback = new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object model1, Object result)
+                    public void onSuccess(Object model1, Object result)
                     {
                         ArrayList<GlusterVolumeEntity> volumes = (ArrayList<GlusterVolumeEntity>) result;
                         if (volumes.size() > 0)
@@ -403,7 +403,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                 asyncQuery1.setModel(clusterModel);
                 asyncQuery1.asyncCallback = new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object model1, Object result)
+                    public void onSuccess(Object model1, Object result)
                     {
                         ArrayList<VM> vmList = (ArrayList<VM>) result;
                         if (vmList.size() > 0)
@@ -660,7 +660,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         aQuery.setHandleFailure(true);
         aQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 getWindow().StopProgress();
 

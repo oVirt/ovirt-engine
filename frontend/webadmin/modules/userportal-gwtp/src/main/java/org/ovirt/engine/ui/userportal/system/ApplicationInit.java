@@ -96,7 +96,7 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
         query.setModel(this);
         query.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object ReturnValue) {
+            public void onSuccess(Object model, Object ReturnValue) {
                 // IE optimization: reload entire application on user logout
                 if (clientAgentType.isIE8OrBelow()) {
                     Window.Location.reload();

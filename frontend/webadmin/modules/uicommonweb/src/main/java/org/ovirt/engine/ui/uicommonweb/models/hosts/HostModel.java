@@ -747,7 +747,7 @@ public class HostModel extends Model
 
         AsyncDataProvider.GetMaxSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
 
                 HostModel model = (HostModel) target;
 
@@ -761,7 +761,7 @@ public class HostModel extends Model
 
         AsyncDataProvider.GetDefaultSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
 
                 HostModel model = (HostModel) target;
 
@@ -857,7 +857,7 @@ public class HostModel extends Model
             _asyncQuery.setModel(this);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object model, Object result)
+                public void onSuccess(Object model, Object result)
                 {
                     HostModel hostModel = (HostModel) model;
                     ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) result;
@@ -904,7 +904,7 @@ public class HostModel extends Model
         {
             AsyncDataProvider.GetPmTypeList(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object model, Object returnValue) {
+                public void onSuccess(Object model, Object returnValue) {
 
                     ArrayList<String> pmTypes = (ArrayList<String>) returnValue;
                     updatePmTypeList(pmTypes, getPmType());
@@ -1021,7 +1021,7 @@ public class HostModel extends Model
         if (!StringHelper.isNullOrEmpty(pmType)) {
             AsyncDataProvider.GetPmOptions(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object model, Object returnValue) {
+                public void onSuccess(Object model, Object returnValue) {
 
                     List<String> pmOptions = (ArrayList<String>) returnValue;
 
@@ -1057,7 +1057,7 @@ public class HostModel extends Model
         if (!StringHelper.isNullOrEmpty(pmSecondaryType)) {
             AsyncDataProvider.GetPmOptions(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object model, Object returnValue) {
+                public void onSuccess(Object model, Object returnValue) {
 
                     List<String> pmOptions = (ArrayList<String>) returnValue;
 
@@ -1137,7 +1137,7 @@ public class HostModel extends Model
         Frontend.RunQuery(VdcQueryType.GetNewVdsFenceStatus, param, new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
-            public void OnSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object model, Object returnValue) {
                 VdcQueryReturnValue response = (VdcQueryReturnValue) returnValue;
                 if (response == null || !response.getSucceeded()) {
                     String message;

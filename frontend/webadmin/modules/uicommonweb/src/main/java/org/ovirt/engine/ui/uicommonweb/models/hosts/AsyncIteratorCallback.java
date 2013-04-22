@@ -47,7 +47,7 @@ public class AsyncIteratorCallback {
         setAsyncQuery(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         AsyncIteratorCallback callback = (AsyncIteratorCallback) target;
                         Event notifyEvent = callback.getNotifyEvent();

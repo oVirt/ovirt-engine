@@ -74,7 +74,7 @@ public class ClusterGuideModel extends GuideModel
         AsyncDataProvider.GetHostListByCluster(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         ClusterGuideModel clusterGuideModel = (ClusterGuideModel) target;
                         ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
                         ;
@@ -86,7 +86,7 @@ public class ClusterGuideModel extends GuideModel
         AsyncDataProvider.GetHostList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         ClusterGuideModel clusterGuideModel = (ClusterGuideModel) target;
                         ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
                         ;
@@ -98,7 +98,7 @@ public class ClusterGuideModel extends GuideModel
             AsyncDataProvider.isAnyHostUpInCluster(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
                             ClusterGuideModel clusterGuideModel = (ClusterGuideModel) target;
                             isAnyHostUpInCluster = (Boolean) returnValue;
                             clusterGuideModel.UpdateOptionsNonLocalFS();
@@ -111,7 +111,7 @@ public class ClusterGuideModel extends GuideModel
         AsyncDataProvider.GetLocalStorageHost(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         ClusterGuideModel clusterGuideModel = (ClusterGuideModel) target;
                         VDS localStorageHost = (VDS) returnValue;
                         ;
@@ -226,7 +226,7 @@ public class ClusterGuideModel extends GuideModel
             AsyncDataProvider.GetDataCenterById(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
                             ClusterGuideModel model = (ClusterGuideModel) target;
                             model.dataCenter = (storage_pool) returnValue;
 
@@ -279,7 +279,7 @@ public class ClusterGuideModel extends GuideModel
         AsyncDataProvider.GetDataCenterById(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         dataCenter = (storage_pool) returnValue;
 
                         boolean isMultiHostDC = dataCenter.getstorage_pool_type() == StorageType.LOCALFS;
@@ -389,7 +389,7 @@ public class ClusterGuideModel extends GuideModel
         AsyncDataProvider.GetDataCenterList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         ClusterGuideModel clusterGuideModel = (ClusterGuideModel) target;
                         HostModel model = (HostModel) clusterGuideModel.getWindow();
 

@@ -436,7 +436,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                 AsyncDataProvider.GetDataCenterList(new AsyncQuery(new Object[] { this, behavior },
                         new INewAsyncCallback() {
                             @Override
-                            public void OnSuccess(Object target, Object returnValue) {
+                            public void onSuccess(Object target, Object returnValue) {
 
                                 Object[] array = (Object[]) target;
                                 StorageModel storageModel = (StorageModel) array[0];
@@ -470,7 +470,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                 AsyncDataProvider.GetDataCentersByStorageDomain(new AsyncQuery(this,
                         new INewAsyncCallback() {
                             @Override
-                            public void OnSuccess(Object target, Object returnValue) {
+                            public void onSuccess(Object target, Object returnValue) {
 
                                 StorageModel storageModel = (StorageModel) target;
                                 List<storage_pool> dataCenters = new ArrayList<storage_pool>();
@@ -548,7 +548,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                 _asyncQuery.setContext(getHash());
                 _asyncQuery.asyncCallback = new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object model, Object ReturnValue)
+                    public void onSuccess(Object model, Object ReturnValue)
                     {
                         StorageModel storageModel = (StorageModel) model;
                         Iterable<VDS> hosts =
@@ -567,7 +567,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                 AsyncDataProvider.GetHostList(new AsyncQuery(this,
                         new INewAsyncCallback() {
                             @Override
-                            public void OnSuccess(Object target, Object returnValue) {
+                            public void onSuccess(Object target, Object returnValue) {
 
                                 StorageModel storageModel = (StorageModel) target;
                                 Iterable<VDS> hosts = (Iterable<VDS>) returnValue;
@@ -580,7 +580,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                 AsyncDataProvider.GetHostListByDataCenter(new AsyncQuery(this,
                         new INewAsyncCallback() {
                             @Override
-                            public void OnSuccess(Object target, Object returnValue) {
+                            public void onSuccess(Object target, Object returnValue) {
 
                                 StorageModel storageModel = (StorageModel) target;
                                 Iterable<VDS> hosts = (Iterable<VDS>) returnValue;

@@ -127,7 +127,7 @@ public class ClusterNetworkListModel extends SearchableListModel
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object ReturnValue)
+            public void onSuccess(Object model, Object ReturnValue)
             {
                 SearchableListModel searchableListModel = (SearchableListModel) model;
                 ArrayList<Network> newItems = (ArrayList<Network>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
@@ -174,7 +174,7 @@ public class ClusterNetworkListModel extends SearchableListModel
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 ClusterNetworkListModel clusterNetworkListModel = (ClusterNetworkListModel) model;
                 ArrayList<Network> dcNetworks = (ArrayList<Network>) result;
@@ -347,7 +347,7 @@ public class ClusterNetworkListModel extends SearchableListModel
             _asyncQuery.setModel(networkModel);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object model, Object result)
+                public void onSuccess(Object model, Object result)
                 {
                     final storage_pool dataCenter = (storage_pool) result;
                     networkModel.getDataCenters().setItems(Arrays.asList(dataCenter));

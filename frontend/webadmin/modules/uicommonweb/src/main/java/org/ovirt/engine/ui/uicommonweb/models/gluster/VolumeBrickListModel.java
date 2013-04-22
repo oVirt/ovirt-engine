@@ -174,7 +174,7 @@ public class VolumeBrickListModel extends SearchableListModel {
 
         AsyncDataProvider.isAnyHostUpInCluster(new AsyncQuery(volumeEntity, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object entity, Object returnValue) {
+            public void onSuccess(Object entity, Object returnValue) {
                 boolean clusterHasUpHost = (Boolean) returnValue;
                 if (clusterHasUpHost) {
                     addBricks((GlusterVolumeEntity) entity);
@@ -222,7 +222,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         _asyncQuery.setModel(volumeBrickModel);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 VDSGroup cluster = (VDSGroup) result;
 
@@ -230,7 +230,7 @@ public class VolumeBrickListModel extends SearchableListModel {
                 _asyncQueryInner.setModel(model);
                 _asyncQueryInner.asyncCallback = new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object model, Object result)
+                    public void onSuccess(Object model, Object result)
                     {
                         VolumeBrickModel volumeBrickModel = (VolumeBrickModel) model;
                         ArrayList<VDS> hostList = (ArrayList<VDS>) result;
@@ -688,7 +688,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         _asyncQuery.setModel(brickModel);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 VDSGroup cluster = (VDSGroup) result;
 
@@ -696,7 +696,7 @@ public class VolumeBrickListModel extends SearchableListModel {
                 _asyncQueryInner.setModel(model);
                 _asyncQueryInner.asyncCallback = new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object model, Object result)
+                    public void onSuccess(Object model, Object result)
                     {
                         ReplaceBrickModel brickModel = (ReplaceBrickModel) model;
                         ArrayList<VDS> hostList = (ArrayList<VDS>) result;
@@ -778,7 +778,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         final GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
         AsyncDataProvider.GetClusterById(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
                 VDSGroup vdsGroup = (VDSGroup) returnValue;
                 if (Version.v3_2.compareTo(vdsGroup.getcompatibility_version()) <= 0) {
                     onShowBrickAdvancedDetails(volumeEntity);
@@ -815,7 +815,7 @@ public class VolumeBrickListModel extends SearchableListModel {
 
         AsyncDataProvider.GetGlusterVolumeBrickDetails(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 brickModel.StopProgress();
 

@@ -184,7 +184,7 @@ public class SnapshotModel extends EntityModel
     private void initVmSnapshots() {
         AsyncDataProvider.GetVmSnapshotList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
                 SnapshotModel snapshotModel = (SnapshotModel) target;
                 ArrayList<Snapshot> snapshots = (ArrayList<Snapshot>) returnValue;
 
@@ -202,7 +202,7 @@ public class SnapshotModel extends EntityModel
     private void initVmDisks() {
         AsyncDataProvider.GetVmDiskList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
                 SnapshotModel snapshotModel = (SnapshotModel) target;
                 ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
 
@@ -220,7 +220,7 @@ public class SnapshotModel extends EntityModel
 
         AsyncDataProvider.GetVmConfigurationBySnapshot(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
                 SnapshotModel snapshotModel = (SnapshotModel) target;
                 Snapshot snapshot = ((Snapshot) snapshotModel.getEntity());
                 VM vm = (VM) returnValue;

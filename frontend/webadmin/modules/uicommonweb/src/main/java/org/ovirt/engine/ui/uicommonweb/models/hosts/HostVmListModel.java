@@ -52,7 +52,7 @@ public class HostVmListModel extends VmListModel
         {
             AsyncDataProvider.GetVmsRunningOnOrMigratingToVds(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object target, Object returnValue) {
+                public void onSuccess(Object target, Object returnValue) {
                     @SuppressWarnings("unchecked")
                     final ArrayList<VM> list = (ArrayList<VM>) returnValue;
                     final HostVmListModel model = (HostVmListModel) target;

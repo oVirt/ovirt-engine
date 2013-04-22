@@ -104,7 +104,7 @@ public class StorageDiskListModel extends SearchableListModel
         Frontend.RunQuery(VdcQueryType.GetAllDisksByStorageDomainId, parameters,
                 new AsyncQuery(this, new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object model, Object ReturnValue) {
+                    public void onSuccess(Object model, Object ReturnValue) {
                         StorageDiskListModel storageDiskListModel = (StorageDiskListModel) model;
                         storageDiskListModel.setItems((ArrayList<DiskImage>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
                     }

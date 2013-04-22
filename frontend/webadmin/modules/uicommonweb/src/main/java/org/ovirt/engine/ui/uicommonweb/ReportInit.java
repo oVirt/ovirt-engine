@@ -47,7 +47,7 @@ public class ReportInit {
         AsyncDataProvider.GetRedirectServletReportsPage(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         setReportBaseUrl((String) returnValue);
                     }
                 }));

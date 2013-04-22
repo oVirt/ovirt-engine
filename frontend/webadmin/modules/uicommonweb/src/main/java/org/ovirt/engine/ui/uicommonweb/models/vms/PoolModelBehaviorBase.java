@@ -56,7 +56,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
         AsyncDataProvider.GetDataCenterByClusterServiceList(new AsyncQuery(getModel(), new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
 
                 UnitVmModel model = (UnitVmModel) target;
                 ArrayList<storage_pool> list = new ArrayList<storage_pool>();
@@ -85,7 +85,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
         AsyncDataProvider.GetClusterByServiceList(new AsyncQuery(new Object[] { this, getModel() }, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
 
                 Object[] array = (Object[]) target;
                 PoolModelBehaviorBase behavior = (PoolModelBehaviorBase) array[0];
@@ -256,7 +256,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
         AsyncDataProvider.GetTemplateListByDataCenter(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target1, Object returnValue1) {
+            public void onSuccess(Object target1, Object returnValue1) {
 
                 ArrayList<VmTemplate> loadedTemplates = (ArrayList<VmTemplate>) returnValue1;
 

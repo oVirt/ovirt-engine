@@ -29,7 +29,7 @@ public class CloneVmFromSnapshotModelBehavior extends ExistingVmModelBehavior
         AsyncDataProvider.GetTemplateById(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         UnitVmModel model = (UnitVmModel) target;
                         VmTemplate template = (VmTemplate) returnValue;

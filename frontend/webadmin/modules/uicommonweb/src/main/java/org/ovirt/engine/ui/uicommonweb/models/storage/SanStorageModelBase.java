@@ -442,7 +442,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
         AsyncQuery asyncQuery = new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
                 SanStorageModelBase model = (SanStorageModelBase) target;
                 Object result = ((VdcQueryReturnValue) returnValue).getReturnValue();
                 model.PostDiscoverTargetsInternal(result != null ? (ArrayList<StorageServerConnections>) result

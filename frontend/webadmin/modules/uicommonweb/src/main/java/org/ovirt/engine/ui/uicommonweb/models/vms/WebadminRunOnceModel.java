@@ -41,7 +41,7 @@ public class WebadminRunOnceModel extends RunOnceModel {
         AsyncDataProvider.GetHostListByCluster(new AsyncQuery(this,
                 new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
                 final List<VDS> hosts = (ArrayList<VDS>) returnValue;
                 final List<VDS> activeHosts = new ArrayList<VDS>();
                 for (VDS host : hosts) {

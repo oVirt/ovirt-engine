@@ -67,7 +67,7 @@ public class VncConsoleModel extends ConsoleModel
                             _asyncQuery.setModel(this);
                             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                                 @Override
-                                public void OnSuccess(Object model, Object ReturnValue)
+                                public void onSuccess(Object model, Object ReturnValue)
                                 {
                                     VncConsoleModel consoleModel = (VncConsoleModel) model;
                                     consoleModel.postGetHost((String) ((VdcQueryReturnValue) ReturnValue).getReturnValue());

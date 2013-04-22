@@ -119,7 +119,7 @@ public class TemplateStorageListModel extends SearchableListModel
             AsyncDataProvider.GetTemplateDiskList(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
                             TemplateStorageListModel templateStorageListModel = (TemplateStorageListModel) target;
                             ArrayList<DiskImage> diskImages = (ArrayList<DiskImage>) returnValue;
 

@@ -131,7 +131,7 @@ public class ClusterServiceModel extends EntityModel {
         asyncQuery.setModel(this);
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 List<VDS> hostList = (List<VDS>) result;
                 hostList.add(0, null);
@@ -153,7 +153,7 @@ public class ClusterServiceModel extends EntityModel {
         asyncQuery.setModel(this);
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 GlusterVolumeAdvancedDetails details = (GlusterVolumeAdvancedDetails) result;
                 if (details.getServiceInfo() != null) {

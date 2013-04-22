@@ -43,7 +43,7 @@ public class PoolDiskListModel extends VmDiskListModelBase
             _asyncQuery.setModel(this);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object model, Object result)
+                public void onSuccess(Object model, Object result)
                 {
                     if (result != null)
                     {

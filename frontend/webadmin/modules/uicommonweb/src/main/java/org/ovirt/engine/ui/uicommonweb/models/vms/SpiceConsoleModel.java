@@ -274,7 +274,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
         _asyncQuery0.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model0, Object result0) {
+            public void onSuccess(Object model0, Object result0) {
                 SpiceConsoleModel thisSpiceConsoleModel = (SpiceConsoleModel) model0;
                 VM thisVm = thisSpiceConsoleModel.getEntity();
 
@@ -339,10 +339,10 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             boolean enableSpiceRootCertificateValidation = (Boolean) result.getReturnValues().get(3).getReturnValue();
             VdcQueryReturnValue caCertificateReturnValue = result.getReturnValues().get(5);
 
-            // If only the caCertificate query failed - ignore failure (goto OnSuccess)
+            // If only the caCertificate query failed - ignore failure (goto onSuccess)
             if (!caCertificateReturnValue.getSucceeded() && !enableSpiceRootCertificateValidation) {
                 // Verify that all queries (except caCertificate) succeeded
-                // If succeeded goto 'OnSuccess'; Otherwise, 'OnFailure'.
+                // If succeeded goto 'onSuccess'; Otherwise, 'onFailure'.
                 for (VdcQueryReturnValue returnValue : returnValues) {
                     if (!returnValue.getSucceeded() && returnValue != caCertificateReturnValue) {
                         return;
@@ -533,7 +533,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object ReturnValue) {
+            public void onSuccess(Object model, Object ReturnValue) {
                 SpiceConsoleModel spiceConsoleModel = (SpiceConsoleModel) model;
                 String address =
                         (String) ((VdcQueryReturnValue) ReturnValue).getReturnValue();

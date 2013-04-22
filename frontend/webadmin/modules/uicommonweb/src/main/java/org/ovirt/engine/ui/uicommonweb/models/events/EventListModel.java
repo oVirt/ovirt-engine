@@ -160,7 +160,7 @@ public class EventListModel extends ListWithDetailsModel
     {
         AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object model, Object returnValue) {
                 EventListModel eventListModel = (EventListModel) model;
                 ArrayList<AuditLog> list = (ArrayList<AuditLog>) ((VdcQueryReturnValue) returnValue).getReturnValue();
                 requestingData = false;

@@ -123,7 +123,7 @@ public class DisksAllocationModel extends EntityModel
                             new INewAsyncCallback() {
 
                                 @Override
-                                public void OnSuccess(Object innerModel, Object innerReturnValue) {
+                                public void onSuccess(Object innerModel, Object innerReturnValue) {
                                     ArrayList<Quota> list =
                                             (ArrayList<Quota>) ((VdcQueryReturnValue) innerReturnValue).getReturnValue();
                                     DisksAllocationModel diskAllocationModel = (DisksAllocationModel) innerModel;

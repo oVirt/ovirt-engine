@@ -39,7 +39,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
             AsyncDataProvider.GetDataCenterById(new AsyncQuery(getModel(),
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
 
                             UnitVmModel model = (UnitVmModel) target;
                             storage_pool dataCenter = (storage_pool) returnValue;
@@ -66,7 +66,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         AsyncDataProvider.GetClusterByServiceList(new AsyncQuery(new Object[] { this, getModel() },
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         Object[] array = (Object[]) target;
                         TemplateVmModelBehavior behavior = (TemplateVmModelBehavior) array[0];

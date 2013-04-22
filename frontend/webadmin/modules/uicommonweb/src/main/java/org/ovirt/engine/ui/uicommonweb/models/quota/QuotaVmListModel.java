@@ -35,7 +35,7 @@ public class QuotaVmListModel extends SearchableListModel {
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object ReturnValue)
+            public void onSuccess(Object model, Object ReturnValue)
             {
                 QuotaVmListModel vmModel = (QuotaVmListModel) model;
                 vmModel.setItems((ArrayList<VM>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());

@@ -130,7 +130,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
                 new AsyncQuery(this, new INewAsyncCallback() {
 
                     @Override
-                    public void OnSuccess(Object model, Object returnValue) {
+                    public void onSuccess(Object model, Object returnValue) {
                         UserPortalBasicListModel userPortalBasicListModel = (UserPortalBasicListModel) model;
                         ArrayList<VM> vms = new ArrayList<VM>();
                         ArrayList<VmPool> pools = new ArrayList<VmPool>();
@@ -237,7 +237,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
             _asyncQuery.setModel(this);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object model, Object result)
+                public void onSuccess(Object model, Object result)
                 {
                     UserPortalBasicListModel userPortalBasicListModel = (UserPortalBasicListModel) model;
                     if (result != null)

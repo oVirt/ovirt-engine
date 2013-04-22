@@ -400,7 +400,7 @@ public class HostInterfaceListModel extends SearchableListModel
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object ReturnValue)
+            public void onSuccess(Object model, Object ReturnValue)
             {
                 HostInterfaceListModel interfaceModel = (HostInterfaceListModel) model;
                 Iterable iVdcQueryableItems = (Iterable) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
@@ -798,7 +798,7 @@ public class HostInterfaceListModel extends SearchableListModel
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object ReturnValue)
+            public void onSuccess(Object model, Object ReturnValue)
             {
                 HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) model;
                 ArrayList<Network> networksByCluster = (ArrayList<Network>) ReturnValue;
@@ -1020,7 +1020,7 @@ public class HostInterfaceListModel extends SearchableListModel
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object ReturnValue)
+            public void onSuccess(Object model, Object ReturnValue)
             {
                 final HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) model;
                 ArrayList<Network> clusterNetworks = (ArrayList<Network>) ReturnValue;
@@ -1045,7 +1045,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 AsyncDataProvider.GetInterfaceOptionsForEditNetwork(new AsyncQuery(this, new INewAsyncCallback() {
 
                     @Override
-                    public void OnSuccess(Object model, Object returnValue) {
+                    public void onSuccess(Object model, Object returnValue) {
                         ArrayList<VdsNetworkInterface> interfaces = (ArrayList<VdsNetworkInterface>) returnValue;
 
                         String defaultInterfaceName = tmpDefaultInterfaceName.toString();
@@ -1310,7 +1310,7 @@ public class HostInterfaceListModel extends SearchableListModel
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object ReturnValue)
+            public void onSuccess(Object model, Object ReturnValue)
             {
                 HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) model;
                 ArrayList<Network> networksByCluster = (ArrayList<Network>) ReturnValue;
@@ -1424,7 +1424,7 @@ public class HostInterfaceListModel extends SearchableListModel
                     _asyncQuery1.setModel(hostInterfaceListModel);
                     _asyncQuery1.asyncCallback = new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object model1, Object ReturnValue1)
+                        public void onSuccess(Object model1, Object ReturnValue1)
                         {
                             HostInterfaceListModel innerHostInterfaceListModel = (HostInterfaceListModel) model1;
                             HostBondInterfaceModel bModel =
@@ -1784,7 +1784,7 @@ public class HostInterfaceListModel extends SearchableListModel
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object ReturnValue)
+            public void onSuccess(Object model, Object ReturnValue)
             {
                 HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) model;
                 ArrayList<Network> networks = (ArrayList<Network>) ReturnValue;
@@ -1897,7 +1897,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 _asyncQuery.setModel(this);
                 _asyncQuery.asyncCallback = new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object model, Object ReturnValue)
+                    public void onSuccess(Object model, Object ReturnValue)
                     {
                         final HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) model;
                         HostInterfaceModel hostInterfaceModel = (HostInterfaceModel) hostInterfaceListModel.getWindow();
@@ -2129,7 +2129,7 @@ public class HostInterfaceListModel extends SearchableListModel
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object ReturnValue)
+            public void onSuccess(Object model, Object ReturnValue)
             {
                 HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) model;
                 ArrayList<Network> networks = (ArrayList<Network>) ReturnValue;

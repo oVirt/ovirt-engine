@@ -125,7 +125,7 @@ public class VmInterfaceListModel extends SearchableListModel
         AsyncQuery getVmGuestAgentInterfacesByVmIdQuery = new AsyncQuery();
         getVmGuestAgentInterfacesByVmIdQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 setGuestAgentData((List<VmGuestAgentInterface>) result);
                 VmInterfaceListModel.super.SyncSearch(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(vm.getId()));

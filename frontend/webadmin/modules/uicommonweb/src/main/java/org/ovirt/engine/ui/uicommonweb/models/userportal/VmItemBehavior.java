@@ -201,7 +201,7 @@ public class VmItemBehavior extends ItemBehavior
             AsyncDataProvider.GetPoolById(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
 
                             VmItemBehavior behavior = (VmItemBehavior) target;
                             VmPool pool = (VmPool) returnValue;

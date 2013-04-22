@@ -790,7 +790,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object ReturnValue)
+            public void onSuccess(Object model, Object ReturnValue)
             {
                 SearchableListModel searchableListModel = (SearchableListModel) model;
                 searchableListModel.setItems((Iterable) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
@@ -862,7 +862,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
             _asyncQuery1.setModel(this);
             _asyncQuery1.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object model1, Object result1)
+                public void onSuccess(Object model1, Object result1)
                 {
                     PrivateAsyncCallback privateAsyncCallback1 = (PrivateAsyncCallback) model1;
                     privateAsyncCallback1.ApplySearchPageSize((Integer) result1);

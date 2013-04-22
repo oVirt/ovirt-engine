@@ -613,7 +613,7 @@ public abstract class RunOnceModel extends Model
         AsyncDataProvider.GetFloppyImageList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                  @Override
-                 public void OnSuccess(Object model, Object returnValue) {
+                 public void onSuccess(Object model, Object returnValue) {
                      VM selectedVM = (VM) vm;
                      List<String> images = (List<String>) returnValue;
 
@@ -647,7 +647,7 @@ public abstract class RunOnceModel extends Model
                 new AsyncQuery(this, new INewAsyncCallback() {
 
                  @Override
-                 public void OnSuccess(Object model, Object returnValue) {
+                 public void onSuccess(Object model, Object returnValue) {
                      ArrayList<Disk> vmDisks = (ArrayList<Disk>) ((VdcQueryReturnValue) returnValue).getReturnValue();
 
                      if (vmDisks.isEmpty()) {
@@ -686,7 +686,7 @@ public abstract class RunOnceModel extends Model
                 new AsyncQuery(this, new INewAsyncCallback() {
 
                  @Override
-                 public void OnSuccess(Object model, Object returnValue) {
+                 public void onSuccess(Object model, Object returnValue) {
                      boolean hasNics =
                              ((ArrayList<VmNetworkInterface>) ((VdcQueryReturnValue) returnValue).getReturnValue()).size() > 0;
 
@@ -713,7 +713,7 @@ public abstract class RunOnceModel extends Model
         AsyncDataProvider.GetIrsImageList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                  @Override
-                 public void OnSuccess(Object model, Object returnValue) {
+                 public void onSuccess(Object model, Object returnValue) {
                      List<String> images = (List<String>) returnValue;
                      getIsoImage().setItems(images);
 
@@ -733,7 +733,7 @@ public abstract class RunOnceModel extends Model
         AsyncDataProvider.GetDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
                 List<String> domains = (List<String>) returnValue;
                 String oldDomain = (String) getSysPrepDomainName().getSelectedItem();
                 if (oldDomain != null && !oldDomain.equals("") && !domains.contains(oldDomain)) { //$NON-NLS-1$

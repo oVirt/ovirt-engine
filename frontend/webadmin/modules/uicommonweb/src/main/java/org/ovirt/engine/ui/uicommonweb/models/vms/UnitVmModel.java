@@ -1372,7 +1372,7 @@ public class UnitVmModel extends Model {
             AsyncDataProvider.GetNumOfMonitorList(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
 
                             UnitVmModel model = (UnitVmModel) target;
                             Integer oldNumOfMonitors = null;
@@ -1478,7 +1478,7 @@ public class UnitVmModel extends Model {
         AsyncDataProvider.GetMinimalVmMemSize(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         UnitVmModel vmModel = (UnitVmModel) target;
                         vmModel.set_MinMemSize((Integer) returnValue);
@@ -1492,7 +1492,7 @@ public class UnitVmModel extends Model {
         AsyncDataProvider.GetMaximalVmMemSize32OS(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         UnitVmModel vmModel = (UnitVmModel) target;
                         vmModel.set_MaxMemSize32((Integer) returnValue);
@@ -1510,7 +1510,7 @@ public class UnitVmModel extends Model {
             AsyncDataProvider.GetMaximalVmMemSize64OS(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
 
                             UnitVmModel vmModel = (UnitVmModel) target;
                             vmModel.set_MaxMemSize64((Integer) returnValue);

@@ -170,7 +170,7 @@ public class StorageGeneralModel extends EntityModel
                 _asyncQuery.setModel(this);
                 _asyncQuery.asyncCallback = new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object model, Object ReturnValue)
+                    public void onSuccess(Object model, Object ReturnValue)
                     {
                         StorageServerConnections connection = (StorageServerConnections) ReturnValue;
                         StorageGeneralModel generalModel = (StorageGeneralModel) model;

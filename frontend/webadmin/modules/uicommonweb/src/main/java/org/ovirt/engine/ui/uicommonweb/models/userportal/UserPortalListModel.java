@@ -288,7 +288,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             AsyncDataProvider.GetCustomPropertiesList(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
                             UserPortalListModel model = (UserPortalListModel) target;
                             if (returnValue != null) {
                                 model.setCustomPropertiesKeysList((HashMap<Version, ArrayList<String>>) returnValue);
@@ -331,7 +331,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 new AsyncQuery(this, new INewAsyncCallback() {
 
                     @Override
-                    public void OnSuccess(Object model, Object returnValue) {
+                    public void onSuccess(Object model, Object returnValue) {
                         UserPortalListModel userPortalListModel = (UserPortalListModel) model;
                         ArrayList<VM> vms = new ArrayList<VM>();
                         ArrayList<VmPool> pools = new ArrayList<VmPool>();
@@ -576,7 +576,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             AsyncDataProvider.IsTemplateNameUnique(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
 
                             UserPortalListModel userPortalListModel = (UserPortalListModel) target;
                             boolean isNameUnique = (Boolean) returnValue;
@@ -886,7 +886,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         getImagesQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model1, Object result)
+            public void onSuccess(Object model1, Object result)
             {
                 UserPortalListModel userPortalListModel = (UserPortalListModel) model1;
                 AttachCdModel _attachCdModel = (AttachCdModel) userPortalListModel.getWindow();
@@ -961,7 +961,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         AsyncDataProvider.IsVmNameUnique(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         UserPortalListModel userPortalListModel = (UserPortalListModel) target;
                         boolean isNameUnique = (Boolean) returnValue;
@@ -1100,7 +1100,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                     _asyncQuery.setModel(this);
                     _asyncQuery.asyncCallback = new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object model, Object result)
+                        public void onSuccess(Object model, Object result)
                         {
                             UserPortalListModel userPortalListModel1 = (UserPortalListModel) model;
                             UnitVmModel unitVmModel = (UnitVmModel) userPortalListModel1.getWindow();
@@ -1217,7 +1217,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             _asyncQuery.setModel(this);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object model, Object result)
+                public void onSuccess(Object model, Object result)
                 {
                     UserPortalListModel userPortalListModel = (UserPortalListModel) model;
                     ArrayList<storage_pool> list =
@@ -1326,7 +1326,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 AsyncDataProvider.GetMaxVmPriority(new AsyncQuery(model,
                         new INewAsyncCallback() {
                             @Override
-                            public void OnSuccess(Object target, Object returnValue) {
+                            public void onSuccess(Object target, Object returnValue) {
                                 cachedMaxPriority = (Integer) returnValue;
                                 updatePriority((UnitVmModel) target);
                             }

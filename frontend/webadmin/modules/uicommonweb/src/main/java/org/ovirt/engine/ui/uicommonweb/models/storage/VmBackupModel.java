@@ -131,7 +131,7 @@ public class VmBackupModel extends ManageBackupModel {
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
 
             @Override
-            public void OnSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object model, Object returnValue) {
                 ArrayList<storage_pool> pools = (ArrayList<storage_pool>) returnValue;
                 if (pools != null && pools.size() > 0) {
                     storage_pool pool = pools.get(0);
@@ -509,7 +509,7 @@ public class VmBackupModel extends ManageBackupModel {
             _asyncQuery.setModel(this);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object model, Object ReturnValue) {
+                public void onSuccess(Object model, Object ReturnValue) {
                     VmBackupModel backupModel = (VmBackupModel) model;
                     ArrayList<storage_pool> list = (ArrayList<storage_pool>) ReturnValue;
                     if (list != null && list.size() > 0) {
@@ -518,7 +518,7 @@ public class VmBackupModel extends ManageBackupModel {
                         _asyncQuery1.setModel(backupModel);
                         _asyncQuery1.asyncCallback = new INewAsyncCallback() {
                             @Override
-                            public void OnSuccess(Object model1,
+                            public void onSuccess(Object model1,
                                     Object ReturnValue1) {
                                 VmBackupModel backupModel1 = (VmBackupModel) model1;
 

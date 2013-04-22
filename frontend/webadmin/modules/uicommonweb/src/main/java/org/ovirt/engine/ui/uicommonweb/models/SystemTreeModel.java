@@ -195,7 +195,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
         dcQuery.setModel(this);
         dcQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 final SystemTreeModel systemTreeModel = (SystemTreeModel) model;
                 systemTreeModel.setDataCenters((ArrayList<storage_pool>) result);
@@ -204,7 +204,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                 clusterQuery.setModel(systemTreeModel);
                 clusterQuery.asyncCallback = new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object model1, Object result1)
+                    public void onSuccess(Object model1, Object result1)
                     {
                         SystemTreeModel systemTreeModel1 = (SystemTreeModel) model1;
                         ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) result1;
@@ -227,7 +227,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                         hostQuery.setModel(systemTreeModel1);
                         hostQuery.asyncCallback = new INewAsyncCallback() {
                             @Override
-                            public void OnSuccess(Object model2, Object result2)
+                            public void onSuccess(Object model2, Object result2)
                             {
                                 SystemTreeModel systemTreeModel2 = (SystemTreeModel) model2;
                                 ArrayList<VDS> hosts = (ArrayList<VDS>) result2;
@@ -247,7 +247,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                                 volumeQuery.setModel(systemTreeModel2);
                                 volumeQuery.asyncCallback = new INewAsyncCallback() {
                                     @Override
-                                    public void OnSuccess(Object model3, Object result3)
+                                    public void onSuccess(Object model3, Object result3)
                                     {
                                         SystemTreeModel systemTreeModel3 = (SystemTreeModel) model3;
                                         ArrayList<GlusterVolumeEntity> volumes =

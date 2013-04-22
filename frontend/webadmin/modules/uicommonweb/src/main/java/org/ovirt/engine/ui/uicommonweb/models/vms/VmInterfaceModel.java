@@ -440,7 +440,7 @@ public abstract class VmInterfaceModel extends Model
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model1, Object result1)
+            public void onSuccess(Object model1, Object result1)
             {
                 ArrayList<Network> networks = new ArrayList<Network>();
                 for (Network a : (ArrayList<Network>) result1)

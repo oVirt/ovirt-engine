@@ -227,7 +227,7 @@ public class VmSnapshotListModel extends SearchableListModel
             AsyncDataProvider.GetCustomPropertiesList(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
                             VmSnapshotListModel model = (VmSnapshotListModel) target;
                             if (returnValue != null) {
                                 model.setCustomPropertiesKeysList((HashMap<Version, ArrayList<String>>) returnValue);
@@ -489,7 +489,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
         AsyncDataProvider.GetVmConfigurationBySnapshot(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
                 VmSnapshotListModel vmSnapshotListModel = (VmSnapshotListModel) target;
                 UnitVmModel model = (UnitVmModel) vmSnapshotListModel.getWindow();
                 VM selectedVm = (VM) getEntity();
@@ -743,7 +743,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
         AsyncDataProvider.GetDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
                 VmSnapshotListModel model = (VmSnapshotListModel) target;
                 storage_pool dataCenter = (storage_pool) returnValue;
                 VM vm = (VM) model.getEntity();
@@ -753,7 +753,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
                 AsyncDataProvider.IsCommandCompatible(new AsyncQuery(model, new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         VmSnapshotListModel model = (VmSnapshotListModel) target;
                         model.setIsCloneVmSupported((Boolean) returnValue);
                     }

@@ -76,7 +76,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
         storage_pool dataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
         AsyncDataProvider.GetPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
 
                 VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
 

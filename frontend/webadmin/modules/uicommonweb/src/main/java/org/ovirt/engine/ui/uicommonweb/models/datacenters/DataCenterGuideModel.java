@@ -155,7 +155,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         AsyncDataProvider.GetClusterList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
                         ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
                         dataCenterGuideModel.clusters = clusters;
@@ -166,7 +166,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
                         ArrayList<StorageDomain> storageDomains =
                                 (ArrayList<StorageDomain>) returnValue;
@@ -178,7 +178,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
                         ArrayList<StorageDomain> storageDomains =
                                 (ArrayList<StorageDomain>) returnValue;
@@ -190,7 +190,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         AsyncDataProvider.GetISOStorageDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
                         ArrayList<StorageDomain> storageDomains =
                                 (ArrayList<StorageDomain>) returnValue;
@@ -202,7 +202,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         AsyncDataProvider.GetHostList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
                         ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
                         dataCenterGuideModel.allHosts = hosts;
@@ -215,7 +215,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         AsyncDataProvider.GetClusterList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
                         ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
                         dataCenterGuideModel.clusters = clusters;
@@ -227,7 +227,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                 + " status=maintenance or status=pendingapproval ", SearchType.VDS), new AsyncQuery(this, //$NON-NLS-1$
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
                         ArrayList<VDS> hosts =
                                 (ArrayList<VDS>) ((VdcQueryReturnValue) returnValue).getReturnValue();
@@ -238,7 +238,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         AsyncDataProvider.GetLocalStorageHost(new AsyncQuery(dataCenterGuideModel,
                                 new INewAsyncCallback() {
                                     @Override
-                                    public void OnSuccess(Object target, Object returnValue) {
+                                    public void onSuccess(Object target, Object returnValue) {
                                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
                                         if (returnValue != null) {
                                         VDS localStorageHost = (VDS) returnValue;
@@ -587,7 +587,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         AsyncDataProvider.GetLocalStorageHost(new AsyncQuery(new Object[] { this, model },
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         Object[] array = (Object[]) target;
                         DataCenterGuideModel listModel = (DataCenterGuideModel) array[0];
                         StorageModel model = (StorageModel) array[1];
@@ -681,7 +681,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         AsyncDataProvider.IsStorageDomainNameUnique(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
                         StorageModel storageModel = (StorageModel) dataCenterGuideModel.getWindow();
@@ -699,7 +699,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         AsyncDataProvider.GetStorageDomainMaxNameLength(new AsyncQuery(dataCenterGuideModel,
                                 new INewAsyncCallback() {
                                     @Override
-                                    public void OnSuccess(Object target1, Object returnValue1) {
+                                    public void onSuccess(Object target1, Object returnValue1) {
 
                                         DataCenterGuideModel dataCenterGuideModel1 = (DataCenterGuideModel) target1;
                                         StorageModel storageModel1 = (StorageModel) dataCenterGuideModel1.getWindow();
@@ -774,7 +774,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         AsyncDataProvider.GetStorageDomainsByConnection(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
                         ArrayList<StorageDomain> storages =
@@ -921,7 +921,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         AsyncDataProvider.GetStorageDomainsByConnection(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
                         ArrayList<StorageDomain> storages =
@@ -1058,7 +1058,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         AsyncDataProvider.GetStorageDomainsByConnection(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
                         ArrayList<StorageDomain> storages =
@@ -1239,7 +1239,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
                         ArrayList<StorageDomain> attachedStorage =
                                 new ArrayList<StorageDomain>();
@@ -1248,7 +1248,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                                 attachedStorage },
                                 new INewAsyncCallback() {
                                     @Override
-                                    public void OnSuccess(Object target, Object returnValue) {
+                                    public void onSuccess(Object target, Object returnValue) {
                                         Object[] array = (Object[]) target;
                                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) array[0];
                                         ArrayList<StorageDomain> attachedStorage =
@@ -1289,7 +1289,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
                         ArrayList<StorageDomain> storageDomains =
                                 (ArrayList<StorageDomain>) returnValue;
@@ -1440,7 +1440,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         AsyncDataProvider.GetClusterList(new AsyncQuery(new Object[] { this, model },
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         Object[] array = (Object[]) target;
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) array[0];
                         MoveHost moveHostModel = (MoveHost) array[1];

@@ -147,7 +147,7 @@ public class PoolListModel extends ListWithDetailsModel
             AsyncDataProvider.GetCustomPropertiesList(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
                             PoolListModel model = (PoolListModel) target;
                             if (returnValue != null) {
                                 model.setCustomPropertiesKeysList((HashMap<Version, ArrayList<String>>) returnValue);
@@ -241,7 +241,7 @@ public class PoolListModel extends ListWithDetailsModel
 
                 new AsyncQuery(this, new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object modell, Object result) {
+                    public void onSuccess(Object modell, Object result) {
                         final VM vm = (VM) ((VdcQueryReturnValue) result).getReturnValue();
 
                         final ExistingPoolModelBehavior behavior = new ExistingPoolModelBehavior(vm);
@@ -423,7 +423,7 @@ public class PoolListModel extends ListWithDetailsModel
         AsyncDataProvider.IsPoolNameUnique(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         Boolean isUnique = (Boolean) returnValue;
 
                         if ((model.getIsNew() && !isUnique)

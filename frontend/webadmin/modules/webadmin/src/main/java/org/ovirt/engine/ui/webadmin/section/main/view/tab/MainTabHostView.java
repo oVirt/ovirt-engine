@@ -57,7 +57,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
     private void InitSpmPriorities() {
         AsyncDataProvider.GetMaxSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
 
                 MainTabHostView view = (MainTabHostView) target;
 
@@ -70,7 +70,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
     private void InitSpmPriorities1() {
         AsyncDataProvider.GetDefaultSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
 
                 MainTabHostView view = (MainTabHostView) target;
 

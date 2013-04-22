@@ -276,7 +276,7 @@ public class HostGeneralModel extends EntityModel
     private void retrieveMaxSpmPriority() {
         AsyncDataProvider.GetMaxSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
                 spmMaxPriorityValue = (Integer) returnValue;
                 retrieveDefaultSpmPriority();
             }
@@ -286,7 +286,7 @@ public class HostGeneralModel extends EntityModel
     private void retrieveDefaultSpmPriority() {
         AsyncDataProvider.GetDefaultSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
                 spmDefaultPriorityValue = (Integer) returnValue;
                 updateSpmPriorityValues();
                 updateSpmPriority();
@@ -830,7 +830,7 @@ public class HostGeneralModel extends EntityModel
             AsyncDataProvider.GetoVirtISOsList(new AsyncQuery(model,
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
 
                             InstallModel model = (InstallModel) target;
 
@@ -914,7 +914,7 @@ public class HostGeneralModel extends EntityModel
         AsyncDataProvider.GetClusterById(new AsyncQuery(param, new INewAsyncCallback() {
 
             @Override
-            public void OnSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object model, Object returnValue) {
                 VDSGroup cluster = (VDSGroup) returnValue;
                 UpdateVdsActionParameters internalParam = (UpdateVdsActionParameters) model;
 
@@ -1077,7 +1077,7 @@ public class HostGeneralModel extends EntityModel
             AsyncDataProvider.GetoVirtISOsList(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
 
                             HostGeneralModel hostGeneralModel = (HostGeneralModel) target;
                             ArrayList<RpmVersion> isos = (ArrayList<RpmVersion>) returnValue;

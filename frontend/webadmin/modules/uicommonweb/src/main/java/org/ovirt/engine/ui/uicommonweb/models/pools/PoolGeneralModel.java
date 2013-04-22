@@ -440,7 +440,7 @@ public class PoolGeneralModel extends EntityModel
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 // currently, only query that is being invoked asynchrounously in
                 // this context is GetVmDataByPoolIdQuery. If more async queries will be needed,
@@ -488,7 +488,7 @@ public class PoolGeneralModel extends EntityModel
                         _asyncQuery1.setModel(poolGeneralModel);
                         _asyncQuery1.asyncCallback = new INewAsyncCallback() {
                             @Override
-                            public void OnSuccess(Object model1, Object ReturnValue1)
+                            public void onSuccess(Object model1, Object ReturnValue1)
                             {
                                 PoolGeneralModel poolGeneralModel1 = (PoolGeneralModel) model1;
                                 ArrayList<VDS> hosts =
@@ -552,7 +552,7 @@ public class PoolGeneralModel extends EntityModel
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object ReturnValue)
+            public void onSuccess(Object model, Object ReturnValue)
             {
                 PoolGeneralModel poolGeneralModel = (PoolGeneralModel) model;
                 Iterable disks = (Iterable) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
@@ -565,7 +565,7 @@ public class PoolGeneralModel extends EntityModel
                     _asyncQuery1.setModel(poolGeneralModel);
                     _asyncQuery1.asyncCallback = new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object model1, Object ReturnValue1)
+                        public void onSuccess(Object model1, Object ReturnValue1)
                         {
                             PoolGeneralModel poolGeneralModel1 = (PoolGeneralModel) model1;
                             StorageDomain storage =

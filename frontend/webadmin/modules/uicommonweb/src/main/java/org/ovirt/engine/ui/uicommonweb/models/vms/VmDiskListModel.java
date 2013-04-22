@@ -696,7 +696,7 @@ public class VmDiskListModel extends VmDiskListModelBase
 
         AsyncDataProvider.GetDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
                 VmDiskListModel model = (VmDiskListModel) target;
 
                 storage_pool dataCenter = (storage_pool) returnValue;
@@ -706,7 +706,7 @@ public class VmDiskListModel extends VmDiskListModelBase
                 AsyncDataProvider.IsCommandCompatible(new AsyncQuery(model,
                         new INewAsyncCallback() {
                             @Override
-                            public void OnSuccess(Object target, Object returnValue) {
+                            public void onSuccess(Object target, Object returnValue) {
                                 VmDiskListModel model = (VmDiskListModel) target;
                                 model.setIsLiveStorageMigrationEnabled((Boolean) returnValue);
                             }

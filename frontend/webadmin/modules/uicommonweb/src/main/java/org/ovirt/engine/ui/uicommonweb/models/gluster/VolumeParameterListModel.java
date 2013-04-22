@@ -121,7 +121,7 @@ public class VolumeParameterListModel extends SearchableListModel {
         _asyncQuery.setHandleFailure(true);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 VolumeParameterListModel volumeParameterListModel = (VolumeParameterListModel) model;
                 VolumeParameterModel innerParameterModel = (VolumeParameterModel) getWindow();
@@ -230,7 +230,7 @@ public class VolumeParameterListModel extends SearchableListModel {
         _asyncQuery.setHandleFailure(true);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 VolumeParameterListModel volumeParameterListModel = (VolumeParameterListModel) model;
                 VolumeParameterModel innerParameterModel = (VolumeParameterModel) getWindow();

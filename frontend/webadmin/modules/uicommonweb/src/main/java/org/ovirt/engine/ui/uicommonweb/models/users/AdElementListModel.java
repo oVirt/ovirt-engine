@@ -175,7 +175,7 @@ public class AdElementListModel extends SearchableListModel
         AsyncDataProvider.GetDomainList(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
-            public void OnSuccess(Object model, Object result) {
+            public void onSuccess(Object model, Object result) {
                 populateDomains((List<String>) result);
             }
         }), false);
@@ -184,7 +184,7 @@ public class AdElementListModel extends SearchableListModel
         AsyncDataProvider.GetRoleList(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
-            public void OnSuccess(Object model, Object result) {
+            public void onSuccess(Object model, Object result) {
                 populateRoles((List<Role>) result);
 
             }
@@ -243,7 +243,7 @@ public class AdElementListModel extends SearchableListModel
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object ReturnValue)
+            public void onSuccess(Object model, Object ReturnValue)
             {
                 AdElementListModel adElementListModel = (AdElementListModel) model;
                 HashSet<Guid> excludeUsers = new HashSet<Guid>();
@@ -288,7 +288,7 @@ public class AdElementListModel extends SearchableListModel
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object ReturnValue)
+            public void onSuccess(Object model, Object ReturnValue)
             {
                 AdElementListModel adElementListModel = (AdElementListModel) model;
                 HashSet<Guid> excludeUsers = new HashSet<Guid>();

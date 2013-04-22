@@ -49,7 +49,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
         AsyncDataProvider.GetClustersWithPermittedAction(new AsyncQuery(new Object[] { this, getModel() },
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         Object[] array = (Object[]) target;
                         ExistingVmModelBehavior behavior = (ExistingVmModelBehavior) array[0];
@@ -111,7 +111,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
         AsyncDataProvider.GetClusterById(new AsyncQuery(new Object[] { getModel(), clusters },
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         Object[] array = (Object[]) target;
                         UnitVmModel model = (UnitVmModel) array[0];

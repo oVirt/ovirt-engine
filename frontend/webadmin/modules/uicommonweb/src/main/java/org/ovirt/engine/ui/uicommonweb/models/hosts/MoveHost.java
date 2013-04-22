@@ -65,7 +65,7 @@ public class MoveHost extends ListModel
         {
             AsyncDataProvider.GetHostList(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object target, Object returnValue) {
+                public void onSuccess(Object target, Object returnValue) {
 
                     MoveHost moveHost = (MoveHost) target;
                     ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;

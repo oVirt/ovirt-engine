@@ -285,7 +285,7 @@ public class UserPortalLoginModel extends LoginModel
         AsyncDataProvider.GetRoleActionGroupsByRoleId(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         UserPortalLoginModel loginModel = (UserPortalLoginModel) target;
                         loginModel.setENGINEUserActionGroupList((ArrayList<ActionGroup>) returnValue);
@@ -307,7 +307,7 @@ public class UserPortalLoginModel extends LoginModel
         AsyncDataProvider.GetPermissionsByAdElementId(new AsyncQuery(targetObject,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         ArrayList<permissions> permissions = (ArrayList<permissions>) returnValue;
                         ArrayList<Guid> roleIdList = new ArrayList<Guid>();

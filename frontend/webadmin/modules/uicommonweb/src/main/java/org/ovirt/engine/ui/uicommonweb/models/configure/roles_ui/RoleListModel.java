@@ -201,7 +201,7 @@ public class RoleListModel extends ListWithDetailsModel
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object ReturnValue)
+            public void onSuccess(Object model, Object ReturnValue)
             {
                 RoleListModel roleListModel = (RoleListModel) model;
                 ArrayList<Role> filteredList = new ArrayList<Role>();
@@ -229,7 +229,7 @@ public class RoleListModel extends ListWithDetailsModel
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object ReturnValue)
+            public void onSuccess(Object model, Object ReturnValue)
             {
                 RoleListModel roleListModel = (RoleListModel) model;
                 ArrayList<Role> filteredList = new ArrayList<Role>();
@@ -355,7 +355,7 @@ public class RoleListModel extends ListWithDetailsModel
                 _asyncQuery.setModel(this);
                 _asyncQuery.asyncCallback = new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object model, Object ReturnValue) {
+                    public void onSuccess(Object model, Object ReturnValue) {
                         RoleListModel roleListModel = (RoleListModel) model;
                         roleListModel.publicAttachedActions =
                                 (ArrayList<ActionGroup>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();

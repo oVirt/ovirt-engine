@@ -27,7 +27,7 @@ public class QuotaStorageListModel extends SearchableListModel {
         asyncQuery.asyncCallback = new INewAsyncCallback() {
 
             @Override
-            public void OnSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object model, Object returnValue) {
                 QuotaStorageListModel quotaStorageListModel = (QuotaStorageListModel) model;
                 quotaStorageListModel.setItems((ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue());
 

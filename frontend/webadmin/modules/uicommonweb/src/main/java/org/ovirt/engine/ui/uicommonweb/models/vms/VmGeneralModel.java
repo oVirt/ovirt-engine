@@ -653,7 +653,7 @@ public class VmGeneralModel extends EntityModel
                     + " sortby name", SearchType.VDS), new AsyncQuery(this, //$NON-NLS-1$
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
 
                             VmGeneralModel model = (VmGeneralModel) target;
                             VM localVm = (VM) model.getEntity();
@@ -688,7 +688,7 @@ public class VmGeneralModel extends EntityModel
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object ReturnValue)
+            public void onSuccess(Object model, Object ReturnValue)
             {
                 VmGeneralModel vmGeneralModel = (VmGeneralModel) model;
                 Iterable disks = (Iterable) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
@@ -701,7 +701,7 @@ public class VmGeneralModel extends EntityModel
                     _asyncQuery1.setModel(vmGeneralModel);
                     _asyncQuery1.asyncCallback = new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object model1, Object ReturnValue1)
+                        public void onSuccess(Object model1, Object ReturnValue1)
                         {
                             VmGeneralModel vmGeneralModel1 = (VmGeneralModel) model1;
                             StorageDomain storage =

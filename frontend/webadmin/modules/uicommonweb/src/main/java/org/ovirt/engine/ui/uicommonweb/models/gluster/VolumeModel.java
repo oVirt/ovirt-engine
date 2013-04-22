@@ -320,7 +320,7 @@ public class VolumeModel extends Model {
         _asyncQuery.setModel(volumeBrickModel);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 VolumeBrickModel volumeBrickModel = (VolumeBrickModel) model;
                 ArrayList<VDS> hostList = (ArrayList<VDS>) result;
@@ -485,7 +485,7 @@ public class VolumeModel extends Model {
 
             AsyncDataProvider.isAnyHostUpInCluster(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object model, Object returnValue) {
+                public void onSuccess(Object model, Object returnValue) {
 
                     // In case the result of previous call is returned after selecting some other cluster
                     if (!((VDSGroup) getCluster().getSelectedItem()).getId().equals(cluster.getId())) {
@@ -520,7 +520,7 @@ public class VolumeModel extends Model {
             _asyncQuery.setModel(this);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object model, Object result)
+                public void onSuccess(Object model, Object result)
                 {
                     VolumeModel volumeModel = (VolumeModel) model;
                     ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) result;

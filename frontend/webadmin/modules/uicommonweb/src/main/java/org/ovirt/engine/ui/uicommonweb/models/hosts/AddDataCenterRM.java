@@ -56,7 +56,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
             AsyncDataProvider.GetDataCenterListByName(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object model, Object returnValue) {
+                        public void onSuccess(Object model, Object returnValue) {
 
                             context.dataCenterFoundByName = Linq.FirstOrDefault((Iterable<storage_pool>) returnValue);
                             prepare2();
@@ -161,7 +161,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
             AsyncDataProvider.GetDataCenterById(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object model, Object returnValue) {
+                        public void onSuccess(Object model, Object returnValue) {
 
                             context.dataCenterFoundById = (storage_pool) returnValue;
                             rollback2();
@@ -185,7 +185,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
         AsyncDataProvider.GetHostById(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object model, Object returnValue) {
+                    public void onSuccess(Object model, Object returnValue) {
 
                         context.hostFoundById = (VDS) returnValue;
                         rollback3();

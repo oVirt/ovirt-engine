@@ -94,7 +94,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
             AsyncDataProvider.GetHostById(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object model, Object returnValue) {
+                        public void onSuccess(Object model, Object returnValue) {
 
                             context.host = (VDS) returnValue;
 

@@ -62,7 +62,7 @@ public class NetworkHostListModel extends SearchableListModel
         asyncQuery.setModel(getViewFilterType());
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object ReturnValue)
+            public void onSuccess(Object model, Object ReturnValue)
             {
                 if (model.equals(getViewFilterType())) {
                     Iterable returnList = (Iterable) ((VdcQueryReturnValue) ReturnValue).getReturnValue();

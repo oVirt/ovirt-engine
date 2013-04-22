@@ -440,7 +440,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             AsyncDataProvider.GetCustomPropertiesList(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
                             VmListModel model = (VmListModel) target;
                             if (returnValue != null) {
                                 model.setCustomPropertiesKeysList((HashMap<Version, ArrayList<String>>) returnValue);
@@ -453,7 +453,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         AsyncDataProvider.IsCommandCompatible(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                     }
                 }), null, null, null);
     }
@@ -510,7 +510,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             AsyncDataProvider.GetAttachedTagsToVm(new AsyncQuery(new Object[] { this, model },
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
 
                             Object[] array = (Object[]) target;
                             VmListModel vmListModel = (VmListModel) array[0];
@@ -615,7 +615,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         AsyncDataProvider.GetVmById(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         VmListModel vmListModel = (VmListModel) target;
                         VmGuideModel model = (VmGuideModel) vmListModel.getWindow();
                         model.setEntity(returnValue);
@@ -1035,7 +1035,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         AsyncDataProvider.GetDataCentersByStorageDomain(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         VmListModel vmListModel = (VmListModel) target;
                         ArrayList<storage_pool> storagePools =
                                 (ArrayList<storage_pool>) returnValue;
@@ -1056,7 +1056,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             AsyncDataProvider.GetAllTemplatesFromExportDomain(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
                             VmListModel vmListModel = (VmListModel) target;
                             HashMap<VmTemplate, ArrayList<DiskImage>> templatesDiskSet =
                                     (HashMap<VmTemplate, ArrayList<DiskImage>>) returnValue;
@@ -1262,7 +1262,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         AsyncDataProvider.GetVmDiskList(new AsyncQuery(getWindow(),
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         final ExportVmModel model = (ExportVmModel) target;
                         @SuppressWarnings("unchecked")
                         final ArrayList<Disk> vmDisks = (ArrayList<Disk>) returnValue;
@@ -1345,7 +1345,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             AsyncDataProvider.IsTemplateNameUnique(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
 
                             VmListModel vmListModel = (VmListModel) target;
                             boolean isNameUnique = (Boolean) returnValue;
@@ -1472,7 +1472,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         AsyncDataProvider.GetUpHostListByCluster(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         VmListModel vmListModel = (VmListModel) target;
                         vmListModel.PostMigrateGetUpHosts((ArrayList<VDS>) returnValue);
                     }
@@ -1838,7 +1838,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         getIrsImageListCallback.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 VmListModel vmListModel2 = (VmListModel) model;
                 AttachCdModel _attachCdModel = (AttachCdModel) vmListModel2.getWindow();
@@ -1918,7 +1918,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         AsyncDataProvider.IsVmNameUnique(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
                 if (!(Boolean) returnValue && name.compareToIgnoreCase(getcurrentVm().getName()) != 0) {
                     model.getName()
                             .getInvalidityReasons()
@@ -2055,7 +2055,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     _asyncQuery.setModel(this);
                     _asyncQuery.asyncCallback = new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object model1, Object result1)
+                        public void onSuccess(Object model1, Object result1)
                         {
                             VmListModel vmListModel = (VmListModel) model1;
                             UnitVmModel unitVmModel = (UnitVmModel) vmListModel.getWindow();

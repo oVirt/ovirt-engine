@@ -164,7 +164,7 @@ public class TemplateDiskListModel extends SearchableListModel
             AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
                             TemplateDiskListModel model = (TemplateDiskListModel) target;
                             ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
 

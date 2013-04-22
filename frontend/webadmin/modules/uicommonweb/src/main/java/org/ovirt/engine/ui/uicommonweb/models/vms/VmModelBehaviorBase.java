@@ -106,7 +106,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     protected void updateUserCdImage(Guid storagePoolId) {
         AsyncDataProvider.GetIrsImageList(new AsyncQuery(getModel(), new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
                 UnitVmModel model = (UnitVmModel) target;
                 List<String> images = (List<String>) returnValue;
                 setImagesToModel(model, images);
@@ -134,7 +134,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         AsyncDataProvider.GetIrsImageList(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         UnitVmModel model = (UnitVmModel) target;
                         ArrayList<String> images = (ArrayList<String>) returnValue;
                         setImagesToModel(model, images);
@@ -173,7 +173,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             AsyncDataProvider.GetTimeZoneList(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
                             VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
                             Map<String, String> timezones = (Map<String, String>) returnValue;
                             // empty entry for default timezone
@@ -242,7 +242,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             AsyncDataProvider.GetDefaultTimeZone(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
 
                             VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
                             cachedDefaultTimeZoneKey = (String) returnValue;
@@ -267,7 +267,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         AsyncDataProvider.GetDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
                         List<String> domains = (List<String>) returnValue;
@@ -293,7 +293,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         AsyncDataProvider.GetMaxVmPriority(new AsyncQuery(new Object[] { getModel(), priority },
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         Object[] array = (Object[]) target;
                         UnitVmModel model = (UnitVmModel) array[0];
@@ -317,7 +317,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             AsyncDataProvider.GetMaxVmPriority(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
 
                             VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
                             cachedMaxPriority = (Integer) returnValue;
@@ -409,7 +409,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         AsyncQuery query = new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         UnitVmModel model = (UnitVmModel) target;
                         ArrayList<VDS> hosts = null;
@@ -479,7 +479,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         AsyncDataProvider.GetMaxVmsInPool(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
                         behavior.setMaxVmsInPool((Integer) returnValue);
                         behavior.UpdateMaxNumOfVmCpus();
@@ -495,7 +495,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         AsyncDataProvider.GetMaxNumOfVmCpus(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
                         behavior.maxCpus = (Integer) returnValue;
@@ -512,7 +512,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         AsyncDataProvider.GetMaxNumOfCPUsPerSocket(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
                         behavior.maxCpusPerSocket = (Integer) returnValue;
@@ -528,7 +528,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         AsyncDataProvider.GetTemplateDiskList(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         UnitVmModel model = (UnitVmModel) target;
                         ArrayList<DiskImage> disks = (ArrayList<DiskImage>) returnValue;
@@ -598,7 +598,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         storage_pool dataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
         AsyncDataProvider.GetPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
                 VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
                 ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
                 ArrayList<StorageDomain> activeStorageDomains = FilterStorageDomains(storageDomains);
@@ -663,7 +663,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                             new INewAsyncCallback() {
 
                                 @Override
-                                public void OnSuccess(Object model, Object returnValue) {
+                                public void onSuccess(Object model, Object returnValue) {
                                     UnitVmModel vmModel = (UnitVmModel) model;
                                     ArrayList<Quota> quotaList =
                                             (ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue();
@@ -697,7 +697,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         AsyncDataProvider.GetTemplateById(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         UnitVmModel model = (UnitVmModel) target;
                         VmTemplate template = (VmTemplate) returnValue;
@@ -890,7 +890,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         AsyncDataProvider.GetMaxNumOfVmSockets(new AsyncQuery(new Object[] { this, getModel() },
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         Object[] array = (Object[]) target;
                         VmModelBehaviorBase behavior = (VmModelBehaviorBase) array[0];

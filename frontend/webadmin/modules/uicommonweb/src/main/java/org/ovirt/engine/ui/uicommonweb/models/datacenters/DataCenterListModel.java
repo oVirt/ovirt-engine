@@ -212,7 +212,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         AsyncDataProvider.GetDataCenterById(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         DataCenterListModel dataCenterListModel = (DataCenterListModel) target;
                         DataCenterGuideModel model = (DataCenterGuideModel) dataCenterListModel.getWindow();
                         model.setEntity((storage_pool) returnValue);
@@ -321,7 +321,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         List<StorageDomain> storageDomainList = (List<StorageDomain>) returnValue;
 
                         if (storageDomainList.size() != 0) {
@@ -417,7 +417,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
         AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object model, Object returnValue) {
                 windowModel.StopProgress();
                 List<StorageDomain> storageDomainList = (List<StorageDomain>) returnValue;
                 List<EntityModel> models = new ArrayList<EntityModel>();
@@ -475,7 +475,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
         AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object model, Object returnValue) {
                 StorageDomain master = null;
                 List<StorageDomain> storageDomainList = (List<StorageDomain>) returnValue;
                 for (StorageDomain a : storageDomainList)
@@ -654,7 +654,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                         new INewAsyncCallback() {
 
                             @Override
-                            public void OnSuccess(Object model, Object returnValue) {
+                            public void onSuccess(Object model, Object returnValue) {
                                 if (((ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue()).size() == 0) {
                                     promptNoQuotaInDCMessage();
                                 } else {

@@ -166,7 +166,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 VolumeListModel volumeListModel = (VolumeListModel) model;
                 VolumeModel innerVolumeModel = (VolumeModel) volumeListModel.getWindow();
@@ -426,20 +426,20 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         aQuery.setModel(this);
         aQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, final Object result)
+            public void onSuccess(Object model, final Object result)
             {
                 AsyncQuery aQueryInner = new AsyncQuery();
                 aQueryInner.setModel(this);
                 aQueryInner.asyncCallback = new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object modelInner, final Object resultInner)
+                    public void onSuccess(Object modelInner, final Object resultInner)
                     {
 
                         AsyncQuery aQueryInner1 = new AsyncQuery();
                         aQueryInner1.setModel(this);
                         aQueryInner1.asyncCallback = new INewAsyncCallback() {
                             @Override
-                            public void OnSuccess(Object modelInner1, Object resultInner1)
+                            public void onSuccess(Object modelInner1, Object resultInner1)
                             {
                                 String optionGroupVirt = (String) result;
                                 String optionOwnerUserVirt = (String) resultInner;

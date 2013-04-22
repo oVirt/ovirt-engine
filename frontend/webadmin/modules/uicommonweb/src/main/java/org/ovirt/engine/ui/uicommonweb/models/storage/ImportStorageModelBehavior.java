@@ -34,7 +34,7 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
                 AsyncDataProvider.GetIsoDomainByDataCenterId(new AsyncQuery(new Object[] { this, item },
                         new INewAsyncCallback() {
                             @Override
-                            public void OnSuccess(Object target, Object returnValue) {
+                            public void onSuccess(Object target, Object returnValue) {
 
                                 Object[] array = (Object[]) target;
                                 ImportStorageModelBehavior behavior = (ImportStorageModelBehavior) array[0];
@@ -49,7 +49,7 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
                 AsyncDataProvider.GetExportDomainByDataCenterId(new AsyncQuery(new Object[] { this, item },
                         new INewAsyncCallback() {
                             @Override
-                            public void OnSuccess(Object target, Object returnValue) {
+                            public void onSuccess(Object target, Object returnValue) {
 
                                 Object[] array = (Object[]) target;
                                 ImportStorageModelBehavior behavior = (ImportStorageModelBehavior) array[0];

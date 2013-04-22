@@ -116,7 +116,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         AsyncDataProvider.GetDataCenterList(new AsyncQuery(NetworkListModel.this, new INewAsyncCallback() {
 
             @Override
-            public void OnSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object model, Object returnValue) {
 
                 ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) returnValue;
                 networkModel.getDataCenters().setItems(dataCenters);

@@ -30,7 +30,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
         AsyncDataProvider.GetDataCenterByClusterServiceList(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         UnitVmModel model = (UnitVmModel) target;
                         ArrayList<storage_pool> list = new ArrayList<storage_pool>();
@@ -58,7 +58,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
         AsyncDataProvider.GetClusterByServiceList(new AsyncQuery(new Object[] { this, getModel() },
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         Object[] array = (Object[]) target;
                         NewVmModelBehavior behavior = (NewVmModelBehavior) array[0];
@@ -237,7 +237,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
             AsyncDataProvider.GetTemplateListByDataCenter(new AsyncQuery(new Object[] { this, storage },
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target1, Object returnValue1) {
+                        public void onSuccess(Object target1, Object returnValue1) {
 
                             Object[] array1 = (Object[]) target1;
                             NewVmModelBehavior behavior1 = (NewVmModelBehavior) array1[0];
@@ -246,7 +246,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
                                     returnValue1 },
                                     new INewAsyncCallback() {
                                         @Override
-                                        public void OnSuccess(Object target2, Object returnValue2) {
+                                        public void onSuccess(Object target2, Object returnValue2) {
 
                                             Object[] array2 = (Object[]) target2;
                                             NewVmModelBehavior behavior2 = (NewVmModelBehavior) array2[0];
@@ -276,7 +276,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
             AsyncDataProvider.GetTemplateListByDataCenter(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object target, Object returnValue) {
 
                             NewVmModelBehavior behavior = (NewVmModelBehavior) target;
                             behavior.PostInitTemplate((ArrayList<VmTemplate>) returnValue);

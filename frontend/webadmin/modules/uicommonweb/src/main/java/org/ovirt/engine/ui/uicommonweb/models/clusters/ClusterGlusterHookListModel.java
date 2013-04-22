@@ -194,7 +194,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
         AsyncDataProvider.getGlusterHooks(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
-            public void OnSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object model, Object returnValue) {
                 List<GlusterHookEntity> glusterHooks = (List<GlusterHookEntity>) returnValue;
                 setItems(glusterHooks);
             }

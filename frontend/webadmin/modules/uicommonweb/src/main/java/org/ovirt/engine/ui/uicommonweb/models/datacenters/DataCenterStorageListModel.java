@@ -203,7 +203,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object ReturnValue)
+            public void onSuccess(Object model, Object ReturnValue)
             {
                 SearchableListModel searchableListModel = (SearchableListModel) model;
                 searchableListModel.setItems((ArrayList<StorageDomain>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
@@ -297,7 +297,7 @@ public class DataCenterStorageListModel extends SearchableListModel
             _asyncQuery.setModel(this);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object model, Object result)
+                public void onSuccess(Object model, Object result)
                 {
                     ArrayList<StorageDomain> list = (ArrayList<StorageDomain>) result;
                     DataCenterStorageListModel dcStorageModel = (DataCenterStorageListModel) model;
@@ -329,7 +329,7 @@ public class DataCenterStorageListModel extends SearchableListModel
             _asyncQuery.setModel(this);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object model, Object result)
+                public void onSuccess(Object model, Object result)
                 {
                     DataCenterStorageListModel dcStorageModel = (DataCenterStorageListModel) model;
                     ArrayList<StorageDomain> list = (ArrayList<StorageDomain>) result;
@@ -582,7 +582,7 @@ public class DataCenterStorageListModel extends SearchableListModel
             _asyncQuery.setModel(this);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object model, Object result)
+                public void onSuccess(Object model, Object result)
                 {
                     DataCenterStorageListModel dataCenterStorageListModel = (DataCenterStorageListModel) model;
                     VDS locaVds = (VDS) result;

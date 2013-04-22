@@ -93,7 +93,7 @@ public class TemplateBackupModel extends VmBackupModel
         AsyncDataProvider.GetDataCentersByStorageDomain(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
-            public void OnSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object model, Object returnValue) {
                 TemplateBackupModel templateBackupModel = (TemplateBackupModel) model;
                 ArrayList<storage_pool> pools = (ArrayList<storage_pool>) returnValue;
                 if (pools != null && pools.size() > 0) {
@@ -292,7 +292,7 @@ public class TemplateBackupModel extends VmBackupModel
             _asyncQuery.setModel(this);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object model, Object ReturnValue)
+                public void onSuccess(Object model, Object ReturnValue)
                 {
                     TemplateBackupModel backupModel = (TemplateBackupModel) model;
                     ArrayList<storage_pool> list = (ArrayList<storage_pool>) ReturnValue;
@@ -303,7 +303,7 @@ public class TemplateBackupModel extends VmBackupModel
                         _asyncQuery1.setModel(backupModel);
                         _asyncQuery1.asyncCallback = new INewAsyncCallback() {
                             @Override
-                            public void OnSuccess(Object model1, Object ReturnValue1)
+                            public void onSuccess(Object model1, Object ReturnValue1)
                             {
                                 TemplateBackupModel backupModel1 = (TemplateBackupModel) model1;
                                 ArrayList<Map.Entry<VmTemplate, DiskImageList>> items =

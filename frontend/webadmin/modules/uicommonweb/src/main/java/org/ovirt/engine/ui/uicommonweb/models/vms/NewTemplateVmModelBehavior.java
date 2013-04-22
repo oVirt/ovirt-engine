@@ -51,7 +51,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         AsyncDataProvider.GetDataCenterById(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         NewTemplateVmModelBehavior behavior = (NewTemplateVmModelBehavior) target;
                         storage_pool dataCenter = (storage_pool) returnValue;
@@ -86,7 +86,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         AsyncDataProvider.GetClusterByServiceList(new AsyncQuery(new Object[] { this, getModel() },
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         Object[] array = (Object[]) target;
                         NewTemplateVmModelBehavior behavior = (NewTemplateVmModelBehavior) array[0];
@@ -102,7 +102,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         AsyncDataProvider.GetVmDiskList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         NewTemplateVmModelBehavior behavior = (NewTemplateVmModelBehavior) target;
                         ArrayList<Disk> imageDisks = new ArrayList<Disk>();
@@ -240,7 +240,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         AsyncDataProvider.GetPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
                         NewTemplateVmModelBehavior behavior = (NewTemplateVmModelBehavior) target;
                         ArrayList<StorageDomain> activeStorageDomainList =
                                 new ArrayList<StorageDomain>();

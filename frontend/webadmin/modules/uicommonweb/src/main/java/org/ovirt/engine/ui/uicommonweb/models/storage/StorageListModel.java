@@ -457,7 +457,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         AsyncDataProvider.GetStorageConnectionById(new AsyncQuery(null, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
 
                 StorageServerConnections connection = (StorageServerConnections) returnValue;
                 model.getPath().setEntity(connection.getconnection());
@@ -500,7 +500,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         AsyncDataProvider.GetStorageConnectionById(new AsyncQuery(model, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
 
                 LocalStorageModel localStorageModel = (LocalStorageModel) target;
                 StorageServerConnections connection = (StorageServerConnections) returnValue;
@@ -524,7 +524,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         AsyncDataProvider.GetStorageConnectionById(new AsyncQuery(null, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
 
                 StorageServerConnections connection = (StorageServerConnections) returnValue;
                 model.getPath().setEntity(connection.getconnection());
@@ -567,7 +567,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         AsyncDataProvider.GetStorageConnectionById(new AsyncQuery(null, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
 
                 StorageServerConnections connection = (StorageServerConnections) returnValue;
                 model.getPath().setEntity(connection.getconnection());
@@ -610,7 +610,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         AsyncDataProvider.GetLunsByVgId(new AsyncQuery(model, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
                 SanStorageModel sanStorageModel = (SanStorageModel) target;
                 ArrayList<LUNs> lunList = (ArrayList<LUNs>) returnValue;
                 sanStorageModel.ApplyData(lunList, true);
@@ -727,7 +727,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         AsyncDataProvider.IsStorageDomainNameUnique(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
 
                 StorageListModel storageListModel = (StorageListModel) target;
                 StorageModel storageModel = (StorageModel) storageListModel.getWindow();
@@ -747,7 +747,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
                     AsyncDataProvider.GetStorageDomainMaxNameLength(new AsyncQuery(storageListModel, new INewAsyncCallback() {
                         @Override
-                        public void OnSuccess(Object target1, Object returnValue1) {
+                        public void onSuccess(Object target1, Object returnValue1) {
 
                             StorageListModel storageListModel1 = (StorageListModel) target1;
                             StorageModel storageModel1 = (StorageModel) storageListModel1.getWindow();
@@ -798,7 +798,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         AsyncDataProvider.GetHostListByStatus(new AsyncQuery(new Object[] {this, model}, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
 
                 Object[] array = (Object[]) target;
                 StorageListModel storageListModel = (StorageListModel) array[0];
@@ -1248,7 +1248,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         if (isNew) {
             AsyncDataProvider.GetStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object target, Object returnValue) {
+                public void onSuccess(Object target, Object returnValue) {
 
                     StorageListModel storageListModel = (StorageListModel) target;
                     ArrayList<StorageDomain> storages = (ArrayList<StorageDomain>) returnValue;
@@ -1377,7 +1377,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         if (isNew) {
             AsyncDataProvider.GetStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object target, Object returnValue) {
+                public void onSuccess(Object target, Object returnValue) {
 
                     StorageListModel storageListModel = (StorageListModel) target;
                     ArrayList<StorageDomain> storages = (ArrayList<StorageDomain>) returnValue;
@@ -1509,7 +1509,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         {
             AsyncDataProvider.GetStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object target, Object returnValue) {
+                public void onSuccess(Object target, Object returnValue) {
 
                     StorageListModel storageListModel = (StorageListModel) target;
                     ArrayList<StorageDomain> storages = (ArrayList<StorageDomain>) returnValue;
@@ -1759,7 +1759,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         {
             AsyncDataProvider.GetStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object target, Object returnValue) {
+                public void onSuccess(Object target, Object returnValue) {
 
                     StorageListModel storageListModel = (StorageListModel) target;
                     ArrayList<StorageDomain> storages = (ArrayList<StorageDomain>) returnValue;
@@ -1988,7 +1988,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         // Check storage domain existence
         AsyncDataProvider.GetStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
 
                 StorageListModel storageListModel = (StorageListModel) target;
                 ArrayList<StorageDomain> storages = (ArrayList<StorageDomain>) returnValue;
@@ -2040,7 +2040,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                             AsyncDataProvider.GetExistingStorageDomainList(new AsyncQuery(storageListModel,
                                     new INewAsyncCallback() {
                                         @Override
-                                        public void OnSuccess(Object target, Object returnValue) {
+                                        public void onSuccess(Object target, Object returnValue) {
 
                                             StorageListModel storageListModel1 = (StorageListModel) target;
                                             ArrayList<StorageDomain> domains = (ArrayList<StorageDomain>) returnValue;
@@ -2236,7 +2236,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         AsyncDataProvider.GetDataCentersByStorageDomain(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
 
                 List<storage_pool> dataCenters = (List<storage_pool>) returnValue;
                 for (storage_pool dataCenter : dataCenters) {

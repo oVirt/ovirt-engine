@@ -592,7 +592,7 @@ public class ClusterModel extends EntityModel
         setAllowClusterWithVirtGlusterEnabled(true);
         AsyncDataProvider.GetAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object model, Object returnValue) {
                 setAllowClusterWithVirtGlusterEnabled((Boolean) returnValue);
             }
         }));
@@ -696,7 +696,7 @@ public class ClusterModel extends EntityModel
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 ClusterModel clusterModel = (ClusterModel) model;
                 clusterModel.setDesktopOverCommit((Integer) result);
@@ -704,7 +704,7 @@ public class ClusterModel extends EntityModel
                 _asyncQuery1.setModel(clusterModel);
                 _asyncQuery1.asyncCallback = new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object model1, Object result1)
+                    public void onSuccess(Object model1, Object result1)
                     {
                         ClusterModel clusterModel1 = (ClusterModel) model1;
                         clusterModel1.setServerOverCommit((Integer) result1);
@@ -815,7 +815,7 @@ public class ClusterModel extends EntityModel
         aQuery.setModel(this);
         aQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 String fingerprint = (String) result;
                 if (fingerprint != null && fingerprint.length() > 0)
@@ -847,7 +847,7 @@ public class ClusterModel extends EntityModel
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 ClusterModel clusterModel = (ClusterModel) model;
                 ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) result;
@@ -952,7 +952,7 @@ public class ClusterModel extends EntityModel
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 ClusterModel clusterModel = (ClusterModel) model;
                 ArrayList<ServerCpu> cpus = (ArrayList<ServerCpu>) result;
@@ -1016,7 +1016,7 @@ public class ClusterModel extends EntityModel
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object result)
+            public void onSuccess(Object model, Object result)
             {
                 ClusterModel clusterModel = (ClusterModel) model;
                 ArrayList<Version> versions = (ArrayList<Version>) result;

@@ -207,7 +207,7 @@ public class StorageDataCenterListModel extends SearchableListModel
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object ReturnValue)
+            public void onSuccess(Object model, Object ReturnValue)
             {
                 SearchableListModel searchableListModel = (SearchableListModel) model;
                 ArrayList<StorageDomain> domains =
@@ -251,7 +251,7 @@ public class StorageDataCenterListModel extends SearchableListModel
         AsyncDataProvider.GetDataCenterList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
-                    public void OnSuccess(Object target, Object returnValue) {
+                    public void onSuccess(Object target, Object returnValue) {
 
                         StorageDataCenterListModel listModel = (StorageDataCenterListModel) target;
                         listModel.setavailableDatacenters((ArrayList<storage_pool>) returnValue);
@@ -273,7 +273,7 @@ public class StorageDataCenterListModel extends SearchableListModel
                                         dataCenter },
                                         new INewAsyncCallback() {
                                             @Override
-                                            public void OnSuccess(Object target1, Object returnValue1) {
+                                            public void onSuccess(Object target1, Object returnValue1) {
 
                                                 Object[] array1 = (Object[]) target1;
                                                 StorageDataCenterListModel listModel1 =
@@ -293,7 +293,7 @@ public class StorageDataCenterListModel extends SearchableListModel
                                         listModel, dataCenter },
                                         new INewAsyncCallback() {
                                             @Override
-                                            public void OnSuccess(Object target2, Object returnValue2) {
+                                            public void onSuccess(Object target2, Object returnValue2) {
 
                                                 Object[] array2 = (Object[]) target2;
                                                 StorageDataCenterListModel listModel2 =
@@ -524,7 +524,7 @@ public class StorageDataCenterListModel extends SearchableListModel
                 AsyncDataProvider.GetLocalStorageHost(new AsyncQuery(new Object[] { this, storageDomain },
                         new INewAsyncCallback() {
                             @Override
-                            public void OnSuccess(Object target, Object returnValue) {
+                            public void onSuccess(Object target, Object returnValue) {
 
                                 Object[] array = (Object[]) target;
                                 StorageDataCenterListModel listModel = (StorageDataCenterListModel) array[0];

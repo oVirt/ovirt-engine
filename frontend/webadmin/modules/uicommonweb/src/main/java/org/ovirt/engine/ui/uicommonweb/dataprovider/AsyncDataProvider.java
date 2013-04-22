@@ -154,7 +154,7 @@ public final class AsyncDataProvider {
         AsyncQuery callback = new AsyncQuery(target, new INewAsyncCallback() {
 
             @Override
-            public void OnSuccess(Object model, Object returnValue) {
+            public void onSuccess(Object model, Object returnValue) {
                 if (returnValue != null) {
                     _defaultConfigurationVersion =
                             (String) ((VdcQueryReturnValue) returnValue).getReturnValue();
@@ -174,7 +174,7 @@ public final class AsyncDataProvider {
     public static void initCache(LoginModel loginModel) {
         AsyncDataProvider.CacheConfigValues(new AsyncQuery(loginModel, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object target, Object returnValue) {
+            public void onSuccess(Object target, Object returnValue) {
                 getDefaultConfigurationVersion(target);
             }
         }));
@@ -1056,7 +1056,7 @@ public final class AsyncDataProvider {
     public static void GetVolumeList(AsyncQuery aQuery, String clusterName) {
 
         if ((ApplicationModeHelper.getUiMode().getValue() & ApplicationMode.GlusterOnly.getValue()) == 0) {
-            aQuery.asyncCallback.OnSuccess(aQuery.Model, new ArrayList<GlusterVolumeEntity>());
+            aQuery.asyncCallback.onSuccess(aQuery.Model, new ArrayList<GlusterVolumeEntity>());
             return;
         }
         aQuery.converterCallback = new IAsyncConverter() {
@@ -1687,7 +1687,7 @@ public final class AsyncDataProvider {
         // new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForPowerSave, getDefaultConfigurationVersion()),
         // aQuery);
 
-        aQuery.asyncCallback.OnSuccess(aQuery.getModel(), 10);
+        aQuery.asyncCallback.onSuccess(aQuery.getModel(), 10);
     }
 
     public static void GetDefaultSpmPriority(AsyncQuery aQuery) {
@@ -1702,7 +1702,7 @@ public final class AsyncDataProvider {
         // new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForPowerSave, getDefaultConfigurationVersion()),
         // aQuery);
 
-        aQuery.asyncCallback.OnSuccess(aQuery.getModel(), 5);
+        aQuery.asyncCallback.onSuccess(aQuery.getModel(), 5);
     }
 
     public static void GetDefaultPmProxyPreferences(AsyncQuery query) {
@@ -1858,7 +1858,7 @@ public final class AsyncDataProvider {
                 new AsyncQuery(_AsyncQuery, new INewAsyncCallback() {
 
                     @Override
-                    public void OnSuccess(Object model, Object returnValue) {
+                    public void onSuccess(Object model, Object returnValue) {
                         ArrayList<storage_pool> pools =
                                 (ArrayList<storage_pool>) ((VdcQueryReturnValue) returnValue).getReturnValue();
                         if (pools != null && pools.size() > 0) {
@@ -1875,7 +1875,7 @@ public final class AsyncDataProvider {
                 new INewAsyncCallback() {
 
                     @Override
-                    public void OnSuccess(Object model, Object returnValue) {
+                    public void onSuccess(Object model, Object returnValue) {
                         ArrayList<storage_pool> pools = (ArrayList<storage_pool>) returnValue;
                         storage_pool pool = pools.get(0);
                         if (pool != null) {
@@ -2113,7 +2113,7 @@ public final class AsyncDataProvider {
         };
 
         if (cachedCommandsCompatibilityVersions != null) {
-            aQuery.asyncCallback.OnSuccess(aQuery.getModel(), IsCommandCompatible(vdcActionType, cluster, dc));
+            aQuery.asyncCallback.onSuccess(aQuery.getModel(), IsCommandCompatible(vdcActionType, cluster, dc));
         } else {
             Frontend.RunQuery(VdcQueryType.GetCommandsCompatibilityVersions, new VdcQueryParametersBase(), aQuery);
         }
@@ -2233,7 +2233,7 @@ public final class AsyncDataProvider {
             returnValue = cachedConfigValues.get(config_key);
         }
         // cache miss: convert configuration value using query's converter
-        // and call asyncCallback's OnSuccess
+        // and call asyncCallback's onSuccess
         else if (cachedConfigValuesPreConvert.containsKey(config_key)) {
             returnValue = cachedConfigValuesPreConvert.get(config_key);
 
@@ -2245,7 +2245,7 @@ public final class AsyncDataProvider {
                 cachedConfigValues.put(config_key, returnValue);
             }
         }
-        aQuery.asyncCallback.OnSuccess(aQuery.getModel(), returnValue);
+        aQuery.asyncCallback.onSuccess(aQuery.getModel(), returnValue);
     }
 
     /**
@@ -2364,7 +2364,7 @@ public final class AsyncDataProvider {
                     ifacesOptions.add(originalInterface);
                     defaultInterfaceName.append(originalInterface.getName());
 
-                    asyncQuery.asyncCallback.OnSuccess(asyncQuery.Model, ifacesOptions);
+                    asyncQuery.asyncCallback.onSuccess(asyncQuery.Model, ifacesOptions);
                 }
             });
 
@@ -2377,14 +2377,14 @@ public final class AsyncDataProvider {
             GetVlanParentInterface(vdsID, originalInterface, new AsyncQuery(asyncQuery, new INewAsyncCallback() {
 
                 @Override
-                public void OnSuccess(Object model, Object returnValue) {
+                public void onSuccess(Object model, Object returnValue) {
                     final VdsNetworkInterface vlanParent = (VdsNetworkInterface) returnValue;
 
                     if (vlanParent != null && vlanParent.getBonded() != null && vlanParent.getBonded()){
                         InterfaceHasSiblingVlanInterfaces(vdsID, originalInterface, new AsyncQuery(asyncQuery, new INewAsyncCallback() {
 
                             @Override
-                            public void OnSuccess(Object model, Object returnValue) {
+                            public void onSuccess(Object model, Object returnValue) {
                                 Boolean interfaceHasSiblingVlanInterfaces = (Boolean) returnValue;
 
                                 if (!interfaceHasSiblingVlanInterfaces){
@@ -2411,7 +2411,7 @@ public final class AsyncDataProvider {
                                 // (since it has no network_name or bond_name).
                                 defaultInterfaceName.append(vlanParent.getName());
 
-                                asyncQuery.asyncCallback.OnSuccess(asyncQuery.Model, ifacesOptions);
+                                asyncQuery.asyncCallback.onSuccess(asyncQuery.Model, ifacesOptions);
 
                             }
                         }));
@@ -2420,7 +2420,7 @@ public final class AsyncDataProvider {
                         // (since it has no network_name or bond_name).
                         if (vlanParent != null)
                             defaultInterfaceName.append(vlanParent.getName());
-                        asyncQuery.asyncCallback.OnSuccess(asyncQuery.Model, ifacesOptions);
+                        asyncQuery.asyncCallback.onSuccess(asyncQuery.Model, ifacesOptions);
                     }
                 }
            }));
