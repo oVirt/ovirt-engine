@@ -1417,6 +1417,10 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         return getStatus().isQualifyToMigrate();
     }
 
+    public boolean isRunningAndQualifyForDisksMigration() {
+        return getStatus().isUpOrPaused() && getRunOnVds() != null && !getRunOnVds().equals(Guid.Empty);
+    }
+
     public boolean isNotRunning() {
         return getStatus().isNotRunning();
     }

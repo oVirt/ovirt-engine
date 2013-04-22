@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.DiskImageDAO;
@@ -100,10 +99,10 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
                 return false;
             }
 
-            if (vm == null || isVmDown(vm)) {
+            if (vm == null || vm.isDown()) {
                 moveParametersList.add(moveDiskParameters);
             }
-            else if (isVmRunning(vm)) {
+            else if (vm.isRunningAndQualifyForDisksMigration()) {
                 MultiValueMapUtils.addToMap(vm.getId(),
                         createLiveMigrateDiskParameters(moveDiskParameters, vm.getId()),
                         vmsLiveMigrateParametersMap);
@@ -115,14 +114,6 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
         }
 
         return true;
-    }
-
-    private boolean isVmRunning(VM vm) {
-        return vm.getStatus().isUpOrPaused() && vm.getRunOnVds() != null && !vm.getRunOnVds().equals(Guid.Empty);
-    }
-
-    private boolean isVmDown(VM vm) {
-        return vm.getStatus() == VMStatus.Down;
     }
 
     private LiveMigrateDiskParameters createLiveMigrateDiskParameters(MoveDiskParameters moveDiskParameters, Guid vmId) {

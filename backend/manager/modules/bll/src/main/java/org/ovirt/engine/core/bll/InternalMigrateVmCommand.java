@@ -30,7 +30,7 @@ public class InternalMigrateVmCommand<T extends InternalMigrateVmParameters> ext
      * the internal migration command should fail
      */
     @Override
-    protected boolean canMigrateVm(Guid vmGuid, java.util.ArrayList<String> reasons) {
+    protected boolean canMigrateVm(Guid vmGuid, java.util.List<String> reasons) {
         if (getVm().getMigrationSupport() == MigrationSupport.MIGRATABLE) {
             return super.canMigrateVm(vmGuid, reasons);
         }

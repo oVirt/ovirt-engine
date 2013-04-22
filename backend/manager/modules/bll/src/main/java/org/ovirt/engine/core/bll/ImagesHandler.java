@@ -446,6 +446,10 @@ public final class ImagesHandler {
         return result;
     }
 
+    public static List<DiskImage> getPluggedImagesForVm(Guid vmId) {
+        return filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(vmId, true), true, false);
+    }
+
     /**
      * @return A unique {@link Set} of all the storage domain IDs relevant to all the given images
      * @param images The images to get the storage domain IDs for
