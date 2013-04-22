@@ -20,6 +20,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ServletUtilsTest {
@@ -27,6 +28,7 @@ public class ServletUtilsTest {
     /**
      * Test method for {@link org.ovirt.engine.core.ServletUtils#canReadFile(java.io.File)}.
      */
+    @Ignore("Fails when run as root")
     @Test
     public void testCanReadFile() {
         //Does not exist.
