@@ -34,9 +34,7 @@ import daemon
 from Cheetah.Template import Template
 
 
-class Config(object):
-    ENGINE_DEFAULT_FILE = '@ENGINE_DEFAULTS@'
-    ENGINE_VARS = '@ENGINE_VARS@'
+import config
 
 
 class Base(object):
@@ -251,20 +249,20 @@ class EngineDaemon(Base):
         super(EngineDaemon, self).__init__()
 
     def _loadConfig(self):
-        if not os.path.exists(Config.ENGINE_DEFAULT_FILE):
+        if not os.path.exists(config.ENGINE_DEFAULT_FILE):
             raise RuntimeError(
                 _(
                     "The engine configuration defaults file '{file}' "
                     "required but missing"
                 ).format(
-                    file=Config.ENGINE_DEFAULT_FILE,
+                    file=config.ENGINE_DEFAULT_FILE,
                 )
             )
 
         self._config = ConfigFile(
             (
-                Config.ENGINE_DEFAULT_FILE,
-                Config.ENGINE_VARS,
+                config.ENGINE_DEFAULT_FILE,
+                config.ENGINE_VARS,
             ),
         )
 
@@ -817,8 +815,8 @@ class EngineDaemon(Base):
                 'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin',
                 'LANG': 'en_US.UTF-8',
                 'LC_ALL': 'en_US.UTF-8',
-                'ENGINE_DEFAULTS': Config.ENGINE_DEFAULT_FILE,
-                'ENGINE_VARS': Config.ENGINE_VARS,
+                'ENGINE_DEFAULTS': config.ENGINE_DEFAULT_FILE,
+                'ENGINE_VARS': config.ENGINE_VARS,
                 'ENGINE_ETC': self._config.getString('ENGINE_ETC'),
                 'ENGINE_LOG': self._config.getString('ENGINE_LOG'),
                 'ENGINE_TMP': self._config.getString('ENGINE_TMP'),

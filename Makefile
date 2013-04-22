@@ -132,7 +132,7 @@ GENERATED = \
 	backend/manager/tools/src/main/conf/engine-config-log4j.xml \
 	backend/manager/tools/src/main/conf/engine-manage-domains-log4j.xml \
 	backend/manager/tools/src/main/conf/engine-notifier-log4j.xml \
-	packaging/services/engine-service.py \
+	packaging/services/config.py \
 	packaging/services/engine-service.systemd \
 	packaging/services/engine-service.sysv \
 	packaging/fedora/spec/ovirt-engine.spec \
@@ -145,7 +145,6 @@ all: \
 
 generated-files:	$(GENERATED)
 	chmod a+x packaging/services/engine-service.sysv
-	chmod a+x packaging/services/engine-service.py
 
 $(BUILD_FILE):
 	-[ "$(MAVEN_OUTPUT_DIR_DEFAULT)" = "$(MAVEN_OUTPUT_DIR)" ] && rm -fr "$(MAVEN_OUTPUT_DIR)"
@@ -423,6 +422,8 @@ install_service:
 
 	# Install the files:
 	install -dm 755 $(DESTDIR)$(DATA_DIR)/services
+	install -m 644 packaging/services/__init__.py $(DESTDIR)$(DATA_DIR)/services
+	install -m 644 packaging/services/config.py $(DESTDIR)$(DATA_DIR)/services
 	install -m 644 packaging/services/engine-service.xml.in $(DESTDIR)$(DATA_DIR)/services
 	install -m 644 packaging/services/engine-service-logging.properties.in $(DESTDIR)$(DATA_DIR)/services
 	install -m 755 packaging/services/engine-service.py $(DESTDIR)$(DATA_DIR)/services

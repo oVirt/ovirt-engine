@@ -47,7 +47,7 @@ backend/manager/tools/src/main/shell/engine-prolog.sh
 backend/manager/tools/src/main/conf/engine-config-log4j.xml
 backend/manager/tools/src/main/conf/engine-manage-domains-log4j.xml
 backend/manager/tools/src/main/conf/engine-notifier-log4j.xml
-packaging/services/engine-service.py
+packaging/services/config.py
 packaging/services/engine-service.systemd
 packaging/services/engine-service.sysv
 packaging/fedora/spec/ovirt-engine.spec
