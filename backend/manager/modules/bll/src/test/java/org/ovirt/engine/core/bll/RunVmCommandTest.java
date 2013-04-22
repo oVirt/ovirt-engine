@@ -37,9 +37,9 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -317,12 +317,12 @@ public class RunVmCommandTest {
         initDAOMocks(disks);
         final VM vm = new VM();
         vm.setStatus(VMStatus.Down);
-        vm.setStoragePoolId(Guid.NewGuid());
+        doReturn(new StoragePool()).when(command).getStoragePool();
         VdsSelector vdsSelector = mock(VdsSelector.class);
-        doReturn(true).when(vdsSelector).canFindVdsToRunOn(Matchers.anyList(), anyBoolean());
         doReturn(vdsSelector).when(command).getVdsSelector();
         doReturn(vm).when(command).getVm();
         doReturn(true).when(command).validateNetworkInterfaces();
+        doReturn(true).when(command).checkPayload(any(VmPayload.class), anyString());
         assertTrue(command.canDoAction());
         assertTrue(command.getReturnValue().getCanDoActionMessages().isEmpty());
     }
@@ -352,23 +352,16 @@ public class RunVmCommandTest {
 
     private RunVmValidator mockSuccessfulRunVmValidator() {
         RunVmValidator runVmValidator = mock(RunVmValidator.class);
-        when(runVmValidator.validateVmProperties(any(VM.class), Matchers.anyListOf(String.class))).thenReturn(true);
-        when(runVmValidator.validateBootSequence(any(VM.class), any(BootSequence.class), Matchers.anyListOf(Disk.class))).thenReturn(ValidationResult.VALID);
-        StoragePool sp = new StoragePool();
-        sp.setstatus(StoragePoolStatus.Up);
-        when(spDao.get(any(Guid.class))).thenReturn(sp);
-        doReturn(spDao).when(command).getStoragePoolDAO();
-        when(runVmValidator.validateImagesForRunVm(Matchers.anyListOf(String.class),
-                Matchers.anyListOf(DiskImage.class))).thenReturn(true);
-        when(runVmValidator.validateStorageDomains(any(VM.class),
+        when(runVmValidator.canRunVm(any(VM.class),
                 Matchers.anyListOf(String.class),
+                Matchers.anyListOf(Disk.class),
+                any(BootSequence.class),
+                any(StoragePool.class),
                 anyBoolean(),
-                Matchers.anyListOf(DiskImage.class))).thenReturn(true);
-        when(runVmValidator.validateIsoPath(anyBoolean(), any(Guid.class), any(String.class), any(String.class))).thenReturn(ValidationResult.VALID);
-        when(runVmValidator.vmDuringInitialization(any(VM.class))).thenReturn(ValidationResult.VALID);
-        when(runVmValidator.validateVdsStatus(any(VM.class), Matchers.anyListOf(String.class))).thenReturn(true);
-        when(runVmValidator.validateStatelessVm(any(VM.class), Matchers.anyListOf(Disk.class), anyBoolean())).thenReturn(ValidationResult.VALID);
-        when(runVmValidator.validateVmStatusUsingMatrix(any(VM.class))).thenReturn(ValidationResult.VALID);
+                anyString(),
+                anyString(),
+                anyBoolean(),
+                any(VdsSelector.class))).thenReturn(true);
         doReturn(runVmValidator).when(command).getRunVmValidator();
         return runVmValidator;
     }

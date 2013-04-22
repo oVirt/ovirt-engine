@@ -325,8 +325,21 @@ public class RunVmValidator {
         return validationResult.isValid();
     }
 
-    // Compatibility method for static VmPoolCommandBase.canRunPoolVm
-    // who uses the same validation as runVmCommand
+    /**
+     * A general method for run vm validations. used in runVmCommand and in VmPoolCommandBase
+     *
+     * @param vm
+     * @param messages
+     * @param vmDisks
+     * @param bootSequence
+     * @param isInternalExecution
+     * @param storagePool
+     * @param diskPath
+     * @param floppyPath
+     * @param runAsStateless
+     * @param vdsSelector
+     * @return
+     */
     public boolean canRunVm(VM vm,
             List<String> messages,
             List<Disk> vmDisks,
