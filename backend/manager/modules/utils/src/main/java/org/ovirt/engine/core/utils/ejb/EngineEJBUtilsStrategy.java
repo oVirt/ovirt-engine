@@ -20,6 +20,7 @@ public class EngineEJBUtilsStrategy extends EJBUtilsStrategy {
         addBeanJNDIName(BeanType.VDS_EVENT_LISTENER, ENGINE_CONTEXT_PREFIX.concat("bll/VdsEventListener"));
         addBeanJNDIName(BeanType.LOCK_MANAGER, ENGINE_CONTEXT_PREFIX.concat("bll/LockManager"));
         addBeanJNDIName(BeanType.EVENTQUEUE_MANAGER,  ENGINE_CONTEXT_PREFIX.concat("bll/EventQueue"));
+        addBeanJNDIName(BeanType.CACHE_CONTAINER,  "java:jboss/infinispan/ovirt-engine");
     }
 
     @Override

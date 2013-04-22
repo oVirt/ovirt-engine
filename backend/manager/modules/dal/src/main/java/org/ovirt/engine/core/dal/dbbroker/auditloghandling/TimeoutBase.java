@@ -1,13 +1,12 @@
 package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import org.ovirt.engine.core.utils.cache.CacheManager;
 
 public abstract class TimeoutBase implements Serializable {
     private static final long serialVersionUID = -4969034051659487755L;
-    private static final Map<String, TimeoutBase> mHandler = new HashMap<String, TimeoutBase>();
-    private static final Object mLock = new Object();
     private boolean mUseTimeout;
     private long mEndTime = 0L;
 
@@ -48,28 +47,19 @@ public abstract class TimeoutBase implements Serializable {
      * Checks if timeout is used and if it is, checks the timeout. If no timeout set, then it will set this object as timeout.
      * @return should the action be logged again
      */
+    @SuppressWarnings("unchecked")
     public boolean getLegal() {
-        boolean returnValue = true;
         if (getUseTimout()) {
-            synchronized (mLock) {
-                String keyForCheck = getkeyForCheck();
-                TimeoutBase timeoutBase = mHandler.get(keyForCheck);
-
-                if (timeoutBase != null) {
-                    // not first try. check if timeout passed
-                    if (System.currentTimeMillis() < timeoutBase.getEndTime()) {
-                        returnValue = false;
-                    } else {
-                        // timeout over. Clean data
-                        mHandler.remove(keyForCheck);
-                    }
-                } else {
-                    // first try, add value
-                    mHandler.put(keyForCheck, this);
-                }
+            String keyForCheck = getkeyForCheck();
+            if (CacheManager.getTimeoutBaseCache().putIfAbsent(keyForCheck,
+                    this,
+                    this.getEndTime(),
+                    TimeUnit.MILLISECONDS) == null) {
+                return true;
             }
+            return false;
         }
 
-        return returnValue;
+        return true;
     }
 }

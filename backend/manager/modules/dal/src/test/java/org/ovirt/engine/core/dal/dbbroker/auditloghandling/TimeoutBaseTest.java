@@ -68,53 +68,6 @@ public class TimeoutBaseTest {
         assertTrue(result);
     }
 
-    @Test
-    public void legalFirstTime() {
-        final TestTimeoutBase t = new TestTimeoutBase();
-        t.setUseTimout(true);
-        final boolean result = t.getLegal();
-        assertTrue(result);
-    }
-
-    @Test
-    public void legalNullObjectId() {
-        final TestTimeoutBase t = new TestTimeoutBase();
-        t.setUseTimout(true);
-        t.setTimeoutObjectId(null);
-        final boolean result = t.getLegal();
-        assertTrue(result);
-    }
-
-    @Test
-    public void legalTimedOut() {
-        final TestTimeoutBase t = new TestTimeoutBase();
-        t.setUseTimout(true);
-        long c = System.currentTimeMillis();
-        c -= 1000;
-        t.setEndTime(c);
-        final String s = "legal-timeout";
-        t.setTimeoutObjectId(s);
-        // get it into the hashtable
-        t.getLegal();
-        final boolean result = t.getLegal();
-        assertTrue(result);
-    }
-
-    @Test
-    public void legalNotTimedOut() {
-        final TestTimeoutBase t = new TestTimeoutBase();
-        t.setUseTimout(true);
-        final String s = "illegal-timeout";
-        t.setTimeoutObjectId(s);
-        long c = System.currentTimeMillis();
-        c += 5000;
-        t.setEndTime(c);
-        // get it into the hashtable
-        t.getLegal();
-        final boolean result = t.getLegal();
-        assertFalse(result);
-    }
-
     public class TestTimeoutBase extends TimeoutBase {
 
         @Override

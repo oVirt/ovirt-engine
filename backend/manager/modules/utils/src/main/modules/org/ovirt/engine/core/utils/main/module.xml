@@ -21,6 +21,7 @@
       <module name="org.ovirt.engine.core.common"/>
       <module name="org.ovirt.engine.core.compat"/>
       <module name="org.ovirt.engine.core.dependencies"/>
+      <module name="org.infinispan"/>
    </dependencies>
 
 </module>

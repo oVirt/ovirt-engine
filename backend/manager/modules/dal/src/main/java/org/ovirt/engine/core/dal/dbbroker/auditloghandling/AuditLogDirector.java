@@ -806,57 +806,61 @@ public final class AuditLogDirector {
         updateTimeoutLogableObject(auditLogable, logType);
 
         if (auditLogable.getLegal()) {
-            String message = null;
-            String resolvedMessage = null;
-            AuditLogSeverity severity = severities.get(logType);
-            if (severity == null) {
-                severity = AuditLogSeverity.NORMAL;
-                log.infoFormat("No severity for {0} audit log type, assuming Normal severity", logType);
-            }
-            AuditLog auditLog = null;
-            // handle external log messages invoked by plugins via the API
-            if (auditLogable.isExternal()) {
-                resolvedMessage = message = loggerString; // message is sent as an argument, no need to resolve.
-                auditLog = new AuditLog(logType,
-                        severity,
-                        resolvedMessage,
-                        auditLogable.getUserId(),
-                        auditLogable.getUserName(),
-                        auditLogable.getVmIdRef(),
-                        auditLogable.getVmName(),
-                        auditLogable.getVdsIdRef(),
-                        auditLogable.getVdsName(),
-                        auditLogable.getVmTemplateIdRef(),
-                        auditLogable.getVmTemplateName(),
-                        auditLogable.getOrigin(),
-                        auditLogable.getCustomEventId(),
-                        auditLogable.getEventFloodInSec(),
-                        auditLogable.getCustomData());
-            } else if ((message = messages.get(logType)) != null) { // Application log message from AuditLogMessages
-                resolvedMessage = resolveMessage(message, auditLogable);
-                auditLog = new AuditLog(logType, severity, resolvedMessage, auditLogable.getUserId(),
-                        auditLogable.getUserName(), auditLogable.getVmIdRef(), auditLogable.getVmName(),
-                        auditLogable.getVdsIdRef(), auditLogable.getVdsName(), auditLogable.getVmTemplateIdRef(),
-                        auditLogable.getVmTemplateName());
-            }
-            if (auditLog != null) {
-                auditLog.setstorage_domain_id(auditLogable.getStorageDomainId());
-                auditLog.setstorage_domain_name(auditLogable.getStorageDomainName());
-                auditLog.setstorage_pool_id(auditLogable.getStoragePoolId());
-                auditLog.setstorage_pool_name(auditLogable.getStoragePoolName());
-                auditLog.setvds_group_id(auditLogable.getVdsGroupId());
-                auditLog.setvds_group_name(auditLogable.getVdsGroupName());
-                auditLog.setCorrelationId(auditLogable.getCorrelationId());
-                auditLog.setJobId(auditLogable.getJobId());
-                auditLog.setGlusterVolumeId(auditLogable.getGlusterVolumeId());
-                auditLog.setGlusterVolumeName(auditLogable.getGlusterVolumeName());
-                auditLog.setExternal(auditLogable.isExternal());
-                auditLog.setQuotaId(auditLogable.getQuotaIdForLog());
-                auditLog.setQuotaName(auditLogable.getQuotaNameForLog());
-                getDbFacadeInstance().getAuditLogDao().save(auditLog);
-                if (!"".equals(loggerString)) {
-                    log.infoFormat(loggerString, resolvedMessage);
-                }
+            saveToDb(auditLogable, logType, loggerString);
+        }
+    }
+
+    private static void saveToDb(AuditLogableBase auditLogable, AuditLogType logType, String loggerString) {
+        String message = null;
+        String resolvedMessage = null;
+        AuditLogSeverity severity = severities.get(logType);
+        if (severity == null) {
+            severity = AuditLogSeverity.NORMAL;
+            log.infoFormat("No severity for {0} audit log type, assuming Normal severity", logType);
+        }
+        AuditLog auditLog = null;
+        // handle external log messages invoked by plugins via the API
+        if (auditLogable.isExternal()) {
+            resolvedMessage = message = loggerString; // message is sent as an argument, no need to resolve.
+            auditLog = new AuditLog(logType,
+                    severity,
+                    resolvedMessage,
+                    auditLogable.getUserId(),
+                    auditLogable.getUserName(),
+                    auditLogable.getVmIdRef(),
+                    auditLogable.getVmName(),
+                    auditLogable.getVdsIdRef(),
+                    auditLogable.getVdsName(),
+                    auditLogable.getVmTemplateIdRef(),
+                    auditLogable.getVmTemplateName(),
+                    auditLogable.getOrigin(),
+                    auditLogable.getCustomEventId(),
+                    auditLogable.getEventFloodInSec(),
+                    auditLogable.getCustomData());
+        } else if ((message = messages.get(logType)) != null) { // Application log message from AuditLogMessages
+            resolvedMessage = resolveMessage(message, auditLogable);
+            auditLog = new AuditLog(logType, severity, resolvedMessage, auditLogable.getUserId(),
+                    auditLogable.getUserName(), auditLogable.getVmIdRef(), auditLogable.getVmName(),
+                    auditLogable.getVdsIdRef(), auditLogable.getVdsName(), auditLogable.getVmTemplateIdRef(),
+                    auditLogable.getVmTemplateName());
+        }
+        if (auditLog != null) {
+            auditLog.setstorage_domain_id(auditLogable.getStorageDomainId());
+            auditLog.setstorage_domain_name(auditLogable.getStorageDomainName());
+            auditLog.setstorage_pool_id(auditLogable.getStoragePoolId());
+            auditLog.setstorage_pool_name(auditLogable.getStoragePoolName());
+            auditLog.setvds_group_id(auditLogable.getVdsGroupId());
+            auditLog.setvds_group_name(auditLogable.getVdsGroupName());
+            auditLog.setCorrelationId(auditLogable.getCorrelationId());
+            auditLog.setJobId(auditLogable.getJobId());
+            auditLog.setGlusterVolumeId(auditLogable.getGlusterVolumeId());
+            auditLog.setGlusterVolumeName(auditLogable.getGlusterVolumeName());
+            auditLog.setExternal(auditLogable.isExternal());
+            auditLog.setQuotaId(auditLogable.getQuotaIdForLog());
+            auditLog.setQuotaName(auditLogable.getQuotaNameForLog());
+            getDbFacadeInstance().getAuditLogDao().save(auditLog);
+            if (!"".equals(loggerString)) {
+                log.infoFormat(loggerString, resolvedMessage);
             }
         }
     }
@@ -875,7 +879,7 @@ public final class AuditLogDirector {
                 :
                 logType.getDuplicateEventsIntervalValue();
         if (duplicateEventsIntrvalValue > 0) {
-            auditLogable.setEndTime(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(duplicateEventsIntrvalValue));
+            auditLogable.setEndTime(TimeUnit.SECONDS.toMillis(duplicateEventsIntrvalValue));
             auditLogable.setTimeoutObjectId(composeObjectId(auditLogable, logType));
         }
     }
