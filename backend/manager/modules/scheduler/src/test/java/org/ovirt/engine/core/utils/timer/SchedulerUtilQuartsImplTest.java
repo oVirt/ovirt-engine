@@ -271,7 +271,7 @@ public class SchedulerUtilQuartsImplTest {
             inputType[0] = String.class;
 
             Object[] input = new Object[1];
-            input[0] = new String("livnat");
+            input[0] = "livnat";
 
             Method methodToRun = job.getClass().getDeclaredMethod(methodName, inputType);
 
@@ -293,7 +293,7 @@ public class SchedulerUtilQuartsImplTest {
         inputType[1] = Integer.class;
 
         Object[] input = new Object[2];
-        input[0] = new String("msg1");
+        input[0] = "msg1";
         input[1] = new Integer(5);
         scheduler.scheduleAOneTimeJob(pj, "onTimerWithParam", inputType, input, 1, TimeUnit.MILLISECONDS);
         try {
@@ -320,7 +320,7 @@ public class SchedulerUtilQuartsImplTest {
         inputType[1] = int.class;
 
         Object[] input = new Object[2];
-        input[0] = new String("msg1");
+        input[0] = "msg1";
         input[1] = 5;
         scheduler.scheduleAFixedDelayJob(pj, "onTimerWithParam", inputType, input, 1, 1, TimeUnit.MILLISECONDS);
         try {
