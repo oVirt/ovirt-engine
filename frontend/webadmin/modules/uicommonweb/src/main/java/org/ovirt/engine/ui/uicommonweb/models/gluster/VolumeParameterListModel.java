@@ -396,11 +396,11 @@ public class VolumeParameterListModel extends SearchableListModel {
     }
 
     @Override
-    protected void OnEntityChanged() {
+    protected void onEntityChanged() {
         if (getEntity() == null) {
             return;
         }
-        super.OnEntityChanged();
+        super.onEntityChanged();
         GlusterVolumeEntity glusterVolumeEntity = (GlusterVolumeEntity) getEntity();
         ArrayList<GlusterVolumeOptionEntity> list = new ArrayList<GlusterVolumeOptionEntity>();
         for (GlusterVolumeOptionEntity glusterVolumeOption : glusterVolumeEntity.getOptions()) {

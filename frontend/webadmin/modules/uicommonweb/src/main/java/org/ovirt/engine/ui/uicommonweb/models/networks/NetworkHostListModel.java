@@ -38,8 +38,8 @@ public class NetworkHostListModel extends SearchableListModel
     }
 
     @Override
-    protected void OnEntityChanged() {
-        super.OnEntityChanged();
+    protected void onEntityChanged() {
+        super.onEntityChanged();
         getSearchCommand().Execute();
     }
 
@@ -128,8 +128,8 @@ public class NetworkHostListModel extends SearchableListModel
     }
 
     @Override
-    protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
-        super.EntityPropertyChanged(sender, e);
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
+        super.entityPropertyChanged(sender, e);
 
         if (e.PropertyName.equals("name")) //$NON-NLS-1$
         {

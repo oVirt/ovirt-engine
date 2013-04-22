@@ -21,9 +21,9 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 public class VmBasicDiskListModel extends SearchableListModel
 {
     @Override
-    protected void OnEntityChanged()
+    protected void onEntityChanged()
     {
-        super.OnEntityChanged();
+        super.onEntityChanged();
 
         if (getEntity() != null)
         {

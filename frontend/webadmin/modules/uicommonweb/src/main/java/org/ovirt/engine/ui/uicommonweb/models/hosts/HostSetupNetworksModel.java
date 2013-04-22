@@ -431,8 +431,8 @@ public class HostSetupNetworksModel extends EntityModel {
     }
 
     @Override
-    protected void OnEntityChanged() {
-        super.OnEntityChanged();
+    protected void onEntityChanged() {
+        super.onEntityChanged();
         initAllModels(true);
     }
 

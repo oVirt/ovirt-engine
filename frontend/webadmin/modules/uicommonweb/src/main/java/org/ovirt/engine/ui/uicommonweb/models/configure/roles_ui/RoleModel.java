@@ -149,10 +149,10 @@ public class RoleModel extends Model
         RegexValidation tempVar2 = new RegexValidation();
         tempVar2.setExpression("^[A-Za-z0-9_-]+$"); //$NON-NLS-1$
         tempVar2.setMessage(ConstantsManager.getInstance().getConstants().asciiNameValidationMsg());
-        getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar, tempVar2 });
+        getName().validateEntity(new IValidation[] { new NotEmptyValidation(), tempVar, tempVar2 });
         LengthValidation lengthValidation = new LengthValidation();
         lengthValidation.setMaxLength(4000);
-        getDescription().ValidateEntity(new IValidation[] { lengthValidation });
+        getDescription().validateEntity(new IValidation[] { lengthValidation });
 
         return getName().getIsValid() && getDescription().getIsValid();
     }

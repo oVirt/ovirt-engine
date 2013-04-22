@@ -145,9 +145,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     }
 
     @Override
-    protected void OnEntityChanged()
+    protected void onEntityChanged()
     {
-        super.OnEntityChanged();
+        super.onEntityChanged();
         UpdateOptions();
     }
 
@@ -708,7 +708,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                                         tempVar2.setExpression("^[A-Za-z0-9_-]{1," + nameMaxLength + "}$"); //$NON-NLS-1$ //$NON-NLS-2$
                                         tempVar2.setMessage(ConstantsManager.getInstance().getMessages()
                                                 .nameCanContainOnlyMsg(nameMaxLength));
-                                        storageModel1.getName().ValidateEntity(new IValidation[] {
+                                        storageModel1.getName().validateEntity(new IValidation[] {
                                                 new NotEmptyValidation(), tempVar2 });
                                         dataCenterGuideModel1.PostOnAddStorage();
 

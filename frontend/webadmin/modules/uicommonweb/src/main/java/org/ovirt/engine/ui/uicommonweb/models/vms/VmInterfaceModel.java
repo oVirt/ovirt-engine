@@ -354,14 +354,14 @@ public abstract class VmInterfaceModel extends Model
 
     public boolean Validate()
     {
-        getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new I18NNameValidation() });
+        getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new I18NNameValidation() });
 
         getNicType().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         getMAC().setIsValid(true);
         if (getMAC().getIsChangable())
         {
-            getMAC().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new MacAddressValidation() });
+            getMAC().validateEntity(new IValidation[] { new NotEmptyValidation(), new MacAddressValidation() });
         }
 
         return getName().getIsValid() && getNetwork().getIsValid() && getNicType().getIsValid()

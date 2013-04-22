@@ -139,8 +139,8 @@ public class VolumeParameterModel extends EntityModel {
 
     public boolean Validate() {
         NotEmptyValidation valueValidation = new NotEmptyValidation();
-        getSelectedKey().ValidateEntity(new IValidation[] { valueValidation });
-        getValue().ValidateEntity(new IValidation[] { valueValidation });
+        getSelectedKey().validateEntity(new IValidation[] { valueValidation });
+        getValue().validateEntity(new IValidation[] { valueValidation });
 
         return getSelectedKey().getIsValid() && getValue().getIsValid();
     }

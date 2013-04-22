@@ -233,11 +233,11 @@ public abstract class NetworkModel extends Model
         tempVar2.setIsNegate(true);
         tempVar2.setExpression("^(bond)"); //$NON-NLS-1$
         tempVar2.setMessage(ConstantsManager.getInstance().getConstants().networkNameStartMsg());
-        getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar, tempVar2 });
+        getName().validateEntity(new IValidation[] { new NotEmptyValidation(), tempVar, tempVar2 });
 
         LengthValidation tempVar3 = new LengthValidation();
         tempVar3.setMaxLength(40);
-        getDescription().ValidateEntity(new IValidation[] { tempVar3 });
+        getDescription().validateEntity(new IValidation[] { tempVar3 });
 
         getVLanTag().setIsValid(true);
         if ((Boolean) getHasVLanTag().getEntity())
@@ -245,7 +245,7 @@ public abstract class NetworkModel extends Model
             IntegerValidation tempVar4 = new IntegerValidation();
             tempVar4.setMinimum(0);
             tempVar4.setMaximum(4094);
-            getVLanTag().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar4 });
+            getVLanTag().validateEntity(new IValidation[] { new NotEmptyValidation(), tempVar4 });
         }
 
         getMtu().setIsValid(true);
@@ -254,7 +254,7 @@ public abstract class NetworkModel extends Model
             IntegerValidation tempVar5 = new IntegerValidation();
             tempVar5.setMinimum(68);
             tempVar5.setMaximum(9000);
-            getMtu().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar5 });
+            getMtu().validateEntity(new IValidation[] { new NotEmptyValidation(), tempVar5 });
         }
 
         return getName().getIsValid() && getVLanTag().getIsValid() && getDescription().getIsValid()

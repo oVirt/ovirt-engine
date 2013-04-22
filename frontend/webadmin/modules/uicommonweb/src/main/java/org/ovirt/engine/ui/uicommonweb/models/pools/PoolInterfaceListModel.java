@@ -21,9 +21,9 @@ public class PoolInterfaceListModel extends SearchableListModel
     }
 
     @Override
-    protected void OnEntityChanged()
+    protected void onEntityChanged()
     {
-        super.OnEntityChanged();
+        super.onEntityChanged();
 
         VmPool pool = (VmPool) getEntity();
         if (pool != null)

@@ -350,7 +350,7 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
     }
 
     @Override
-    protected void OnEntityChanged()
+    protected void onEntityChanged()
     {
         // Change behavior to match entity type.
         if (getEntity() instanceof VM)
@@ -418,9 +418,9 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
     }
 
     @Override
-    protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e)
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
     {
-        super.EntityPropertyChanged(sender, e);
+        super.entityPropertyChanged(sender, e);
         behavior.EntityPropertyChanged(e);
     }
 

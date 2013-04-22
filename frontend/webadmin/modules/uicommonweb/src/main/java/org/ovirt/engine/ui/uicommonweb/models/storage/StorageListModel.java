@@ -756,7 +756,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                             tempVar2.setExpression("^[A-Za-z0-9_-]{1," + nameMaxLength + "}$"); //$NON-NLS-1$ //$NON-NLS-2$
                             tempVar2.setMessage(ConstantsManager.getInstance().getMessages()
                                 .nameCanContainOnlyMsg(nameMaxLength));
-                            storageModel1.getName().ValidateEntity(new IValidation[] {
+                            storageModel1.getName().validateEntity(new IValidation[] {
                                 new NotEmptyValidation(), tempVar2});
                             storageListModel1.PostStorageNameValidation();
 
@@ -1588,8 +1588,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         NfsStorageModel nfsModel = (NfsStorageModel) storageModel;
         if ((Boolean) nfsModel.getOverride().getEntity()) {
             connection.setNfsVersion((NfsVersion) ((EntityModel) nfsModel.getVersion().getSelectedItem()).getEntity());
-            connection.setNfsRetrans(nfsModel.getRetransmissions().AsConvertible().nullableShort());
-            connection.setNfsTimeo(nfsModel.getTimeout().AsConvertible().nullableShort());
+            connection.setNfsRetrans(nfsModel.getRetransmissions().asConvertible().nullableShort());
+            connection.setNfsTimeo(nfsModel.getTimeout().asConvertible().nullableShort());
         }
 
     }
@@ -1616,8 +1616,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         tempVar.setstorage_type(nfsModel.getType());
         if ((Boolean) nfsModel.getOverride().getEntity()) {
             tempVar.setNfsVersion((NfsVersion) ((EntityModel) nfsModel.getVersion().getSelectedItem()).getEntity());
-            tempVar.setNfsRetrans(nfsModel.getRetransmissions().AsConvertible().nullableShort());
-            tempVar.setNfsTimeo(nfsModel.getTimeout().AsConvertible().nullableShort());
+            tempVar.setNfsRetrans(nfsModel.getRetransmissions().asConvertible().nullableShort());
+            tempVar.setNfsTimeo(nfsModel.getTimeout().asConvertible().nullableShort());
         }
         connection = tempVar;
 
@@ -2009,8 +2009,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                         NfsStorageModel nfsModel = (NfsStorageModel) storageModel;
                         if ((Boolean) nfsModel.getOverride().getEntity()) {
                             tempVar.setNfsVersion((NfsVersion) ((EntityModel) nfsModel.getVersion().getSelectedItem()).getEntity());
-                            tempVar.setNfsRetrans(nfsModel.getRetransmissions().AsConvertible().nullableShort());
-                            tempVar.setNfsTimeo(nfsModel.getTimeout().AsConvertible().nullableShort());
+                            tempVar.setNfsRetrans(nfsModel.getRetransmissions().asConvertible().nullableShort());
+                            tempVar.setNfsTimeo(nfsModel.getTimeout().asConvertible().nullableShort());
                         }
                     }
                     if (storageModel instanceof PosixStorageModel) {

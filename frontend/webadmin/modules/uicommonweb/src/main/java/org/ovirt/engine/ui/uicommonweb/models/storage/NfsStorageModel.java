@@ -191,17 +191,17 @@ public class NfsStorageModel extends Model implements IStorageModel {
 
     @Override
     public boolean Validate() {
-        getPath().ValidateEntity(new IValidation[] {
+        getPath().validateEntity(new IValidation[] {
             new NotEmptyValidation(),
             new LinuxMountPointValidation(),
             new NonUtfValidation()
         });
 
-        getRetransmissions().ValidateEntity(new IValidation[] {
+        getRetransmissions().validateEntity(new IValidation[] {
             new IntegerValidation(0, RETRANS_MAX)
         });
 
-        getTimeout().ValidateEntity(new IValidation[] {
+        getTimeout().validateEntity(new IValidation[] {
             new IntegerValidation(1, TIMEOUT_MAX)
         });
 

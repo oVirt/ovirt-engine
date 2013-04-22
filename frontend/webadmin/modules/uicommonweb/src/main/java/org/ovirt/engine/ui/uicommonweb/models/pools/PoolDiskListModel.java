@@ -32,9 +32,9 @@ public class PoolDiskListModel extends VmDiskListModelBase
     }
 
     @Override
-    protected void OnEntityChanged()
+    protected void onEntityChanged()
     {
-        super.OnEntityChanged();
+        super.onEntityChanged();
 
         VmPool pool = (VmPool) getEntity();
         if (pool != null)

@@ -45,9 +45,9 @@ public class VmAppListModel extends SearchableListModel
     }
 
     @Override
-    protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e)
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
     {
-        super.EntityPropertyChanged(sender, e);
+        super.entityPropertyChanged(sender, e);
         if (e.PropertyName.equals("appList")) //$NON-NLS-1$
         {
             updateAppList();
@@ -55,9 +55,9 @@ public class VmAppListModel extends SearchableListModel
     }
 
     @Override
-    protected void OnEntityChanged()
+    protected void onEntityChanged()
     {
-        super.OnEntityChanged();
+        super.onEntityChanged();
 
         updateAppList();
     }

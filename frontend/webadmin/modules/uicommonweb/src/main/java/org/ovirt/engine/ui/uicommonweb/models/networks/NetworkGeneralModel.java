@@ -27,8 +27,8 @@ public class NetworkGeneralModel extends EntityModel
     }
 
     @Override
-    protected void OnEntityChanged() {
-        super.OnEntityChanged();
+    protected void onEntityChanged() {
+        super.onEntityChanged();
 
         if (super.getEntity() != null)
         {
@@ -37,8 +37,8 @@ public class NetworkGeneralModel extends EntityModel
     }
 
     @Override
-    protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
-        super.EntityPropertyChanged(sender, e);
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
+        super.entityPropertyChanged(sender, e);
 
         UpdateProperties();
     }

@@ -616,13 +616,13 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     public boolean validate() {
-        getDescription().ValidateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
+        getDescription().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
 
         if (getVm() == null) {
-            getAlias().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new I18NNameValidation() });
+            getAlias().validateEntity(new IValidation[] { new NotEmptyValidation(), new I18NNameValidation() });
         }
         else {
-            getAlias().ValidateEntity(new IValidation[] { new I18NNameValidation() });
+            getAlias().validateEntity(new IValidation[] { new I18NNameValidation() });
         }
 
         storage_pool dataCenter = (storage_pool) getDataCenter().getSelectedItem();

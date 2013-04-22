@@ -10,7 +10,7 @@ public class VmImportInterfaceListModel extends SearchableListModel
     }
 
     @Override
-    protected void OnEntityChanged()
+    protected void onEntityChanged()
     {
         if (getEntity() != null)
         {

@@ -1937,8 +1937,8 @@ public class UnitVmModel extends Model {
     public boolean Validate() {
         getDataCenter().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getCluster().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
-        getMemSize().ValidateEntity(new IValidation[] { new ByteSizeValidation() });
-        getMinAllocatedMemory().ValidateEntity(new IValidation[] { new ByteSizeValidation() });
+        getMemSize().validateEntity(new IValidation[] { new ByteSizeValidation() });
+        getMinAllocatedMemory().validateEntity(new IValidation[] { new ByteSizeValidation() });
         getOSType().ValidateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
 
         storage_pool dataCenter = (storage_pool) getDataCenter().getSelectedItem();
@@ -1946,14 +1946,14 @@ public class UnitVmModel extends Model {
             getQuota().ValidateSelectedItem(new IValidation[] { new NotEmptyQuotaValidation() });
         }
 
-        getTotalCPUCores().ValidateEntity(new IValidation[] {
+        getTotalCPUCores().validateEntity(new IValidation[] {
                 new NotEmptyValidation(),
                 new IntegerValidation(1, behavior.maxCpus),
                 new TotalCpuCoresComposableValidation() });
 
         if (getOSType().getIsValid()) {
             VmOsType osType = (VmOsType) getOSType().getSelectedItem();
-            getName().ValidateEntity(
+            getName().validateEntity(
                     new IValidation[] {
                             new NotEmptyValidation(),
                             new LengthValidation(
@@ -1962,7 +1962,7 @@ public class UnitVmModel extends Model {
                             isPoolTabValid ? new PoolNameValidation() : new I18NNameValidation()
                     });
 
-            getDescription().ValidateEntity(
+            getDescription().validateEntity(
                     new IValidation[] {
                             new LengthValidation(DESCRIPTION_MAX_LIMIT),
                             new SpecialAsciiI18NOrNoneValidation()
@@ -1986,7 +1986,7 @@ public class UnitVmModel extends Model {
         }
 
         getTemplate().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
-        getDisksAllocationModel().ValidateEntity(new IValidation[] {});
+        getDisksAllocationModel().validateEntity(new IValidation[] {});
 
         getCdImage().setIsValid(true);
         if (getCdImage().getIsChangable()) {
@@ -1994,9 +1994,9 @@ public class UnitVmModel extends Model {
         }
 
         if (getIsLinuxOS()) {
-            getKernel_path().ValidateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
-            getInitrd_path().ValidateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
-            getKernel_parameters().ValidateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
+            getKernel_path().validateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
+            getInitrd_path().validateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
+            getKernel_parameters().validateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
 
             // initrd path and kernel params require kernel path to be filled
             if (StringHelper.isNullOrEmpty((String) getKernel_path().getEntity())) {

@@ -74,7 +74,7 @@ public class EditQuotaStorageModel extends EntityModel {
         intValidation.setMaximum(65535);
         getSpecificStorageValue().setIsValid(true);
         if ((Boolean) getSpecificStorage().getEntity()) {
-            getSpecificStorageValue().ValidateEntity(new IValidation[] { intValidation, new NotEmptyValidation() });
+            getSpecificStorageValue().validateEntity(new IValidation[] { intValidation, new NotEmptyValidation() });
         }
         return getSpecificStorageValue().getIsValid();
     }

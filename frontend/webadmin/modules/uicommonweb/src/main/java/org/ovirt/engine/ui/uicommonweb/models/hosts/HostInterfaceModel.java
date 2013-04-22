@@ -333,8 +333,8 @@ public class HostInterfaceModel extends EntityModel
         Network net = (Network) getNetwork().getSelectedItem();
         if (getIsStaticAddress())
         {
-            getAddress().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new IpAddressValidation() });
-            getSubnet().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new SubnetMaskValidation() });
+            getAddress().validateEntity(new IValidation[] { new NotEmptyValidation(), new IpAddressValidation() });
+            getSubnet().validateEntity(new IValidation[] { new NotEmptyValidation(), new SubnetMaskValidation() });
         }
 
         return getNetwork().getIsValid() && getAddress().getIsValid() && getSubnet().getIsValid();

@@ -360,9 +360,9 @@ public class HostInterfaceListModel extends SearchableListModel
     }
 
     @Override
-    protected void OnEntityChanged()
+    protected void onEntityChanged()
     {
-        super.OnEntityChanged();
+        super.onEntityChanged();
 
         getSearchCommand().Execute();
         UpdateActionAvailability();
@@ -381,9 +381,9 @@ public class HostInterfaceListModel extends SearchableListModel
     // }
 
     @Override
-    protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e)
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
     {
-        super.EntityPropertyChanged(sender, e);
+        super.entityPropertyChanged(sender, e);
 
         if (e.PropertyName.equals("status") || e.PropertyName.equals("net_config_dirty")) //$NON-NLS-1$ //$NON-NLS-2$
         {

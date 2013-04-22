@@ -1175,17 +1175,17 @@ public class HostModel extends Model
         EntityModel port = primary ? getPmPort() : getPmSecondaryPort();
         EntityModel options = primary ? getPmOptions() : getPmSecondaryOptions();
 
-        ip.ValidateEntity(new IValidation[] {new NotEmptyValidation(), new HostAddressValidation()});
-        userName.ValidateEntity(new IValidation[] {new NotEmptyValidation()});
-        password.ValidateEntity(new IValidation[] {new NotEmptyValidation()});
+        ip.validateEntity(new IValidation[] {new NotEmptyValidation(), new HostAddressValidation()});
+        userName.validateEntity(new IValidation[] {new NotEmptyValidation()});
+        password.validateEntity(new IValidation[] {new NotEmptyValidation()});
         type.ValidateSelectedItem(new IValidation[] {new NotEmptyValidation()});
-        port.ValidateEntity(new IValidation[] {new IntegerValidation(1, 65535)});
-        options.ValidateEntity(new IValidation[] {new KeyValuePairValidation(true)});
+        port.validateEntity(new IValidation[] {new IntegerValidation(1, 65535)});
+        options.validateEntity(new IValidation[] {new KeyValuePairValidation(true)});
     }
 
     public boolean Validate()
     {
-        getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new LengthValidation(255),
+        getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new LengthValidation(255),
                 new BaseI18NValidation() {
             @Override
             protected String composeRegex() {
@@ -1198,15 +1198,15 @@ public class HostModel extends Model
             }
         } });
 
-        getHost().ValidateEntity(new IValidation[] {
+        getHost().validateEntity(new IValidation[] {
                 new NotEmptyValidation(),
                 new LengthValidation(255),
                 new HostAddressValidation() });
 
-        getPort().ValidateEntity(new IValidation[] {new NotEmptyValidation(), new IntegerValidation(1, 65535)});
+        getPort().validateEntity(new IValidation[] {new NotEmptyValidation(), new IntegerValidation(1, 65535)});
 
         if ((Boolean) getConsoleAddressEnabled().getEntity()) {
-            getConsoleAddress().ValidateEntity(new IValidation[] {new NotEmptyValidation(), new HostAddressValidation()});
+            getConsoleAddress().validateEntity(new IValidation[] {new NotEmptyValidation(), new HostAddressValidation()});
         } else {
             // the console address is ignored so can not be invalid
             getConsoleAddress().setIsValid(true);

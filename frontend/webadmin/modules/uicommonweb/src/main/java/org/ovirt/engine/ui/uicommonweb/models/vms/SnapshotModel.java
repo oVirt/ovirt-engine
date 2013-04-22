@@ -240,7 +240,7 @@ public class SnapshotModel extends EntityModel
 
     public boolean Validate()
     {
-        getDescription().ValidateEntity(new IValidation[] { new NotEmptyValidation(),
+        getDescription().validateEntity(new IValidation[] { new NotEmptyValidation(),
                 new SpecialAsciiI18NOrNoneValidation(),
                 new LengthValidation(BusinessEntitiesDefinitions.GENERAL_MAX_SIZE) });
 

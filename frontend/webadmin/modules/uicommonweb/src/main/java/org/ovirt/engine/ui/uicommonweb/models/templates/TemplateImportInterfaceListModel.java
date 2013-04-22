@@ -12,9 +12,9 @@ public class TemplateImportInterfaceListModel extends SearchableListModel
     }
 
     @Override
-    protected void OnEntityChanged()
+    protected void onEntityChanged()
     {
-        super.OnEntityChanged();
+        super.onEntityChanged();
 
         if (getEntity() != null)
         {

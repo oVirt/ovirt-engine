@@ -182,7 +182,7 @@ public class TagModel extends Model
     {
         LengthValidation tempVar = new LengthValidation();
         tempVar.setMaxLength(40);
-        getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar, new I18NNameValidation() });
+        getName().validateEntity(new IValidation[] { new NotEmptyValidation(), tempVar, new I18NNameValidation() });
 
         return getName().getIsValid();
     }

@@ -113,7 +113,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
     public boolean Validate() {
         boolean parentValidation = super.Validate();
         if (getModel().getNumOfDesktops().getIsValid()) {
-            getModel().getNumOfDesktops().ValidateEntity(new IValidation[] { new ExistingPoolNameLengthValidation(
+            getModel().getNumOfDesktops().validateEntity(new IValidation[] { new ExistingPoolNameLengthValidation(
                     (String) getModel().getName().getEntity(),
                     ((Integer) getModel().getAssignedVms().getEntity()) +
                     Integer.parseInt((getModel().getNumOfDesktops().getEntity().toString())),

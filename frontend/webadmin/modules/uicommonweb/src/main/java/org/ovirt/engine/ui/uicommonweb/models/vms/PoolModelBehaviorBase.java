@@ -303,9 +303,9 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     public boolean Validate() {
         boolean isNew = getModel().getIsNew();
         int maxAllowedVms = getMaxVmsInPool();
-        int assignedVms = getModel().getAssignedVms().AsConvertible().Integer();
+        int assignedVms = getModel().getAssignedVms().asConvertible().Integer();
 
-        getModel().getNumOfDesktops().ValidateEntity(
+        getModel().getNumOfDesktops().validateEntity(
 
                 new IValidation[]
                 {
@@ -314,7 +314,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                         new IntegerValidation(isNew ? 1 : 0, isNew ? maxAllowedVms : maxAllowedVms - assignedVms)
                 });
 
-        getModel().getPrestartedVms().ValidateEntity(
+        getModel().getPrestartedVms().validateEntity(
                 new IValidation[]
                 {
                         new NotEmptyValidation(),

@@ -298,7 +298,7 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
                     .getMessages()
                     .customPropertyValueShouldBeInFormatReason(key, allKeyValueMap.get(key)));
             regexValidation.setExpression(allKeyValueMap.get(key));
-            keyValueLineModel.getValue().ValidateEntity(
+            keyValueLineModel.getValue().validateEntity(
                     new IValidation[] { regexValidation });
             isValid &= keyValueLineModel.getValue().getIsValid();
         }

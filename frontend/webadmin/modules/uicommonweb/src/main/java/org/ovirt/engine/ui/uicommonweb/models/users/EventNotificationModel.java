@@ -120,7 +120,7 @@ public class EventNotificationModel extends Model
 
     public boolean Validate()
     {
-        getEmail().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new EmailValidation() });
+        getEmail().validateEntity(new IValidation[] { new NotEmptyValidation(), new EmailValidation() });
 
         return getEmail().getIsValid();
     }

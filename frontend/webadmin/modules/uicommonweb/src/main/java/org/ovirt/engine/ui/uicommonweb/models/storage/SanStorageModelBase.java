@@ -486,17 +486,17 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     {
         getContainer().getHost().ValidateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
 
-        getAddress().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
+        getAddress().validateEntity(new IValidation[] { new NotEmptyValidation() });
 
         IntegerValidation tempVar = new IntegerValidation();
         tempVar.setMinimum(0);
         tempVar.setMaximum(65535);
-        getPort().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar });
+        getPort().validateEntity(new IValidation[] { new NotEmptyValidation(), tempVar });
 
         if ((Boolean) getUseUserAuth().getEntity())
         {
-            getUserName().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
-            getPassword().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
+            getUserName().validateEntity(new IValidation[] { new NotEmptyValidation() });
+            getPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
         }
 
         return getContainer().getHost().getIsValid() && getAddress().getIsValid() && getPort().getIsValid()

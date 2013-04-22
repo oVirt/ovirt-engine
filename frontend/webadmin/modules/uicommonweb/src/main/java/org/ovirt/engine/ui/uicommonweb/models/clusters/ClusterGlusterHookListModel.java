@@ -173,8 +173,8 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
     }
 
     @Override
-    protected void OnEntityChanged() {
-        super.OnEntityChanged();
+    protected void onEntityChanged() {
+        super.onEntityChanged();
         getSearchCommand().Execute();
     }
 

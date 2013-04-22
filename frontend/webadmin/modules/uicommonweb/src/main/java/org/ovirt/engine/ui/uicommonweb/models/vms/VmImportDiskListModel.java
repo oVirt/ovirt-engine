@@ -16,7 +16,7 @@ public class VmImportDiskListModel extends SearchableListModel
     }
 
     @Override
-    protected void OnEntityChanged()
+    protected void onEntityChanged()
     {
         if (getEntity() != null) {
             VM vm = ((ImportVmData) getEntity()).getVm();

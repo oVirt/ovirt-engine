@@ -460,7 +460,7 @@ public class VolumeModel extends Model {
             return false;
         }
 
-        getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new LengthValidation(50),
+        getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new LengthValidation(50),
                 new AsciiNameValidation() });
 
         setMessage(null);

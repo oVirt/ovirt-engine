@@ -97,8 +97,8 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
     }
 
     @Override
-    protected void OnEntityChanged() {
-        super.OnEntityChanged();
+    protected void onEntityChanged() {
+        super.onEntityChanged();
         updateActionAvailability();
     }
 

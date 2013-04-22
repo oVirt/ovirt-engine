@@ -440,7 +440,7 @@ public class PoolListModel extends ListWithDetailsModel
                         pool.setName((String) model.getName().getEntity());
                         pool.setVmPoolDescription((String) model.getDescription().getEntity());
                         pool.setVdsGroupId(((VDSGroup) model.getCluster().getSelectedItem()).getId());
-                        pool.setPrestartedVms(model.getPrestartedVms().AsConvertible().Integer());
+                        pool.setPrestartedVms(model.getPrestartedVms().asConvertible().Integer());
 
                         EntityModel poolTypeSelectedItem = (EntityModel) model.getPoolType().getSelectedItem();
                         pool.setVmPoolType((VmPoolType) poolTypeSelectedItem.getEntity());
@@ -496,7 +496,7 @@ public class PoolListModel extends ListWithDetailsModel
 
                         AddVmPoolWithVmsParameters param =
                                 new AddVmPoolWithVmsParameters(pool, desktop, model.getNumOfDesktops()
-                                        .AsConvertible()
+                                        .asConvertible()
                                         .Integer(), 0);
 
                         param.setStorageDomainId(Guid.Empty);

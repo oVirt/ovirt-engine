@@ -98,9 +98,9 @@ public class ClusterNetworkListModel extends SearchableListModel
     }
 
     @Override
-    protected void OnEntityChanged()
+    protected void onEntityChanged()
     {
-        super.OnEntityChanged();
+        super.onEntityChanged();
         getSearchCommand().Execute();
     }
 
@@ -300,7 +300,7 @@ public class ClusterNetworkListModel extends SearchableListModel
     }
 
     @Override
-    protected void EntityChanging(Object newValue, Object oldValue)
+    protected void entityChanging(Object newValue, Object oldValue)
     {
         VDSGroup vdsGroup = (VDSGroup) newValue;
         getNewNetworkCommand().setIsExecutionAllowed(vdsGroup != null && vdsGroup.getStoragePoolId() != null);

@@ -412,9 +412,9 @@ public class PoolGeneralModel extends EntityModel
     }
 
     @Override
-    protected void OnEntityChanged()
+    protected void onEntityChanged()
     {
-        super.OnEntityChanged();
+        super.onEntityChanged();
 
         if (getEntity() != null)
         {
@@ -423,9 +423,9 @@ public class PoolGeneralModel extends EntityModel
     }
 
     @Override
-    protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e)
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
     {
-        super.EntityPropertyChanged(sender, e);
+        super.entityPropertyChanged(sender, e);
         UpdateProperties();
     }
 

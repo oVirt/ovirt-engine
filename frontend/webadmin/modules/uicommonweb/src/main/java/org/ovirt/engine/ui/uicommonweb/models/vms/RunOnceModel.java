@@ -866,9 +866,9 @@ public abstract class RunOnceModel extends Model
         boolean customPropertyValidation = getCustomPropertySheet().validate();
 
         if (getIsLinuxOS()) {
-            getKernel_path().ValidateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
-            getInitrd_path().ValidateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
-            getKernel_parameters().ValidateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
+            getKernel_path().validateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
+            getInitrd_path().validateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
+            getKernel_parameters().validateEntity(new IValidation[] { new NoTrimmingWhitespacesValidation() });
 
             // initrd path and kernel params require kernel path to be filled
             if (StringHelper.isNullOrEmpty((String) getKernel_path().getEntity())) {

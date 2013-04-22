@@ -268,8 +268,8 @@ public class EventListModel extends ListWithDetailsModel
     private boolean entitiesChanged = true;
 
     @Override
-    protected void EntityChanging(Object newValue, Object oldValue) {
-        super.EntityChanging(newValue, oldValue);
+    protected void entityChanging(Object newValue, Object oldValue) {
+        super.entityChanging(newValue, oldValue);
         entitiesChanged = calculateEntitiesChanged(newValue, oldValue);
     }
 
@@ -306,8 +306,8 @@ public class EventListModel extends ListWithDetailsModel
      * Runs the onEntityContentChanged() only when the calculateEntitiesChanged(new, old) returns true
      */
     @Override
-    protected void OnEntityChanged() {
-        super.OnEntityChanged();
+    protected void onEntityChanged() {
+        super.onEntityChanged();
 
         if (entitiesChanged) {
             onEntityContentChanged();

@@ -56,11 +56,11 @@ public class BookmarkModel extends Model
     {
         LengthValidation tempVar = new LengthValidation();
         tempVar.setMaxLength(40);
-        getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar });
+        getName().validateEntity(new IValidation[] { new NotEmptyValidation(), tempVar });
 
         LengthValidation tempVar2 = new LengthValidation();
         tempVar2.setMaxLength(300);
-        getSearchString().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar2 });
+        getSearchString().validateEntity(new IValidation[] { new NotEmptyValidation(), tempVar2 });
 
         return getName().getIsValid() && getSearchString().getIsValid();
     }

@@ -169,7 +169,7 @@ public class ClusterPolicyModel extends EntityModel {
         IntegerValidation tempVar = new IntegerValidation();
         tempVar.setMinimum(1);
         tempVar.setMaximum(100);
-        getOverCommitTime().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar });
+        getOverCommitTime().validateEntity(new IValidation[] { new NotEmptyValidation(), tempVar });
 
         return getOverCommitTime().getIsValid();
     }

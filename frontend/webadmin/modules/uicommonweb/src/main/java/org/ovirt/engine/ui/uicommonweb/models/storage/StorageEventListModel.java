@@ -45,9 +45,9 @@ public class StorageEventListModel extends SubTabEventListModel
     }
 
     @Override
-    protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e)
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
     {
-        super.EntityPropertyChanged(sender, e);
+        super.entityPropertyChanged(sender, e);
 
         if (e.PropertyName.equals("storage_name")) //$NON-NLS-1$
         {

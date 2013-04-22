@@ -573,7 +573,7 @@ public class VolumeBrickModel extends Model {
             IntegerValidation replicaCountValidation = new IntegerValidation();
             replicaCountValidation.setMinimum(2);
             replicaCountValidation.setMaximum(16);
-            getReplicaCount().ValidateEntity(new IValidation[] { new NotEmptyValidation(), replicaCountValidation });
+            getReplicaCount().validateEntity(new IValidation[] { new NotEmptyValidation(), replicaCountValidation });
         }
 
         if (getStripeCount().getIsAvailable())
@@ -581,7 +581,7 @@ public class VolumeBrickModel extends Model {
             IntegerValidation stripeCountValidation = new IntegerValidation();
             stripeCountValidation.setMinimum(4);
             stripeCountValidation.setMaximum(16);
-            getReplicaCount().ValidateEntity(new IValidation[] { new NotEmptyValidation(), stripeCountValidation });
+            getReplicaCount().validateEntity(new IValidation[] { new NotEmptyValidation(), stripeCountValidation });
         }
 
         return getReplicaCount().getIsValid() && getStripeCount().getIsValid();

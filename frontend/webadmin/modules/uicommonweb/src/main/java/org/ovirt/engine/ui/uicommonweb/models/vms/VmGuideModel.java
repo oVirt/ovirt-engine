@@ -42,9 +42,9 @@ public class VmGuideModel extends GuideModel
     }
 
     @Override
-    protected void OnEntityChanged()
+    protected void onEntityChanged()
     {
-        super.OnEntityChanged();
+        super.onEntityChanged();
         UpdateOptions();
     }
 

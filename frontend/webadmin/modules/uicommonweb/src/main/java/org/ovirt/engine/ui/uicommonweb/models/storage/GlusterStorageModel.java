@@ -92,13 +92,13 @@ public class GlusterStorageModel extends Model implements IStorageModel {
     @Override
     public boolean Validate() {
 
-        getPath().ValidateEntity(
+        getPath().validateEntity(
             new IValidation[] {
                 new NotEmptyValidation(),
             }
         );
 
-        getVfsType().ValidateEntity(
+        getVfsType().validateEntity(
             new IValidation[] {
                 new NotEmptyValidation(),
             }

@@ -1049,7 +1049,7 @@ public class ClusterModel extends EntityModel
 
     public boolean Validate(boolean validateStoragePool, boolean validateCpu)
     {
-        getName().ValidateEntity(new IValidation[] {
+        getName().validateEntity(new IValidation[] {
                 new NotEmptyValidation(),
                 new LengthValidation(40),
                 new I18NNameValidation() });
@@ -1087,8 +1087,8 @@ public class ClusterModel extends EntityModel
                             || ((Boolean) getEnableGlusterService().getEntity());
         }
 
-        getGlusterHostAddress().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
-        getGlusterHostPassword().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
+        getGlusterHostAddress().validateEntity(new IValidation[] { new NotEmptyValidation() });
+        getGlusterHostPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
 
         if (!validService)
         {

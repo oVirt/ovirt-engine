@@ -56,9 +56,9 @@ public class QuotaPermissionListModel extends PermissionListModel {
     }
 
     @Override
-    protected void OnEntityChanged()
+    protected void onEntityChanged()
     {
-        super.OnEntityChanged();
+        super.onEntityChanged();
         getSearchCommand().Execute();
     }
 

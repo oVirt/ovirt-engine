@@ -38,9 +38,9 @@ public class EntityModel extends Model
     {
         if (entity != value)
         {
-            EntityChanging(value, entity);
+            entityChanging(value, entity);
             entity = value;
-            OnEntityChanged();
+            onEntityChanged();
             // EntityChanged(this, EventArgs.Empty);
             getEntityChangedEvent().raise(this, EventArgs.Empty);
             onPropertyChanged(new PropertyChangedEventArgs("Entity")); //$NON-NLS-1$
@@ -90,7 +90,7 @@ public class EntityModel extends Model
         setTitle(title);
     }
 
-    protected void EntityChanging(Object newValue, Object oldValue)
+    protected void entityChanging(Object newValue, Object oldValue)
     {
         IProvidePropertyChangedEvent notifier =
                 (IProvidePropertyChangedEvent) ((oldValue instanceof IProvidePropertyChangedEvent) ? oldValue : null);
@@ -107,14 +107,14 @@ public class EntityModel extends Model
         }
     }
 
-    protected void OnEntityChanged()
+    protected void onEntityChanged()
     {
     }
 
     /**
      * Invoked whenever some property of the entity was changed.
      */
-    protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e)
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
     {
     }
 
@@ -125,15 +125,15 @@ public class EntityModel extends Model
 
         if (ev.matchesDefinition(EntityChangedEventDefinition))
         {
-            OnEntityChanged();
+            onEntityChanged();
         }
         else if (ev.matchesDefinition(ProvidePropertyChangedEvent.Definition))
         {
-            EntityPropertyChanged(sender, (PropertyChangedEventArgs) args);
+            entityPropertyChanged(sender, (PropertyChangedEventArgs) args);
         }
     }
 
-    public void ValidateEntity(IValidation[] validations)
+    public void validateEntity(IValidation[] validations)
     {
         setIsValid(true);
 
@@ -158,7 +158,7 @@ public class EntityModel extends Model
         }
     }
 
-    public Convertible AsConvertible() {
+    public Convertible asConvertible() {
         return new Convertible(this);
     }
 }

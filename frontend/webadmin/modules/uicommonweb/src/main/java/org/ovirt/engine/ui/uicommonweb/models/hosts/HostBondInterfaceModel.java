@@ -251,9 +251,9 @@ public class HostBondInterfaceModel extends Model
 
         if (getIsStaticAddress())
         {
-            getAddress().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new IpAddressValidation() });
-            getSubnet().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new SubnetMaskValidation() });
-            getGateway().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new IpAddressValidation() });
+            getAddress().validateEntity(new IValidation[] { new NotEmptyValidation(), new IpAddressValidation() });
+            getSubnet().validateEntity(new IValidation[] { new NotEmptyValidation(), new SubnetMaskValidation() });
+            getGateway().validateEntity(new IValidation[] { new NotEmptyValidation(), new IpAddressValidation() });
         }
 
         return getBond().getIsValid() && getNetwork().getIsValid() && getAddress().getIsValid()

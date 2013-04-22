@@ -26,9 +26,9 @@ public class TemplateVmListModel extends VmListModel
     }
 
     @Override
-    protected void OnEntityChanged()
+    protected void onEntityChanged()
     {
-        super.OnEntityChanged();
+        super.onEntityChanged();
         getSearchCommand().Execute();
     }
 

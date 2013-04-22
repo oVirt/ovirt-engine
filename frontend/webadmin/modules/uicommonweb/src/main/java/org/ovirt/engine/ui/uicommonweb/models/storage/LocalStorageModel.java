@@ -67,7 +67,7 @@ public class LocalStorageModel extends Model implements IStorageModel {
     @Override
     public boolean Validate() {
 
-        getPath().ValidateEntity(new IValidation[] {
+        getPath().validateEntity(new IValidation[] {
             new NotEmptyValidation(),
             new LocalfsLinuxMountPointValidation(),
             new NonUtfValidation() });

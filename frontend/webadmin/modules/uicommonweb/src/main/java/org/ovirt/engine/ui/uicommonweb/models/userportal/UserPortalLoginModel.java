@@ -249,8 +249,8 @@ public class UserPortalLoginModel extends LoginModel
 
         if (getIsChangingPassword())
         {
-            getNewPassword().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
-            getVerifyPassword().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
+            getNewPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
+            getVerifyPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
 
             // Check that the verify password field matches new password.
             if (!((String) getNewPassword().getEntity()).equals(getVerifyPassword().getEntity()))

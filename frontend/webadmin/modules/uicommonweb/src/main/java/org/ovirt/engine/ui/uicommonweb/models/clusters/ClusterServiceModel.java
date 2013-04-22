@@ -98,8 +98,8 @@ public class ClusterServiceModel extends EntityModel {
     }
 
     @Override
-    protected void OnEntityChanged() {
-        super.OnEntityChanged();
+    protected void onEntityChanged() {
+        super.onEntityChanged();
         if (getEntity() != null) {
             updateServiceList();
             updateHostList();

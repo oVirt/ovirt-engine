@@ -283,7 +283,7 @@ public class DataCenterModel extends Model
 
     public boolean Validate()
     {
-        getName().ValidateEntity(new IValidation[] {
+        getName().validateEntity(new IValidation[] {
                 new NotEmptyValidation(),
                 new LengthValidation(40),
                 new LengthValidation(getMaxNameLength()),
@@ -293,7 +293,7 @@ public class DataCenterModel extends Model
 
         getVersion().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
-        getDescription().ValidateEntity(new IValidation[] { new AsciiOrNoneValidation() });
+        getDescription().validateEntity(new IValidation[] { new AsciiOrNoneValidation() });
 
         // TODO: add this code to async validate.
         // string name = (string)Name.Entity;

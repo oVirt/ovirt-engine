@@ -147,8 +147,8 @@ public class VolumeBrickListModel extends SearchableListModel {
     }
 
     @Override
-    protected void OnEntityChanged() {
-        super.OnEntityChanged();
+    protected void onEntityChanged() {
+        super.onEntityChanged();
         if (getEntity() == null) {
             return;
         }
@@ -158,7 +158,7 @@ public class VolumeBrickListModel extends SearchableListModel {
 
     @Override
     protected void SyncSearch() {
-        OnEntityChanged();
+        onEntityChanged();
     }
 
     private void checkUpServerAndAddBricks() {

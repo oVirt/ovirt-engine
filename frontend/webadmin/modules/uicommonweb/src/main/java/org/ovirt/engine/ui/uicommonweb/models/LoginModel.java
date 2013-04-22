@@ -314,8 +314,8 @@ public class LoginModel extends Model
 
     protected boolean Validate()
     {
-        getUserName().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
-        getPassword().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
+        getUserName().validateEntity(new IValidation[] { new NotEmptyValidation() });
+        getPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
         getDomain().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         return getUserName().getIsValid() && getPassword().getIsValid() && getDomain().getIsValid();

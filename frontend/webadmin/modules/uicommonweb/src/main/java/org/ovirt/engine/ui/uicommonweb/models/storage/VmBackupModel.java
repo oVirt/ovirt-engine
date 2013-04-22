@@ -155,7 +155,7 @@ public class VmBackupModel extends ManageBackupModel {
                                             .getState();
                                     localModel.StopProgress();
                                     Cancel();
-                                    OnEntityChanged();
+                                    onEntityChanged();
 
                                 }
                             }, backupModel.getWindow());
@@ -364,7 +364,7 @@ public class VmBackupModel extends ManageBackupModel {
         EntityModel temp = new EntityModel();
         temp.setIsValid(true);
         temp.setEntity(newVmName);
-        temp.ValidateEntity(validators);
+        temp.validateEntity(validators);
         if (!temp.getIsValid()) {
             entity.setInvalidityReasons(temp.getInvalidityReasons());
             entity.setIsValid(false);
@@ -487,9 +487,9 @@ public class VmBackupModel extends ManageBackupModel {
     }
 
     @Override
-    protected void EntityPropertyChanged(Object sender,
+    protected void entityPropertyChanged(Object sender,
             PropertyChangedEventArgs e) {
-        super.EntityPropertyChanged(sender, e);
+        super.entityPropertyChanged(sender, e);
 
         if (e.PropertyName.equals("storage_domain_shared_status")) { //$NON-NLS-1$
             getSearchCommand().Execute();

@@ -226,7 +226,7 @@ public class NewDiskModel extends AbstractDiskModel
         if (storageType == StorageType.ISCSI || storageType == StorageType.FCP) {
             sizeValidation.setMaximum((Integer) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.MaxBlockDiskSize));
         }
-        getSize().ValidateEntity(new IValidation[] { new NotEmptyValidation(), sizeValidation });
+        getSize().validateEntity(new IValidation[] { new NotEmptyValidation(), sizeValidation });
         getStorageDomain().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         return super.validate() && getSize().getIsValid() && getStorageDomain().getIsValid();

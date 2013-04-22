@@ -35,7 +35,7 @@ public class ReplaceBrickModel extends Model {
 
     public boolean validate()
     {
-        getBrickDirectory().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
+        getBrickDirectory().validateEntity(new IValidation[] { new NotEmptyValidation() });
 
         return getServers().getIsValid() && getBrickDirectory().getIsValid();
     }

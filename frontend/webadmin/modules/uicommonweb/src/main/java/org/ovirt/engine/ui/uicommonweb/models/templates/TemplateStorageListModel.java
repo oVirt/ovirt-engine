@@ -60,9 +60,9 @@ public class TemplateStorageListModel extends SearchableListModel
     }
 
     @Override
-    protected void OnEntityChanged()
+    protected void onEntityChanged()
     {
-        super.OnEntityChanged();
+        super.onEntityChanged();
 
         if (getEntity() != null)
         {
@@ -230,9 +230,9 @@ public class TemplateStorageListModel extends SearchableListModel
     }
 
     @Override
-    protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e)
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
     {
-        super.EntityPropertyChanged(sender, e);
+        super.entityPropertyChanged(sender, e);
 
         if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {

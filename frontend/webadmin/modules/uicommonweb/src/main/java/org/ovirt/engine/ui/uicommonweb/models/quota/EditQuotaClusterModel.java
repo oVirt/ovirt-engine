@@ -126,10 +126,10 @@ public class EditQuotaClusterModel extends EntityModel {
         getSpecificMemValue().setIsValid(true);
         getSpecificCpuValue().setIsValid(true);
         if ((Boolean) getSpecificMem().getEntity()) {
-            getSpecificMemValue().ValidateEntity(new IValidation[] { intValidation, new NotEmptyValidation() });
+            getSpecificMemValue().validateEntity(new IValidation[] { intValidation, new NotEmptyValidation() });
         }
         if ((Boolean) getSpecificCpu().getEntity()) {
-            getSpecificCpuValue().ValidateEntity(new IValidation[] { intValidation, new NotEmptyValidation() });
+            getSpecificCpuValue().validateEntity(new IValidation[] { intValidation, new NotEmptyValidation() });
         }
         return getSpecificMemValue().getIsValid() && getSpecificCpuValue().getIsValid();
     }

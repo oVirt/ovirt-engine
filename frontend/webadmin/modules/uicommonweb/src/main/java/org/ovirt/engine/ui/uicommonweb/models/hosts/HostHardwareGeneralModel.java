@@ -132,9 +132,9 @@ public class HostHardwareGeneralModel extends EntityModel
     }
 
     @Override
-    protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e)
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
     {
-        super.EntityPropertyChanged(sender, e);
+        super.entityPropertyChanged(sender, e);
     }
 
     private void UpdateProperties()
@@ -149,9 +149,9 @@ public class HostHardwareGeneralModel extends EntityModel
     }
 
     @Override
-    protected void OnEntityChanged()
+    protected void onEntityChanged()
     {
-        super.OnEntityChanged();
+        super.onEntityChanged();
 
         if (getEntity() != null)
         {

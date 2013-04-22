@@ -84,9 +84,9 @@ public class TemplateInterfaceListModel extends SearchableListModel
     }
 
     @Override
-    protected void OnEntityChanged()
+    protected void onEntityChanged()
     {
-        super.OnEntityChanged();
+        super.onEntityChanged();
 
         getSearchCommand().Execute();
         UpdateActionAvailability();

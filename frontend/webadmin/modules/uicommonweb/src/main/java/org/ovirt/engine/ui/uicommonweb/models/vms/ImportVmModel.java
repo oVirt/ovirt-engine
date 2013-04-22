@@ -150,7 +150,7 @@ public class ImportVmModel extends ListWithDetailsModel {
     @Override
     public void setSelectedItem(Object value) {
         super.setSelectedItem(value);
-        OnEntityChanged();
+        onEntityChanged();
     }
 
     public ImportVmModel() {

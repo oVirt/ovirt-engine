@@ -236,9 +236,9 @@ public class DisksAllocationModel extends EntityModel
     }
 
     @Override
-    public void ValidateEntity(IValidation[] validations)
+    public void validateEntity(IValidation[] validations)
     {
-        super.ValidateEntity(validations);
+        super.validateEntity(validations);
 
         if (getDisks() == null) {
             return;

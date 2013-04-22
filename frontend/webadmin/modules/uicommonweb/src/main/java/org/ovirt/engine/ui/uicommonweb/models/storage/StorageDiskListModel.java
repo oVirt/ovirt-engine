@@ -46,8 +46,8 @@ public class StorageDiskListModel extends SearchableListModel
     }
 
     @Override
-    protected void OnEntityChanged() {
-        super.OnEntityChanged();
+    protected void onEntityChanged() {
+        super.onEntityChanged();
 
         getSearchCommand().Execute();
     }

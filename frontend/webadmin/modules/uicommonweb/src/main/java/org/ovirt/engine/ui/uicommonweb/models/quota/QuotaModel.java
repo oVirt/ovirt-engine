@@ -375,7 +375,7 @@ public class QuotaModel extends EntityModel {
         LengthValidation lenValidation = new LengthValidation();
         lenValidation.setMaxLength(60);
         getName().setIsValid(true);
-        getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), lenValidation });
+        getName().validateEntity(new IValidation[] { new NotEmptyValidation(), lenValidation });
 
         IValidation[] graceValidationArr =
                 new IValidation[] { new NotEmptyValidation(), new IntegerValidation(0, Integer.MAX_VALUE) };
@@ -383,10 +383,10 @@ public class QuotaModel extends EntityModel {
         IValidation[] thresholdValidationArr =
                 new IValidation[] { new NotEmptyValidation(), new IntegerValidation(0, 100) };
 
-        getGraceCluster().ValidateEntity(graceValidationArr);
-        getGraceStorage().ValidateEntity(graceValidationArr);
-        getThresholdCluster().ValidateEntity(thresholdValidationArr);
-        getThresholdStorage().ValidateEntity(thresholdValidationArr);
+        getGraceCluster().validateEntity(graceValidationArr);
+        getGraceStorage().validateEntity(graceValidationArr);
+        getThresholdCluster().validateEntity(thresholdValidationArr);
+        getThresholdStorage().validateEntity(thresholdValidationArr);
 
         boolean graceThreshold = getGraceCluster().getIsValid() &
                 getGraceStorage().getIsValid() &
@@ -433,8 +433,8 @@ public class QuotaModel extends EntityModel {
             }
         }
 
-        getSpecificClusterQuota().ValidateEntity(new IValidation[] { quotaEmptyValidation });
-        getSpecificStorageQuota().ValidateEntity(new IValidation[] { quotaEmptyValidation });
+        getSpecificClusterQuota().validateEntity(new IValidation[] { quotaEmptyValidation });
+        getSpecificStorageQuota().validateEntity(new IValidation[] { quotaEmptyValidation });
 
         return false;
     }

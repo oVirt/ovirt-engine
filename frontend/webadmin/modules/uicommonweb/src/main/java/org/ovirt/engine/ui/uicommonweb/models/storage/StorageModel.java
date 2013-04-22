@@ -748,7 +748,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
             getHost().setIsValid(true);
         }
         ValidateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
-        getDescription().ValidateEntity(new IValidation[] {
+        getDescription().validateEntity(new IValidation[] {
                 new LengthValidation(BusinessEntitiesDefinitions.GENERAL_MAX_SIZE),
                 new SpecialAsciiI18NOrNoneValidation() });
 

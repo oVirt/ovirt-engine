@@ -301,9 +301,9 @@ public class HostManagementNetworkModel extends EntityModel
 
         if (getIsStaticAddress())
         {
-            getAddress().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new IpAddressValidation() });
-            getSubnet().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new SubnetMaskValidation() });
-            getGateway().ValidateEntity(new IValidation[] { new IpAddressValidation() });
+            getAddress().validateEntity(new IValidation[] { new NotEmptyValidation(), new IpAddressValidation() });
+            getSubnet().validateEntity(new IValidation[] { new NotEmptyValidation(), new SubnetMaskValidation() });
+            getGateway().validateEntity(new IValidation[] { new IpAddressValidation() });
         }
 
         return getInterface().getIsValid() && getAddress().getIsValid() && getSubnet().getIsValid() && getGateway().getIsValid();
