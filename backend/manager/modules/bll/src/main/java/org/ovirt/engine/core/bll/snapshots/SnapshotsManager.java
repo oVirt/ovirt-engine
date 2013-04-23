@@ -112,14 +112,14 @@ public class SnapshotsManager {
      *            The VM to save in configuration.
      * @param compensationContext
      *            Context for saving compensation details.
-     * @return The new snapshot's ID.
+     * @return the added snapshot
      */
-    public void addSnapshot(Guid snapshotId,
+    public Snapshot addSnapshot(Guid snapshotId,
             String description,
             SnapshotType snapshotType,
             VM vm,
             final CompensationContext compensationContext) {
-        addSnapshot(snapshotId, description, SnapshotStatus.LOCKED, snapshotType, vm, true, compensationContext);
+        return addSnapshot(snapshotId, description, SnapshotStatus.LOCKED, snapshotType, vm, true, compensationContext);
     }
 
     /**
@@ -139,6 +139,7 @@ public class SnapshotsManager {
      *            Should VM configuration be generated and saved?
      * @param compensationContext
      *            In case compensation is needed.
+     * @return the saved snapshot
      */
     public Snapshot addSnapshot(Guid snapshotId,
             String description,

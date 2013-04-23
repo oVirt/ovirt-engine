@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -104,42 +105,50 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
         setActionReturnValue(createdSnapshotId);
 
-        if (getDisksList().isEmpty()) {
+        addSnapshotToDB(createdSnapshotId);
+        createSnapshotsForDisks(newActiveSnapshotId);
+
+        if (getTaskIdList().isEmpty()) {
             getParameters().setTaskGroupSuccess(true);
-            new SnapshotsManager().addSnapshot(createdSnapshotId,
+            incrementVmGeneration();
+        }
+        setSucceeded(true);
+    }
+
+    private Snapshot addSnapshotToDB(Guid snapshotId) {
+        if (getDisksList().isEmpty()) {
+            return new SnapshotsManager().addSnapshot(snapshotId,
                     getParameters().getDescription(),
                     SnapshotStatus.OK,
                     getParameters().getSnapshotType(),
                     getVm(),
                     true,
                     getCompensationContext());
-            // at the moment there's no need to execute vdsm Snapshot command for diskless snapshots,
-            // when support for ram snapshot will be introduced, this vdsm command should be executed
-            // for diskless snapshots as well (currently executed within endSuccesfully() method.
-            incrementVmGeneration();
-        } else {
-            new SnapshotsManager().addSnapshot(createdSnapshotId,
+        }
+        else {
+            return new SnapshotsManager().addSnapshot(snapshotId,
                     getParameters().getDescription(),
                     getParameters().getSnapshotType(),
                     getVm(),
                     getCompensationContext());
+        }
+    }
 
-            for (DiskImage image : getDisksList()) {
+    private void createSnapshotsForDisks(Guid vmSnapshotId) {
+        for (DiskImage image : getDisksList()) {
 
-                VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
-                                VdcActionType.CreateSnapshot,
-                                buildCreateSnapshotParameters(image, newActiveSnapshotId),
-                                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+            VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
+                            VdcActionType.CreateSnapshot,
+                            buildCreateSnapshotParameters(image, vmSnapshotId),
+                            ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
-                if (vdcReturnValue.getSucceeded()) {
-                    getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
-                } else {
-                    throw new VdcBLLException(vdcReturnValue.getFault().getError(),
-                            "CreateAllSnapshotsFromVmCommand::executeVmCommand: Failed to create snapshot!");
-                }
+            if (vdcReturnValue.getSucceeded()) {
+                getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
+            } else {
+                throw new VdcBLLException(vdcReturnValue.getFault().getError(),
+                        "CreateAllSnapshotsFromVmCommand::executeVmCommand: Failed to create snapshot!");
             }
         }
-        setSucceeded(true);
     }
 
     private ImagesActionsParametersBase buildCreateSnapshotParameters(DiskImage image, Guid snapshotId) {
