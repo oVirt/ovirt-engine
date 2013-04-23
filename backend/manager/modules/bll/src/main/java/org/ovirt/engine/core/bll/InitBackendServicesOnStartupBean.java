@@ -60,7 +60,6 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             VmPropertiesUtils.getInstance().init();
         } catch (InitializationException e) {
             log.error("Initialization of vm custom properties failed.",e);
-            throw new RuntimeException(e);
         }
     }
 
