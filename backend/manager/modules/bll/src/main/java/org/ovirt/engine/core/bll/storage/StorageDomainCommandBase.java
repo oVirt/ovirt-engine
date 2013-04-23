@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -45,8 +44,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @SuppressWarnings("serial")
 public abstract class StorageDomainCommandBase<T extends StorageDomainParametersBase> extends
         StorageHandlingCommandBase<T> {
-
-    private storage_pool _storagePool;
 
     public StorageDomainCommandBase(T parameters) {
         super(parameters);
@@ -135,16 +132,6 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     private boolean isMaster() {
         return getStorageDomain().getStorageDomainType() == StorageDomainType.Master;
-    }
-
-    @Override
-    public storage_pool getStoragePool() {
-        if (_storagePool == null) {
-            if (getStoragePoolId() != null && !getStoragePoolId().equals(Guid.Empty)) {
-                _storagePool = getStoragePoolDAO().get(getStoragePoolId().getValue());
-            }
-        }
-        return _storagePool;
     }
 
     @Override
