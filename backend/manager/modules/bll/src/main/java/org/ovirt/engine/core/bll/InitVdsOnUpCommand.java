@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -34,6 +37,7 @@ import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
+import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -45,6 +49,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
@@ -62,7 +67,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     private boolean fenceSucceeded = true;
     private boolean vdsProxyFound;
     private boolean connectPoolSucceeded;
-    private boolean glusterPeerListSucceeded, glusterPeerProbeSucceeded;
+    private boolean glusterHostUuidFound, glusterPeerListSucceeded, glusterPeerProbeSucceeded;
     private FenceStatusReturnValue fenceStatusReturnValue;
 
     public InitVdsOnUpCommand(HostStoragePoolParametersBase parameters) {
@@ -74,13 +79,17 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     protected void executeCommand() {
         VDSGroup vdsGroup = getVdsGroup();
 
+        boolean initSucceeded = true;
+
         if (vdsGroup.supportsVirtService()) {
-            setSucceeded(initVirtResources());
+            initSucceeded = initVirtResources();
         }
 
-        if (vdsGroup.supportsGlusterService()) {
-            setSucceeded(initGlusterPeerProcess());
+        if (initSucceeded && vdsGroup.supportsGlusterService()) {
+            initSucceeded = initGlusterHost();
         }
+
+        setSucceeded(initSucceeded);
     }
 
     private boolean initVirtResources() {
@@ -227,40 +236,53 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     public AuditLogType getAuditLogTypeValue() {
         AuditLogType type = AuditLogType.UNASSIGNED;
 
-        if(!getVdsGroup().supportsVirtService()) {
-            if (getVdsGroup().supportsGlusterService()) {
-                if (!glusterPeerListSucceeded) {
-                    type = AuditLogType.GLUSTER_SERVERS_LIST_FAILED;
-                } else if (!glusterPeerProbeSucceeded) {
-                    type = AuditLogType.GLUSTER_SERVER_ADD_FAILED;
+        if (getVdsGroup().supportsVirtService()) {
+            if (!connectPoolSucceeded) {
+                type = AuditLogType.CONNECT_STORAGE_POOL_FAILED;
+            } else if (getVds().getpm_enabled() && fenceSucceeded) {
+                type = AuditLogType.VDS_FENCE_STATUS;
+            } else if (getVds().getpm_enabled() && !fenceSucceeded) {
+                type = AuditLogType.VDS_FENCE_STATUS_FAILED;
+            }
+
+            // PM alerts
+            AuditLogableBase logable = new AuditLogableBase(getVds().getId());
+            if (getVds().getpm_enabled()) {
+                if (!vdsProxyFound) {
+                    logable.addCustomValue("Reason",
+                            AuditLogDirector.getMessage(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST));
+                    AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
+                } else if (!fenceStatusReturnValue.getIsSucceeded()) {
+                    logable.addCustomValue("Reason", fenceStatusReturnValue.getMessage());
+                    AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
                 }
+            } else {
+                AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED);
             }
-            return type;
         }
 
-        if (!connectPoolSucceeded) {
-            type = AuditLogType.CONNECT_STORAGE_POOL_FAILED;
-        } else if (getVds().getpm_enabled() && fenceSucceeded) {
-            type = AuditLogType.VDS_FENCE_STATUS;
-        } else if (getVds().getpm_enabled() && !fenceSucceeded) {
-            type = AuditLogType.VDS_FENCE_STATUS_FAILED;
+        if (type == AuditLogType.UNASSIGNED && getVdsGroup().supportsGlusterService()) {
+            if (!glusterHostUuidFound) {
+                type = AuditLogType.GLUSTER_HOST_UUID_NOT_FOUND;
+            } else if (!glusterPeerListSucceeded) {
+                type = AuditLogType.GLUSTER_SERVERS_LIST_FAILED;
+            } else if (!glusterPeerProbeSucceeded) {
+                type = AuditLogType.GLUSTER_SERVER_ADD_FAILED;
+            }
         }
 
-        // PM alerts
-        AuditLogableBase logable = new AuditLogableBase(getVds().getId());
-        if (getVds().getpm_enabled()) {
-            if (!vdsProxyFound) {
-                logable.addCustomValue("Reason",
-                        AuditLogDirector.getMessage(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST));
-                AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
-            } else if (!fenceStatusReturnValue.getIsSucceeded()) {
-                logable.addCustomValue("Reason", fenceStatusReturnValue.getMessage());
-                AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
-            }
-        } else {
-            AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED);
-        }
         return type;
+    }
+
+    private boolean initGlusterHost() {
+        glusterHostUuidFound = true;
+        if (GlusterFeatureSupported.glusterHostUuidSupported(getVdsGroup().getcompatibility_version())) {
+            if (!saveGlusterHostUuid()) {
+                glusterHostUuidFound = false;
+                setNonOperational(NonOperationalReason.GLUSTER_HOST_UUID_NOT_FOUND, null);
+            }
+        }
+        return glusterHostUuidFound && initGlusterPeerProcess();
     }
 
     private boolean initGlusterPeerProcess() {
@@ -299,17 +321,55 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     }
 
     private boolean hostExists(List<GlusterServerInfo> glusterServers, VDS server) {
-        for (GlusterServerInfo glusterServer : glusterServers) {
-            if (glusterServer.getHostnameOrIp().equals(server.getHostName())) {
-                return true;
+        if (GlusterFeatureSupported.glusterHostUuidSupported(getVdsGroup().getcompatibility_version())) {
+            GlusterServer glusterServer = DbFacade.getInstance().getGlusterServerDao().getByServerId(server.getId());
+            if (glusterServer != null) {
+                for (GlusterServerInfo glusterServerInfo : glusterServers) {
+                    if (glusterServerInfo.getUuid().equals(glusterServer.getGlusterServerUuid())) {
+                        return true;
+                    }
+                }
             }
-            for (VdsNetworkInterface vdsNwInterface : getVdsInterfaces(server.getId())) {
-                if (glusterServer.getHostnameOrIp().equals(vdsNwInterface.getAddress())) {
+        }
+        else {
+            for (GlusterServerInfo glusterServer : glusterServers) {
+                if (glusterServer.getHostnameOrIp().equals(server.getHostName())) {
                     return true;
+                }
+                try {
+                    String glusterHostAddr = InetAddress.getByName(glusterServer.getHostnameOrIp()).getHostAddress();
+                    for (VdsNetworkInterface vdsNwInterface : getVdsInterfaces(server.getId())) {
+                        if (glusterHostAddr.equals(vdsNwInterface.getAddress())) {
+                            return true;
+                        }
+                    }
+                } catch (UnknownHostException e) {
+                    log.errorFormat("Could not resole IP address of the host {0}. Error: {1}",
+                            glusterServer.getHostnameOrIp(),
+                            e.getMessage());
                 }
             }
         }
         return false;
+    }
+
+    private boolean saveGlusterHostUuid() {
+        GlusterServerDao glusterServerDao = DbFacade.getInstance().getGlusterServerDao();
+        GlusterServer glusterServer = glusterServerDao.getByServerId(getVds().getId());
+        if (glusterServer == null) {
+            VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GetGlusterHostUUID,
+                    new VdsIdVDSCommandParametersBase(getVds().getId()));
+            if (returnValue.getSucceeded() && returnValue.getReturnValue() != null) {
+                glusterServer = new GlusterServer();
+                glusterServer.setId(getVds().getId());
+                glusterServer.setGlusterServerUuid(Guid.createGuidFromString((String) returnValue.getReturnValue()));
+                glusterServerDao.save(glusterServer);
+            }
+            else {
+                return false;
+            }
+        }
+        return true;
     }
 
     public InterfaceDao getInterfaceDAO() {

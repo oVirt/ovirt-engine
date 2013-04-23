@@ -15,6 +15,7 @@ public enum NonOperationalReason {
     TIMEOUT_RECOVERING_FROM_CRASH(7),
     VM_NETWORK_IS_BRIDGELESS(8),
     GLUSTER_COMMAND_FAILED(9),
+    GLUSTER_HOST_UUID_NOT_FOUND(10),
     ;
 
     private final int value;

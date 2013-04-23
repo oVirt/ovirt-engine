@@ -114,6 +114,8 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
             return AuditLogType.VDS_SET_NON_OPERATIONAL_VM_NETWORK_IS_BRIDGELESS;
         case GLUSTER_COMMAND_FAILED:
             return AuditLogType.GLUSTER_COMMAND_FAILED;
+        case GLUSTER_HOST_UUID_NOT_FOUND:
+            return AuditLogType.GLUSTER_HOST_UUID_NOT_FOUND;
         default:
             return (getSucceeded()) ? AuditLogType.VDS_SET_NONOPERATIONAL : AuditLogType.VDS_SET_NONOPERATIONAL_FAILED;
         }

@@ -1327,6 +1327,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     GlusterServicesEnabled(426),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    GlusterHostUUIDSupport(427),
+
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Auto")
     KeystoneAuthUrl(427),
