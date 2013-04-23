@@ -111,7 +111,7 @@ public class VmAppListModel extends SearchableListModel
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
         updateAppList();
         setIsQueryFirstTime(false);

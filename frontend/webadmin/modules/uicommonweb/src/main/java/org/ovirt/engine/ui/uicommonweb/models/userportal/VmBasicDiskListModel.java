@@ -32,9 +32,9 @@ public class VmBasicDiskListModel extends SearchableListModel
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
-        super.SyncSearch();
+        super.syncSearch();
 
         if (getEntity() instanceof VM)
         {

@@ -69,8 +69,8 @@ public class QuotaUserListModel extends SearchableListModel {
     }
 
     @Override
-    protected void SyncSearch() {
-        super.SyncSearch();
+    protected void syncSearch() {
+        super.syncSearch();
         GetEntitiesRelatedToQuotaIdParameters param = new GetEntitiesRelatedToQuotaIdParameters();
         param.setQuotaId(((Quota) getEntity()).getId());
         param.setRefresh(getIsQueryFirstTime());

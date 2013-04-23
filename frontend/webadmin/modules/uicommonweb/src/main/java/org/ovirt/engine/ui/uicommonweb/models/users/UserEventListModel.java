@@ -34,12 +34,12 @@ public class UserEventListModel extends SubTabEventListModel
     }
 
     @Override
-    public void Search()
+    public void search()
     {
         if (getEntity() != null)
         {
             setSearchString("events: usrname=" + getEntity().getusername()); //$NON-NLS-1$
-            super.Search();
+            super.search();
         }
     }
 

@@ -212,9 +212,9 @@ public class ResourcesModel extends SearchableListModel
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
-        super.SyncSearch();
+        super.syncSearch();
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);

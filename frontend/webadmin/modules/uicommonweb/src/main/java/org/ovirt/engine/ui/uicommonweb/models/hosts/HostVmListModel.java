@@ -24,26 +24,26 @@ public class HostVmListModel extends VmListModel
     }
 
     @Override
-    protected void AsyncSearch()
+    protected void asyncSearch()
     {
-        Search();
+        search();
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
-        Search();
+        search();
     }
 
     @Override
     protected void onEntityChanged()
     {
         super.onEntityChanged();
-        Search();
+        search();
     }
 
     @Override
-    public void Search()
+    public void search()
     {
         // Override standard search query mechanism.
         // During the migration, the VM should be visible on source host (Migrating From), and also
@@ -71,7 +71,7 @@ public class HostVmListModel extends VmListModel
 
         if (e.PropertyName.equals("vds_name")) //$NON-NLS-1$
         {
-            Search();
+            search();
         }
     }
 }

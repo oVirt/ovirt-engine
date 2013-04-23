@@ -115,11 +115,11 @@ public class StorageIsoListModel extends SearchableListModel
     }
 
     @Override
-    public void Search()
+    public void search()
     {
         if (getEntity() != null)
         {
-            super.Search();
+            super.search();
         }
         else
         {
@@ -128,14 +128,14 @@ public class StorageIsoListModel extends SearchableListModel
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
         if (getEntity() == null)
         {
             return;
         }
 
-        super.SyncSearch();
+        super.syncSearch();
 
         if (getProgress() != null)
         {
@@ -193,10 +193,10 @@ public class StorageIsoListModel extends SearchableListModel
     }
 
     @Override
-    protected void AsyncSearch()
+    protected void asyncSearch()
     {
-        super.AsyncSearch();
-        SyncSearch();
+        super.asyncSearch();
+        syncSearch();
     }
 
     private void UpdateIsoModels(ArrayList<EntityModel> items)

@@ -124,9 +124,9 @@ public class EventListModel extends ListWithDetailsModel
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
-        super.SyncSearch();
+        super.syncSearch();
 
         requestingData = true;
         setItems(new ObservableCollection<AuditLog>());
@@ -136,8 +136,8 @@ public class EventListModel extends ListWithDetailsModel
     }
 
     @Override
-    public void Search() {
-        super.Search();
+    public void search() {
+        super.search();
 
         // Force refresh of the event list when the event tab is shown
         // without waiting to the timer. This is invoked only the first
@@ -150,10 +150,10 @@ public class EventListModel extends ListWithDetailsModel
     }
 
     @Override
-    protected void AsyncSearch()
+    protected void asyncSearch()
     {
-        super.AsyncSearch();
-        SyncSearch();
+        super.asyncSearch();
+        syncSearch();
     }
 
     protected void refreshModel()

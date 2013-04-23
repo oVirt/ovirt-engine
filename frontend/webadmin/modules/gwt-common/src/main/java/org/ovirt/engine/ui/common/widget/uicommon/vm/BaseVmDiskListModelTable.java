@@ -70,7 +70,7 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase> extends Abs
         getTable().getSelectionModel().clear();
         getModel().getDiskViewType().setEntity(disksViewRadioGroup.getDiskStorageType());
         getModel().setItems(null);
-        getModel().Search();
+        getModel().search();
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.diskStatusColumn, constants.empty(), all || images || luns, "30px"); //$NON-NLS-1$

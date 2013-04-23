@@ -226,7 +226,7 @@ public class AdElementListModel extends SearchableListModel
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
         // allow only a single user lookup at a time
         if ((Boolean) getSearchInProgress().getEntity()) {
@@ -234,7 +234,7 @@ public class AdElementListModel extends SearchableListModel
         }
         getSearchInProgress().setEntity(true);
 
-        super.SyncSearch();
+        super.syncSearch();
         // var exclude = ExcludeItems != null ? ExcludeItems.Cast<DbUser>() : new List<DbUser>();
 
         String domain = (String) getDomain().getSelectedItem();
@@ -357,10 +357,10 @@ public class AdElementListModel extends SearchableListModel
     }
 
     @Override
-    protected void AsyncSearch()
+    protected void asyncSearch()
     {
-        super.AsyncSearch();
-        SyncSearch();
+        super.asyncSearch();
+        syncSearch();
     }
 
     private ArrayList<EntityModel> privateusers;

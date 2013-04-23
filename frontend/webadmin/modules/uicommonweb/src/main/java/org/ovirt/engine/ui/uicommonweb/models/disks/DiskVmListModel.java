@@ -38,7 +38,7 @@ public class DiskVmListModel extends SearchableListModel
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
         Disk disk = (Disk) getEntity();
         if (disk == null)

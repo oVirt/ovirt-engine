@@ -28,7 +28,7 @@ public class TemplateImportInterfaceListModel extends SearchableListModel
     }
 
     @Override
-    protected void SyncSearch() {
+    protected void syncSearch() {
     }
 
     @Override

@@ -30,21 +30,21 @@ public class ClusterHostListModel extends HostListModel
     }
 
     @Override
-    public void Search()
+    public void search()
     {
         if (getEntity() != null)
         {
             setSearchString("hosts: cluster=" + getEntity().getname()); //$NON-NLS-1$
-            super.Search();
+            super.search();
         }
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
         SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.VDS);
         tempVar.setRefresh(getIsQueryFirstTime());
-        super.SyncSearch(VdcQueryType.Search, tempVar);
+        super.syncSearch(VdcQueryType.Search, tempVar);
     }
 
     @Override

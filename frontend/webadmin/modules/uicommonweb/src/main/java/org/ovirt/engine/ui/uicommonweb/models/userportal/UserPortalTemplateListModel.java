@@ -21,7 +21,7 @@ import org.ovirt.engine.ui.uicompat.ObservableCollection;
 public class UserPortalTemplateListModel extends TemplateListModel
 {
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
         AsyncDataProvider.GetAllVmTemplates(new AsyncQuery(this, new INewAsyncCallback() {
             @Override

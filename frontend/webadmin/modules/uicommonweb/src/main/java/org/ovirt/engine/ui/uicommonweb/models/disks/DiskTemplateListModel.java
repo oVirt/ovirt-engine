@@ -36,7 +36,7 @@ public class DiskTemplateListModel extends SearchableListModel
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
         DiskImage diskImage = (DiskImage) getEntity();
         if (diskImage == null)

@@ -87,16 +87,16 @@ public class PermissionListModel extends SearchableListModel
     }
 
     @Override
-    public void Search()
+    public void search()
     {
         if (getEntity() != null)
         {
-            super.Search();
+            super.search();
         }
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
         VdcObjectType objType = getObjectType();
         boolean directOnly = (objType == VdcObjectType.VM ? true : false);
@@ -105,13 +105,13 @@ public class PermissionListModel extends SearchableListModel
         tempVar.setVdcObjectType(objType);
         tempVar.setDirectOnly(directOnly);
         tempVar.setRefresh(getIsQueryFirstTime());
-        super.SyncSearch(VdcQueryType.GetPermissionsForObject, tempVar);
+        super.syncSearch(VdcQueryType.GetPermissionsForObject, tempVar);
     }
 
     @Override
-    protected void AsyncSearch()
+    protected void asyncSearch()
     {
-        super.AsyncSearch();
+        super.asyncSearch();
 
         VdcObjectType objType = getObjectType();
         boolean directOnly = (objType == VdcObjectType.VM ? true : false);

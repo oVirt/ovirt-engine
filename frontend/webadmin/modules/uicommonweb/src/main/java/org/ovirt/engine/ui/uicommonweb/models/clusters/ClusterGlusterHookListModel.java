@@ -179,14 +179,14 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
     }
 
     @Override
-    public void Search() {
+    public void search() {
         if (getEntity() != null) {
-            super.Search();
+            super.search();
         }
     }
 
     @Override
-    protected void SyncSearch() {
+    protected void syncSearch() {
         if (getEntity() == null) {
             return;
         }
@@ -202,9 +202,9 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
     }
 
     @Override
-    protected void AsyncSearch() {
-        super.AsyncSearch();
-        SyncSearch();
+    protected void asyncSearch() {
+        super.asyncSearch();
+        syncSearch();
     }
 
     @Override

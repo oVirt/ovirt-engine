@@ -190,26 +190,26 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
         SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.VmPools);
         tempVar.setMaxCount(getSearchPageSize());
-        super.SyncSearch(VdcQueryType.Search, tempVar);
+        super.syncSearch(VdcQueryType.Search, tempVar);
     }
 
     @Override
-    protected void AsyncSearch()
+    protected void asyncSearch()
     {
-        super.AsyncSearch();
+        super.asyncSearch();
 
         setAsyncResult(Frontend.RegisterSearch(getSearchString(), SearchType.VmPools, getSearchPageSize()));
         setItems(getAsyncResult().getData());
     }
 
     @Override
-    public void Search()
+    public void search()
     {
-        super.Search();
+        super.search();
     }
 
     public void New()

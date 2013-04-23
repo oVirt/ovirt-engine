@@ -275,17 +275,17 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
         SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.Cluster);
         tempVar.setMaxCount(getSearchPageSize());
-        super.SyncSearch(VdcQueryType.Search, tempVar);
+        super.syncSearch(VdcQueryType.Search, tempVar);
     }
 
     @Override
-    protected void AsyncSearch()
+    protected void asyncSearch()
     {
-        super.AsyncSearch();
+        super.asyncSearch();
 
         setAsyncResult(Frontend.RegisterSearch(getSearchString(), SearchType.Cluster, getSearchPageSize()));
         setItems(getAsyncResult().getData());

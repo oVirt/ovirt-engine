@@ -313,10 +313,10 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     }
 
     @Override
-    protected void SyncSearch() {
+    protected void syncSearch() {
         SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.GlusterVolume);
         tempVar.setMaxCount(getSearchPageSize());
-        super.SyncSearch(VdcQueryType.Search, tempVar);
+        super.syncSearch(VdcQueryType.Search, tempVar);
     }
 
     @Override

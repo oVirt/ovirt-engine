@@ -34,12 +34,12 @@ public class DataCenterEventListModel extends SubTabEventListModel
     }
 
     @Override
-    public void Search()
+    public void search()
     {
         if (getEntity() != null)
         {
             setSearchString("Events: event_datacenter=" + getEntity().getname()); //$NON-NLS-1$
-            super.Search();
+            super.search();
         }
     }
 

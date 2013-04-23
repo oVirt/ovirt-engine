@@ -60,9 +60,9 @@ public class RolePermissionListModel extends SearchableListModel
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
-        super.SyncSearch();
+        super.syncSearch();
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -85,13 +85,13 @@ public class RolePermissionListModel extends SearchableListModel
     protected void onEntityChanged()
     {
         super.onEntityChanged();
-        Search();
+        search();
     }
 
     @Override
-    protected void AsyncSearch()
+    protected void asyncSearch()
     {
-        super.AsyncSearch();
+        super.asyncSearch();
 
         if (getEntity() == null)
         {

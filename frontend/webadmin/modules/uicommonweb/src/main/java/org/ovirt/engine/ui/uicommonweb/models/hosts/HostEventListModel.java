@@ -34,12 +34,12 @@ public class HostEventListModel extends SubTabEventListModel
     }
 
     @Override
-    public void Search()
+    public void search()
     {
         if (getEntity() != null)
         {
             setSearchString("events: host.name=" + getEntity().getName()); //$NON-NLS-1$
-            super.Search();
+            super.search();
         }
     }
 

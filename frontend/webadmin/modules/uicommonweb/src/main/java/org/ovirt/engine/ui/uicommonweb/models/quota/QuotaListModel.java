@@ -130,10 +130,10 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
     }
 
     @Override
-    protected void SyncSearch() {
+    protected void syncSearch() {
         SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.Quota);
         tempVar.setMaxCount(getSearchPageSize());
-        super.SyncSearch(VdcQueryType.Search, tempVar);
+        super.syncSearch(VdcQueryType.Search, tempVar);
     }
 
     private void updateActionAvailability() {
@@ -690,7 +690,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
     }
 
     private void OnSystemTreeSelectedItemChanged() {
-        Search();
+        search();
     }
 
     @Override

@@ -34,12 +34,12 @@ public class TemplateEventListModel extends SubTabEventListModel
     }
 
     @Override
-    public void Search()
+    public void search()
     {
         if (getEntity() != null)
         {
             preSearchCalled(getEntity());
-            super.Search();
+            super.search();
         }
     }
 

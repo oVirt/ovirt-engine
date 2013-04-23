@@ -23,13 +23,13 @@ public class QuotaVmListModel extends SearchableListModel {
     }
 
     @Override
-    protected void SyncSearch() {
+    protected void syncSearch() {
         if (getEntity() == null)
         {
             return;
         }
 
-        super.SyncSearch();
+        super.syncSearch();
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);

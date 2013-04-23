@@ -30,21 +30,21 @@ public class ClusterVmListModel extends VmListModel
     }
 
     @Override
-    public void Search()
+    public void search()
     {
         if (getEntity() != null)
         {
             setSearchString("Vms: cluster=" + getEntity().getname()); //$NON-NLS-1$
-            super.Search();
+            super.search();
         }
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
         SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.VM);
         tempVar.setRefresh(getIsQueryFirstTime());
-        super.SyncSearch(VdcQueryType.Search, tempVar);
+        super.syncSearch(VdcQueryType.Search, tempVar);
     }
 
     @Override

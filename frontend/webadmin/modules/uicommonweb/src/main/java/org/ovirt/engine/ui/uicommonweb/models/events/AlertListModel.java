@@ -23,7 +23,7 @@ public class AlertListModel extends SearchableListModel
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);

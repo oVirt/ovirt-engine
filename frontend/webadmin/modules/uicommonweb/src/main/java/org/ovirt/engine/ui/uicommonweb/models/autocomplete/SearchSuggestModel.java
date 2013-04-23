@@ -91,18 +91,18 @@ public class SearchSuggestModel extends SearchableListModel implements ITaskTarg
     }
 
     @Override
-    protected void AsyncSearch()
+    protected void asyncSearch()
     {
-        super.AsyncSearch();
+        super.asyncSearch();
 
         Task.Create(this, null).InvokeUIThread();
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
-        super.SyncSearch();
-        AsyncSearch();
+        super.syncSearch();
+        asyncSearch();
     }
 
     public void UpdateOptionsAsync(String search)

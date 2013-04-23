@@ -73,9 +73,9 @@ public class TemplateStorageListModel extends SearchableListModel
     }
 
     @Override
-    protected void AsyncSearch()
+    protected void asyncSearch()
     {
-        super.AsyncSearch();
+        super.asyncSearch();
 
         VmTemplate template = (VmTemplate) getEntity();
 
@@ -85,17 +85,17 @@ public class TemplateStorageListModel extends SearchableListModel
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
         if (getEntity() == null)
         {
             return;
         }
 
-        super.SyncSearch();
+        super.syncSearch();
 
         VmTemplate template = (VmTemplate) getEntity();
-        super.SyncSearch(VdcQueryType.GetStorageDomainsByVmTemplateId,
+        super.syncSearch(VdcQueryType.GetStorageDomainsByVmTemplateId,
                 new GetStorageDomainsByVmTemplateIdQueryParameters(template.getId()));
     }
 

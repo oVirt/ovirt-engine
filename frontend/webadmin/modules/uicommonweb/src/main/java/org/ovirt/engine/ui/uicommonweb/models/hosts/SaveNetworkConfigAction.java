@@ -37,7 +37,7 @@ public class SaveNetworkConfigAction {
                                 windowModel.StopProgress();
                                 listModel.setWindow(null);
                                 listModel.setConfirmWindow(null);
-                                listModel.Search();
+                                listModel.search();
                             }
                         }
 

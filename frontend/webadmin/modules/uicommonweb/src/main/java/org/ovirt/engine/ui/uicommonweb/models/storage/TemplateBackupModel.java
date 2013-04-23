@@ -279,7 +279,7 @@ public class TemplateBackupModel extends VmBackupModel
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
         if (getEntity() == null || getEntity().getStorageDomainType() != StorageDomainType.ImportExport
                 || getEntity().getStorageDomainSharedStatus() != StorageDomainSharedStatus.Active)
@@ -344,10 +344,10 @@ public class TemplateBackupModel extends VmBackupModel
     }
 
     @Override
-    protected void AsyncSearch()
+    protected void asyncSearch()
     {
-        super.AsyncSearch();
-        SyncSearch();
+        super.asyncSearch();
+        syncSearch();
     }
 
     @Override

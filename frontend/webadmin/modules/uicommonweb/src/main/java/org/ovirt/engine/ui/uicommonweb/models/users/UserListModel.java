@@ -382,11 +382,11 @@ public class UserListModel extends ListWithDetailsModel
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
         SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.DBUser);
         tempVar.setMaxCount(getSearchPageSize());
-        super.SyncSearch(VdcQueryType.Search, tempVar);
+        super.syncSearch(VdcQueryType.Search, tempVar);
     }
 
     private EntityModel userGroupListModel;
@@ -422,9 +422,9 @@ public class UserListModel extends ListWithDetailsModel
     }
 
     @Override
-    protected void AsyncSearch()
+    protected void asyncSearch()
     {
-        super.AsyncSearch();
+        super.asyncSearch();
 
         setAsyncResult(Frontend.RegisterSearch(getSearchString(), SearchType.DBUser, getSearchPageSize()));
         setItems(getAsyncResult().getData());

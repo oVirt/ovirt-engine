@@ -323,9 +323,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
-        super.SyncSearch();
+        super.syncSearch();
         Frontend.RunQuery(VdcQueryType.GetAllVmsAndVmPools,
                 new VdcQueryParametersBase(),
                 new AsyncQuery(this, new INewAsyncCallback() {
@@ -358,10 +358,10 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     }
 
     @Override
-    protected void AsyncSearch()
+    protected void asyncSearch()
     {
-        super.AsyncSearch();
-        SyncSearch();
+        super.asyncSearch();
+        syncSearch();
     }
 
     @Override

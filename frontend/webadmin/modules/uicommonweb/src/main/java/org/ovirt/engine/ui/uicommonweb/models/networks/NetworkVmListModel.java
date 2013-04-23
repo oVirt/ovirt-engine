@@ -46,7 +46,7 @@ public class NetworkVmListModel extends SearchableListModel
 
     public void setViewFilterType(NetworkVmFilter viewFilterType) {
         this.viewFilterType = viewFilterType;
-        Search();
+        search();
     }
 
     @Override
@@ -88,15 +88,15 @@ public class NetworkVmListModel extends SearchableListModel
     }
 
     @Override
-    public void Search() {
+    public void search() {
         if (getEntity() != null)
         {
-            super.Search();
+            super.search();
         }
     }
 
     @Override
-    protected void SyncSearch() {
+    protected void syncSearch() {
         if (getEntity() == null)
         {
             return;

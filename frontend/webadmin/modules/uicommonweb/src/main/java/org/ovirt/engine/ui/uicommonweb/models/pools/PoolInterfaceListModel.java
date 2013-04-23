@@ -41,7 +41,7 @@ public class PoolInterfaceListModel extends SearchableListModel
                            return;
                         }
                         PoolInterfaceListModel poolInterfaceListModel = (PoolInterfaceListModel) model;
-                        poolInterfaceListModel.SyncSearch(VdcQueryType.GetVmInterfacesByVmId,
+                        poolInterfaceListModel.syncSearch(VdcQueryType.GetVmInterfacesByVmId,
                                 new IdQueryParameters(vm.getId()));
                     }
                 }

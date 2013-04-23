@@ -497,8 +497,8 @@ public class VmBackupModel extends ManageBackupModel {
     }
 
     @Override
-    protected void SyncSearch() {
-        super.SyncSearch();
+    protected void syncSearch() {
+        super.syncSearch();
 
         if (getEntity() == null
                 || getEntity().getStorageDomainType() != StorageDomainType.ImportExport
@@ -539,9 +539,9 @@ public class VmBackupModel extends ManageBackupModel {
     }
 
     @Override
-    protected void AsyncSearch() {
-        super.AsyncSearch();
-        SyncSearch();
+    protected void asyncSearch() {
+        super.asyncSearch();
+        syncSearch();
     }
 
     @Override

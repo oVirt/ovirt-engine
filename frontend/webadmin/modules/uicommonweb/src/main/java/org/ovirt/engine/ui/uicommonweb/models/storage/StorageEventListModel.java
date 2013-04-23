@@ -35,12 +35,12 @@ public class StorageEventListModel extends SubTabEventListModel
     }
 
     @Override
-    public void Search()
+    public void search()
     {
         if (getEntity() != null)
         {
             setSearchString("events: event_storage=" + getEntity().getStorageName()); //$NON-NLS-1$
-            super.Search();
+            super.search();
         }
     }
 

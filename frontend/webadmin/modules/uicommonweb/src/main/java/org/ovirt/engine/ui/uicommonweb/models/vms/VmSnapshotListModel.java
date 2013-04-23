@@ -295,7 +295,7 @@ public class VmSnapshotListModel extends SearchableListModel
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
         VM vm = (VM) getEntity();
         if (vm == null)
@@ -303,7 +303,7 @@ public class VmSnapshotListModel extends SearchableListModel
             return;
         }
 
-        super.SyncSearch(VdcQueryType.GetAllVmSnapshotsByVmId, new GetAllVmSnapshotsByVmIdParameters(vm.getId()));
+        super.syncSearch(VdcQueryType.GetAllVmSnapshotsByVmId, new GetAllVmSnapshotsByVmIdParameters(vm.getId()));
     }
 
     @Override

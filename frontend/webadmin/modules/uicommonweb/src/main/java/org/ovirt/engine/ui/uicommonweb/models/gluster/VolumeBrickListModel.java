@@ -157,7 +157,7 @@ public class VolumeBrickListModel extends SearchableListModel {
     }
 
     @Override
-    protected void SyncSearch() {
+    protected void syncSearch() {
         onEntityChanged();
     }
 

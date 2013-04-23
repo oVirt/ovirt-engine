@@ -112,7 +112,7 @@ public class VmInterfaceListModel extends SearchableListModel
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
         if (getEntity() == null)
         {
@@ -128,16 +128,16 @@ public class VmInterfaceListModel extends SearchableListModel
             public void onSuccess(Object model, Object result)
             {
                 setGuestAgentData((List<VmGuestAgentInterface>) result);
-                VmInterfaceListModel.super.SyncSearch(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(vm.getId()));
+                VmInterfaceListModel.super.syncSearch(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(vm.getId()));
             }
         };
         AsyncDataProvider.getVmGuestAgentInterfacesByVmId(getVmGuestAgentInterfacesByVmIdQuery, vm.getId());
     }
 
     @Override
-    protected void AsyncSearch()
+    protected void asyncSearch()
     {
-        super.AsyncSearch();
+        super.asyncSearch();
 
         VM vm = getEntity();
 

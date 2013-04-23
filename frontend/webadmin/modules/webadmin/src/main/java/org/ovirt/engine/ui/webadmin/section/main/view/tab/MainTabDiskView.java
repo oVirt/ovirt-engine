@@ -262,6 +262,6 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         getTable().getSelectionModel().clear();
         getMainModel().setItems(null);
         getMainModel().setSearchString(commonModel.getEffectiveSearchString());
-        getMainModel().Search();
+        getMainModel().search();
     }
 }

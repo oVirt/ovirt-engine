@@ -169,10 +169,10 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         alertImage = SafeHtmlUtils.fromTrustedString(image);
 
         // no body is invoking the alert search (timer)
-        alertModelProvider.getModel().Search();
+        alertModelProvider.getModel().search();
 
         // no body is invoking the alert search (timer)
-        taskModelProvider.getModel().Search();
+        taskModelProvider.getModel().search();
 
         updateButtonResources();
         updateEventsButton();

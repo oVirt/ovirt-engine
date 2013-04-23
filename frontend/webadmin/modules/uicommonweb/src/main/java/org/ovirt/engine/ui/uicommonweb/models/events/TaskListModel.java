@@ -29,7 +29,7 @@ public class TaskListModel extends SearchableListModel {
     }
 
     @Override
-    protected void SyncSearch() {
+    protected void syncSearch() {
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {

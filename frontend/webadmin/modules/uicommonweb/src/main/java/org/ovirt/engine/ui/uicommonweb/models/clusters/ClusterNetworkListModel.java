@@ -105,23 +105,23 @@ public class ClusterNetworkListModel extends SearchableListModel
     }
 
     @Override
-    public void Search()
+    public void search()
     {
         if (getEntity() != null)
         {
-            super.Search();
+            super.search();
         }
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
         if (getEntity() == null)
         {
             return;
         }
 
-        super.SyncSearch();
+        super.syncSearch();
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -142,9 +142,9 @@ public class ClusterNetworkListModel extends SearchableListModel
     }
 
     @Override
-    protected void AsyncSearch()
+    protected void asyncSearch()
     {
-        super.AsyncSearch();
+        super.asyncSearch();
 
         setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetAllNetworksByClusterId,
                 new IdQueryParameters(getEntity().getId())));

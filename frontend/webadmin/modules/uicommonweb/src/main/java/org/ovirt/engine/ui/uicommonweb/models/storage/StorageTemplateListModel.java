@@ -52,11 +52,11 @@ public class StorageTemplateListModel extends SearchableListModel
     }
 
     @Override
-    public void Search()
+    public void search()
     {
         if (getEntity() != null)
         {
-            super.Search();
+            super.search();
         }
         else
         {
@@ -65,14 +65,14 @@ public class StorageTemplateListModel extends SearchableListModel
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
         if (getEntity() == null)
         {
             return;
         }
 
-        super.SyncSearch();
+        super.syncSearch();
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -92,10 +92,10 @@ public class StorageTemplateListModel extends SearchableListModel
     }
 
     @Override
-    protected void AsyncSearch()
+    protected void asyncSearch()
     {
-        super.AsyncSearch();
-        SyncSearch();
+        super.asyncSearch();
+        syncSearch();
     }
 
     @Override

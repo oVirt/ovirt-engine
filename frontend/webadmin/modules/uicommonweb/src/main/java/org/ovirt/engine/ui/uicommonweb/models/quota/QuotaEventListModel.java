@@ -38,12 +38,12 @@ public class QuotaEventListModel extends SubTabEventListModel
     }
 
     @Override
-    public void Search()
+    public void search()
     {
         if (getEntity() != null)
         {
             setSearchString("Events: quota=" + getEntity().getQuotaName()); //$NON-NLS-1$
-            super.Search();
+            super.search();
         }
     }
 

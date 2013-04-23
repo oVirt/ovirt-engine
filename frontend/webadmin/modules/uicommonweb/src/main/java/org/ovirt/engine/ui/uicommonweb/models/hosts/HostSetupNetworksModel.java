@@ -787,7 +787,7 @@ public class HostSetupNetworksModel extends EntityModel {
                     {
                         model.StopProgress();
                         sourceListModel.setWindow(null);
-                        sourceListModel.Search();
+                        sourceListModel.search();
                     }
                 }
                 else

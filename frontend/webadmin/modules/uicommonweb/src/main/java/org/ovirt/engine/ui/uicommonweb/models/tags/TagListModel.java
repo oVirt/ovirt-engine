@@ -184,9 +184,9 @@ public class TagListModel extends SearchableListModel
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
-        super.SyncSearch();
+        super.syncSearch();
 
         AsyncDataProvider.GetRootTag(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -383,10 +383,10 @@ public class TagListModel extends SearchableListModel
     }
 
     @Override
-    protected void AsyncSearch()
+    protected void asyncSearch()
     {
-        super.AsyncSearch();
-        SyncSearch();
+        super.asyncSearch();
+        syncSearch();
     }
 
     private void Reset()

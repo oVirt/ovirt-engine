@@ -52,7 +52,7 @@ public class TemplateImportDiskListModel extends SearchableListModel
     }
 
     @Override
-    protected void SyncSearch() {
+    protected void syncSearch() {
     }
 
     @Override

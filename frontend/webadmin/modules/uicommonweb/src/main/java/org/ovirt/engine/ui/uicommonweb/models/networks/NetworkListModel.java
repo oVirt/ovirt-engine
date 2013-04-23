@@ -164,15 +164,15 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
     }
 
     @Override
-    protected void SyncSearch() {
+    protected void syncSearch() {
         SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.Network);
         tempVar.setMaxCount(getSearchPageSize());
-        super.SyncSearch(VdcQueryType.Search, tempVar);
+        super.syncSearch(VdcQueryType.Search, tempVar);
     }
 
     @Override
-    protected void AsyncSearch() {
-        super.AsyncSearch();
+    protected void asyncSearch() {
+        super.asyncSearch();
 
         setAsyncResult(Frontend.RegisterSearch(getSearchString(), SearchType.Network, getSearchPageSize()));
         setItems(getAsyncResult().getData());

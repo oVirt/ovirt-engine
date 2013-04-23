@@ -219,7 +219,7 @@ public class VmDiskListModel extends VmDiskListModelBase
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
         if (getEntity() == null)
         {
@@ -227,13 +227,13 @@ public class VmDiskListModel extends VmDiskListModelBase
         }
         VM vm = getEntity();
 
-        super.SyncSearch(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(vm.getId()));
+        super.syncSearch(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(vm.getId()));
     }
 
     @Override
-    protected void AsyncSearch()
+    protected void asyncSearch()
     {
-        super.AsyncSearch();
+        super.asyncSearch();
 
         VM vm = getEntity();
 

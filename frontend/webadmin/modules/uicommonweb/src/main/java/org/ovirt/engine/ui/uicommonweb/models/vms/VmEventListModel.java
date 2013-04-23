@@ -24,14 +24,14 @@ public class VmEventListModel extends SubTabEventListModel
     }
 
     @Override
-    public void Search()
+    public void search()
     {
         VM vm = (VM) getEntity();
 
         if (getEntity() != null)
         {
             preSearchCalled(vm);
-            super.Search();
+            super.search();
         }
     }
 

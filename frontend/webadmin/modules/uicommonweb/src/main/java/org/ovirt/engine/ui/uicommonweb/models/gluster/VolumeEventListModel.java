@@ -34,12 +34,12 @@ public class VolumeEventListModel extends SubTabEventListModel
     }
 
     @Override
-    public void Search()
+    public void search()
     {
         if (getEntity() != null)
         {
             setSearchString("Events: volume.name=" + getEntity().getName()); //$NON-NLS-1$
-            super.Search();
+            super.search();
         }
     }
 

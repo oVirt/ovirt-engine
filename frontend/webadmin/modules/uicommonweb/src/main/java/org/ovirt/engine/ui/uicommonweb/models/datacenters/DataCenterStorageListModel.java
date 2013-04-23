@@ -186,18 +186,18 @@ public class DataCenterStorageListModel extends SearchableListModel
     }
 
     @Override
-    public void Search()
+    public void search()
     {
         if (getEntity() != null)
         {
             // omer - overriding AsyncSearch - using query instead of search
             // SearchString = StringFormat.format("storage: datacenter={0}", Entity.name);
-            super.Search();
+            super.search();
         }
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -216,9 +216,9 @@ public class DataCenterStorageListModel extends SearchableListModel
     }
 
     @Override
-    protected void AsyncSearch()
+    protected void asyncSearch()
     {
-        super.AsyncSearch();
+        super.asyncSearch();
 
         setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetStorageDomainsByStoragePoolId,
                 new StoragePoolQueryParametersBase(getEntity().getId())));

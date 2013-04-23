@@ -122,9 +122,9 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
-        super.SyncSearch();
+        super.syncSearch();
         Frontend.RunQuery(VdcQueryType.GetAllVmsAndVmPools,
                 new VdcQueryParametersBase(),
                 new AsyncQuery(this, new INewAsyncCallback() {
@@ -157,10 +157,10 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
     }
 
     @Override
-    protected void AsyncSearch()
+    protected void asyncSearch()
     {
-        super.AsyncSearch();
-        SyncSearch();
+        super.asyncSearch();
+        syncSearch();
     }
 
     @Override

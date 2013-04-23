@@ -117,30 +117,30 @@ public class TemplateDiskListModel extends SearchableListModel
     }
 
     @Override
-    public void Search()
+    public void search()
     {
         if (getEntityStronglyTyped() != null)
         {
-            super.Search();
+            super.search();
         }
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
         if (getEntity() == null)
         {
             return;
         }
 
-        super.SyncSearch(VdcQueryType.GetVmTemplatesDisks,
+        super.syncSearch(VdcQueryType.GetVmTemplatesDisks,
                 new GetVmTemplatesDisksParameters(getEntityStronglyTyped().getId()));
     }
 
     @Override
-    protected void AsyncSearch()
+    protected void asyncSearch()
     {
-        super.AsyncSearch();
+        super.asyncSearch();
 
         setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetVmTemplatesDisks,
                 new GetVmTemplatesDisksParameters(getEntityStronglyTyped().getId())));

@@ -64,12 +64,12 @@ public class PoolVmListModel extends VmListModel
     }
 
     @Override
-    public void Search()
+    public void search()
     {
         if (getEntity() != null)
         {
             setSearchString("Vms: pool=" + getEntity().getName()); //$NON-NLS-1$
-            super.Search();
+            super.search();
         }
     }
 

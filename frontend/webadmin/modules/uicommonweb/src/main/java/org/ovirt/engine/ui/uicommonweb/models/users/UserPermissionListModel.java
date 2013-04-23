@@ -68,16 +68,16 @@ public class UserPermissionListModel extends SearchableListModel
     }
 
     @Override
-    public void Search()
+    public void search()
     {
         if (getEntity() != null)
         {
-            super.Search();
+            super.search();
         }
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
         if (getEntity() == null)
         {
@@ -114,9 +114,9 @@ public class UserPermissionListModel extends SearchableListModel
     }
 
     @Override
-    protected void AsyncSearch()
+    protected void asyncSearch()
     {
-        super.AsyncSearch();
+        super.asyncSearch();
 
         setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetPermissionsByAdElementId,
                 new MultilevelAdministrationByAdElementIdParameters(getEntity().getuser_id())));

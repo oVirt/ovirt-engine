@@ -76,9 +76,9 @@ public class StorageDiskListModel extends SearchableListModel
     }
 
     @Override
-    public void Search() {
+    public void search() {
         if (getEntity() != null) {
-            super.Search();
+            super.search();
         }
         else {
             setItems(null);
@@ -90,12 +90,12 @@ public class StorageDiskListModel extends SearchableListModel
     }
 
     @Override
-    protected void SyncSearch() {
+    protected void syncSearch() {
         if (getEntity() == null) {
             return;
         }
 
-        super.SyncSearch();
+        super.syncSearch();
 
         StorageDomainQueryParametersBase parameters =
                 new StorageDomainQueryParametersBase((getEntity()).getId());

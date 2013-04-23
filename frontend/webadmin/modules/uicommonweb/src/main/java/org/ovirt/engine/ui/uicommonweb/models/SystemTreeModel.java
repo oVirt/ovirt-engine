@@ -180,16 +180,16 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
     }
 
     @Override
-    protected void AsyncSearch()
+    protected void asyncSearch()
     {
-        super.AsyncSearch();
-        SyncSearch();
+        super.asyncSearch();
+        syncSearch();
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
-        super.SyncSearch();
+        super.syncSearch();
 
         AsyncQuery dcQuery = new AsyncQuery();
         dcQuery.setModel(this);

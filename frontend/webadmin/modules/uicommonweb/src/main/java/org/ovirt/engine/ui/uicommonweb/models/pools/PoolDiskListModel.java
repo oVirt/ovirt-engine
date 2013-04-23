@@ -54,7 +54,7 @@ public class PoolDiskListModel extends VmDiskListModelBase
 
                         PoolDiskListModel poolDiskListModel = (PoolDiskListModel) model;
                         poolDiskListModel.setVM(vm);
-                        poolDiskListModel.SyncSearch();
+                        poolDiskListModel.syncSearch();
                     }
                 }
             };
@@ -65,14 +65,14 @@ public class PoolDiskListModel extends VmDiskListModelBase
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
         if (getVM() == null)
         {
             return;
         }
 
-        super.SyncSearch(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(getVM().getId()));
+        super.syncSearch(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(getVM().getId()));
     }
 
     @Override

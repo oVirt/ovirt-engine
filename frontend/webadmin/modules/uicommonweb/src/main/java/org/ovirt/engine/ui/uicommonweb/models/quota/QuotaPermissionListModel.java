@@ -22,7 +22,7 @@ public class QuotaPermissionListModel extends PermissionListModel {
     }
 
     @Override
-    protected void SyncSearch() {
+    protected void syncSearch() {
         GetPermissionsForObjectParameters tempVar = new GetPermissionsForObjectParameters();
         tempVar.setObjectId(getEntityGuid());
         tempVar.setVdcObjectType(getObjectType());

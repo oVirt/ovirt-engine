@@ -334,9 +334,9 @@ public abstract class SearchableListModel extends ListModel implements GridContr
                     logger.fine(SearchableListModel.this.getClass().getName() + ": Executing search"); //$NON-NLS-1$
                     if (getIsAsync())
                     {
-                        AsyncSearch();
+                        asyncSearch();
                     } else {
-                        SyncSearch();
+                        syncSearch();
                     }
                 }
 
@@ -389,7 +389,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
     {
     }
 
-    public void Search()
+    public void search()
     {
         // Defer search if there max result limit was not yet retrieved.
         if (getSearchPageSize() == UnknownInteger)
@@ -408,20 +408,20 @@ public abstract class SearchableListModel extends ListModel implements GridContr
 
             if (getIsAsync())
             {
-                AsyncSearch();
+                asyncSearch();
             }
             else
             {
                 if (getIsTimerDisabled() == false)
                 {
                     setIsQueryFirstTime(true);
-                    SyncSearch();
+                    syncSearch();
                     setIsQueryFirstTime(false);
                     getTimer().start();
                 }
                 else
                 {
-                    SyncSearch();
+                    syncSearch();
                 }
             }
         }
@@ -431,7 +431,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
     {
         getTimer().stop();
         setIsQueryFirstTime(true);
-        SyncSearch();
+        syncSearch();
 
         if (!getIsTimerDisabled())
         {
@@ -517,7 +517,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         }
         if (ev.matchesDefinition(ProvideTickEvent.Definition))
         {
-            SyncSearch();
+            syncSearch();
         }
     }
 
@@ -677,7 +677,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
     /**
      * Override this method to take care on sync fetching.
      */
-    protected void SyncSearch()
+    protected void syncSearch()
     {
     }
 
@@ -784,7 +784,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         }
     }
 
-    public void SyncSearch(VdcQueryType vdcQueryType, VdcQueryParametersBase vdcQueryParametersBase)
+    public void syncSearch(VdcQueryType vdcQueryType, VdcQueryParametersBase vdcQueryParametersBase)
     {
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -807,7 +807,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
     /**
      * Override this method to take care on async fetching.
      */
-    protected void AsyncSearch()
+    protected void asyncSearch()
     {
     }
 
@@ -827,7 +827,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
 
         if (command == getSearchCommand())
         {
-            Search();
+            search();
         }
         else if (command == getSearchNextPageCommand())
         {

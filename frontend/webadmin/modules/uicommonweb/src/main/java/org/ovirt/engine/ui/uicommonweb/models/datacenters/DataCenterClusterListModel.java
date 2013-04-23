@@ -27,12 +27,12 @@ public class DataCenterClusterListModel extends ClusterListModel
     }
 
     @Override
-    public void Search()
+    public void search()
     {
         if (getEntity() != null)
         {
             setSearchString("clusters: datacenter.name=" + getEntity().getname()); //$NON-NLS-1$
-            super.Search();
+            super.search();
         }
     }
 

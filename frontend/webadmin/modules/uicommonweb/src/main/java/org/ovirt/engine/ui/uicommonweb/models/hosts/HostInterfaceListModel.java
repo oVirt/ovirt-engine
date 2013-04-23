@@ -351,11 +351,11 @@ public class HostInterfaceListModel extends SearchableListModel
     }
 
     @Override
-    public void Search()
+    public void search()
     {
         if (getEntity() != null)
         {
-            super.Search();
+            super.search();
         }
     }
 
@@ -392,9 +392,9 @@ public class HostInterfaceListModel extends SearchableListModel
     }
 
     @Override
-    protected void SyncSearch()
+    protected void syncSearch()
     {
-        super.SyncSearch();
+        super.syncSearch();
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -440,11 +440,11 @@ public class HostInterfaceListModel extends SearchableListModel
     }
 
     @Override
-    protected void AsyncSearch()
+    protected void asyncSearch()
     {
-        super.AsyncSearch();
+        super.asyncSearch();
 
-        SyncSearch();
+        syncSearch();
     }
 
     private void UpdateItems(Iterable<VdsNetworkInterface> source)
@@ -1280,7 +1280,7 @@ public class HostInterfaceListModel extends SearchableListModel
                             {
                                 hostInterfaceListModel.getcurrentModel().StopProgress();
                                 hostInterfaceListModel.Cancel();
-                                hostInterfaceListModel.Search();
+                                hostInterfaceListModel.search();
                             }
                         }
                         else
@@ -1647,7 +1647,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                 {
                                     hostInterfaceListModel.getcurrentModel().StopProgress();
                                     hostInterfaceListModel.Cancel();
-                                    hostInterfaceListModel.Search();
+                                    hostInterfaceListModel.search();
                                 }
                             }
                             else
@@ -1731,7 +1731,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                 {
                                     hostInterfaceListModel.getcurrentModel().StopProgress();
                                     hostInterfaceListModel.Cancel();
-                                    hostInterfaceListModel.Search();
+                                    hostInterfaceListModel.search();
                                 }
                             }
                             else
@@ -1820,7 +1820,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                     {
                                         hostInterfaceListModel.getcurrentModel().StopProgress();
                                         hostInterfaceListModel.Cancel();
-                                        hostInterfaceListModel.Search();
+                                        hostInterfaceListModel.search();
                                     }
                                 }
                                 else
@@ -1932,7 +1932,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                             {
                                                 hostInterfaceListModel.getcurrentModel().StopProgress();
                                                 hostInterfaceListModel.Cancel();
-                                                hostInterfaceListModel.Search();
+                                                hostInterfaceListModel.search();
                                             }
                                         }
                                         else
@@ -2063,7 +2063,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                 {
                                     hostInterfaceListModel.getcurrentModel().StopProgress();
                                     hostInterfaceListModel.Cancel();
-                                    hostInterfaceListModel.Search();
+                                    hostInterfaceListModel.search();
                                 }
                             }
                             else
@@ -2163,7 +2163,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                     {
                                         hostInterfaceListModel.getcurrentModel().StopProgress();
                                         hostInterfaceListModel.Cancel();
-                                        hostInterfaceListModel.Search();
+                                        hostInterfaceListModel.search();
                                     }
                                 }
                                 else

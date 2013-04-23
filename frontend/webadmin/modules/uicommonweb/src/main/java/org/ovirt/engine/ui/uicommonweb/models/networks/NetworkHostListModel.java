@@ -44,15 +44,15 @@ public class NetworkHostListModel extends SearchableListModel
     }
 
     @Override
-    public void Search() {
+    public void search() {
         if (getEntity() != null)
         {
-            super.Search();
+            super.search();
         }
     }
 
     @Override
-    protected void SyncSearch() {
+    protected void syncSearch() {
         if (getEntity() == null)
         {
             return;
@@ -182,7 +182,7 @@ public class NetworkHostListModel extends SearchableListModel
 
     public void setViewFilterType(NetworkHostFilter viewFilterType) {
         this.viewFilterType = viewFilterType;
-        Search();
+        search();
     }
 
     @Override
