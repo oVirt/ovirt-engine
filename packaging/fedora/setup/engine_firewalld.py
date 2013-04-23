@@ -4,6 +4,22 @@ import basedefs
 ALREADY_ENABLED = 11
 
 
+def isPermanentSupported():
+    """
+    check if firewall-cmd support --permanent option
+    """
+    cmd = [
+        basedefs.EXEC_FIREWALL_CMD,
+        '--help',
+    ]
+    out, rc = utils.execCmd(
+        cmdList=cmd,
+        failOnError=False,
+    )
+    supported = (out.find('--permanent') != -1)
+    return supported
+
+
 def getActiveZones():
     cmd = [
         basedefs.EXEC_FIREWALL_CMD,

@@ -28,6 +28,8 @@ from optparse import OptionParser, OptionGroup
 from setup_controller import Controller
 from miniyum import MiniYum
 
+import engine_firewalld as firewalld
+
 # Globals
 controller = Controller()
 logFile = os.path.join(basedefs.DIR_LOG,basedefs.FILE_INSTALLER_LOG)
@@ -961,7 +963,7 @@ def getFirewalls():
     fwd = utils.Service("firewalld")
 
     # Add available services to list
-    if fwd.available():
+    if fwd.available() and firewalld.isPermanentSupported():
         firewalls.append("Firewalld")
     if iptables.available():
         firewalls.append("iptables")
@@ -1032,11 +1034,6 @@ def _createFirewalldConfig():
 
 def _configureFirewalld():
     logging.debug("configuring firewalld")
-
-    # Load firewalld module only when needed.
-    # This will fail if firewalld isn't available in the system.
-    import engine_firewalld as firewalld
-
     # Always start firewalld, otherwise, we will get DBus exception
     service = utils.Service("firewalld")
     service.start(True)
