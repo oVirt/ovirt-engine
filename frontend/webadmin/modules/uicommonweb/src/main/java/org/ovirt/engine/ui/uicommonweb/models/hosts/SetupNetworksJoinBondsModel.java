@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.BondNetworkInterfaceModel;
@@ -25,7 +24,6 @@ public class SetupNetworksJoinBondsModel extends SetupNetworksBondModel {
             BondNetworkInterfaceModel target) {
 
         setTitle(ConstantsManager.getInstance().getConstants().joinBondsTitle());
-        setBootProtocol(NetworkBootProtocol.NONE);
 
         Set<String> availableBonds = new HashSet<String>();
         availableBonds.addAll(freeBonds);
