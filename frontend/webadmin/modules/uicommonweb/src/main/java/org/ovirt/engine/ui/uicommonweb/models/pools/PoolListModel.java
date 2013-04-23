@@ -119,7 +119,6 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
     @Override
     public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
         systemTreeSelectedItem = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("SystemTreeSelectedItem")); //$NON-NLS-1$
     }
 
     protected Object[] getSelectedKeys()
