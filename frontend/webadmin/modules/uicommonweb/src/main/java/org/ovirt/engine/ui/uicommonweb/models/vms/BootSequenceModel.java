@@ -154,9 +154,9 @@ public class BootSequenceModel extends ListModel
     }
 
     @Override
-    protected void OnSelectedItemChanged()
+    protected void onSelectedItemChanged()
     {
-        super.OnSelectedItemChanged();
+        super.onSelectedItemChanged();
         UpdateActionAvailability();
     }
 

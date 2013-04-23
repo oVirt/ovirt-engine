@@ -141,16 +141,16 @@ public class NetworkTemplateListModel extends SearchableListModel
     }
 
     @Override
-    protected void OnSelectedItemChanged()
+    protected void onSelectedItemChanged()
     {
-        super.OnSelectedItemChanged();
+        super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void SelectedItemsChanged()
+    protected void selectedItemsChanged()
     {
-        super.SelectedItemsChanged();
+        super.selectedItemsChanged();
         updateActionAvailability();
     }
 

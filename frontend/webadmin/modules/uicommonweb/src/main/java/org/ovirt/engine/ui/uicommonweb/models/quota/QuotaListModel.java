@@ -103,14 +103,14 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
     }
 
     @Override
-    protected void OnSelectedItemChanged() {
-        super.OnSelectedItemChanged();
+    protected void onSelectedItemChanged() {
+        super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void SelectedItemsChanged() {
-        super.SelectedItemsChanged();
+    protected void selectedItemsChanged() {
+        super.selectedItemsChanged();
         updateActionAvailability();
     }
 

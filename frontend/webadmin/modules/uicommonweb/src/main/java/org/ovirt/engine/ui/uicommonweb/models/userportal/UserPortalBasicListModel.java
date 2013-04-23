@@ -211,9 +211,9 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
     }
 
     @Override
-    protected void OnSelectedItemChanged()
+    protected void onSelectedItemChanged()
     {
-        super.OnSelectedItemChanged();
+        super.onSelectedItemChanged();
 
         UpdateSelectedEntityDetails();
     }

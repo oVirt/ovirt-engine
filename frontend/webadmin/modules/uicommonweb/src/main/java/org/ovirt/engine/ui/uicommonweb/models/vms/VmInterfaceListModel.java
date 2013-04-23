@@ -188,9 +188,9 @@ public class VmInterfaceListModel extends SearchableListModel
     }
 
     @Override
-    protected void SelectedItemsChanged()
+    protected void selectedItemsChanged()
     {
-        super.SelectedItemsChanged();
+        super.selectedItemsChanged();
         UpdateActionAvailability();
     }
 
@@ -271,9 +271,9 @@ public class VmInterfaceListModel extends SearchableListModel
     }
 
     @Override
-    protected void OnSelectedItemChanging(Object newValue, Object oldValue) {
+    protected void onSelectedItemChanging(Object newValue, Object oldValue) {
         initSelectionGeustAgentData(newValue);
-        super.OnSelectedItemChanging(newValue, oldValue);
+        super.onSelectedItemChanging(newValue, oldValue);
     }
 
     private void initSelectionGeustAgentData(Object selectedItem) {
@@ -294,9 +294,9 @@ public class VmInterfaceListModel extends SearchableListModel
     }
 
     @Override
-    protected void OnSelectedItemChanged()
+    protected void onSelectedItemChanged()
     {
-        super.OnSelectedItemChanged();
+        super.onSelectedItemChanged();
         UpdateActionAvailability();
     }
 

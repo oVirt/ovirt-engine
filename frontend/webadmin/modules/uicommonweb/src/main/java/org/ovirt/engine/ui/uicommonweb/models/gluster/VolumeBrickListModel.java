@@ -103,15 +103,15 @@ public class VolumeBrickListModel extends SearchableListModel {
     }
 
     @Override
-    protected void OnSelectedItemChanged() {
-        super.OnSelectedItemChanged();
+    protected void onSelectedItemChanged() {
+        super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void SelectedItemsChanged()
+    protected void selectedItemsChanged()
     {
-        super.SelectedItemsChanged();
+        super.selectedItemsChanged();
         updateActionAvailability();
     }
 

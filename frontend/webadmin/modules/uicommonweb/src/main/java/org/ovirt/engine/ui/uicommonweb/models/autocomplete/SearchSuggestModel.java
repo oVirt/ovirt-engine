@@ -204,9 +204,9 @@ public class SearchSuggestModel extends SearchableListModel implements ITaskTarg
     }
 
     @Override
-    protected void OnSelectedItemChanged()
+    protected void onSelectedItemChanged()
     {
-        super.OnSelectedItemChanged();
+        super.onSelectedItemChanged();
 
         List selectedItem = (List) getSelectedItem();
         if (selectedItem != null)

@@ -573,14 +573,14 @@ public abstract class SearchableListModel extends ListModel implements GridContr
     }
 
     @Override
-    protected void OnSelectedItemChanged() {
-        super.OnSelectedItemChanged();
+    protected void onSelectedItemChanged() {
+        super.onSelectedItemChanged();
         UpdateActionAvailability();
     }
 
     @Override
-    protected void SelectedItemsChanged() {
-        super.SelectedItemsChanged();
+    protected void selectedItemsChanged() {
+        super.selectedItemsChanged();
         UpdateActionAvailability();
     }
 
@@ -780,7 +780,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
                     }
                 }
             }
-            OnSelectedItemChanged();
+            onSelectedItemChanged();
         }
     }
 

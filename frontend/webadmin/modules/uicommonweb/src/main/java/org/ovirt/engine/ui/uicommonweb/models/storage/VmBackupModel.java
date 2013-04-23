@@ -77,8 +77,8 @@ public class VmBackupModel extends ManageBackupModel {
     }
 
     @Override
-    protected void OnSelectedItemChanged() {
-        super.OnSelectedItemChanged();
+    protected void onSelectedItemChanged() {
+        super.onSelectedItemChanged();
         if (getAppListModel() != null) {
             getAppListModel().setEntity(getSelectedItem());
         }

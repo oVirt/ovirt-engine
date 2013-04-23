@@ -845,9 +845,9 @@ public class CommonModel extends ListModel
     private SystemPermissionListModel systemPermissionListModel;
 
     @Override
-    protected void OnSelectedItemChanging(Object newValue, Object oldValue)
+    protected void onSelectedItemChanging(Object newValue, Object oldValue)
     {
-        super.OnSelectedItemChanging(newValue, oldValue);
+        super.onSelectedItemChanging(newValue, oldValue);
 
         SearchableListModel oldModel = (SearchableListModel) oldValue;
 
@@ -870,9 +870,9 @@ public class CommonModel extends ListModel
     }
 
     @Override
-    protected void OnSelectedItemChanged()
+    protected void onSelectedItemChanged()
     {
-        super.OnSelectedItemChanged();
+        super.onSelectedItemChanged();
 
         if (!executingSearch && getSelectedItem() != null)
         {

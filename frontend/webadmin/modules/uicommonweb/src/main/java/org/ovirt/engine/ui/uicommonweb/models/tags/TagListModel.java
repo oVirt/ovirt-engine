@@ -581,9 +581,9 @@ public class TagListModel extends SearchableListModel
     }
 
     @Override
-    protected void OnSelectedItemChanged()
+    protected void onSelectedItemChanged()
     {
-        super.OnSelectedItemChanged();
+        super.onSelectedItemChanged();
         UpdateActionAvailability();
     }
 

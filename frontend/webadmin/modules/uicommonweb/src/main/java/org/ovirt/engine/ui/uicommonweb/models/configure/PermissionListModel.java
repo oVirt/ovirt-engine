@@ -300,16 +300,16 @@ public class PermissionListModel extends SearchableListModel
     }
 
     @Override
-    protected void OnSelectedItemChanged()
+    protected void onSelectedItemChanged()
     {
-        super.OnSelectedItemChanged();
+        super.onSelectedItemChanged();
         UpdateActionAvailability();
     }
 
     @Override
-    protected void SelectedItemsChanged()
+    protected void selectedItemsChanged()
     {
-        super.SelectedItemsChanged();
+        super.selectedItemsChanged();
         UpdateActionAvailability();
     }
 

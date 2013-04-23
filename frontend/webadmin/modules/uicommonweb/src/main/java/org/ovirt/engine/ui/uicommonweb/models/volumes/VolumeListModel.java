@@ -320,14 +320,14 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     }
 
     @Override
-    protected void OnSelectedItemChanged() {
-        super.OnSelectedItemChanged();
+    protected void onSelectedItemChanged() {
+        super.onSelectedItemChanged();
         updateActionAvailability();
     }
 
     @Override
-    protected void SelectedItemsChanged() {
-        super.OnSelectedItemChanged();
+    protected void selectedItemsChanged() {
+        super.onSelectedItemChanged();
         updateActionAvailability();
     }
 

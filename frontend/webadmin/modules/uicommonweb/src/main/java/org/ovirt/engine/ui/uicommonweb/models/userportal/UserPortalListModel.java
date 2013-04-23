@@ -318,7 +318,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                     }
                 }
             }
-            OnSelectedItemChanged();
+            onSelectedItemChanged();
         }
     }
 
@@ -674,9 +674,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     }
 
     @Override
-    protected void OnSelectedItemChanged()
+    protected void onSelectedItemChanged()
     {
-        super.OnSelectedItemChanged();
+        super.onSelectedItemChanged();
         UpdateActionAvailability();
     }
 

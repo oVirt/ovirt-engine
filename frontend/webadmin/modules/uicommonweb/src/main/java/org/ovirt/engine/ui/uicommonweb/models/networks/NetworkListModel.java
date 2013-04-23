@@ -179,14 +179,14 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
     }
 
     @Override
-    protected void OnSelectedItemChanged() {
-        super.OnSelectedItemChanged();
+    protected void onSelectedItemChanged() {
+        super.onSelectedItemChanged();
         UpdateActionAvailability();
     }
 
     @Override
-    protected void SelectedItemsChanged() {
-        super.SelectedItemsChanged();
+    protected void selectedItemsChanged() {
+        super.selectedItemsChanged();
         UpdateActionAvailability();
     }
 

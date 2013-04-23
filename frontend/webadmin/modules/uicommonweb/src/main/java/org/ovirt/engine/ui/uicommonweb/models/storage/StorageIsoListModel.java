@@ -83,7 +83,7 @@ public class StorageIsoListModel extends SearchableListModel
                     selectedItems.add(newSelectedItem);
                 }
             }
-            OnSelectedItemChanged();
+            onSelectedItemChanged();
         }
     }
 

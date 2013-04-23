@@ -1586,16 +1586,16 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     }
 
     @Override
-    protected void OnSelectedItemChanged()
+    protected void onSelectedItemChanged()
     {
-        super.OnSelectedItemChanged();
+        super.onSelectedItemChanged();
         UpdateActionAvailability();
     }
 
     @Override
-    protected void SelectedItemsChanged()
+    protected void selectedItemsChanged()
     {
-        super.SelectedItemsChanged();
+        super.selectedItemsChanged();
         UpdateActionAvailability();
     }
 
@@ -1614,9 +1614,9 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     }
 
     @Override
-    protected void SelectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e)
+    protected void selectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e)
     {
-        super.SelectedItemPropertyChanged(sender, e);
+        super.selectedItemPropertyChanged(sender, e);
 
         if (e.PropertyName.equals("status") || e.PropertyName.equals("pm_enabled")) //$NON-NLS-1$ //$NON-NLS-2$
         {

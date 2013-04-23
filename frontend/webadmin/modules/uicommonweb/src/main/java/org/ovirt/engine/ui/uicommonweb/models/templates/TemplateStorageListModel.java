@@ -223,9 +223,9 @@ public class TemplateStorageListModel extends SearchableListModel
     }
 
     @Override
-    protected void SelectedItemsChanged()
+    protected void selectedItemsChanged()
     {
-        super.SelectedItemsChanged();
+        super.selectedItemsChanged();
         UpdateActionAvailability();
     }
 

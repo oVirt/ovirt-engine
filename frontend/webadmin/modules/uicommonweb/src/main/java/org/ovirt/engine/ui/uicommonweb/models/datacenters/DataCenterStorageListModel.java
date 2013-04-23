@@ -636,16 +636,16 @@ public class DataCenterStorageListModel extends SearchableListModel
     }
 
     @Override
-    protected void OnSelectedItemChanged()
+    protected void onSelectedItemChanged()
     {
-        super.OnSelectedItemChanged();
+        super.onSelectedItemChanged();
         UpdateActionAvailability();
     }
 
     @Override
-    protected void SelectedItemsChanged()
+    protected void selectedItemsChanged()
     {
-        super.SelectedItemsChanged();
+        super.selectedItemsChanged();
         UpdateActionAvailability();
     }
 
@@ -664,9 +664,9 @@ public class DataCenterStorageListModel extends SearchableListModel
     }
 
     @Override
-    protected void SelectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e)
+    protected void selectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e)
     {
-        super.SelectedItemPropertyChanged(sender, e);
+        super.selectedItemPropertyChanged(sender, e);
 
         if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
@@ -675,9 +675,9 @@ public class DataCenterStorageListModel extends SearchableListModel
     }
 
     @Override
-    protected void ItemPropertyChanged(Object sender, PropertyChangedEventArgs e)
+    protected void itemPropertyChanged(Object sender, PropertyChangedEventArgs e)
     {
-        super.ItemPropertyChanged(sender, e);
+        super.itemPropertyChanged(sender, e);
 
         if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {

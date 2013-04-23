@@ -141,8 +141,8 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
     }
 
     @Override
-    protected void SelectedItemsChanged() {
-        super.SelectedItemsChanged();
+    protected void selectedItemsChanged() {
+        super.selectedItemsChanged();
         updateActionAvailability();
     }
 

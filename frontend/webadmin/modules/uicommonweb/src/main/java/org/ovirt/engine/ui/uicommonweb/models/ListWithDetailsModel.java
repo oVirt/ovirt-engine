@@ -82,9 +82,9 @@ public abstract class ListWithDetailsModel extends SearchableListModel
     }
 
     @Override
-    protected void OnSelectedItemChanged()
+    protected void onSelectedItemChanged()
     {
-        super.OnSelectedItemChanged();
+        super.onSelectedItemChanged();
 
         if (getSelectedItem() != null)
         {

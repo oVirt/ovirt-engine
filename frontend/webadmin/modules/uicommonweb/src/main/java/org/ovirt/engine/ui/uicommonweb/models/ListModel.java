@@ -68,9 +68,9 @@ public class ListModel extends EntityModel
     {
         if (selectedItems != value)
         {
-            SelectedItemsChanging(value, selectedItems);
+            selectedItemsChanging(value, selectedItems);
             selectedItems = value;
-            SelectedItemsChanged();
+            selectedItemsChanged();
             getSelectedItemsChangedEvent().raise(this, EventArgs.Empty);
             onPropertyChanged(new PropertyChangedEventArgs("SelectedItems")); //$NON-NLS-1$
         }
@@ -87,9 +87,9 @@ public class ListModel extends EntityModel
     {
         if (selectedItem != value)
         {
-            OnSelectedItemChanging(value, selectedItem);
+            onSelectedItemChanging(value, selectedItem);
             selectedItem = value;
-            OnSelectedItemChanged();
+            onSelectedItemChanged();
             getSelectedItemChangedEvent().raise(this, EventArgs.Empty);
             onPropertyChanged(new PropertyChangedEventArgs("SelectedItem")); //$NON-NLS-1$
         }
@@ -158,19 +158,19 @@ public class ListModel extends EntityModel
         setItemsChangedEvent(new Event(ItemsChangedEventDefinition));
     }
 
-    protected void OnSelectedItemChanging(Object newValue, Object oldValue)
+    protected void onSelectedItemChanging(Object newValue, Object oldValue)
     {
     }
 
-    protected void OnSelectedItemChanged()
+    protected void onSelectedItemChanged()
     {
     }
 
-    protected void SelectedItemsChanged()
+    protected void selectedItemsChanged()
     {
     }
 
-    protected void SelectedItemsChanging(List newValue, List oldValue)
+    protected void selectedItemsChanging(List newValue, List oldValue)
     {
         // Skip this method when notifying on property change for any
         // item but not only for selected ones is requested.
@@ -210,17 +210,17 @@ public class ListModel extends EntityModel
 
                 if (anyOfSelectedItem)
                 {
-                    SelectedItemPropertyChanged(sender, (PropertyChangedEventArgs) args);
+                    selectedItemPropertyChanged(sender, (PropertyChangedEventArgs) args);
                 }
                 else
                 {
-                    ItemPropertyChanged(sender, (PropertyChangedEventArgs) args);
+                    itemPropertyChanged(sender, (PropertyChangedEventArgs) args);
                 }
             }
             else
             {
                 // In this case a sender always will be a one of selected item.
-                SelectedItemPropertyChanged(sender, (PropertyChangedEventArgs) args);
+                selectedItemPropertyChanged(sender, (PropertyChangedEventArgs) args);
             }
         }
         else if (ev.matchesDefinition(ProvideCollectionChangedEvent.Definition))
@@ -232,7 +232,7 @@ public class ListModel extends EntityModel
     /**
      * Invoked whenever some property of any selected item was changed.
      */
-    protected void SelectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e)
+    protected void selectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e)
     {
     }
 
@@ -240,7 +240,7 @@ public class ListModel extends EntityModel
      * Invoked whenever some property of any item was changed. For performance considerations, in order to get this
      * method called, override NotifyPropertyChangeForAnyItem property and return true.
      */
-    protected void ItemPropertyChanged(Object sender, PropertyChangedEventArgs e)
+    protected void itemPropertyChanged(Object sender, PropertyChangedEventArgs e)
     {
     }
 

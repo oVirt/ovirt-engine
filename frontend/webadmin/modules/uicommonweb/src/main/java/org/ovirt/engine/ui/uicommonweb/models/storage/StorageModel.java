@@ -296,9 +296,9 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
     }
 
     @Override
-    protected void OnSelectedItemChanged()
+    protected void onSelectedItemChanged()
     {
-        super.OnSelectedItemChanged();
+        super.onSelectedItemChanged();
 
         if (getSelectedItem() != null)
         {
