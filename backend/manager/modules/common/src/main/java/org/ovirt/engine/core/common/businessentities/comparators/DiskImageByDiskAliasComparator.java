@@ -1,9 +1,10 @@
-package org.ovirt.engine.core.dal.comparators;
+package org.ovirt.engine.core.common.businessentities.comparators;
 
 import java.io.Serializable;
 import java.util.Comparator;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
+
 
 public class DiskImageByDiskAliasComparator implements Comparator<Disk>, Serializable {
     private static final long serialVersionUID = 4948753716816170325L;

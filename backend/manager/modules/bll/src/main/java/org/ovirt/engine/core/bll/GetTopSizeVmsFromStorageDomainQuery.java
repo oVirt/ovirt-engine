@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.comparators.ImagesComparerByName;
+import org.ovirt.engine.core.common.businessentities.comparators.DiskImageByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.VmsComparerByDiskSize;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -23,7 +23,7 @@ extends QueriesCommandBase<P> {
                 getParameters().getStorageDomainId());
         for (VM vm : vms) {
             VmHandler.updateDisksFromDb(vm);
-            Collections.sort(vm.getDiskList(), new ImagesComparerByName());
+            Collections.sort(vm.getDiskList(), new DiskImageByDiskAliasComparator());
             ImagesHandler.fillImagesBySnapshots(vm);
         }
         Collections.sort(vms, Collections.reverseOrder(new VmsComparerByDiskSize()));

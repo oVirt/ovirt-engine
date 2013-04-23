@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.comparators.ImagesComparerByName;
+import org.ovirt.engine.core.common.businessentities.comparators.DiskImageByDiskAliasComparator;
 import org.ovirt.engine.core.common.queries.GetUserVmsByUserIdAndGroupsParameters;
 
 public class GetUserVmsByUserIdAndGroupsQuery<P extends GetUserVmsByUserIdAndGroupsParameters> extends QueriesCommandBase<P> {
@@ -19,7 +19,7 @@ public class GetUserVmsByUserIdAndGroupsQuery<P extends GetUserVmsByUserIdAndGro
             updateVmGuestAgentVersion(vm);
             if (getParameters().getIncludeDiskData()) {
                 updateDisksFromDB(vm);
-                Collections.sort(vm.getDiskList(), new ImagesComparerByName());
+                Collections.sort(vm.getDiskList(), new DiskImageByDiskAliasComparator());
                 fillImagesBySnapshots(vm);
             }
         }

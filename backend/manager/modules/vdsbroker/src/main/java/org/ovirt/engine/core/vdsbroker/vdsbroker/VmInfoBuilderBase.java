@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.businessentities.comparators.DiskImageByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.config.Config;
@@ -24,8 +27,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.TimeZoneInfo;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
-import org.ovirt.engine.core.dal.comparators.DiskImageByBootComparator;
-import org.ovirt.engine.core.dal.comparators.DiskImageByDiskAliasComparator;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -38,6 +39,17 @@ public abstract class VmInfoBuilderBase {
     protected VM vm;
     // IDE supports only 4 slots , slot 2 is preserved by VDSM to the CDROM
     protected int[] ideIndexSlots = new int[] { 0, 1, 3 };
+
+    private static class DiskImageByBootComparator implements Comparator<Disk>, Serializable {
+        private static final long serialVersionUID = 4732164571328497830L;
+
+        @Override
+        public int compare(Disk o1, Disk o2) {
+            Boolean boot1 = o1.isBoot();
+            Boolean boot2 = o2.isBoot();
+            return boot1.compareTo(boot2);
+        }
+    }
 
     protected void buildVmProperties() {
         createInfo.put(VdsProperties.vm_guid, vm.getId().toString());
