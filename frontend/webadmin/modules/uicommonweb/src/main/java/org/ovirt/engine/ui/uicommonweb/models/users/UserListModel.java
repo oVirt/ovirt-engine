@@ -393,9 +393,9 @@ public class UserListModel extends ListWithDetailsModel
     private EntityModel userEventNotifierListModel;
 
     @Override
-    protected void InitDetailModels()
+    protected void initDetailModels()
     {
-        super.InitDetailModels();
+        super.initDetailModels();
 
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
         list.add(new UserGeneralModel());
@@ -411,7 +411,7 @@ public class UserListModel extends ListWithDetailsModel
     }
 
     @Override
-    protected void UpdateDetailsAvailability()
+    protected void updateDetailsAvailability()
     {
         if (getSelectedItem() != null)
         {

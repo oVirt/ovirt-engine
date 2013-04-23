@@ -1517,9 +1517,9 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     }
 
     @Override
-    protected void InitDetailModels()
+    protected void initDetailModels()
     {
-        super.InitDetailModels();
+        super.initDetailModels();
 
         HostGeneralModel generalModel = new HostGeneralModel();
         generalModel.getRequestEditEvent().addListener(this);

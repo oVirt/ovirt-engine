@@ -37,27 +37,27 @@ public abstract class ListWithDetailsModel extends SearchableListModel
     {
         if (activeDetailModel != value)
         {
-            ActiveDetailModelChanging(value, getActiveDetailModel());
+            activeDetailModelChanging(value, getActiveDetailModel());
             activeDetailModel = value;
-            ActiveDetailModelChanged();
+            activeDetailModelChanged();
             onPropertyChanged(new PropertyChangedEventArgs("ActiveDetailModel")); //$NON-NLS-1$
         }
     }
 
     public ListWithDetailsModel()
     {
-        InitDetailModels();
+        initDetailModels();
     }
 
-    protected void InitDetailModels()
+    protected void initDetailModels()
     {
     }
 
-    protected void UpdateDetailsAvailability()
+    protected void updateDetailsAvailability()
     {
     }
 
-    private void ActiveDetailModelChanging(EntityModel newValue, EntityModel oldValue)
+    private void activeDetailModelChanging(EntityModel newValue, EntityModel oldValue)
     {
         // Make sure we had set an entity property of details model.
         if (oldValue != null)
@@ -72,11 +72,11 @@ public abstract class ListWithDetailsModel extends SearchableListModel
 
         if (newValue != null)
         {
-            newValue.setEntity(ProvideDetailModelEntity(getSelectedItem()));
+            newValue.setEntity(provideDetailModelEntity(getSelectedItem()));
         }
     }
 
-    protected Object ProvideDetailModelEntity(Object selectedItem)
+    protected Object provideDetailModelEntity(Object selectedItem)
     {
         return selectedItem;
     }
@@ -89,7 +89,7 @@ public abstract class ListWithDetailsModel extends SearchableListModel
         if (getSelectedItem() != null)
         {
             // Try to choose default (first) detail model.
-            UpdateDetailsAvailability();
+            updateDetailsAvailability();
             if (getDetailModels() != null)
             {
                 if ((getActiveDetailModel() != null && !getActiveDetailModel().getIsAvailable())
@@ -129,16 +129,16 @@ public abstract class ListWithDetailsModel extends SearchableListModel
         {
             if (activeDetailModel instanceof HostInterfaceListModel)
             {
-                ((HostInterfaceListModel) activeDetailModel).setEntity((VDS) ProvideDetailModelEntity(getSelectedItem()));
+                ((HostInterfaceListModel) activeDetailModel).setEntity((VDS) provideDetailModelEntity(getSelectedItem()));
             }
             else
             {
-                activeDetailModel.setEntity(ProvideDetailModelEntity(getSelectedItem()));
+                activeDetailModel.setEntity(provideDetailModelEntity(getSelectedItem()));
             }
         }
     }
 
-    protected void ActiveDetailModelChanged()
+    protected void activeDetailModelChanged()
     {
     }
 

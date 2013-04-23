@@ -143,8 +143,8 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
     }
 
     @Override
-    protected void InitDetailModels() {
-        super.InitDetailModels();
+    protected void initDetailModels() {
+        super.initDetailModels();
 
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
 

@@ -475,13 +475,13 @@ public class ImportVmModel extends ListWithDetailsModel {
     }
 
     @Override
-    protected void ActiveDetailModelChanged() {
-        super.ActiveDetailModelChanged();
+    protected void activeDetailModelChanged() {
+        super.activeDetailModelChanged();
     }
 
     @Override
-    protected void InitDetailModels() {
-        super.InitDetailModels();
+    protected void initDetailModels() {
+        super.initDetailModels();
 
         importDiskListModel = new VmImportDiskListModel();
 

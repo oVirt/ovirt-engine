@@ -227,9 +227,9 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
     }
 
     @Override
-    protected void InitDetailModels()
+    protected void initDetailModels()
     {
-        super.InitDetailModels();
+        super.initDetailModels();
 
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
         list.add(new DataCenterStorageListModel());
@@ -798,8 +798,8 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
     }
 
     @Override
-    protected void UpdateDetailsAvailability() {
-        super.UpdateDetailsAvailability();
+    protected void updateDetailsAvailability() {
+        super.updateDetailsAvailability();
         if (getSelectedItem() != null
                 && ((storage_pool) getSelectedItem()).getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
             quotaListModel.setIsAvailable(true);

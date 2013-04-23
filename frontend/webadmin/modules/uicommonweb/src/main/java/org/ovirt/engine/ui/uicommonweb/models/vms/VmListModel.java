@@ -630,9 +630,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     }
 
     @Override
-    protected void InitDetailModels()
+    protected void initDetailModels()
     {
-        super.InitDetailModels();
+        super.initDetailModels();
 
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
         list.add(new VmGeneralModel());

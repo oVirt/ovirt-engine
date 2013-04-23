@@ -195,9 +195,9 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
     }
 
     @Override
-    protected void InitDetailModels()
+    protected void initDetailModels()
     {
-        super.InitDetailModels();
+        super.initDetailModels();
 
         diskVmListModel = new DiskVmListModel();
         diskVmListModel.setIsAvailable(false);
@@ -218,7 +218,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
     }
 
     @Override
-    protected void UpdateDetailsAvailability()
+    protected void updateDetailsAvailability()
     {
         if (getSelectedItem() != null)
         {

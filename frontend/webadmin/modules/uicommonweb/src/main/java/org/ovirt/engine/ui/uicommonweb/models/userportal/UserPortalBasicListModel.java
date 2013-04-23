@@ -175,9 +175,9 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
     }
 
     @Override
-    protected void InitDetailModels()
+    protected void initDetailModels()
     {
-        super.InitDetailModels();
+        super.initDetailModels();
 
         setvmBasicDiskListModel(new VmBasicDiskListModel());
 
@@ -189,7 +189,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
     }
 
     @Override
-    protected Object ProvideDetailModelEntity(Object selectedItem)
+    protected Object provideDetailModelEntity(Object selectedItem)
     {
         // Each item in this list model is not a business entity,
         // therefore select an Entity property to provide it to
@@ -205,9 +205,9 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
     }
 
     @Override
-    protected void UpdateDetailsAvailability()
+    protected void updateDetailsAvailability()
     {
-        super.UpdateDetailsAvailability();
+        super.updateDetailsAvailability();
     }
 
     @Override

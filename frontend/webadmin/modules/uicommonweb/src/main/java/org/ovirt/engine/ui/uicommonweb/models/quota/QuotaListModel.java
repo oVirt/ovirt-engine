@@ -115,8 +115,8 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
     }
 
     @Override
-    protected void InitDetailModels() {
-        super.InitDetailModels();
+    protected void initDetailModels() {
+        super.initDetailModels();
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
         list.add(new QuotaClusterListModel());
         list.add(new QuotaStorageListModel());

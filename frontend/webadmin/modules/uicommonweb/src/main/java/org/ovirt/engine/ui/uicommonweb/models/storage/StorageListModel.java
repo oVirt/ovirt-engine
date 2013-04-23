@@ -206,9 +206,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     public boolean removeConnection;
 
     @Override
-    protected void InitDetailModels()
+    protected void initDetailModels()
     {
-        super.InitDetailModels();
+        super.initDetailModels();
 
         vmBackupModel = new VmBackupModel();
         vmBackupModel.setIsAvailable(false);
@@ -1090,7 +1090,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     }
 
     @Override
-    protected void UpdateDetailsAvailability()
+    protected void updateDetailsAvailability()
     {
         if (getSelectedItem() != null)
         {

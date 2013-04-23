@@ -236,9 +236,9 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     }
 
     @Override
-    protected void InitDetailModels()
+    protected void initDetailModels()
     {
-        super.InitDetailModels();
+        super.initDetailModels();
 
         setClusterVmListModel(new ClusterVmListModel());
         setClusterPolicyModel(new ClusterPolicyModel());
@@ -258,8 +258,8 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     }
 
     @Override
-    protected void UpdateDetailsAvailability() {
-        super.UpdateDetailsAvailability();
+    protected void updateDetailsAvailability() {
+        super.updateDetailsAvailability();
         VDSGroup vdsGroup = (VDSGroup) getSelectedItem();
         getClusterVmListModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsVirtService());
         getClusterServiceModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsGlusterService()

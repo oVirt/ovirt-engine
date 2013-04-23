@@ -244,9 +244,9 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
     }
 
     @Override
-    protected void InitDetailModels()
+    protected void initDetailModels()
     {
-        super.InitDetailModels();
+        super.initDetailModels();
 
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
         list.add(new TemplateGeneralModel());

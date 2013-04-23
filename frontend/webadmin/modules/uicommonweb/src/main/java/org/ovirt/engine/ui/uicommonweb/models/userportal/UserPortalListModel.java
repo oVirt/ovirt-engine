@@ -365,9 +365,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     }
 
     @Override
-    protected void InitDetailModels()
+    protected void initDetailModels()
     {
-        super.InitDetailModels();
+        super.initDetailModels();
 
         vmGeneralModel = new VmGeneralModel();
         vmGeneralModel.setIsAvailable(false);
@@ -428,7 +428,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     }
 
     @Override
-    protected Object ProvideDetailModelEntity(Object selectedItem)
+    protected Object provideDetailModelEntity(Object selectedItem)
     {
         // Each item in this list model is not a business entity,
         // therefore select an Entity property to provide it to
@@ -444,9 +444,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     }
 
     @Override
-    protected void UpdateDetailsAvailability()
+    protected void updateDetailsAvailability()
     {
-        super.UpdateDetailsAvailability();
+        super.updateDetailsAvailability();
 
         UserPortalItemModel item = (UserPortalItemModel) getSelectedItem();
 

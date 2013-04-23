@@ -143,8 +143,8 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     }
 
     @Override
-    protected void InitDetailModels() {
-        super.InitDetailModels();
+    protected void initDetailModels() {
+        super.initDetailModels();
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
         list.add(new VolumeGeneralModel());
         list.add(new VolumeParameterListModel());
