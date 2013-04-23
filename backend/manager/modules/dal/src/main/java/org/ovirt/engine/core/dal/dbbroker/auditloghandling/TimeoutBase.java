@@ -47,13 +47,12 @@ public abstract class TimeoutBase implements Serializable {
      * Checks if timeout is used and if it is, checks the timeout. If no timeout set, then it will set this object as timeout.
      * @return should the action be logged again
      */
-    @SuppressWarnings("unchecked")
     public boolean getLegal() {
         if (getUseTimout()) {
             String keyForCheck = getkeyForCheck();
             if (CacheManager.getTimeoutBaseCache().putIfAbsent(keyForCheck,
-                    this,
-                    this.getEndTime(),
+                    keyForCheck,
+                    getEndTime(),
                     TimeUnit.MILLISECONDS) == null) {
                 return true;
             }
