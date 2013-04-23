@@ -10,6 +10,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -1059,6 +1060,25 @@ public final class Linq
             return StringHelper.stringsEqual(source.getName(), target.getName())
                     && StringHelper.stringsEqual(source.getAddress(), target.getAddress())
                     && StringHelper.stringsEqual(source.getPort(), target.getPort());
+        }
+    }
+
+    public final static class DbUserPredicate implements IPredicate<DbUser>
+    {
+        private final DbUser target;
+
+        public DbUserPredicate(DbUser target)
+        {
+            this.target = target;
+        }
+
+        @Override
+        public boolean match(DbUser source)
+        {
+            return StringHelper.stringsEqual(source.getDomain(), target.getDomain())
+                    && (StringHelper.isNullOrEmpty(target.getLoginName())
+                    || StringHelper.stringsEqual(target.getLoginName(), "*") //$NON-NLS-1$
+                    || source.getLoginName().toLowerCase().startsWith(target.getLoginName()));
         }
     }
 

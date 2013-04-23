@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
@@ -249,35 +250,8 @@ public class AdElementListModel extends SearchableListModel
                     return;
                 }
 
-                HashSet<Guid> excludeUsers = new HashSet<Guid>();
-                if (getExcludeItems() != null)
-                {
-                    for (Object item : getExcludeItems())
-                    {
-                        DbUser a = (DbUser) item;
-
-                        excludeUsers.add(a.getId());
-                    }
-                }
                 setusers(new ArrayList<EntityModel>());
-                for (IVdcQueryable item : (ArrayList<IVdcQueryable>) ((VdcQueryReturnValue) ReturnValue).getReturnValue())
-                {
-                    LdapUser a = (LdapUser) item;
-                    if (!excludeUsers.contains(a.getUserId()))
-                    {
-                        DbUser tempVar = new DbUser();
-                        tempVar.setId(a.getUserId());
-                        tempVar.setFirstName(a.getName());
-                        tempVar.setLastName(a.getSurName());
-                        tempVar.setLoginName(a.getUserName());
-                        tempVar.setDomain(a.getDomainControler());
-                        DbUser user = tempVar;
-
-                        EntityModel tempVar2 = new EntityModel();
-                        tempVar2.setEntity(user);
-                        getusers().add(tempVar2);
-                    }
-                }
+                addUsersToModel(queryReturnValue, getExcludeUsers());
                 onUserAndAdGroupsLoaded(adElementListModel);
             }
         };
@@ -337,6 +311,28 @@ public class AdElementListModel extends SearchableListModel
                 _asyncQuery);
     }
 
+    protected void addUsersToModel(VdcQueryReturnValue returnValue, Set<Guid> excludeUsers) {
+        for (IVdcQueryable item : (ArrayList<IVdcQueryable>) returnValue.getReturnValue()) {
+            LdapUser a = (LdapUser) item;
+            if (!excludeUsers.contains(a.getUserId())) {
+                EntityModel tempVar2 = new EntityModel();
+                tempVar2.setEntity(new DbUser(a));
+                getusers().add(tempVar2);
+            }
+        }
+    }
+
+    protected Set<Guid> getExcludeUsers() {
+        Set<Guid> excludeUsers = new HashSet<Guid>();
+        if (getExcludeItems() != null) {
+            for (Object item : getExcludeItems()) {
+                DbUser a = (DbUser) item;
+                excludeUsers.add(a.getId());
+            }
+        }
+        return excludeUsers;
+    }
+
     protected void findGroups(String searchString, AsyncQuery query) {
         Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("ADGROUP@" + getDomain().getSelectedItem() + ": " + searchString, SearchType.AdGroup), query); //$NON-NLS-1$ //$NON-NLS-2$
     }
@@ -345,7 +341,7 @@ public class AdElementListModel extends SearchableListModel
         Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("ADUSER@" + getDomain().getSelectedItem() + ": " + searchString, SearchType.AdUser), query); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    private void onUserAndAdGroupsLoaded(AdElementListModel adElementListModel)
+    protected void onUserAndAdGroupsLoaded(AdElementListModel adElementListModel)
     {
         if (adElementListModel.getusers() != null && adElementListModel.getgroups() != null)
         {
