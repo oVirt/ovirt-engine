@@ -88,9 +88,6 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
             if (xmlRpcStruct.containsKey(IrsProperties.size)) {
                 newImage.setSize(Long.parseLong(xmlRpcStruct.get(IrsProperties.size).toString()) * 512);
             }
-            if (xmlRpcStruct.containsKey("apparentsize")) {
-                newImage.setActualSizeFromDiskImage(Long.parseLong(xmlRpcStruct.get("apparentsize").toString()) * 512);
-            }
             if (xmlRpcStruct.containsKey("capacity")) {
                 newImage.setSize(Long.parseLong(xmlRpcStruct.get("capacity").toString()));
             }
