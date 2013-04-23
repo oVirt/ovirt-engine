@@ -162,7 +162,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
             UICommand setVmTicketCommand = new UICommand("setVmCommand", new BaseCommandTarget() { //$NON-NLS-1$
                 @Override
-                public void ExecuteCommand(UICommand uiCommand) {
+                public void executeCommand(UICommand uiCommand) {
                     setVmTicket();
                 }
             });
@@ -249,8 +249,8 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
     }
 
     @Override
-    public void ExecuteCommand(UICommand command) {
-        super.ExecuteCommand(command);
+    public void executeCommand(UICommand command) {
+        super.executeCommand(command);
 
         if (StringHelper.stringsEqual(command.getName(), "Cancel")) { //$NON-NLS-1$
             Cancel();
@@ -591,7 +591,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                                     UICommand okCommand =
                                             new UICommand("SpiceWithoutAgentOK", new BaseCommandTarget() { //$NON-NLS-1$
                                                         @Override
-                                                        public void ExecuteCommand(UICommand uiCommand) {
+                                                        public void executeCommand(UICommand uiCommand) {
                                                             logSsoOnDesktopFailedAgentNonResp(spiceConsoleModel.getLogger(),
                                                                     logonCommandReturnValue != null ?
                                                                             logonCommandReturnValue.getDescription()
@@ -603,7 +603,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
                                     UICommand cancelCommand = new UICommand("SpiceWithoutAgentCancel", new BaseCommandTarget() { //$NON-NLS-1$
                                         @Override
-                                        public void ExecuteCommand(UICommand uiCommand) {
+                                        public void executeCommand(UICommand uiCommand) {
                                             parentModel.setWindow(null);
                                         }
                                     });

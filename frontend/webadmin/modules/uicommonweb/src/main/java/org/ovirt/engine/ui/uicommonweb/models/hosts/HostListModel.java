@@ -1743,9 +1743,9 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     }
 
     @Override
-    public void ExecuteCommand(UICommand command)
+    public void executeCommand(UICommand command)
     {
-        super.ExecuteCommand(command);
+        super.executeCommand(command);
 
         if (command == getNewCommand())
         {

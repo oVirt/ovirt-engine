@@ -138,8 +138,8 @@ public class NetworkHostListModel extends SearchableListModel
     }
 
     @Override
-    public void ExecuteCommand(UICommand command) {
-        super.ExecuteCommand(command);
+    public void executeCommand(UICommand command) {
+        super.executeCommand(command);
 
         if (command == getSetupNetworksCommand())
         {

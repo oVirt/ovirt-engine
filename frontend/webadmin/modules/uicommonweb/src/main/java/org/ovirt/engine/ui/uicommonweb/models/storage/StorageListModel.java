@@ -1173,9 +1173,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     }
 
     @Override
-    public void ExecuteCommand(UICommand command)
+    public void executeCommand(UICommand command)
     {
-        super.ExecuteCommand(command);
+        super.executeCommand(command);
 
         if (command == getNewDomainCommand())
         {

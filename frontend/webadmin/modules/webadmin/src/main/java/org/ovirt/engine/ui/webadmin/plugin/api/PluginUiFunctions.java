@@ -229,7 +229,7 @@ public class PluginUiFunctions implements HasHandlers {
             final ActionButtonInterface actionButtonInterface, final ActionTable<T> table) {
         final UICommand command = new UICommand(label, new BaseCommandTarget() {
             @Override
-            public void ExecuteCommand(UICommand uiCommand) {
+            public void executeCommand(UICommand uiCommand) {
                 actionButtonInterface.onClick().invoke(EntityObject.arrayFrom(table.getSelectedItems()), null);
             }
         });

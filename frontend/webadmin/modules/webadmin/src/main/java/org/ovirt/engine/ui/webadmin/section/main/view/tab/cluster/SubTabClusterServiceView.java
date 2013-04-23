@@ -157,7 +157,7 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, C
 
             @Override
             public void onClick(ClickEvent event) {
-                getDetailModel().ExecuteCommand(getDetailModel().getFilterServicesCommand());
+                getDetailModel().executeCommand(getDetailModel().getFilterServicesCommand());
             }
         });
 
@@ -165,7 +165,7 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, C
 
             @Override
             public void onClick(ClickEvent event) {
-                getDetailModel().ExecuteCommand(getDetailModel().getClearFilterServicesCommand());
+                getDetailModel().executeCommand(getDetailModel().getClearFilterServicesCommand());
             }
         });
     }

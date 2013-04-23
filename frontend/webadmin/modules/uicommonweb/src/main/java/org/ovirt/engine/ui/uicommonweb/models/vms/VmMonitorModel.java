@@ -114,9 +114,9 @@ public class VmMonitorModel extends EntityModel
     }
 
     @Override
-    public void ExecuteCommand(UICommand command)
+    public void executeCommand(UICommand command)
     {
-        super.ExecuteCommand(command);
+        super.executeCommand(command);
 
         if (command == getRefreshCommand())
         {

@@ -349,9 +349,9 @@ public abstract class NetworkModel extends Model
     }
 
     @Override
-    public void ExecuteCommand(UICommand command)
+    public void executeCommand(UICommand command)
     {
-        super.ExecuteCommand(command);
+        super.executeCommand(command);
 
         if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {

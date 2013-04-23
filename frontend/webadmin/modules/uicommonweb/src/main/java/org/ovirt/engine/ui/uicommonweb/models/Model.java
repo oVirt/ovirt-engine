@@ -462,7 +462,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
     }
 
     @Override
-    public void ExecuteCommand(UICommand command)
+    public void executeCommand(UICommand command)
     {
         setLastExecutedCommand(command);
         if (command == getOpenDocumentationCommand())
@@ -472,8 +472,8 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
     }
 
     @Override
-    public void ExecuteCommand(UICommand uiCommand, Object... parameters) {
-        ExecuteCommand(uiCommand);
+    public void executeCommand(UICommand uiCommand, Object... parameters) {
+        executeCommand(uiCommand);
     }
 
     /**

@@ -209,8 +209,8 @@ public class EventListModel extends ListWithDetailsModel
     }
 
     @Override
-    public void ExecuteCommand(UICommand command) {
-        super.ExecuteCommand(command);
+    public void executeCommand(UICommand command) {
+        super.executeCommand(command);
 
         if (command == getRefreshCommand()) {
             refreshModel();

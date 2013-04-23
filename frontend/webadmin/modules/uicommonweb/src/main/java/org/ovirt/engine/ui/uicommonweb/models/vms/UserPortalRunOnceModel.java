@@ -49,7 +49,7 @@ public class UserPortalRunOnceModel extends RunOnceModel {
                    @Override
                    public void Executed(FrontendActionAsyncResult result) {
                        StopProgress();
-                       commandTarget.ExecuteCommand(runOnceCommand);
+                       commandTarget.executeCommand(runOnceCommand);
                    }
                }, this);
    }

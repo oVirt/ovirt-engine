@@ -55,7 +55,7 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
             protected UICommand resolveCommand() {
                 return new UICommand(constants.treeExpandAll(), new BaseCommandTarget() {
                     @Override
-                    public void ExecuteCommand(UICommand command) {
+                    public void executeCommand(UICommand command) {
                         TreeNode expandNode = findNode(display.getRootTreeNode(), modelProvider.getSelectionModel().getSelectedObject());
                         if (expandNode != null) {
                             expandTree(expandNode);
@@ -70,7 +70,7 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
             protected UICommand resolveCommand() {
                 return new UICommand(constants.treeCollapseAll(), new BaseCommandTarget() {
                     @Override
-                    public void ExecuteCommand(UICommand command) {
+                    public void executeCommand(UICommand command) {
                         TreeNode collapseNode = findNode(display.getRootTreeNode(), modelProvider.getSelectionModel().getSelectedObject());
                         if (collapseNode != null) {
                             collapseTree(collapseNode);

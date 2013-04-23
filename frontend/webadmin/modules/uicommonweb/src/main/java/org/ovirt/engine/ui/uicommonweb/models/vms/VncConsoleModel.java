@@ -39,7 +39,7 @@ public class VncConsoleModel extends ConsoleModel
 
         UICommand setVmTicketCommand = new UICommand("setVmCommand", new BaseCommandTarget() { //$NON-NLS-1$
             @Override
-            public void ExecuteCommand(UICommand uiCommand) {
+            public void executeCommand(UICommand uiCommand) {
                 setVmTicket();
             }
         });

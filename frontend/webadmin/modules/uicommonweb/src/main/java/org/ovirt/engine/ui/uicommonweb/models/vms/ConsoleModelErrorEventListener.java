@@ -66,14 +66,14 @@ public class ConsoleModelErrorEventListener implements IEventListener, ICommandT
     }
 
     @Override
-    public void ExecuteCommand(UICommand command) {
+    public void executeCommand(UICommand command) {
         if ("CancelError".equals(command.getName())) { //$NON-NLS-1$
             parentModel.setConfirmWindow(null);
         }
     }
 
     @Override
-    public void ExecuteCommand(UICommand uiCommand, Object... parameters) {
-        ExecuteCommand(uiCommand);
+    public void executeCommand(UICommand uiCommand, Object... parameters) {
+        executeCommand(uiCommand);
     }
 }

@@ -552,9 +552,9 @@ public class ClusterGuideModel extends GuideModel
     }
 
     @Override
-    public void ExecuteCommand(UICommand command)
+    public void executeCommand(UICommand command)
     {
-        super.ExecuteCommand(command);
+        super.executeCommand(command);
 
         if (StringHelper.stringsEqual(command.getName(), "AddHost")) //$NON-NLS-1$
         {

@@ -907,7 +907,7 @@ public abstract class RunOnceModel extends Model
     }
 
     @Override
-    public void ExecuteCommand(UICommand command)
+    public void executeCommand(UICommand command)
     {
         if (command == runOnceCommand)
         {
@@ -917,7 +917,7 @@ public abstract class RunOnceModel extends Model
         }
         else if (command == cancelCommand)
         {
-            commandTarget.ExecuteCommand(command);
+            commandTarget.executeCommand(command);
         }
     }
     protected abstract void onRunOnce();

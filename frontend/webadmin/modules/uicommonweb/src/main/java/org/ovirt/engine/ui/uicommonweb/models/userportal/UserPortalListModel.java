@@ -463,9 +463,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     }
 
     @Override
-    public void ExecuteCommand(UICommand command)
+    public void executeCommand(UICommand command)
     {
-        super.ExecuteCommand(command);
+        super.executeCommand(command);
 
         if (command == getNewDesktopCommand())
         {

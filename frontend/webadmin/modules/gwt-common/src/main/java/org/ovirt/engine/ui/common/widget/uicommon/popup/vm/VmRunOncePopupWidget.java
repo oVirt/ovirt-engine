@@ -407,14 +407,14 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @UiHandler("bootSequenceUpButton")
     void handleBootSequenceUpButtonClick(ClickEvent event) {
         if (bootSequenceModel != null) {
-            bootSequenceModel.ExecuteCommand(bootSequenceModel.getMoveItemUpCommand());
+            bootSequenceModel.executeCommand(bootSequenceModel.getMoveItemUpCommand());
         }
     }
 
     @UiHandler("bootSequenceDownButton")
     void handleBootSequenceDownButtonClick(ClickEvent event) {
         if (bootSequenceModel != null) {
-            bootSequenceModel.ExecuteCommand(bootSequenceModel.getMoveItemDownCommand());
+            bootSequenceModel.executeCommand(bootSequenceModel.getMoveItemDownCommand());
         }
     }
 

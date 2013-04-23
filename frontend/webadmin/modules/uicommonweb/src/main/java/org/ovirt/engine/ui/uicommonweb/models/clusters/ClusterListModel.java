@@ -910,19 +910,19 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     }
 
     @Override
-    public void ExecuteCommand(UICommand command, Object... parameters) {
+    public void executeCommand(UICommand command, Object... parameters) {
         if (command == getEditCommand() && parameters.length > 0 && Boolean.TRUE.equals(parameters[0]))
         {
             this.clusterPolicyFirst = true;
-            super.ExecuteCommand(command, parameters);
+            super.executeCommand(command, parameters);
             this.clusterPolicyFirst = false;
         }
     }
 
     @Override
-    public void ExecuteCommand(UICommand command)
+    public void executeCommand(UICommand command)
     {
-        super.ExecuteCommand(command);
+        super.executeCommand(command);
 
         if (command == getNewCommand())
         {

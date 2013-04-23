@@ -6,7 +6,7 @@ package org.ovirt.engine.ui.uicommonweb;
 public abstract class BaseCommandTarget implements ICommandTarget {
 
     @Override
-    public abstract void ExecuteCommand(UICommand uiCommand);
+    public abstract void executeCommand(UICommand uiCommand);
 
     /*
      * (non-Javadoc) This implementation discards the parameters
@@ -15,8 +15,8 @@ public abstract class BaseCommandTarget implements ICommandTarget {
      * java.lang.Object[])
      */
     @Override
-    public void ExecuteCommand(UICommand uiCommand, Object... parameters) {
-        ExecuteCommand(uiCommand);
+    public void executeCommand(UICommand uiCommand, Object... parameters) {
+        executeCommand(uiCommand);
     }
 
 }

@@ -172,9 +172,9 @@ public abstract class ConsoleModel extends EntityModel {
     }
 
     @Override
-    public void ExecuteCommand(UICommand command)
+    public void executeCommand(UICommand command)
     {
-        super.ExecuteCommand(command);
+        super.executeCommand(command);
 
         if (command == getConnectCommand())
         {
@@ -253,7 +253,7 @@ public abstract class ConsoleModel extends EntityModel {
 
         UICommand confirmAndCloseCommand = new UICommand("Confirm", new BaseCommandTarget() { //$NON-NLS-1$
             @Override
-            public void ExecuteCommand(UICommand uiCommand) {
+            public void executeCommand(UICommand uiCommand) {
                 onConfirmCommand.Execute();
                 parentModel.setWindow(null);
             }
@@ -264,7 +264,7 @@ public abstract class ConsoleModel extends EntityModel {
 
         UICommand cancelCommand = new UICommand("Cancel", new BaseCommandTarget() { //$NON-NLS-1$
             @Override
-            public void ExecuteCommand(UICommand uiCommand) {
+            public void executeCommand(UICommand uiCommand) {
                 parentModel.setWindow(null);
             }
         });

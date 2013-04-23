@@ -639,8 +639,8 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
     }
 
     @Override
-    public void ExecuteCommand(UICommand command) {
-        super.ExecuteCommand(command);
+    public void executeCommand(UICommand command) {
+        super.executeCommand(command);
         if (command.equals(getCreateCommand())) {
             createQuota();
         }

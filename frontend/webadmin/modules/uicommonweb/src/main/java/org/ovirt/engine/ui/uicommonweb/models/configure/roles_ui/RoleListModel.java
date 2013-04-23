@@ -669,9 +669,9 @@ public class RoleListModel extends ListWithDetailsModel
     }
 
     @Override
-    public void ExecuteCommand(UICommand command)
+    public void executeCommand(UICommand command)
     {
-        super.ExecuteCommand(command);
+        super.executeCommand(command);
 
         if (command == getNewCommand())
         {

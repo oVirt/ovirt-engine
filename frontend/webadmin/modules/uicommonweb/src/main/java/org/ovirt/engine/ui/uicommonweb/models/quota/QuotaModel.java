@@ -360,8 +360,8 @@ public class QuotaModel extends EntityModel {
     }
 
     @Override
-    public void ExecuteCommand(UICommand command) {
-        super.ExecuteCommand(command);
+    public void executeCommand(UICommand command) {
+        super.executeCommand(command);
         if (command.getName().equals("OnEditClusterQuota")) { //$NON-NLS-1$
             onEditClusterQuota();
         } else if (command.getName().equals("OnEditStorageQuota")) { //$NON-NLS-1$

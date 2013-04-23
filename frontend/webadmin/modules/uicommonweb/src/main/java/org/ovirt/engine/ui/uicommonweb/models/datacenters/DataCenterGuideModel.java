@@ -1687,9 +1687,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     }
 
     @Override
-    public void ExecuteCommand(UICommand command)
+    public void executeCommand(UICommand command)
     {
-        super.ExecuteCommand(command);
+        super.executeCommand(command);
 
         if (StringHelper.stringsEqual(command.getName(), "AddCluster")) //$NON-NLS-1$
         {

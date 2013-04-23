@@ -12,12 +12,12 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 public abstract class NetworkOperationCommandTarget implements ICommandTarget {
 
     @Override
-    public void ExecuteCommand(UICommand uiCommand) {
-        ExecuteCommand(uiCommand, new Object[0]);
+    public void executeCommand(UICommand uiCommand) {
+        executeCommand(uiCommand, new Object[0]);
     }
 
     @Override
-    public void ExecuteCommand(UICommand uiCommand, Object... params) {
+    public void executeCommand(UICommand uiCommand, Object... params) {
         NetworkCommand command = (NetworkCommand) uiCommand;
         NetworkItemModel<?> op1 = command.getOp1();
         NetworkItemModel<?> op2 = command.getOp2();

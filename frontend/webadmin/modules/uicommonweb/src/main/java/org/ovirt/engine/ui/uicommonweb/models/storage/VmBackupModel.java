@@ -545,8 +545,8 @@ public class VmBackupModel extends ManageBackupModel {
     }
 
     @Override
-    public void ExecuteCommand(UICommand command) {
-        super.ExecuteCommand(command);
+    public void executeCommand(UICommand command) {
+        super.executeCommand(command);
 
         if (command.getName().equals("OnRemove")) { //$NON-NLS-1$
             OnRemove();

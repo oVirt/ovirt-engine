@@ -2380,9 +2380,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     }
 
     @Override
-    public void ExecuteCommand(UICommand command)
+    public void executeCommand(UICommand command)
     {
-        super.ExecuteCommand(command);
+        super.executeCommand(command);
 
         if (command == getNewServerCommand())
         {

@@ -243,7 +243,7 @@ public class HostSetupNetworksModel extends EntityModel {
             // OK Target
             okTarget = new BaseCommandTarget() {
                 @Override
-                public void ExecuteCommand(UICommand command) {
+                public void executeCommand(UICommand command) {
                     setBondOptions(entity, bondDialogModel);
                     sourceListModel.setConfirmWindow(null);
                 }
@@ -278,7 +278,7 @@ public class HostSetupNetworksModel extends EntityModel {
                 // OK Target
                 okTarget = new BaseCommandTarget() {
                     @Override
-                    public void ExecuteCommand(UICommand command) {
+                    public void executeCommand(UICommand command) {
                         if (!mgmntDialogModel.Validate()) {
                             return;
                         }
@@ -323,7 +323,7 @@ public class HostSetupNetworksModel extends EntityModel {
                 // OK Target
                 okTarget = new BaseCommandTarget() {
                     @Override
-                    public void ExecuteCommand(UICommand command) {
+                    public void executeCommand(UICommand command) {
                         if (!networkDialogModel.Validate()) {
                             return;
                         }
@@ -351,7 +351,7 @@ public class HostSetupNetworksModel extends EntityModel {
         // cancel command
         UICommand cancelCommand = new UICommand("Cancel", new BaseCommandTarget() { //$NON-NLS-1$
                     @Override
-                    public void ExecuteCommand(UICommand command) {
+                    public void executeCommand(UICommand command) {
                         sourceListModel.setConfirmWindow(null);
                     }
                 });
@@ -370,7 +370,7 @@ public class HostSetupNetworksModel extends EntityModel {
 
         UICommand cancelCommand = new UICommand("Cancel", new BaseCommandTarget() { //$NON-NLS-1$
                     @Override
-                    public void ExecuteCommand(UICommand command) {
+                    public void executeCommand(UICommand command) {
                         sourceListModel.setConfirmWindow(null);
                     }
                 });
@@ -392,7 +392,7 @@ public class HostSetupNetworksModel extends EntityModel {
             bondPopup.getCommands().add(new UICommand("OK", new BaseCommandTarget() { //$NON-NLS-1$
 
                         @Override
-                        public void ExecuteCommand(UICommand command) {
+                        public void executeCommand(UICommand command) {
                             if (!bondPopup.Validate()) {
                                 return;
                             }
@@ -799,9 +799,9 @@ public class HostSetupNetworksModel extends EntityModel {
     }
 
     @Override
-    public void ExecuteCommand(UICommand command)
+    public void executeCommand(UICommand command)
     {
-        super.ExecuteCommand(command);
+        super.executeCommand(command);
 
         if (StringHelper.stringsEqual(command.getName(), "OnSetupNetworks")) //$NON-NLS-1$
         {

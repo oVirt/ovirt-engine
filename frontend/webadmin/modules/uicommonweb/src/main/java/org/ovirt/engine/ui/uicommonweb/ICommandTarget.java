@@ -11,7 +11,7 @@ public interface ICommandTarget
      *
      * @param command
      */
-    void ExecuteCommand(UICommand command);
+    void executeCommand(UICommand command);
 
     /**
      * Execute the command with the specified parameters
@@ -19,5 +19,5 @@ public interface ICommandTarget
      * @param uiCommand
      * @param parameters
      */
-    void ExecuteCommand(UICommand uiCommand, Object... parameters);
+    void executeCommand(UICommand uiCommand, Object... parameters);
 }

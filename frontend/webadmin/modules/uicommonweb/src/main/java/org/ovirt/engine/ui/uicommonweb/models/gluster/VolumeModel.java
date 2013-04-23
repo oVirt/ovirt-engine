@@ -570,8 +570,8 @@ public class VolumeModel extends Model {
     }
 
     @Override
-    public void ExecuteCommand(UICommand command) {
-        super.ExecuteCommand(command);
+    public void executeCommand(UICommand command) {
+        super.executeCommand(command);
 
         if (command == getAddBricksCommand())
         {

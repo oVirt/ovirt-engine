@@ -581,34 +581,34 @@ public class HostModel extends Model
     {
         setTestCommand(new UICommand("Test", new ICommandTarget() { //$NON-NLS-1$
             @Override
-            public void ExecuteCommand(UICommand command) {
+            public void executeCommand(UICommand command) {
                 Test();
             }
 
             @Override
-            public void ExecuteCommand(UICommand uiCommand, Object... parameters) {
+            public void executeCommand(UICommand uiCommand, Object... parameters) {
                 Test();
             }
         }));
         setProxyUpCommand(new UICommand("Up", new ICommandTarget() {    //$NON-NLS-1$
             @Override
-            public void ExecuteCommand(UICommand command) {
+            public void executeCommand(UICommand command) {
                 ProxyUp();
             }
 
             @Override
-            public void ExecuteCommand(UICommand uiCommand, Object... parameters) {
+            public void executeCommand(UICommand uiCommand, Object... parameters) {
                 ProxyUp();
             }
         }));
         setProxyDownCommand(new UICommand("Down", new ICommandTarget() {    //$NON-NLS-1$
             @Override
-            public void ExecuteCommand(UICommand command) {
+            public void executeCommand(UICommand command) {
                 ProxyDown();
             }
 
             @Override
-            public void ExecuteCommand(UICommand uiCommand, Object... parameters) {
+            public void executeCommand(UICommand uiCommand, Object... parameters) {
                 ProxyDown();
             }
         }));

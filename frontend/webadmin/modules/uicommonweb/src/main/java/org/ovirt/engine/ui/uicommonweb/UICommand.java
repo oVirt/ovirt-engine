@@ -157,9 +157,9 @@ public class UICommand extends Model implements ICommand
         if (target != null)
         {
             if (parameters == null || parameters.length == 0) {
-                target.ExecuteCommand(this);
+                target.executeCommand(this);
             } else {
-                target.ExecuteCommand(this, parameters);
+                target.executeCommand(this, parameters);
             }
         }
     }

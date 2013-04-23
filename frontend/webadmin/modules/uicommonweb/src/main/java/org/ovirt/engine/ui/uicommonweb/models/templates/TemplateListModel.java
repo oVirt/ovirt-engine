@@ -635,9 +635,9 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
     }
 
     @Override
-    public void ExecuteCommand(UICommand command)
+    public void executeCommand(UICommand command)
     {
-        super.ExecuteCommand(command);
+        super.executeCommand(command);
 
         if (command == getEditCommand())
         {

@@ -202,9 +202,9 @@ public class PoolVmListModel extends VmListModel
     }
 
     @Override
-    public void ExecuteCommand(UICommand command)
+    public void executeCommand(UICommand command)
     {
-        super.ExecuteCommand(command);
+        super.executeCommand(command);
 
         if (command == getDetachCommand())
         {

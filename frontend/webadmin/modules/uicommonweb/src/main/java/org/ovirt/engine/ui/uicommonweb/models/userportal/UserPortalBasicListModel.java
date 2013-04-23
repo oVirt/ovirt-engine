@@ -358,8 +358,8 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
     }
 
     @Override
-    public void ExecuteCommand(UICommand command) {
-        super.ExecuteCommand(command);
+    public void executeCommand(UICommand command) {
+        super.executeCommand(command);
 
         if (command.getName().equals("closeVncInfo")) { //$NON-NLS-1$
             setWindow(null);

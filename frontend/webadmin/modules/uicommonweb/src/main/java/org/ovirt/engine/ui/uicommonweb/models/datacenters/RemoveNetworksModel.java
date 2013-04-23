@@ -83,8 +83,8 @@ public class RemoveNetworksModel extends ConfirmationModel {
     }
 
     @Override
-    public void ExecuteCommand(UICommand command) {
-        super.ExecuteCommand(command);
+    public void executeCommand(UICommand command) {
+        super.executeCommand(command);
         if ("onRemove".equals(command.getName())) //$NON-NLS-1$
         {
             onRemove();

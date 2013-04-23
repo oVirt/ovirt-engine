@@ -351,7 +351,7 @@ public class TemplateBackupModel extends VmBackupModel
     }
 
     @Override
-    public void ExecuteCommand(UICommand command)
+    public void executeCommand(UICommand command)
     {
         if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
@@ -361,7 +361,7 @@ public class TemplateBackupModel extends VmBackupModel
         {
             OnRestore();
         } else {
-            super.ExecuteCommand(command);
+            super.executeCommand(command);
         }
     }
 

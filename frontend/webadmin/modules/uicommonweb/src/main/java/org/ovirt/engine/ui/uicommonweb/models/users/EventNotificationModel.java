@@ -126,9 +126,9 @@ public class EventNotificationModel extends Model
     }
 
     @Override
-    public void ExecuteCommand(UICommand command)
+    public void executeCommand(UICommand command)
     {
-        super.ExecuteCommand(command);
+        super.executeCommand(command);
 
         if (command == getExpandAllCommand())
         {
