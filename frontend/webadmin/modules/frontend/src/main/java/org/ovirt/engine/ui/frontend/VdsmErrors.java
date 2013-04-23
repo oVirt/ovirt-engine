@@ -729,14 +729,11 @@ public interface VdsmErrors extends ConstantsWithLookup {
     @DefaultStringValue("Failed to enable gluster hook.")
     String GlusterHookEnableFailed();
 
-    @DefaultStringValue("Gluster Hook already enabled.")
-    String GlusterHookAlreadyEnabled();
-
     @DefaultStringValue("Failed to disable gluster hook.")
     String GlusterHookDisableFailed();
 
-    @DefaultStringValue("Gluster Hook already disabled.")
-    String GlusterHookAlreadyDisabled();
+    @DefaultStringValue("Found conflicting hooks.")
+    String GlusterHookConflict();
 
     @DefaultStringValue("Gluster hook not found")
     String GlusterHookNotFound();

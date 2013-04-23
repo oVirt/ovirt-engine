@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -113,9 +112,7 @@ public abstract class GlusterHookStatusChangeCommand extends GlusterHookCommandB
         for (Pair<VDS, VDSReturnValue> pairResult : pairResults) {
 
             VDSReturnValue retValue = pairResult.getSecond();
-         // ignore already enabled/disabled errors.
-            if (retValue.getSucceeded() || VdcBllErrors.GlusterHookAlreadyEnabled.equals(retValue.getVdsError().getCode())
-                    || VdcBllErrors.GlusterHookAlreadyDisabled.equals(retValue.getVdsError().getCode())) {
+            if (retValue.getSucceeded() ) {
                 atLeastOneSuccess = true;
                 // update status in database
                 addOrUpdateServerHook(serverHooks, pairResult);

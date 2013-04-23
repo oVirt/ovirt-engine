@@ -46,11 +46,10 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
         case GlusterHookFailed:
         case GlusterHookEnableFailed:
         case GlusterHookDisableFailed:
-        case GlusterHookAlreadyEnabled:
-        case GlusterHookAlreadyDisabled:
         case GlusterHookNotFound:
         case GlusterHookListException:
         case GlusterHostUUIDNotFound:
+        case GlusterHookConflict:
             // Capture error from gluster command and record failure
             getVDSReturnValue().setVdsError(new VDSError(returnStatus, getReturnStatus().mMessage));
             getVDSReturnValue().setSucceeded(false);

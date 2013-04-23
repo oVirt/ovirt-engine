@@ -11,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -73,16 +72,6 @@ public class DisableGlusterHookCommandTest extends GlusterHookCommandTest<Disabl
         cmd.executeCommand();
         assertFalse(cmd.getReturnValue().getSucceeded());
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_HOOK_DISABLE_FAILED);
-    }
-
-    @Test
-    public void executeCommandWhenAlreadyDisabled() {
-        cmd = spy(new DisableGlusterHookCommand(new GlusterHookParameters(CLUSTER_ID, HOOK_ID)));
-        setupMocks(cmd);
-        mockBackend(cmd,false,VdcBllErrors.GlusterHookAlreadyDisabled);
-        cmd.executeCommand();
-        assertTrue(cmd.getReturnValue().getSucceeded());
-        assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_HOOK_DISABLE);
     }
 
 }
