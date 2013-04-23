@@ -124,7 +124,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
             returnValue = false;
         }
         if (returnValue && getStorageDomain().getStorageDomainType() == StorageDomainType.ISO
-                && getStorageDomain().getStorageType() != StorageType.NFS) {
+                && !getStorageDomain().getStorageType().isFileDomain()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
             returnValue = false;
         }

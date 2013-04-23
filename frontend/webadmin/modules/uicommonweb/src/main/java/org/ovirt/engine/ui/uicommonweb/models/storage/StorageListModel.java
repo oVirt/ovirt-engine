@@ -298,9 +298,17 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         localDataModel.setRole(StorageDomainType.Data);
         items.add(localDataModel);
 
+        LocalStorageModel localIsoModel = new LocalStorageModel();
+        localIsoModel.setRole(StorageDomainType.ISO);
+        items.add(localIsoModel);
+
         PosixStorageModel posixDataModel = new PosixStorageModel();
         posixDataModel.setRole(StorageDomainType.Data);
         items.add(posixDataModel);
+
+        PosixStorageModel posixIsoModel = new PosixStorageModel();
+        posixIsoModel.setRole(StorageDomainType.ISO);
+        items.add(posixIsoModel);
 
         NfsStorageModel nfsIsoModel = new NfsStorageModel();
         nfsIsoModel.setRole(StorageDomainType.ISO);

@@ -258,7 +258,8 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
     }
 
     protected boolean removeDomainFromPool(StorageDomain storageDomain, VDS vds) {
-        if (storageDomain.getStorageType() != StorageType.LOCALFS) {
+        if (storageDomain.getStorageType() != StorageType.LOCALFS
+                || storageDomain.getStorageDomainType() == StorageDomainType.ISO) {
             DetachStorageDomainFromPoolParameters tempVar = new DetachStorageDomainFromPoolParameters(
                     storageDomain.getId(), getStoragePool().getId());
             tempVar.setRemoveLast(true);

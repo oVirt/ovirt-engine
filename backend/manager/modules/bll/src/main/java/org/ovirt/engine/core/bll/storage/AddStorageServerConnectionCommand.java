@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -90,15 +89,6 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
             returnValue = false;
         }
 
-        if (returnValue) {
-            if (paramConnection.getstorage_type() == StorageType.LOCALFS) {
-                storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao().getForVds(getVds().getId());
-                if (storagePool == null || storagePool.getstorage_pool_type() != StorageType.LOCALFS) {
-                    returnValue = false;
-                    addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_ADD_LOCAL_STORAGE_TO_NON_LOCAL_HOST);
-                }
-            }
-        }
         return returnValue;
     }
 

@@ -563,7 +563,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         for (StorageDomain a : Linq.<StorageDomain> Cast(getSelectedItems()))
         {
             // For local storage - remove; otherwise - detach
-            if (a.getStorageType() == StorageType.LOCALFS)
+            if (a.getStorageType() == StorageType.LOCALFS && a.getStorageDomainType() != StorageDomainType.ISO)
             {
                 getpb_remove().add(new RemoveStorageDomainParameters(a.getId()));
                 localStorgaeDC = a.getStoragePoolName();
