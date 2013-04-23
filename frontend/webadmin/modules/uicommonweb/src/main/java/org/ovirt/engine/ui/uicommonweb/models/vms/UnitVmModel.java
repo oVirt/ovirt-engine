@@ -1016,7 +1016,7 @@ public class UnitVmModel extends Model {
         _maxMemSize32 = value;
     }
 
-    private int _maxMemSize64 = 262144;
+    private int _maxMemSize64 = 524288;
 
     public int get_MaxMemSize64()
     {
@@ -1593,6 +1593,8 @@ public class UnitVmModel extends Model {
     private void Cluster_SelectedItemChanged(Object sender, EventArgs args)
     {
         behavior.Cluster_SelectedItemChanged();
+
+        UpdateMaximalVmMemSize();
     }
 
     private void TimeZone_SelectedItemChanged(Object sender, EventArgs args)

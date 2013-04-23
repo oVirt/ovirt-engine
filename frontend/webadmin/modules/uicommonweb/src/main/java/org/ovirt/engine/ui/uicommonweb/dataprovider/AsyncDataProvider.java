@@ -495,7 +495,8 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? ((Integer) source).intValue() : 262144;
+                // we should detect missing config values instead of putting in obsolete hardcoded values
+                return source != null ? ((Integer) source).intValue() : -1;
             }
         };
         GetConfigurationValueParameters tempVar =
