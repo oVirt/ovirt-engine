@@ -105,7 +105,7 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
                     continue;
                 }
 
-                splitLine = line.split("="); //$NON-NLS-1$
+                splitLine = line.split("=", 2); //$NON-NLS-1$
                 String key = splitLine[0];
                 if (allKeyValueMap.containsKey(key)) {
                     keyValueMap_used.put(key, splitLine[1]);
@@ -151,7 +151,7 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
             if (line.isEmpty()) {
                 continue;
             }
-            splitLine = line.split("="); //$NON-NLS-1$
+            splitLine = line.split("=", 2); //$NON-NLS-1$
             String key = splitLine[0];
             allKeyValueMap.put(key, splitLine[1]);
             ValidationResult valid = regexValidation.validate(allKeyValueMap.get(key));

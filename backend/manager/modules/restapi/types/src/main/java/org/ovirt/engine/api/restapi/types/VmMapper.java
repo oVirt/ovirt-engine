@@ -496,7 +496,7 @@ public class VmMapper {
         CustomProperties model = template != null ? template : new CustomProperties();
         if (entity != null) {
             for (String envStr : entity.split(";", -1)) {
-                String[] parts = envStr.split("=", -1);
+                String[] parts = envStr.split("=", 2);
                 if (parts.length >= 1) {
                     CustomProperty env = new CustomProperty();
                     env.setName(parts[0]);

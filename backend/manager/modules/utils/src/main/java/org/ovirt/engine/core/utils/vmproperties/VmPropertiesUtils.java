@@ -217,7 +217,7 @@ public class VmPropertiesUtils {
         for (String property : propertiesStrs) {
 
             Pattern pattern = null;
-            String[] propertyParts = property.split(KEY_VALUE_DELIMETER);
+            String[] propertyParts = property.split(KEY_VALUE_DELIMETER, 2);
             if (propertyParts.length == 1) { // there is no value(regex) for the property - we assume
                 // in that case that any value is allowed except for the properties delimeter
                 pattern = VALUE_PATTERN;
