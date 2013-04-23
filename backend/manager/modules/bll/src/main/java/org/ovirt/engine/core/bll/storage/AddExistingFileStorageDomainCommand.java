@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
-public class AddExistingNFSStorageDomainCommand<T extends StorageDomainManagementParameter> extends
+public class AddExistingFileStorageDomainCommand<T extends StorageDomainManagementParameter> extends
         AddNFSStorageDomainCommand<T> {
 
     /**
@@ -20,11 +20,11 @@ public class AddExistingNFSStorageDomainCommand<T extends StorageDomainManagemen
      *
      * @param commandId
      */
-    protected AddExistingNFSStorageDomainCommand(Guid commandId) {
+    protected AddExistingFileStorageDomainCommand(Guid commandId) {
         super(commandId);
     }
 
-    public AddExistingNFSStorageDomainCommand(T parameters) {
+    public AddExistingFileStorageDomainCommand(T parameters) {
         super(parameters);
     }
 

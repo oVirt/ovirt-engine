@@ -88,11 +88,11 @@ public class BackendStorageDomainsResource
                                          cnx);
             if (existing != null) {
                 entity = existing.getStorageStaticData();
-                action = VdcActionType.AddExistingNFSStorageDomain;
+                action = VdcActionType.AddExistingFileStorageDomain;
             }
         }
 
-        if (action != VdcActionType.AddExistingNFSStorageDomain) {
+        if (action != VdcActionType.AddExistingFileStorageDomain) {
             validateParameters(model, 2, "name");
         }
 

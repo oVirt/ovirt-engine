@@ -261,7 +261,7 @@ public class BackendStorageDomainsResourceTest
                                    getExistingStorageDomains(existing));
 
 
-        setUpCreationExpectations(!existing ? VdcActionType.AddNFSStorageDomain : VdcActionType.AddExistingNFSStorageDomain,
+        setUpCreationExpectations(!existing ? VdcActionType.AddNFSStorageDomain : VdcActionType.AddExistingFileStorageDomain,
                                   StorageDomainManagementParameter.class,
                                   new String[] {},
                                   new Object[] {},

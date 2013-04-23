@@ -54,14 +54,14 @@ public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfo
                     StorageFormatType.forValue(xmlRpcStruct.get("version").toString()));
         }
         if (sdStatic.getStorageType() != StorageType.UNKNOWN) {
-            if (sdStatic.getStorageType() == StorageType.NFS && xmlRpcStruct.containsKey("remotePath")) {
+            if (sdStatic.getStorageType().isFileDomain() && xmlRpcStruct.containsKey("remotePath")) {
                 String path = xmlRpcStruct.get("remotePath").toString();
                 List<StorageServerConnections> connections = DbFacade.getInstance()
                         .getStorageServerConnectionDao().getAllForStorage(path);
                 if (connections.isEmpty()) {
                     sdStatic.setConnection(new StorageServerConnections());
                     sdStatic.getConnection().setconnection(path);
-                    sdStatic.getConnection().setstorage_type(StorageType.NFS);
+                    sdStatic.getConnection().setstorage_type(sdStatic.getStorageType());
                 } else {
                     sdStatic.setStorage(connections.get(0).getid());
                     sdStatic.setConnection(connections.get(0));

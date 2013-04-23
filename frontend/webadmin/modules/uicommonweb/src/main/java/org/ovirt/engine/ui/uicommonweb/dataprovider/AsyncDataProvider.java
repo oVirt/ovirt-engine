@@ -1613,6 +1613,7 @@ public final class AsyncDataProvider {
     public static void GetExistingStorageDomainList(AsyncQuery aQuery,
             Guid hostId,
             StorageDomainType domainType,
+            StorageType storageType,
             String path) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
@@ -1623,7 +1624,7 @@ public final class AsyncDataProvider {
         };
 
         Frontend.RunQuery(VdcQueryType.GetExistingStorageDomainList, new GetExistingStorageDomainListParameters(hostId,
-                StorageType.NFS,
+                storageType,
                 domainType,
                 path), aQuery);
     }

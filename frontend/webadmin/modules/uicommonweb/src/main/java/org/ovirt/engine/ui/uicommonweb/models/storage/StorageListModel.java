@@ -197,11 +197,12 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     public TaskContext context;
     public IStorageModel storageModel;
     public NGuid storageId;
-    public StorageServerConnections nfsConnection;
+    public StorageServerConnections fileConnection;
     public StorageServerConnections connection;
     public Guid hostId = new Guid();
     public String path;
     public StorageDomainType domainType = StorageDomainType.values()[0];
+    public StorageType storageType;
     public boolean removeConnection;
 
     @Override
@@ -637,6 +638,12 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         NfsStorageModel tempVar = new NfsStorageModel();
         tempVar.setRole(StorageDomainType.ISO);
         items.add(tempVar);
+        LocalStorageModel localIsoModel = new LocalStorageModel();
+        localIsoModel.setRole(StorageDomainType.ISO);
+        items.add(localIsoModel);
+        PosixStorageModel posixIsoModel = new PosixStorageModel();
+        posixIsoModel.setRole(StorageDomainType.ISO);
+        items.add(posixIsoModel);
         NfsStorageModel tempVar2 = new NfsStorageModel();
         tempVar2.setRole(StorageDomainType.ImportExport);
         items.add(tempVar2);
@@ -683,8 +690,26 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             nfsModel.setMessage(null);
 
             Task.Create(this,
-                    new ArrayList<Object>(Arrays.asList(new Object[] { "ImportNfs", //$NON-NLS-1$
-                            host.getId(), nfsModel.getPath().getEntity(), nfsModel.getRole() }))).Run();
+                    new ArrayList<Object>(Arrays.asList(new Object[] { "ImportFile", //$NON-NLS-1$
+                            host.getId(), nfsModel.getPath().getEntity(), nfsModel.getRole(), StorageType.NFS }))).Run();
+        }
+        else if (model.getSelectedItem() instanceof LocalStorageModel)
+        {
+            LocalStorageModel localModel = (LocalStorageModel) model.getSelectedItem();
+            localModel.setMessage(null);
+
+            Task.Create(this,
+                    new ArrayList<Object>(Arrays.asList(new Object[] { "ImportFile", //$NON-NLS-1$
+                            host.getId(), localModel.getPath().getEntity(), localModel.getRole(), StorageType.LOCALFS }))).Run();
+        }
+        else if (model.getSelectedItem() instanceof PosixStorageModel)
+        {
+            PosixStorageModel posixModel = (PosixStorageModel) model.getSelectedItem();
+            posixModel.setMessage(null);
+
+            Task.Create(this,
+                    new ArrayList<Object>(Arrays.asList(new Object[] { "ImportFile", //$NON-NLS-1$
+                            host.getId(), posixModel.getPath().getEntity(), posixModel.getRole(), StorageType.POSIXFS}))).Run();
         }
         else
         {
@@ -1913,7 +1938,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             dataCenterId), null, this);
     }
 
-    private void ImportNfsStorage(TaskContext context)
+    private void ImportFileStorage(TaskContext context)
     {
         this.context = context;
 
@@ -1924,17 +1949,18 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         hostId = (Guid) data.get(1);
         path = (String) data.get(2);
         domainType = (StorageDomainType) data.get(3);
+        storageType = (StorageType) data.get(4);
 
-        ImportNfsStorageInit();
+        ImportFileStorageInit();
     }
 
-    public void ImportNfsStorageInit()
+    public void ImportFileStorageInit()
     {
-        if (nfsConnection != null)
+        if (fileConnection != null)
         {
             // Clean nfs connection
             Frontend.RunAction(VdcActionType.DisconnectStorageServerConnection,
-                new StorageServerConnectionParametersBase(nfsConnection, hostId),
+                new StorageServerConnectionParametersBase(fileConnection, hostId),
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendActionAsyncResult result) {
@@ -1943,9 +1969,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                         VdcReturnValueBase returnVal = result.getReturnValue();
                         boolean success = returnVal != null && returnVal.getSucceeded();
                         if (success) {
-                            storageListModel.nfsConnection = null;
+                            storageListModel.fileConnection = null;
                         }
-                        storageListModel.ImportNfsStoragePostInit();
+                        storageListModel.ImportFileStoragePostInit();
 
                     }
                 },
@@ -1953,11 +1979,11 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         }
         else
         {
-            ImportNfsStoragePostInit();
+            ImportFileStoragePostInit();
         }
     }
 
-    public void ImportNfsStoragePostInit()
+    public void ImportFileStoragePostInit()
     {
         // Check storage domain existence
         AsyncDataProvider.GetStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
@@ -1977,25 +2003,31 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 } else {
                     StorageServerConnections tempVar = new StorageServerConnections();
                     storageModel = storageListModel.storageModel;
-                    NfsStorageModel nfsModel = (NfsStorageModel) storageModel;
-
                     tempVar.setconnection(storageListModel.path);
-                    tempVar.setstorage_type(StorageType.NFS);
-                    if ((Boolean) nfsModel.getOverride().getEntity()) {
-                        tempVar.setNfsVersion((NfsVersion) ((EntityModel) nfsModel.getVersion().getSelectedItem()).getEntity());
-                        tempVar.setNfsRetrans(nfsModel.getRetransmissions().AsConvertible().nullableShort());
-                        tempVar.setNfsTimeo(nfsModel.getTimeout().AsConvertible().nullableShort());
+                    tempVar.setstorage_type(storageListModel.storageType);
+                    if (storageModel instanceof NfsStorageModel) {
+                        NfsStorageModel nfsModel = (NfsStorageModel) storageModel;
+                        if ((Boolean) nfsModel.getOverride().getEntity()) {
+                            tempVar.setNfsVersion((NfsVersion) ((EntityModel) nfsModel.getVersion().getSelectedItem()).getEntity());
+                            tempVar.setNfsRetrans(nfsModel.getRetransmissions().AsConvertible().nullableShort());
+                            tempVar.setNfsTimeo(nfsModel.getTimeout().AsConvertible().nullableShort());
+                        }
                     }
-                    storageListModel.nfsConnection = tempVar;
-                    storageListModel.ImportNfsStorageConnect();
+                    if (storageModel instanceof PosixStorageModel) {
+                        PosixStorageModel posixModel = (PosixStorageModel) storageModel;
+                        tempVar.setVfsType((String) posixModel.getVfsType().getEntity());
+                        tempVar.setMountOptions((String) posixModel.getMountOptions().getEntity());
+                    }
+                    storageListModel.fileConnection = tempVar;
+                    storageListModel.ImportFileStorageConnect();
                 }
             }
         }), null, path);
     }
 
-    public void ImportNfsStorageConnect()
+    public void ImportFileStorageConnect()
     {
-        Frontend.RunAction(VdcActionType.AddStorageServerConnection, new StorageServerConnectionParametersBase(nfsConnection, hostId),
+        Frontend.RunAction(VdcActionType.AddStorageServerConnection, new StorageServerConnectionParametersBase(fileConnection, hostId),
             new IFrontendActionAsyncCallback() {
                 @Override
                 public void Executed(FrontendActionAsyncResult result) {
@@ -2016,7 +2048,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                                             {
                                                 if (domains.isEmpty())
                                                 {
-                                                    PostImportNfsStorage(storageListModel1.context,
+                                                    PostImportFileStorage(storageListModel1.context,
                                                             false,
                                                             storageListModel1.storageModel,
                                                             ConstantsManager.getInstance()
@@ -2025,12 +2057,12 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                                                 }
                                                 else
                                                 {
-                                                    storageListModel1.ImportNfsStorageAddDomain(domains);
+                                                    storageListModel1.ImportFileStorageAddDomain(domains);
                                                 }
                                             }
                                             else
                                             {
-                                                PostImportNfsStorage(storageListModel1.context,
+                                                PostImportFileStorage(storageListModel1.context,
                                                         false,
                                                         storageListModel1.storageModel,
                                                         ConstantsManager.getInstance()
@@ -2042,11 +2074,12 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                                     }),
                                     hostId,
                                     domainType,
+                                    storageType,
                                     path);
                         }
                         else
                         {
-                            PostImportNfsStorage(storageListModel.context,
+                            PostImportFileStorage(storageListModel.context,
                                     false,
                                     storageListModel.storageModel,
                                     ConstantsManager.getInstance()
@@ -2059,14 +2092,14 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 this);
     }
 
-    public void ImportNfsStorageAddDomain(ArrayList<StorageDomain> domains)
+    public void ImportFileStorageAddDomain(ArrayList<StorageDomain> domains)
     {
         StorageDomain sdToAdd = Linq.FirstOrDefault(domains);
         StorageDomainStatic sdsToAdd = sdToAdd == null ? null : sdToAdd.getStorageStaticData();
 
         StorageDomainManagementParameter params = new StorageDomainManagementParameter(sdsToAdd);
         params.setVdsId(hostId);
-        Frontend.RunAction(VdcActionType.AddExistingNFSStorageDomain, params, new IFrontendActionAsyncCallback() {
+        Frontend.RunAction(VdcActionType.AddExistingFileStorageDomain, params, new IFrontendActionAsyncCallback() {
             @Override
             public void Executed(FrontendActionAsyncResult result) {
 
@@ -2083,19 +2116,19 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                     if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
                         storageListModel.AttachStorageToDataCenter(sdToAdd1.getId(), dataCenter.getId());
                     }
-                    PostImportNfsStorage(storageListModel.context, true, storageListModel.storageModel, null);
+                    PostImportFileStorage(storageListModel.context, true, storageListModel.storageModel, null);
 
                 } else {
-                    PostImportNfsStorage(storageListModel.context, false, storageListModel.storageModel, ""); //$NON-NLS-1$
+                    PostImportFileStorage(storageListModel.context, false, storageListModel.storageModel, ""); //$NON-NLS-1$
                 }
             }
         }, new Object[] {this, sdToAdd});
     }
 
-    public void PostImportNfsStorage(TaskContext context, boolean isSucceeded, IStorageModel model, String message)
+    public void PostImportFileStorage(TaskContext context, boolean isSucceeded, IStorageModel model, String message)
     {
         Frontend.RunAction(VdcActionType.DisconnectStorageServerConnection,
-            new StorageServerConnectionParametersBase(nfsConnection, hostId),
+            new StorageServerConnectionParametersBase(fileConnection, hostId),
             new IFrontendActionAsyncCallback() {
                 @Override
                 public void Executed(FrontendActionAsyncResult result) {
@@ -2103,7 +2136,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                     VdcReturnValueBase returnValue = result.getReturnValue();
                     boolean success = returnValue != null && returnValue.getSucceeded();
                     if (success) {
-                        nfsConnection = null;
+                        fileConnection = null;
                     }
                     Object[] array = (Object[]) result.getState();
                     OnFinish((TaskContext) array[0],
@@ -2115,6 +2148,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             },
             new Object[] {context, isSucceeded, model, message});
     }
+
 
     @Override
     public void run(TaskContext context)
@@ -2142,9 +2176,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         {
             saveSanStorage(context);
         }
-        else if (StringHelper.stringsEqual(key, "ImportNfs")) //$NON-NLS-1$
+        else if (StringHelper.stringsEqual(key, "ImportFile")) //$NON-NLS-1$
         {
-            ImportNfsStorage(context);
+            ImportFileStorage(context);
         }
         else if (StringHelper.stringsEqual(key, "Finish")) //$NON-NLS-1$
         {
@@ -2160,6 +2194,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             }
         }
     }
+
 
     private SystemTreeItemModel systemTreeSelectedItem;
 
