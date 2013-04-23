@@ -332,7 +332,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
         boolean isValid = true;
         for (DiskModel diskModel : getDisks()) {
-            diskModel.getQuota().ValidateSelectedItem(new IValidation[] { new SelectedQuotaValidation() });
+            diskModel.getQuota().validateSelectedItem(new IValidation[] { new SelectedQuotaValidation() });
             isValid &= diskModel.getQuota().getIsValid();
         }
 

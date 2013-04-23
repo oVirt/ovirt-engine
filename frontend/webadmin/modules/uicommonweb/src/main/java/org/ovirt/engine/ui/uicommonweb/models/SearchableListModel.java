@@ -555,18 +555,18 @@ public abstract class SearchableListModel extends ListModel implements GridContr
     }
 
     @Override
-    protected void ItemsChanged()
+    protected void itemsChanged()
     {
-        super.ItemsChanged();
+        super.itemsChanged();
 
         ResetIsEmpty();
         UpdatePagingAvailability();
     }
 
     @Override
-    protected void ItemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs e)
+    protected void itemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs e)
     {
-        super.ItemsCollectionChanged(sender, e);
+        super.itemsCollectionChanged(sender, e);
 
         ResetIsEmpty();
         UpdatePagingAvailability();
@@ -714,7 +714,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
                 }
             }
 
-            ItemsChanging(value, items);
+            itemsChanging(value, items);
             items = value;
             UpdatePagingAvailability();
             getItemsChangedEvent().raise(this, EventArgs.Empty);

@@ -61,7 +61,7 @@ public class UserPermissionModel extends Model
 
     public boolean Validate()
     {
-        getRole().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        getRole().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         return getRole().getIsValid();
     }

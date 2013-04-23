@@ -226,7 +226,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(SelectedItemChangedEventDefinition))
+        if (ev.matchesDefinition(selectedItemChangedEventDefinition))
         {
             if (sender == getDataCenter())
             {
@@ -308,9 +308,9 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
     }
 
     @Override
-    protected void ItemsChanged()
+    protected void itemsChanged()
     {
-        super.ItemsChanged();
+        super.itemsChanged();
 
         if (getItems() != null)
         {
@@ -747,7 +747,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         else {
             getHost().setIsValid(true);
         }
-        ValidateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
+        validateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
         getDescription().validateEntity(new IValidation[] {
                 new LengthValidation(BusinessEntitiesDefinitions.GENERAL_MAX_SIZE),
                 new SpecialAsciiI18NOrNoneValidation() });

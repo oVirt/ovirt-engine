@@ -505,7 +505,7 @@ public class ImportVmModel extends ListWithDetailsModel {
 
     public boolean Validate() {
         if (QuotaEnforcementTypeEnum.HARD_ENFORCEMENT.equals(storagePool.getQuotaEnforcementType())) {
-            getClusterQuota().ValidateSelectedItem(
+            getClusterQuota().validateSelectedItem(
                     new IValidation[] { new NotEmptyValidation() });
             for (ImportDiskData item : diskImportDataMap.values()) {
                 if (item.getSelectedQuota() == null) {
@@ -520,9 +520,9 @@ public class ImportVmModel extends ListWithDetailsModel {
                 setMessage("");
             }
         }
-        getStorage().ValidateSelectedItem(
+        getStorage().validateSelectedItem(
                 new IValidation[] { new NotEmptyValidation() });
-        getCluster().ValidateSelectedItem(
+        getCluster().validateSelectedItem(
                 new IValidation[] { new NotEmptyValidation() });
 
         return getStorage().getIsValid()

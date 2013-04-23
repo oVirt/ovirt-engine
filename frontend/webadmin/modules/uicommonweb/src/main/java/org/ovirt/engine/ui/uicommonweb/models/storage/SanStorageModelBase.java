@@ -484,7 +484,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
     private boolean ValidateDiscoverTargetFields()
     {
-        getContainer().getHost().ValidateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
+        getContainer().getHost().validateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
 
         getAddress().validateEntity(new IValidation[] { new NotEmptyValidation() });
 

@@ -753,7 +753,7 @@ public abstract class RunOnceModel extends Model
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(ListModel.SelectedItemChangedEventDefinition))
+        if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition))
         {
             if (sender == getFloppyImage())
             {
@@ -855,12 +855,12 @@ public abstract class RunOnceModel extends Model
     public boolean Validate() {
         getIsoImage().setIsValid(true);
         if ((Boolean) getAttachIso().getEntity()) {
-            getIsoImage().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+            getIsoImage().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         }
 
         getFloppyImage().setIsValid(true);
         if ((Boolean) getAttachFloppy().getEntity()) {
-            getFloppyImage().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+            getFloppyImage().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         }
 
         boolean customPropertyValidation = getCustomPropertySheet().validate();
@@ -891,7 +891,7 @@ public abstract class RunOnceModel extends Model
         }
 
         if (getIsAutoAssign().getEntity() != null && (Boolean) getIsAutoAssign().getEntity() == false) {
-            getDefaultHost().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+            getDefaultHost().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         }
         else {
             getDefaultHost().setIsValid(true);

@@ -227,7 +227,7 @@ public class NewDiskModel extends AbstractDiskModel
             sizeValidation.setMaximum((Integer) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.MaxBlockDiskSize));
         }
         getSize().validateEntity(new IValidation[] { new NotEmptyValidation(), sizeValidation });
-        getStorageDomain().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        getStorageDomain().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         return super.validate() && getSize().getIsValid() && getStorageDomain().getIsValid();
     }

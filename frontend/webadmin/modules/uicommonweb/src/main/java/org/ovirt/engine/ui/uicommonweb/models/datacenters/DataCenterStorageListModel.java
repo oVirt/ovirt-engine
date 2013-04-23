@@ -650,16 +650,16 @@ public class DataCenterStorageListModel extends SearchableListModel
     }
 
     @Override
-    protected void ItemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs e)
+    protected void itemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs e)
     {
-        super.ItemsCollectionChanged(sender, e);
+        super.itemsCollectionChanged(sender, e);
         UpdateActionAvailability();
     }
 
     @Override
-    protected void ItemsChanged()
+    protected void itemsChanged()
     {
-        super.ItemsChanged();
+        super.itemsChanged();
         UpdateActionAvailability();
     }
 

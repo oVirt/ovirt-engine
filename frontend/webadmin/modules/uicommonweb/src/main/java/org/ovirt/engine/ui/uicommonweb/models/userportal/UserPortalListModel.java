@@ -303,7 +303,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     {
         if (items != value)
         {
-            ItemsChanging(value, items);
+            itemsChanging(value, items);
             items = value;
             getItemsChangedEvent().raise(this, EventArgs.Empty);
             onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$

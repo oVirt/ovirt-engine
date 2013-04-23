@@ -878,7 +878,7 @@ public class ClusterModel extends EntityModel
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(ListModel.SelectedItemChangedEventDefinition))
+        if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition))
         {
             if (sender == getDataCenter())
             {
@@ -1056,19 +1056,19 @@ public class ClusterModel extends EntityModel
 
         if (validateStoragePool)
         {
-            getDataCenter().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+            getDataCenter().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         }
 
         if (validateCpu)
         {
-            getCPU().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+            getCPU().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         }
         else
         {
-            getCPU().ValidateSelectedItem(new IValidation[] {});
+            getCPU().validateSelectedItem(new IValidation[] {});
         }
 
-        getVersion().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        getVersion().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         // TODO: async validation for webadmin
         // string name = (string)Name.Entity;

@@ -275,7 +275,7 @@ public class HostInterfaceModel extends EntityModel
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(ListModel.SelectedItemChangedEventDefinition) && sender == getNetwork())
+        if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getNetwork())
         {
             Network_SelectedItemChanged(null);
         }
@@ -325,7 +325,7 @@ public class HostInterfaceModel extends EntityModel
 
     public boolean Validate()
     {
-        getNetwork().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        getNetwork().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         getAddress().setIsValid(true);
         getSubnet().setIsValid(true);

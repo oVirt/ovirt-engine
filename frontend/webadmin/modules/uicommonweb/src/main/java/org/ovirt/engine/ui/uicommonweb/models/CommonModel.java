@@ -834,7 +834,7 @@ public class CommonModel extends ListModel
         {
             BookmarkListModel_Navigated(sender, (BookmarkEventArgs) args);
         }
-        else if (ev.matchesDefinition(SelectedItemChangedEventDefinition) && sender == getSystemTree())
+        else if (ev.matchesDefinition(selectedItemChangedEventDefinition) && sender == getSystemTree())
         {
             SystemTree_ItemChanged(sender, args);
         }

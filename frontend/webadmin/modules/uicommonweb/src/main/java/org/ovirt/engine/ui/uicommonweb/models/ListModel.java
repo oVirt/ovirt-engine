@@ -18,7 +18,7 @@ import java.util.List;
 public class ListModel extends EntityModel
 {
 
-    public static EventDefinition SelectedItemChangedEventDefinition;
+    public static EventDefinition selectedItemChangedEventDefinition;
     private Event privateSelectedItemChangedEvent;
 
     public Event getSelectedItemChangedEvent()
@@ -106,9 +106,9 @@ public class ListModel extends EntityModel
     {
         if (items != value)
         {
-            ItemsChanging(value, items);
+            itemsChanging(value, items);
             items = value;
-            ItemsChanged();
+            itemsChanged();
             getItemsChangedEvent().raise(this, EventArgs.Empty);
             onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
         }
@@ -146,14 +146,14 @@ public class ListModel extends EntityModel
 
     static
     {
-        SelectedItemChangedEventDefinition = new EventDefinition("SelectedItemChanged", ListModel.class); //$NON-NLS-1$
+        selectedItemChangedEventDefinition = new EventDefinition("SelectedItemChanged", ListModel.class); //$NON-NLS-1$
         SelectedItemsChangedEventDefinition = new EventDefinition("SelectedItemsChanged", ListModel.class); //$NON-NLS-1$
         ItemsChangedEventDefinition = new EventDefinition("ItemsChanged", ListModel.class); //$NON-NLS-1$
     }
 
     public ListModel()
     {
-        setSelectedItemChangedEvent(new Event(SelectedItemChangedEventDefinition));
+        setSelectedItemChangedEvent(new Event(selectedItemChangedEventDefinition));
         setSelectedItemsChangedEvent(new Event(SelectedItemsChangedEventDefinition));
         setItemsChangedEvent(new Event(ItemsChangedEventDefinition));
     }
@@ -180,8 +180,8 @@ public class ListModel extends EntityModel
             return;
         }
 
-        UnsubscribeList(oldValue);
-        SubscribeList(newValue);
+        unsubscribeList(oldValue);
+        subscribeList(newValue);
     }
 
     @Override
@@ -225,7 +225,7 @@ public class ListModel extends EntityModel
         }
         else if (ev.matchesDefinition(ProvideCollectionChangedEvent.Definition))
         {
-            ItemsCollectionChanged(sender, (NotifyCollectionChangedEventArgs) args);
+            itemsCollectionChanged(sender, (NotifyCollectionChangedEventArgs) args);
         }
     }
 
@@ -244,14 +244,14 @@ public class ListModel extends EntityModel
     {
     }
 
-    protected void ItemsChanged()
+    protected void itemsChanged()
     {
         // if Items are updated, SelectedItem and SelectedItems become irrelevant:
         setSelectedItem(null);
         setSelectedItems(null);
     }
 
-    protected void ItemsChanging(Iterable newValue, Iterable oldValue)
+    protected void itemsChanging(Iterable newValue, Iterable oldValue)
     {
         IProvideCollectionChangedEvent notifier =
                 (IProvideCollectionChangedEvent) ((oldValue instanceof IProvideCollectionChangedEvent) ? oldValue
@@ -270,14 +270,14 @@ public class ListModel extends EntityModel
         }
 
         // Unsure subscribing to the property change notification for all items.
-        UnsubscribeList(oldValue);
-        SubscribeList(newValue);
+        unsubscribeList(oldValue);
+        subscribeList(newValue);
     }
 
     /**
      * Invoked whenever items collection was changed, i.e. some items was added or removed.
      */
-    protected void ItemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs e)
+    protected void itemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs e)
     {
         if (!getNotifyPropertyChangeForAnyItem())
         {
@@ -285,11 +285,11 @@ public class ListModel extends EntityModel
         }
 
         // Track property change on all items as necessary.
-        UnsubscribeList(e.OldItems);
-        SubscribeList(e.NewItems);
+        unsubscribeList(e.OldItems);
+        subscribeList(e.NewItems);
     }
 
-    public void ValidateSelectedItem(IValidation[] validations)
+    public void validateSelectedItem(IValidation[] validations)
     {
         setIsValid(true);
 
@@ -314,7 +314,7 @@ public class ListModel extends EntityModel
         }
     }
 
-    private void SubscribeList(Iterable list)
+    private void subscribeList(Iterable list)
     {
         if (list == null)
         {
@@ -332,7 +332,7 @@ public class ListModel extends EntityModel
         }
     }
 
-    private void UnsubscribeList(Iterable list)
+    private void unsubscribeList(Iterable list)
     {
         if (list == null)
         {

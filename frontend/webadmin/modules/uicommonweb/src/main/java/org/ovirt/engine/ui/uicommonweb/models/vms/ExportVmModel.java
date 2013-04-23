@@ -57,7 +57,7 @@ public class ExportVmModel extends Model
 
     public boolean Validate()
     {
-        getStorage().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        getStorage().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         return getStorage().getIsValid();
     }

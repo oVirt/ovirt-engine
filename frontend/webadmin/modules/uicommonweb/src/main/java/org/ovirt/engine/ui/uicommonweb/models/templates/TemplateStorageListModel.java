@@ -105,9 +105,9 @@ public class TemplateStorageListModel extends SearchableListModel
         if (storageDomainModels != null)
         {
             Linq.Sort(storageDomainModels, new StorageDomainModelByNameComparer());
-            ItemsChanging(value, items);
+            itemsChanging(value, items);
             items = storageDomainModels;
-            ItemsChanged();
+            itemsChanged();
             getItemsChangedEvent().raise(this, EventArgs.Empty);
             onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
             storageDomainModels = null;

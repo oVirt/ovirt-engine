@@ -627,7 +627,7 @@ public abstract class AbstractDiskModel extends DiskModel
 
         storage_pool dataCenter = (storage_pool) getDataCenter().getSelectedItem();
         if (dataCenter != null && dataCenter.getQuotaEnforcementType() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT) {
-            getQuota().ValidateSelectedItem(new IValidation[] { new NotEmptyQuotaValidation() });
+            getQuota().validateSelectedItem(new IValidation[] { new NotEmptyQuotaValidation() });
         }
 
         return getAlias().getIsValid() && getDescription().getIsValid() && getQuota().getIsValid();
@@ -731,11 +731,11 @@ public abstract class AbstractDiskModel extends DiskModel
         {
             IsInternal_EntityChanged();
         }
-        else if (ev.matchesDefinition(ListModel.SelectedItemChangedEventDefinition) && sender == getVolumeType())
+        else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getVolumeType())
         {
             VolumeType_SelectedItemChanged();
         }
-        else if (ev.matchesDefinition(ListModel.SelectedItemChangedEventDefinition) && sender == getDataCenter())
+        else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getDataCenter())
         {
             Datacenter_SelectedItemChanged();
         }

@@ -356,7 +356,7 @@ public abstract class VmInterfaceModel extends Model
     {
         getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new I18NNameValidation() });
 
-        getNicType().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        getNicType().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         getMAC().setIsValid(true);
         if (getMAC().getIsChangable())

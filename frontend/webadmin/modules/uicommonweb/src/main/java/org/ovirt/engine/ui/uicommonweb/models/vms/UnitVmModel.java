@@ -1260,7 +1260,7 @@ public class UnitVmModel extends Model {
         {
             Frontend_QueryComplete();
         }
-        else if (ev.matchesDefinition(ListModel.SelectedItemChangedEventDefinition))
+        else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition))
         {
             if (sender == getDataCenter())
             {
@@ -1938,15 +1938,15 @@ public class UnitVmModel extends Model {
     }
 
     public boolean Validate() {
-        getDataCenter().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
-        getCluster().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        getDataCenter().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        getCluster().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getMemSize().validateEntity(new IValidation[] { new ByteSizeValidation() });
         getMinAllocatedMemory().validateEntity(new IValidation[] { new ByteSizeValidation() });
-        getOSType().ValidateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
+        getOSType().validateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
 
         storage_pool dataCenter = (storage_pool) getDataCenter().getSelectedItem();
         if (dataCenter != null && dataCenter.getQuotaEnforcementType() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT) {
-            getQuota().ValidateSelectedItem(new IValidation[] { new NotEmptyQuotaValidation() });
+            getQuota().validateSelectedItem(new IValidation[] { new NotEmptyQuotaValidation() });
         }
 
         getTotalCPUCores().validateEntity(new IValidation[] {
@@ -1983,17 +1983,17 @@ public class UnitVmModel extends Model {
         }
 
         if (getIsAutoAssign().getEntity() != null && ((Boolean) getIsAutoAssign().getEntity()) == false) {
-            getDefaultHost().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+            getDefaultHost().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         } else {
             getDefaultHost().setIsValid(true);
         }
 
-        getTemplate().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        getTemplate().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getDisksAllocationModel().validateEntity(new IValidation[] {});
 
         getCdImage().setIsValid(true);
         if (getCdImage().getIsChangable()) {
-            getCdImage().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+            getCdImage().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         }
 
         if (getIsLinuxOS()) {

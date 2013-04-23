@@ -165,7 +165,7 @@ public class ConfigureLocalStorageModel extends Model {
     public void eventRaised(Event ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(ListModel.SelectedItemChangedEventDefinition) && sender == getDataCenter().getVersion()) {
+        if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getDataCenter().getVersion()) {
             DataCenterVersion_SelectedItemChanged();
         } else if (ev.matchesDefinition(Frontend.QueryStartedEventDefinition)
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), frontendHash)) {

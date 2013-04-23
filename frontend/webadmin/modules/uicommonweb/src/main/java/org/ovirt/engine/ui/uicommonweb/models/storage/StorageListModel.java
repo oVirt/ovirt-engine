@@ -1075,9 +1075,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     }
 
     @Override
-    protected void ItemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs e)
+    protected void itemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs e)
     {
-        super.ItemsCollectionChanged(sender, e);
+        super.itemsCollectionChanged(sender, e);
 
         // Try to select an item corresponding to the system tree selection.
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage)

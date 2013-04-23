@@ -179,7 +179,7 @@ public class DataCenterModel extends Model
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(ListModel.SelectedItemChangedEventDefinition) && sender == getStorageTypeList())
+        if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getStorageTypeList())
         {
             StorageType_SelectedItemChanged();
         }
@@ -289,9 +289,9 @@ public class DataCenterModel extends Model
                 new LengthValidation(getMaxNameLength()),
                 new AsciiNameValidation() });
 
-        getStorageTypeList().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        getStorageTypeList().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
-        getVersion().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        getVersion().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         getDescription().validateEntity(new IValidation[] { new AsciiOrNoneValidation() });
 

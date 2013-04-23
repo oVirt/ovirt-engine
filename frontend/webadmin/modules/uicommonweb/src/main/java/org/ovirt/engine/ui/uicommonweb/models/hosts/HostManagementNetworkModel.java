@@ -294,7 +294,7 @@ public class HostManagementNetworkModel extends EntityModel
 
     public boolean Validate()
     {
-        getInterface().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        getInterface().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         getAddress().setIsValid(true);
         getSubnet().setIsValid(true);

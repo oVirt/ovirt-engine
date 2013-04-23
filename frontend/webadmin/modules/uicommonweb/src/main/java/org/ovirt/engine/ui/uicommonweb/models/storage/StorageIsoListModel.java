@@ -37,7 +37,7 @@ public class StorageIsoListModel extends SearchableListModel
             EntityModel lastSelectedItem = (EntityModel) getSelectedItem();
             ArrayList<EntityModel> lastSelectedItems = (ArrayList<EntityModel>) getSelectedItems();
 
-            ItemsChanging(value, items);
+            itemsChanging(value, items);
             items = value;
             getItemsChangedEvent().raise(this, EventArgs.Empty);
             onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$

@@ -95,9 +95,9 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
     {
         if (items != value)
         {
-            ItemsChanging(value, items);
+            itemsChanging(value, items);
             items = value;
-            ItemsChanged();
+            itemsChanged();
             getItemsChangedEvent().raise(this, EventArgs.Empty);
             onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
         }

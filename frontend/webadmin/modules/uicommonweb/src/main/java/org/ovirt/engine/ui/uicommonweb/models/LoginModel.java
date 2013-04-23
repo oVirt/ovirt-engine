@@ -316,7 +316,7 @@ public class LoginModel extends Model
     {
         getUserName().validateEntity(new IValidation[] { new NotEmptyValidation() });
         getPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
-        getDomain().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        getDomain().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         return getUserName().getIsValid() && getPassword().getIsValid() && getDomain().getIsValid();
     }

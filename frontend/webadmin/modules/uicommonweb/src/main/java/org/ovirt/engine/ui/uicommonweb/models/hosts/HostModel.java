@@ -831,11 +831,11 @@ public class HostModel extends Model
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(ListModel.SelectedItemChangedEventDefinition) && sender == getDataCenter())
+        if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getDataCenter())
         {
             DataCenter_SelectedItemChanged();
         }
-        else if (ev.matchesDefinition(ListModel.SelectedItemChangedEventDefinition) && sender == getCluster())
+        else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getCluster())
         {
             Cluster_SelectedItemChanged();
         } else if (sender == getConsoleAddressEnabled()) {
@@ -1092,7 +1092,7 @@ public class HostModel extends Model
         {
         Boolean isPmEnabled = (Boolean) getIsPm().getEntity();
         boolean isPrimary = isPmPrimarySelected();
-            getCluster().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+            getCluster().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
             ValidatePmModels(isPrimary);
 
         if (isPrimary && (!getManagementIp().getIsValid()
@@ -1178,7 +1178,7 @@ public class HostModel extends Model
         ip.validateEntity(new IValidation[] {new NotEmptyValidation(), new HostAddressValidation()});
         userName.validateEntity(new IValidation[] {new NotEmptyValidation()});
         password.validateEntity(new IValidation[] {new NotEmptyValidation()});
-        type.ValidateSelectedItem(new IValidation[] {new NotEmptyValidation()});
+        type.validateSelectedItem(new IValidation[] {new NotEmptyValidation()});
         port.validateEntity(new IValidation[] {new IntegerValidation(1, 65535)});
         options.validateEntity(new IValidation[] {new KeyValuePairValidation(true)});
     }
@@ -1212,8 +1212,8 @@ public class HostModel extends Model
             getConsoleAddress().setIsValid(true);
         }
 
-        getDataCenter().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
-        getCluster().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        getDataCenter().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        getCluster().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         if ((Boolean) getIsPm().getEntity())
         {

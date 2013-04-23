@@ -117,7 +117,7 @@ public class MoveHost extends ListModel
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(SelectedItemChangedEventDefinition) && sender == getCluster())
+        if (ev.matchesDefinition(selectedItemChangedEventDefinition) && sender == getCluster())
         {
             Cluster_SelectedItemChanged();
         }
@@ -125,7 +125,7 @@ public class MoveHost extends ListModel
 
     public boolean Validate()
     {
-        getCluster().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        getCluster().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         return getCluster().getIsValid();
     }

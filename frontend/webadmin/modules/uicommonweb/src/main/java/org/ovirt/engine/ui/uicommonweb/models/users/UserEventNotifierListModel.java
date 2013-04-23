@@ -313,9 +313,9 @@ public class UserEventNotifierListModel extends SearchableListModel
     }
 
     @Override
-    protected void ItemsChanged()
+    protected void itemsChanged()
     {
-        super.ItemsChanged();
+        super.itemsChanged();
         UpdateActionAvailability();
     }
 

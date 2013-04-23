@@ -241,8 +241,8 @@ public class HostBondInterfaceModel extends Model
 
     public boolean Validate()
     {
-        getNetwork().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
-        getBond().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation(),
+        getNetwork().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        getBond().validateSelectedItem(new IValidation[] { new NotEmptyValidation(),
                 new LengthValidation(BusinessEntitiesDefinitions.HOST_NIC_NAME_LENGTH), new BondNameValidation() });
 
         getAddress().setIsValid(true);

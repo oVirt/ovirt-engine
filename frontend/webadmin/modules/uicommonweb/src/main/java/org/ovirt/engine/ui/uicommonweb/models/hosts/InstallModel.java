@@ -63,7 +63,7 @@ public class InstallModel extends Model {
         getRootPassword().setIsValid(true);
 
         if (isOVirt) {
-            getOVirtISO().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+            getOVirtISO().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         } else {
             getRootPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
         }
