@@ -113,4 +113,13 @@ public class FeatureSupported {
     public static boolean multipleGatewaysSupported(Version version) {
         return supportedInConfig(ConfigValues.MultipleGatewaysSupported, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if memory snapshot is supported for the version, <code>false</code> if it's not.
+     */
+    public static boolean memorySnapshot(Version version) {
+        return supportedInConfig(ConfigValues.MemorySnapshotSupported, version);
+    }
 }

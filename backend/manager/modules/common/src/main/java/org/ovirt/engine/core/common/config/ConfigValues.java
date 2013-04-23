@@ -1370,6 +1370,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     MultipleGatewaysSupported(505),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    MemorySnapshotSupported(511),
+
     Invalid(65535);
 
     private int intValue;
