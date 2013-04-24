@@ -70,6 +70,8 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
 
     @Override
     public void initTable(final CommonApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         getTable().addColumn(new NicActivateStatusColumn<VmNetworkInterface>(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> nameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
@@ -78,7 +80,7 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
                 return object.getName();
             }
         };
-        getTable().addColumn(nameColumn, constants.nameInterface());
+        getTable().addColumn(nameColumn, constants.nameInterface(), "150px"); //$NON-NLS-1$
 
         CheckboxColumn<VmNetworkInterface> pluggedColumn = new CheckboxColumn<VmNetworkInterface>() {
             @Override
@@ -100,7 +102,7 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
                 return object.getNetworkName();
             }
         };
-        getTable().addColumn(networkNameColumn, constants.networkNameInterface());
+        getTable().addColumn(networkNameColumn, constants.networkNameInterface(), "150px"); //$NON-NLS-1$
 
         BooleanColumn<VmNetworkInterface> linkStateColumn =
                 new BooleanColumn<VmNetworkInterface>(constants.linkedNetworkInteface(),
@@ -119,7 +121,7 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
                 return VmInterfaceType.forValue(object.getType());
             }
         };
-        getTable().addColumn(typeColumn, constants.typeInterface());
+        getTable().addColumn(typeColumn, constants.typeInterface(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> macColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
@@ -127,7 +129,7 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
                 return object.getMacAddress();
             }
         };
-        getTable().addColumn(macColumn, constants.macInterface());
+        getTable().addColumn(macColumn, constants.macInterface(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> speedColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
@@ -140,7 +142,7 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
             }
         };
         getTable().addColumnWithHtmlHeader(speedColumn,
-                templates.sub(constants.speedInterface(), constants.mbps()).asString());
+                templates.sub(constants.speedInterface(), constants.mbps()).asString(), "150px"); //$NON-NLS-1$
 
         getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(),
                 constants.newInterface()) {

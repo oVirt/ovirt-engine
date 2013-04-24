@@ -33,13 +33,15 @@ public class SubTabDataCenterNetworkView extends AbstractSubTabTableView<storage
     }
 
     void initTable(ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         TextColumnWithTooltip<Network> nameColumn = new TextColumnWithTooltip<Network>() {
             @Override
             public String getValue(Network object) {
                 return object.getName();
             }
         };
-        getTable().addColumn(nameColumn, constants.nameNetwork());
+        getTable().addColumn(nameColumn, constants.nameNetwork(), "400px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<Network> typeColumn = new TextColumnWithTooltip<Network>() {
             @Override
@@ -47,7 +49,7 @@ public class SubTabDataCenterNetworkView extends AbstractSubTabTableView<storage
                 return object.getDescription();
             }
         };
-        getTable().addColumn(typeColumn, constants.descriptionNetwork());
+        getTable().addColumn(typeColumn, constants.descriptionNetwork(), "400px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<Network>(constants.newNetwork()) {
             @Override

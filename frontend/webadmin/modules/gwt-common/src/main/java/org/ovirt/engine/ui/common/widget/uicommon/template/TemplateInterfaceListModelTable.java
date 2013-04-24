@@ -35,7 +35,7 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
                 return object.getName();
             }
         };
-        getTable().addColumn(nameColumn, constants.nameInterface());
+        getTable().addColumn(nameColumn, constants.nameInterface(), "200px"); //$NON-NLS-1$
 
         CheckboxColumn<VmNetworkInterface> pluggedColumn = new CheckboxColumn<VmNetworkInterface>() {
             @Override
@@ -49,7 +49,7 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
             }
         };
 
-        getTable().addColumnWithHtmlHeader(pluggedColumn, constants.plugged(), "60px"); //$NON-NLS-1$
+        getTable().addColumnWithHtmlHeader(pluggedColumn, constants.plugged(), "90px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> networkNameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
@@ -57,7 +57,7 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
                 return object.getNetworkName();
             }
         };
-        getTable().addColumn(networkNameColumn, constants.networkNameInterface());
+        getTable().addColumn(networkNameColumn, constants.networkNameInterface(), "200px"); //$NON-NLS-1$
 
         BooleanColumn<VmNetworkInterface> linkStateColumn =
                 new BooleanColumn<VmNetworkInterface>(constants.linkedNetworkInteface(),
@@ -68,7 +68,7 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
                     }
                 };
 
-        getTable().addColumnWithHtmlHeader(linkStateColumn, constants.linkStateNetworkInteface(), "65px"); //$NON-NLS-1$
+        getTable().addColumnWithHtmlHeader(linkStateColumn, constants.linkStateNetworkInteface(), "90px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> typeColumn = new EnumColumn<VmNetworkInterface, VmInterfaceType>() {
             @Override
@@ -76,7 +76,7 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
                 return VmInterfaceType.forValue(object.getType());
             }
         };
-        getTable().addColumn(typeColumn, constants.typeInterface());
+        getTable().addColumn(typeColumn, constants.typeInterface(), "100px"); //$NON-NLS-1$
 
         getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(), constants.newInterface()) {
             @Override

@@ -37,13 +37,15 @@ public class SubTabNetworkTemplateView extends AbstractSubTabTableView<NetworkVi
     }
 
     void initTable(ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>> nameColumn = new TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>>() {
             @Override
             public String getValue(PairQueryable<VmNetworkInterface, VmTemplate> object) {
                 return object.getSecond().getName();
             }
         };
-        getTable().addColumn(nameColumn, constants.nameTemplate());
+        getTable().addColumn(nameColumn, constants.nameTemplate(), "400px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>> statusColumn = new EnumColumn<PairQueryable<VmNetworkInterface, VmTemplate>, VmTemplateStatus>() {
             @Override
@@ -67,7 +69,7 @@ public class SubTabNetworkTemplateView extends AbstractSubTabTableView<NetworkVi
                 return object.getFirst().getName();
             }
         };
-        getTable().addColumn(vnicNameColumn, constants.vnicNetworkTemplate());
+        getTable().addColumn(vnicNameColumn, constants.vnicNetworkTemplate(), "150px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<PairQueryable<VmNetworkInterface, VmTemplate>>(constants.removeInterface()) {
             @Override

@@ -11,8 +11,8 @@ import org.ovirt.engine.ui.common.widget.table.column.BooleanColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.VmInterfaceListModelTable;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
-import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineNetworkInterfacePresenter;
 
@@ -38,6 +38,8 @@ public class SubTabVirtualMachineNetworkInterfaceView extends AbstractSubTabTabl
             @Override
             public void initTable(final CommonApplicationConstants constants) {
                 super.initTable(constants);
+
+                getTable().enableColumnResizing();
 
                 BooleanColumn<VmNetworkInterface> portMirroringColumn =
                         new BooleanColumn<VmNetworkInterface>(constants.portMirroringEnabled()) {

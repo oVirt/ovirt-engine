@@ -163,17 +163,24 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         boolean attached = viewRadioGroup.getSelectedValue() == NetworkHostFilter.attached;
 
         getTable().ensureColumnPresent(hostStatus, constants.empty(), true, "30px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(nameColumn, constants.nameHost(), true);
-        getTable().ensureColumnPresent(clusterColumn, constants.clusterHost(), true);
-        getTable().ensureColumnPresent(dcColumn, constants.dcHost(), true);
+        getTable().ensureColumnPresent(nameColumn, constants.nameHost(), true, "200px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(clusterColumn, constants.clusterHost(), true, "200px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(dcColumn, constants.dcHost(), true, "200px"); //$NON-NLS-1$
         getTable().ensureColumnPresent(nicStatusColumn, constants.statusNetworkHost(), attached, "140px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(nicColumn, constants.nicNetworkHost(), attached);
-        getTable().ensureColumnPresent(speedColumn, constants.speedNetworkHost(), attached);
-        getTable().ensureColumnPresent(nicRxColumn, templates.sub(constants.rxNetworkHost(), constants.mbps()).asString(), attached);
-        getTable().ensureColumnPresent(nicTxColumn, templates.sub(constants.txNetworkHost(), constants.mbps()).asString(), attached);
+        getTable().ensureColumnPresent(nicColumn, constants.nicNetworkHost(), attached, "200px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(speedColumn, constants.speedNetworkHost(), attached, "200px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(nicRxColumn,
+                templates.sub(constants.rxNetworkHost(), constants.mbps()).asString(),
+                attached,
+                "200px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(nicTxColumn,
+                templates.sub(constants.txNetworkHost(), constants.mbps()).asString(),
+                attached,
+                "200px"); //$NON-NLS-1$
     }
 
     void initTable() {
+        getTable().enableColumnResizing();
         initTableOverhead();
         handleRadioButtonClick(null);
 

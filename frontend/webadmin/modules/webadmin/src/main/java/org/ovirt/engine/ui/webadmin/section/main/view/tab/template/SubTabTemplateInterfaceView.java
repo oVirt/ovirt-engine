@@ -29,6 +29,7 @@ public class SubTabTemplateInterfaceView extends AbstractSubTabTableWidgetView<V
             ClientStorage clientStorage, ApplicationConstants constants) {
         super(new TemplateInterfaceListModelTable(modelProvider, eventBus, clientStorage));
         ViewIdHandler.idHandler.generateAndSetIds(this);
+        getTable().enableColumnResizing();
         initTable(constants);
         initWidget(getModelBoundTableWidget());
     }

@@ -27,6 +27,7 @@ public class SubTabNetworkPermissionView extends AbstractSubTabPermissionsView<N
             EventBus eventBus,
             ClientStorage clientStorage, ApplicationConstants constants) {
         super(modelProvider, eventBus, clientStorage, constants);
+        getTable().enableColumnResizing();
     }
 
     @Override

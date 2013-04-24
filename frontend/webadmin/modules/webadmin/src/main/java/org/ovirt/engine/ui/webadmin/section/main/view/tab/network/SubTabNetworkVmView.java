@@ -74,25 +74,25 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
 
         getTable().ensureColumnPresent(vmStatusColumn, constants.empty(), true, "30px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(nameColumn, constants.nameVm(), true); //$NON-NLS-1$
+        getTable().ensureColumnPresent(nameColumn, constants.nameVm(), true, "150px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(clusterColumn, constants.clusterVm(), true); //$NON-NLS-1$
+        getTable().ensureColumnPresent(clusterColumn, constants.clusterVm(), true, "150px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(ipColumn, constants.ipVm(), true);
+        getTable().ensureColumnPresent(ipColumn, constants.ipVm(), true, "150px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(nicActivateStatusColumn, constants.vnicStatusNetworkVM(), true); //$NON-NLS-1$
+        getTable().ensureColumnPresent(nicActivateStatusColumn, constants.vnicStatusNetworkVM(), true, "150px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(vnicNameColumn, constants.vnicNetworkVM(), true);
+        getTable().ensureColumnPresent(vnicNameColumn, constants.vnicNetworkVM(), true, "150px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(rxColumn,
                 templates.sub(constants.rxNetworkVM(), constants.mbps()).asString(),
-                running);
+                running, "150px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(txColumn,
                 templates.sub(constants.txNetworkVM(), constants.mbps()).asString(),
-                running);
+                running, "150px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(descriptionColumn, constants.descriptionVm(), true);
+        getTable().ensureColumnPresent(descriptionColumn, constants.descriptionVm(), true, "150px"); //$NON-NLS-1$
     }
 
     private final VmStatusColumn<PairQueryable<VmNetworkInterface, VM>> vmStatusColumn =
@@ -173,6 +173,7 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
             };
 
     private void initTable() {
+        getTable().enableColumnResizing();
         initTableOverhead();
         handleRadioButtonClick(null);
 

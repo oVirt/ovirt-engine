@@ -59,6 +59,8 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
     }
 
     void initTable(final ApplicationConstants constants, final ApplicationTemplates templates) {
+        getTable().enableColumnResizing();
+
         getTable().addColumn(new NetworkStatusColumn(), "", "20px"); //$NON-NLS-1$ //$NON-NLS-2$
 
         TextColumnWithTooltip<Network> nameColumn = new TextColumnWithTooltip<Network>() {
@@ -67,7 +69,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
                 return object.getName();
             }
         };
-        getTable().addColumn(nameColumn, constants.nameNetwork());
+        getTable().addColumn(nameColumn, constants.nameNetwork(), "400px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<Network> statusColumn = new EnumColumn<Network, NetworkStatus>() {
             @Override
@@ -75,7 +77,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
                 return object.getCluster().getStatus();
             }
         };
-        getTable().addColumn(statusColumn, constants.statusNetwork());
+        getTable().addColumn(statusColumn, constants.statusNetwork(), "100px"); //$NON-NLS-1$
 
         SafeHtmlWithSafeHtmlTooltipColumn<Network> roleColumn =
                 new SafeHtmlWithSafeHtmlTooltipColumn<Network>() {
@@ -129,7 +131,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
                 return object.getDescription();
             }
         };
-        getTable().addColumn(descColumn, constants.descriptionNetwork());
+        getTable().addColumn(descColumn, constants.descriptionNetwork(), "400px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<Network>(constants.addNetworkNetwork()) {
             @Override
