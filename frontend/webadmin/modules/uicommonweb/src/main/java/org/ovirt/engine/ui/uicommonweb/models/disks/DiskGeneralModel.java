@@ -69,7 +69,7 @@ public class DiskGeneralModel extends EntityModel
 
     public void setDiskId(String value)
     {
-        if (diskId != value)
+        if (!StringHelper.stringsEqual(diskId, value))
         {
             diskId = value;
             onPropertyChanged(new PropertyChangedEventArgs("ID")); //$NON-NLS-1$
@@ -85,7 +85,7 @@ public class DiskGeneralModel extends EntityModel
 
     public void setLunId(String value)
     {
-        if (privateLunId != value)
+        if (!StringHelper.stringsEqual(privateLunId, value))
         {
             privateLunId = value;
             onPropertyChanged(new PropertyChangedEventArgs("LUN ID")); //$NON-NLS-1$
@@ -101,7 +101,7 @@ public class DiskGeneralModel extends EntityModel
 
     public void setQuotaName(String value)
     {
-        if (privateQuotaName != value)
+        if (!StringHelper.stringsEqual(privateQuotaName, value))
         {
             privateQuotaName = value;
             onPropertyChanged(new PropertyChangedEventArgs("Quota Name")); //$NON-NLS-1$

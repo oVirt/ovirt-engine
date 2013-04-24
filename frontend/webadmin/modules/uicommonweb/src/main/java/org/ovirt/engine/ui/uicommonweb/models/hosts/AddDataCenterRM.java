@@ -79,7 +79,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
         DataCenterModel dataCenterModel = configureModel.getDataCenter();
         String dataCenterName = (String) dataCenterModel.getName().getEntity();
 
-        if (candidate == null || candidate.getname() != dataCenterName) {
+        if (candidate == null || !StringHelper.stringsEqual(candidate.getname(), dataCenterName)) {
 
             // Try to find existing data center with the specified name.
             StoragePool dataCenter = context.dataCenterFoundByName;

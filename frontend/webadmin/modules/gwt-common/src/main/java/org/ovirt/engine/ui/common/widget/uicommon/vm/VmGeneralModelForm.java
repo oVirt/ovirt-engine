@@ -97,7 +97,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
                     @Override
                     public boolean isTrue() {
                         String quotaName = getModel().getQuotaName();
-                        return quotaName != null && quotaName != "";
+                        return quotaName != null && !quotaName.equals("");
                     }
                 }) {
 

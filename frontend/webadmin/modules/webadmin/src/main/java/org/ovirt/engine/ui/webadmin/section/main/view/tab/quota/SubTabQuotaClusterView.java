@@ -38,8 +38,8 @@ public class SubTabQuotaClusterView extends AbstractSubTabTableView<Quota, Quota
         getTable().addColumn(new TextColumnWithTooltip<QuotaVdsGroup>() {
             @Override
             public String getValue(QuotaVdsGroup object) {
-                return object.getVdsGroupName() == null || object.getVdsGroupName() == "" ? constants.ultQuotaForAllClustersQuotaPopup()
-                        : object.getVdsGroupName();
+                return object.getVdsGroupName() == null || object.getVdsGroupName().equals("") ?
+                        constants.ultQuotaForAllClustersQuotaPopup() : object.getVdsGroupName();
             }
         },
                 constants.nameCluster(),

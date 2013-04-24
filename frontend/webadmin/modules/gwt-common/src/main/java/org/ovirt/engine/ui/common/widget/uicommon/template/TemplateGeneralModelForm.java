@@ -96,7 +96,7 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
                     @Override
                     public boolean isTrue() {
                         String quotaName = getModel().getQuotaName();
-                        return quotaName != null && quotaName != "";
+                        return quotaName != null && !"".equals(quotaName);
                     }
                 }) {
             @Override

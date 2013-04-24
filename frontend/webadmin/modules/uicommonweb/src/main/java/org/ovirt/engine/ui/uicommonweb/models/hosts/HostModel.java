@@ -1263,6 +1263,6 @@ public class HostModel extends Model
     }
 
     private boolean isEntityModelEmpty(EntityModel model) {
-        return !(model.getEntity() != null && model.getEntity() != "");
+        return !(model.getEntity() != null && !model.getEntity().equals(""));
     }
 }

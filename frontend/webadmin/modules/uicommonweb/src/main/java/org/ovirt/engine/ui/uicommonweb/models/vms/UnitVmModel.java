@@ -2167,7 +2167,7 @@ public class UnitVmModel extends Model {
     }
 
     public void setPrestartedVmsHint(String value) {
-        if (prestartedVmsHint != value) {
+        if (!StringHelper.stringsEqual(prestartedVmsHint, value)) {
             prestartedVmsHint = value;
             onPropertyChanged(new PropertyChangedEventArgs("PrestartedVmsHint")); //$NON-NLS-1$
         }

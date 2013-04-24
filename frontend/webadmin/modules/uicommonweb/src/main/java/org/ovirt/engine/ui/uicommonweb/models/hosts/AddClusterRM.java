@@ -73,7 +73,7 @@ public class AddClusterRM extends IEnlistmentNotification {
         ClusterModel clusterModel = configureModel.getCluster();
         String clusterName = (String) clusterModel.getName().getEntity();
 
-        if (candidate == null || candidate.getname() != clusterName) {
+        if (candidate == null || !StringHelper.stringsEqual(candidate.getname(), clusterName)) {
 
             // Try to find existing cluster with the specified name.
             VDSGroup cluster = context.clusterFoundByName;
