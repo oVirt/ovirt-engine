@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -34,7 +35,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -95,8 +95,11 @@ import org.ovirt.engine.core.dao.VmStaticDAO;
 import org.ovirt.engine.core.dao.VmStatisticsDAO;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
+import org.ovirt.engine.core.dao.gluster.GlusterClusterServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.dao.gluster.GlusterOptionDao;
+import org.ovirt.engine.core.dao.gluster.GlusterServerServiceDao;
+import org.ovirt.engine.core.dao.gluster.GlusterServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
@@ -159,7 +162,6 @@ public class DbFacade {
 
     private int connectionCheckInterval;
 
-
     public void setDbEngineDialect(DbEngineDialect dbEngineDialect) {
         this.dbEngineDialect = dbEngineDialect;
         callsHandler.setDbEngineDialect(dbEngineDialect);
@@ -175,8 +177,11 @@ public class DbFacade {
 
     /**
      * Return the correct DAO for the given {@link BusinessEntity} class.
-     * @param <T> The Type of DAO which is returned.
-     * @param entityClass The class of the entity.
+     *
+     * @param <T>
+     *            The Type of DAO which is returned.
+     * @param entityClass
+     *            The class of the entity.
      * @return The DAO for the entity.
      */
     public <T extends GenericDao<?, ?>> T getDaoForEntity(Class<? extends BusinessEntity<?>> entityClass) {
@@ -188,7 +193,7 @@ public class DbFacade {
     protected <T extends DAO> T getDao(Class<T> daoType) {
         T dao = DaoFactory.get(daoType);
         if (dao instanceof BaseDAODbFacade) {
-            BaseDAODbFacade dbFacadeDAO = (BaseDAODbFacade)dao;
+            BaseDAODbFacade dbFacadeDAO = (BaseDAODbFacade) dao;
             dbFacadeDAO.setTemplate(jdbcTemplate);
             dbFacadeDAO.setDialect(dbEngineDialect);
             dbFacadeDAO.setDbFacade(this);
@@ -231,11 +236,20 @@ public class DbFacade {
         return dbResults.get(resultKey) != null ? new NGuid(dbResults.get(resultKey).toString()) : null;
     }
 
-    public NGuid getEntityPermissionsForUserAndGroups(Guid userId, String groupIds, ActionGroup actionGroup, Guid objectId,
-            VdcObjectType vdcObjectType, boolean ignoreEveryone) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("user_id", userId)
-                .addValue("group_ids", groupIds).addValue("action_group_id", actionGroup.getId()).addValue("object_id", objectId).addValue(
-                        "object_type_id", vdcObjectType.getValue()).addValue("ignore_everyone", ignoreEveryone);
+    public NGuid getEntityPermissionsForUserAndGroups(Guid userId,
+            String groupIds,
+            ActionGroup actionGroup,
+            Guid objectId,
+            VdcObjectType vdcObjectType,
+            boolean ignoreEveryone) {
+        MapSqlParameterSource parameterSource =
+                getCustomMapSqlParameterSource().addValue("user_id", userId)
+                        .addValue("group_ids", groupIds)
+                        .addValue("action_group_id", actionGroup.getId())
+                        .addValue("object_id", objectId)
+                        .addValue(
+                                "object_type_id", vdcObjectType.getValue())
+                        .addValue("ignore_everyone", ignoreEveryone);
 
         String resultKey = "permission_id";
         Map<String, Object> dbResults =
@@ -260,8 +274,11 @@ public class DbFacade {
 
     /**
      * Get the column size as defined in database for char/varchar colmuns
-     * @param table table name
-     * @param column column name
+     *
+     * @param table
+     *            table name
+     * @param column
+     *            column name
      * @return the column size (number of characters allowed)
      */
     public int getColumnSize(String table, String column) {
@@ -273,7 +290,7 @@ public class DbFacade {
                         parameterSource);
 
         String resultKey = dbEngineDialect.getFunctionReturnKey();
-        return dbResults.get(resultKey) != null ? ((Integer)dbResults.get(resultKey)).intValue() : -1;
+        return dbResults.get(resultKey) != null ? ((Integer) dbResults.get(resultKey)).intValue() : -1;
     }
 
     public boolean isStoragePoolMasterUp(Guid storagePoolId) {
@@ -303,8 +320,9 @@ public class DbFacade {
             }
         };
 
-        Map<String, Object> dbResults = dbEngineDialect.createJdbcCallForQuery(jdbcTemplate).withProcedureName("Getsystem_statistics")
-                .returningResultSet("RETURN_VALUE", mapper).execute(parameterSource);
+        Map<String, Object> dbResults =
+                dbEngineDialect.createJdbcCallForQuery(jdbcTemplate).withProcedureName("Getsystem_statistics")
+                        .returningResultSet("RETURN_VALUE", mapper).execute(parameterSource);
 
         return (Integer) DbFacadeUtils.asSingleResult((List<?>) (dbResults.get("RETURN_VALUE")));
     }
@@ -336,9 +354,9 @@ public class DbFacade {
 
     /**
      * User presentation in GUI have a distinction between ADMIN/USER user. The distinction is determined by their
-     * permissions or their group's permissions. when Permission with the role type Admin is found, set
-     * the DbUser isAdmin flag to ADMIN Type or to USER otherwise. Make the change only if the value is different to
-     * what it is saved to db
+     * permissions or their group's permissions. when Permission with the role type Admin is found, set the DbUser
+     * isAdmin flag to ADMIN Type or to USER otherwise. Make the change only if the value is different to what it is
+     * saved to db
      *
      * @param userIds
      */
@@ -347,7 +365,7 @@ public class DbFacade {
                 getCustomMapSqlParameterSource().addValue("userIds", StringUtils.join(userIds, ","));
 
         new SimpleJdbcCall(jdbcTemplate).withProcedureName("UpdateLastAdminCheckStatus")
-                        .execute(parameterSource);
+                .execute(parameterSource);
     }
 
     /***
@@ -375,7 +393,7 @@ public class DbFacade {
      * @return the dao
      */
     public DbUserDAO getDbUserDao() {
-       return getDao(DbUserDAO.class);
+        return getDao(DbUserDAO.class);
     }
 
     /**
@@ -386,7 +404,6 @@ public class DbFacade {
     public VdsDAO getVdsDao() {
         return getDao(VdsDAO.class);
     }
-
 
     /**
      * Returns the singleton instance of {@link VmAndTemplatesGenerationsDAO}.
@@ -768,12 +785,12 @@ public class DbFacade {
 
     /**
      * Returns the singleton instance of {@link BusinessEntitySnapshotDAO}.
+     *
      * @return
      */
     public BusinessEntitySnapshotDAO getBusinessEntitySnapshotDao() {
         return getDao(BusinessEntitySnapshotDAO.class);
     }
-
 
     /**
      * Returns the singleton instance of {@link VmPoolDAO}.
@@ -863,6 +880,33 @@ public class DbFacade {
      */
     public GlusterOptionDao getGlusterOptionDao() {
         return getDao(GlusterOptionDao.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link GlusterServiceDao}.
+     *
+     * @return the dao
+     */
+    public GlusterServiceDao getGlusterServiceDao() {
+        return getDao(GlusterServiceDao.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link GlusterServerServiceDao}.
+     *
+     * @return the dao
+     */
+    public GlusterServerServiceDao getGlusterServerServiceDao() {
+        return getDao(GlusterServerServiceDao.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link GlusterClusterServiceDao}.
+     *
+     * @return the dao
+     */
+    public GlusterClusterServiceDao getGlusterClusterServiceDao() {
+        return getDao(GlusterClusterServiceDao.class);
     }
 
     /**

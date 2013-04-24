@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.MallInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.MemoryStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.Mempool;
-import org.ovirt.engine.core.common.businessentities.gluster.ServiceInfo;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
 import org.ovirt.engine.core.compat.Guid;
@@ -91,27 +91,27 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
         }
     }
 
-    private List<ServiceInfo> prepareServiceInfo(Map<String, Object> statusInfo) {
-        List<ServiceInfo> serviceInfoList = new ArrayList<ServiceInfo>();
+    private List<GlusterServerService> prepareServiceInfo(Map<String, Object> statusInfo) {
+        List<GlusterServerService> serviceInfoList = new ArrayList<GlusterServerService>();
         prepareServiceInfo(statusInfo, serviceInfoList, NFS_KEY);
         prepareServiceInfo(statusInfo, serviceInfoList, SHD_KEY);
         return serviceInfoList;
     }
 
-    private void prepareServiceInfo(Map<String, Object> statusInfo, List<ServiceInfo> serviceInfoList, String service) {
+    private void prepareServiceInfo(Map<String, Object> statusInfo, List<GlusterServerService> serviceInfoList, String service) {
         if (statusInfo.containsKey(service)) {
             Object[] serviceInfo = (Object[]) statusInfo.get(service);
             for (Object serviceObj : serviceInfo) {
                 Map<String, Object> serviceMap = (Map<String, Object>) serviceObj;
-                ServiceInfo parsedServiceInfo = parseServiceInfo(serviceMap);
+                GlusterServerService parsedServiceInfo = parseServiceInfo(serviceMap);
                 parsedServiceInfo.setServiceType((service.equals(NFS_KEY) ? ServiceType.NFS : ServiceType.SHD));
                 serviceInfoList.add(parsedServiceInfo);
             }
         }
     }
 
-    private ServiceInfo parseServiceInfo(Map<String, Object> volumeServiceInfo) {
-        ServiceInfo serviceInfo = new ServiceInfo();
+    private GlusterServerService parseServiceInfo(Map<String, Object> volumeServiceInfo) {
+        GlusterServerService serviceInfo = new GlusterServerService();
 
         if (volumeServiceInfo.containsKey(HOSTNAME)) {
             serviceInfo.setHostName((String) volumeServiceInfo.get(HOSTNAME));

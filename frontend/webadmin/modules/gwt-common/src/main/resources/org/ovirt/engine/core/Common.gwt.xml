@@ -236,7 +236,7 @@
 		<include name="common/businessentities/gluster/AccessProtocol.java"/>
 		<include name="common/businessentities/gluster/GlusterTaskOperation.java"/>
 		<include name="common/businessentities/gluster/GlusterVolumeAdvancedDetails.java"/>
-		<include name="common/businessentities/gluster/ServiceInfo.java"/>
+		<include name="common/businessentities/gluster/GlusterServerService.java"/>
 		<include name="common/businessentities/gluster/BrickDetails.java"/>
 		<include name="common/businessentities/gluster/BrickProperties.java"/>
 		<include name="common/businessentities/gluster/GlusterClientInfo.java"/>

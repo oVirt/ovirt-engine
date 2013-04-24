@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
-import org.ovirt.engine.core.common.businessentities.gluster.ServiceInfo;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
 
@@ -19,7 +19,7 @@ public class GlusterServicesReturnForXmlRpc extends StatusReturnForXmlRpc {
     private static final String STATUS = "status";
     private static final String MESSAGE = "message";
 
-    private List<ServiceInfo> services;
+    private List<GlusterServerService> services;
 
     @SuppressWarnings("unchecked")
     public GlusterServicesReturnForXmlRpc(Map<String, Object> innerMap) {
@@ -29,14 +29,14 @@ public class GlusterServicesReturnForXmlRpc extends StatusReturnForXmlRpc {
             return;
         }
 
-        services = new ArrayList<ServiceInfo>();
+        services = new ArrayList<GlusterServerService>();
         for (Object service : (Object[]) innerMap.get(SERVICES)) {
             services.add(getService((Map<String, Object>) service));
         }
     }
 
-    private ServiceInfo getService(Map<String, Object> serviceMap) {
-        ServiceInfo service = new ServiceInfo();
+    private GlusterServerService getService(Map<String, Object> serviceMap) {
+        GlusterServerService service = new GlusterServerService();
         service.setServiceName((String) serviceMap.get(NAME));
         service.setPid(Integer.parseInt((String) serviceMap.get(PID)));
         service.setStatus(GlusterServiceStatus.valueOf((String) serviceMap.get(STATUS)));
@@ -45,7 +45,7 @@ public class GlusterServicesReturnForXmlRpc extends StatusReturnForXmlRpc {
         return service;
     }
 
-    public List<ServiceInfo> getServices() {
+    public List<GlusterServerService> getServices() {
         return services;
     }
 }

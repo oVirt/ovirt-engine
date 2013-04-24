@@ -4,7 +4,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.gluster.ServiceInfo;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
@@ -111,30 +111,30 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, C
 
     protected void initTableColumns(final ApplicationConstants constants) {
         // Table Entity Columns
-        servicesTable.addEntityModelColumn(new EntityModelTextColumn<ServiceInfo>() {
+        servicesTable.addEntityModelColumn(new EntityModelTextColumn<GlusterServerService>() {
             @Override
-            public String getText(ServiceInfo entity) {
+            public String getText(GlusterServerService entity) {
                 return entity.getHostName();
             }
         }, constants.hostService());
 
-        servicesTable.addEntityModelColumn(new EntityModelTextColumn<ServiceInfo>() {
+        servicesTable.addEntityModelColumn(new EntityModelTextColumn<GlusterServerService>() {
             @Override
-            public String getText(ServiceInfo entity) {
+            public String getText(GlusterServerService entity) {
                 return entity.getServiceType().name();
             }
         }, constants.nameService());
 
-        servicesTable.addEntityModelColumn(new EntityModelTextColumn<ServiceInfo>() {
+        servicesTable.addEntityModelColumn(new EntityModelTextColumn<GlusterServerService>() {
             @Override
-            public String getText(ServiceInfo entity) {
+            public String getText(GlusterServerService entity) {
                 return entity.getStatus().name();
             }
         }, constants.statusService());
 
-        servicesTable.addEntityModelColumn(new EntityModelTextColumn<ServiceInfo>() {
+        servicesTable.addEntityModelColumn(new EntityModelTextColumn<GlusterServerService>() {
             @Override
-            public String getText(ServiceInfo entity) {
+            public String getText(GlusterServerService entity) {
                 if (entity.getPort() > 0) {
                     return String.valueOf(entity.getPort());
                 }
@@ -144,9 +144,9 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, C
             }
         }, constants.portService());
 
-        servicesTable.addEntityModelColumn(new EntityModelTextColumn<ServiceInfo>() {
+        servicesTable.addEntityModelColumn(new EntityModelTextColumn<GlusterServerService>() {
             @Override
-            public String getText(ServiceInfo entity) {
+            public String getText(GlusterServerService entity) {
                 return String.valueOf(entity.getPid());
             }
         }, constants.pidService());

@@ -4988,4 +4988,77 @@
 		<value>sshkeyfingerprint</value>
 		</row>
 </table>
+
+	<table name="gluster_services">
+		<column>id</column>
+		<column>service_type</column>
+		<column>service_name</column>
+		<row>
+			<value>c83c9ee3-b7d8-4709-ae4b-5d86a152e6b1</value>
+			<value>GLUSTER_SWIFT</value>
+			<value>gluster-swift-test-1</value>
+		</row>
+		<row>
+			<value>338da070-598f-48fb-8892-979f9bb6c3b5</value>
+			<value>GLUSTER_SWIFT</value>
+			<value>gluster-swift-test-2</value>
+		</row>
+		<row>
+			<value>fc00df54-4fcd-4495-8756-b217780bdad7</value>
+			<value>GLUSTER</value>
+			<value>gluster-test</value>
+		</row>
+	</table>
+
+    <table name="gluster_cluster_services">
+        <column>cluster_id</column>
+        <column>service_type</column>
+        <column>status</column>
+        <column>_create_date</column>
+        <column>_update_date</column>
+        <row>
+            <value>ae956031-6be2-43d6-bb8f-5191c9253314</value>
+            <value>GLUSTER</value>
+            <value>RUNNING</value>
+            <value>2012-12-27 13:54:18</value>
+            <value>2012-12-31 11:45:27</value>
+        </row>
+        <row>
+            <value>ae956031-6be2-43d6-bb8f-5191c9253314</value>
+            <value>GLUSTER_SWIFT</value>
+            <value>STOPPED</value>
+            <value>2012-12-28 09:27:18</value>
+            <value>2012-12-31 11:54:27</value>
+        </row>
+    </table>
+    <table name="gluster_server_services">
+        <column>id</column>
+        <column>server_id</column>
+        <column>service_id</column>
+        <column>pid</column>
+        <column>status</column>
+        <column>message</column>
+        <column>_create_date</column>
+        <column>_update_date</column>
+        <row>
+            <value>c77b4d6a-a2c9-4c9f-a873-3dbff8a34720</value>
+            <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
+            <value>c83c9ee3-b7d8-4709-ae4b-5d86a152e6b1</value>
+            <value>11111</value>
+            <value>RUNNING</value>
+            <value>Service is running</value>
+            <value>2012-12-27 13:54:18</value>
+            <value>2012-12-31 11:45:27</value>
+        </row>
+        <row>
+            <value>ae956031-6be2-43d6-bb8f-5191c9253314</value>
+            <value>2001751e-549b-4e7a-aff6-32d36856c125</value>
+            <value>fc00df54-4fcd-4495-8756-b217780bdad7</value>
+            <value>22222</value>
+            <value>STOPPED</value>
+            <value>Service is stopped</value>
+            <value>2012-12-28 09:27:18</value>
+            <value>2012-12-31 11:54:27</value>
+        </row>
+    </table>
 </dataset>

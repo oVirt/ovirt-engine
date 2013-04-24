@@ -20,7 +20,7 @@ public class GlusterVolumeAdvancedDetails implements Serializable {
     private Guid volumeId;
 
     private List<BrickDetails> brickDetails;
-    private List<ServiceInfo> serviceInfo;
+    private List<GlusterServerService> serviceInfo;
 
     public GlusterVolumeAdvancedDetails() {
     }
@@ -98,11 +98,11 @@ public class GlusterVolumeAdvancedDetails implements Serializable {
         this.brickDetails = brickDetails;
     }
 
-    public List<ServiceInfo> getServiceInfo() {
+    public List<GlusterServerService> getServiceInfo() {
         return serviceInfo;
     }
 
-    public void setServiceInfo(List<ServiceInfo> serviceInfo) {
+    public void setServiceInfo(List<GlusterServerService> serviceInfo) {
         this.serviceInfo = serviceInfo;
     }
 }

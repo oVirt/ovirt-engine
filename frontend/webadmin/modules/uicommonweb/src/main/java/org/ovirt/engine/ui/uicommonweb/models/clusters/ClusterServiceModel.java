@@ -7,7 +7,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
-import org.ovirt.engine.core.common.businessentities.gluster.ServiceInfo;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -49,13 +49,13 @@ public class ClusterServiceModel extends EntityModel {
         this.serviceList = serviceList;
     }
 
-    private List<ServiceInfo> actualServiceList;
+    private List<GlusterServerService> actualServiceList;
 
-    public List<ServiceInfo> getActualServiceList() {
+    public List<GlusterServerService> getActualServiceList() {
         return actualServiceList;
     }
 
-    public void setActualServiceList(List<ServiceInfo> actualServiceList) {
+    public void setActualServiceList(List<GlusterServerService> actualServiceList) {
         this.actualServiceList = actualServiceList;
     }
 
@@ -88,7 +88,7 @@ public class ClusterServiceModel extends EntityModel {
         setTitle(ConstantsManager.getInstance().getConstants().servicesTitle());
         setHashName("services"); //$NON-NLS-1$
 
-        setActualServiceList(new ArrayList<ServiceInfo>());
+        setActualServiceList(new ArrayList<GlusterServerService>());
         setServiceList(new ListModel());
         setHostList(new ListModel());
         setServiceTypeList(new ListModel());
@@ -160,7 +160,7 @@ public class ClusterServiceModel extends EntityModel {
                     setActualServiceList(details.getServiceInfo());
                 }
                 else {
-                    setActualServiceList(new ArrayList<ServiceInfo>());
+                    setActualServiceList(new ArrayList<GlusterServerService>());
                 }
                 filterServices();
             }
@@ -172,7 +172,7 @@ public class ClusterServiceModel extends EntityModel {
         VDS selectedVds = (VDS) hostList.getSelectedItem();
         ServiceType serviceType = (ServiceType) serviceTypeList.getSelectedItem();
         ArrayList<EntityModel> list = new ArrayList<EntityModel>();
-        for (ServiceInfo service : getActualServiceList()) {
+        for (GlusterServerService service : getActualServiceList()) {
             if ((selectedVds == null || service.getHostName().equals(selectedVds.getHostName()))
                     && (serviceType == null || service.getServiceType() == serviceType)) {
                 list.add(new EntityModel(service));

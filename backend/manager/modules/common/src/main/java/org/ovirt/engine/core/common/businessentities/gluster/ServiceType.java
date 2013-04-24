@@ -1,19 +1,16 @@
 package org.ovirt.engine.core.common.businessentities.gluster;
 
 /**
- * Enum of Gluster volume service type.
+ * Enum of Gluster service types.
  *
- * @See {@link ServiceInfo}
+ * @See {@link GlusterServerService}
  *
  */
 public enum ServiceType {
-    /**
-     * NFS Service
-     */
     NFS,
-
-    /**
-     * SHD Service
-     */
-    SHD;
+    SHD,
+    GLUSTER,
+    GLUSTER_SWIFT,
+    SMB,
+    ;
 }
