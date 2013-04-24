@@ -29,7 +29,7 @@ import org.ovirt.engine.core.dao.VdsDAO;
 public class GetGlusterVolumeOptionsInfoQueryTest extends AbstractQueryTest<GlusterParameters, GetGlusterVolumeOptionsInfoQuery<GlusterParameters>> {
 
     List<GlusterVolumeOptionInfo> expected;
-    GlusterParameters params;
+    GlusterParameters parameters;
     private Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     VDSBrokerFrontend vdsBrokerFrontend;
 
@@ -73,7 +73,7 @@ public class GetGlusterVolumeOptionsInfoQueryTest extends AbstractQueryTest<Glus
     }
 
     private void setupExpectedGlusterVolumeOptionInfo() {
-        params = new GlusterParameters(CLUSTER_ID);
+        parameters = new GlusterParameters(CLUSTER_ID);
         expected = new ArrayList<GlusterVolumeOptionInfo>();
         GlusterVolumeOptionInfo option = new GlusterVolumeOptionInfo();
         option.setKey("cluster.self-heal-window-size");
@@ -92,7 +92,7 @@ public class GetGlusterVolumeOptionsInfoQueryTest extends AbstractQueryTest<Glus
 
     @Test
     public void testExecuteQueryCommnad() {
-        when(getQueryParameters().getClusterId()).thenReturn(params.getClusterId());
+        when(getQueryParameters().getClusterId()).thenReturn(parameters.getClusterId());
         getQuery().executeQueryCommand();
         List<GlusterVolumeOptionInfo> options =
                 (List<GlusterVolumeOptionInfo>) getQuery().getQueryReturnValue().getReturnValue();
