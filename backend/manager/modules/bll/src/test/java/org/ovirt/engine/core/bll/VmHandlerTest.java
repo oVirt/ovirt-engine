@@ -59,7 +59,6 @@ import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.utils.RandomUtils;
@@ -80,8 +79,6 @@ public class VmHandlerTest {
 
         VmStatic dest = new VmStatic();
         dest.setName(RandomUtils.instance().nextString(10));
-
-        System.out.println(VmHandler.isUpdateValid(src, dest, VMStatus.Up));
 
         assertTrue("Update should be valid for different names",
                 VmHandler.isUpdateValid(src, dest));
