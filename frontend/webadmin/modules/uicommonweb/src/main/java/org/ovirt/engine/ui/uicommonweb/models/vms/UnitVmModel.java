@@ -1016,7 +1016,7 @@ public class UnitVmModel extends Model {
         _maxMemSize32 = value;
     }
 
-    private int _maxMemSize64 = 524288;
+    private int _maxMemSize64 = 2097152;
 
     public int get_MaxMemSize64()
     {

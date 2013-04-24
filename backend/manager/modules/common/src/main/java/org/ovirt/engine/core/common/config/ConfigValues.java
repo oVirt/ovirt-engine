@@ -532,7 +532,7 @@ public enum ConfigValues {
     VM32BitMaxMemorySizeInMB(211),
     @Reloadable
     @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("524288")
+    @DefaultValueAttribute("268435456")
     VM64BitMaxMemorySizeInMB(212),
     @Reloadable
     @TypeConverterAttribute(Integer.class)

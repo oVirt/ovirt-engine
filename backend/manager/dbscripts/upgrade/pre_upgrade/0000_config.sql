@@ -500,9 +500,9 @@ select fn_db_add_config_value('vdsTimeout','180','general');
 --Handling Virtual Machine Domain Name
 select fn_db_add_config_value('VM32BitMaxMemorySizeInMB','20480','general');
 select fn_db_add_config_value('VM64BitMaxMemorySizeInMB','524288','3.0');
-select fn_db_add_config_value('VM64BitMaxMemorySizeInMB','524288','3.1');
-select fn_db_add_config_value('VM64BitMaxMemorySizeInMB','524288','3.2');
-select fn_db_add_config_value('VM64BitMaxMemorySizeInMB','524288','3.3');
+select fn_db_add_config_value('VM64BitMaxMemorySizeInMB','2097152','3.1');
+select fn_db_add_config_value('VM64BitMaxMemorySizeInMB','2097152','3.2');
+select fn_db_add_config_value('VM64BitMaxMemorySizeInMB','2097152','3.3');
 select fn_db_add_config_value('VmGracefulShutdownMessage','System Administrator has initiated shutdown of this Virtual Machine. Virtual Machine is shutting down.','general');
 select fn_db_add_config_value('VmGracefulShutdownTimeout','30','general');
 select fn_db_add_config_value('VMMinMemorySizeInMB','256','general');
