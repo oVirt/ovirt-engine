@@ -34,6 +34,8 @@ public class SubTabStorageDataCenterView extends AbstractSubTabTableView<Storage
     }
 
     void initTable(ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         getTable().addColumn(new StorageDomainStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<StorageDomain> nameColumn = new TextColumnWithTooltip<StorageDomain>() {
@@ -42,7 +44,7 @@ public class SubTabStorageDataCenterView extends AbstractSubTabTableView<Storage
                 return object.getStoragePoolName();
             }
         };
-        getTable().addColumn(nameColumn, constants.nameDc());
+        getTable().addColumn(nameColumn, constants.nameDc(), "600px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<StorageDomain> domainStatusColumn =
                 new EnumColumn<StorageDomain, StorageDomainStatus>() {

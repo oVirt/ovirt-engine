@@ -36,8 +36,10 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
     }
 
     void initTable(ApplicationResources resources, final ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         getTable().ensureColumnPresent(
-                DisksViewColumns.aliasColumn, constants.aliasDisk(), true);
+                DisksViewColumns.aliasColumn, constants.aliasDisk(), true, "90px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.bootableDiskColumn,
@@ -72,7 +74,7 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
                 DisksViewColumns.statusColumn, constants.statusDisk(), true, "100px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.descriptionColumn, constants.descriptionDisk(), true);
+                DisksViewColumns.descriptionColumn, constants.descriptionDisk(), true, "100px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.removeDisk()) {
             @Override
