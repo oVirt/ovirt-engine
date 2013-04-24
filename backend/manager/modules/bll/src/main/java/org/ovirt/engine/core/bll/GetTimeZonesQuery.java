@@ -82,7 +82,14 @@ public class GetTimeZonesQuery<P extends TimeZoneQueryParams> extends QueriesCom
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getParameters().isWindowsOS() ? windowsTimezones : javaTimezones);
+        switch (getParameters().getTimeZoneType()) {
+        case GENERAL_TIMEZONE:
+            getQueryReturnValue().setReturnValue(javaTimezones);
+            break;
+        case WINDOWS_TIMEZONE:
+            getQueryReturnValue().setReturnValue(windowsTimezones);
+            break;
+        }
     }
 
     private static Map<String, String> sortMapByValue(Map<String, String> map) {

@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.queries.TimeZoneQueryParams;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.SysprepHandler;
 
@@ -26,7 +27,7 @@ public class GetTimeZonesQueryTest extends AbstractSysprepQueryTest<TimeZoneQuer
 
     @Test
     public void testExecuteQuery() {
-        when(getQueryParameters().isWindowsOS()).thenReturn(true);
+        when(getQueryParameters().getTimeZoneType()).thenReturn(TimeZoneType.WINDOWS_TIMEZONE);
         getQuery().executeQueryCommand();
 
         @SuppressWarnings("unchecked")
@@ -38,7 +39,7 @@ public class GetTimeZonesQueryTest extends AbstractSysprepQueryTest<TimeZoneQuer
 
     @Test
     public void queryWindowsTimeZones() {
-        when(getQueryParameters().isWindowsOS()).thenReturn(true);
+        when(getQueryParameters().getTimeZoneType()).thenReturn(TimeZoneType.WINDOWS_TIMEZONE);
         getQuery().executeQueryCommand();
         Map<String, String> map = (Map<String, String>) getQuery().getQueryReturnValue().getReturnValue();
 
@@ -48,8 +49,7 @@ public class GetTimeZonesQueryTest extends AbstractSysprepQueryTest<TimeZoneQuer
 
     @Test
     public void queryGenralTimeZones() {
-        when(getQueryParameters().isWindowsOS()).thenReturn(false);
-        getQuery().getParameters().setWindowsOS(false);
+        when(getQueryParameters().getTimeZoneType()).thenReturn(TimeZoneType.GENERAL_TIMEZONE);
         getQuery().executeQueryCommand();
         Map<String, String> map = ((Map<String, String>) getQuery().getQueryReturnValue().getReturnValue());
 

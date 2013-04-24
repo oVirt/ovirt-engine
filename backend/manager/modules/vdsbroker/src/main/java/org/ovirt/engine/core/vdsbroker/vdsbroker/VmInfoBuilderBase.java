@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.compat.TimeZoneInfo;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -178,10 +177,7 @@ public abstract class VmInfoBuilderBase {
             createInfo.put(VdsProperties.utc_diff, vm.getUtcDiff().toString());
         } else {
             // get vm timezone
-            String timeZone = TimeZoneInfo.Local.getId();
-            if (!StringUtils.isEmpty(vm.getTimeZone())) {
-                timeZone = vm.getTimeZone();
-            }
+            String timeZone = getTimeZoneForVm(vm);
 
             int offset = 0;
             String javaZoneId = null;
@@ -198,6 +194,19 @@ public abstract class VmInfoBuilderBase {
                         new Date().getTime()) / 1000);
             }
             createInfo.put(VdsProperties.utc_diff, "" + offset);
+        }
+    }
+
+    private String getTimeZoneForVm(VM vm) {
+        if (!StringUtils.isEmpty(vm.getTimeZone())) {
+            return vm.getTimeZone();
+        }
+
+        // else fallback to engine config default for given OS type
+        if (vm.getOs().isWindows()) {
+            return Config.<String> GetValue(ConfigValues.DefaultWindowsTimeZone);
+        } else {
+            return Config.<String> GetValue(ConfigValues.DefaultGeneralTimeZone);
         }
     }
 

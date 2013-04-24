@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigUtil;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.compat.TimeZoneInfo;
 import org.ovirt.engine.core.dal.dbbroker.generic.DomainsPasswordMap;
 import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.log.Log;
@@ -197,7 +196,7 @@ public final class SysprepHandler {
         String timeZone;
         // Can be empty if the VM was imported.
         if (StringUtils.isEmpty(vm.getTimeZone())) {
-            vm.setTimeZone(TimeZoneInfo.Local.getId());
+            vm.setTimeZone(Config.<String> GetValue(ConfigValues.DefaultWindowsTimeZone));
         }
 
         switch (vm.getStaticData().getOs()) {

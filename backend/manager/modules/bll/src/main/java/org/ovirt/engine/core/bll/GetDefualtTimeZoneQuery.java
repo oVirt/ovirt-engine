@@ -2,19 +2,28 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.compat.KeyValuePairCompat;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.SysprepHandler;
+import org.ovirt.engine.core.common.queries.TimeZoneQueryParams;
 
-public class GetDefualtTimeZoneQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
+public class GetDefualtTimeZoneQuery<P extends TimeZoneQueryParams> extends QueriesCommandBase<P> {
     public GetDefualtTimeZoneQuery(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeQueryCommand() {
-        String timezone = Config.<String> GetValue(ConfigValues.DefaultTimeZone);
-        getQueryReturnValue().setReturnValue(new KeyValuePairCompat<String, String>(SysprepHandler.getTimezoneKey(timezone),
-                timezone));
+        ConfigValues defaultTimeZoneConfigKey;
+        switch (getParameters().getTimeZoneType()) {
+
+        default:
+        case GENERAL_TIMEZONE:
+            defaultTimeZoneConfigKey = ConfigValues.DefaultGeneralTimeZone;
+            break;
+        case WINDOWS_TIMEZONE:
+            defaultTimeZoneConfigKey = ConfigValues.DefaultWindowsTimeZone;
+            break;
+        }
+
+        String timeZone = Config.<String> GetValue(defaultTimeZoneConfigKey);
+        getQueryReturnValue().setReturnValue(timeZone);
     }
 }

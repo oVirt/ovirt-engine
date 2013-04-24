@@ -1385,8 +1385,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         tempVar.setVmMemSizeMb((Integer) model.getMemSize().getEntity());
         tempVar.setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
         tempVar.setVdsGroupId(((VDSGroup) model.getCluster().getSelectedItem()).getId());
-        tempVar.setTimeZone(model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null ? ((Map.Entry<String, String>) model.getTimeZone()
-                .getSelectedItem()).getKey()
+        tempVar.setTimeZone(model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null ? ((TimeZoneModel) model.getTimeZone()
+                .getSelectedItem()).getTimeZoneKey()
                 : ""); //$NON-NLS-1$
         tempVar.setNumOfSockets((Integer) model.getNumOfSockets().getSelectedItem());
         tempVar.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
@@ -1960,8 +1960,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         getcurrentVm().setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
         Guid newClusterID = ((VDSGroup) model.getCluster().getSelectedItem()).getId();
         getcurrentVm().setVdsGroupId(newClusterID);
-        getcurrentVm().setTimeZone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? ((Map.Entry<String, String>) model.getTimeZone()
-                .getSelectedItem()).getKey()
+        getcurrentVm().setTimeZone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? ((TimeZoneModel) model.getTimeZone()
+                .getSelectedItem()).getTimeZoneKey()
                 : ""); //$NON-NLS-1$
         getcurrentVm().setNumOfSockets((Integer) model.getNumOfSockets().getSelectedItem());
         getcurrentVm().setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())

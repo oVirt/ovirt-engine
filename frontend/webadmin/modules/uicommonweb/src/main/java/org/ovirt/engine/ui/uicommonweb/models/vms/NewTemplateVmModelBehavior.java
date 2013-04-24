@@ -13,12 +13,11 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -203,14 +202,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         getModel().getIsSmartcardEnabled().setEntity(this.vm.isSmartcardEnabled());
         getModel().getVncKeyboardLayout().setSelectedItem(this.vm.getVncKeyboardLayout());
 
-        if (!StringHelper.isNullOrEmpty(this.vm.getTimeZone()))
-        {
-            updateTimeZone(this.vm.getTimeZone());
-        }
-        else
-        {
-            updateDefaultTimeZone();
-        }
+        updateTimeZone(this.vm.getTimeZone());
 
         // Update domain list
         updateDomain();

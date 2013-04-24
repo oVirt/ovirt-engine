@@ -1,15 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.NGuid;
@@ -19,6 +15,10 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 public class TemplateVmModelBehavior extends VmModelBehaviorBase
 {
@@ -174,14 +174,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         getModel().getKernel_path().setEntity(this.template.getKernelUrl());
         getModel().getInitrd_path().setEntity(this.template.getInitrdUrl());
 
-        if (!StringHelper.isNullOrEmpty(template.getTimeZone()))
-        {
-            updateTimeZone(template.getTimeZone());
-        }
-        else
-        {
-            updateDefaultTimeZone();
-        }
+        updateTimeZone(template.getTimeZone());
 
         // Update domain list
         updateDomain();

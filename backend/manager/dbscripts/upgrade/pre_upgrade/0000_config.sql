@@ -76,7 +76,8 @@ select fn_db_add_config_value('DBEngine','Postgres','general');
 select fn_db_add_config_value('DebugTimerLogging','true','general');
 select fn_db_add_config_value('DefaultMaxThreadPoolSize','500','general');
 select fn_db_add_config_value('DefaultMinThreadPoolSize','50','general');
-select fn_db_add_config_value('DefaultTimeZone','(GMT) GMT Standard Time','general');
+select fn_db_add_config_value('DefaultWindowsTimeZone','GMT Standard Time','general');
+select fn_db_add_config_value('DefaultGeneralTimeZone','Etc/GMT','general');
 --Handling Default Workgroup
 select fn_db_add_config_value('DefaultWorkgroup','WORKGROUP','general');
 select fn_db_add_config_value('DesktopAudioDeviceType','WindowsXP,ac97,RHEL4,ac97,RHEL3,ac97,Windows2003x64,ac97,RHEL4x64,ac97,RHEL3x64,ac97,OtherLinux,ac97,Other,ac97,default,ich6','3.0');
@@ -758,6 +759,7 @@ select fn_db_delete_config_value('LiveStorageMigrationEnabled','3.0');
 select fn_db_delete_config_value('LiveStorageMigrationEnabled','3.1');
 select fn_db_delete_config_value('LiveStorageMigrationEnabled','3.2');
 select fn_db_delete_config_value('DiskConfigurationList','general');
+select fn_db_delete_config_value('DefaultTimeZone','general');
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once

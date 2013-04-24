@@ -46,6 +46,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TemplateVmModelBehavior;
+import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -441,8 +442,8 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         template.setMemSizeMb((Integer) model.getMemSize().getEntity());
         template.setMinAllocatedMem(((Integer) model.getMinAllocatedMemory().getEntity()));
         template.setVdsGroupId(((VDSGroup) model.getCluster().getSelectedItem()).getId());
-        template.setTimeZone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? ((Map.Entry<String, String>) model.getTimeZone()
-                .getSelectedItem()).getKey()
+        template.setTimeZone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? ((TimeZoneModel) model.getTimeZone()
+                .getSelectedItem()).getTimeZoneKey()
                 : ""); //$NON-NLS-1$
         template.setNumOfSockets((Integer) model.getNumOfSockets().getSelectedItem());
         template.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())

@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.common.util.StatusUtils;
-import org.ovirt.engine.api.common.util.TimeZoneMapping;
 import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
@@ -125,7 +124,7 @@ public class TemplateMapper {
             entity.setDomain(model.getDomain().getName());
         }
         if (model.isSetTimezone()) {
-            entity.setTimeZone(TimeZoneMapping.getWindows(model.getTimezone()));
+            entity.setTimeZone(model.getTimezone());
         }
         if (model.isSetTunnelMigration()) {
             entity.setTunnelMigration(model.isTunnelMigration());
@@ -230,7 +229,7 @@ public class TemplateMapper {
             staticVm.setDomain(model.getDomain().getName());
         }
         if (model.isSetTimezone()) {
-            staticVm.setTimeZone(TimeZoneMapping.getWindows(model.getTimezone()));
+            staticVm.setTimeZone(model.getTimezone());
         }
         if (model.isSetTunnelMigration()) {
             staticVm.setTunnelMigration(model.isTunnelMigration());
@@ -316,7 +315,7 @@ public class TemplateMapper {
             }
             model.setUsb(usb);
         }
-        model.setTimezone(TimeZoneMapping.getJava(entity.getTimeZone()));
+        model.setTimezone(entity.getTimeZone());
         model.setTunnelMigration(entity.getTunnelMigration());
         return model;
     }

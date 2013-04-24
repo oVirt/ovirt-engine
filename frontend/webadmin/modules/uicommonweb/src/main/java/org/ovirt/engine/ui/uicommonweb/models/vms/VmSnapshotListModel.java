@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
@@ -20,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -553,7 +552,7 @@ public class VmSnapshotListModel extends SearchableListModel
         getcurrentVm().setVdsGroupId(newClusterID);
         getcurrentVm().setTimeZone(
                 (model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ?
-                        ((Map.Entry<String, String>) model.getTimeZone().getSelectedItem()).getKey() : ""); //$NON-NLS-1$
+                        ((TimeZoneModel) model.getTimeZone().getSelectedItem()).getTimeZoneKey() : ""); //$NON-NLS-1$
         getcurrentVm().setNumOfSockets((Integer) model.getNumOfSockets().getSelectedItem());
         getcurrentVm().setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString()) /
                 (Integer) model.getNumOfSockets().getSelectedItem());

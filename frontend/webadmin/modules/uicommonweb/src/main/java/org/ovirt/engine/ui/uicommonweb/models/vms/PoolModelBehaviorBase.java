@@ -131,14 +131,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                 getModel().getCdImage().setSelectedItem(vmBase.getIsoPath());
             }
 
-            if (!StringHelper.isNullOrEmpty(vmBase.getTimeZone()))
-            {
-                updateTimeZone(vmBase.getTimeZone());
-            }
-            else
-            {
-                updateDefaultTimeZone();
-            }
+            updateTimeZone(vmBase.getTimeZone());
 
             // Update domain list
             updateDomain();

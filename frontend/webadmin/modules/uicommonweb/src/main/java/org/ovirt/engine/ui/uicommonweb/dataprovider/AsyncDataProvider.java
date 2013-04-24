@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.EventNotificationEntity;
+import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.VdcEventNotificationUtils;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -128,7 +129,6 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmModelBehaviorBase;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WANDisableEffects;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WanColorDepth;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -346,7 +346,7 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.GetVmByVmId, new IdQueryParameters(vmId), aQuery);
     }
 
-    public static void getTimeZoneList(AsyncQuery aQuery) {
+    public static void getTimeZoneList(AsyncQuery aQuery, TimeZoneType timeZoneType) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -359,7 +359,7 @@ public final class AsyncDataProvider {
             }
         };
         TimeZoneQueryParams params = new TimeZoneQueryParams();
-        params.setWindowsOS(((VmModelBehaviorBase) aQuery.getModel()).getModel().getIsWindowsOS());
+        params.setTimeZoneType(timeZoneType);
         Frontend.RunQuery(VdcQueryType.GetTimeZones, params, aQuery);
     }
 
@@ -788,19 +788,22 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
-    public static void getDefaultTimeZone(AsyncQuery aQuery) {
+    public static void getDefaultTimeZone(AsyncQuery aQuery, TimeZoneType timeZoneType) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
                 if (source != null)
                 {
-                    return ((Map.Entry<String, String>) source).getKey();
+                    return source;
                 }
                 return ""; //$NON-NLS-1$
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetDefualtTimeZone, new VdcQueryParametersBase(), aQuery);
+
+        TimeZoneQueryParams params = new TimeZoneQueryParams();
+        params.setTimeZoneType(timeZoneType);
+        Frontend.RunQuery(VdcQueryType.GetDefualtTimeZone, params, aQuery);
     }
 
     public static void getHostById(AsyncQuery aQuery, Guid id) {

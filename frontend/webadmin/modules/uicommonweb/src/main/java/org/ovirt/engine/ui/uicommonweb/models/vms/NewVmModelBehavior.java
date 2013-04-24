@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -115,14 +115,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
                 getModel().getCdImage().setSelectedItem(template.getIsoPath());
             }
 
-            if (!StringHelper.isNullOrEmpty(template.getTimeZone()))
-            {
-                updateTimeZone(template.getTimeZone());
-            }
-            else
-            {
-                updateDefaultTimeZone();
-            }
+            updateTimeZone(template.getTimeZone());
 
             // Update domain list
             updateDomain();

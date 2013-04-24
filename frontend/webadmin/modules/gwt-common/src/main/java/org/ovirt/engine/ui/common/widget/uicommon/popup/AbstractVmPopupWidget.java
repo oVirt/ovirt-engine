@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -43,6 +42,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -679,7 +679,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         timeZoneEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
-                return ((Entry<String, String>) object).getValue();
+                TimeZoneModel timeZone = (TimeZoneModel) object;
+                if (timeZone.isDefault()) {
+                    return messages.defaultTimeZoneCaption(timeZone.getDisplayValue());//$NON-NLS-1$
+                } else {
+                    return timeZone.getDisplayValue();
+                }
             }
         });
 

@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
@@ -21,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
@@ -49,6 +48,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDomainModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
 import org.ovirt.engine.ui.uicompat.DateTimeUtils;
 import org.ovirt.engine.ui.uicompat.IEqualityComparer;
 
@@ -932,7 +932,7 @@ public final class Linq
         return diskModels;
     }
 
-    public final static class TimeZonePredicate implements IPredicate<Map.Entry<String, String>>
+    public final static class TimeZonePredicate implements IPredicate<TimeZoneModel>
     {
         private final String timeZone;
 
@@ -942,9 +942,9 @@ public final class Linq
         }
 
         @Override
-        public boolean match(Map.Entry<String, String> source)
+        public boolean match(TimeZoneModel source)
         {
-            return StringHelper.stringsEqual(source.getKey(), timeZone);
+            return StringHelper.stringsEqual(source.getTimeZoneKey(), timeZone);
         }
     }
 

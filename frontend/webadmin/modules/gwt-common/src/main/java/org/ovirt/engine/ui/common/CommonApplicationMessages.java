@@ -97,4 +97,7 @@ public interface CommonApplicationMessages extends Messages {
 
     @DefaultMessage("default [{0}]")
     String globalVncKeyboardLayoutCaption(String currentDefault);
+
+    @DefaultMessage("default: {0}")
+    String defaultTimeZoneCaption(String currentDefault);
 }

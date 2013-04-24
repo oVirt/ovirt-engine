@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
@@ -14,6 +13,7 @@ import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetVmdataByPoolIdParameters;
@@ -50,6 +49,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExistingPoolModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewPoolModelBehavior;
+import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -478,8 +478,8 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         desktop.setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
                         desktop.setVdsGroupId(((VDSGroup) model.getCluster().getSelectedItem()).getId());
                         desktop.setTimeZone((model.getTimeZone().getIsAvailable() && model.getTimeZone()
-                                .getSelectedItem() != null) ? ((Map.Entry<String, String>) model.getTimeZone()
-                                .getSelectedItem()).getKey()
+                                .getSelectedItem() != null) ? ((TimeZoneModel) model.getTimeZone()
+                                .getSelectedItem()).getTimeZoneKey()
                                 : ""); //$NON-NLS-1$
                         desktop.setNumOfSockets((Integer) model.getNumOfSockets().getSelectedItem());
                         desktop.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())

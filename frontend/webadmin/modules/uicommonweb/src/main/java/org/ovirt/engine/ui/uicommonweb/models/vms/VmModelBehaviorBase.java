@@ -1,13 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -15,12 +8,13 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForVdsGroupParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -40,6 +34,11 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicompat.Constants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
@@ -145,121 +144,43 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     }
 
-    private final Map<TimezoneType, Iterable<Entry<String, String>>> cachedTimeZones = new HashMap<VmModelBehaviorBase.TimezoneType, Iterable<Entry<String,String>>>();
-
-    private enum TimezoneType {
-        WINDOWS_TIMEZONE,
-        GENERAL_TIMEZONE;
-
-        static TimezoneType getTimezoneByOs(boolean windows) {
-            return windows ? WINDOWS_TIMEZONE : GENERAL_TIMEZONE;
-        }
-    }
-
-    private boolean lastIsWinOS = false;
-    private String winTimezoneString;
-    private String generalTimezonesString;
-
-    protected void updateTimeZone() {
-        updateTimeZone(null);
-    }
-
     protected void updateTimeZone(final String selectedTimeZone)
     {
-        final TimezoneType timezoneType = TimezoneType.getTimezoneByOs(getModel().getIsWindowsOS());
-
-        if (cachedTimeZones.get(timezoneType) == null)
-        {
-            AsyncDataProvider.getTimeZoneList(new AsyncQuery(this,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object target, Object returnValue) {
-                            VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
-                            Map<String, String> timezones = (Map<String, String>) returnValue;
-                            // empty entry for default timezone
-                            timezones.put(null, ""); //$NON-NLS-1$
-                            cachedTimeZones.put(timezoneType, timezones.entrySet());
-                            behavior.postUpdateTimeZone(selectedTimeZone);
-                        }
-                    }, getModel().getHash()));
-        }
-        else
-        {
-            postUpdateTimeZone(selectedTimeZone);
-        }
-    }
-
-    private void postUpdateTimeZone(String selectedTimeZone)
-    {
-        if (getModel().getIsWindowsOS() != lastIsWinOS) {
-            lastIsWinOS = getModel().getIsWindowsOS();
-            if (selectedTimeZone != null) {
-                if (getModel().getIsWindowsOS()) {
-                    generalTimezonesString = selectedTimeZone;
-                } else {
-                    winTimezoneString = selectedTimeZone;
-                }
-            }
-            selectedTimeZone = getModel().getIsWindowsOS() ? winTimezoneString : generalTimezonesString;
+        if (StringHelper.isNullOrEmpty(selectedTimeZone)) {
+            updateDefaultTimeZone();
         } else {
-            if (selectedTimeZone != null) {
-                if (getModel().getIsWindowsOS()) {
-                    winTimezoneString = selectedTimeZone;
-                } else {
-                    generalTimezonesString = selectedTimeZone;
-                }
-            }
+            doUpdateTimeZone(selectedTimeZone);
         }
-        final TimezoneType timezoneType = TimezoneType.getTimezoneByOs(getModel().getIsWindowsOS());
-        getModel().getTimeZone().setItems(cachedTimeZones.get(timezoneType));
-
-        // If there was some time zone selected before, try select it again.
-        Entry<String, String> selectedTimeZoneEntry =
-                getTimezoneEntryByKey(selectedTimeZone, cachedTimeZones.get(timezoneType));
-        Map.Entry<String, String> selectedItem = selectedTimeZoneEntry != null ?
-                selectedTimeZoneEntry : (Map.Entry<String, String>) getModel().getTimeZone().getSelectedItem();
-
-        getModel().getTimeZone().setSelectedItem(selectedItem == null ? null :
-            Linq.firstOrDefault(cachedTimeZones.get(timezoneType), new Linq.TimeZonePredicate(selectedItem.getKey())));
     }
-
-    private Entry<String, String> getTimezoneEntryByKey(String key, Iterable<Entry<String, String>> timeZones) {
-        for (Entry<String, String> entry : timeZones) {
-            if (StringHelper.stringsEqual(key, entry.getKey())) {
-                return entry;
-            }
-        }
-
-        return null;
-    }
-
-    private String cachedDefaultTimeZoneKey;
 
     protected void updateDefaultTimeZone()
     {
-        if (cachedDefaultTimeZoneKey == null)
-        {
-            AsyncDataProvider.getDefaultTimeZone(new AsyncQuery(this,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object target, Object returnValue) {
+        TimeZoneModel.withLoadedDefaultTimeZoneKey(getTimeZoneType(), new Runnable() {
 
-                            VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
-                            cachedDefaultTimeZoneKey = (String) returnValue;
-                            behavior.postUpdateDefaultTimeZone();
+            @Override
+            public void run() {
+                doUpdateTimeZone(null);
+            }
 
-                        }
-                    }, getModel().getHash()));
-        }
-        else
-        {
-            postUpdateDefaultTimeZone();
-        }
+        });
     }
 
-    public void postUpdateDefaultTimeZone()
-    {
-        updateTimeZone(cachedDefaultTimeZoneKey);
+    private void doUpdateTimeZone(final String selectedTimeZone) {
+        TimeZoneModel.withLoadedTimeZones(getTimeZoneType(), new Runnable() {
+
+            @Override
+            public void run() {
+                final Iterable<TimeZoneModel> timeZones = TimeZoneModel.getTimeZones(getTimeZoneType());
+                getModel().getTimeZone().setItems(timeZones);
+                getModel().getTimeZone().setSelectedItem(Linq.firstOrDefault(timeZones, new Linq.TimeZonePredicate(selectedTimeZone)));
+            }
+
+        });
+    }
+
+    public TimeZoneType getTimeZoneType() {
+        VmOsType vmOsType = (VmOsType) getModel().getOSType().getSelectedItem();
+        return TimeZoneType.getTimeZoneByOs(vmOsType);
     }
 
     protected void updateDomain()

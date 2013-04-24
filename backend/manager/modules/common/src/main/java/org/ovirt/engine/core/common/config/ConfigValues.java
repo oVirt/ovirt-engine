@@ -594,8 +594,12 @@ public enum ConfigValues {
     OvfItemsCountPerUpdate(232),
 
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("(GMT) GMT Standard Time")
-    DefaultTimeZone(260),
+    @DefaultValueAttribute("GMT Standard Time")
+    DefaultWindowsTimeZone(260),
+
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("Etc/GMT")
+    DefaultGeneralTimeZone(261),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("389")

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
@@ -57,6 +56,7 @@ import org.ovirt.engine.ui.uicommonweb.models.pools.PoolInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewTemplateVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RunOnceModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalExistingVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalNewVmModelBehavior;
@@ -616,8 +616,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         tempVar.setVmMemSizeMb((Integer) model.getMemSize().getEntity());
         tempVar.setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
         tempVar.setVdsGroupId(((VDSGroup) model.getCluster().getSelectedItem()).getId());
-        tempVar.setTimeZone(model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null ? ((Map.Entry<String, String>) model.getTimeZone()
-                .getSelectedItem()).getKey()
+        tempVar.setTimeZone(model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null ? ((TimeZoneModel) model.getTimeZone()
+                .getSelectedItem()).getTimeZoneKey()
                 : ""); //$NON-NLS-1$
         tempVar.setNumOfSockets((Integer) model.getNumOfSockets().getSelectedItem());
         tempVar.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
@@ -1019,8 +1019,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         Guid newClusterID = ((VDSGroup) model.getCluster().getSelectedItem()).getId();
         gettempVm().setVdsGroupId(newClusterID);
         gettempVm().setTimeZone((model.getTimeZone().getIsAvailable() && model.getTimeZone()
-                .getSelectedItem() != null) ? ((Map.Entry<String, String>) model.getTimeZone()
-                .getSelectedItem()).getKey() : ""); //$NON-NLS-1$
+                .getSelectedItem() != null) ? ((TimeZoneModel) model.getTimeZone()
+                .getSelectedItem()).getTimeZoneKey() : ""); //$NON-NLS-1$
         gettempVm().setNumOfSockets((Integer) model.getNumOfSockets().getSelectedItem());
         gettempVm().setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
                 / (Integer) model.getNumOfSockets().getSelectedItem());

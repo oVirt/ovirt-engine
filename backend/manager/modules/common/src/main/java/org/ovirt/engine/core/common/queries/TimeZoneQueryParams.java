@@ -1,18 +1,21 @@
 package org.ovirt.engine.core.common.queries;
 
+import org.ovirt.engine.core.common.TimeZoneType;
+
 
 public class TimeZoneQueryParams extends VdcQueryParametersBase {
     private static final long serialVersionUID = 1L;
-    private boolean windowsOS = true;
+    private TimeZoneType timeZoneType;
 
     public TimeZoneQueryParams() {
     }
 
-    public boolean isWindowsOS() {
-        return windowsOS;
+    public TimeZoneType getTimeZoneType() {
+        return timeZoneType;
     }
 
-    public void setWindowsOS(boolean windowsOS) {
-        this.windowsOS = windowsOS;
+    public void setTimeZoneType(TimeZoneType timeZoneType) {
+        this.timeZoneType = timeZoneType;
     }
+
 }

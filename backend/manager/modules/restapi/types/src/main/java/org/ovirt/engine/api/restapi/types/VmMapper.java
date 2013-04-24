@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
-import org.ovirt.engine.api.common.util.TimeZoneMapping;
 import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.CPU;
@@ -228,7 +227,7 @@ public class VmMapper {
             staticVm.setMinAllocatedMem(memGuaranteed.intValue());
         }
         if (vm.isSetTimezone()) {
-            staticVm.setTimeZone(TimeZoneMapping.getWindows(vm.getTimezone()));
+            staticVm.setTimeZone(vm.getTimezone());
         }
         if (vm.isSetCustomProperties() && vm.getCustomProperties().isSetCustomProperty()) {
             staticVm.setCustomProperties(CustomPropertiesParser.parse(vm.getCustomProperties().getCustomProperty()));
@@ -408,7 +407,7 @@ public class VmMapper {
         MemoryPolicy policy = new MemoryPolicy();
         policy.setGuaranteed(Long.valueOf(entity.getMinAllocatedMem() * BYTES_PER_MB));
         model.setMemoryPolicy(policy);
-        model.setTimezone(TimeZoneMapping.getJava(entity.getTimeZone()));
+        model.setTimezone(entity.getTimeZone());
         if (!StringUtils.isEmpty(entity.getCustomProperties())) {
             CustomProperties hooks = new CustomProperties();
             hooks.getCustomProperty().addAll(CustomPropertiesParser.parse(entity.getCustomProperties(), false));

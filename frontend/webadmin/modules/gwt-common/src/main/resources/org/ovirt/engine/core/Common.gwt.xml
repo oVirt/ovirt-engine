@@ -175,6 +175,7 @@
 		<include name="common/utils/PairQueryable.java" />
 		<include name="common/interfaces/IVdcUser.java" />
 		<include name="common/VdcObjectType.java" />
+		<include name="common/TimeZoneType.java" />
 
 		<!-- Required by frontend -->
 		<include name="common/interfaces/SearchType.java" />

@@ -7,7 +7,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -1219,19 +1218,6 @@ public class UnitVmModel extends Model {
         setCpuPinning(new NotChangableForVmInPoolEntityModel());
         getCpuPinning().setEntity("");
         getCpuPinning().setIsChangable(false);
-
-        initTimeZones();
-    }
-
-    private void initTimeZones() {
-        getOSType().getSelectedItemChangedEvent().addListener(new IEventListener() {
-
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                getBehavior().updateTimeZone();
-            }
-        });
-
     }
 
     public void initialize(SystemTreeItemModel SystemTreeSelectedItem)
@@ -1656,12 +1642,8 @@ public class UnitVmModel extends Model {
         getKernel_parameters().setIsAvailable(getIsLinuxOS());
 
         getDomain().setIsChangable(getIsWindowsOS());
-        if (getTimeZone().getSelectedItem() == null) {
-            getBehavior().updateTimeZone();
-        } else {
-            getBehavior().updateTimeZone(((Entry<String, String>)getTimeZone().getSelectedItem()).getKey());
-        }
 
+        getBehavior().updateDefaultTimeZone();
     }
 
     private void firstBootDevice_SelectedItemChanged(Object sender, EventArgs args)
