@@ -18,11 +18,11 @@ import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -234,7 +234,8 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         return getRunVmValidator().canRunVm(vm,
                 messages,
                 getDiskDao().getAllForVm(vm.getId(), true),
-                runVmParams.getBootSequence())
+                runVmParams.getBootSequence(),
+                fetchStoragePool(vm.getStoragePoolId()))
                 &&
                 VmRunHandler.getInstance().canRunVm(vm,
                         messages,
@@ -245,6 +246,10 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
     private static DiskDao getDiskDao() {
         return DbFacade.getInstance().getDiskDao();
+    }
+
+    private static StoragePool fetchStoragePool(Guid storagePoolId) {
+        return DbFacade.getInstance().getStoragePoolDao().get(storagePoolId);
     }
 
     private static RunVmValidator getRunVmValidator() {

@@ -11,7 +11,6 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
-import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
@@ -23,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -68,13 +66,6 @@ public class VmRunHandler {
         List<Disk> vmDisks = getDiskDao().getAllForVm(vm.getId(), true);
         List<DiskImage> vmImages = ImagesHandler.filterImageDisks(vmDisks, true, false);
         if (retValue && !vmImages.isEmpty()) {
-            StoragePool sp = getStoragePoolDAO().get(vm.getStoragePoolId());
-            ValidationResult spUpResult = new StoragePoolValidator(sp).isUp();
-            if (!spUpResult.isValid()) {
-                message.add(spUpResult.getMessage().name());
-                retValue = false;
-            }
-
             if (retValue) {
                 retValue = performStorageDomainChecks(vm, message, runParams, vmImages);
             }

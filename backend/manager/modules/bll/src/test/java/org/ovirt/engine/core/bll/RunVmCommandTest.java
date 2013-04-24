@@ -465,6 +465,10 @@ public class RunVmCommandTest {
         RunVmValidator runVmValidator = mock(RunVmValidator.class);
         when(runVmValidator.validateVmProperties(any(VM.class), Matchers.anyListOf(String.class))).thenReturn(true);
         when(runVmValidator.validateBootSequence(any(VM.class), any(BootSequence.class), Matchers.anyListOf(Disk.class))).thenReturn(ValidationResult.VALID);
+        StoragePool sp = new StoragePool();
+        sp.setstatus(StoragePoolStatus.Up);
+        when(spDao.get(any(Guid.class))).thenReturn(sp);
+        doReturn(spDao).when(command).getStoragePoolDAO();
         doReturn(runVmValidator).when(command).getRunVmValidator();
         return runVmValidator;
     }

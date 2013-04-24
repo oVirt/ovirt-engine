@@ -2,12 +2,16 @@ package org.ovirt.engine.core.bll.validator;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -75,7 +79,11 @@ public class RunVmValidator {
 
     // Compatibility method for static VmPoolCommandBase.canRunPoolVm
     // who uses the same validation as runVmCommand
-    public boolean canRunVm(VM vm, List<String> messages, List<Disk> vmDisks, BootSequence bootSequence) {
+    public boolean canRunVm(VM vm,
+            List<String> messages,
+            List<Disk> vmDisks,
+            BootSequence bootSequence,
+            StoragePool storagePool) {
         if (!validateVmProperties(vm, messages)) {
             return false;
         }
@@ -94,7 +102,14 @@ public class RunVmValidator {
             messages.add(result.getMessage().toString());
             return false;
         }
-
+        List<DiskImage> images = ImagesHandler.filterImageDisks(vmDisks, true, false);
+        if (!images.isEmpty()) {
+            result = new StoragePoolValidator(storagePool).isUp();
+            if (!result.isValid()) {
+                messages.add(result.getMessage().toString());
+                return false;
+            }
+        }
         return true;
     }
 

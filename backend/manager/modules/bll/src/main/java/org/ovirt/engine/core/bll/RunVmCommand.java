@@ -19,6 +19,7 @@ import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
+import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
@@ -33,6 +34,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
@@ -679,6 +681,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
         List<String> messages = getReturnValue().getCanDoActionMessages();
         List<Disk> vmDisks = getDiskDao().getAllForVm(vm.getId(), true);
+        List<DiskImage> vmImages = ImagesHandler.filterImageDisks(vmDisks, true, false);
         boolean canDoAction =
                 getRunVmValidator().validateVmProperties(vm, messages) &&
                         validate(getRunVmValidator().validateBootSequence(vm,
@@ -686,6 +689,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                                 vmDisks)) &&
                         validate(getVmValidator(vm).vmNotLocked()) &&
                         validate(getSnapshotsValidator().vmNotDuringSnapshot(vm.getId())) &&
+                        (vmImages.isEmpty() ||
+                        validate(new StoragePoolValidator(getStoragePoolDAO().get(vm.getStoragePoolId())).isUp())) &&
                         canRunVm(vm) &&
                         validateNetworkInterfaces();
 
