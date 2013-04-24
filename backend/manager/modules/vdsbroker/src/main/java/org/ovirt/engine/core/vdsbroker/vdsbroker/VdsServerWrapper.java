@@ -844,9 +844,20 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc snapshot(String vmId, Map<String, String>[] snapParams) {
+    public StatusOnlyReturnForXmlRpc snapshot(String vmId, Map<String, String>[] disks) {
         try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.snapshot(vmId, snapParams);
+            Map<String, Object> xmlRpcReturnValue = vdsServer.snapshot(vmId, disks);
+            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc snapshot(String vmId, Map<String, String>[] disks, String memory) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.snapshot(vmId, disks, memory);
             StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {

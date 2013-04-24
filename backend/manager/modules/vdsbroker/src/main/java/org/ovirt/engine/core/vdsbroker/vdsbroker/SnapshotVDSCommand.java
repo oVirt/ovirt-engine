@@ -21,11 +21,18 @@ public class SnapshotVDSCommand<P extends SnapshotVDSCommandParameters> extends 
 
     @Override
     protected void ExecuteVdsBrokerCommand() {
-        status = getBroker().snapshot(getParameters().getVmId().toString(), createSnapshotParameters());
+        status = executeSnapshotVerb();
         ProceedProxyReturnValue();
     }
 
-    private Map<String, String>[] createSnapshotParameters() {
+    private StatusOnlyReturnForXmlRpc executeSnapshotVerb() {
+        String vmId = getParameters().getVmId().toString();
+        return getParameters().isMemoryVolumeExists() ?
+                getBroker().snapshot(vmId, createDisksMap(), getParameters().getMemoryVolume()) :
+                getBroker().snapshot(vmId, createDisksMap());
+    }
+
+    private Map<String, String>[] createDisksMap() {
         @SuppressWarnings("unchecked")
         Map<String, String>[] result = new HashMap[getParameters().getImages().size()];
 

@@ -156,7 +156,9 @@ public interface VdsServerConnector {
 
     public Map<String, Object> vmUpdateDevice(String vmId, Map<String, Object> device);
 
-    Map<String, Object> snapshot(String vmId, Map<String, String>[] snapParams);
+    Map<String, Object> snapshot(String vmId, Map<String, String>[] disks);
+
+    Map<String, Object> snapshot(String vmId, Map<String, String>[] disks, String memory);
 
     // Gluster vdsm commands
     public Map<String, Object> glusterVolumeCreate(String volumeName,
