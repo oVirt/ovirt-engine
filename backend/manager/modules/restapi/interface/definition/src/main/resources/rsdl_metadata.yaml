@@ -8,7 +8,7 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: 
+    urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
@@ -688,7 +688,7 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: 
+    urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
@@ -870,7 +870,7 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: 
+    urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
@@ -1009,7 +1009,7 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: 
+    urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
@@ -1181,7 +1181,7 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: 
+    urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
@@ -1472,7 +1472,7 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: 
+    urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
@@ -1489,7 +1489,7 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: 
+    urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
@@ -1524,7 +1524,7 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: 
+    urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
@@ -1736,7 +1736,7 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: 
+    urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
@@ -2096,7 +2096,7 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: 
+    urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
@@ -2316,7 +2316,7 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: 
+    urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
@@ -2586,7 +2586,7 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: 
+    urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
@@ -2769,7 +2769,7 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: 
+    urlparams:
       search: {context: query, type: 'xs:string', value: 'search query', required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
@@ -2974,9 +2974,8 @@ actions:
       parameterType: Bricks
       signatures:
       - mandatoryArguments:
-          bricks.brick--COLLECTION: {brick.server_id: 'xs:string', brick.brick_dir: 'xs:string'}
-        optionalArguments:
-          bricks.brick--COLLECTION: {brick.replica_count: 'xs:unsignedShort', brick.stripe_count: 'xs:unsignedShort'}
+          brick--COLLECTION: {brick.server_id: 'xs:string', brick.brick_dir: 'xs:string'}
+        optionalArguments: {replica_count: 'xs:unsignedShort', stripe_count: 'xs:unsignedShort'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
