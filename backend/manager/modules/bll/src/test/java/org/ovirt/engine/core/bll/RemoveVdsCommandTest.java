@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -14,9 +13,10 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -33,6 +33,7 @@ import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 
+@RunWith(MockitoJUnitRunner.class)
 public class RemoveVdsCommandTest {
     @Mock
     private VdsDynamicDAO vdsDynamicDAO;
@@ -55,22 +56,22 @@ public class RemoveVdsCommandTest {
     @Mock
     private VdsGroupDAO vdsGroupDao;
 
-    ClusterUtils clusterUtils;
+    @Mock
+    private ClusterUtils clusterUtils;
 
     /**
      * The command under test.
      */
     private RemoveVdsCommand<RemoveVdsParameters> command;
 
-    private Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+    private Guid clusterId;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        clusterUtils = mock(ClusterUtils.class);
+        clusterId = Guid.NewGuid();
     }
 
-    private void prepareMocks(RemoveVdsCommand<RemoveVdsParameters> command) {
+    private void prepareMocks() {
         doReturn(vdsDAO).when(command).getVdsDAO();
         doReturn(vmStaticDAO).when(command).getVmStaticDAO();
         doReturn(storagePoolDAO).when(command).getStoragePoolDAO();
@@ -79,23 +80,23 @@ public class RemoveVdsCommandTest {
         doReturn(vdsGroupDao).when(command).getVdsGroupDAO();
         doReturn(vdsGroup).when(vdsGroupDao).get(Mockito.any(Guid.class));
         doReturn(clusterUtils).when(command).getClusterUtils();
-        when(clusterUtils.getUpServer(CLUSTER_ID)).thenReturn(getVds(VDSStatus.Up));
+        when(clusterUtils.getUpServer(clusterId)).thenReturn(getVds(VDSStatus.Up));
     }
 
     private VDS getVds(VDSStatus status) {
         VDS vds = new VDS();
         vds.setId(Guid.NewGuid());
         vds.setVdsName("gfs1");
-        vds.setVdsGroupId(CLUSTER_ID);
+        vds.setVdsGroupId(clusterId);
         vds.setStatus(status);
         return vds;
-        }
+    }
 
 
     @Test
     public void canDoActionSucceeds() throws Exception {
         command = spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.NewGuid(), false)));
-        prepareMocks(command);
+        prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
         mockVmsPinnedToHost(Collections.<String> emptyList());
@@ -108,7 +109,7 @@ public class RemoveVdsCommandTest {
     @Test
     public void canDoActionFailsWhenGlusterHostHasVolumes() throws Exception {
         command = spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.NewGuid(), false)));
-        prepareMocks(command);
+        prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
         mockVmsPinnedToHost(Collections.<String> emptyList());
@@ -124,7 +125,7 @@ public class RemoveVdsCommandTest {
     @Test
     public void canDoActionSucceedsWithForceOption() throws Exception {
         command = spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.NewGuid(), true)));
-        prepareMocks(command);
+        prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
         mockVmsPinnedToHost(Collections.<String> emptyList());
@@ -137,7 +138,7 @@ public class RemoveVdsCommandTest {
     @Test
     public void canDoActionFailsWhenVMsPinnedToHost() throws Exception {
         command = spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.NewGuid(), false)));
-        prepareMocks(command);
+        prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
 
