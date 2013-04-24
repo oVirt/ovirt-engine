@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -103,7 +102,7 @@ public class RemoveVdsCommandTest {
 
         mockIsGlusterEnabled(false);
         mockHasVolumeOnServer(false);
-        runAndAssertCanDoActionSuccess();
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 
     @Test
@@ -117,9 +116,8 @@ public class RemoveVdsCommandTest {
         mockIsGlusterEnabled(true);
         mockHasVolumeOnServer(true);
 
-        boolean canDoAction = command.canDoAction();
-        System.out.println(command.getReturnValue().getCanDoActionMessages());
-        assertFalse(canDoAction);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
     }
 
     @Test
@@ -132,7 +130,7 @@ public class RemoveVdsCommandTest {
 
         mockIsGlusterEnabled(true);
         mockHasVolumeOnServer(true);
-        runAndAssertCanDoActionSuccess();
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 
     @Test
@@ -148,34 +146,15 @@ public class RemoveVdsCommandTest {
         String vmName = "abc";
         mockVmsPinnedToHost(Arrays.asList(vmName));
 
-        ArrayList<String> messages =
-                runAndAssertCanDoActionFailure(VdcBllMessages.ACTION_TYPE_FAILED_DETECTED_PINNED_VMS);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.ACTION_TYPE_FAILED_DETECTED_PINNED_VMS);
 
         boolean foundMessage = false;
-        for (String message : messages) {
+        for (String message : command.getReturnValue().getCanDoActionMessages()) {
             foundMessage |= message.contains(vmName);
         }
 
         assertTrue("Can't find VM name in can do action messages", foundMessage);
-    }
-
-    /**
-     * Run the canDoAction and assert that it fails with the given message, while printing the messages (for easier
-     * debug if test fails).
-     *
-     * @param message
-     *            The message that should be in the failed messages.
-     * @return The failure messages, so that they can be further examined if needed.
-     */
-    private ArrayList<String> runAndAssertCanDoActionFailure(VdcBllMessages message) {
-        boolean canDoAction = command.canDoAction();
-        ArrayList<String> canDoActionMessages = command.getReturnValue().getCanDoActionMessages();
-
-        System.out.println(canDoActionMessages);
-        assertFalse(canDoAction);
-        assertTrue(canDoActionMessages.contains(message.name()));
-
-        return canDoActionMessages;
     }
 
     /**
@@ -233,14 +212,5 @@ public class RemoveVdsCommandTest {
             bricks.add(brick);
         }
         when(glusterBrickDao.getGlusterVolumeBricksByServerId(command.getVdsId())).thenReturn(bricks);
-    }
-
-    /**
-     * Run the canDoAction and assert that it succeeds, while printing the messages (for easier debug if test fails).
-     */
-    private void runAndAssertCanDoActionSuccess() {
-        boolean canDoAction = command.canDoAction();
-        System.out.println(command.getReturnValue().getCanDoActionMessages());
-        assertTrue(canDoAction);
     }
 }
