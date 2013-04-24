@@ -81,11 +81,11 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.aliasColumn, constants.aliasDisk(), all || images || luns,
-                "130px"); //$NON-NLS-1$
+                "120px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.idColumn, constants.idDisk(), all || images || luns,
-                "130px"); //$NON-NLS-1$
+                "120px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.bootableDiskColumn,
@@ -145,7 +145,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.descriptionColumn, constants.descriptionDisk(), all || images || luns,
-                "100px"); //$NON-NLS-1$
+                "90px"); //$NON-NLS-1$
     }
 
     void initTableColumns() {

@@ -81,6 +81,8 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
 
     @Override
     public void initTable(final CommonApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         TextColumnWithTooltip<Snapshot> dateColumn = new TextColumnWithTooltip<Snapshot>() {
             @Override
             public String getValue(Snapshot snapshot) {
@@ -90,7 +92,7 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
                 return FullDateTimeRenderer.getLocalizedDateTimeFormat().format(snapshot.getCreationDate());
             }
         };
-        getTable().addColumn(dateColumn, constants.dateSnapshot());
+        getTable().addColumn(dateColumn, constants.dateSnapshot(), "185px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<Snapshot> statusColumn = new EnumColumn<Snapshot, SnapshotStatus>() {
             @Override
@@ -98,7 +100,7 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
                 return snapshot.getStatus();
             }
         };
-        getTable().addColumn(statusColumn, constants.statusSnapshot(), "100px"); //$NON-NLS-1$
+        getTable().addColumn(statusColumn, constants.statusSnapshot(), "95px"); //$NON-NLS-1$
 
         SafeHtmlColumn<Snapshot> descriptionColumn = new SafeHtmlColumn<Snapshot>() {
             @Override
@@ -123,7 +125,7 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
                 return description;
             }
         };
-        getTable().addColumn(descriptionColumn, constants.descriptionSnapshot());
+        getTable().addColumn(descriptionColumn, constants.descriptionSnapshot(), "185px"); //$NON-NLS-1$
 
         initActionButtons(constants);
         disableActiveSnapshotRow();

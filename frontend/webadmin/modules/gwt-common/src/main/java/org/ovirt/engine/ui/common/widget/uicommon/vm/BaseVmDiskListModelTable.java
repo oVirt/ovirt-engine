@@ -72,11 +72,13 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase> extends Abs
         getModel().setItems(null);
         getModel().search();
 
+        getTable().enableColumnResizing();
+
         getTable().ensureColumnPresent(
                 DisksViewColumns.diskStatusColumn, constants.empty(), all || images || luns, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.aliasColumn, constants.aliasDisk(), all || images || luns);
+                DisksViewColumns.aliasColumn, constants.aliasDisk(), all || images || luns, "80px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.bootableDiskColumn,
@@ -106,16 +108,16 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase> extends Abs
                 DisksViewColumns.dateCreatedColumn, constants.creationDateDisk(), images, "120px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.lunIdColumn, constants.lunIdSanStorage(), luns);
+                DisksViewColumns.lunIdColumn, constants.lunIdSanStorage(), luns, "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.lunSerialColumn, constants.serialSanStorage(), luns);
+                DisksViewColumns.lunSerialColumn, constants.serialSanStorage(), luns, "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.lunVendorIdColumn, constants.vendorIdSanStorage(), luns);
+                DisksViewColumns.lunVendorIdColumn, constants.vendorIdSanStorage(), luns, "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.lunProductIdColumn, constants.productIdSanStorage(), luns);
+                DisksViewColumns.lunProductIdColumn, constants.productIdSanStorage(), luns, "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.diskContainersColumn, constants.attachedToDisk(), all || images || luns, "110px"); //$NON-NLS-1$
@@ -124,10 +126,10 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase> extends Abs
                 DisksViewColumns.interfaceColumn, constants.interfaceDisk(), all || images || luns, "100px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.statusColumn, constants.statusDisk(), images, "90px"); //$NON-NLS-1$
+                DisksViewColumns.statusColumn, constants.statusDisk(), images, "80px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.descriptionColumn, constants.descriptionDisk(), all || images || luns);
+                DisksViewColumns.descriptionColumn, constants.descriptionDisk(), all || images || luns, "90px"); //$NON-NLS-1$
 
     }
 }
