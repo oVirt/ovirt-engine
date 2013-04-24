@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -116,7 +116,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
                 String formattedString = ""; //$NON-NLS-1$
 
                 if (object != null) {
-                    storage_pool storage = (storage_pool) object;
+                    StoragePool storage = (StoragePool) object;
 
                     // Get formatted storage type and format using Enum renders
                     String storageType = storage.getstorage_pool_type() == StorageType.UNKNOWN ? "" : //$NON-NLS-1$

@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
@@ -22,12 +22,12 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class MainTabDataCenterPresenter extends AbstractMainTabWithDetailsPresenter<storage_pool, DataCenterListModel, MainTabDataCenterPresenter.ViewDef, MainTabDataCenterPresenter.ProxyDef> {
+public class MainTabDataCenterPresenter extends AbstractMainTabWithDetailsPresenter<StoragePool, DataCenterListModel, MainTabDataCenterPresenter.ViewDef, MainTabDataCenterPresenter.ProxyDef> {
 
     @GenEvent
     public static class DataCenterSelectionChange {
 
-        List<storage_pool> selectedItems;
+        List<StoragePool> selectedItems;
 
     }
 
@@ -36,7 +36,7 @@ public class MainTabDataCenterPresenter extends AbstractMainTabWithDetailsPresen
     public interface ProxyDef extends TabContentProxyPlace<MainTabDataCenterPresenter> {
     }
 
-    public interface ViewDef extends AbstractMainTabWithDetailsPresenter.ViewDef<storage_pool> {
+    public interface ViewDef extends AbstractMainTabWithDetailsPresenter.ViewDef<StoragePool> {
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
@@ -47,7 +47,7 @@ public class MainTabDataCenterPresenter extends AbstractMainTabWithDetailsPresen
 
     @Inject
     public MainTabDataCenterPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, MainModelProvider<storage_pool, DataCenterListModel> modelProvider) {
+            PlaceManager placeManager, MainModelProvider<StoragePool, DataCenterListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 

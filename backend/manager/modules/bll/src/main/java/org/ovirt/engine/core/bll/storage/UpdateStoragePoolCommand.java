@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.SetStoragePoolDescriptionVDSCommandParameters;
@@ -51,7 +51,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         super(commandId);
     }
 
-    private storage_pool _oldStoragePool;
+    private StoragePool _oldStoragePool;
 
     @Override
     protected void executeCommand() {
@@ -87,7 +87,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     }
 
     private void updateStoragePoolFormatType() {
-        final storage_pool storagePool = getStoragePool();
+        final StoragePool storagePool = getStoragePool();
         final Guid spId = storagePool.getId();
         final Version spVersion = storagePool.getcompatibility_version();
         final Version oldSpVersion = _oldStoragePool.getcompatibility_version();
@@ -257,7 +257,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
      * @param oldStoragePool
      * @param newStoragePool
      */
-    private static void copyUnchangedStoragePoolProperties(storage_pool newStoragePool, storage_pool oldStoragePool) {
+    private static void copyUnchangedStoragePoolProperties(StoragePool newStoragePool, StoragePool oldStoragePool) {
         newStoragePool.setStoragePoolFormatType(oldStoragePool.getStoragePoolFormatType());
     }
 

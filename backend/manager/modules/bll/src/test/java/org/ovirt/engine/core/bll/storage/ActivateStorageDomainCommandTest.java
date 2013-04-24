@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
@@ -121,7 +121,7 @@ public class ActivateStorageDomainCommandTest {
     }
 
     private void createUpStoragePool() {
-        storage_pool pool = new storage_pool();
+        StoragePool pool = new StoragePool();
         pool.setId(Guid.NewGuid());
         pool.setstatus(StoragePoolStatus.Up);
         when(storagePoolDAO.get(any(Guid.class))).thenReturn(pool);

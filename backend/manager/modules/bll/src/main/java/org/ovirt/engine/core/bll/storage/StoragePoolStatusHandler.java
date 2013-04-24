@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -56,7 +56,7 @@ public final class StoragePoolStatusHandler {
     public void onTimeout() {
         if (_nonOperationalPools.containsKey(poolId)) {
             try {
-                storage_pool pool = DbFacade.getInstance().getStoragePoolDao().get(poolId);
+                StoragePool pool = DbFacade.getInstance().getStoragePoolDao().get(poolId);
                 if (pool != null && pool.getstatus() == StoragePoolStatus.NotOperational) {
                     NonOperationalPoolTreatment(pool);
                 }
@@ -84,7 +84,7 @@ public final class StoragePoolStatusHandler {
         }
     }
 
-    private static void NonOperationalPoolTreatment(storage_pool pool) {
+    private static void NonOperationalPoolTreatment(StoragePool pool) {
         boolean changeStatus = false;
         if (StorageHandlingCommandBase.GetAllRunningVdssInPool(pool).size() > 0) {
             changeStatus = true;
@@ -103,8 +103,8 @@ public final class StoragePoolStatusHandler {
     }
 
     public static void Init() {
-        List<storage_pool> allPools = DbFacade.getInstance().getStoragePoolDao().getAll();
-        for (storage_pool pool : allPools) {
+        List<StoragePool> allPools = DbFacade.getInstance().getStoragePoolDao().getAll();
+        for (StoragePool pool : allPools) {
             if (pool.getstatus() == StoragePoolStatus.NotOperational) {
                 PoolStatusChanged(pool.getId(), StoragePoolStatus.NotOperational);
             }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -39,7 +39,7 @@ public abstract class StorageModelBehavior extends Model
         privateHash = value;
     }
 
-    public List<storage_pool> FilterDataCenter(List<storage_pool> source)
+    public List<StoragePool> FilterDataCenter(List<StoragePool> source)
     {
         return Linq.ToList(Linq.Where(source, new Linq.DataCenterNotStatusPredicate(StoragePoolStatus.NotOperational)));
     }

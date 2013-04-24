@@ -33,7 +33,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -87,7 +87,7 @@ public class AttachStorageDomainToPoolCommandTest {
         when(dbFacade.getVdsDao()).thenReturn(vdsDAO);
         when(dbFacade.getStorageDomainDao()).thenReturn(storageDomainDAO);
         when(dbFacade.getStorageDomainStaticDao()).thenReturn(storageDomainStaticDAO);
-        storage_pool pool = new storage_pool();
+        StoragePool pool = new StoragePool();
         pool.setstatus(StoragePoolStatus.Up);
         when(storagePoolDAO.get(any(Guid.class))).thenReturn(pool);
         when(isoMapDAO.get(any(StoragePoolIsoMapId.class))).thenReturn(map);

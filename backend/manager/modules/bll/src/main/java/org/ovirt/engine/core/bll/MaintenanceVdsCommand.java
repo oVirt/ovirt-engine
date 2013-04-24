@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmsComparer;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
@@ -191,7 +191,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         if (!Guid.Empty.equals(vds.getStoragePoolId())) {
             clearDomainCache(vds);
 
-            storage_pool storage_pool = DbFacade.getInstance()
+            StoragePool storage_pool = DbFacade.getInstance()
                     .getStoragePoolDao()
                     .get(vds.getStoragePoolId());
             if (StoragePoolStatus.Uninitialized != storage_pool

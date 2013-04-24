@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -378,8 +378,8 @@ public class UpdateVdsGroupCommandTest {
         return group;
     }
 
-    private static storage_pool createStoragePoolLocalFS() {
-        storage_pool pool = new storage_pool();
+    private static StoragePool createStoragePoolLocalFS() {
+        StoragePool pool = new StoragePool();
         pool.setstorage_pool_type(StorageType.LOCALFS);
         return pool;
     }

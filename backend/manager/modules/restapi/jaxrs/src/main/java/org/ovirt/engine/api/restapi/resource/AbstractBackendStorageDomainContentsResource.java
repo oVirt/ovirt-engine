@@ -13,7 +13,7 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -50,7 +50,7 @@ public abstract class AbstractBackendStorageDomainContentsResource<C extends Bas
     }
 
     public Guid getDataCenterId(Guid storageDomainId) {
-        List<storage_pool> storagepools = getStoragePools(storageDomainId, this);
+        List<StoragePool> storagepools = getStoragePools(storageDomainId, this);
         return storagepools.size() > 0 ?
                 storagepools.get(0).getId()
                 :

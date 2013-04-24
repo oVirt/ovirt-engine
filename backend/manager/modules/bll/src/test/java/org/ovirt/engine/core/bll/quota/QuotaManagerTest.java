@@ -12,7 +12,7 @@ import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -85,7 +85,7 @@ public class QuotaManagerTest {
     @Spy
     private QuotaManagerAuditLogger quotaManagerAuditLogger = quotaManager.getQuotaManagerAuditLogger();
 
-    private storage_pool storage_pool = new storage_pool();
+    private StoragePool storage_pool = new StoragePool();
     private ArrayList<String> canDoActionMessages = new ArrayList<String>();
     private QuotaConsumptionParametersWrapper parametersWrapper;
     private boolean hardEnforcement = true;

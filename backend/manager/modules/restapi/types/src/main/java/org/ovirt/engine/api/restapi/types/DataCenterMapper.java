@@ -9,13 +9,13 @@ import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 
 public class DataCenterMapper {
 
-    @Mapping(from = DataCenter.class, to = storage_pool.class)
-    public static storage_pool map(DataCenter model, storage_pool template) {
-        storage_pool entity = template != null ? template : new storage_pool();
+    @Mapping(from = DataCenter.class, to = StoragePool.class)
+    public static StoragePool map(DataCenter model, StoragePool template) {
+        StoragePool entity = template != null ? template : new StoragePool();
         if (model.isSetId()) {
             entity.setId(GuidUtils.asGuid(model.getId()));
         }
@@ -44,8 +44,8 @@ public class DataCenterMapper {
         return entity;
     }
 
-    @Mapping(from = storage_pool.class, to = DataCenter.class)
-    public static DataCenter map(storage_pool entity, DataCenter template) {
+    @Mapping(from = StoragePool.class, to = DataCenter.class)
+    public static DataCenter map(StoragePool entity, DataCenter template) {
         DataCenter model = template != null ? template : new DataCenter();
         model.setId(entity.getId().toString());
         model.setName(entity.getname());

@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -240,7 +240,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
             }
         }
         if (result && getVdsGroup().getStoragePoolId() != null) {
-            storage_pool storagePool = getStoragePoolDAO().get(getVdsGroup().getStoragePoolId().getValue());
+            StoragePool storagePool = getStoragePoolDAO().get(getVdsGroup().getStoragePoolId().getValue());
             if (oldGroup.getStoragePoolId() == null && storagePool.getstorage_pool_type() == StorageType.LOCALFS) {
                 // we allow only one cluster in localfs data center
                 if (!getVdsGroupDAO().getAllForStoragePool(getVdsGroup().getStoragePoolId().getValue()).isEmpty()) {

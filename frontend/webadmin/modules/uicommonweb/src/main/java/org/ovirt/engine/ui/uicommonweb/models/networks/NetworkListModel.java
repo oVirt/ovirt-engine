@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -105,7 +105,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
     private void initDcList(final NetworkModel networkModel) {
         SystemTreeItemModel treeSelectedDc = SystemTreeItemModel.FindAncestor(SystemTreeItemType.DataCenter, getSystemTreeSelectedItem());
         if (treeSelectedDc != null) {
-            storage_pool dc = (storage_pool) treeSelectedDc.getEntity();
+            StoragePool dc = (StoragePool) treeSelectedDc.getEntity();
             networkModel.getDataCenters().setItems(Arrays.asList(dc));
             networkModel.getDataCenters().setSelectedItem(dc);
             networkModel.getDataCenters().setIsChangable(false);
@@ -118,11 +118,11 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
             @Override
             public void onSuccess(Object model, Object returnValue) {
 
-                ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) returnValue;
+                ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) returnValue;
                 networkModel.getDataCenters().setItems(dataCenters);
 
                 if (networkModel instanceof EditNetworkModel) {
-                    storage_pool currentDc =
+                    StoragePool currentDc =
                             findDc(networkModel.getNetwork().getDataCenterId().getValue(), dataCenters);
                     networkModel.getDataCenters().setSelectedItem(currentDc);
                 } else {
@@ -133,8 +133,8 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         }));
     }
 
-    private storage_pool findDc(Guid dcId, List<storage_pool> dataCenters) {
-        for (storage_pool dc : dataCenters) {
+    private StoragePool findDc(Guid dcId, List<StoragePool> dataCenters) {
+        for (StoragePool dc : dataCenters) {
             if (dcId.equals(dc.getId())) {
                 return dc;
             }

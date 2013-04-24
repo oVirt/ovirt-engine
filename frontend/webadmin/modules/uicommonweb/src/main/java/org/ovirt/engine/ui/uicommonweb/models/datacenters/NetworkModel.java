@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -264,7 +264,7 @@ public abstract class NetworkModel extends Model
     protected boolean firstInit = true;
 
     public void syncWithBackend() {
-        final storage_pool dc = getSelectedDc();
+        final StoragePool dc = getSelectedDc();
         if (dc == null) {
             return;
         }
@@ -295,8 +295,8 @@ public abstract class NetworkModel extends Model
         getCommands().add(tempVar3);
     }
 
-    public storage_pool getSelectedDc() {
-        return (storage_pool) getDataCenters().getSelectedItem();
+    public StoragePool getSelectedDc() {
+        return (StoragePool) getDataCenters().getSelectedItem();
     }
 
     public void flush() {

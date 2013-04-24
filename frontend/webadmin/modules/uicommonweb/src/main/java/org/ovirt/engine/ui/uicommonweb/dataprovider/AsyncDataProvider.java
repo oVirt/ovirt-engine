@@ -44,7 +44,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -367,7 +367,7 @@ public final class AsyncDataProvider {
             {
                 if (source == null)
                 {
-                    return new ArrayList<storage_pool>();
+                    return new ArrayList<StoragePool>();
                 }
                 return source;
             }
@@ -382,11 +382,11 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery) {
                 if (source == null) {
-                    return new ArrayList<storage_pool>();
+                    return new ArrayList<StoragePool>();
                 }
 
                 // sort data centers
-                final ArrayList<storage_pool> storagePoolList = (ArrayList<storage_pool>) source;
+                final ArrayList<StoragePool> storagePoolList = (ArrayList<StoragePool>) source;
                 Collections.sort(storagePoolList, new Linq.StoragePoolByNameComparer());
                 return source;
             }
@@ -406,7 +406,7 @@ public final class AsyncDataProvider {
             {
                 if (source == null)
                 {
-                    return new ArrayList<storage_pool>();
+                    return new ArrayList<StoragePool>();
                 }
                 return source;
             }
@@ -1283,7 +1283,7 @@ public final class AsyncDataProvider {
             {
                 if (source == null)
                 {
-                    return new ArrayList<storage_pool>();
+                    return new ArrayList<StoragePool>();
                 }
                 return source;
             }
@@ -1370,7 +1370,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (ArrayList<storage_pool>) source : null;
+                return source != null ? (ArrayList<StoragePool>) source : null;
             }
         };
         Frontend.RunQuery(VdcQueryType.GetStoragePoolsByStorageDomainId,
@@ -1860,10 +1860,10 @@ public final class AsyncDataProvider {
 
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        ArrayList<storage_pool> pools =
-                                (ArrayList<storage_pool>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        ArrayList<StoragePool> pools =
+                                (ArrayList<StoragePool>) ((VdcQueryReturnValue) returnValue).getReturnValue();
                         if (pools != null && pools.size() > 0) {
-                            storage_pool pool = pools.get(0);
+                            StoragePool pool = pools.get(0);
                             GetClusterList((AsyncQuery) model, pool.getId());
                         }
                     }
@@ -1877,8 +1877,8 @@ public final class AsyncDataProvider {
 
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        ArrayList<storage_pool> pools = (ArrayList<storage_pool>) returnValue;
-                        storage_pool pool = pools.get(0);
+                        ArrayList<StoragePool> pools = (ArrayList<StoragePool>) returnValue;
+                        StoragePool pool = pools.get(0);
                         if (pool != null) {
                             GetStorageDomainList((AsyncQuery) model,
                                     pool.getId());
@@ -2668,9 +2668,9 @@ public final class AsyncDataProvider {
         {
             return ((VM) entity).getId();
         }
-        else if (entity instanceof storage_pool)
+        else if (entity instanceof StoragePool)
         {
-            return ((storage_pool) entity).getId();
+            return ((StoragePool) entity).getId();
         }
         else if (entity instanceof VDSGroup)
         {

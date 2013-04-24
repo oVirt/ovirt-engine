@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.ListUtils;
 import org.ovirt.engine.core.compat.IntegerCompat;
@@ -79,13 +79,13 @@ public class ConfigureLocalStorageModel extends Model {
         privateFormattedStorageName = value;
     }
 
-    private storage_pool candidateDataCenter;
+    private StoragePool candidateDataCenter;
 
-    public storage_pool getCandidateDataCenter() {
+    public StoragePool getCandidateDataCenter() {
         return candidateDataCenter;
     }
 
-    public void setCandidateDataCenter(storage_pool value) {
+    public void setCandidateDataCenter(StoragePool value) {
         candidateDataCenter = value;
     }
 
@@ -218,19 +218,19 @@ public class ConfigureLocalStorageModel extends Model {
     private void SetDefaultNames8() {
 
         VDS host = context.host;
-        ArrayList<storage_pool> dataCenters = context.dataCenterList;
+        ArrayList<StoragePool> dataCenters = context.dataCenterList;
         ArrayList<VDSGroup> clusters = context.clusterList;
 
         setCommonName(host.getName().replace('.', '-') + "-Local"); //$NON-NLS-1$
 
-        storage_pool candidate = null;
+        StoragePool candidate = null;
 
         // Check if current settings suitable for local setup (in case just SD creation failed - re-using the same
         // setup)
         boolean useCurrentSettings = false;
         if (host.getStoragePoolId() != null) {
 
-            storage_pool tempCandidate = context.hostDataCenter;
+            StoragePool tempCandidate = context.hostDataCenter;
             if (IsLocalDataCenterEmpty(tempCandidate)) {
 
                 candidate = tempCandidate;
@@ -248,7 +248,7 @@ public class ConfigureLocalStorageModel extends Model {
 
         // Check if there is other DC suitable for re-use
         if (candidate == null) {
-            for (storage_pool dataCenter : dataCenters) {
+            for (StoragePool dataCenter : dataCenters) {
 
                 // Need to check if the new DC is without host.
                 if (IsLocalDataCenterEmpty(dataCenter)
@@ -338,7 +338,7 @@ public class ConfigureLocalStorageModel extends Model {
             // Didn't found DC to re-use, so we select new names.
             names = new ArrayList<String>();
 
-            for (storage_pool dataCenter : dataCenters) {
+            for (StoragePool dataCenter : dataCenters) {
                 names.add(dataCenter.getname());
             }
 
@@ -419,30 +419,30 @@ public class ConfigureLocalStorageModel extends Model {
 
         // Fill map of local storage host by data center.
 
-        context.clusterListByDataCenterMap = new HashMap<storage_pool, ArrayList<VDSGroup>>();
+        context.clusterListByDataCenterMap = new HashMap<StoragePool, ArrayList<VDSGroup>>();
 
-        AsyncIterator<storage_pool> iterator = new AsyncIterator<storage_pool>(context.dataCenterList);
+        AsyncIterator<StoragePool> iterator = new AsyncIterator<StoragePool>(context.dataCenterList);
 
         iterator.setComplete(
-                new AsyncIteratorComplete<storage_pool>() {
+                new AsyncIteratorComplete<StoragePool>() {
                     @Override
-                    public void run(storage_pool item, Object value) {
+                    public void run(StoragePool item, Object value) {
 
                         SetDefaultNames7();
                     }
                 });
 
         iterator.Iterate(
-                new AsyncIteratorFunc<storage_pool>() {
+                new AsyncIteratorFunc<StoragePool>() {
                     @Override
-                    public void run(storage_pool item, AsyncIteratorCallback callback) {
+                    public void run(StoragePool item, AsyncIteratorCallback callback) {
 
                         AsyncDataProvider.GetClusterList(callback.getAsyncQuery(), item.getId());
                     }
                 },
-                new AsyncIteratorPredicate<storage_pool>() {
+                new AsyncIteratorPredicate<StoragePool>() {
                     @Override
-                    public boolean match(storage_pool item, Object value) {
+                    public boolean match(StoragePool item, Object value) {
 
                         context.clusterListByDataCenterMap.put(item, (ArrayList<VDSGroup>) value);
                         return false;
@@ -456,30 +456,30 @@ public class ConfigureLocalStorageModel extends Model {
 
         // Fill map of local storage host by data center.
 
-        context.localStorageHostByDataCenterMap = new HashMap<storage_pool, VDS>();
+        context.localStorageHostByDataCenterMap = new HashMap<StoragePool, VDS>();
 
-        AsyncIterator<storage_pool> iterator = new AsyncIterator<storage_pool>(context.dataCenterList);
+        AsyncIterator<StoragePool> iterator = new AsyncIterator<StoragePool>(context.dataCenterList);
 
         iterator.setComplete(
-                new AsyncIteratorComplete<storage_pool>() {
+                new AsyncIteratorComplete<StoragePool>() {
                     @Override
-                    public void run(storage_pool item, Object value) {
+                    public void run(StoragePool item, Object value) {
 
                         SetDefaultNames6();
                     }
                 });
 
         iterator.Iterate(
-                new AsyncIteratorFunc<storage_pool>() {
+                new AsyncIteratorFunc<StoragePool>() {
                     @Override
-                    public void run(storage_pool item, AsyncIteratorCallback callback) {
+                    public void run(StoragePool item, AsyncIteratorCallback callback) {
 
                         AsyncDataProvider.GetLocalStorageHost(callback.getAsyncQuery(), item.getname());
                     }
                 },
-                new AsyncIteratorPredicate<storage_pool>() {
+                new AsyncIteratorPredicate<StoragePool>() {
                     @Override
-                    public boolean match(storage_pool item, Object value) {
+                    public boolean match(StoragePool item, Object value) {
 
                         context.localStorageHostByDataCenterMap.put(item, (VDS) value);
                         return false;
@@ -497,7 +497,7 @@ public class ConfigureLocalStorageModel extends Model {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
 
-                        context.dataCenterList = (ArrayList<storage_pool>) returnValue;
+                        context.dataCenterList = (ArrayList<StoragePool>) returnValue;
                         SetDefaultNames5();
                     }
                 },
@@ -553,7 +553,7 @@ public class ConfigureLocalStorageModel extends Model {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
 
-                            context.hostDataCenter = (storage_pool) returnValue;
+                            context.hostDataCenter = (StoragePool) returnValue;
                             SetDefaultNames2();
                         }
                     },
@@ -755,7 +755,7 @@ public class ConfigureLocalStorageModel extends Model {
         // return message;
     }
 
-    private boolean IsLocalDataCenterEmpty(storage_pool dataCenter) {
+    private boolean IsLocalDataCenterEmpty(StoragePool dataCenter) {
 
         if (dataCenter != null && dataCenter.getstorage_pool_type() == StorageType.LOCALFS
                 && dataCenter.getstatus() == StoragePoolStatus.Uninitialized) {
@@ -817,12 +817,12 @@ public class ConfigureLocalStorageModel extends Model {
     public final class Context {
 
         public VDS host;
-        public storage_pool hostDataCenter;
+        public StoragePool hostDataCenter;
         public VDSGroup hostCluster;
-        public ArrayList<storage_pool> dataCenterList;
+        public ArrayList<StoragePool> dataCenterList;
         public ArrayList<VDSGroup> clusterList;
         public ArrayList<StorageDomain> storageList;
-        public HashMap<storage_pool, VDS> localStorageHostByDataCenterMap;
-        public HashMap<storage_pool, ArrayList<VDSGroup>> clusterListByDataCenterMap;
+        public HashMap<StoragePool, VDS> localStorageHostByDataCenterMap;
+        public HashMap<StoragePool, ArrayList<VDSGroup>> clusterListByDataCenterMap;
     }
 }

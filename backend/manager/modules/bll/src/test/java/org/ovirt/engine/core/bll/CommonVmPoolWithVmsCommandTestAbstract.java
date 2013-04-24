@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
@@ -74,7 +74,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
     protected static int VM_COUNT = 5;
     protected static int DISK_SIZE = 100000;
     protected VmTemplate vmTemplate;
-    protected storage_pool storage_pool;
+    protected StoragePool storagePool;
     protected List<StorageDomain> storageDomainsList;
 
     @Mock
@@ -139,7 +139,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
         vmPools = mockVmPools();
         vdsGroup = mockVdsGroup();
         vmTemplate = mockVmTemplate();
-        storage_pool = mockStoragePool();
+        storagePool = mockStoragePool();
     }
 
     protected void mockGetImageDomainsListVdsCommand(int availableDiskSizeFirstDomain,
@@ -168,7 +168,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
 
     private void mockStoragePoolDAO() {
         doReturn(storagePoolDAO).when(command).getStoragePoolDAO();
-        when(storagePoolDAO.get(storagePoolId)).thenReturn(storage_pool);
+        when(storagePoolDAO.get(storagePoolId)).thenReturn(storagePool);
     }
 
     private void mockVMTemplateDAO() {
@@ -269,11 +269,11 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
     /**
      * Mock Storage Pool
      */
-    private storage_pool mockStoragePool() {
-        storage_pool storage_pool = new storage_pool();
-        storage_pool.setstatus(StoragePoolStatus.Up);
+    private StoragePool mockStoragePool() {
+        StoragePool storagePool = new StoragePool();
+        storagePool.setstatus(StoragePoolStatus.Up);
 
-        return storage_pool;
+        return storagePool;
     }
 
     private static void setDiskList(VmTemplate vmTemplate) {

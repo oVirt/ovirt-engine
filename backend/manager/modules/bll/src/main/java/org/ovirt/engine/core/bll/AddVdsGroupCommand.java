@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
@@ -131,7 +131,7 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
         }
 
         if (result && getVdsGroup().getStoragePoolId() != null) {
-            storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao().get(
+            StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().get(
                     getVdsGroup().getStoragePoolId().getValue());
             // Making sure the given SP ID is valid to prevent
             // breaking Fk_vds_groups_storage_pool_id

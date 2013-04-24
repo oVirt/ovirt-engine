@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.common.config.Config;
@@ -106,7 +106,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
     }
 
     public static void Init() {
-        for (storage_pool sp : DbFacade.getInstance().getStoragePoolDao().getAll()) {
+        for (StoragePool sp : DbFacade.getInstance().getStoragePoolDao().getAll()) {
             if (!_irsProxyData.containsKey(sp.getId())) {
                 _irsProxyData.put(sp.getId(), new IrsProxyData(sp.getId()));
             }
@@ -174,7 +174,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             try {
                 synchronized (syncObj) {
                     if (!_disposed) {
-                        storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao()
+                        StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao()
                                 .get(_storagePoolId);
                         if (storagePool != null
                                 && (storagePool.getstatus() == StoragePoolStatus.Up
@@ -192,7 +192,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         private int _errorAttempts;
 
         @SuppressWarnings("unchecked")
-        private void proceedStoragePoolStats(storage_pool storagePool) {
+        private void proceedStoragePoolStats(StoragePool storagePool) {
             // ugly patch because vdsm doesnt check if host is spm on spm
             // operations
             VDSReturnValue result = null;
@@ -272,8 +272,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             VDSReturnValue storagePoolInfoResult = ResourceManager.getInstance().runVdsCommand(
                     VDSCommandType.GetStoragePoolInfo, tempVar);
             if (storagePoolInfoResult.getSucceeded()) {
-                KeyValuePairCompat<storage_pool, java.util.List<StorageDomain>> data =
-                        (KeyValuePairCompat<storage_pool, java.util.List<StorageDomain>>) storagePoolInfoResult
+                KeyValuePairCompat<StoragePool, java.util.List<StorageDomain>> data =
+                        (KeyValuePairCompat<StoragePool, java.util.List<StorageDomain>>) storagePoolInfoResult
                                 .getReturnValue();
                 int masterVersion = data.getKey().getmaster_domain_version();
                 java.util.HashSet<Guid> domainsInVds = new java.util.HashSet<Guid>();
@@ -298,7 +298,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             }
         }
 
-        private void proceedStorageDomain(StorageDomain data, int dataMasterVersion, storage_pool storagePool) {
+        private void proceedStorageDomain(StorageDomain data, int dataMasterVersion, StoragePool storagePool) {
             StorageDomain storage_domain = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(data.getId(), _storagePoolId);
             StorageDomainStatic domainFromDb = null;
             StoragePoolIsoMap domainPoolMap = null;
@@ -344,7 +344,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     }
                     if (data.getStatus() != null && data.getStatus() == StorageDomainStatus.InActive
                             && domainFromDb.getStorageDomainType() == StorageDomainType.Master) {
-                        storage_pool pool = DbFacade.getInstance().getStoragePoolDao()
+                        StoragePool pool = DbFacade.getInstance().getStoragePoolDao()
                                 .get(domainPoolMap.getstorage_pool_id().getValue());
                         if (pool != null) {
                             DbFacade.getInstance().getStoragePoolDao().updateStatus(pool.getId(),StoragePoolStatus.Maintenance);
@@ -504,7 +504,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
         public IIrsServer getIrsProxy() {
             if (getmIrsProxy() == null) {
-                final storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao().get(_storagePoolId);
+                final StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().get(_storagePoolId);
                 // don't try to start spm on uninitialized pool
                 if (storagePool.getstatus() != StoragePoolStatus.Uninitialized) {
                     String host =
@@ -538,7 +538,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             return getmIrsProxy();
         }
 
-        private void runStoragePoolUpEvent(final storage_pool storagePool) {
+        private void runStoragePoolUpEvent(final StoragePool storagePool) {
             ThreadPoolUtil.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -567,7 +567,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             _isSpmStartCalled = false;
             String returnValue = null;
             Guid curVdsId = (mCurrentVdsId != null) ? mCurrentVdsId : Guid.Empty;
-            storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao().get(_storagePoolId);
+            StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().get(_storagePoolId);
 
             if (storagePool == null) {
                 log.infoFormat("hostFromVds::Finished elect spm, storage pool {0} was removed", _storagePoolId);
@@ -702,7 +702,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
         private boolean _isSpmStartCalled;
 
-        private String handleSelectedVdsForSPM(storage_pool storagePool, RefObject<VDS> selectedVds,
+        private String handleSelectedVdsForSPM(StoragePool storagePool, RefObject<VDS> selectedVds,
                                                RefObject<SpmStatusResult> spmStatus, StoragePoolStatus prevStatus) {
             String returnValue = null;
             if (spmStatus.argvalue == null || spmStatus.argvalue.getSpmStatus() != SpmStatus.SPM) {
@@ -766,7 +766,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             }
         }
 
-        private void movePoolToProblematicInDB(storage_pool storagePool) {
+        private void movePoolToProblematicInDB(StoragePool storagePool) {
             ResourceManager
                     .getInstance()
                     .getEventListener()
@@ -779,7 +779,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
         private SpmStatusResult handleSpmStatusResult(Guid curVdsId,
                                                       List<VDS> vdsByPool,
-                                                      final storage_pool storagePool,
+                                                      final StoragePool storagePool,
                                                       RefObject<VDS> selectedVds,
                                                       SpmStatusResult spmStatus) {
             if (spmStatus.getSpmStatus() == SpmStatus.Free) {
@@ -940,7 +940,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                             TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
                                 @Override
                                 public Object runInTransaction() {
-                                    storage_pool pool =
+                                    StoragePool pool =
                                             DbFacade.getInstance().getStoragePoolDao().get(storagePool.getId());
                                     pool.setspm_vds_id(null);
                                     DbFacade.getInstance().getStoragePoolDao().update(pool);
@@ -983,7 +983,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
         public void ResetIrs() {
             nullifyInternalProxies();
-            storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao().get(_storagePoolId);
+            StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().get(_storagePoolId);
             if (storagePool != null) {
                 storagePool.setspm_vds_id(null);
                 DbFacade.getInstance().getStoragePoolDao().update(storagePool);
@@ -1007,7 +1007,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 final ArrayList<VDSDomainsData> data) {
 
             Set<Guid> domainsInProblems = null;
-            storage_pool storagePool =
+            StoragePool storagePool =
                     DbFacade.getInstance().getStoragePoolDao().get(_storagePoolId);
             if (storagePool != null
                     && (storagePool.getstatus() == StoragePoolStatus.Up || storagePool.getstatus() == StoragePoolStatus.Problematic)) {

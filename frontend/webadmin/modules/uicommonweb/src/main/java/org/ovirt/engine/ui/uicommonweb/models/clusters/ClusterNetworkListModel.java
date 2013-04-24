@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.DisplayNetworkToVdsGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -349,7 +349,7 @@ public class ClusterNetworkListModel extends SearchableListModel
                 @Override
                 public void onSuccess(Object model, Object result)
                 {
-                    final storage_pool dataCenter = (storage_pool) result;
+                    final StoragePool dataCenter = (StoragePool) result;
                     networkModel.getDataCenters().setItems(Arrays.asList(dataCenter));
                     networkModel.getDataCenters().setSelectedItem(dataCenter);
 

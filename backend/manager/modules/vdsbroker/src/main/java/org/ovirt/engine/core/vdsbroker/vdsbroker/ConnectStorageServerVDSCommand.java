@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -56,19 +56,19 @@ public class ConnectStorageServerVDSCommand<P extends ConnectStorageServerVDSCom
 
     @SuppressWarnings("unchecked")
     protected Map<String, String>[] BuildStructFromConnectionListObject() {
-        final storage_pool storage_pool =
+        final StoragePool storagePool =
                 DbFacade.getInstance().getStoragePoolDao().getForVds(getParameters().getVdsId());
         final Map<String, String>[] result = new HashMap[getParameters().getConnectionList().size()];
         int i = 0;
         for (StorageServerConnections connection : getParameters().getConnectionList()) {
-            result[i] = CreateStructFromConnection(connection, storage_pool);
+            result[i] = CreateStructFromConnection(connection, storagePool);
             i++;
         }
         return result;
     }
 
     public static Map<String, String> CreateStructFromConnection(final StorageServerConnections connection,
-            final storage_pool storage_pool) {
+            final StoragePool storagePool) {
         // for information, see _connectionDict2ConnectionInfo in vdsm/storage/hsm.py
         DefaultValueMap con = new DefaultValueMap();
         con.put("id", connection.getid(), Guid.Empty.toString());
@@ -81,8 +81,8 @@ public class ConnectStorageServerVDSCommand<P extends ConnectStorageServerVDSCom
 
         // storage_pool can be null when discovering iscsi send targets or when connecting
         // through vds which has no storage pool
-        if (storage_pool == null || Config.<Boolean> GetValue(ConfigValues.AdvancedNFSOptionsEnabled,
-                storage_pool.getcompatibility_version().getValue())) {
+        if (storagePool == null || Config.<Boolean> GetValue(ConfigValues.AdvancedNFSOptionsEnabled,
+                storagePool.getcompatibility_version().getValue())) {
             // For mnt_options, vfs_type, and protocol_version - if they are null
             // or empty we should not send a key with an empty value
             con.putIfNotEmpty("mnt_options", connection.getMountOptions());

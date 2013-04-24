@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
@@ -35,9 +35,9 @@ public final class Cloner
         {
             return CloneVDSGroup((VDSGroup) instance);
         }
-        if (instance instanceof storage_pool)
+        if (instance instanceof StoragePool)
         {
-            return CloneStorage_pool((storage_pool) instance);
+            return CloneStorage_pool((StoragePool) instance);
         }
         if (instance instanceof Network)
         {
@@ -235,9 +235,9 @@ public final class Cloner
         return obj;
     }
 
-    private static storage_pool CloneStorage_pool(storage_pool instance)
+    private static StoragePool CloneStorage_pool(StoragePool instance)
     {
-        storage_pool obj = new storage_pool();
+        StoragePool obj = new StoragePool();
 
         obj.setdescription(instance.getdescription());
         obj.setId(instance.getId());

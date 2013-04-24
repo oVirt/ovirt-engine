@@ -82,7 +82,7 @@
 		<include name="common/businessentities/StorageDomain.java" />
 		<include name="common/businessentities/StoragePoolIsoMap.java" />
 		<include name="common/businessentities/StoragePoolIsoMapId.java" />
-		<include name="common/businessentities/storage_pool.java" />
+		<include name="common/businessentities/StoragePool.java" />
 		<include name="common/businessentities/StorageServerConnections.java" />
 		<include name="common/businessentities/StorageDomainOwnerType.java" />
 		<include name="common/businessentities/StorageDomainSharedStatus.java" />

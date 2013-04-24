@@ -11,7 +11,7 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
@@ -24,7 +24,7 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
     private VDSGroup existingVdsGroup;
     private VDSGroup newGroup;
     private VDSGroup groupWithNoRunningVms;
-    private storage_pool storagePool;
+    private StoragePool storagePool;
 
     @Override
     public void setUp() throws Exception {

@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -1330,7 +1330,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
                 // Attach storage to data center as necessary.
                 StorageModel storageModel = (StorageModel) storageListModel.getWindow();
-                storage_pool dataCenter = (storage_pool) storageModel.getDataCenter().getSelectedItem();
+                StoragePool dataCenter = (StoragePool) storageModel.getDataCenter().getSelectedItem();
                 if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
                     storageListModel.AttachStorageToDataCenter((Guid) storageListModel.storageId, dataCenter.getId());
                 }
@@ -1454,7 +1454,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
                 // Attach storage to data center as necessary.
                 StorageModel storageModel = (StorageModel) storageListModel.getWindow();
-                storage_pool dataCenter = (storage_pool) storageModel.getDataCenter().getSelectedItem();
+                StoragePool dataCenter = (StoragePool) storageModel.getDataCenter().getSelectedItem();
                 if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
                     storageListModel.AttachStorageToDataCenter((Guid) storageListModel.storageId, dataCenter.getId());
                 }
@@ -1663,7 +1663,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 StorageModel storageModel = (StorageModel) storageListModel.getWindow();
 
                 // Attach storage to data center as necessary.
-                storage_pool dataCenter = (storage_pool) storageModel.getDataCenter().getSelectedItem();
+                StoragePool dataCenter = (StoragePool) storageModel.getDataCenter().getSelectedItem();
                 if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId))
                 {
                     storageListModel.AttachStorageToDataCenter((Guid) storageListModel.storageId, dataCenter.getId());
@@ -1720,7 +1720,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                             return;
                         }
 
-                        storage_pool dataCenter = (storage_pool) storageModel.getDataCenter().getSelectedItem();
+                        StoragePool dataCenter = (StoragePool) storageModel.getDataCenter().getSelectedItem();
                         if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
                             VdcReturnValueBase returnValue = result.getReturnValue();
                             NGuid storageId = (NGuid) returnValue.getActionReturnValue();
@@ -2112,7 +2112,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 if (success) {
 
                     StorageModel model = (StorageModel) storageListModel.getWindow();
-                    storage_pool dataCenter = (storage_pool) model.getDataCenter().getSelectedItem();
+                    StoragePool dataCenter = (StoragePool) model.getDataCenter().getSelectedItem();
                     if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
                         storageListModel.AttachStorageToDataCenter(sdToAdd1.getId(), dataCenter.getId());
                     }
@@ -2238,8 +2238,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             @Override
             public void onSuccess(Object target, Object returnValue) {
 
-                List<storage_pool> dataCenters = (List<storage_pool>) returnValue;
-                for (storage_pool dataCenter : dataCenters) {
+                List<StoragePool> dataCenters = (List<StoragePool>) returnValue;
+                for (StoragePool dataCenter : dataCenters) {
                     reportModel.addDataCenterID(dataCenter.getId().toString());
                 }
 

@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -353,7 +353,7 @@ public class PermissionListModel extends SearchableListModel
         {
             return VdcObjectType.VM;
         }
-        if (getEntity() instanceof storage_pool)
+        if (getEntity() instanceof StoragePool)
         {
             return VdcObjectType.StoragePool;
         }

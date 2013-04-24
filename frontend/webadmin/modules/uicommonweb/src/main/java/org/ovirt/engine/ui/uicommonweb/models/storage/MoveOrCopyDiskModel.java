@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -126,7 +126,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
                     MoveOrCopyDiskModel model = (MoveOrCopyDiskModel) target;
-                    storage_pool dataCenter = (storage_pool) returnValue;
+                    StoragePool dataCenter = (StoragePool) returnValue;
 
                     model.setQuotaEnforcementType(dataCenter.getQuotaEnforcementType());
                     model.postInitStorageDomains();

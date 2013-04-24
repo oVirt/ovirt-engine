@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
@@ -83,8 +83,8 @@ public class VdsBrokerObjectsBuilder {
         return vmdynamic;
     }
 
-    public static storage_pool buildStoragePool(Map<String, Object> xmlRpcStruct) {
-        storage_pool sPool = new storage_pool();
+    public static StoragePool buildStoragePool(Map<String, Object> xmlRpcStruct) {
+        StoragePool sPool = new StoragePool();
         if (xmlRpcStruct.containsKey("type")) {
             sPool.setstorage_pool_type(StorageType.valueOf(xmlRpcStruct.get("type").toString()));
         }

@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
@@ -21,11 +21,11 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
     private static final int NUMBER_OF_POOLS_FOR_PRIVELEGED_USER = 1;
 
     private StoragePoolDAO dao;
-    private storage_pool existingPool;
+    private StoragePool existingPool;
     private Guid vds;
     private Guid vdsGroup;
     private Guid storageDomain;
-    private storage_pool newPool;
+    private StoragePool newPool;
 
     @Override
     public void setUp() throws Exception {
@@ -39,7 +39,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
         vdsGroup = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
         storageDomain = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
 
-        newPool = new storage_pool();
+        newPool = new StoragePool();
         newPool.setname("newPoolDude");
         newPool.setcompatibility_version(new Version("3.0"));
 
@@ -50,7 +50,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        storage_pool result = dao.get(Guid.NewGuid());
+        StoragePool result = dao.get(Guid.NewGuid());
 
         assertNull(result);
     }
@@ -60,28 +60,28 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGet() {
-        storage_pool result = dao.get(existingPool.getId());
+        StoragePool result = dao.get(existingPool.getId());
 
         assertGetResult(result);
     }
 
     @Test
     public void testGetFilteredWithPermissions() {
-        storage_pool result = dao.get(existingPool.getId(), PRIVILEGED_USER_ID, true);
+        StoragePool result = dao.get(existingPool.getId(), PRIVILEGED_USER_ID, true);
 
         assertGetResult(result);
     }
 
     @Test
     public void testGetFilteredWithPermissionsNoPermissions() {
-        storage_pool result = dao.get(existingPool.getId(), UNPRIVILEGED_USER_ID, true);
+        StoragePool result = dao.get(existingPool.getId(), UNPRIVILEGED_USER_ID, true);
 
         assertNull(result);
     }
 
     @Test
     public void testGetFilteredWithPermissionsNoPermissionsAndNoFilter() {
-        storage_pool result = dao.get(existingPool.getId(), UNPRIVILEGED_USER_ID, false);
+        StoragePool result = dao.get(existingPool.getId(), UNPRIVILEGED_USER_ID, false);
 
         assertGetResult(result);
     }
@@ -91,7 +91,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByNameWithInvalidName() {
-        storage_pool result = dao.getByName("farkle");
+        StoragePool result = dao.getByName("farkle");
 
         assertNull(result);
     }
@@ -101,7 +101,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByName() {
-        storage_pool result = dao.getByName(existingPool.getname());
+        StoragePool result = dao.getByName(existingPool.getname());
 
         assertGetResult(result);
     }
@@ -110,7 +110,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
      * Asserts the result of {@link StoragePoolDAO#get(Guid)} is correct
      * @param result The result to check
      */
-    private void assertGetResult(storage_pool result) {
+    private void assertGetResult(StoragePool result) {
         assertNotNull(result);
         assertEquals(existingPool, result);
     }
@@ -120,7 +120,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetForVds() {
-        storage_pool result = dao.getForVds(vds);
+        StoragePool result = dao.getForVds(vds);
 
         assertNotNull(result);
     }
@@ -130,7 +130,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetForVdsGroup() {
-        storage_pool result = dao.getForVdsGroup(vdsGroup);
+        StoragePool result = dao.getForVdsGroup(vdsGroup);
 
         assertNotNull(result);
     }
@@ -140,14 +140,14 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAll() {
-        List<storage_pool> result = dao.getAll();
+        List<StoragePool> result = dao.getAll();
 
         assertCorrectGetAllResult(result);
     }
 
     @Test
     public void testGetAllByStatus() {
-        List<storage_pool> result = dao.getAllByStatus(StoragePoolStatus.Up);
+        List<StoragePool> result = dao.getAllByStatus(StoragePoolStatus.Up);
         assertNotNull("list of returned pools in status up shouldn't be null", result);
         assertEquals("wrong number of storage pools returned for up status", 5, result.size());
 
@@ -161,7 +161,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllWithPermissionsPrivilegedUser() {
-        List<storage_pool> result = dao.getAll(PRIVILEGED_USER_ID, true);
+        List<StoragePool> result = dao.getAll(PRIVILEGED_USER_ID, true);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -174,7 +174,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllWithPermissionsDisabledUnprivilegedUser() {
-        List<storage_pool> result = dao.getAll(UNPRIVILEGED_USER_ID, false);
+        List<StoragePool> result = dao.getAll(UNPRIVILEGED_USER_ID, false);
 
         assertCorrectGetAllResult(result);
     }
@@ -184,7 +184,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllWithPermissionsUnprivilegedUser() {
-        List<storage_pool> result = dao.getAll(UNPRIVILEGED_USER_ID, true);
+        List<StoragePool> result = dao.getAll(UNPRIVILEGED_USER_ID, true);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -195,7 +195,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForStorageDomain() {
-        List<storage_pool> result = dao.getAllForStorageDomain(storageDomain);
+        List<StoragePool> result = dao.getAllForStorageDomain(storageDomain);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -206,7 +206,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllOfTypeForUnrepresentedType() {
-        List<storage_pool> result = dao.getAllOfType(StorageType.UNKNOWN);
+        List<StoragePool> result = dao.getAllOfType(StorageType.UNKNOWN);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -217,11 +217,11 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllOfType() {
-        List<storage_pool> result = dao.getAllOfType(StorageType.ISCSI);
+        List<StoragePool> result = dao.getAllOfType(StorageType.ISCSI);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        for (storage_pool pool : result) {
+        for (StoragePool pool : result) {
             assertEquals(StorageType.ISCSI, pool.getstorage_pool_type());
         }
     }
@@ -230,7 +230,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
     public void testSave() {
         dao.save(newPool);
 
-        storage_pool result = dao.getByName(newPool.getname());
+        StoragePool result = dao.getByName(newPool.getname());
 
         assertNotNull(result);
         assertEquals(newPool, result);
@@ -246,7 +246,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
 
         dao.update(existingPool);
 
-        storage_pool result = dao.get(existingPool.getId());
+        StoragePool result = dao.get(existingPool.getId());
 
         assertGetResult(result);
     }
@@ -261,7 +261,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
 
         dao.updatePartial(existingPool);
 
-        storage_pool result = dao.get(existingPool.getId());
+        StoragePool result = dao.get(existingPool.getId());
 
         assertGetResult(result);
     }
@@ -274,7 +274,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
         dao.updateStatus(existingPool.getId(), StoragePoolStatus.NotOperational);
         existingPool.setstatus(StoragePoolStatus.NotOperational);
 
-        storage_pool result = dao.get(existingPool.getId());
+        StoragePool result = dao.get(existingPool.getId());
 
         assertGetResult(result);
     }
@@ -282,7 +282,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
     @Test
     public void testIncreaseStoragePoolMasterVersion() {
         int result = dao.increaseStoragePoolMasterVersion(existingPool.getId());
-        storage_pool dbPool = dao.get(existingPool.getId());
+        StoragePool dbPool = dao.get(existingPool.getId());
         assertEquals(result, existingPool.getmaster_domain_version() + 1);
         assertEquals(result, dbPool.getmaster_domain_version());
     }
@@ -315,7 +315,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
      *
      * @param result A list of storage pools to assert
      */
-    private static void assertCorrectGetAllResult(List<storage_pool> result) {
+    private static void assertCorrectGetAllResult(List<StoragePool> result) {
         assertNotNull(result);
         assertFalse(result.isEmpty());
     }

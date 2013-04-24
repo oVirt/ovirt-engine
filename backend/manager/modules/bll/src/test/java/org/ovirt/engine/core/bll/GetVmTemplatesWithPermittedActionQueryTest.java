@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
 
@@ -34,7 +34,7 @@ public class GetVmTemplatesWithPermittedActionQueryTest
         getQuery().executeQueryCommand();
 
         @SuppressWarnings("unchecked")
-        List<storage_pool> actual = (List<storage_pool>) getQuery().getQueryReturnValue().getReturnValue();
+        List<StoragePool> actual = (List<StoragePool>) getQuery().getQueryReturnValue().getReturnValue();
         assertEquals("Wrong number of VDS Groups", 1, actual.size());
         assertEquals("Wrong VDS Groups", expected, actual.get(0));
     }

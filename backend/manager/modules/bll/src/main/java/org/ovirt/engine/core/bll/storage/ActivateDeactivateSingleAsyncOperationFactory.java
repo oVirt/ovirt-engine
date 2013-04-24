@@ -4,14 +4,14 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.utils.ISingleAsyncOperation;
 import org.ovirt.engine.core.utils.ISingleAsyncOperationFactory;
 
 public abstract class ActivateDeactivateSingleAsyncOperationFactory implements ISingleAsyncOperationFactory {
     private ArrayList<VDS> _vdss;
     private StorageDomain _storageDomain;
-    private storage_pool _storagePool;
+    private StoragePool _storagePool;
 
     protected ArrayList<VDS> getVdss() {
         return _vdss;
@@ -21,7 +21,7 @@ public abstract class ActivateDeactivateSingleAsyncOperationFactory implements I
         return _storageDomain;
     }
 
-    protected storage_pool getStoragePool() {
+    protected StoragePool getStoragePool() {
         return _storagePool;
     }
 
@@ -38,10 +38,10 @@ public abstract class ActivateDeactivateSingleAsyncOperationFactory implements I
             throw new InvalidOperationException();
         }
         _storageDomain = (StorageDomain) parameters.get(1);
-        if (!(parameters.get(2) instanceof storage_pool)) {
+        if (!(parameters.get(2) instanceof StoragePool)) {
             throw new InvalidOperationException();
         }
-        _storagePool = (storage_pool) parameters.get(2);
+        _storagePool = (StoragePool) parameters.get(2);
     }
 
     public abstract ISingleAsyncOperation createSingleAsyncOperation();

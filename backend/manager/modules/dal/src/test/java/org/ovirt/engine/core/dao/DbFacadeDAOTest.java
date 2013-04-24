@@ -40,7 +40,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.config.Config;
@@ -384,7 +384,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testIsStoragePoolMasterUpWhenDown() {
-        storage_pool storagePoolToCheck = dbFacade.getStoragePoolDao().get(STORAGE_POOL_WITH_MASTER_DOWN);
+        StoragePool storagePoolToCheck = dbFacade.getStoragePoolDao().get(STORAGE_POOL_WITH_MASTER_DOWN);
         assertNotNull(storagePoolToCheck);
 
         Guid masterStorageDomainGuid =
@@ -471,7 +471,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetEntityNameByIdAndTypeForDataCenter() {
-        storage_pool storagePool = dbFacade.getStoragePoolDao().get(STORAGE_POOL_ID);
+        StoragePool storagePool = dbFacade.getStoragePoolDao().get(STORAGE_POOL_ID);
         assertNotNull(storagePool);
         String name = storagePool.getname();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(STORAGE_POOL_ID, VdcObjectType.StoragePool)));

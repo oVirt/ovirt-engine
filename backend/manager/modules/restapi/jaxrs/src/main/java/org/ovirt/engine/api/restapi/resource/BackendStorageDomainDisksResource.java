@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.action.RegisterDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
@@ -103,7 +103,7 @@ public class BackendStorageDomainDisksResource extends BackendDisksResource {
     protected Guid getStoragePoolIdForDomain(Guid storageDomainId) {
         // Retrieve the storage pools for the storage domain.
         StorageDomainQueryParametersBase params = new StorageDomainQueryParametersBase(storageDomainId);
-        List<storage_pool> storagePools = getBackendCollection(storage_pool.class, VdcQueryType.GetStoragePoolsByStorageDomainId, params);
+        List<StoragePool> storagePools = getBackendCollection(StoragePool.class, VdcQueryType.GetStoragePoolsByStorageDomainId, params);
 
         if (storagePools != null && !storagePools.isEmpty()) {
             // Take the first storage pool. We should only be running on NFS domains and thus should only have a single

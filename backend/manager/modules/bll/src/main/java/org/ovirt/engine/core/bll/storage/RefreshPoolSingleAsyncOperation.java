@@ -6,7 +6,7 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.RefreshStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -19,7 +19,7 @@ public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsy
     private final java.util.ArrayList<Guid> _vdsIdsToSetNonOperational;
 
     public RefreshPoolSingleAsyncOperation(java.util.ArrayList<VDS> vdss, StorageDomain domain,
-            storage_pool storagePool, ArrayList<Guid> vdssIdsToSetNonoperational) {
+            StoragePool storagePool, ArrayList<Guid> vdssIdsToSetNonoperational) {
         super(vdss, domain, storagePool);
         _vdsIdsToSetNonOperational = vdssIdsToSetNonoperational;
     }

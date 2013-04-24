@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
@@ -50,14 +50,14 @@ public class DataCenterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public MainModelProvider<storage_pool, DataCenterListModel> getDataCenterListProvider(ClientGinjector ginjector,
+    public MainModelProvider<StoragePool, DataCenterListModel> getDataCenterListProvider(ClientGinjector ginjector,
             final Provider<DataCenterPopupPresenterWidget> popupProvider,
             final Provider<GuidePopupPresenterWidget> guidePopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<RecoveryStoragePopupPresenterWidget> recoveryStorageConfirmPopupProvider,
             final Provider<ReportPresenterWidget> reportWindowProvider,
             final Provider<DataCenterForceRemovePopupPresenterWidget> forceRemovePopupProvider) {
-        return new MainTabModelProvider<storage_pool, DataCenterListModel>(ginjector, DataCenterListModel.class) {
+        return new MainTabModelProvider<StoragePool, DataCenterListModel>(ginjector, DataCenterListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(DataCenterListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {

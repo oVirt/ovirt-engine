@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -25,7 +25,7 @@ public class AttachStorageDomainsMultipleActionRunner extends SortedMultipleActi
     @Override
     public java.util.ArrayList<VdcReturnValueBase> Execute() {
         if (getParameters().size() > 0) {
-            storage_pool pool = DbFacade.getInstance().getStoragePoolDao().get(
+            StoragePool pool = DbFacade.getInstance().getStoragePoolDao().get(
                     ((StorageDomainPoolParametersBase) getParameters().get(0)).getStoragePoolId());
             if (pool.getstatus() == StoragePoolStatus.Uninitialized) {
                 java.util.ArrayList<Guid> storageDomainIds = new java.util.ArrayList<Guid>();

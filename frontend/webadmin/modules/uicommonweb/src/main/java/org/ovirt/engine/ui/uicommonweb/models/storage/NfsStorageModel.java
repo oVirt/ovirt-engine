@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -239,7 +239,7 @@ public class NfsStorageModel extends Model implements IStorageModel {
     private void containerDataCenterChanged() {
 
         // Show advanced NFS options for <=3.1
-        storage_pool dataCenter = (storage_pool) getContainer().getDataCenter().getSelectedItem();
+        StoragePool dataCenter = (StoragePool) getContainer().getDataCenter().getSelectedItem();
         Version ver31 = new Version(3, 1);
 
         boolean available = dataCenter != null && (dataCenter.getcompatibility_version().compareTo(ver31) >= 0 || dataCenter.getId().equals(Guid.Empty));

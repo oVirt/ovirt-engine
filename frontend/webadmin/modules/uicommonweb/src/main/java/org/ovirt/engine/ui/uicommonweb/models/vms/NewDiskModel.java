@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -99,7 +99,7 @@ public class NewDiskModel extends AbstractDiskModel
     }
 
     @Override
-    protected boolean isDatacenterAvailable(storage_pool dataCenter) {
+    protected boolean isDatacenterAvailable(StoragePool dataCenter) {
         boolean isStatusUp = dataCenter.getstatus() == StoragePoolStatus.Up;
 
         boolean isInTreeContext = true;
@@ -108,7 +108,7 @@ public class NewDiskModel extends AbstractDiskModel
             switch (getSystemTreeSelectedItem().getType())
             {
             case DataCenter:
-                storage_pool selectedDataCenter = (storage_pool) getSystemTreeSelectedItem().getEntity();
+                StoragePool selectedDataCenter = (StoragePool) getSystemTreeSelectedItem().getEntity();
                 isInTreeContext = selectedDataCenter.getId().equals(dataCenter.getId());
             default:
                 break;
@@ -132,7 +132,7 @@ public class NewDiskModel extends AbstractDiskModel
     }
 
     @Override
-    public void updateInterface(storage_pool datacenter) {
+    public void updateInterface(StoragePool datacenter) {
         getDiskInterface().setItems(AsyncDataProvider.GetDiskInterfaceList());
         getDiskInterface().setSelectedItem(DiskInterface.VirtIO);
     }

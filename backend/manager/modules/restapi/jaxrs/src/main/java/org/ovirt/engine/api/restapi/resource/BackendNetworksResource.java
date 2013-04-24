@@ -9,7 +9,7 @@ import org.ovirt.engine.api.resource.NetworkResource;
 import org.ovirt.engine.api.resource.NetworksResource;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -79,7 +79,7 @@ public class BackendNetworksResource extends AbstractBackendNetworksResource imp
     }
 
     protected Guid getDataCenterId(Network network) {
-        return getEntity(storage_pool.class,
+        return getEntity(StoragePool.class,
                          SearchType.StoragePool,
                          "Datacenter: name=" + network.getDataCenter().getName()).getId();
     }

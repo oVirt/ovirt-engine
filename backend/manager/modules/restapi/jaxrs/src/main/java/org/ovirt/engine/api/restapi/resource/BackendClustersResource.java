@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
@@ -79,7 +79,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
     public Response add(Cluster cluster) {
         validateParameters(cluster, "name", "dataCenter.name|id");
         validateEnums(Cluster.class, cluster);
-        storage_pool pool = getStoragePool(cluster, this);
+        StoragePool pool = getStoragePool(cluster, this);
         VDSGroup entity = map(cluster, map(pool));
         return performCreate(VdcActionType.AddVdsGroup,
                 new VdsGroupOperationParameters(entity),
@@ -111,8 +111,8 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
      * Map the storage pool (i.e. datacenter entity) to a VDSGroup instance
      * with the same compatibility version
      */
-    protected VDSGroup map(storage_pool pool) {
-        return getMapper(storage_pool.class, VDSGroup.class).map(pool, null);
+    protected VDSGroup map(StoragePool pool) {
+        return getMapper(StoragePool.class, VDSGroup.class).map(pool, null);
     }
 
     @Override

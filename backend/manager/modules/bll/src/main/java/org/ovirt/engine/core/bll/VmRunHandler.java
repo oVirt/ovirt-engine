@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
@@ -128,7 +128,7 @@ public class VmRunHandler {
 
                     List<DiskImage> vmImages = ImagesHandler.filterImageDisks(vmDisks, true, false);
                     if (retValue && !vmImages.isEmpty()) {
-                        storage_pool sp = getStoragePoolDAO().get(vm.getStoragePoolId());
+                        StoragePool sp = getStoragePoolDAO().get(vm.getStoragePoolId());
                         ValidationResult spUpResult = new StoragePoolValidator(sp).isUp();
                         if (!spUpResult.isValid()) {
                             message.add(spUpResult.getMessage().name());

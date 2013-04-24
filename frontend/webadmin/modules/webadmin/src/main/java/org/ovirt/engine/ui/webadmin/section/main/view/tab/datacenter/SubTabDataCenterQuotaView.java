@@ -4,7 +4,7 @@ import javax.inject.Inject;
 
 import com.google.gwt.core.client.GWT;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
@@ -17,7 +17,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.QuotaDcStatusColumn;
 
-public class SubTabDataCenterQuotaView extends AbstractSubTabTableView<storage_pool, Quota, DataCenterListModel, DataCenterQuotaListModel>
+public class SubTabDataCenterQuotaView extends AbstractSubTabTableView<StoragePool, Quota, DataCenterListModel, DataCenterQuotaListModel>
         implements SubTabDataCenterQuotaPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabDataCenterQuotaView> {

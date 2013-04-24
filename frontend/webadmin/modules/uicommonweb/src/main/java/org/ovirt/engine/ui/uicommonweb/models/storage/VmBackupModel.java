@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -132,9 +132,9 @@ public class VmBackupModel extends ManageBackupModel {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                ArrayList<storage_pool> pools = (ArrayList<storage_pool>) returnValue;
+                ArrayList<StoragePool> pools = (ArrayList<StoragePool>) returnValue;
                 if (pools != null && pools.size() > 0) {
-                    storage_pool pool = pools.get(0);
+                    StoragePool pool = pools.get(0);
                     VmBackupModel backupModel = (VmBackupModel) model;
                     ArrayList<VdcActionParametersBase> list =
                             new ArrayList<VdcActionParametersBase>();
@@ -511,9 +511,9 @@ public class VmBackupModel extends ManageBackupModel {
                 @Override
                 public void onSuccess(Object model, Object ReturnValue) {
                     VmBackupModel backupModel = (VmBackupModel) model;
-                    ArrayList<storage_pool> list = (ArrayList<storage_pool>) ReturnValue;
+                    ArrayList<StoragePool> list = (ArrayList<StoragePool>) ReturnValue;
                     if (list != null && list.size() > 0) {
-                        storage_pool dataCenter = list.get(0);
+                        StoragePool dataCenter = list.get(0);
                         AsyncQuery _asyncQuery1 = new AsyncQuery();
                         _asyncQuery1.setModel(backupModel);
                         _asyncQuery1.asyncCallback = new INewAsyncCallback() {

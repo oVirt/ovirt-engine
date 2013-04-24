@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -61,7 +61,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
     protected void executeCommand() {
         if (UpdateStorageDomainsInDb()) {
             // setting storage pool status to maintenance
-            storage_pool storagePool = getStoragePool();
+            StoragePool storagePool = getStoragePool();
             getCompensationContext().snapshotEntity(storagePool);
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
                 @Override

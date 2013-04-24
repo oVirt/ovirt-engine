@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -146,7 +146,7 @@ public class UpdateStoragePoolCommandTest {
     }
 
     private void newPoolNameIsAlreadyTaken() {
-        when(spDao.get(any(Guid.class))).thenReturn(new storage_pool("foo", Guid.Empty, "foo",
+        when(spDao.get(any(Guid.class))).thenReturn(new StoragePool("foo", Guid.Empty, "foo",
                 StorageType.NFS.getValue(), StoragePoolStatus.Up.getValue()));
         when(spDao.getByName(anyString())).thenReturn(createDefaultStoragePool());
     }
@@ -179,43 +179,43 @@ public class UpdateStoragePoolCommandTest {
         return versions;
     }
 
-    private static storage_pool createNewStoragePool() {
-        storage_pool pool = createBasicPool();
+    private static StoragePool createNewStoragePool() {
+        StoragePool pool = createBasicPool();
         pool.setstorage_pool_type(StorageType.NFS);
         pool.setcompatibility_version(VERSION_1_1);
         return pool;
     }
 
-    private static storage_pool createDefaultStoragePool() {
-        storage_pool pool = createBasicPool();
+    private static StoragePool createDefaultStoragePool() {
+        StoragePool pool = createBasicPool();
         pool.setstorage_pool_type(StorageType.LOCALFS);
         pool.setcompatibility_version(VERSION_1_1);
         return pool;
     }
 
-    private static storage_pool createLowerVersionStoragePool() {
-        storage_pool pool = createBasicPool();
+    private static StoragePool createLowerVersionStoragePool() {
+        StoragePool pool = createBasicPool();
         pool.setstorage_pool_type(StorageType.LOCALFS);
         pool.setcompatibility_version(VERSION_1_0);
         return pool;
     }
 
-    private static storage_pool createBasicPool() {
-        storage_pool pool = new storage_pool();
+    private static StoragePool createBasicPool() {
+        StoragePool pool = new StoragePool();
         pool.setId(Guid.NewGuid());
         pool.setname("Default");
         return pool;
     }
 
-    private static storage_pool createHigherVersionStoragePool() {
-        storage_pool pool = createBasicPool();
+    private static StoragePool createHigherVersionStoragePool() {
+        StoragePool pool = createBasicPool();
         pool.setstorage_pool_type(StorageType.LOCALFS);
         pool.setcompatibility_version(VERSION_1_2);
         return pool;
     }
 
-    private static storage_pool createInvalidVersionStoragePool() {
-        storage_pool pool = createBasicPool();
+    private static StoragePool createInvalidVersionStoragePool() {
+        StoragePool pool = createBasicPool();
         pool.setstorage_pool_type(StorageType.LOCALFS);
         pool.setcompatibility_version(VERSION_2_0);
         return pool;

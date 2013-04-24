@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.compat.Guid;
@@ -286,16 +286,16 @@ public class AuditLogableBase extends TimeoutBase {
         return "";
     }
 
-    private storage_pool _storagePool;
+    private StoragePool _storagePool;
 
-    public storage_pool getStoragePool() {
+    public StoragePool getStoragePool() {
         if (_storagePool == null && getStoragePoolId() != null && !Guid.Empty.equals(getStoragePoolId())) {
             _storagePool = getStoragePoolDAO().get(getStoragePoolId().getValue());
         }
         return _storagePool;
     }
 
-    public void setStoragePool(final storage_pool value) {
+    public void setStoragePool(final StoragePool value) {
         _storagePool = value;
     }
 

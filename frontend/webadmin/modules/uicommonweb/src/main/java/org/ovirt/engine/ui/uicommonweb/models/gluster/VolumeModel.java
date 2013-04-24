@@ -8,7 +8,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -513,7 +513,7 @@ public class VolumeModel extends Model {
 
     private void dataCenter_SelectedItemChanged()
     {
-        storage_pool dataCenter = (storage_pool) getDataCenter().getSelectedItem();
+        StoragePool dataCenter = (StoragePool) getDataCenter().getSelectedItem();
         if (dataCenter != null)
         {
             AsyncQuery _asyncQuery = new AsyncQuery();
@@ -525,7 +525,7 @@ public class VolumeModel extends Model {
                     VolumeModel volumeModel = (VolumeModel) model;
                     ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) result;
                     VDSGroup oldCluster = (VDSGroup) volumeModel.getCluster().getSelectedItem();
-                    storage_pool selectedDataCenter = (storage_pool) getDataCenter().getSelectedItem();
+                    StoragePool selectedDataCenter = (StoragePool) getDataCenter().getSelectedItem();
 
                     Iterator<VDSGroup> iterator = clusters.iterator();
                     while(iterator.hasNext())

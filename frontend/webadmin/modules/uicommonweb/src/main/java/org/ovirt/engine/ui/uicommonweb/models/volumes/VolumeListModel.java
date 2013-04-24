@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -170,7 +170,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             {
                 VolumeListModel volumeListModel = (VolumeListModel) model;
                 VolumeModel innerVolumeModel = (VolumeModel) volumeListModel.getWindow();
-                ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) result;
+                ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) result;
 
                 if (volumeListModel.getSystemTreeSelectedItem() != null)
                 {
@@ -180,12 +180,12 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                     case Cluster:
                     case Cluster_Gluster:
                         VDSGroup cluster = (VDSGroup) volumeListModel.getSystemTreeSelectedItem().getEntity();
-                        for (storage_pool dc : dataCenters)
+                        for (StoragePool dc : dataCenters)
                         {
                             if (dc.getId().equals(cluster.getStoragePoolId()))
                             {
                                 innerVolumeModel.getDataCenter()
-                                        .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] {dc})));
+                                        .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] {dc})));
                                 innerVolumeModel.getDataCenter().setSelectedItem(dc);
                                 break;
                             }
@@ -203,10 +203,10 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                         break;
                     case Clusters:
                     case DataCenter:
-                        storage_pool selectDataCenter =
-                                (storage_pool) volumeListModel.getSystemTreeSelectedItem().getEntity();
+                        StoragePool selectDataCenter =
+                                (StoragePool) volumeListModel.getSystemTreeSelectedItem().getEntity();
                         innerVolumeModel.getDataCenter()
-                                .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { selectDataCenter })));
+                                .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { selectDataCenter })));
                         innerVolumeModel.getDataCenter().setSelectedItem(selectDataCenter);
                         innerVolumeModel.getDataCenter().setIsChangable(false);
                         innerVolumeModel.getDataCenter().setInfo(ConstantsManager.getInstance()

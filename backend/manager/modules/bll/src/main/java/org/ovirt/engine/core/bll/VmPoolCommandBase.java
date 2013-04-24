@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -151,7 +151,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         List<DiskImage> vmImages = ImagesHandler.filterImageDisks(disks, true, true);
 
         VM vm = DbFacade.getInstance().getVmDao().get(vmId);
-        storage_pool sp = DbFacade.getInstance().getStoragePoolDao().get(vm.getStoragePoolId());
+        StoragePool sp = DbFacade.getInstance().getStoragePoolDao().get(vm.getStoragePoolId());
         ValidationResult spUpResult = new StoragePoolValidator(sp).isUp();
         if (!spUpResult.isValid()) {
             return failVmFree(messages, spUpResult.getMessage().name());

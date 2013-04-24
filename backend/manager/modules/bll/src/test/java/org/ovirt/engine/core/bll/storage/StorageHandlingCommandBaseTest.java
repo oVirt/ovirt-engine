@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -72,8 +72,8 @@ public class StorageHandlingCommandBaseTest {
         assertTrue(cmd.checkStoragePool());
     }
 
-    private static storage_pool createStoragePool() {
-        storage_pool pool = new storage_pool();
+    private static StoragePool createStoragePool() {
+        StoragePool pool = new StoragePool();
         pool.setname("DefaultStoragePool");
         pool.setId(Guid.NewGuid());
         return pool;

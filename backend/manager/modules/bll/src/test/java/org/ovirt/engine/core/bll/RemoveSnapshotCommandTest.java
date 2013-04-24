@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -208,7 +208,7 @@ public class RemoveSnapshotCommandTest {
         vm.setStatus(VMStatus.Up);
         vm.setStoragePoolId(STORAGE_POOLD_ID);
 
-        storage_pool sp = new storage_pool();
+        StoragePool sp = new StoragePool();
         sp.setId(STORAGE_POOLD_ID);
         sp.setstatus(StoragePoolStatus.Up);
 

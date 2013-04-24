@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -262,7 +262,7 @@ public class UpdateVmDiskCommandTest {
         vms.add(vm);
         mockGetForDisk(vms);
         mockGetVmsListForDisk(vm);
-        storage_pool storagePool = mockStoragePool(Version.v3_1);
+        StoragePool storagePool = mockStoragePool(Version.v3_1);
         vm.setStoragePoolId(storagePool.getId());
         when(vmDAO.get(command.getParameters().getVmId())).thenReturn(vm);
         return vm;
@@ -296,14 +296,14 @@ public class UpdateVmDiskCommandTest {
     }
 
     /**
-     * Mock a {@link storage_pool}.
+     * Mock a {@link StoragePool}.
      *
      * @param compatibilityVersion
      * @return
      */
-    private storage_pool mockStoragePool(Version compatibilityVersion) {
+    private StoragePool mockStoragePool(Version compatibilityVersion) {
         Guid storagePoolId = Guid.NewGuid();
-        storage_pool storagePool = new storage_pool();
+        StoragePool storagePool = new StoragePool();
         storagePool.setId(storagePoolId);
         storagePool.setcompatibility_version(compatibilityVersion);
         when(storagePoolDao.get(storagePoolId)).thenReturn(storagePool);

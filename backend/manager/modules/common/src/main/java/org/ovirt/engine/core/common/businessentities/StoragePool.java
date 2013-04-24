@@ -12,7 +12,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
 
-public class storage_pool extends IVdcQueryable implements BusinessEntity<Guid> {
+public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid> {
     private static final long serialVersionUID = 6162262095329980112L;
 
     private Guid id = new Guid();
@@ -48,12 +48,12 @@ public class storage_pool extends IVdcQueryable implements BusinessEntity<Guid> 
 
     private QuotaEnforcementTypeEnum quotaEnforcementType = QuotaEnforcementTypeEnum.DISABLED;
 
-    public storage_pool() {
+    public StoragePool() {
         description = "";
         masterDomainVersion = 0;
     }
 
-    public storage_pool(String description, Guid id, String name, int storage_pool_type, int status) {
+    public StoragePool(String description, Guid id, String name, int storage_pool_type, int status) {
         this();
         this.description = description;
         this.id = id;
@@ -195,7 +195,7 @@ public class storage_pool extends IVdcQueryable implements BusinessEntity<Guid> 
         if (getClass() != obj.getClass()) {
             return false;
         }
-        storage_pool other = (storage_pool) obj;
+        StoragePool other = (StoragePool) obj;
         return (ObjectUtils.objectsEqual(id, other.id)
                 && ObjectUtils.objectsEqual(LVER, other.LVER)
                 && ObjectUtils.objectsEqual(description, other.description)

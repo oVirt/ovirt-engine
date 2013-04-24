@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetQuotaByQuotaIdQueryParameters;
@@ -163,7 +163,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
                 @Override
                 public void onSuccess(Object model, Object returnValue) {
-                    ArrayList<storage_pool> dataCenterList = (ArrayList<storage_pool>) returnValue;
+                    ArrayList<StoragePool> dataCenterList = (ArrayList<StoragePool>) returnValue;
                     if (dataCenterList == null || dataCenterList.size() == 0) {
                         return;
                     }
@@ -175,8 +175,8 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                     if (quotaListModel.getSystemTreeSelectedItem() != null
                             && quotaListModel.getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter)
                     {
-                        storage_pool selectDataCenter =
-                                (storage_pool) quotaListModel.getSystemTreeSelectedItem().getEntity();
+                        StoragePool selectDataCenter =
+                                (StoragePool) quotaListModel.getSystemTreeSelectedItem().getEntity();
 
                         quotaModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenterList,
                                 new Linq.DataCenterPredicate(selectDataCenter.getId())));
@@ -190,7 +190,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                storage_pool selectedDataCenter = (storage_pool) qModel.getDataCenter().getSelectedItem();
+                StoragePool selectedDataCenter = (StoragePool) qModel.getDataCenter().getSelectedItem();
                 if(selectedDataCenter == null){
                     return;
                 }
@@ -273,7 +273,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         Quota quota = (Quota) model.getEntity();
         quota.setQuotaName((String) model.getName().getEntity());
         quota.setDescription((String) model.getDescription().getEntity());
-        quota.setStoragePoolId(((storage_pool) model.getDataCenter().getSelectedItem()).getId());
+        quota.setStoragePoolId(((StoragePool) model.getDataCenter().getSelectedItem()).getId());
 
         quota.setGraceVdsGroupPercentage(model.getGraceClusterAsInteger());
         quota.setGraceStoragePercentage(model.getGraceStorageAsInteger());
@@ -428,7 +428,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
                     @Override
                     public void eventRaised(Event ev, Object sender, EventArgs args) {
-                        storage_pool selectedDataCenter = (storage_pool) qModel.getDataCenter().getSelectedItem();
+                        StoragePool selectedDataCenter = (StoragePool) qModel.getDataCenter().getSelectedItem();
                         AsyncDataProvider.GetClusterList(new AsyncQuery(this, new INewAsyncCallback() {
 
                             @Override
@@ -526,8 +526,8 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                     }
                 });
 
-                ArrayList<storage_pool> dataCenterList = new ArrayList<storage_pool>();
-                storage_pool dataCenter = new storage_pool();
+                ArrayList<StoragePool> dataCenterList = new ArrayList<StoragePool>();
+                StoragePool dataCenter = new StoragePool();
                 dataCenter.setId(quota.getStoragePoolId());
                 dataCenter.setname(quota.getStoragePoolName());
                 dataCenterList.add(dataCenter);

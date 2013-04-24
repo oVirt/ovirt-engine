@@ -6,7 +6,7 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -21,7 +21,7 @@ public class GetStoragePoolByIdQueryTest extends AbstractUserQueryTest<StoragePo
     @Test
     public void testExecuteQuery() {
         Guid storagePoolID = Guid.NewGuid();
-        storage_pool expectedResult = mock(storage_pool.class);
+        StoragePool expectedResult = mock(StoragePool.class);
 
         StoragePoolQueryParametersBase paramsMock = getQueryParameters();
         when(paramsMock.getStoragePoolId()).thenReturn(storagePoolID);
@@ -34,7 +34,7 @@ public class GetStoragePoolByIdQueryTest extends AbstractUserQueryTest<StoragePo
 
         getQuery().executeQueryCommand();
 
-        storage_pool result = (storage_pool) getQuery().getQueryReturnValue().getReturnValue();
+        StoragePool result = (StoragePool) getQuery().getQueryReturnValue().getReturnValue();
 
         assertEquals("Wrong storage pool returned", expectedResult, result);
     }

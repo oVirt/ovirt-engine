@@ -16,7 +16,7 @@ import org.ovirt.engine.api.resource.DataCentersResource;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAvailableStoragePoolVersionsParameters;
 import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
@@ -25,12 +25,12 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendDataCentersResource extends
-        AbstractBackendCollectionResource<DataCenter, storage_pool> implements DataCentersResource {
+        AbstractBackendCollectionResource<DataCenter, StoragePool> implements DataCentersResource {
 
     static final String[] SUB_COLLECTIONS = {"storagedomains", "clusters", "permissions", "quotas"};
 
     public BackendDataCentersResource() {
-        super(DataCenter.class, storage_pool.class, SUB_COLLECTIONS);
+        super(DataCenter.class, StoragePool.class, SUB_COLLECTIONS);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class BackendDataCentersResource extends
         validateParameters(dataCenter, "name", "storageType");
         validateEnums(DataCenter.class, dataCenter);
         validateEnum(StorageType.class, dataCenter.getStorageType().toUpperCase());
-        storage_pool entity = map(dataCenter);
+        StoragePool entity = map(dataCenter);
         return performCreate(VdcActionType.AddEmptyStoragePool,
                                new StoragePoolManagementParameter(entity),
                                new QueryIdResolver<Guid>(VdcQueryType.GetStoragePoolById, StoragePoolQueryParametersBase.class));
@@ -74,21 +74,21 @@ public class BackendDataCentersResource extends
         return performAction(VdcActionType.RemoveStoragePool, params);
     }
 
-    private DataCenters mapCollection(List<storage_pool> entities) {
+    private DataCenters mapCollection(List<StoragePool> entities) {
         DataCenters collection = new DataCenters();
-        for (storage_pool entity : entities) {
+        for (StoragePool entity : entities) {
             collection.getDataCenters().add(addLinks(populate(map(entity), entity)));
         }
         return collection;
     }
 
     @Override
-    protected DataCenter doPopulate(DataCenter model, storage_pool entity) {
+    protected DataCenter doPopulate(DataCenter model, StoragePool entity) {
         return model;
     }
 
     @Override
-    protected DataCenter deprecatedPopulate(DataCenter model, storage_pool entity) {
+    protected DataCenter deprecatedPopulate(DataCenter model, StoragePool entity) {
         GetAvailableStoragePoolVersionsParameters parameters = new GetAvailableStoragePoolVersionsParameters();
         parameters.setStoragePoolId(new Guid(model.getId()));
         model.setSupportedVersions(getMapper(List.class,

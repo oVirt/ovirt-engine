@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetQuotaByStoragePoolIdQueryParameters;
@@ -151,7 +151,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         else
         {
             ArrayList<Object> objL = new ArrayList<Object>();
-            for (storage_pool a : Linq.<storage_pool> Cast(getSelectedItems()))
+            for (StoragePool a : Linq.<StoragePool> Cast(getSelectedItems()))
             {
                 objL.add(a.getId());
             }
@@ -205,7 +205,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         model.setTitle(ConstantsManager.getInstance().getConstants().newDataCenterGuideMeTitle());
         model.setHashName("new_data_center_-_guide_me"); //$NON-NLS-1$
         if (getGuideContext() == null) {
-            storage_pool dataCenter = (storage_pool) getSelectedItem();
+            StoragePool dataCenter = (StoragePool) getSelectedItem();
             setGuideContext(dataCenter.getId());
         }
 
@@ -215,7 +215,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                     public void onSuccess(Object target, Object returnValue) {
                         DataCenterListModel dataCenterListModel = (DataCenterListModel) target;
                         DataCenterGuideModel model = (DataCenterGuideModel) dataCenterListModel.getWindow();
-                        model.setEntity((storage_pool) returnValue);
+                        model.setEntity((StoragePool) returnValue);
 
                         UICommand tempVar = new UICommand("Cancel", dataCenterListModel); //$NON-NLS-1$
                         tempVar.setTitle(ConstantsManager.getInstance().getConstants().configureLaterTitle());
@@ -293,7 +293,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
     public void Edit()
     {
-        storage_pool dataCenter = (storage_pool) getSelectedItem();
+        StoragePool dataCenter = (StoragePool) getSelectedItem();
 
         if (getWindow() != null)
         {
@@ -361,7 +361,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         model.setMessage(ConstantsManager.getInstance().getConstants().dataCentersMsg());
 
         ArrayList<String> list = new ArrayList<String>();
-        for (storage_pool a : Linq.<storage_pool> Cast(getSelectedItems()))
+        for (StoragePool a : Linq.<StoragePool> Cast(getSelectedItems()))
         {
             list.add(a.getname());
         }
@@ -388,7 +388,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         model.getLatch().setIsChangable(true);
 
         ArrayList<String> list = new ArrayList<String>();
-        for (storage_pool a : Linq.<storage_pool> Cast(getSelectedItems()))
+        for (StoragePool a : Linq.<StoragePool> Cast(getSelectedItems()))
         {
             list.add(a.getname());
         }
@@ -423,7 +423,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                 List<EntityModel> models = new ArrayList<EntityModel>();
                 for (StorageDomain a : storageDomainList) {
                     if (a.getStorageDomainType() == StorageDomainType.Data
-                            && a.getStorageType() == ((storage_pool) getSelectedItem()).getstorage_pool_type()
+                            && a.getStorageType() == ((StoragePool) getSelectedItem()).getstorage_pool_type()
                             && (a.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)) {
                         EntityModel tempVar = new EntityModel();
                         tempVar.setEntity(a);
@@ -504,7 +504,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                             new ArrayList<VdcActionParametersBase>();
                     for (StorageDomain a : items)
                     {
-                        parameters.add(new RecoveryStoragePoolParameters(((storage_pool) getSelectedItem()).getId(),
+                        parameters.add(new RecoveryStoragePoolParameters(((StoragePool) getSelectedItem()).getId(),
                                 a.getId()));
                     }
                     windowModel.StartProgress(null);
@@ -526,7 +526,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                 }
             }
         }),
-                ((storage_pool) getSelectedItem()).getId());
+                ((StoragePool) getSelectedItem()).getId());
     }
 
     public void Activate()
@@ -548,7 +548,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         }
 
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
-        for (storage_pool a : Linq.<storage_pool> Cast(getSelectedItems()))
+        for (StoragePool a : Linq.<StoragePool> Cast(getSelectedItems()))
         {
             parameters.add(new StoragePoolParametersBase(a.getId()));
         }
@@ -576,7 +576,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
             return;
         }
         VdcActionParametersBase parametersBase = new VdcActionParametersBase();
-        StoragePoolParametersBase tempVar = new StoragePoolParametersBase(((storage_pool) getSelectedItem()).getId());
+        StoragePoolParametersBase tempVar = new StoragePoolParametersBase(((StoragePool) getSelectedItem()).getId());
         tempVar.setForceDelete(true);
         parametersBase = tempVar;
         Frontend.RunAction(VdcActionType.RemoveStoragePool, parametersBase);
@@ -613,7 +613,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         }
         else if (!model.getIsNew()
                 && getSelectedItem() != null
-                && !((Version) model.getVersion().getSelectedItem()).equals(((storage_pool) getSelectedItem()).getcompatibility_version())) {
+                && !((Version) model.getVersion().getSelectedItem()).equals(((StoragePool) getSelectedItem()).getcompatibility_version())) {
             ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
             confirmModel.setTitle(ConstantsManager.getInstance()
@@ -634,7 +634,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
             confirmModel.getCommands().add(tempVar2);
         }
         else if (getSelectedItem() != null
-                && ((storage_pool) getSelectedItem()).getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED
+                && ((StoragePool) getSelectedItem()).getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED
                 && model.getQuotaEnforceTypeListModel().getSelectedItem() != QuotaEnforcementTypeEnum.DISABLED)
         {
             checkForQuotaInDC(model.getEntity(), this);
@@ -645,7 +645,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         }
     }
 
-    private void checkForQuotaInDC(storage_pool storage_pool, final ICommandTarget commandTarget) {
+    private void checkForQuotaInDC(StoragePool storage_pool, final ICommandTarget commandTarget) {
         GetQuotaByStoragePoolIdQueryParameters parameters = new GetQuotaByStoragePoolIdQueryParameters(storage_pool.getId());
         Frontend.RunQuery(VdcQueryType.GetQuotaByStoragePoolId,
                 parameters,
@@ -694,8 +694,8 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
             return;
         }
 
-        storage_pool dataCenter =
-                model.getIsNew() ? new storage_pool() : (storage_pool) Cloner.clone(getSelectedItem());
+        StoragePool dataCenter =
+                model.getIsNew() ? new StoragePool() : (StoragePool) Cloner.clone(getSelectedItem());
 
         // cancel confirm window if there is
         CancelConfirmation();
@@ -779,9 +779,9 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         if (getSystemTreeSelectedItem() != null
                 && getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter)
         {
-            storage_pool dataCenter = (storage_pool) getSystemTreeSelectedItem().getEntity();
+            StoragePool dataCenter = (StoragePool) getSystemTreeSelectedItem().getEntity();
 
-            setSelectedItem(Linq.FirstOrDefault(Linq.<storage_pool> Cast(getItems()),
+            setSelectedItem(Linq.FirstOrDefault(Linq.<StoragePool> Cast(getItems()),
                     new Linq.DataCenterPredicate(dataCenter.getId())));
         }
     }
@@ -801,7 +801,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
     protected void updateDetailsAvailability() {
         super.updateDetailsAvailability();
         if (getSelectedItem() != null
-                && ((storage_pool) getSelectedItem()).getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
+                && ((StoragePool) getSelectedItem()).getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
             quotaListModel.setIsAvailable(true);
         } else {
             quotaListModel.setIsAvailable(false);
@@ -810,12 +810,12 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
     private void UpdateActionAvailability()
     {
-        ArrayList<storage_pool> items =
-                getSelectedItems() != null ? new ArrayList<storage_pool>(Linq.<storage_pool> Cast(getSelectedItems()))
-                        : new ArrayList<storage_pool>();
+        ArrayList<StoragePool> items =
+                getSelectedItems() != null ? new ArrayList<StoragePool>(Linq.<StoragePool> Cast(getSelectedItems()))
+                        : new ArrayList<StoragePool>();
 
         boolean isAllDown = true;
-        for (storage_pool item : items)
+        for (StoragePool item : items)
         {
             if (item.getstatus() == StoragePoolStatus.Up || item.getstatus() == StoragePoolStatus.Contend)
             {
@@ -827,7 +827,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         getEditCommand().setIsExecutionAllowed(getSelectedItem() != null && items.size() == 1);
         getRemoveCommand().setIsExecutionAllowed(items.size() > 0 && isAllDown);
 
-        storage_pool storagePoolItem = (storage_pool) getSelectedItem();
+        StoragePool storagePoolItem = (StoragePool) getSelectedItem();
 
         getForceRemoveCommand().setIsExecutionAllowed(storagePoolItem != null
                 && items.size() == 1
@@ -839,7 +839,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         getActivateCommand().setIsExecutionAllowed(items.size() > 0);
         if (getActivateCommand().getIsExecutionAllowed())
         {
-            for (storage_pool a : items)
+            for (StoragePool a : items)
             {
                 if (a.getstatus() == StoragePoolStatus.Up || a.getstatus() == StoragePoolStatus.Uninitialized)
                 {

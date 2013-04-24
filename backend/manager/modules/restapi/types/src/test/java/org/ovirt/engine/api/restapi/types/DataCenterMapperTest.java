@@ -7,13 +7,13 @@ import org.ovirt.engine.api.model.DataCenterStatus;
 import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 
 public class DataCenterMapperTest extends
-        AbstractInvertibleMappingTest<DataCenter, storage_pool, storage_pool> {
+        AbstractInvertibleMappingTest<DataCenter, StoragePool, StoragePool> {
 
     public DataCenterMapperTest() {
-        super(DataCenter.class, storage_pool.class, storage_pool.class);
+        super(DataCenter.class, StoragePool.class, StoragePool.class);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class DataCenterMapperTest extends
     }
 
     private void testStatusMapping(StoragePoolStatus storagePoolStatus, DataCenterStatus dataCenterStatus) {
-        storage_pool storagePool = new storage_pool();
+        StoragePool storagePool = new StoragePool();
         storagePool.setstatus(storagePoolStatus);
         DataCenter dataCenter = DataCenterMapper.map(storagePool, null);
         assertEquals(dataCenter.getStatus().getState(), dataCenterStatus.value());

@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -281,8 +281,8 @@ public class RemoveStorageDomainTest {
         return dom;
     }
 
-    protected storage_pool getStoragePool(Guid id) {
-        storage_pool pool = new storage_pool();
+    protected StoragePool getStoragePool(Guid id) {
+        StoragePool pool = new StoragePool();
         pool.setId(id);
         return pool;
     }

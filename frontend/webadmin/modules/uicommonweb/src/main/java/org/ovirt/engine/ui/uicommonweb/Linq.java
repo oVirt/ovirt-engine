@@ -29,7 +29,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -291,10 +291,10 @@ public final class Linq
 
     }
 
-    public static class StoragePoolByNameComparer implements Comparator<storage_pool>, Serializable {
+    public static class StoragePoolByNameComparer implements Comparator<StoragePool>, Serializable {
 
         @Override
-        public int compare(storage_pool x, storage_pool y) {
+        public int compare(StoragePool x, StoragePool y) {
             return x.getname().compareTo(y.getname());
         }
     }
@@ -1072,7 +1072,7 @@ public final class Linq
         }
     }
 
-    public final static class DataCenterPredicate implements IPredicate<storage_pool>
+    public final static class DataCenterPredicate implements IPredicate<StoragePool>
     {
         private Guid id = new Guid();
 
@@ -1082,13 +1082,13 @@ public final class Linq
         }
 
         @Override
-        public boolean Match(storage_pool source)
+        public boolean Match(StoragePool source)
         {
             return id.equals(source.getId());
         }
     }
 
-    public final static class DataCenterStatusPredicate implements IPredicate<storage_pool>
+    public final static class DataCenterStatusPredicate implements IPredicate<StoragePool>
     {
         private StoragePoolStatus status = StoragePoolStatus.values()[0];
 
@@ -1098,13 +1098,13 @@ public final class Linq
         }
 
         @Override
-        public boolean Match(storage_pool source)
+        public boolean Match(StoragePool source)
         {
             return source.getstatus() == status;
         }
     }
 
-    public final static class DataCenterNotStatusPredicate implements IPredicate<storage_pool>
+    public final static class DataCenterNotStatusPredicate implements IPredicate<StoragePool>
     {
         private StoragePoolStatus status = StoragePoolStatus.values()[0];
 
@@ -1114,7 +1114,7 @@ public final class Linq
         }
 
         @Override
-        public boolean Match(storage_pool source)
+        public boolean Match(StoragePool source)
         {
             return source.getstatus() != status;
         }

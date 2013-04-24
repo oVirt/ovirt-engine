@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -55,7 +55,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         super(commandId);
     }
 
-    public static List<VDS> GetAllRunningVdssInPool(storage_pool pool) {
+    public static List<VDS> GetAllRunningVdssInPool(StoragePool pool) {
         return DbFacade.getInstance().getVdsDao().getAllForStoragePoolAndStatus(pool.getId(), VDSStatus.Up);
     }
 
@@ -112,7 +112,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
     protected boolean CheckStoragePoolStatus(StoragePoolStatus status) {
         boolean returnValue = false;
-        storage_pool storagePool = getStoragePool();
+        StoragePool storagePool = getStoragePool();
         if (storagePool != null) {
             returnValue = (storagePool.getstatus() == status);
             if (!returnValue
@@ -126,7 +126,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
     protected boolean CheckStoragePoolStatusNotEqual(StoragePoolStatus status, VdcBllMessages onFailMessage) {
         boolean returnValue = false;
-        storage_pool storagePool = getStoragePool();
+        StoragePool storagePool = getStoragePool();
         if (storagePool != null) {
             returnValue = (storagePool.getstatus() != status);
             if (!returnValue
@@ -246,7 +246,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         if (newStatus != getStoragePool().getstatus()) {
             getCompensationContext().snapshotEntity(getStoragePool());
             getStoragePool().setstatus(newStatus);
-            storage_pool poolFromDb = getStoragePoolDAO().get(getStoragePool().getId());
+            StoragePool poolFromDb = getStoragePoolDAO().get(getStoragePool().getId());
             if ((getStoragePool().getspm_vds_id() == null && poolFromDb.getspm_vds_id() != null)
                     || (getStoragePool().getspm_vds_id() != null && !getStoragePool().getspm_vds_id().equals(
                             poolFromDb.getspm_vds_id()))) {
@@ -256,9 +256,9 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                 getStoragePool().setspm_vds_id(null);
             }
 
-            executeInScope(TransactionScopeOption.Required, new TransactionMethod<storage_pool>() {
+            executeInScope(TransactionScopeOption.Required, new TransactionMethod<StoragePool>() {
                 @Override
-                public storage_pool runInTransaction() {
+                public StoragePool runInTransaction() {
                     getStoragePoolDAO().update(getStoragePool());
                     return null;
                 }
@@ -286,7 +286,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
      *            - the pool object
      * @return
      */
-    protected boolean isStorageDomainFormatCorrectForPool(StorageDomain storageDomain, storage_pool storagePool) {
+    protected boolean isStorageDomainFormatCorrectForPool(StorageDomain storageDomain, StoragePool storagePool) {
         if (storageDomain.getStorageDomainType() == StorageDomainType.ISO
                 || storageDomain.getStorageDomainType() == StorageDomainType.ImportExport) {
             return true;

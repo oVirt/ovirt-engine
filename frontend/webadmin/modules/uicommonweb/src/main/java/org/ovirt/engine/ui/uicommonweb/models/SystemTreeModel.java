@@ -9,7 +9,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -103,14 +103,14 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
         }
     }
 
-    private ArrayList<storage_pool> privateDataCenters;
+    private ArrayList<StoragePool> privateDataCenters;
 
-    public ArrayList<storage_pool> getDataCenters()
+    public ArrayList<StoragePool> getDataCenters()
     {
         return privateDataCenters;
     }
 
-    public void setDataCenters(ArrayList<storage_pool> value)
+    public void setDataCenters(ArrayList<StoragePool> value)
     {
         privateDataCenters = value;
     }
@@ -198,7 +198,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             public void onSuccess(Object model, Object result)
             {
                 final SystemTreeModel systemTreeModel = (SystemTreeModel) model;
-                systemTreeModel.setDataCenters((ArrayList<storage_pool>) result);
+                systemTreeModel.setDataCenters((ArrayList<StoragePool>) result);
 
                 AsyncQuery clusterQuery = new AsyncQuery();
                 clusterQuery.setModel(systemTreeModel);
@@ -274,7 +274,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                                         ArrayList<VdcQueryParametersBase> queryParamList =
                                                 new ArrayList<VdcQueryParametersBase>();
 
-                                        for (storage_pool dataCenter : systemTreeModel.getDataCenters())
+                                        for (StoragePool dataCenter : systemTreeModel.getDataCenters())
                                         {
                                             queryTypeList.add(VdcQueryType.GetAllNetworks);
                                             queryParamList.add(new IdQueryParameters(dataCenter.getId()));
@@ -308,7 +308,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                                                 ArrayList<VdcQueryParametersBase> queryParamList =
                                                         new ArrayList<VdcQueryParametersBase>();
 
-                                                for (storage_pool dataCenter : systemTreeModel.getDataCenters())
+                                                for (StoragePool dataCenter : systemTreeModel.getDataCenters())
                                                 {
                                                     queryTypeList.add(VdcQueryType.GetStorageDomainsByStoragePoolId);
                                                     queryParamList.add(new StoragePoolQueryParametersBase(dataCenter.getId()));

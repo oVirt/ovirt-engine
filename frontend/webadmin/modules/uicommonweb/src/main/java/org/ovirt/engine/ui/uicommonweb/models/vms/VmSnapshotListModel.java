@@ -28,7 +28,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -745,7 +745,7 @@ public class VmSnapshotListModel extends SearchableListModel
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 VmSnapshotListModel model = (VmSnapshotListModel) target;
-                storage_pool dataCenter = (storage_pool) returnValue;
+                StoragePool dataCenter = (StoragePool) returnValue;
                 VM vm = (VM) model.getEntity();
 
                 Version minClusterVersion = vm.getVdsGroupCompatibilityVersion();

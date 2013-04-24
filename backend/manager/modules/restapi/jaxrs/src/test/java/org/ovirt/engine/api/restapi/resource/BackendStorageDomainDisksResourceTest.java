@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
@@ -103,7 +103,7 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
     public void testAddUnregistered() throws Exception {
         setUriInfo(addMatrixParameterExpectations(setUpBasicUriExpectations(), BackendStorageDomainDisksResource.UNREGISTERED_CONSTRAINT_PARAMETER));
         setUpHttpHeaderExpectations("Expect", "201-created");
-        storage_pool storagePool = new storage_pool();
+        StoragePool storagePool = new StoragePool();
         storagePool.setId(storagePoolId);
         setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolsByStorageDomainId,
                 StorageDomainQueryParametersBase.class,
@@ -200,7 +200,7 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
     public void testListUnregistered() throws Exception {
         setUriInfo(addMatrixParameterExpectations(setUpBasicUriExpectations(), BackendStorageDomainDisksResource.UNREGISTERED_CONSTRAINT_PARAMETER));
 
-        storage_pool storagePool = new storage_pool();
+        StoragePool storagePool = new StoragePool();
         storagePool.setId(storagePoolId);
         setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolsByStorageDomainId,
                 StorageDomainQueryParametersBase.class,

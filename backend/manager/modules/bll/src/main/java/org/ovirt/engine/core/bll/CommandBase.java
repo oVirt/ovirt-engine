@@ -54,7 +54,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.EntityStatusSnapshot;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -1772,7 +1772,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             Guid storagePoolId,
             Guid StorageDomainId) {
 
-        storage_pool storagePool = null;
+        StoragePool storagePool = null;
         if (storagePoolId != null) {
             storagePool = getStoragePoolDAO().get(storagePoolId);
             if (storagePool != null) {

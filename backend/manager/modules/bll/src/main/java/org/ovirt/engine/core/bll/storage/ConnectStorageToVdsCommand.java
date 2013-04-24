@@ -5,7 +5,7 @@ import java.util.Arrays;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -25,7 +25,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
     protected boolean canDoAction() {
         Guid id = getParameters().getStoragePoolId();
         if (id != null && !id.equals(Guid.Empty)) {
-            storage_pool dc = getStoragePoolDAO().get(id);
+            StoragePool dc = getStoragePoolDAO().get(id);
             if (dc == null) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
                 return false;

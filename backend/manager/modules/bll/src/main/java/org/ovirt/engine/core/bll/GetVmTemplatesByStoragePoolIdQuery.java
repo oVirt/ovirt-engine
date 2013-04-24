@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -19,7 +19,7 @@ public class GetVmTemplatesByStoragePoolIdQuery<P extends GetVmTemplatesByStorag
 
     @Override
     protected void executeQueryCommand() {
-        storage_pool pool = DbFacade.getInstance().getStoragePoolDao().get(getParameters().getStoragePoolId());
+        StoragePool pool = DbFacade.getInstance().getStoragePoolDao().get(getParameters().getStoragePoolId());
         SearchParameters p = new SearchParameters(String.format("Templates: DataCenter = %1$s", pool.getname()),
                 SearchType.VmTemplate);
         p.setMaxCount(Integer.MAX_VALUE);

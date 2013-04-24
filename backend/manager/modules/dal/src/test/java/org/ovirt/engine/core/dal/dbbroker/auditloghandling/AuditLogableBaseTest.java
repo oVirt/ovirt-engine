@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
@@ -553,7 +553,7 @@ public class AuditLogableBaseTest {
     @Test
     public void storagePoolDefault() {
         final AuditLogableBase b = new AuditLogableBase();
-        final storage_pool p = b.getStoragePool();
+        final StoragePool p = b.getStoragePool();
         assertNull(p);
     }
 
@@ -561,16 +561,16 @@ public class AuditLogableBaseTest {
     public void storagePoolWithId() {
         final AuditLogableBase b = new TestAuditLogableBase();
         b.setStoragePoolId(GUID);
-        final storage_pool p = b.getStoragePool();
+        final StoragePool p = b.getStoragePool();
         assertNotNull(p);
     }
 
     @Test
     public void storagePool() {
         final AuditLogableBase b = new AuditLogableBase();
-        final storage_pool p = new storage_pool();
+        final StoragePool p = new StoragePool();
         b.setStoragePool(p);
-        final storage_pool sp = b.getStoragePool();
+        final StoragePool sp = b.getStoragePool();
         assertEquals(p, sp);
     }
 
@@ -601,7 +601,7 @@ public class AuditLogableBaseTest {
     public void storagePoolIdWithStoragePool() {
         final AuditLogableBase b = new AuditLogableBase();
         b.setStoragePoolId(null);
-        final storage_pool p = new storage_pool();
+        final StoragePool p = new StoragePool();
         p.setId(GUID);
         b.setStoragePool(p);
         final NGuid n = b.getStoragePoolId();
@@ -630,7 +630,7 @@ public class AuditLogableBaseTest {
     @Test
     public void storagePoolName() {
         final AuditLogableBase b = new AuditLogableBase();
-        final storage_pool p = new storage_pool();
+        final StoragePool p = new StoragePool();
         p.setname(NAME);
         b.setStoragePool(p);
         final String s = b.getStoragePoolName();
@@ -1087,7 +1087,7 @@ public class AuditLogableBaseTest {
         @Override
         public StoragePoolDAO getStoragePoolDAO() {
             final StoragePoolDAO s = mock(StoragePoolDAO.class);
-            final storage_pool p = new storage_pool();
+            final StoragePool p = new StoragePool();
             p.setId(GUID);
             when(s.get(GUID)).thenReturn(p);
             when(s.get(GUID2)).thenReturn(null);

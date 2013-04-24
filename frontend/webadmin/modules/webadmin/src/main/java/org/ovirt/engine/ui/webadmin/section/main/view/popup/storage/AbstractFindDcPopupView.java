@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
@@ -35,16 +35,16 @@ public class AbstractFindDcPopupView extends AbstractModelBoundPopupView<ListMod
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
         // Table Entity Columns
-        table.addEntityModelColumn(new EntityModelTextColumn<storage_pool>() {
+        table.addEntityModelColumn(new EntityModelTextColumn<StoragePool>() {
             @Override
-            public String getText(storage_pool storage) {
+            public String getText(StoragePool storage) {
                 return storage.getname();
             }
         }, constants.nameDc());
 
-        table.addEntityModelColumn(new EntityModelEnumColumn<storage_pool, StorageType>() {
+        table.addEntityModelColumn(new EntityModelEnumColumn<StoragePool, StorageType>() {
             @Override
-            protected StorageType getEnum(storage_pool storage) {
+            protected StorageType getEnum(StoragePool storage) {
                 return storage.getstorage_pool_type();
             }
         }, constants.storgeTypeDc());

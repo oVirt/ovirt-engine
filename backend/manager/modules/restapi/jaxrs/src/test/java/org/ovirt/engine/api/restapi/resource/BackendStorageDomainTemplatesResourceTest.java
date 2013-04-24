@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
@@ -146,10 +146,10 @@ public class BackendStorageDomainTemplatesResourceTest
         return entity;
     }
 
-    public static List<storage_pool> setUpStoragePool() {
-        final storage_pool entity = new storage_pool();
+    public static List<StoragePool> setUpStoragePool() {
+        final StoragePool entity = new StoragePool();
         entity.setId(DATA_CENTER_ID);
-        return new ArrayList<storage_pool>(){
+        return new ArrayList<StoragePool>(){
             private static final long serialVersionUID = 6544998068993726769L;
         {
             add(entity);}

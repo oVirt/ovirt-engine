@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -1579,7 +1579,7 @@ public class UnitVmModel extends Model {
     {
         behavior.DataCenter_SelectedItemChanged();
 
-        storage_pool dataCenter = (storage_pool) getDataCenter().getSelectedItem();
+        StoragePool dataCenter = (StoragePool) getDataCenter().getSelectedItem();
         if (dataCenter != null) {
             getDisksAllocationModel().setQuotaEnforcementType(dataCenter.getQuotaEnforcementType());
         }
@@ -1795,7 +1795,7 @@ public class UnitVmModel extends Model {
         }
     }
 
-    public void SetDataCenter(UnitVmModel model, ArrayList<storage_pool> list)
+    public void SetDataCenter(UnitVmModel model, ArrayList<StoragePool> list)
     {
         if (model.getBehavior().getSystemTreeSelectedItem() != null
                 && model.getBehavior().getSystemTreeSelectedItem().getType() != SystemTreeItemType.System)
@@ -1804,16 +1804,16 @@ public class UnitVmModel extends Model {
             {
             case Templates:
             case DataCenter:
-                storage_pool selectDataCenter =
-                        (storage_pool) model.getBehavior().getSystemTreeSelectedItem().getEntity();
-                for (storage_pool dc : list) {
+                StoragePool selectDataCenter =
+                        (StoragePool) model.getBehavior().getSystemTreeSelectedItem().getEntity();
+                for (StoragePool dc : list) {
                     if (selectDataCenter.getId().equals(dc.getId())) {
                         selectDataCenter = dc;
                         break;
                     }
                 }
                 model.getDataCenter()
-                        .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { selectDataCenter })));
+                        .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { selectDataCenter })));
                 model.getDataCenter().setSelectedItem(selectDataCenter);
                 model.getDataCenter().setIsChangable(false);
                 model.getDataCenter().setInfo("Cannot choose Data Center in tree context"); //$NON-NLS-1$
@@ -1823,10 +1823,10 @@ public class UnitVmModel extends Model {
             case VMs:
                 VDSGroup cluster = (VDSGroup) model.getBehavior().getSystemTreeSelectedItem().getEntity();
                 if (cluster.supportsVirtService()) {
-                    for (storage_pool dc : list) {
+                    for (StoragePool dc : list) {
                         if (dc.getId().equals(cluster.getStoragePoolId())) {
                             model.getDataCenter()
-                                    .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { dc })));
+                                    .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dc })));
                             model.getDataCenter().setSelectedItem(dc);
                             break;
                         }
@@ -1837,12 +1837,12 @@ public class UnitVmModel extends Model {
                 break;
             case Host:
                 VDS host = (VDS) model.getBehavior().getSystemTreeSelectedItem().getEntity();
-                for (storage_pool dc : list)
+                for (StoragePool dc : list)
                 {
                     if (dc.getId().equals(host.getStoragePoolId()))
                     {
                         model.getDataCenter()
-                                .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { dc })));
+                                .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dc })));
                         model.getDataCenter().setSelectedItem(dc);
                         model.getDataCenter().setIsChangable(false);
                         model.getDataCenter().setInfo("Cannot choose Data Center in tree context"); //$NON-NLS-1$
@@ -1852,12 +1852,12 @@ public class UnitVmModel extends Model {
                 break;
             case Storage:
                 StorageDomain storage = (StorageDomain) model.getBehavior().getSystemTreeSelectedItem().getEntity();
-                for (storage_pool dc : list)
+                for (StoragePool dc : list)
                 {
                     if (dc.getId().equals(storage.getStoragePoolId()))
                     {
                         model.getDataCenter()
-                                .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { dc })));
+                                .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dc })));
                         model.getDataCenter().setSelectedItem(dc);
                         model.getDataCenter().setIsChangable(false);
                         model.getDataCenter().setInfo("Cannot choose Data Center in tree context"); //$NON-NLS-1$
@@ -1944,7 +1944,7 @@ public class UnitVmModel extends Model {
         getMinAllocatedMemory().validateEntity(new IValidation[] { new ByteSizeValidation() });
         getOSType().validateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
 
-        storage_pool dataCenter = (storage_pool) getDataCenter().getSelectedItem();
+        StoragePool dataCenter = (StoragePool) getDataCenter().getSelectedItem();
         if (dataCenter != null && dataCenter.getQuotaEnforcementType() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT) {
             getQuota().validateSelectedItem(new IValidation[] { new NotEmptyQuotaValidation() });
         }

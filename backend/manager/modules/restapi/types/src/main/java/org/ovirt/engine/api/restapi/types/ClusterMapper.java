@@ -18,7 +18,7 @@ import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 
 public class ClusterMapper {
 
@@ -194,8 +194,8 @@ public class ClusterMapper {
         }
     }
 
-    @Mapping(from = storage_pool.class, to = VDSGroup.class)
-    public static VDSGroup map(storage_pool pool, VDSGroup template) {
+    @Mapping(from = StoragePool.class, to = VDSGroup.class)
+    public static VDSGroup map(StoragePool pool, VDSGroup template) {
         VDSGroup entity = template != null ? template : new VDSGroup();
         if (pool.getcompatibility_version() != null) {
             entity.setcompatibility_version(pool.getcompatibility_version());

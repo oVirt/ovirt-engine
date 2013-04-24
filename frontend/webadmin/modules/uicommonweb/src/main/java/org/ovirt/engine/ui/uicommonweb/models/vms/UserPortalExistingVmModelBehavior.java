@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.GetHostsByClusterIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -42,7 +42,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
     @Override
     public void DataCenter_SelectedItemChanged()
     {
-        storage_pool dataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
+        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
         getModel().setIsHostAvailable(dataCenter.getstorage_pool_type() != StorageType.LOCALFS);
 
         // Get clusters with permitted edit action
@@ -78,7 +78,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
     {
         // Filter clusters list (include only clusters that belong to the selected datacenter)
         ArrayList<VDSGroup> filteredList = new ArrayList<VDSGroup>();
-        storage_pool selectedDataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
+        StoragePool selectedDataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
         boolean listContainsVmCluster = false;
 
         for (VDSGroup cluster : clusters)

@@ -39,7 +39,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -148,7 +148,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 canAddShareableDisk();
 
         if (returnValue && vm != null) {
-            storage_pool sp = getStoragePool(); // Note this is done according to the VM's spId.
+            StoragePool sp = getStoragePool(); // Note this is done according to the VM's spId.
             returnValue =
                     validate(new StoragePoolValidator(sp).isUp()) &&
                     isStoragePoolMatching(vm) &&

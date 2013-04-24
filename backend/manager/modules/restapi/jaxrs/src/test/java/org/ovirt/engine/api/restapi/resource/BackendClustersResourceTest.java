@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 
 import static org.easymock.classextension.EasyMock.expect;
@@ -271,8 +271,8 @@ public class BackendClustersResourceTest extends
         }
     }
 
-    protected storage_pool setUpStoragePool(int index) {
-        storage_pool pool = control.createMock(storage_pool.class);
+    protected StoragePool setUpStoragePool(int index) {
+        StoragePool pool = control.createMock(StoragePool.class);
         org.ovirt.engine.core.compat.Version version =
             new org.ovirt.engine.core.compat.Version(2, 2);
         if (index != -1) {

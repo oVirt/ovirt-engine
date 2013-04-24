@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
@@ -134,12 +134,12 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     }
 
     @Override
-    public storage_pool getEntity()
+    public StoragePool getEntity()
     {
-        return (storage_pool) super.getEntity();
+        return (StoragePool) super.getEntity();
     }
 
-    public void setEntity(storage_pool value)
+    public void setEntity(StoragePool value)
     {
         super.setEntity(value);
     }
@@ -597,7 +597,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                                 .setItems(new ArrayList<VDS>(Arrays.asList(new VDS[] { localHost })));
                         model.getHost().setSelectedItem(localHost);
                         model.getDataCenter()
-                                .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { getEntity() })));
+                                .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { getEntity() })));
                         model.getDataCenter().setSelectedItem(getEntity());
                         UICommand tempVar = new UICommand("OnAddStorage", listModel); //$NON-NLS-1$
                         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -628,7 +628,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         setWindow(model);
         model.setTitle(title);
         model.setHashName("new_domain"); //$NON-NLS-1$
-        ArrayList<storage_pool> dataCenters = new ArrayList<storage_pool>();
+        ArrayList<StoragePool> dataCenters = new ArrayList<StoragePool>();
         dataCenters.add(getEntity());
         model.getDataCenter().setItems(dataCenters);
         model.getDataCenter().setSelectedItem(getEntity());
@@ -1001,7 +1001,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                 StorageModel storageModel = (StorageModel) dataCenterGuideModel.getWindow();
 
                 // Attach storage to data center as neccessary.
-                storage_pool dataCenter = (storage_pool) storageModel.getDataCenter().getSelectedItem();
+                StoragePool dataCenter = (StoragePool) storageModel.getDataCenter().getSelectedItem();
                 if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId))
                 {
                     dataCenterGuideModel.AttachStorageToDataCenter((Guid) dataCenterGuideModel.storageId,
@@ -1135,7 +1135,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
                         StorageModel storageModel = (StorageModel) dataCenterGuideModel.getWindow();
-                        storage_pool dataCenter = (storage_pool) storageModel.getDataCenter().getSelectedItem();
+                        StoragePool dataCenter = (StoragePool) storageModel.getDataCenter().getSelectedItem();
                         if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId))
                         {
                             VdcReturnValueBase returnValue = result.getReturnValue();
@@ -1346,7 +1346,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         model.setHashName("new_cluster"); //$NON-NLS-1$
         model.setIsNew(true);
 
-        ArrayList<storage_pool> dataCenters = new ArrayList<storage_pool>();
+        ArrayList<StoragePool> dataCenters = new ArrayList<StoragePool>();
         dataCenters.add(getEntity());
         model.getDataCenter().setItems(dataCenters);
         model.getDataCenter().setSelectedItem(getEntity());
@@ -1383,7 +1383,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         cluster.setname((String) model.getName().getEntity());
         cluster.setdescription((String) model.getDescription().getEntity());
-        cluster.setStoragePoolId(((storage_pool) model.getDataCenter().getSelectedItem()).getId());
+        cluster.setStoragePoolId(((StoragePool) model.getDataCenter().getSelectedItem()).getId());
         if (model.getCPU().getSelectedItem() != null)
         {
             cluster.setcpu_name(((ServerCpu) model.getCPU().getSelectedItem()).getCpuName());
@@ -1545,7 +1545,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         model.setSpmPriorityValue(null);
 
         model.getDataCenter()
-                .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { getEntity() })));
+                .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { getEntity() })));
         model.getDataCenter().setSelectedItem(getEntity());
         model.getDataCenter().setIsChangable(false);
 

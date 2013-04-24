@@ -4,7 +4,7 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.vdscommands.RefreshStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -17,7 +17,7 @@ public class AfterDeactivateSingleAsyncOperation extends ActivateDeactivateSingl
     private Guid _newMasterStorageDomainId = new Guid();
 
     public AfterDeactivateSingleAsyncOperation(java.util.ArrayList<VDS> vdss, StorageDomain domain,
-            storage_pool storagePool, boolean isLastMaster, Guid newMasterStorageDomain) {
+            StoragePool storagePool, boolean isLastMaster, Guid newMasterStorageDomain) {
         super(vdss, domain, storagePool);
         _isLastMaster = isLastMaster;
         _newMasterStorageDomainId = newMasterStorageDomain;

@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetAvailableStoragePoolVersionsParameters;
@@ -20,7 +20,7 @@ public class GetAvailableStoragePoolVersionsQuery<P extends GetAvailableStorageP
     protected void executeQueryCommand() {
         if (getParameters().getStoragePoolId() != null) {
             java.util.ArrayList<Version> result = new java.util.ArrayList<Version>();
-            storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao().get(
+            StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().get(
                     getParameters().getStoragePoolId().getValue());
             if (storagePool != null) {
                 List<VDSGroup> clusters = DbFacade.getInstance().getVdsGroupDao().getAllForStoragePool(

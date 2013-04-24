@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabEventView;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 
-public class SubTabDataCenterEventView extends AbstractSubTabEventView<storage_pool, DataCenterListModel, DataCenterEventListModel>
+public class SubTabDataCenterEventView extends AbstractSubTabEventView<StoragePool, DataCenterListModel, DataCenterEventListModel>
         implements SubTabDataCenterEventPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabDataCenterEventView> {

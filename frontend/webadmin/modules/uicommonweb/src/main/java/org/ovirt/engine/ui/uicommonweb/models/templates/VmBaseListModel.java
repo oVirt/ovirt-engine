@@ -6,7 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -148,16 +148,16 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
                         Object[] array = (Object[]) target;
                         VmBaseListModel vmListModel = (VmBaseListModel) array[0];
                         ExportVmModel exportVmModel = (ExportVmModel) array[1];
-                        List<storage_pool> storagePools = (List<storage_pool>) returnValue;
+                        List<StoragePool> storagePools = (List<StoragePool>) returnValue;
                         vmListModel.PostShowWarningOnExistingVms(exportVmModel, storagePools, getVmOrTemplateQuery);
                     }
                 }), storageDomainId);
     }
 
     private void PostShowWarningOnExistingVms(final ExportVmModel exportModel,
-            List<storage_pool> storagePools,
+            List<StoragePool> storagePools,
             VdcQueryType getVmOrTemplateQuery) {
-        storage_pool storagePool = storagePools.size() > 0 ? storagePools.get(0) : null;
+        StoragePool storagePool = storagePools.size() > 0 ? storagePools.get(0) : null;
 
         if (storagePool != null) {
             AsyncQuery _asyncQuery = new AsyncQuery();

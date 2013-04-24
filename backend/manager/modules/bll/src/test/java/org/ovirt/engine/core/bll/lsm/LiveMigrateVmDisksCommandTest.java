@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
@@ -197,7 +197,7 @@ public class LiveMigrateVmDisksCommandTest {
     }
 
     private void initStoragePool() {
-        storage_pool storagePool = new storage_pool();
+        StoragePool storagePool = new StoragePool();
         storagePool.setcompatibility_version(Version.v3_1);
 
         when(storagePoolDao.get(any(Guid.class))).thenReturn(storagePool);

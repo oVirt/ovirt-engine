@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer.DiskSizeUnit;
@@ -23,7 +23,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainStatusColum
 
 import com.google.gwt.core.client.GWT;
 
-public class SubTabDataCenterStorageView extends AbstractSubTabTableView<storage_pool, StorageDomain, DataCenterListModel, DataCenterStorageListModel>
+public class SubTabDataCenterStorageView extends AbstractSubTabTableView<StoragePool, StorageDomain, DataCenterListModel, DataCenterStorageListModel>
         implements SubTabDataCenterStoragePresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabDataCenterStorageView> {

@@ -39,7 +39,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -371,14 +371,14 @@ public class AddDiskToVmCommandTest {
     }
 
     /**
-     * Mock a {@link storage_pool}.
+     * Mock a {@link StoragePool}.
      *
      * @param compatibilityVersion
      * @return
      */
-    private storage_pool mockStoragePool(Version compatibilityVersion) {
+    private StoragePool mockStoragePool(Version compatibilityVersion) {
         Guid storagePoolId = Guid.NewGuid();
-        storage_pool storagePool = new storage_pool();
+        StoragePool storagePool = new StoragePool();
         storagePool.setId(storagePoolId);
         storagePool.setcompatibility_version(compatibilityVersion);
         storagePool.setstatus(StoragePoolStatus.Up);
@@ -411,7 +411,7 @@ public class AddDiskToVmCommandTest {
 
     private StorageDomain mockStorageDomain(Guid storageId, int availableSize, int usedSize,
             StorageType storageType, Version version) {
-        storage_pool storagePool = mockStoragePool(version);
+        StoragePool storagePool = mockStoragePool(version);
         Guid storagePoolId = storagePool.getId();
 
         StorageDomain sd = new StorageDomain();

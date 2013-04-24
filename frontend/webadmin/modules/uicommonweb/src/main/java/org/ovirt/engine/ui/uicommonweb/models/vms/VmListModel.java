@@ -42,7 +42,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
@@ -1037,16 +1037,16 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
                         VmListModel vmListModel = (VmListModel) target;
-                        ArrayList<storage_pool> storagePools =
-                                (ArrayList<storage_pool>) returnValue;
-                        storage_pool storagePool = storagePools.size() > 0 ? storagePools.get(0) : null;
+                        ArrayList<StoragePool> storagePools =
+                                (ArrayList<StoragePool>) returnValue;
+                        StoragePool storagePool = storagePools.size() > 0 ? storagePools.get(0) : null;
 
                         vmListModel.postGetTemplatesNotPresentOnExportDomain(storagePool);
                     }
                 }), storageDomainId);
     }
 
-    private void postGetTemplatesNotPresentOnExportDomain(storage_pool storagePool)
+    private void postGetTemplatesNotPresentOnExportDomain(StoragePool storagePool)
     {
         ExportVmModel model = (ExportVmModel) getWindow();
         Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();

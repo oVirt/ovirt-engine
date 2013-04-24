@@ -24,7 +24,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -65,7 +65,7 @@ public class NetworkValidatorTest {
     private Network network;
 
     @Mock
-    private storage_pool dataCenter;
+    private StoragePool dataCenter;
 
     private List<Network> networks = new ArrayList<Network>();
 

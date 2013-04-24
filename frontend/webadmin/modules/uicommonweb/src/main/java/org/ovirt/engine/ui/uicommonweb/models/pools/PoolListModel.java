@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetVmdataByPoolIdParameters;
@@ -289,7 +289,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                                 else
                                 {
                                     model.getDataCenter()
-                                            .setSelectedItem(Linq.FirstOrDefault(Linq.<storage_pool> Cast(model.getDataCenter()
+                                            .setSelectedItem(Linq.FirstOrDefault(Linq.<StoragePool> Cast(model.getDataCenter()
                                                     .getItems())));
                                 }
 
@@ -334,14 +334,14 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                 }));
     }
 
-    private List<storage_pool> asList(Object returnValue) {
+    private List<StoragePool> asList(Object returnValue) {
         if (returnValue instanceof ArrayList) {
-            return (ArrayList<storage_pool>) returnValue;
+            return (ArrayList<StoragePool>) returnValue;
         }
 
-        if (returnValue instanceof storage_pool) {
-            List<storage_pool> res = new ArrayList<storage_pool>();
-            res.add((storage_pool) returnValue);
+        if (returnValue instanceof StoragePool) {
+            List<StoragePool> res = new ArrayList<StoragePool>();
+            res.add((StoragePool) returnValue);
             return res;
         }
 

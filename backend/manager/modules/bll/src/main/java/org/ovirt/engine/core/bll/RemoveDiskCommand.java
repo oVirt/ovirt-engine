@@ -36,7 +36,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -209,7 +209,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private boolean canRemoveVmImageDisk() {
         if (!listVms.isEmpty()) {
             Guid storagePoolId = listVms.get(0).getStoragePoolId();
-            storage_pool sp = getStoragePoolDAO().get(storagePoolId);
+            StoragePool sp = getStoragePoolDAO().get(storagePoolId);
             if (!validate(new StoragePoolValidator(sp).isUp())) {
                 return false;
             }

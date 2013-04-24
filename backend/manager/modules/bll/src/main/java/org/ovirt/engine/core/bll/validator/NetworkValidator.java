@@ -6,7 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Nameable;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -22,7 +22,7 @@ public class NetworkValidator {
 
     protected final Network network;
 
-    private storage_pool dataCenter;
+    private StoragePool dataCenter;
     private List<Network> networks;
 
     public NetworkValidator(Network network) {
@@ -33,7 +33,7 @@ public class NetworkValidator {
         return DbFacade.getInstance();
     }
 
-    protected storage_pool getDataCenter() {
+    protected StoragePool getDataCenter() {
         if (dataCenter == null) {
             dataCenter = getDbFacade().getStoragePoolDao().get(network.getDataCenterId());
         }

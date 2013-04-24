@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.vdscommands.CreateStorageDomainVDSCommandParameters;
@@ -151,7 +151,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
 
     private boolean isStorageFormatSupportedByStoragePool() {
         StorageFormatType storageFormat = getStorageDomain().getStorageFormat();
-        storage_pool targetStoragePool = getStoragePool();
+        StoragePool targetStoragePool = getStoragePool();
 
         if (targetStoragePool == null) {
             targetStoragePool = getStoragePoolDAO().get(getVds().getStoragePoolId());

@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.QuotaDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
@@ -94,8 +94,8 @@ public class RemoveQuotaCommandTest {
         return command;
     }
 
-    private storage_pool mockStoragePool() {
-        storage_pool storagePool = new storage_pool();
+    private StoragePool mockStoragePool() {
+        StoragePool storagePool = new StoragePool();
         storagePool.setId(storagePoolUUID);
         storagePool.setQuotaEnforcementType(QuotaEnforcementTypeEnum.DISABLED);
         return storagePool;

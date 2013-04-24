@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -54,7 +54,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                     public void onSuccess(Object target, Object returnValue) {
 
                         NewTemplateVmModelBehavior behavior = (NewTemplateVmModelBehavior) target;
-                        storage_pool dataCenter = (storage_pool) returnValue;
+                        StoragePool dataCenter = (StoragePool) returnValue;
                         if (dataCenter == null)
                         {
                             DisableNewTemplateModel(ConstantsManager.getInstance()
@@ -65,7 +65,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                         {
                             behavior.getModel()
                                     .getDataCenter()
-                                    .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { dataCenter })));
+                                    .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dataCenter })));
                             behavior.getModel().getDataCenter().setSelectedItem(dataCenter);
                             behavior.getModel().getDataCenter().setIsChangable(false);
                         }
@@ -79,7 +79,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     @Override
     public void DataCenter_SelectedItemChanged()
     {
-        storage_pool dataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
+        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
 
         getModel().setIsHostAvailable(dataCenter.getstorage_pool_type() != StorageType.LOCALFS);
 

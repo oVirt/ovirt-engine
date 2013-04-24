@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.NGuid;
 
 import com.google.gwt.core.client.JavaScriptObject;
@@ -49,8 +49,8 @@ public final class EntityObject extends JavaScriptObject {
         }
 
         // DataCenter
-        else if (businessEntity instanceof storage_pool) {
-            obj.setProperty("name", ((storage_pool) businessEntity).getname()); //$NON-NLS-1$
+        else if (businessEntity instanceof StoragePool) {
+            obj.setProperty("name", ((StoragePool) businessEntity).getname()); //$NON-NLS-1$
         }
 
         // Disk

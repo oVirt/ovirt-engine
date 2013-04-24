@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -58,7 +58,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
                         @Override
                         public void onSuccess(Object model, Object returnValue) {
 
-                            context.dataCenterFoundByName = Linq.FirstOrDefault((Iterable<storage_pool>) returnValue);
+                            context.dataCenterFoundByName = Linq.FirstOrDefault((Iterable<StoragePool>) returnValue);
                             prepare2();
                         }
                     }),
@@ -75,14 +75,14 @@ public class AddDataCenterRM extends IEnlistmentNotification {
         HostListModel model = enlistmentContext.getModel();
         ConfigureLocalStorageModel configureModel = (ConfigureLocalStorageModel) model.getWindow();
 
-        storage_pool candidate = configureModel.getCandidateDataCenter();
+        StoragePool candidate = configureModel.getCandidateDataCenter();
         DataCenterModel dataCenterModel = configureModel.getDataCenter();
         String dataCenterName = (String) dataCenterModel.getName().getEntity();
 
         if (candidate == null || candidate.getname() != dataCenterName) {
 
             // Try to find existing data center with the specified name.
-            storage_pool dataCenter = context.dataCenterFoundByName;
+            StoragePool dataCenter = context.dataCenterFoundByName;
 
             if (dataCenter != null) {
 
@@ -92,7 +92,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
                 enlistment.Prepared();
             } else {
 
-                dataCenter = new storage_pool();
+                dataCenter = new StoragePool();
                 dataCenter.setname(dataCenterName);
                 dataCenter.setdescription((String) dataCenterModel.getDescription().getEntity());
                 dataCenter.setstorage_pool_type((StorageType) dataCenterModel.getStorageTypeList().getSelectedItem());
@@ -163,7 +163,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
                         @Override
                         public void onSuccess(Object model, Object returnValue) {
 
-                            context.dataCenterFoundById = (storage_pool) returnValue;
+                            context.dataCenterFoundById = (StoragePool) returnValue;
                             rollback2();
                         }
                     }),
@@ -221,7 +221,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
             return;
         }
 
-        storage_pool dataCenter = context.dataCenterFoundById;
+        StoragePool dataCenter = context.dataCenterFoundById;
 
         // Perform rollback only when the Data Center is un uninitialized.
         if (dataCenter.getstatus() != StoragePoolStatus.Uninitialized) {
@@ -400,8 +400,8 @@ public class AddDataCenterRM extends IEnlistmentNotification {
     public final class Context {
 
         public Enlistment enlistment;
-        public storage_pool dataCenterFoundByName;
-        public storage_pool dataCenterFoundById;
+        public StoragePool dataCenterFoundByName;
+        public StoragePool dataCenterFoundById;
         public VDS hostFoundById;
         public VdcReturnValueBase addDataCenterReturnValue;
         public VdcReturnValueBase changeVDSClusterReturnValue;

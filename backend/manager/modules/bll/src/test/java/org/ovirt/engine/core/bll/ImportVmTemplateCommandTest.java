@@ -29,7 +29,7 @@ import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -176,7 +176,7 @@ public class ImportVmTemplateCommandTest {
     private static void mockStoragePool(ImportVmTemplateCommand command) {
         final StoragePoolDAO dao = mock(StoragePoolDAO.class);
 
-        final storage_pool pool = new storage_pool();
+        final StoragePool pool = new StoragePool();
         pool.setId(command.getParameters().getStoragePoolId());
         when(dao.get(any(Guid.class))).thenReturn(pool);
 

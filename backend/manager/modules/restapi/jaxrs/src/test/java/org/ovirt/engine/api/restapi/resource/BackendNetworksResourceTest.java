@@ -15,7 +15,7 @@ import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -223,8 +223,8 @@ public class BackendNetworksResourceTest
         }
     }
 
-    protected storage_pool setUpStoragePool(Guid id) {
-        storage_pool pool = control.createMock(storage_pool.class);
+    protected StoragePool setUpStoragePool(Guid id) {
+        StoragePool pool = control.createMock(StoragePool.class);
         expect(pool.getId()).andReturn(id).anyTimes();
         return pool;
     }

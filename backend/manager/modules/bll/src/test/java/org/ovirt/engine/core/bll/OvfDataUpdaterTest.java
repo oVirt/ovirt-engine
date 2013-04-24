@@ -43,7 +43,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
@@ -72,9 +72,9 @@ public class OvfDataUpdaterTest {
     @Mock
     private VmTemplateDAO vmTemplateDAO;
 
-    private storage_pool pool1;
+    private StoragePool pool1;
 
-    private storage_pool pool2;
+    private StoragePool pool2;
 
     private Map<Guid, VM> vms;
 
@@ -135,13 +135,13 @@ public class OvfDataUpdaterTest {
         vms = new HashMap<Guid, VM>();
         templates = new HashMap<Guid, VmTemplate>();
         pool1 =
-                new storage_pool("first sp",
+                new StoragePool("first sp",
                         Guid.NewGuid(),
                         "storage_pool1",
                         StorageType.NFS.getValue(),
                         StoragePoolStatus.Up.getValue());
         pool2 =
-                new storage_pool("second sp",
+                new StoragePool("second sp",
                         Guid.NewGuid(),
                         "storage_pool2",
                         StorageType.NFS.getValue(),
@@ -151,7 +151,7 @@ public class OvfDataUpdaterTest {
         performStoragePoolInitOps(pool2);
     }
 
-    private void performStoragePoolInitOps(storage_pool pool) {
+    private void performStoragePoolInitOps(StoragePool pool) {
         executedUpdatedMetadataForStoragePool.put(pool.getId(),
                 new HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>());
         executedRemovedIds.put(pool.getId(), new LinkedList<Guid>());
@@ -251,7 +251,7 @@ public class OvfDataUpdaterTest {
         }).when(vmAndTemplatesGenerationsDAO).updateOvfGenerations(anyList(), anyList());
     }
 
-    private List<storage_pool> buildStoragePoolsList() {
+    private List<StoragePool> buildStoragePoolsList() {
         return Arrays.asList(pool1, pool2);
     }
 

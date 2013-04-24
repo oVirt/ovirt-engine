@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -65,12 +65,12 @@ public class DataCenterNetworkListModel extends SearchableListModel
     }
 
     @Override
-    public storage_pool getEntity()
+    public StoragePool getEntity()
     {
-        return (storage_pool) super.getEntity();
+        return (StoragePool) super.getEntity();
     }
 
-    public void setEntity(storage_pool value)
+    public void setEntity(StoragePool value)
     {
         super.setEntity(value);
     }

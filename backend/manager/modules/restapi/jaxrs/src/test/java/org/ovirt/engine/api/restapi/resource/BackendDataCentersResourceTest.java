@@ -16,7 +16,7 @@ import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAvailableStoragePoolVersionsParameters;
 import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
@@ -25,7 +25,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
 public class BackendDataCentersResourceTest
-        extends AbstractBackendCollectionResourceTest<DataCenter, storage_pool, BackendDataCentersResource> {
+        extends AbstractBackendCollectionResourceTest<DataCenter, StoragePool, BackendDataCentersResource> {
 
     public BackendDataCentersResourceTest() {
         super(new BackendDataCentersResource(), SearchType.StoragePool, "Datacenter : ");
@@ -218,11 +218,11 @@ public class BackendDataCentersResourceTest
                                    getVersions());
     }
 
-    protected storage_pool getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(storage_pool.class), index);
+    protected StoragePool getEntity(int index) {
+        return setUpEntityExpectations(control.createMock(StoragePool.class), index);
     }
 
-    static storage_pool setUpEntityExpectations(storage_pool entity, int index) {
+    static StoragePool setUpEntityExpectations(StoragePool entity, int index) {
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getname()).andReturn(NAMES[index]).anyTimes();
         expect(entity.getdescription()).andReturn(DESCRIPTIONS[index]).anyTimes();

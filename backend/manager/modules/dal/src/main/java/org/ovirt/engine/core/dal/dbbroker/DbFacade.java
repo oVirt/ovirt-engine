@@ -34,7 +34,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -123,7 +123,7 @@ public class DbFacade {
     private final static Map<Class<?>, Class<?>> mapEntityToDao = new HashMap<Class<?>, Class<?>>()
     {
         {
-            put(storage_pool.class, StoragePoolDAO.class);
+            put(StoragePool.class, StoragePoolDAO.class);
             put(StoragePoolIsoMap.class, StoragePoolIsoMapDAO.class);
             put(StorageDomainStatic.class, StorageDomainStaticDAO.class);
             put(StorageDomainDynamic.class, StorageDomainDynamicDAO.class);

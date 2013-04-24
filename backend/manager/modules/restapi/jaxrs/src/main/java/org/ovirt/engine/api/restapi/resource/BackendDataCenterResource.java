@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
@@ -24,13 +24,13 @@ import org.ovirt.engine.core.compat.Guid;
 
 import static org.ovirt.engine.api.restapi.resource.BackendDataCentersResource.SUB_COLLECTIONS;
 
-public class BackendDataCenterResource extends AbstractBackendSubResource<DataCenter, storage_pool>
+public class BackendDataCenterResource extends AbstractBackendSubResource<DataCenter, StoragePool>
         implements DataCenterResource {
 
     private BackendDataCentersResource parent;
 
     public BackendDataCenterResource(String id, BackendDataCentersResource parent) {
-        super(id, DataCenter.class, storage_pool.class, SUB_COLLECTIONS);
+        super(id, DataCenter.class, StoragePool.class, SUB_COLLECTIONS);
         this.parent = parent;
     }
 
@@ -77,19 +77,19 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
     }
 
     @Override
-    protected DataCenter doPopulate(DataCenter model, storage_pool entity) {
+    protected DataCenter doPopulate(DataCenter model, StoragePool entity) {
         return parent.doPopulate(model, entity);
     }
 
     @Override
-    protected DataCenter deprecatedPopulate(DataCenter model, storage_pool entity) {
+    protected DataCenter deprecatedPopulate(DataCenter model, StoragePool entity) {
         return parent.deprecatedPopulate(model, entity);
     }
 
     protected class UpdateParametersProvider implements
-            ParametersProvider<DataCenter, storage_pool> {
+            ParametersProvider<DataCenter, StoragePool> {
         @Override
-        public VdcActionParametersBase getParameters(DataCenter incoming, storage_pool entity) {
+        public VdcActionParametersBase getParameters(DataCenter incoming, StoragePool entity) {
             return new StoragePoolManagementParameter(map(incoming, entity));
         }
     }
@@ -99,14 +99,14 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
      * cluster.
      */
     @SuppressWarnings("unchecked")
-    public static storage_pool getStoragePool(Cluster cluster, AbstractBackendResource parent) {
-        storage_pool pool = null;
+    public static StoragePool getStoragePool(Cluster cluster, AbstractBackendResource parent) {
+        StoragePool pool = null;
         if (cluster.getDataCenter().isSetId()) {
             String id = cluster.getDataCenter().getId();
-            pool = (storage_pool)parent.getEntity(storage_pool.class, VdcQueryType.GetStoragePoolById,
+            pool = (StoragePool)parent.getEntity(StoragePool.class, VdcQueryType.GetStoragePoolById,
                     new StoragePoolQueryParametersBase(new Guid(id)), "Datacenter: id=" + id);
         } else {
-            pool = (storage_pool)parent.getEntity(storage_pool.class, SearchType.StoragePool, "Datacenter: name="
+            pool = (StoragePool)parent.getEntity(StoragePool.class, SearchType.StoragePool, "Datacenter: name="
                     + cluster.getDataCenter().getName());
             cluster.getDataCenter().setId(pool.getId().toString());
         }
@@ -118,8 +118,8 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
      * storagedomain.
      */
     @SuppressWarnings("unchecked")
-    public static  List<storage_pool> getStoragePools(Guid storageDomainId, AbstractBackendResource parent) {
-        return (List<storage_pool>)parent.getEntity(List.class,
+    public static  List<StoragePool> getStoragePools(Guid storageDomainId, AbstractBackendResource parent) {
+        return (List<StoragePool>)parent.getEntity(List.class,
                                                     VdcQueryType.GetStoragePoolsByStorageDomainId,
                                                     new StorageDomainQueryParametersBase(storageDomainId),
                                                     "Datacenters",

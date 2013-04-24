@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.GetDataCentersWithPermittedActionOnClustersParameters;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 
@@ -32,7 +32,7 @@ public class GetDataCentersWithPermittedActionOnClustersQueryTest
     @Test
     public void testQueryExecution() {
         // Set up the expected data
-        storage_pool expected = new storage_pool();
+        StoragePool expected = new StoragePool();
 
         // Mock the DAO
         StoragePoolDAO storagePoolDAOMock = mock(StoragePoolDAO.class);
@@ -42,7 +42,7 @@ public class GetDataCentersWithPermittedActionOnClustersQueryTest
         getQuery().executeQueryCommand();
 
         @SuppressWarnings("unchecked")
-        List<storage_pool> actual = (List<storage_pool>) getQuery().getQueryReturnValue().getReturnValue();
+        List<StoragePool> actual = (List<StoragePool>) getQuery().getQueryReturnValue().getReturnValue();
         assertEquals("Wrong number of VDS Groups", 1, actual.size());
         assertEquals("Wrong VDS Groups", expected, actual.get(0));
     }

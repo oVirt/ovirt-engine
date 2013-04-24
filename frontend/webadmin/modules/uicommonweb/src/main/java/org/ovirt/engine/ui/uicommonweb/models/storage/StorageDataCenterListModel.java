@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -150,14 +150,14 @@ public class StorageDataCenterListModel extends SearchableListModel
         privateattachCandidateDatacenters = value;
     }
 
-    private ArrayList<storage_pool> privateavailableDatacenters;
+    private ArrayList<StoragePool> privateavailableDatacenters;
 
-    public ArrayList<storage_pool> getavailableDatacenters()
+    public ArrayList<StoragePool> getavailableDatacenters()
     {
         return privateavailableDatacenters;
     }
 
-    public void setavailableDatacenters(ArrayList<storage_pool> value)
+    public void setavailableDatacenters(ArrayList<StoragePool> value)
     {
         privateavailableDatacenters = value;
     }
@@ -254,8 +254,8 @@ public class StorageDataCenterListModel extends SearchableListModel
                     public void onSuccess(Object target, Object returnValue) {
 
                         StorageDataCenterListModel listModel = (StorageDataCenterListModel) target;
-                        listModel.setavailableDatacenters((ArrayList<storage_pool>) returnValue);
-                        for (storage_pool dataCenter : listModel.getavailableDatacenters())
+                        listModel.setavailableDatacenters((ArrayList<StoragePool>) returnValue);
+                        for (StoragePool dataCenter : listModel.getavailableDatacenters())
                         {
                             switch (getEntity().getStorageDomainType())
                             {
@@ -278,7 +278,7 @@ public class StorageDataCenterListModel extends SearchableListModel
                                                 Object[] array1 = (Object[]) target1;
                                                 StorageDataCenterListModel listModel1 =
                                                         (StorageDataCenterListModel) array1[0];
-                                                storage_pool dataCenter1 = (storage_pool) array1[1];
+                                                StoragePool dataCenter1 = (StoragePool) array1[1];
                                                 boolean addDatacenter1 =
                                                         dataCenter1.getstatus() == StoragePoolStatus.Up
                                                                 && returnValue1 == null;
@@ -298,7 +298,7 @@ public class StorageDataCenterListModel extends SearchableListModel
                                                 Object[] array2 = (Object[]) target2;
                                                 StorageDataCenterListModel listModel2 =
                                                         (StorageDataCenterListModel) array2[0];
-                                                storage_pool dataCenter2 = (storage_pool) array2[1];
+                                                StoragePool dataCenter2 = (StoragePool) array2[1];
                                                 boolean addDatacenter2 =
                                                         dataCenter2.getstatus() == StoragePoolStatus.Up
                                                                 && returnValue2 == null;
@@ -315,7 +315,7 @@ public class StorageDataCenterListModel extends SearchableListModel
                 }));
     }
 
-    public void AddToAttachCandidateDatacenters(storage_pool dataCenter, boolean addDatacenter)
+    public void AddToAttachCandidateDatacenters(StoragePool dataCenter, boolean addDatacenter)
     {
         // Add a new datacenter EntityModel
         EntityModel dcEntityModel = new EntityModel();
@@ -391,12 +391,12 @@ public class StorageDataCenterListModel extends SearchableListModel
             return;
         }
 
-        ArrayList<storage_pool> items = new ArrayList<storage_pool>();
+        ArrayList<StoragePool> items = new ArrayList<StoragePool>();
         for (EntityModel a : Linq.<EntityModel> Cast(model.getItems()))
         {
             if (a.getIsSelected())
             {
-                items.add((storage_pool) a.getEntity());
+                items.add((StoragePool) a.getEntity());
             }
         }
 
@@ -406,7 +406,7 @@ public class StorageDataCenterListModel extends SearchableListModel
 
             ArrayList<VdcActionParametersBase> parameters =
                     new ArrayList<VdcActionParametersBase>();
-            for (storage_pool dataCenter : items)
+            for (StoragePool dataCenter : items)
             {
                 parameters.add(new StorageDomainPoolParametersBase(getEntity().getId(), dataCenter.getId()));
             }

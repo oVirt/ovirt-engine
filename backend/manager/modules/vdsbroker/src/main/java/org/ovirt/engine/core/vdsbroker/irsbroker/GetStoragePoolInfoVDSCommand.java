@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.vdscommands.GetStoragePoolInfoVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
@@ -29,7 +29,7 @@ public class GetStoragePoolInfoVDSCommand<P extends GetStoragePoolInfoVDSCommand
     protected void ExecuteIrsBrokerCommand() {
         _result = getIrsProxy().getStoragePoolInfo(getParameters().getStoragePoolId().toString());
         ProceedProxyReturnValue();
-        storage_pool sp = VdsBrokerObjectsBuilder.buildStoragePool(_result.mStoragePoolInfo);
+        StoragePool sp = VdsBrokerObjectsBuilder.buildStoragePool(_result.mStoragePoolInfo);
         Guid masterId = Guid.Empty;
         if (_result.mStoragePoolInfo.containsKey("master_uuid")) {
             masterId = new Guid(_result.mStoragePoolInfo.get("master_uuid").toString());
@@ -37,8 +37,8 @@ public class GetStoragePoolInfoVDSCommand<P extends GetStoragePoolInfoVDSCommand
         sp.setId(getParameters().getStoragePoolId());
         ArrayList<StorageDomain> domList = ParseStorageDomainList(_result.mDomainsList, masterId);
 
-        KeyValuePairCompat<storage_pool, List<StorageDomain>> list =
-                new KeyValuePairCompat<storage_pool, List<StorageDomain>>(
+        KeyValuePairCompat<StoragePool, List<StorageDomain>> list =
+                new KeyValuePairCompat<StoragePool, List<StorageDomain>>(
                         sp, domList);
         setReturnValue(list);
     }

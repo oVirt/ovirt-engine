@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -115,7 +115,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         dataCenterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
-                return ((storage_pool) object).getname();
+                return ((StoragePool) object).getname();
             }
         });
         isVmNetworkEditor = new EntityModelCheckBoxEditor(Align.RIGHT);

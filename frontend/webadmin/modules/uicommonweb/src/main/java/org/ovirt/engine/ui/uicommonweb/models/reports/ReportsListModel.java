@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.uicommonweb.HtmlParameters;
@@ -125,12 +125,12 @@ public class ReportsListModel extends SearchableListModel {
                 break;
             }
             case DataCenter: {
-                storage_pool dataCenter = (storage_pool) treeItemModel.getEntity();
+                StoragePool dataCenter = (StoragePool) treeItemModel.getEntity();
                 setDataCenterID(dataCenter.getId().toString());
                 break;
             }
             case Clusters: {
-                storage_pool dataCenter = (storage_pool) treeItemModel.getEntity();
+                StoragePool dataCenter = (StoragePool) treeItemModel.getEntity();
                 setDataCenterID(dataCenter.getId().toString());
                 break;
             }
@@ -153,7 +153,7 @@ public class ReportsListModel extends SearchableListModel {
                 break;
             }
             case Storages: {
-                storage_pool dataCenter = (storage_pool) treeItemModel.getEntity();
+                StoragePool dataCenter = (StoragePool) treeItemModel.getEntity();
                 setDataCenterID(dataCenter.getId().toString());
                 break;
             }
@@ -164,7 +164,7 @@ public class ReportsListModel extends SearchableListModel {
                 break;
             }
             case Templates: {
-                storage_pool dataCenter = (storage_pool) treeItemModel.getEntity();
+                StoragePool dataCenter = (StoragePool) treeItemModel.getEntity();
                 setDataCenterID(dataCenter.getId().toString());
                 break;
             }
@@ -175,7 +175,7 @@ public class ReportsListModel extends SearchableListModel {
                 break;
             }
             case Networks: {
-                storage_pool dataCenter = (storage_pool) treeItemModel.getEntity();
+                StoragePool dataCenter = (StoragePool) treeItemModel.getEntity();
                 setDataCenterID(dataCenter.getId().toString());
                 break;
             }

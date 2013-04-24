@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -59,8 +59,8 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             public void onSuccess(Object target, Object returnValue) {
 
                 UnitVmModel model = (UnitVmModel) target;
-                ArrayList<storage_pool> list = new ArrayList<storage_pool>();
-                for (storage_pool a : (ArrayList<storage_pool>) returnValue) {
+                ArrayList<StoragePool> list = new ArrayList<StoragePool>();
+                for (StoragePool a : (ArrayList<StoragePool>) returnValue) {
                     if (a.getstatus() == StoragePoolStatus.Up) {
                         list.add(a);
                     }
@@ -76,7 +76,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     @Override
     public void DataCenter_SelectedItemChanged()
     {
-        storage_pool dataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
+        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
 
         if (dataCenter == null)
             return;
@@ -252,7 +252,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
     private void InitTemplate()
     {
-        storage_pool dataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
+        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
 
         AsyncDataProvider.GetTemplateListByDataCenter(new AsyncQuery(this, new INewAsyncCallback() {
             @Override

@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -70,8 +70,8 @@ public class TestHelperImportVmTemplateCommand extends ImportVmTemplateCommand {
     }
 
     @Override
-    public storage_pool getStoragePool() {
-        return new storage_pool();
+    public StoragePool getStoragePool() {
+        return new StoragePool();
     }
 
     @Override

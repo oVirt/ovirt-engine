@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForStorageParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -258,11 +258,11 @@ public abstract class AbstractDiskModel extends DiskModel
 
     public abstract boolean getIsNew();
 
-    protected abstract boolean isDatacenterAvailable(storage_pool dataCenter);
+    protected abstract boolean isDatacenterAvailable(StoragePool dataCenter);
 
     protected abstract void updateWipeAfterDelete(StorageType storageType);
 
-    protected abstract void updateInterface(storage_pool datacenter);
+    protected abstract void updateInterface(StoragePool datacenter);
 
     protected abstract DiskImage getDiskImage();
 
@@ -296,7 +296,7 @@ public abstract class AbstractDiskModel extends DiskModel
         updateDatacenters();
     }
 
-    private void updateStorageDomains(final storage_pool datacenter) {
+    private void updateStorageDomains(final StoragePool datacenter) {
         AsyncDataProvider.GetPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
@@ -333,7 +333,7 @@ public abstract class AbstractDiskModel extends DiskModel
         }, getHash()), datacenter.getId(), ActionGroup.CREATE_DISK);
     }
 
-    private void updateHosts(storage_pool datacenter) {
+    private void updateHosts(StoragePool datacenter) {
         AsyncDataProvider.GetHostListByDataCenter(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
@@ -362,8 +362,8 @@ public abstract class AbstractDiskModel extends DiskModel
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
                     AbstractDiskModel diskModel = (AbstractDiskModel) target;
-                    storage_pool dataCenter = (storage_pool) returnValue;
-                    ArrayList<storage_pool> dataCenters = new ArrayList<storage_pool>();
+                    StoragePool dataCenter = (StoragePool) returnValue;
+                    ArrayList<StoragePool> dataCenters = new ArrayList<StoragePool>();
 
                     if (isDatacenterAvailable(dataCenter)) {
                         dataCenters.add(dataCenter);
@@ -383,10 +383,10 @@ public abstract class AbstractDiskModel extends DiskModel
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
                     AbstractDiskModel diskModel = (AbstractDiskModel) target;
-                    ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) returnValue;
-                    ArrayList<storage_pool> filteredDataCenters = new ArrayList<storage_pool>();
+                    ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) returnValue;
+                    ArrayList<StoragePool> filteredDataCenters = new ArrayList<StoragePool>();
 
-                    for (storage_pool dataCenter : dataCenters) {
+                    for (StoragePool dataCenter : dataCenters) {
                         if (isDatacenterAvailable(dataCenter)) {
                             filteredDataCenters.add(dataCenter);
                         }
@@ -426,7 +426,7 @@ public abstract class AbstractDiskModel extends DiskModel
         }, getHash()), getVm().getId());
     }
 
-    private void updateShareableDiskEnabled(storage_pool datacenter) {
+    private void updateShareableDiskEnabled(StoragePool datacenter) {
         boolean isShareableDiskEnabled = (Boolean) AsyncDataProvider.GetConfigValuePreConverted(
                 ConfigurationValues.ShareableDiskEnabled, datacenter.getcompatibility_version().getValue());
 
@@ -434,7 +434,7 @@ public abstract class AbstractDiskModel extends DiskModel
         getIsShareable().setIsChangable(isShareableDiskEnabled);
     }
 
-    private void updateDirectLunDiskEnabled(storage_pool datacenter) {
+    private void updateDirectLunDiskEnabled(StoragePool datacenter) {
         boolean isInternal = (Boolean) getIsInternal().getEntity();
         if (isInternal) {
             return;
@@ -467,7 +467,7 @@ public abstract class AbstractDiskModel extends DiskModel
         VolumeType_SelectedItemChanged();
     }
 
-    private void updateQuota(storage_pool datacenter) {
+    private void updateQuota(StoragePool datacenter) {
         if (datacenter.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)
                 || !(Boolean) getIsInternal().getEntity()) {
             getQuota().setIsAvailable(false);
@@ -548,7 +548,7 @@ public abstract class AbstractDiskModel extends DiskModel
         }
 
         VolumeType volumeType = (VolumeType) getVolumeType().getSelectedItem();
-        StorageType storageType = ((storage_pool) getDataCenter().getSelectedItem()).getstorage_pool_type();
+        StorageType storageType = ((StoragePool) getDataCenter().getSelectedItem()).getstorage_pool_type();
 
         updateVolumeFormat(volumeType, storageType);
         updateShareable(volumeType, storageType);
@@ -595,7 +595,7 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     private void Datacenter_SelectedItemChanged() {
-        storage_pool datacenter = (storage_pool) getDataCenter().getSelectedItem();
+        StoragePool datacenter = (StoragePool) getDataCenter().getSelectedItem();
         boolean isInternal = getIsInternal().getEntity() != null ? (Boolean) getIsInternal().getEntity() : false;
 
         if (datacenter == null) {
@@ -625,7 +625,7 @@ public abstract class AbstractDiskModel extends DiskModel
             getAlias().validateEntity(new IValidation[] { new I18NNameValidation() });
         }
 
-        storage_pool dataCenter = (storage_pool) getDataCenter().getSelectedItem();
+        StoragePool dataCenter = (StoragePool) getDataCenter().getSelectedItem();
         if (dataCenter != null && dataCenter.getQuotaEnforcementType() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT) {
             getQuota().validateSelectedItem(new IValidation[] { new NotEmptyQuotaValidation() });
         }

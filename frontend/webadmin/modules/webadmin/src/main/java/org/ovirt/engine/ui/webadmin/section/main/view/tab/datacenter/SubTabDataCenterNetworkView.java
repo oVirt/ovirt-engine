@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -17,7 +17,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 
-public class SubTabDataCenterNetworkView extends AbstractSubTabTableView<storage_pool, Network, DataCenterListModel, DataCenterNetworkListModel>
+public class SubTabDataCenterNetworkView extends AbstractSubTabTableView<StoragePool, Network, DataCenterListModel, DataCenterNetworkListModel>
         implements SubTabDataCenterNetworkPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabDataCenterNetworkView> {

@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -585,7 +585,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             {
                 HostListModel hostListModel = (HostListModel) model;
                 HostModel innerHostModel = (HostModel) hostListModel.getWindow();
-                ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) result;
+                ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) result;
 
                 if (hostListModel.getSystemTreeSelectedItem() != null)
                 {
@@ -599,12 +599,12 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                     case Cluster:
                     case Cluster_Gluster:
                         VDSGroup cluster = (VDSGroup) hostListModel.getSystemTreeSelectedItem().getEntity();
-                        for (storage_pool dc : dataCenters)
+                        for (StoragePool dc : dataCenters)
                         {
                             if (dc.getId().equals(cluster.getStoragePoolId()))
                             {
                                 innerHostModel.getDataCenter()
-                                        .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { dc })));
+                                        .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dc })));
                                 innerHostModel.getDataCenter().setSelectedItem(dc);
                                 break;
                             }
@@ -617,10 +617,10 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                         innerHostModel.getCluster().setInfo("Cannot choose Host's Cluster in tree context"); //$NON-NLS-1$
                         break;
                     case DataCenter:
-                        storage_pool selectDataCenter =
-                                (storage_pool) hostListModel.getSystemTreeSelectedItem().getEntity();
+                        StoragePool selectDataCenter =
+                                (StoragePool) hostListModel.getSystemTreeSelectedItem().getEntity();
                         innerHostModel.getDataCenter()
-                                .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { selectDataCenter })));
+                                .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { selectDataCenter })));
                         innerHostModel.getDataCenter().setSelectedItem(selectDataCenter);
                         innerHostModel.getDataCenter().setIsChangable(false);
                         innerHostModel.getDataCenter().setInfo("Cannot choose Host's Data Center in tree context"); //$NON-NLS-1$
@@ -673,7 +673,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             public void onSuccess(Object model, Object result)
             {
                 HostListModel hostListModel = (HostListModel) model;
-                ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) result;
+                ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) result;
                 VDS host = (VDS) hostListModel.getSelectedItem();
 
                 final HostModel hostModel = new HostModel();
@@ -1123,7 +1123,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             {
                 HostListModel hostListModel = (HostListModel) model;
                 HostModel innerHostModel = (HostModel) hostListModel.getWindow();
-                ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) result;
+                ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) result;
                 VDS host = (VDS) hostListModel.getSelectedItem();
                 hostListModel.PrepareModelForApproveEdit(host, innerHostModel, dataCenters, false);
                 innerHostModel.setTitle(ConstantsManager.getInstance().getConstants().editAndApproveHostTitle());
@@ -1144,7 +1144,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
     private void PrepareModelForApproveEdit(VDS vds,
             HostModel model,
-            ArrayList<storage_pool> dataCenters,
+            ArrayList<StoragePool> dataCenters,
             boolean isEditWithPMemphasis)
     {
         model.setHostId(vds.getId());
@@ -1245,9 +1245,9 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 model.getDataCenter().setIsChangable(false);
                 break;
             case DataCenter:
-                storage_pool selectDataCenter = (storage_pool) getSystemTreeSelectedItem().getEntity();
+                StoragePool selectDataCenter = (StoragePool) getSystemTreeSelectedItem().getEntity();
                 model.getDataCenter()
-                        .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { selectDataCenter })));
+                        .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { selectDataCenter })));
                 model.getDataCenter().setSelectedItem(selectDataCenter);
                 model.getDataCenter().setIsChangable(false);
                 break;

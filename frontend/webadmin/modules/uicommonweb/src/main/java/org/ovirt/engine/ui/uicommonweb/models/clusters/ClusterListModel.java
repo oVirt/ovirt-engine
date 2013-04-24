@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -313,7 +313,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             {
                 ClusterListModel clModel = (ClusterListModel) model;
                 ClusterModel cModel = (ClusterModel) clModel.getWindow();
-                ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) result;
+                ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) result;
 
                 cModel.getDataCenter().setItems(dataCenters);
 
@@ -322,7 +322,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                 if (clModel.getSystemTreeSelectedItem() != null
                         && clModel.getSystemTreeSelectedItem().getType() != SystemTreeItemType.System)
                 {
-                    storage_pool selectDataCenter = (storage_pool) clModel.getSystemTreeSelectedItem().getEntity();
+                    StoragePool selectDataCenter = (StoragePool) clModel.getSystemTreeSelectedItem().getEntity();
 
                     cModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters,
                             new Linq.DataCenterPredicate(selectDataCenter.getId())));
@@ -610,7 +610,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
         cluster.setname((String) model.getName().getEntity());
         cluster.setdescription((String) model.getDescription().getEntity());
-        cluster.setStoragePoolId(((storage_pool) model.getDataCenter().getSelectedItem()).getId());
+        cluster.setStoragePoolId(((StoragePool) model.getDataCenter().getSelectedItem()).getId());
         if (model.getCPU().getSelectedItem() != null)
         {
             cluster.setcpu_name(((ServerCpu) model.getCPU().getSelectedItem()).getCpuName());

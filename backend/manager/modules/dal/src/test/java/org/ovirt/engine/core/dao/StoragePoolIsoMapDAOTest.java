@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -17,7 +17,7 @@ public class StoragePoolIsoMapDAOTest extends BaseDAOTestCase {
     private static final Guid FREE_ISO_ID = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ac");
     private StoragePoolDAO storagePoolIsoMapDAO;
     private StoragePoolIsoMapDAO dao;
-    private storage_pool existingPool;
+    private StoragePool existingPool;
     private StoragePoolIsoMap existingStoragePoolIsoMap;
     private StoragePoolIsoMap newStoragePoolIsoMap;
 

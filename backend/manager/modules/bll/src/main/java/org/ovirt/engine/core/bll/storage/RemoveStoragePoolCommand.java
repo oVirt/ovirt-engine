@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -374,7 +374,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
      */
     protected void connectAllHostToPoolAndDomain(final StorageDomain masterDomain) {
         final List<VDS> vdsList = getAllRunningVdssInPool();
-        final storage_pool storagePool = getStoragePool();
+        final StoragePool storagePool = getStoragePool();
         SyncronizeNumberOfAsyncOperations sync = new SyncronizeNumberOfAsyncOperations(vdsList.size(),
                 null, new ActivateDeactivateSingleAsyncOperationFactory() {
 

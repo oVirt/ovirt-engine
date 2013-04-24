@@ -3,14 +3,14 @@ package org.ovirt.engine.core.bll.storage;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class DisconnectStoragePoolAsyncOperation extends ActivateDeactivateSingleAsyncOperation {
-    public DisconnectStoragePoolAsyncOperation(java.util.ArrayList<VDS> vdss, storage_pool storagePool) {
+    public DisconnectStoragePoolAsyncOperation(java.util.ArrayList<VDS> vdss, StoragePool storagePool) {
         super(vdss, null, storagePool);
     }
 

@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -33,8 +33,8 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
                     public void onSuccess(Object target, Object returnValue) {
 
                         UnitVmModel model = (UnitVmModel) target;
-                        ArrayList<storage_pool> list = new ArrayList<storage_pool>();
-                        for (storage_pool a : (ArrayList<storage_pool>) returnValue)
+                        ArrayList<StoragePool> list = new ArrayList<StoragePool>();
+                        for (StoragePool a : (ArrayList<StoragePool>) returnValue)
                         {
                             if (a.getstatus() == StoragePoolStatus.Up)
                             {
@@ -51,7 +51,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
     @Override
     public void DataCenter_SelectedItemChanged()
     {
-        storage_pool dataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
+        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
 
         getModel().setIsHostAvailable(dataCenter.getstorage_pool_type() != StorageType.LOCALFS);
 
@@ -227,7 +227,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
 
     private void InitTemplate()
     {
-        storage_pool dataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
+        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
 
         // Filter according to system tree selection.
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage)
@@ -302,7 +302,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
 
     public void InitCdImage()
     {
-        updateUserCdImage(((storage_pool) getModel().getDataCenter().getSelectedItem()).getId());
+        updateUserCdImage(((StoragePool) getModel().getDataCenter().getSelectedItem()).getId());
     }
 
     @Override

@@ -8,7 +8,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetNewVdsFenceStatusParameters;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
@@ -850,7 +850,7 @@ public class HostModel extends Model
 
     private void DataCenter_SelectedItemChanged()
     {
-        storage_pool dataCenter = (storage_pool) getDataCenter().getSelectedItem();
+        StoragePool dataCenter = (StoragePool) getDataCenter().getSelectedItem();
         if (dataCenter != null)
         {
             AsyncQuery _asyncQuery = new AsyncQuery();
@@ -862,7 +862,7 @@ public class HostModel extends Model
                     HostModel hostModel = (HostModel) model;
                     ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) result;
                     VDSGroup oldCluster = (VDSGroup) hostModel.getCluster().getSelectedItem();
-                    storage_pool selectedDataCenter = (storage_pool) getDataCenter().getSelectedItem();
+                    StoragePool selectedDataCenter = (StoragePool) getDataCenter().getSelectedItem();
 
                     // Update selected cluster only if the returned cluster list is indeed the selected datacenter's
                     // clusters

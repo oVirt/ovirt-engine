@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -53,7 +53,7 @@ public class SearchQueryTest {
     List<VM> vmResultList = new ArrayList<VM>();
     List<VDS> vdsResultList = new ArrayList<VDS>();
     List<VDSGroup> vdsGroupResultList = new ArrayList<VDSGroup>();
-    List<storage_pool> storagePoolResultList = new ArrayList<storage_pool>();
+    List<StoragePool> storagePoolResultList = new ArrayList<StoragePool>();
     List<GlusterVolumeEntity> glusterVolumeList = new ArrayList<GlusterVolumeEntity>();
     List<NetworkView> networkResultList = new ArrayList<NetworkView>();
 

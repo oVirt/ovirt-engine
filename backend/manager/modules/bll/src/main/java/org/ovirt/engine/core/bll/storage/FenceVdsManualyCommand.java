@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.FenceSpmStorageVDSCommandParameters;
@@ -98,7 +98,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
             result = ActivateDataCenter();
             if (getVdsDAO().getAllForStoragePool(getStoragePool().getId()).size() == 1) {
                 //reset SPM flag fot this Host
-                storage_pool sp = getStoragePool();
+                StoragePool sp = getStoragePool();
                 sp.setspm_vds_id(null);
                 getStoragePoolDAO().update(sp);
                 result = true;

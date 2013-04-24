@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaUsagePerUser;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -551,7 +551,7 @@ public class QuotaManager {
         Pair<AuditLogType, AuditLogableBase> auditLogPair = new Pair<AuditLogType, AuditLogableBase>();
         auditLogPair.setSecond(parameters.getAuditLogable());
 
-        storage_pool storagePool = parameters.getAuditLogable().getStoragePool();
+        StoragePool storagePool = parameters.getAuditLogable().getStoragePool();
         if (storagePool == null) {
             throw new InvalidQuotaParametersException("Null storage pool passed to QuotaManager");
         }

@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
@@ -54,7 +54,7 @@ public class ImportVmModel extends ListWithDetailsModel {
     public static final String ON_DISK_LOAD = "OnDiskLoad"; //$NON-NLS-1$
 
     private VmImportDiskListModel importDiskListModel;
-    private storage_pool storagePool;
+    private StoragePool storagePool;
     private boolean hasQuota;
     private final Map<Guid, List<Disk>> missingTemplateDiskMap = new HashMap<Guid, List<Disk>>();
     protected ArrayList<StorageDomain> filteredStorageDomains;
@@ -62,11 +62,11 @@ public class ImportVmModel extends ListWithDetailsModel {
     private final Map<Guid, List<Disk>> templateDiskMap = new HashMap<Guid, List<Disk>>();
     private final Map<Guid, ImportDiskData> diskImportDataMap = new HashMap<Guid, ImportDiskData>();
 
-    public storage_pool getStoragePool() {
+    public StoragePool getStoragePool() {
         return storagePool;
     }
 
-    public void setStoragePool(storage_pool storagePool) {
+    public void setStoragePool(StoragePool storagePool) {
         this.storagePool = storagePool;
     }
 
@@ -166,12 +166,12 @@ public class ImportVmModel extends ListWithDetailsModel {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                ArrayList<storage_pool> pools = (ArrayList<storage_pool>) returnValue;
+                ArrayList<StoragePool> pools = (ArrayList<StoragePool>) returnValue;
                 if (pools == null || pools.size() != 1) {
                     return;
                 }
 
-                storage_pool dataCenter = pools.get(0);
+                StoragePool dataCenter = pools.get(0);
                 setStoragePool(dataCenter);
                 // show quota
                 if (dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {

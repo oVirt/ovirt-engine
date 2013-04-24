@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -68,7 +68,7 @@ public class ClusterGuideModel extends GuideModel
     private ArrayList<VDS> allHosts;
     private Boolean isAnyHostUpInCluster;
     private VDS localStorageHost;
-    private storage_pool dataCenter;
+    private StoragePool dataCenter;
 
     private void UpdateOptionsNonLocalFSData() {
         AsyncDataProvider.GetHostListByCluster(new AsyncQuery(this,
@@ -228,7 +228,7 @@ public class ClusterGuideModel extends GuideModel
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
                             ClusterGuideModel model = (ClusterGuideModel) target;
-                            model.dataCenter = (storage_pool) returnValue;
+                            model.dataCenter = (StoragePool) returnValue;
 
                             if (model.dataCenter == null
                                     || model.dataCenter.getstorage_pool_type() != StorageType.LOCALFS)
@@ -280,7 +280,7 @@ public class ClusterGuideModel extends GuideModel
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
-                        dataCenter = (storage_pool) returnValue;
+                        dataCenter = (StoragePool) returnValue;
 
                         boolean isMultiHostDC = dataCenter.getstorage_pool_type() == StorageType.LOCALFS;
                         if (isMultiHostDC)
@@ -393,7 +393,7 @@ public class ClusterGuideModel extends GuideModel
                         ClusterGuideModel clusterGuideModel = (ClusterGuideModel) target;
                         HostModel model = (HostModel) clusterGuideModel.getWindow();
 
-                        ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) returnValue;
+                        ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) returnValue;
                         ;
                         model.getDataCenter().setItems(dataCenters);
                         if (getEntity().getStoragePoolId() != null)

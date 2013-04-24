@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.quota;
 
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
@@ -27,7 +27,7 @@ public class QuotaConsumptionParametersWrapper {
         this.canDoActionMessages = canDoActionMessages;
     }
 
-    public storage_pool getStoragePool() {
+    public StoragePool getStoragePool() {
         return auditLogable.getStoragePool();
     }
 

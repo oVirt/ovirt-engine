@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -22,7 +22,7 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
         {
             Model model = (Model) item;
 
-            storage_pool dataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
+            StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
             if (dataCenter == null) {
                 return;
             }
@@ -65,7 +65,7 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
     }
 
     public void postUpdateItemsAvailability(IStorageModel item, boolean isNoExportOrIsoStorageAttached) {
-        storage_pool dataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
+        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
         Model model = (Model) item;
 
         boolean isExistingStorage = getModel().getStorage() != null &&

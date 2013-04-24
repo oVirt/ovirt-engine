@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.GetQuotaByStoragePoolIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -25,12 +25,12 @@ public class DataCenterQuotaListModel extends QuotaListModel
     }
 
     @Override
-    public storage_pool getEntity()
+    public StoragePool getEntity()
     {
-        return (storage_pool) ((super.getEntity() instanceof storage_pool) ? super.getEntity() : null);
+        return (StoragePool) ((super.getEntity() instanceof StoragePool) ? super.getEntity() : null);
     }
 
-    public void setEntity(storage_pool value)
+    public void setEntity(StoragePool value)
     {
         super.setEntity(value);
     }

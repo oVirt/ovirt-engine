@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -850,12 +850,12 @@ public class ClusterModel extends EntityModel
             public void onSuccess(Object model, Object result)
             {
                 ClusterModel clusterModel = (ClusterModel) model;
-                ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) result;
+                ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) result;
 
                 clusterModel.getDataCenter().setItems(dataCenters);
 
                 clusterModel.getDataCenter().setSelectedItem(null);
-                for (storage_pool a : dataCenters)
+                for (StoragePool a : dataCenters)
                 {
                     if (clusterModel.getEntity().getStoragePoolId() != null
                             && a.getId().equals(clusterModel.getEntity().getStoragePoolId()))
@@ -946,7 +946,7 @@ public class ClusterModel extends EntityModel
         }
         else
         {
-            version = ((storage_pool) getDataCenter().getSelectedItem()).getcompatibility_version();
+            version = ((StoragePool) getDataCenter().getSelectedItem()).getcompatibility_version();
         }
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -998,7 +998,7 @@ public class ClusterModel extends EntityModel
         // possible versions for new cluster (when editing cluster, this event won't occur)
         // are actually the possible versions for the data-center that the cluster is going
         // to be attached to.
-        storage_pool selectedDataCenter = (storage_pool) getDataCenter().getSelectedItem();
+        StoragePool selectedDataCenter = (StoragePool) getDataCenter().getSelectedItem();
         if (selectedDataCenter == null)
         {
             return;
@@ -1023,9 +1023,9 @@ public class ClusterModel extends EntityModel
                 clusterModel.getVersion().setItems(versions);
                 if (!versions.contains(clusterModel.getVersion().getSelectedItem()))
                 {
-                    if (versions.contains(((storage_pool) clusterModel.getDataCenter().getSelectedItem()).getcompatibility_version()))
+                    if (versions.contains(((StoragePool) clusterModel.getDataCenter().getSelectedItem()).getcompatibility_version()))
                     {
-                        clusterModel.getVersion().setSelectedItem(((storage_pool) clusterModel.getDataCenter()
+                        clusterModel.getVersion().setSelectedItem(((StoragePool) clusterModel.getDataCenter()
                                 .getSelectedItem()).getcompatibility_version());
                     }
                     else

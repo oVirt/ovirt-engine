@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -26,7 +26,7 @@ public abstract class StoragePoolManagementCommandBase<T extends StoragePoolMana
     }
 
     @Override
-    public storage_pool getStoragePool() {
+    public StoragePool getStoragePool() {
         return getParameters().getStoragePool();
     }
 

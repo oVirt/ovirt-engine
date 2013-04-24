@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter;
 
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
@@ -23,14 +23,14 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabDataCenterPermissionPresenter extends AbstractSubTabPresenter<storage_pool, DataCenterListModel, PermissionListModel, SubTabDataCenterPermissionPresenter.ViewDef, SubTabDataCenterPermissionPresenter.ProxyDef> {
+public class SubTabDataCenterPermissionPresenter extends AbstractSubTabPresenter<StoragePool, DataCenterListModel, PermissionListModel, SubTabDataCenterPermissionPresenter.ViewDef, SubTabDataCenterPermissionPresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(ApplicationPlaces.dataCenterPermissionSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabDataCenterPermissionPresenter> {
     }
 
-    public interface ViewDef extends AbstractSubTabPresenter.ViewDef<storage_pool> {
+    public interface ViewDef extends AbstractSubTabPresenter.ViewDef<StoragePool> {
     }
 
     @TabInfo(container = DataCenterSubTabPanelPresenter.class)

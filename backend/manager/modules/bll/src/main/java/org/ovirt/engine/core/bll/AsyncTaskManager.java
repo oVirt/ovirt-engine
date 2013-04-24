@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTasks;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -483,7 +483,7 @@ public final class AsyncTaskManager {
      * @param sp
      *            the storage pool to retrieve running tasks from
      */
-    public void AddStoragePoolExistingTasks(storage_pool sp) {
+    public void AddStoragePoolExistingTasks(StoragePool sp) {
         List<AsyncTaskCreationInfo> currPoolTasks = null;
         try {
             currPoolTasks = (ArrayList<AsyncTaskCreationInfo>) Backend.getInstance().getResourceManager()
@@ -564,7 +564,7 @@ public final class AsyncTaskManager {
      *
      * @param sp
      */
-    public synchronized void StopStoragePoolTasks(final storage_pool sp) {
+    public synchronized void StopStoragePoolTasks(final StoragePool sp) {
         log.infoFormat("Attempting to get and stop tasks on storage pool '{0}'",
                 sp.getname());
 

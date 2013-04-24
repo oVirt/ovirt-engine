@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -26,14 +26,14 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 public class DataCenterModel extends Model
 {
 
-    private storage_pool privateEntity;
+    private StoragePool privateEntity;
 
-    public storage_pool getEntity()
+    public StoragePool getEntity()
     {
         return privateEntity;
     }
 
-    public void setEntity(storage_pool value)
+    public void setEntity(StoragePool value)
     {
         privateEntity = value;
     }

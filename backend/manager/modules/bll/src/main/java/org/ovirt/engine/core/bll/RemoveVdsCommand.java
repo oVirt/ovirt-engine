@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
@@ -73,7 +73,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     @Override
     protected boolean canDoAction() {
         boolean returnValue = canRemoveVds(getVdsId(), getReturnValue().getCanDoActionMessages());
-        storage_pool storagePool = getStoragePoolDAO().getForVds(getParameters().getVdsId());
+        StoragePool storagePool = getStoragePoolDAO().getForVds(getParameters().getVdsId());
 
         if (returnValue && storagePool != null && storagePool.getstorage_pool_type() == StorageType.LOCALFS) {
             if (!getStorageDomainDAO().getAllForStoragePool(storagePool.getId()).isEmpty()) {

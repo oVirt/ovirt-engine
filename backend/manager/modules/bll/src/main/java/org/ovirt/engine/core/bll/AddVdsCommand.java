@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -443,7 +443,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
     protected boolean validateSingleHostAttachedToLocalStorage() {
         boolean retrunValue = true;
-        storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao().getForVdsGroup(
+        StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().getForVdsGroup(
                 getParameters().getVdsStaticData().getVdsGroupId());
 
         if (storagePool != null && storagePool.getstorage_pool_type() == StorageType.LOCALFS) {

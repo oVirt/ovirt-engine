@@ -1,13 +1,13 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 
 import com.google.gwt.resources.client.ImageResource;
 
-public class DcStatusColumn extends WebAdminImageResourceColumn<storage_pool> {
+public class DcStatusColumn extends WebAdminImageResourceColumn<StoragePool> {
 
     @Override
-    public ImageResource getValue(storage_pool dc) {
+    public ImageResource getValue(StoragePool dc) {
         setEnumTitle(dc.getstatus());
         switch (dc.getstatus()) {
         case Contend:

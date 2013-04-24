@@ -17,7 +17,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.GetImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
@@ -72,7 +72,7 @@ public class GetImagesListByStoragePoolIdQueryTest
 
     @Test
     public void testGetStorageDomainIdWithPermissions() {
-        mockStoragePoolDAO(new storage_pool());
+        mockStoragePoolDAO(new StoragePool());
 
         StorageDomainDAO storageDomainDAOMock = mock(StorageDomainDAO.class);
         when(storageDomainDAOMock.getIsoStorageDomainIdForPool(getQueryParameters().getStoragePoolId())).thenReturn(storageDomainId);
@@ -93,7 +93,7 @@ public class GetImagesListByStoragePoolIdQueryTest
      * Mocks the storage pool DAO to return the given storage pool
      * @param sp The storage_pool the DAO should return
      */
-    private void mockStoragePoolDAO(storage_pool pool) {
+    private void mockStoragePoolDAO(StoragePool pool) {
         Guid storagePoolId = getQueryParameters().getStoragePoolId();
         if (pool != null) {
             pool.setId(storagePoolId);

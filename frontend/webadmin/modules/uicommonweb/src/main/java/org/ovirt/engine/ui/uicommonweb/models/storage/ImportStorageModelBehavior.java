@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 public class ImportStorageModelBehavior extends StorageModelBehavior
 {
     @Override
-    public List<storage_pool> FilterDataCenter(List<storage_pool> source)
+    public List<StoragePool> FilterDataCenter(List<StoragePool> source)
     {
         return Linq.ToList(Linq.Where(source, new Linq.DataCenterStatusPredicate(StoragePoolStatus.Up)));
     }
@@ -25,7 +25,7 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
     {
         super.UpdateItemsAvailability();
 
-        storage_pool dataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
+        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
 
         for (IStorageModel item : Linq.<IStorageModel> Cast(getModel().getItems()))
         {
@@ -71,7 +71,7 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
             boolean isNoStorageAttached)
     {
         Model model = (Model) item;
-        storage_pool dataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
+        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
 
         // available type/function items are:
         // all in case of Unassigned DC.

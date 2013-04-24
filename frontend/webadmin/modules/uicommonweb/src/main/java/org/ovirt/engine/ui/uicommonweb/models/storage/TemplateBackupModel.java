@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -95,9 +95,9 @@ public class TemplateBackupModel extends VmBackupModel
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 TemplateBackupModel templateBackupModel = (TemplateBackupModel) model;
-                ArrayList<storage_pool> pools = (ArrayList<storage_pool>) returnValue;
+                ArrayList<StoragePool> pools = (ArrayList<StoragePool>) returnValue;
                 if (pools != null && pools.size() > 0) {
-                    storage_pool pool = pools.get(0);
+                    StoragePool pool = pools.get(0);
                     ArrayList<VdcActionParametersBase> prms =
                             new ArrayList<VdcActionParametersBase>();
                     for (Object a : templateBackupModel.getSelectedItems())
@@ -295,10 +295,10 @@ public class TemplateBackupModel extends VmBackupModel
                 public void onSuccess(Object model, Object ReturnValue)
                 {
                     TemplateBackupModel backupModel = (TemplateBackupModel) model;
-                    ArrayList<storage_pool> list = (ArrayList<storage_pool>) ReturnValue;
+                    ArrayList<StoragePool> list = (ArrayList<StoragePool>) ReturnValue;
                     if (list != null && list.size() > 0)
                     {
-                        storage_pool dataCenter = list.get(0);
+                        StoragePool dataCenter = list.get(0);
                         AsyncQuery _asyncQuery1 = new AsyncQuery();
                         _asyncQuery1.setModel(backupModel);
                         _asyncQuery1.asyncCallback = new INewAsyncCallback() {

@@ -17,7 +17,7 @@ public class GetAvailableClusterVersionsByStoragePoolQuery<P extends GetAvailabl
     protected void executeQueryCommand() {
         if (getParameters().getStoragePoolId() != null) {
             java.util.ArrayList<Version> result = new java.util.ArrayList<Version>();
-            storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao().get(
+            StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().get(
                     getParameters().getStoragePoolId().getValue());
             if (storagePool != null) {
                 // return all versions that >= to the storage pool version

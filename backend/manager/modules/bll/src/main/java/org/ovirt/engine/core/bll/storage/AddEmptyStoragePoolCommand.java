@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -42,7 +42,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
     }
 
     private void setDataCenterDetails() {
-        storage_pool dc = getParameters().getStoragePool();
+        StoragePool dc = getParameters().getStoragePool();
         setCompatibilityVersion(dc.getcompatibility_version().toString());
         setStoragePoolType(dc.getstorage_pool_type().name());
         setQuotaEnforcementType(dc.getQuotaEnforcementType().name());

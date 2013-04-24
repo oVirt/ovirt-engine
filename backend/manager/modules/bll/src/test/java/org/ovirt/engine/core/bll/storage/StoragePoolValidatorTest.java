@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -34,12 +34,12 @@ public class StoragePoolValidatorTest {
                     mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_3.toString(), true));
 
     private StoragePoolValidator validator = null;
-    private storage_pool storagePool = null;
+    private StoragePool storagePool = null;
 
     @Before
     public void setup() {
         storagePool =
-                new storage_pool("test",
+                new StoragePool("test",
                         Guid.NewGuid(),
                         "test",
                         StorageType.UNKNOWN.getValue(),

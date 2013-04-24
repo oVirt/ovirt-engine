@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -66,7 +66,7 @@ public class EditDiskModel extends AbstractDiskModel
     }
 
     @Override
-    protected boolean isDatacenterAvailable(storage_pool dataCenter) {
+    protected boolean isDatacenterAvailable(StoragePool dataCenter) {
         return true;
     }
 
@@ -84,7 +84,7 @@ public class EditDiskModel extends AbstractDiskModel
     }
 
     @Override
-    public void updateInterface(storage_pool datacenter) {
+    public void updateInterface(StoragePool datacenter) {
         getDiskInterface().setItems(AsyncDataProvider.GetDiskInterfaceList());
         getDiskInterface().setSelectedItem(getDisk().getDiskInterface());
     }

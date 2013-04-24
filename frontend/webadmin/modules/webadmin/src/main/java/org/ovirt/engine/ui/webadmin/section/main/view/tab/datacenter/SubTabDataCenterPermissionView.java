@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.AbstractSubTabPermissi
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 
-public class SubTabDataCenterPermissionView extends AbstractSubTabPermissionsView<storage_pool, DataCenterListModel>
+public class SubTabDataCenterPermissionView extends AbstractSubTabPermissionsView<StoragePool, DataCenterListModel>
         implements SubTabDataCenterPermissionPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabDataCenterPermissionView> {

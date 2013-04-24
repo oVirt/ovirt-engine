@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -699,7 +699,7 @@ public class VmDiskListModel extends VmDiskListModelBase
             public void onSuccess(Object target, Object returnValue) {
                 VmDiskListModel model = (VmDiskListModel) target;
 
-                storage_pool dataCenter = (storage_pool) returnValue;
+                StoragePool dataCenter = (StoragePool) returnValue;
                 Version dcCompatibilityVersion = dataCenter.getcompatibility_version() != null
                         ? dataCenter.getcompatibility_version() : new Version();
 

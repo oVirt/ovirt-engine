@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.GetDataCentersWithPermittedActionOnClustersParameters;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
 import org.ovirt.engine.core.common.queries.GetHostsByClusterIdParameters;
@@ -49,8 +49,8 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                     public void onSuccess(Object target, Object returnValue) {
 
                         UnitVmModel model = (UnitVmModel) target;
-                        ArrayList<storage_pool> list = new ArrayList<storage_pool>();
-                        for (storage_pool a : (ArrayList<storage_pool>) returnValue)
+                        ArrayList<StoragePool> list = new ArrayList<StoragePool>();
+                        for (StoragePool a : (ArrayList<StoragePool>) returnValue)
                         {
                             if (a.getstatus() == StoragePoolStatus.Up)
                             {
@@ -67,7 +67,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
     @Override
     public void DataCenter_SelectedItemChanged()
     {
-        storage_pool dataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
+        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
         getModel().setIsHostAvailable(dataCenter.getstorage_pool_type() != StorageType.LOCALFS);
 
         ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
@@ -114,7 +114,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
     {
         // Filter clusters list (include only clusters that belong to the selected datacenter)
         ArrayList<VDSGroup> filteredList = new ArrayList<VDSGroup>();
-        storage_pool selectedDataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
+        StoragePool selectedDataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
 
         for (VDSGroup cluster : clusters)
         {
@@ -134,7 +134,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
         // Filter templates list (include only templates that belong to the selected datacenter)
         ArrayList<VmTemplate> templatesList = new ArrayList<VmTemplate>();
         VmTemplate blankTemplate = null;
-        storage_pool selectedDataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
+        StoragePool selectedDataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
         Guid selectedDataCenterId = selectedDataCenter.getId().getValue();
 
         for (VmTemplate template : templates)

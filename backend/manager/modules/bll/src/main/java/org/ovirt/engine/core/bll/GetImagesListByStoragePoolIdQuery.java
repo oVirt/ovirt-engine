@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.GetImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -31,7 +31,7 @@ public class GetImagesListByStoragePoolIdQuery<P extends GetImagesListByStorageP
      * @return <code>true</code> if the user has permissions on the storage pool, <code>false</code> if not.
      */
     private boolean doesUserHavePermissionsOnStoragePool() {
-        storage_pool pool =
+        StoragePool pool =
                 getDbFacade().getStoragePoolDao().get(getStoragePoolId(),
                         getUserID(),
                         getParameters().isFiltered());

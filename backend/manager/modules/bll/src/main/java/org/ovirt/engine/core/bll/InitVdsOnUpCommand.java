@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -108,7 +108,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
     private void processStoragePoolStatus() {
         if (getVds().getSpmStatus() != VdsSpmStatus.None) {
-            storage_pool pool = DbFacade.getInstance().getStoragePoolDao().get(getVds().getStoragePoolId());
+            StoragePool pool = DbFacade.getInstance().getStoragePoolDao().get(getVds().getStoragePoolId());
             if (pool != null && pool.getstatus() == StoragePoolStatus.NotOperational) {
                 pool.setstatus(StoragePoolStatus.Problematic);
                 DbFacade.getInstance().getStoragePoolDao().updateStatus(pool.getId(), pool.getstatus());
@@ -173,7 +173,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
     private EventResult runConnectHostToPoolEvent(final Guid storagePoolId, final VDS vds) {
         EventResult result = new EventResult(true, EventType.VDSCONNECTTOPOOL);
-        storage_pool storagePool = getStoragePoolDAO().get(storagePoolId);
+        StoragePool storagePool = getStoragePoolDAO().get(storagePoolId);
         Guid masterDomainIdFromDb = getStorageDomainDAO().getMasterStorageDomainIdForPool(storagePoolId);
         try {
             runVdsCommand(VDSCommandType.ConnectStoragePool,

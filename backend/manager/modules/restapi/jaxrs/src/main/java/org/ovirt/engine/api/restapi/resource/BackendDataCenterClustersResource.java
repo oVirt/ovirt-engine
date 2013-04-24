@@ -12,7 +12,7 @@ import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
 import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -49,7 +49,7 @@ public class BackendDataCenterClustersResource extends BackendClustersResource {
         DataCenter dataCenter = new DataCenter();
         dataCenter.setId(dataCenterId.toString());
         cluster.setDataCenter(dataCenter);
-        storage_pool pool = getStoragePool(cluster, this);
+        StoragePool pool = getStoragePool(cluster, this);
         VDSGroup entity = map(cluster, map(pool));
         return performCreate(VdcActionType.AddVdsGroup,
                 new VdsGroupOperationParameters(entity),

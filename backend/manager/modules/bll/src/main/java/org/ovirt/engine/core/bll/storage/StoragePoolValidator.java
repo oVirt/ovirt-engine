@@ -6,7 +6,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -17,9 +17,9 @@ import org.ovirt.engine.core.dao.VdsGroupDAO;
  * CanDoAction validation methods for storage pool handling
  */
 public class StoragePoolValidator {
-    private storage_pool storagePool;
+    private StoragePool storagePool;
 
-    public StoragePoolValidator(storage_pool storagePool) {
+    public StoragePoolValidator(StoragePool storagePool) {
         this.storagePool = storagePool;
     }
 

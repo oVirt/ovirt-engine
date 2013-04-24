@@ -35,7 +35,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
@@ -228,7 +228,7 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void storagePoolUpEvent(storage_pool storagePool, boolean isNewSpm) {
+    public void storagePoolUpEvent(StoragePool storagePool, boolean isNewSpm) {
         if (isNewSpm) {
             AsyncTaskManager.getInstance().StopStoragePoolTasks(storagePool);
         } else {

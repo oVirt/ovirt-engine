@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -115,12 +115,12 @@ public class DataCenterStorageListModel extends SearchableListModel
     }
 
     @Override
-    public storage_pool getEntity()
+    public StoragePool getEntity()
     {
-        return (storage_pool) super.getEntity();
+        return (StoragePool) super.getEntity();
     }
 
-    public void setEntity(storage_pool value)
+    public void setEntity(StoragePool value)
     {
         super.setEntity(value);
     }

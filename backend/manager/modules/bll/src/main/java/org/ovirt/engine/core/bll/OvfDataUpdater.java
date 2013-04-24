@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
@@ -83,8 +83,8 @@ public class OvfDataUpdater {
     public void ovfUpdate_timer() {
         itemsCountPerUpdate = reloadConfigValue();
         log.info("Attempting to update VMs/Templates Ovf.");
-        List<storage_pool> storagePools = getStoragePoolDao().getAllByStatus(StoragePoolStatus.Up);
-        for (storage_pool pool : storagePools) {
+        List<StoragePool> storagePools = getStoragePoolDao().getAllByStatus(StoragePoolStatus.Up);
+        for (StoragePool pool : storagePools) {
             try {
                 log.infoFormat("Attempting to update VM OVFs in Data Center {0}",
                         pool.getname());

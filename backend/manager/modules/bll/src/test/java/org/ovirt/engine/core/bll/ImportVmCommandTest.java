@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -80,7 +80,7 @@ public class ImportVmCommandTest {
         doReturn(createStorageDomain()).when(cmd).getStorageDomain(any(Guid.class));
         doReturn(Collections.<VM> singletonList(createVM())).when(cmd).getVmsFromExportDomain();
         doReturn(new VmTemplate()).when(cmd).getVmTemplate();
-        doReturn(new storage_pool()).when(cmd).getStoragePool();
+        doReturn(new StoragePool()).when(cmd).getStoragePool();
 
         return cmd;
     }

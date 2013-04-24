@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
@@ -23,11 +23,11 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @SuppressWarnings("synthetic-access")
 public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements StoragePoolDAO {
 
-    private static final class StoragePoolRawMapper implements RowMapper<storage_pool> {
+    private static final class StoragePoolRawMapper implements RowMapper<StoragePool> {
         @Override
-        public storage_pool mapRow(ResultSet rs, int rowNum)
+        public StoragePool mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
-            storage_pool entity = new storage_pool();
+            StoragePool entity = new StoragePool();
             entity.setdescription(rs.getString("description"));
             entity.setId(Guid.createGuidFromString(rs.getString("id")));
             entity.setname(rs.getString("name"));
@@ -46,40 +46,40 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
         }
     }
 
-    private static final RowMapper<storage_pool> mapper = new StoragePoolRawMapper();
+    private static final RowMapper<StoragePool> mapper = new StoragePoolRawMapper();
 
     private static StorageFormatType getStorageFormatTypeForPool(ResultSet rs) throws SQLException {
         return StorageFormatType.forValue(rs.getString("storage_pool_format_type"));
     }
 
     @Override
-    public storage_pool get(Guid id) {
+    public StoragePool get(Guid id) {
         return get(id, null, false);
     }
 
     @Override
-    public storage_pool get(Guid id, Guid userID, boolean isFiltered) {
+    public StoragePool get(Guid id, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
         return getCallsHandler().executeRead("Getstorage_poolByid", mapper, parameterSource);
     }
 
     @Override
-    public storage_pool getByName(String name) {
+    public StoragePool getByName(String name) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("name", name);
         return getCallsHandler().executeRead("Getstorage_poolByName", mapper, parameterSource);
     }
 
     @Override
-    public storage_pool getForVds(Guid vds) {
+    public StoragePool getForVds(Guid vds) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vdsId", vds);
         return getCallsHandler().executeRead("Getstorage_poolsByVdsId", mapper, parameterSource);
     }
 
     @Override
-    public storage_pool getForVdsGroup(Guid id) {
+    public StoragePool getForVdsGroup(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("clusterId", id);
         return getCallsHandler().executeRead("Getstorage_poolsByVdsGroupId", mapper,
@@ -87,12 +87,12 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
     }
 
     @Override
-    public List<storage_pool> getAll() {
+    public List<StoragePool> getAll() {
         return getAll(null, false);
     }
 
     @Override
-    public List<storage_pool> getAllByStatus(StoragePoolStatus status) {
+    public List<StoragePool> getAllByStatus(StoragePoolStatus status) {
         MapSqlParameterSource parameterSource =
                 getCustomMapSqlParameterSource().addValue("status", status.getValue());
 
@@ -100,21 +100,21 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
     }
 
     @Override
-    public List<storage_pool> getAll(Guid userID, boolean isFiltered) {
+    public List<StoragePool> getAll(Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource =
                 getCustomMapSqlParameterSource().addValue("user_id", userID).addValue("is_filtered", isFiltered);
         return getCallsHandler().executeReadList("GetAllFromstorage_pool", mapper, parameterSource);
     }
 
     @Override
-    public List<storage_pool> getAllOfType(StorageType type) {
+    public List<StoragePool> getAllOfType(StorageType type) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("storage_pool_type", type);
         return getCallsHandler().executeReadList("Getstorage_poolsByType", mapper, parameterSource);
     }
 
     @Override
-    public List<storage_pool> getAllForStorageDomain(Guid id) {
+    public List<StoragePool> getAllForStorageDomain(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("storage_domain_id", id);
         return getCallsHandler().executeReadList("Getstorage_poolsByStorageDomainId", mapper,
@@ -122,12 +122,12 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
     }
 
     @Override
-    public List<storage_pool> getAllWithQuery(String query) {
+    public List<StoragePool> getAllWithQuery(String query) {
         return jdbcTemplate.query(query, mapper);
     }
 
     @Override
-    public void save(storage_pool pool) {
+    public void save(StoragePool pool) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("description", pool.getdescription())
                 .addValue("id", pool.getId())
@@ -146,7 +146,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
     }
 
     @Override
-    public void update(storage_pool pool) {
+    public void update(StoragePool pool) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("description", pool.getdescription())
                 .addValue("id", pool.getId())
@@ -166,7 +166,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
     }
 
     @Override
-    public void updatePartial(storage_pool pool) {
+    public void updatePartial(StoragePool pool) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("description", pool.getdescription())
                 .addValue("id", pool.getId())
@@ -199,7 +199,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
     }
 
     @Override
-    public List<storage_pool> getDataCentersWithPermittedActionOnClusters(Guid userId, ActionGroup actionGroup,
+    public List<StoragePool> getDataCentersWithPermittedActionOnClusters(Guid userId, ActionGroup actionGroup,
             boolean supportsVirtService, boolean supportsGlusterService) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("user_id", userId)
@@ -220,7 +220,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
     }
 
     @Override
-    public List<storage_pool> getDataCentersByClusterService(boolean supportsVirtService, boolean supportsGlusterService) {
+    public List<StoragePool> getDataCentersByClusterService(boolean supportsVirtService, boolean supportsGlusterService) {
         final MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
         parameterSource
             .addValue("supports_virt_service", supportsVirtService)

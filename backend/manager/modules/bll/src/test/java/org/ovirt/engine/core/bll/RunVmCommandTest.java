@@ -41,7 +41,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -315,7 +315,7 @@ public class RunVmCommandTest {
     }
 
     protected void mockVmRunHandler() {
-        storage_pool sp = new storage_pool();
+        StoragePool sp = new StoragePool();
         sp.setstatus(StoragePoolStatus.Up);
         when(spDao.get(any(Guid.class))).thenReturn(sp);
         doReturn(spDao).when(vmRunHandler).getStoragePoolDAO();

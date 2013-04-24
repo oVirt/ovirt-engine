@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.GetAvailableStoragePoolVersionsParameters;
 import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -23,7 +23,7 @@ import static org.ovirt.engine.api.restapi.resource.BackendDataCentersResourceTe
 import static org.ovirt.engine.api.restapi.resource.BackendDataCentersResourceTest.verifyModelSpecific;
 
 public class BackendDataCenterResourceTest
-        extends AbstractBackendSubResourceTest<DataCenter, storage_pool, BackendDataCenterResource> {
+        extends AbstractBackendSubResourceTest<DataCenter, StoragePool, BackendDataCenterResource> {
 
     public BackendDataCenterResourceTest() {
         super(new BackendDataCenterResource(GUIDS[0].toString(), new BackendDataCentersResource()));
@@ -163,8 +163,8 @@ public class BackendDataCenterResourceTest
     }
 
     @Override
-    protected storage_pool getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(storage_pool.class), index);
+    protected StoragePool getEntity(int index) {
+        return setUpEntityExpectations(control.createMock(StoragePool.class), index);
     }
 
     protected List<Version> getVersions() {

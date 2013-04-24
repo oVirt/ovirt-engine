@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -1186,10 +1186,10 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     private void VmModel_DataCenter_ItemsChanged()
     {
         UnitVmModel model = (UnitVmModel) getWindow();
-        storage_pool dataCenter = null;
+        StoragePool dataCenter = null;
         for (Object item : model.getDataCenter().getItems())
         {
-            storage_pool a = (storage_pool) item;
+            StoragePool a = (StoragePool) item;
 
             if (model.getIsNew())
             {
@@ -1220,8 +1220,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 public void onSuccess(Object model, Object result)
                 {
                     UserPortalListModel userPortalListModel = (UserPortalListModel) model;
-                    ArrayList<storage_pool> list =
-                            new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { (storage_pool) result }));
+                    ArrayList<StoragePool> list =
+                            new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { (StoragePool) result }));
                     UnitVmModel unitModel = (UnitVmModel) userPortalListModel.getWindow();
                     unitModel.getDataCenter().setItems(list);
                     unitModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(list));

@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -42,9 +42,9 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
                         public void onSuccess(Object target, Object returnValue) {
 
                             UnitVmModel model = (UnitVmModel) target;
-                            storage_pool dataCenter = (storage_pool) returnValue;
+                            StoragePool dataCenter = (StoragePool) returnValue;
                             model.SetDataCenter(model,
-                                    new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { dataCenter })));
+                                    new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dataCenter })));
                             model.getDataCenter().setIsChangable(false);
 
                         }
@@ -59,7 +59,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
     @Override
     public void DataCenter_SelectedItemChanged()
     {
-        storage_pool dataCenter = (storage_pool) getModel().getDataCenter().getSelectedItem();
+        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
 
         getModel().setIsHostAvailable(dataCenter.getstorage_pool_type() != StorageType.LOCALFS);
 

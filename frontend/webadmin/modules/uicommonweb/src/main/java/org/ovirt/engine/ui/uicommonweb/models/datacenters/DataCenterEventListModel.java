@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.uicommonweb.models.events.SubTabEventListModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -8,12 +8,12 @@ public class DataCenterEventListModel extends SubTabEventListModel
 {
 
     @Override
-    public storage_pool getEntity()
+    public StoragePool getEntity()
     {
-        return (storage_pool) ((super.getEntity() instanceof storage_pool) ? super.getEntity() : null);
+        return (StoragePool) ((super.getEntity() instanceof StoragePool) ? super.getEntity() : null);
     }
 
-    public void setEntity(storage_pool value)
+    public void setEntity(StoragePool value)
     {
         super.setEntity(value);
     }
