@@ -6,13 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
-import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
-import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.RunVmParams;
@@ -62,18 +59,9 @@ public class VmRunHandler {
     public boolean canRunVm(VM vm, ArrayList<String> message, RunVmParams runParams,
             VdsSelector vdsSelector, SnapshotsValidator snapshotsValidator) {
         boolean retValue = true;
-
         List<Disk> vmDisks = getDiskDao().getAllForVm(vm.getId(), true);
         List<DiskImage> vmImages = ImagesHandler.filterImageDisks(vmDisks, true, false);
         if (retValue && !vmImages.isEmpty()) {
-            if (retValue) {
-                retValue = performStorageDomainChecks(vm, message, runParams, vmImages);
-            }
-
-            if (retValue) {
-                retValue = performImageChecksForRunningVm(message, vmImages);
-            }
-
             // Check if iso and floppy path exists
             if (retValue && !vm.isAutoStartup()
                     && !validateIsoPath(getIsoDomainListSyncronizer()
@@ -118,7 +106,6 @@ public class VmRunHandler {
                 }
             }
         }
-
         retValue = retValue == false ? retValue : vdsSelector.canFindVdsToRunOn(message, false);
 
         /**
@@ -185,48 +172,6 @@ public class VmRunHandler {
             }
         }
         return map;
-    }
-
-    /**
-     * Check storage domains. Storage domain status and disk space are checked only for non-HA VMs.
-     *
-     * @param vm
-     *            The VM to run
-     * @param message
-     *            The error messages to append to
-     * @param runParams
-     *            The parameters for runnign the VM
-     * @param vmImages
-     *            The VM's image disks
-     * @return <code>true</code> if the VM can be run, <code>false</code> if not
-     */
-    protected boolean performStorageDomainChecks(VM vm,
-            List<String> message,
-            RunVmParams runParams,
-            List<DiskImage> vmImages) {
-        if (!vm.isAutoStartup() || !runParams.getIsInternal()) {
-            Set<Guid> storageDomainIds = ImagesHandler.getAllStorageIdsForImageIds(vmImages);
-            MultipleStorageDomainsValidator storageDomainValidator =
-                    new MultipleStorageDomainsValidator(vm.getStoragePoolId(), storageDomainIds);
-            if (!validate(storageDomainValidator.allDomainsExistAndActive(), message)) {
-                return false;
-            }
-
-            if (!vm.isAutoStartup()
-                    && !validate(storageDomainValidator.allDomainsWithinThresholds(), message)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Check isValid only if VM is not HA VM
-     */
-    protected boolean performImageChecksForRunningVm(List<String> message, List<DiskImage> vmDisks) {
-        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(vmDisks);
-        return validate(diskImagesValidator.diskImagesNotLocked(), message);
     }
 
     @SuppressWarnings("unchecked")

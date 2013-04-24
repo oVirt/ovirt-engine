@@ -326,20 +326,9 @@ public class RunVmCommandTest {
         sp.setstatus(StoragePoolStatus.Up);
         when(spDao.get(any(Guid.class))).thenReturn(sp);
         doReturn(spDao).when(vmRunHandler).getStoragePoolDAO();
-
         doReturn(vmRunHandler).when(command).getVmRunHandler();
-
-        doReturn(true).when(vmRunHandler).performStorageDomainChecks(any(VM.class),
-                anyListOf(String.class),
-                any(RunVmParams.class),
-                anyListOf(DiskImage.class));
-
         doNothing().when(isoDomainListSyncronizer).init();
         doReturn(isoDomainListSyncronizer).when(vmRunHandler).getIsoDomainListSyncronizer();
-
-        doReturn(true).when(vmRunHandler).performImageChecksForRunningVm(
-                anyListOf(String.class),
-                anyListOf(DiskImage.class));
     }
 
     @Test
@@ -469,6 +458,12 @@ public class RunVmCommandTest {
         sp.setstatus(StoragePoolStatus.Up);
         when(spDao.get(any(Guid.class))).thenReturn(sp);
         doReturn(spDao).when(command).getStoragePoolDAO();
+        when(runVmValidator.validateImagesForRunVm(Matchers.anyListOf(String.class),
+                Matchers.anyListOf(DiskImage.class))).thenReturn(true);
+        when(runVmValidator.validateStorageDomains(any(VM.class),
+                Matchers.anyListOf(String.class),
+                anyBoolean(),
+                Matchers.anyListOf(DiskImage.class))).thenReturn(true);
         doReturn(runVmValidator).when(command).getRunVmValidator();
         return runVmValidator;
     }

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.validator;
 
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.IsoDomainListSyncronizer;
@@ -65,6 +66,48 @@ public class RunVmValidator {
 
     }
 
+    /**
+     * Check storage domains. Storage domain status and disk space are checked only for non-HA VMs.
+     *
+     * @param vm
+     *            The VM to run
+     * @param message
+     *            The error messages to append to
+     * @param isInternalExecution
+     *            Command is internal?
+     * @param vmImages
+     *            The VM's image disks
+     * @return <code>true</code> if the VM can be run, <code>false</code> if not
+     */
+    public boolean validateStorageDomains(VM vm,
+            List<String> message,
+            boolean isInternalExecution,
+            List<DiskImage> vmImages) {
+        if (!vm.isAutoStartup() || !isInternalExecution) {
+            Set<Guid> storageDomainIds = ImagesHandler.getAllStorageIdsForImageIds(vmImages);
+            MultipleStorageDomainsValidator storageDomainValidator =
+                    new MultipleStorageDomainsValidator(vm.getStoragePoolId(), storageDomainIds);
+            if (!validate(storageDomainValidator.allDomainsExistAndActive(), message)) {
+                return false;
+            }
+
+            if (!vm.isAutoStartup()
+                    && !validate(storageDomainValidator.allDomainsWithinThresholds(), message)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Check isValid only if VM is not HA VM
+     */
+    public boolean validateImagesForRunVm(List<String> message, List<DiskImage> vmDisks) {
+        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(vmDisks);
+        return validate(diskImagesValidator.diskImagesNotLocked(), message);
+    }
+
     protected VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
         return DbFacade.getInstance().getVmNetworkInterfaceDao();
     }
@@ -77,13 +120,26 @@ public class RunVmValidator {
         return VmPropertiesUtils.getInstance();
     }
 
+    protected boolean validate(ValidationResult validationResult, List<String> message) {
+        if (!validationResult.isValid()) {
+            message.add(validationResult.getMessage().name());
+            if (validationResult.getVariableReplacements() != null) {
+                for (String variableReplacement : validationResult.getVariableReplacements()) {
+                    message.add(variableReplacement);
+                }
+            }
+        }
+        return validationResult.isValid();
+    }
+
     // Compatibility method for static VmPoolCommandBase.canRunPoolVm
     // who uses the same validation as runVmCommand
     public boolean canRunVm(VM vm,
             List<String> messages,
             List<Disk> vmDisks,
             BootSequence bootSequence,
-            StoragePool storagePool) {
+            StoragePool storagePool,
+            boolean isInternalExecution) {
         if (!validateVmProperties(vm, messages)) {
             return false;
         }
@@ -107,6 +163,12 @@ public class RunVmValidator {
             result = new StoragePoolValidator(storagePool).isUp();
             if (!result.isValid()) {
                 messages.add(result.getMessage().toString());
+                return false;
+            }
+            if (!validateStorageDomains(vm, messages, isInternalExecution, images)) {
+                return false;
+            }
+            if (!validateImagesForRunVm(messages, images)) {
                 return false;
             }
         }

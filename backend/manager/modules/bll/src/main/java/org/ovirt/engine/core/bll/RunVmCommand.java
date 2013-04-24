@@ -690,7 +690,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                         validate(getVmValidator(vm).vmNotLocked()) &&
                         validate(getSnapshotsValidator().vmNotDuringSnapshot(vm.getId())) &&
                         (vmImages.isEmpty() ||
-                        validate(new StoragePoolValidator(getStoragePoolDAO().get(vm.getStoragePoolId())).isUp())) &&
+                        (validate(new StoragePoolValidator(getStoragePoolDAO().get(vm.getStoragePoolId())).isUp())
+                                &&
+                        getRunVmValidator().validateStorageDomains(vm, messages, isInternalExecution(), vmImages) &&
+                        getRunVmValidator().validateImagesForRunVm(messages, vmImages))) &&
                         canRunVm(vm) &&
                         validateNetworkInterfaces();
 

@@ -235,7 +235,8 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                 messages,
                 getDiskDao().getAllForVm(vm.getId(), true),
                 runVmParams.getBootSequence(),
-                fetchStoragePool(vm.getStoragePoolId()))
+                fetchStoragePool(vm.getStoragePoolId()),
+                false)
                 &&
                 VmRunHandler.getInstance().canRunVm(vm,
                         messages,
