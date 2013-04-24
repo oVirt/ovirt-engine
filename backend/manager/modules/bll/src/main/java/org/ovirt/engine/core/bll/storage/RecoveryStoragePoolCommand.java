@@ -89,7 +89,6 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<R
     protected void executeCommand() {
         if (StorageHelperDirector.getInstance().getItem(getStorageDomain().getStorageType())
                 .connectStorageToDomainByVdsId(getNewMaster(false), getVds().getId())) {
-            getParameters().setStorageDomainId(getStorageDomainId().getValue());
 
             ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(getParameters().getStoragePoolId(),
                     _newMasterStorageDomainId,
@@ -98,6 +97,7 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<R
                     new Callable<EventResult>() {
                         @Override
                         public EventResult call() {
+                            getParameters().setStorageDomainId(getMasterDomainIdFromDb());
                             StoragePoolIsoMap domainPoolMap =
                                     new StoragePoolIsoMap(getParameters()
                                             .getNewMasterDomainId(),
