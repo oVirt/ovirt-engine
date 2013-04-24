@@ -35,7 +35,6 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.utils.ListUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
@@ -78,7 +77,7 @@ public final class ImagesHandler {
         for (StorageDomain storageDomain : domains) {
             StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
             if (validator.isDomainExistAndActive().isValid() && validator.domainIsValidDestination().isValid()
-                    && (notCheckSize || isStorageDomainWithinThresholds(storageDomain, null, false))) {
+                    && (notCheckSize || validator.isDomainWithinThresholds().isValid())) {
                 storageDomainsMap.put(storageDomain.getId(), storageDomain);
             }
         }
@@ -460,39 +459,6 @@ public final class ImagesHandler {
             domainsIds.addAll(image.getStorageIds());
         }
         return domainsIds;
-    }
-
-    /**
-     * Returns whether the storage domain is within the threshold
-     *
-     * @param storageDomain
-     *            - The storage domain to be checked.
-     * @param messages
-     *            - Add a message to the messages list.
-     * @param addCanDoMessage
-     *            - Indicate whether to add a CDA message for failure
-     * @return <code>boolean</code> value which indicates if the storage domain has enough free space.
-     */
-    private static boolean isStorageDomainWithinThresholds(StorageDomain storageDomain,
-            List<String> messages,
-            boolean addCanDoMessage) {
-        ValidationResult validationResult = new StorageDomainValidator(storageDomain).isDomainWithinThresholds();
-        if (addCanDoMessage) {
-            validate(validationResult, messages);
-        }
-        return validationResult.isValid();
-    }
-
-    private static boolean validate(ValidationResult validationResult, List<String> messages) {
-        if (!validationResult.isValid()) {
-            ListUtils.nullSafeAdd(messages, validationResult.getMessage().name());
-            if (validationResult.getVariableReplacements() != null) {
-                for (String variableReplacement : validationResult.getVariableReplacements()) {
-                    messages.add(variableReplacement);
-                }
-            }
-        }
-        return validationResult.isValid();
     }
 
     public static void fillImagesBySnapshots(VM vm) {
