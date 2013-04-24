@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.gluster;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,10 +28,11 @@ public class GlusterHooksListReturnForXmlRpc extends StatusReturnForXmlRpc {
         }
 
         Object[] hooksArr = (Object[]) innerMap.get(HOOKS_LIST);
+        hooks = new ArrayList<GlusterHookEntity>();
 
         if (hooksArr != null) {
             for (Object hookMap : hooksArr) {
-                this.hooks.add(getHook((Map<String, Object>)hookMap));
+                hooks.add(getHook((Map<String, Object>)hookMap));
             }
         }
     }
