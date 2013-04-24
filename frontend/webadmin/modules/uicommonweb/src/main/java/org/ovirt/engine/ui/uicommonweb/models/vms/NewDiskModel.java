@@ -10,9 +10,9 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -127,7 +127,7 @@ public class NewDiskModel extends AbstractDiskModel
         }
         else {
             getIsWipeAfterDelete().setIsChangable(true);
-            getIsWipeAfterDelete().setEntity((Boolean) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.SANWipeAfterDelete));
+            getIsWipeAfterDelete().setEntity(AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.SANWipeAfterDelete));
         }
     }
 
@@ -179,7 +179,7 @@ public class NewDiskModel extends AbstractDiskModel
         AddDiskParameters parameters = new AddDiskParameters(getVmId(), getDisk());
         if ((Boolean) getIsInternal().getEntity()) {
             StorageDomain storageDomain = (StorageDomain) getStorageDomain().getSelectedItem();
-            ((AddDiskParameters) parameters).setStorageDomainId(storageDomain.getId());
+            parameters.setStorageDomainId(storageDomain.getId());
         }
 
         Frontend.RunAction(VdcActionType.AddDisk, parameters, new IFrontendActionAsyncCallback() {
@@ -223,7 +223,7 @@ public class NewDiskModel extends AbstractDiskModel
                 : ((StorageDomain) getStorageDomain().getSelectedItem()).getStorageType();
         IntegerValidation sizeValidation = new IntegerValidation();
         sizeValidation.setMinimum(1);
-        if (storageType == StorageType.ISCSI || storageType == StorageType.FCP) {
+        if (storageType.isBlockDomain()) {
             sizeValidation.setMaximum((Integer) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.MaxBlockDiskSize));
         }
         getSize().validateEntity(new IValidation[] { new NotEmptyValidation(), sizeValidation });

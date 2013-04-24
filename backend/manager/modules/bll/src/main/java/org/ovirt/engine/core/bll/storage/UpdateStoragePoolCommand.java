@@ -108,8 +108,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         }
 
         StorageType spType = storagePool.getstorage_pool_type();
-        if (targetFormat == StorageFormatType.V2
-                && spType != StorageType.ISCSI && spType != StorageType.FCP) {
+        if (targetFormat == StorageFormatType.V2 && !spType.isBlockDomain()) {
             // There is no format V2 for domains that aren't ISCSI/FCP
             return;
         }

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -30,8 +29,7 @@ public class GetVgListQuery<P extends VdsIdParametersBase> extends QueriesComman
                 new Predicate<StorageDomain>() {
                     @Override
                     public boolean eval(StorageDomain storageDomain) {
-                        return storageDomain.getStorageType() == StorageType.ISCSI
-                                || storageDomain.getStorageType() == StorageType.FCP;
+                        return storageDomain.getStorageType().isBlockDomain();
                     }
                 });
 

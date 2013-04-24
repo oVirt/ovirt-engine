@@ -968,15 +968,9 @@ public final class AsyncDataProvider {
     }
 
     public static VolumeFormat GetDiskVolumeFormat(VolumeType volumeType, StorageType storageType) {
-        switch (storageType) {
-        case NFS:
-        case LOCALFS:
-        case POSIXFS:
-        case GLUSTERFS:
+        if (storageType.isFileDomain()) {
             return VolumeFormat.RAW;
-
-        case ISCSI:
-        case FCP:
+        } else if (storageType.isBlockDomain()) {
             switch (volumeType) {
             case Sparse:
                 return VolumeFormat.COW;
@@ -987,8 +981,7 @@ public final class AsyncDataProvider {
             default:
                 return VolumeFormat.Unassigned;
             }
-
-        default:
+        } else {
             return VolumeFormat.Unassigned;
         }
     }

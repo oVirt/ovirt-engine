@@ -10,9 +10,9 @@ import org.ovirt.engine.api.model.StorageDomainType;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.model.VolumeGroup;
 import org.ovirt.engine.api.restapi.model.StorageFormat;
+import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.api.restapi.utils.GuidUtils;
 
 public class StorageDomainMapper {
 
@@ -120,8 +120,7 @@ public class StorageDomainMapper {
         }
         model.setStorage(new Storage());
         model.getStorage().setType(map(entity.getStorageType(), null));
-        if (entity.getStorageType() == org.ovirt.engine.core.common.businessentities.StorageType.ISCSI ||
-            entity.getStorageType() == org.ovirt.engine.core.common.businessentities.StorageType.FCP) {
+        if (entity.getStorageType().isBlockDomain()) {
             model.getStorage().setVolumeGroup(new VolumeGroup());
             model.getStorage().getVolumeGroup().setId(entity.getStorage());
         }

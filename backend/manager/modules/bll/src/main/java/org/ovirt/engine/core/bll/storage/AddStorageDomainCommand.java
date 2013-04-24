@@ -7,18 +7,18 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.Backend;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.SANState;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.StorageFormatType;
-import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.vdscommands.CreateStorageDomainVDSCommandParameters;
@@ -174,7 +174,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         StorageType storageType = getStorageDomain().getStorageType();
         StorageDomainType storageDomainFunction = getStorageDomain().getStorageDomainType();
 
-        boolean isBlockStorage = storageType == StorageType.ISCSI || storageType == StorageType.FCP;
+        boolean isBlockStorage = storageType.isBlockDomain();
         boolean isDataStorageDomain = storageDomainFunction == StorageDomainType.Data;
 
         // V2 is applicable only for block data storage domains

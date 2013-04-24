@@ -681,12 +681,12 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                 {
                     formats.add(StorageFormatType.V1);
                 }
-                else if ((getSelectedItem().getType() == StorageType.ISCSI || getSelectedItem().getType() == StorageType.FCP)
+                else if (getSelectedItem().getType().isBlockDomain()
                         && dataCenter.getcompatibility_version().compareTo(Version.v3_0) < 0)
                 {
                     formats.add(StorageFormatType.V1);
                 }
-                else if ((getSelectedItem().getType() == StorageType.ISCSI || getSelectedItem().getType() == StorageType.FCP)
+                else if (getSelectedItem().getType().isBlockDomain()
                         && dataCenter.getcompatibility_version().compareTo(Version.v3_0) == 0)
                 {
                     formats.add(StorageFormatType.V2);
