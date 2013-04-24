@@ -295,8 +295,8 @@ install_setup:
 	install -m 644 packaging/fedora/setup/add_fn_db_get_async_tasks_function.sql $(DESTDIR)$(DATA_DIR)/scripts
 
 	# Install man pages
-	install -m 644 packaging/engine-setup.8 $(DESTDIR)$(MAN_DIR)/man8/
-	install -m 644 packaging/engine-upgrade.8 $(DESTDIR)$(MAN_DIR)/man8/
+	install -m 644 packaging/man/engine-setup.8 $(DESTDIR)$(MAN_DIR)/man8/
+	install -m 644 packaging/man/engine-upgrade.8 $(DESTDIR)$(MAN_DIR)/man8/
 
 	# Example Plugin:
 	install -m 644 packaging/fedora/setup/plugins/example_plugin_000.py $(DESTDIR)$(DATA_DIR)/scripts/plugins
@@ -362,7 +362,7 @@ install_config:
 	install -m 750 backend/manager/tools/src/main/shell/engine-encrypt-passwd.sh $(DESTDIR)$(DATA_DIR)/bin
 
 	# Install man pages
-	install -m 644 packaging/engine-manage-domains.8 $(DESTDIR)$(MAN_DIR)/man8/
+	install -m 644 packaging/man/engine-manage-domains.8 $(DESTDIR)$(MAN_DIR)/man8/
 
 install_sysprep:
 	@echo "*** Deploying sysperp"
