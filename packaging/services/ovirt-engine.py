@@ -276,7 +276,7 @@ class EngineDaemon(service.Daemon):
             template=os.path.join(
                 self._config.getString('ENGINE_USR'),
                 'services',
-                'engine-service-logging.properties.in'
+                'ovirt-engine-logging.properties.in'
             ),
             dir=self._config.getString('ENGINE_TMP'),
         )
@@ -285,7 +285,7 @@ class EngineDaemon(service.Daemon):
             template=os.path.join(
                 self._config.getString('ENGINE_USR'),
                 'services',
-                'engine-service.xml.in',
+                'ovirt-engine.xml.in',
             ),
             dir=self._config.getString('ENGINE_TMP'),
         )
@@ -305,7 +305,7 @@ class EngineDaemon(service.Daemon):
         # Add arguments for the java virtual machine:
         self._engineArgs.extend([
             # The name or the process, as displayed by ps:
-            'engine-service',
+            'ovirt-engine',
 
             # Virtual machine options:
             '-server',
@@ -356,7 +356,7 @@ class EngineDaemon(service.Daemon):
             '-Dorg.jboss.resolver.warning=true',
             '-Djboss.modules.system.pkgs=org.jboss.byteman',
             '-Djboss.modules.write-indexes=false',
-            '-Djboss.server.default.config=engine-service',
+            '-Djboss.server.default.config=ovirt-engine',
             '-Djboss.home.dir=%s' % self._config.getString(
                 'JBOSS_HOME'
             ),

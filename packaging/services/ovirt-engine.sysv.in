@@ -34,7 +34,7 @@ case "$1" in
 		touch "${PIDFILE}"
 		chown "${USER}" "${PIDFILE}"
 		daemon --user "${USER}" --pidfile="${PIDFILE}" \
-			/usr/share/ovirt-engine/services/engine-service.py \
+			/usr/share/ovirt-engine/services/ovirt-engine.py \
 				--pidfile="${PIDFILE}" \
 				--background \
 				${OVIRT_ENGINE_EXTRA_ARGS} \
