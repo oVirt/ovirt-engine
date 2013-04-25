@@ -563,7 +563,7 @@ public class RoleListModel extends ListWithDetailsModel
             Frontend.RunAction(VdcActionType.AddRoleWithActionGroups, tempVar,
                     new IFrontendActionAsyncCallback() {
                         @Override
-                        public void Executed(FrontendActionAsyncResult result) {
+                        public void executed(FrontendActionAsyncResult result) {
 
                             RoleListModel localModel = (RoleListModel) result.getState();
                             localModel.PostOnSaveNew(result.getReturnValue());
@@ -580,7 +580,7 @@ public class RoleListModel extends ListWithDetailsModel
             Frontend.RunAction(VdcActionType.UpdateRole, new RolesOperationsParameters(role),
                     new IFrontendActionAsyncCallback() {
                         @Override
-                        public void Executed(FrontendActionAsyncResult result) {
+                        public void executed(FrontendActionAsyncResult result) {
 
                             RoleListModel roleListModel = (RoleListModel) result.getState();
                             VdcReturnValueBase retVal = result.getReturnValue();

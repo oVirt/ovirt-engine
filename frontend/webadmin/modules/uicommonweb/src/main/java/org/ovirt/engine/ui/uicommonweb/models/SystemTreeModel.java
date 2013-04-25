@@ -283,7 +283,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                                         Frontend.RunMultipleQueries(queryTypeList, queryParamList, new IFrontendMultipleQueryAsyncCallback() {
 
                                             @Override
-                                            public void Executed(FrontendMultipleQueryAsyncResult result) {
+                                            public void executed(FrontendMultipleQueryAsyncResult result) {
 
                                                 systemTreeModel.setNetworkMap(new HashMap<Guid, List<Network>>());
 
@@ -319,7 +319,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                                                     VdcQueryReturnValue value = new VdcQueryReturnValue();
                                                     value.setSucceeded(true);
                                                     dummyResult.getReturnValues().add(value);
-                                                    SystemTreeModel.this.Executed(dummyResult);
+                                                    SystemTreeModel.this.executed(dummyResult);
                                                 } else {
                                                     Frontend.RunMultipleQueries(queryTypeList, queryParamList, systemTreeModel);
                                                 }
@@ -384,7 +384,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
     }
 
     @Override
-    public void Executed(FrontendMultipleQueryAsyncResult result)
+    public void executed(FrontendMultipleQueryAsyncResult result)
     {
         ArrayList<StorageDomain> storages = null;
         int count = -1;

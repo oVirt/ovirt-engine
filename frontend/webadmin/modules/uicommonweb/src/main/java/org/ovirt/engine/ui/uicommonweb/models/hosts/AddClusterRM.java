@@ -104,7 +104,7 @@ public class AddClusterRM extends IEnlistmentNotification {
                 Frontend.RunAction(VdcActionType.AddVdsGroup, parameters,
                         new IFrontendActionAsyncCallback() {
                             @Override
-                            public void Executed(FrontendActionAsyncResult result) {
+                            public void executed(FrontendActionAsyncResult result) {
 
                                 VdcReturnValueBase returnValue = result.getReturnValue();
 

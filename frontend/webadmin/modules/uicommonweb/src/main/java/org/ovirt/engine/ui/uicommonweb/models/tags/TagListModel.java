@@ -459,7 +459,7 @@ public class TagListModel extends SearchableListModel
         Frontend.RunAction(VdcActionType.RemoveTag, new TagsActionParametersBase(getSelectedItem().getId()),
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
 
                         TagListModel tagListModel = (TagListModel) result.getState();
                         VdcReturnValueBase returnVal = result.getReturnValue();
@@ -552,7 +552,7 @@ public class TagListModel extends SearchableListModel
                 new TagsOperationParameters(tag),
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
 
                         TagListModel localModel = (TagListModel) result.getState();
                         localModel.PostOnSave(result.getReturnValue());

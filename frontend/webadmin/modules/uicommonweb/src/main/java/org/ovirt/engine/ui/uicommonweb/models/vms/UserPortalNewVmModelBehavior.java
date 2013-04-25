@@ -97,7 +97,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
     }
 
     @Override
-    public void Executed(FrontendMultipleQueryAsyncResult result)
+    public void executed(FrontendMultipleQueryAsyncResult result)
     {
         List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
         ArrayList<VDSGroup> clusters =

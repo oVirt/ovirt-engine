@@ -308,7 +308,7 @@ public class ClusterGeneralModel extends EntityModel {
                 new IFrontendMultipleActionAsyncCallback() {
 
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
                         hostsModel.StopProgress();
                         boolean isAllCanDoPassed = true;
                         for (VdcReturnValueBase returnValueBase : result.getReturnValue())

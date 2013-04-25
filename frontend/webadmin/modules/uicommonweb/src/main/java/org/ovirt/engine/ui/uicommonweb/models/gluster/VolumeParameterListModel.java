@@ -182,7 +182,7 @@ public class VolumeParameterListModel extends SearchableListModel {
                 new IFrontendActionAsyncCallback() {
 
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
                         VolumeParameterListModel localModel = (VolumeParameterListModel) result.getState();
                         localModel.postOnSetParameter(result.getReturnValue());
                     }
@@ -333,7 +333,7 @@ public class VolumeParameterListModel extends SearchableListModel {
                 new IFrontendActionAsyncCallback() {
 
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
                         localModel.StopProgress();
                         cancel();
@@ -387,7 +387,7 @@ public class VolumeParameterListModel extends SearchableListModel {
                 new IFrontendActionAsyncCallback() {
 
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
                         localModel.StopProgress();
                         cancel();

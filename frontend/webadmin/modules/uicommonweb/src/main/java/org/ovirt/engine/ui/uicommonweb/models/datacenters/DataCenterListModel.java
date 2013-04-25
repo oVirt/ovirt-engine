@@ -511,7 +511,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                     Frontend.RunMultipleAction(VdcActionType.RecoveryStoragePool, parameters,
                             new IFrontendMultipleActionAsyncCallback() {
                                 @Override
-                                public void Executed(FrontendMultipleActionAsyncResult result) {
+                                public void executed(FrontendMultipleActionAsyncResult result) {
 
                                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
                                     localModel.StopProgress();
@@ -558,7 +558,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         Frontend.RunMultipleAction(VdcActionType.RemoveStoragePool, parameters,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
                         localModel.StopProgress();
@@ -717,7 +717,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                 new StoragePoolManagementParameter(dataCenter),
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
                         DataCenterListModel localModel = (DataCenterListModel) result.getState();
                         localModel.PostOnSaveInternal(result.getReturnValue());
                     }
@@ -731,7 +731,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                 ),
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
                         DataCenterListModel localModel = (DataCenterListModel) result.getState();
                         localModel.PostOnSaveInternal(result.getReturnValue().get(0));
                     }

@@ -145,7 +145,7 @@ public class NetworkClusterListModel extends SearchableListModel
             Boolean needsDetach = !toDetach.isEmpty();
 
             @Override
-            public void Executed(FrontendMultipleActionAsyncResult result) {
+            public void executed(FrontendMultipleActionAsyncResult result) {
                 if (result.getActionType() == VdcActionType.DetachNetworkToVdsGroup) {
                     needsDetach = false;
                 }
@@ -173,7 +173,7 @@ public class NetworkClusterListModel extends SearchableListModel
             }
         };
 
-        callback.Executed(new FrontendMultipleActionAsyncResult(null, null, null));
+        callback.executed(new FrontendMultipleActionAsyncResult(null, null, null));
         windowModel.StartProgress(null);
     }
 

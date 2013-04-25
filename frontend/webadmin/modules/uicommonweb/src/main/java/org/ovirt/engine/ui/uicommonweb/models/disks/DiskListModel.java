@@ -336,7 +336,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         Frontend.RunMultipleAction(VdcActionType.ChangeQuotaForDisk, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
                         DiskListModel localModel = (DiskListModel) result.getState();
                         localModel.StopProgress();
                         Cancel();
@@ -423,7 +423,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         Frontend.RunMultipleAction(VdcActionType.RemoveDisk, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
                         DiskListModel localModel = (DiskListModel) result.getState();
                         localModel.StopProgress();
                         Cancel();

@@ -666,7 +666,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         Frontend.RunAction(VdcActionType.AddVmTemplate, addVmTemplateParameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
                         stopProgress(result.getState());
                         cancel();
                     }
@@ -850,7 +850,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         Frontend.RunAction(VdcActionType.RemoveVm, new RemoveVmParameters(vm.getId(), false),
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
                         ConfirmationModel model =
                                 (ConfirmationModel) ((UserPortalListModel) result.getState()).getConfirmWindow();
                         model.StopProgress();
@@ -931,7 +931,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         Frontend.RunAction(VdcActionType.ChangeDisk, new ChangeDiskCommandParameters(vm.getId(), isoName),
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
                         stopProgress(result.getState());
                         cancel();
                     }
@@ -1084,7 +1084,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 Frontend.RunAction(VdcActionType.AddVmFromScratch, parameters,
                         new IFrontendActionAsyncCallback() {
                             @Override
-                            public void Executed(FrontendActionAsyncResult result) {
+                            public void executed(FrontendActionAsyncResult result) {
                                 stopProgress(result.getState());
                                 cancel();
                             }
@@ -1116,7 +1116,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                             Frontend.RunMultipleAction(VdcActionType.AddVmFromTemplate, parameters,
                                     new IFrontendMultipleActionAsyncCallback() {
                                         @Override
-                                        public void Executed(FrontendMultipleActionAsyncResult a) {
+                                        public void executed(FrontendMultipleActionAsyncResult a) {
                                             stopProgress(a.getState());
                                             cancel();
                                         }
@@ -1137,7 +1137,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                     Frontend.RunMultipleAction(VdcActionType.AddVm, parameters,
                             new IFrontendMultipleActionAsyncCallback() {
                         @Override
-                        public void Executed(FrontendMultipleActionAsyncResult a) {
+                        public void executed(FrontendMultipleActionAsyncResult a) {
                             stopProgress(a.getState());
                             cancel();
                         }
@@ -1155,12 +1155,12 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                         gettempVm().getId()),
                         new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
 
                         Frontend.RunAction(VdcActionType.UpdateVm, new VmManagementParametersBase(gettempVm()),
                                 new IFrontendActionAsyncCallback() {
                             @Override
-                            public void Executed(FrontendActionAsyncResult a) {
+                            public void executed(FrontendActionAsyncResult a) {
                                 stopProgress(a.getState());
                                 cancel();
                             }
@@ -1174,7 +1174,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 Frontend.RunAction(VdcActionType.UpdateVm, new VmManagementParametersBase(gettempVm()),
                         new IFrontendActionAsyncCallback() {
                             @Override
-                            public void Executed(FrontendActionAsyncResult a) {
+                            public void executed(FrontendActionAsyncResult a) {
                                 stopProgress(a.getState());
                                 cancel();
                             }

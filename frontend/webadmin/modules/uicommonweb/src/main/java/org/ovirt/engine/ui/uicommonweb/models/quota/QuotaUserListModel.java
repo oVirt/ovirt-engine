@@ -275,7 +275,7 @@ public class QuotaUserListModel extends SearchableListModel {
         Frontend.RunMultipleAction(VdcActionType.AddPermission, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
 
                         QuotaUserListModel localModel = (QuotaUserListModel) result.getState();
                         localModel.StopProgress();
@@ -310,7 +310,7 @@ public class QuotaUserListModel extends SearchableListModel {
             Frontend.RunMultipleAction(VdcActionType.RemovePermission, list,
                     new IFrontendMultipleActionAsyncCallback() {
                         @Override
-                        public void Executed(FrontendMultipleActionAsyncResult result) {
+                        public void executed(FrontendMultipleActionAsyncResult result) {
 
                             ConfirmationModel localModel = (ConfirmationModel) result.getState();
                             localModel.StopProgress();

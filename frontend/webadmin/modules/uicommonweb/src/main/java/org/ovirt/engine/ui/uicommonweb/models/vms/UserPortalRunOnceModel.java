@@ -47,7 +47,7 @@ public class UserPortalRunOnceModel extends RunOnceModel {
        Frontend.RunAction(VdcActionType.RunVmOnce, createRunVmOnceParams(),
                new IFrontendActionAsyncCallback() {
                    @Override
-                   public void Executed(FrontendActionAsyncResult result) {
+                   public void executed(FrontendActionAsyncResult result) {
                        StopProgress();
                        commandTarget.executeCommand(runOnceCommand);
                    }

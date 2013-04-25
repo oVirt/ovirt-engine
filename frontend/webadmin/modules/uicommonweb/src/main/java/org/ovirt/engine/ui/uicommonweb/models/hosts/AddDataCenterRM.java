@@ -103,7 +103,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
                 Frontend.RunAction(VdcActionType.AddEmptyStoragePool, parameters,
                         new IFrontendActionAsyncCallback() {
                             @Override
-                            public void Executed(FrontendActionAsyncResult result) {
+                            public void executed(FrontendActionAsyncResult result) {
 
                                 VdcReturnValueBase returnValue = result.getReturnValue();
 
@@ -238,7 +238,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
                     new ChangeVDSClusterParameters(enlistmentContext.getOldClusterId(), host.getId()),
                     new IFrontendActionAsyncCallback() {
                         @Override
-                        public void Executed(FrontendActionAsyncResult result) {
+                        public void executed(FrontendActionAsyncResult result) {
 
                             VdcReturnValueBase returnValue = result.getReturnValue();
 
@@ -268,7 +268,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
                         new VdsGroupParametersBase(enlistmentContext.getClusterId()),
                         new IFrontendActionAsyncCallback() {
                             @Override
-                            public void Executed(FrontendActionAsyncResult result) {
+                            public void executed(FrontendActionAsyncResult result) {
 
                                 VdcReturnValueBase returnValue = result.getReturnValue();
 

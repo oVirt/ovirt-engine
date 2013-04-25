@@ -56,7 +56,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
         Frontend.RunAction(VdcActionType.ActivateVds, parameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
                         VdcReturnValueBase returnValue = result.getReturnValue();
                         context.activateVdsReturnValue = returnValue;
                         prepare2();
@@ -143,7 +143,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
                     parameters,
                     new IFrontendActionAsyncCallback() {
                         @Override
-                        public void Executed(FrontendActionAsyncResult result) {
+                        public void executed(FrontendActionAsyncResult result) {
 
                             VdcReturnValueBase returnValue = result.getReturnValue();
 
@@ -182,7 +182,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
             Frontend.RunAction(VdcActionType.AddLocalStorageDomain, parameters,
                     new IFrontendActionAsyncCallback() {
                         @Override
-                        public void Executed(FrontendActionAsyncResult result) {
+                        public void executed(FrontendActionAsyncResult result) {
 
                             VdcReturnValueBase returnValue = result.getReturnValue();
 
@@ -206,7 +206,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
                     parameter,
                     new IFrontendActionAsyncCallback() {
                         @Override
-                        public void Executed(FrontendActionAsyncResult result) {
+                        public void executed(FrontendActionAsyncResult result) {
 
                             VdcReturnValueBase returnValue = result.getReturnValue();
 

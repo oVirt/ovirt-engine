@@ -399,7 +399,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
         Frontend.RunMultipleAction(VdcActionType.RemoveVmPool, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
                         localModel.StopProgress();
@@ -529,7 +529,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                                     new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { param })),
                                     new IFrontendMultipleActionAsyncCallback() {
                                         @Override
-                                        public void Executed(FrontendMultipleActionAsyncResult result) {
+                                        public void executed(FrontendMultipleActionAsyncResult result) {
                                             Cancel();
                                             StopProgress();
                                         }
@@ -542,7 +542,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                                     new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { param })),
                                     new IFrontendMultipleActionAsyncCallback() {
                                         @Override
-                                        public void Executed(FrontendMultipleActionAsyncResult result) {
+                                        public void executed(FrontendMultipleActionAsyncResult result) {
                                             Cancel();
                                             StopProgress();
                                         }

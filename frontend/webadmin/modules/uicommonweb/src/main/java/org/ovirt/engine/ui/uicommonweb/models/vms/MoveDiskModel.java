@@ -105,7 +105,7 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
         Frontend.RunAction(getActionType(), moveDisksParameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
                         MoveDiskModel localModel = (MoveDiskModel) result.getState();
                         localModel.cancel();
                     }

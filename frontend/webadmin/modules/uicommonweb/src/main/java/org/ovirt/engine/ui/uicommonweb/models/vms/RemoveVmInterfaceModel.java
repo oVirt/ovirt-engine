@@ -72,7 +72,7 @@ public class RemoveVmInterfaceModel extends ConfirmationModel {
         Frontend.RunMultipleAction(getActionType(), list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
 
                         StopProgress();
                         cancel();

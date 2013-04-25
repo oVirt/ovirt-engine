@@ -67,7 +67,7 @@ public class NewDiskModel extends AbstractDiskModel
 
         IFrontendActionAsyncCallback onFinishCallback = new IFrontendActionAsyncCallback() {
             @Override
-            public void Executed(FrontendActionAsyncResult result) {
+            public void executed(FrontendActionAsyncResult result) {
                 NewDiskModel diskModel = (NewDiskModel) result.getState();
                 diskModel.StopProgress();
                 diskModel.cancel();
@@ -184,7 +184,7 @@ public class NewDiskModel extends AbstractDiskModel
 
         Frontend.RunAction(VdcActionType.AddDisk, parameters, new IFrontendActionAsyncCallback() {
             @Override
-            public void Executed(FrontendActionAsyncResult result) {
+            public void executed(FrontendActionAsyncResult result) {
                 NewDiskModel diskModel = (NewDiskModel) result.getState();
                 diskModel.StopProgress();
                 diskModel.cancel();

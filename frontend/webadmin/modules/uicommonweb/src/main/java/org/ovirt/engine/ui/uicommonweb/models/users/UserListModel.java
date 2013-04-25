@@ -482,7 +482,7 @@ public class UserListModel extends ListWithDetailsModel
         Frontend.RunMultipleAction(VdcActionType.AddUser, parameters,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
 
                         AdElementListModel localModel = (AdElementListModel) result.getState();
                         localModel.StopProgress();

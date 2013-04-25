@@ -183,7 +183,7 @@ public class RolePermissionListModel extends SearchableListModel
             Frontend.RunMultipleAction(VdcActionType.RemovePermission, list,
                     new IFrontendMultipleActionAsyncCallback() {
                         @Override
-                        public void Executed(FrontendMultipleActionAsyncResult result) {
+                        public void executed(FrontendMultipleActionAsyncResult result) {
 
                             ConfirmationModel localModel = (ConfirmationModel) result.getState();
                             localModel.StopProgress();

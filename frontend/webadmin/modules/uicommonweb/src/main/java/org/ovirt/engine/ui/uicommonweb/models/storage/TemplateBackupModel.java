@@ -221,7 +221,7 @@ public class TemplateBackupModel extends VmBackupModel
         Frontend.RunMultipleAction(VdcActionType.ImportVmTemplate, prms,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
 
                         TemplateBackupModel templateBackupModel = (TemplateBackupModel) result.getState();
                         templateBackupModel.getWindow().StopProgress();

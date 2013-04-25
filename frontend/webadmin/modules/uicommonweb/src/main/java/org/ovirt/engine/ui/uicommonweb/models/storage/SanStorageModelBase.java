@@ -366,7 +366,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
         IFrontendActionAsyncCallback loginCallback = new IFrontendActionAsyncCallback() {
             @Override
-            public void Executed(FrontendActionAsyncResult result) {
+            public void executed(FrontendActionAsyncResult result) {
                 SanStorageModelBase sanStorageModel = (SanStorageModelBase) result.getState();
                 sanStorageModel.postLogin(result);
             }

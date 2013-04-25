@@ -414,7 +414,7 @@ public class StorageDataCenterListModel extends SearchableListModel
             Frontend.RunMultipleAction(VdcActionType.AttachStorageDomainToPool, parameters,
                     new IFrontendMultipleActionAsyncCallback() {
                         @Override
-                        public void Executed(FrontendMultipleActionAsyncResult result) {
+                        public void executed(FrontendMultipleActionAsyncResult result) {
 
                             ListModel localModel = (ListModel) result.getState();
                             localModel.StopProgress();
@@ -577,7 +577,7 @@ public class StorageDataCenterListModel extends SearchableListModel
         Frontend.RunMultipleAction(VdcActionType.DeactivateStorageDomain, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
 
                     }
                 }, null);
@@ -603,7 +603,7 @@ public class StorageDataCenterListModel extends SearchableListModel
         Frontend.RunMultipleAction(VdcActionType.ActivateStorageDomain, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
 
                     }
                 }, null);

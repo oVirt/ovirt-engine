@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.action.DisplayNetworkToVdsGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -262,7 +262,7 @@ public class ClusterNetworkListModel extends SearchableListModel
             Boolean needsDetach = !toDetach.isEmpty();
 
             @Override
-            public void Executed(FrontendMultipleActionAsyncResult result) {
+            public void executed(FrontendMultipleActionAsyncResult result) {
                 if (result.getActionType() == VdcActionType.DetachNetworkToVdsGroup) {
                     needsDetach = false;
                 }
@@ -290,7 +290,7 @@ public class ClusterNetworkListModel extends SearchableListModel
             }
         };
 
-        callback.Executed(new FrontendMultipleActionAsyncResult(null, null, null));
+        callback.executed(new FrontendMultipleActionAsyncResult(null, null, null));
         windowModel.StartProgress(null);
     }
 

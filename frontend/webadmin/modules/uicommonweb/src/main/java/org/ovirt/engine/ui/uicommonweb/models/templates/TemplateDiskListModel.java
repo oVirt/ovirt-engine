@@ -329,7 +329,7 @@ public class TemplateDiskListModel extends SearchableListModel
         Frontend.RunMultipleAction(VdcActionType.ChangeQuotaForDisk, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
                         Cancel();
                     }
                 },

@@ -207,7 +207,7 @@ public class BookmarkListModel extends SearchableListModel
 
         IFrontendActionAsyncCallback async = new IFrontendActionAsyncCallback() {
             @Override
-            public void Executed(FrontendActionAsyncResult result) {
+            public void executed(FrontendActionAsyncResult result) {
                 PostOnSave(result.getReturnValue());
             }
         };
@@ -297,7 +297,7 @@ public class BookmarkListModel extends SearchableListModel
                 new BookmarksOperationParameters(bookmark),
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
 
                         BookmarkListModel localModel = (BookmarkListModel) result.getState();
                         localModel.PostOnSave(result.getReturnValue());

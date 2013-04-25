@@ -303,7 +303,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         Frontend.RunMultipleAction(VdcActionType.DeleteGlusterVolume, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
                         localModel.StopProgress();
@@ -548,7 +548,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                 new IFrontendMultipleActionAsyncCallback() {
 
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
                         localModel.StopProgress();
                         cancel();
@@ -632,7 +632,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         Frontend.RunAction(VdcActionType.CreateGlusterVolume, parameter, new IFrontendActionAsyncCallback() {
 
             @Override
-            public void Executed(FrontendActionAsyncResult result) {
+            public void executed(FrontendActionAsyncResult result) {
                 VolumeListModel localModel = (VolumeListModel) result.getState();
                 localModel.postOnCreateVolume(result.getReturnValue());
             }

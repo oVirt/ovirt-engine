@@ -324,7 +324,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
     private String ticket;
 
     @Override
-    public void Executed(FrontendMultipleQueryAsyncResult result) {
+    public void executed(FrontendMultipleQueryAsyncResult result) {
         List<VdcQueryReturnValue> returnValues = result.getReturnValues();
 
         boolean success = true;
@@ -552,7 +552,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         Frontend.RunAction(VdcActionType.SetVmTicket, new SetVmTicketParameters(getEntity().getId(), null, 120),
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
 
                         SpiceConsoleModel spiceConsoleModel = (SpiceConsoleModel) result.getState();
                         spiceConsoleModel.PostSendVmTicket(result.getReturnValue());
@@ -578,7 +578,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             Frontend.RunAction(VdcActionType.VmLogon, new VmOperationParameterBase(getEntity().getId()),
                     new IFrontendActionAsyncCallback() {
                         @Override
-                        public void Executed(FrontendActionAsyncResult result) {
+                        public void executed(FrontendActionAsyncResult result) {
 
                             final SpiceConsoleModel spiceConsoleModel = (SpiceConsoleModel) result.getState();
                             final VdcReturnValueBase logonCommandReturnValue = result.getReturnValue();

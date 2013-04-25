@@ -505,7 +505,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         Frontend.RunMultipleAction(VdcActionType.FenceVdsManualy, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
                         localModel.StopProgress();
@@ -845,7 +845,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             Frontend.RunAction(VdcActionType.AddVds, parameters,
                     new IFrontendActionAsyncCallback() {
                         @Override
-                        public void Executed(FrontendActionAsyncResult result) {
+                        public void executed(FrontendActionAsyncResult result) {
 
                             Object[] array = (Object[]) result.getState();
                             HostListModel localModel = (HostListModel) array[0];
@@ -870,7 +870,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                         new ChangeVDSClusterParameters(newClusterId, host.getId()),
                         new IFrontendActionAsyncCallback() {
                             @Override
-                            public void Executed(FrontendActionAsyncResult result) {
+                            public void executed(FrontendActionAsyncResult result) {
 
                                 Object[] array = (Object[]) result.getState();
                                 HostListModel localModel = (HostListModel) array[0];
@@ -902,7 +902,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         Frontend.RunAction(VdcActionType.UpdateVds, parameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
 
                         Object[] array = (Object[]) result.getState();
                         HostListModel localModel = (HostListModel) array[0];
@@ -937,7 +937,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { new ApproveVdsParameters(vds.getId()) })),
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
 
                     }
                 },
@@ -1015,7 +1015,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         Frontend.RunMultipleAction(VdcActionType.RemoveVds, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
                         localModel.StopProgress();
@@ -1037,7 +1037,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         Frontend.RunMultipleAction(VdcActionType.ActivateVds, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
 
                     }
                 }, null);
@@ -1100,7 +1100,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         Frontend.RunMultipleAction(VdcActionType.MaintenanceNumberOfVdss, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
                         localModel.StopProgress();
@@ -1315,7 +1315,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         Frontend.RunMultipleAction(VdcActionType.RestartVds, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
                         localModel.StopProgress();
@@ -1337,7 +1337,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         Frontend.RunMultipleAction(VdcActionType.StartVds, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
 
                     }
                 }, null);
@@ -1390,7 +1390,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         Frontend.RunMultipleAction(VdcActionType.StopVds, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
                         localModel.StopProgress();

@@ -207,7 +207,7 @@ public class TemplateStorageListModel extends SearchableListModel
         Frontend.RunMultipleAction(VdcActionType.RemoveDisk, parameters,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
                         localModel.StopProgress();
                         Cancel();

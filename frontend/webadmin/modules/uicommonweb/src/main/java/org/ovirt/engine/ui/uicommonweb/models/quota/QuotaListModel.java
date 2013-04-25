@@ -336,7 +336,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                 new IFrontendActionAsyncCallback() {
 
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
                         setWindow(null);
                     }
                 });
@@ -598,7 +598,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         Frontend.RunMultipleAction(VdcActionType.RemoveQuota, prms,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
                         localModel.StopProgress();

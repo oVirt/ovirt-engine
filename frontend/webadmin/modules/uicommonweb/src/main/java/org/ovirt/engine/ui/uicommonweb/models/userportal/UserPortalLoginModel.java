@@ -202,7 +202,7 @@ public class UserPortalLoginModel extends LoginModel
                 ""), //$NON-NLS-1$
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
 
                         UserPortalLoginModel model = (UserPortalLoginModel) result.getState();
                         VdcReturnValueBase returnValue = result.getReturnValue();
@@ -376,7 +376,7 @@ public class UserPortalLoginModel extends LoginModel
         Frontend.RunMultipleQueries(queryTypeList, queryParamsList, new IFrontendMultipleQueryAsyncCallback() {
 
             @Override
-            public void Executed(FrontendMultipleQueryAsyncResult result) {
+            public void executed(FrontendMultipleQueryAsyncResult result) {
                 for (int i = 0; i < result.getReturnValues().size(); i++) {
                     VdcQueryReturnValue retVal = result.getReturnValues().get(i);
                     ArrayList<ActionGroup> roleActionGroupList =

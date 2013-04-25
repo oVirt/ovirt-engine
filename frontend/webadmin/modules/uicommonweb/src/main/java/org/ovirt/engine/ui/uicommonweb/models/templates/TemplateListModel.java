@@ -233,7 +233,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         Frontend.RunMultipleAction(VdcActionType.ExportVmTemplate, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ExportVmModel localModel = (ExportVmModel) result.getState();
                         localModel.StopProgress();
@@ -377,7 +377,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         Frontend.RunMultipleAction(VdcActionType.RemoveVmTemplate, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
                         localModel.StopProgress();
@@ -496,7 +496,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         Frontend.RunAction(VdcActionType.UpdateVmTemplate, new UpdateVmTemplateParameters(template),
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
 
                         TemplateListModel localModel = (TemplateListModel) result.getState();
                         localModel.PostUpdateVmTemplate(result.getReturnValue());

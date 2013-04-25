@@ -103,7 +103,7 @@ public class NewNetworkModel extends NetworkModel {
                 parameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result1) {
+                    public void executed(FrontendActionAsyncResult result1) {
                         VdcReturnValueBase retVal = result1.getReturnValue();
                         boolean succeeded = false;
                         if (retVal != null && retVal.getSucceeded())

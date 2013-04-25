@@ -774,7 +774,7 @@ public class HostSetupNetworksModel extends EntityModel {
         Frontend.RunAction(VdcActionType.SetupNetworks, params, new IFrontendActionAsyncCallback() {
 
             @Override
-            public void Executed(FrontendActionAsyncResult result) {
+            public void executed(FrontendActionAsyncResult result) {
                 VdcReturnValueBase returnValueBase = result.getReturnValue();
                 if (returnValueBase != null && returnValueBase.getSucceeded())
                 {

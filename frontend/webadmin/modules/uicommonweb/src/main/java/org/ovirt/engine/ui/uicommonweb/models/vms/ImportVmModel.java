@@ -238,7 +238,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                 queryParamsList,
                 new IFrontendMultipleQueryAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleQueryAsyncResult result) {
+                    public void executed(FrontendMultipleQueryAsyncResult result) {
                         List<VdcQueryReturnValue> returnValueList =
                                 result.getReturnValues();
                         boolean noQuota = true;
@@ -337,7 +337,7 @@ public class ImportVmModel extends ListWithDetailsModel {
             }
             Frontend.RunMultipleQueries(queryTypeList, queryParamsList, new IFrontendMultipleQueryAsyncCallback() {
                 @Override
-                public void Executed(FrontendMultipleQueryAsyncResult result) {
+                public void executed(FrontendMultipleQueryAsyncResult result) {
                     List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
                     Map<Guid, ArrayList<StorageDomain>> templateDisksStorageDomains =
                             new HashMap<Guid, ArrayList<StorageDomain>>();

@@ -59,7 +59,7 @@ public class EditNetworkModel extends NetworkModel {
                 new AddNetworkStoragePoolParameters(getSelectedDc().getId(), getNetwork()),
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result1) {
+                    public void executed(FrontendActionAsyncResult result1) {
                         VdcReturnValueBase retVal = result1.getReturnValue();
                         postSaveAction(null,
                                 retVal != null && retVal.getSucceeded());

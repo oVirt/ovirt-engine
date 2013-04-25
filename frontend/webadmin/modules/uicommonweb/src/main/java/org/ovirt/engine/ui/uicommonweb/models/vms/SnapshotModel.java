@@ -317,7 +317,7 @@ public class SnapshotModel extends EntityModel
         Frontend.RunMultipleAction(VdcActionType.CreateAllSnapshotsFromVm, params,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
                         SnapshotModel localModel = (SnapshotModel) result.getState();
                         localModel.StopProgress();
                         getCancelCommand().Execute();

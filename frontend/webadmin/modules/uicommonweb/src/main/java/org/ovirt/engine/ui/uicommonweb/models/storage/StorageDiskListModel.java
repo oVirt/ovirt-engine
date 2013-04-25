@@ -179,7 +179,7 @@ public class StorageDiskListModel extends SearchableListModel
         Frontend.RunMultipleAction(VdcActionType.RemoveDisk, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
                         StorageDiskListModel localModel = (StorageDiskListModel) result.getState();
                         localModel.StopProgress();
                         Cancel();

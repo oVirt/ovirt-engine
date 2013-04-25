@@ -72,7 +72,7 @@ public class PoolItemBehavior extends ItemBehavior
                 false),
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
                         if (!result.getReturnValue().getSucceeded()) {
                             return;
                         }

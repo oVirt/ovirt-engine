@@ -148,7 +148,7 @@ public class PoolVmListModel extends VmListModel
         Frontend.RunMultipleAction(VdcActionType.RemoveVmFromPool, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
                         localModel.StopProgress();
                         cancel();

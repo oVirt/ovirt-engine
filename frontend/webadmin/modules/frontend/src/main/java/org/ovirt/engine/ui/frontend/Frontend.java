@@ -367,7 +367,7 @@ public class Frontend {
                 FrontendMultipleQueryAsyncResult f =
                         new FrontendMultipleQueryAsyncResult(queryTypeList, queryParamsList, null);
                 failureEventHandler(caught);
-                callback.Executed(f);
+                callback.executed(f);
 
                 raiseQueryCompleteEvent(queryTypeList, context);
             }
@@ -391,12 +391,12 @@ public class Frontend {
                             // failureEventHandler("Failed to execute RunMultipleQueries!");
                         }
 
-                        callback.Executed(f);
+                        callback.executed(f);
                         return;
                     }
                 }
 
-                callback.Executed(f);
+                callback.executed(f);
 
                 raiseQueryCompleteEvent(queryTypeList, context);
             }
@@ -476,7 +476,7 @@ public class Frontend {
                 logger.log(Level.SEVERE, "Failed to execute RunAction: " + caught, caught); //$NON-NLS-1$
                 failureEventHandler(caught);
                 FrontendActionAsyncResult f = new FrontendActionAsyncResult(actionType, parameters, null, state);
-                callback.Executed(f);
+                callback.executed(f);
             }
 
             @Override
@@ -543,7 +543,7 @@ public class Frontend {
                         failureEventHandler(caught);
 
                         if (callback != null) {
-                            callback.Executed(new FrontendMultipleActionAsyncResult(actionType, parameters, null, state));
+                            callback.executed(new FrontendMultipleActionAsyncResult(actionType, parameters, null, state));
                         }
                     }
 
@@ -566,7 +566,7 @@ public class Frontend {
                         }
 
                         if (callback != null) {
-                            callback.Executed(new FrontendMultipleActionAsyncResult(actionType,
+                            callback.executed(new FrontendMultipleActionAsyncResult(actionType,
                                     parameters,
                                     result,
                                     state));
@@ -597,7 +597,7 @@ public class Frontend {
         RunAction(actionTypes.get(0), parameters.get(0),
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
                         VdcReturnValueBase returnValue = result.getReturnValue();
                         boolean success = returnValue != null && returnValue.getSucceeded();
                         if (success || failureCallback == null)
@@ -605,7 +605,7 @@ public class Frontend {
                             IFrontendActionAsyncCallback callback = callbacks.get(0);
                             if (callback != null)
                             {
-                                callback.Executed(result);
+                                callback.executed(result);
                             }
                             actionTypes.remove(0);
                             parameters.remove(0);
@@ -614,7 +614,7 @@ public class Frontend {
                         }
                         else
                         {
-                            failureCallback.Executed(result);
+                            failureCallback.executed(result);
                         }
                     }
                 }, state);
@@ -770,10 +770,10 @@ public class Frontend {
             failed.add(result);
             translateErrors(failed);
             getEventsHandler().runActionFailed(failed);
-            callback.Executed(f);
+            callback.executed(f);
         } else if (result.getIsSyncronious() && result.getSucceeded() == false) {
             runActionExecutionFailed(actionType, result.getFault());
-            callback.Executed(f);
+            callback.executed(f);
 
             // Prevent another (untranslated) error message pop-up display
             // ('runActionExecutionFailed' invokes an error pop-up displaying,
@@ -781,7 +781,7 @@ public class Frontend {
             success = true;
         } else {
             success = true;
-            callback.Executed(f);
+            callback.executed(f);
         }
 
         if ((!success) && (getEventsHandler() != null)
@@ -880,7 +880,7 @@ public class Frontend {
      */
     private final static class NullableFrontendActionAsyncCallback implements IFrontendActionAsyncCallback {
         @Override
-        public void Executed(FrontendActionAsyncResult result) {
+        public void executed(FrontendActionAsyncResult result) {
         }
     }
 }

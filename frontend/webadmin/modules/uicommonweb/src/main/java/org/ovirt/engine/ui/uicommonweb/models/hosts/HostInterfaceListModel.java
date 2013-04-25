@@ -1263,7 +1263,7 @@ public class HostInterfaceListModel extends SearchableListModel
         Frontend.RunAction(actionType, parameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
 
                         HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) result.getState();
                         VdcReturnValueBase returnValueBase = result.getReturnValue();
@@ -1630,7 +1630,7 @@ public class HostInterfaceListModel extends SearchableListModel
             Frontend.RunAction(VdcActionType.UpdateNetworkToVdsInterface, parameters,
                     new IFrontendActionAsyncCallback() {
                         @Override
-                        public void Executed(FrontendActionAsyncResult result) {
+                        public void executed(FrontendActionAsyncResult result) {
 
                             HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) result.getState();
                             VdcReturnValueBase returnValueBase = result.getReturnValue();
@@ -1714,7 +1714,7 @@ public class HostInterfaceListModel extends SearchableListModel
             Frontend.RunAction(VdcActionType.AddBond, parameters,
                     new IFrontendActionAsyncCallback() {
                         @Override
-                        public void Executed(FrontendActionAsyncResult result) {
+                        public void executed(FrontendActionAsyncResult result) {
 
                             HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) result.getState();
                             VdcReturnValueBase returnValueBase = result.getReturnValue();
@@ -1801,7 +1801,7 @@ public class HostInterfaceListModel extends SearchableListModel
                         new AttachNetworkToVdsParameters(getEntity().getId(), net, nic),
                         new IFrontendActionAsyncCallback() {
                             @Override
-                            public void Executed(FrontendActionAsyncResult result) {
+                            public void executed(FrontendActionAsyncResult result) {
 
                                 HostInterfaceListModel hostInterfaceListModel =
                                         (HostInterfaceListModel) result.getState();
@@ -1914,7 +1914,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                 new AttachNetworkToVdsParameters(getEntity().getId(), net, nic),
                                 new IFrontendActionAsyncCallback() {
                                     @Override
-                                    public void Executed(FrontendActionAsyncResult result) {
+                                    public void executed(FrontendActionAsyncResult result) {
 
                                         HostInterfaceListModel hostInterfaceListModel =
                                                 (HostInterfaceListModel) result.getState();
@@ -2046,7 +2046,7 @@ public class HostInterfaceListModel extends SearchableListModel
             Frontend.RunAction(actionType, parameters,
                     new IFrontendActionAsyncCallback() {
                         @Override
-                        public void Executed(FrontendActionAsyncResult result) {
+                        public void executed(FrontendActionAsyncResult result) {
 
                             HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) result.getState();
                             VdcReturnValueBase returnValueBase = result.getReturnValue();
@@ -2145,7 +2145,7 @@ public class HostInterfaceListModel extends SearchableListModel
                         new AttachNetworkToVdsParameters(getEntity().getId(), net, nic),
                         new IFrontendActionAsyncCallback() {
                             @Override
-                            public void Executed(FrontendActionAsyncResult result) {
+                            public void executed(FrontendActionAsyncResult result) {
 
                                 HostInterfaceListModel hostInterfaceListModel =
                                         (HostInterfaceListModel) result.getState();

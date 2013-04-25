@@ -826,7 +826,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         IFrontendActionAsyncCallback callback1 = new IFrontendActionAsyncCallback() {
             @Override
-            public void Executed(FrontendActionAsyncResult result) {
+            public void executed(FrontendActionAsyncResult result) {
 
                 DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
                 dataCenterGuideModel.removeConnection = true;
@@ -838,7 +838,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         };
         IFrontendActionAsyncCallback callback2 = new IFrontendActionAsyncCallback() {
             @Override
-            public void Executed(FrontendActionAsyncResult result) {
+            public void executed(FrontendActionAsyncResult result) {
 
                 DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
                 dataCenterGuideModel.removeConnection = false;
@@ -849,7 +849,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         };
         IFrontendActionAsyncCallback failureCallback = new IFrontendActionAsyncCallback() {
             @Override
-            public void Executed(FrontendActionAsyncResult result) {
+            public void executed(FrontendActionAsyncResult result) {
 
                 DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
 
@@ -975,7 +975,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         IFrontendActionAsyncCallback callback1 = new IFrontendActionAsyncCallback() {
             @Override
-            public void Executed(FrontendActionAsyncResult result) {
+            public void executed(FrontendActionAsyncResult result) {
 
                 DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
                 VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
@@ -985,7 +985,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         };
         IFrontendActionAsyncCallback callback2 = new IFrontendActionAsyncCallback() {
             @Override
-            public void Executed(FrontendActionAsyncResult result) {
+            public void executed(FrontendActionAsyncResult result) {
 
                 DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
                 VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
@@ -995,7 +995,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         };
         IFrontendActionAsyncCallback callback3 = new IFrontendActionAsyncCallback() {
             @Override
-            public void Executed(FrontendActionAsyncResult result) {
+            public void executed(FrontendActionAsyncResult result) {
 
                 DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
                 StorageModel storageModel = (StorageModel) dataCenterGuideModel.getWindow();
@@ -1014,7 +1014,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         };
         IFrontendActionAsyncCallback failureCallback = new IFrontendActionAsyncCallback() {
             @Override
-            public void Executed(FrontendActionAsyncResult result) {
+            public void executed(FrontendActionAsyncResult result) {
 
                 DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
                 dataCenterGuideModel.CleanConnection(dataCenterGuideModel.connection, dataCenterGuideModel.hostId);
@@ -1131,7 +1131,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         Frontend.RunAction(VdcActionType.AddSANStorageDomain, params,
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
 
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
                         StorageModel storageModel = (StorageModel) dataCenterGuideModel.getWindow();
@@ -1399,7 +1399,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         Frontend.RunAction(VdcActionType.AddVdsGroup, new VdsGroupOperationParameters(cluster),
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
 
                         DataCenterGuideModel localModel = (DataCenterGuideModel) result.getState();
                         localModel.PostOnAddCluster(result.getReturnValue());
@@ -1502,7 +1502,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         Frontend.RunMultipleAction(VdcActionType.ChangeVDSCluster, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
 
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
                         ArrayList<VDS> hosts =
@@ -1639,7 +1639,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         Frontend.RunAction(VdcActionType.AddVds, addVdsParams,
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
 
                         DataCenterGuideModel localModel = (DataCenterGuideModel) result.getState();
                         localModel.PostOnAddHost(result.getReturnValue());

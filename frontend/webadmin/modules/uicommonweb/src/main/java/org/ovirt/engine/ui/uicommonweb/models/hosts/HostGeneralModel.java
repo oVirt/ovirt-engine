@@ -801,7 +801,7 @@ public class HostGeneralModel extends EntityModel
                 new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] {new VdsActionParameters(getEntity().getId())})),
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
 
                     }
                 },
@@ -924,7 +924,7 @@ public class HostGeneralModel extends EntityModel
                         internalParam,
                         new IFrontendActionAsyncCallback() {
                             @Override
-                            public void Executed(FrontendActionAsyncResult result) {
+                            public void executed(FrontendActionAsyncResult result) {
                                 VdcReturnValueBase returnValue = result.getReturnValue();
                                 if (returnValue != null && returnValue.getSucceeded()) {
                                     Cancel();

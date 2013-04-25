@@ -53,7 +53,7 @@ public class VncConsoleModel extends ConsoleModel
                     seconds), new IFrontendActionAsyncCallback() {
 
                 @Override
-                public void Executed(FrontendActionAsyncResult result) {
+                public void executed(FrontendActionAsyncResult result) {
 
                     VdcReturnValueBase ticketReturnValue = result.getReturnValue();
                     if (ticketReturnValue != null && ticketReturnValue.getActionReturnValue() != null)

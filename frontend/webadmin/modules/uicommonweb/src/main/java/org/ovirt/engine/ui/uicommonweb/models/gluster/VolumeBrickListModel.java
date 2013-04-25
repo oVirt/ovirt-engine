@@ -364,7 +364,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         Frontend.RunAction(VdcActionType.AddBricksToGlusterVolume, parameter, new IFrontendActionAsyncCallback() {
 
             @Override
-            public void Executed(FrontendActionAsyncResult result) {
+            public void executed(FrontendActionAsyncResult result) {
                 VolumeBrickListModel localModel = (VolumeBrickListModel) result.getState();
                 localModel.postOnAddBricks(result.getReturnValue());
 
@@ -655,7 +655,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         Frontend.RunAction(VdcActionType.GlusterVolumeRemoveBricks, parameter, new IFrontendActionAsyncCallback() {
 
             @Override
-            public void Executed(FrontendActionAsyncResult result) {
+            public void executed(FrontendActionAsyncResult result) {
 
                 ConfirmationModel localModel = (ConfirmationModel) result.getState();
                 localModel.StopProgress();
@@ -764,7 +764,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         Frontend.RunAction(VdcActionType.ReplaceGlusterVolumeBrick, parameter, new IFrontendActionAsyncCallback() {
 
             @Override
-            public void Executed(FrontendActionAsyncResult result) {
+            public void executed(FrontendActionAsyncResult result) {
 
                 ReplaceBrickModel localModel = (ReplaceBrickModel) result.getState();
                 localModel.StopProgress();

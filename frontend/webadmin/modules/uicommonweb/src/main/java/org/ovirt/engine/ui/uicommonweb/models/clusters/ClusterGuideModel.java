@@ -344,7 +344,7 @@ public class ClusterGuideModel extends GuideModel
         Frontend.RunMultipleAction(VdcActionType.ChangeVDSCluster, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ClusterGuideModel clusterGuideModel = (ClusterGuideModel) result.getState();
                         ArrayList<VDS> hosts = ((MoveHost) clusterGuideModel.getWindow()).getSelectedHosts();
@@ -504,7 +504,7 @@ public class ClusterGuideModel extends GuideModel
         Frontend.RunAction(VdcActionType.AddVds, vdsActionParams,
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
 
                         ClusterGuideModel localModel = (ClusterGuideModel) result.getState();
                         localModel.PostOnAddHost(result.getReturnValue());

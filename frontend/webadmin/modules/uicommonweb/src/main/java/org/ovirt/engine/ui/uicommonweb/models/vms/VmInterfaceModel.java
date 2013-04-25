@@ -407,7 +407,7 @@ public abstract class VmInterfaceModel extends Model
                 createVdcActionParameters(nic),
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
                         VdcReturnValueBase returnValue = result.getReturnValue();
                         StopProgress();
 

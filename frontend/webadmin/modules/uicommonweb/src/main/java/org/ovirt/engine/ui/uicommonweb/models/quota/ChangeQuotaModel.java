@@ -43,7 +43,7 @@ public class ChangeQuotaModel extends ListModel {
         Frontend.RunMultipleQueries(queryTypeList, queryParamsList, new IFrontendMultipleQueryAsyncCallback() {
 
             @Override
-            public void Executed(FrontendMultipleQueryAsyncResult result) {
+            public void executed(FrontendMultipleQueryAsyncResult result) {
                 storageDomainIdMap.clear();
                 for (int i = 0; i < result.getReturnValues().size(); i++) {
                     VdcQueryReturnValue retVal = result.getReturnValues().get(i);

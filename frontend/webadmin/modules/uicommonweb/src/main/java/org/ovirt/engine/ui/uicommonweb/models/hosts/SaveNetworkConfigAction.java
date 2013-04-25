@@ -27,7 +27,7 @@ public class SaveNetworkConfigAction {
         Frontend.RunAction(VdcActionType.CommitNetworkChanges, new VdsActionParameters(host.getId()),
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
 
                         VdcReturnValueBase returnValueBase = result.getReturnValue();
                         if (returnValueBase != null && returnValueBase.getSucceeded())

@@ -485,7 +485,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         Frontend.RunMultipleAction(VdcActionType.RemoveVdsGroup, prms,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
                         localModel.StopProgress();
@@ -638,7 +638,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                 new VdsGroupOperationParameters(cluster),
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
 
                         ClusterListModel localModel = (ClusterListModel) result.getState();
                         if ((Boolean) model.getIsImportGlusterConfiguration().getEntity()) {
@@ -827,7 +827,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                 new IFrontendMultipleActionAsyncCallback() {
 
             @Override
-            public void Executed(FrontendMultipleActionAsyncResult result) {
+            public void executed(FrontendMultipleActionAsyncResult result) {
                         hostsModel.StopProgress();
                         boolean isAllCanDoPassed = true;
                         for (VdcReturnValueBase returnValueBase : result.getReturnValue())

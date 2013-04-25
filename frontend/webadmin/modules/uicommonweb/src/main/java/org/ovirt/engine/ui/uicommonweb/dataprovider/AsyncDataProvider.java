@@ -2320,7 +2320,7 @@ public final class AsyncDataProvider {
             GetAllChildVlanInterfaces(vdsID, ifacesOptions, new IFrontendMultipleQueryAsyncCallback() {
 
                 @Override
-                public void Executed(FrontendMultipleQueryAsyncResult result) {
+                public void executed(FrontendMultipleQueryAsyncResult result) {
 
                     ArrayList<VdsNetworkInterface> ifacesOptionsTemp = new ArrayList<VdsNetworkInterface>();
                     List<VdcQueryReturnValue> returnValueList = result.getReturnValues();

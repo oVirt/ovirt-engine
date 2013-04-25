@@ -323,7 +323,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         Frontend.RunMultipleAction(VdcActionType.ChangeQuotaForDisk, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
                         Cancel();
                     }
                 },
@@ -419,7 +419,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         Frontend.RunMultipleAction(actionType, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
                         VmDiskListModel localModel = (VmDiskListModel) result.getState();
                         localModel.StopProgress();
                         Cancel();
@@ -447,7 +447,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         Frontend.RunMultipleAction(plugAction, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                    public void executed(FrontendMultipleActionAsyncResult result) {
                     }
                 },
                 this);

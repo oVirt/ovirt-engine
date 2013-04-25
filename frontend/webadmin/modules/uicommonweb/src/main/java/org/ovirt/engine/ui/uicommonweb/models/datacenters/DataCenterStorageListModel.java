@@ -608,7 +608,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         Frontend.RunMultipleAction(VdcActionType.RemoveStorageDomain, getpb_remove(),
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result1) {
+                    public void executed(FrontendMultipleActionAsyncResult result1) {
 
                         Object[] array = (Object[]) result1.getState();
                         ConfirmationModel localModel1 = (ConfirmationModel) array[0];
@@ -617,7 +617,7 @@ public class DataCenterStorageListModel extends SearchableListModel
                         Frontend.RunMultipleAction(VdcActionType.DetachStorageDomainFromPool, parameters,
                                 new IFrontendMultipleActionAsyncCallback() {
                                     @Override
-                                    public void Executed(FrontendMultipleActionAsyncResult result2) {
+                                    public void executed(FrontendMultipleActionAsyncResult result2) {
 
                                         ConfirmationModel localModel2 = (ConfirmationModel) result2.getState();
                                         localModel2.StopProgress();

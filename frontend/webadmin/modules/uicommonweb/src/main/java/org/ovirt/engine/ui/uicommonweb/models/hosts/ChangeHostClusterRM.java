@@ -45,7 +45,7 @@ public class ChangeHostClusterRM extends IEnlistmentNotification {
                     parameters,
                     new IFrontendActionAsyncCallback() {
                         @Override
-                        public void Executed(FrontendActionAsyncResult result) {
+                        public void executed(FrontendActionAsyncResult result) {
 
                             VdcReturnValueBase returnValue = result.getReturnValue();
 

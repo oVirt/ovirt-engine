@@ -20,9 +20,9 @@ import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -148,7 +148,7 @@ public class VmBackupModel extends ManageBackupModel {
                             VdcActionType.RemoveVmFromImportExport, list,
                             new IFrontendMultipleActionAsyncCallback() {
                                 @Override
-                                public void Executed(
+                                public void executed(
                                         FrontendMultipleActionAsyncResult result) {
 
                                     ConfirmationModel localModel = (ConfirmationModel) result
@@ -434,7 +434,7 @@ public class VmBackupModel extends ManageBackupModel {
         Frontend.RunMultipleAction(VdcActionType.ImportVm, prms,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
-                    public void Executed(
+                    public void executed(
                             FrontendMultipleActionAsyncResult result) {
 
                         VmBackupModel vmBackupModel = (VmBackupModel) result

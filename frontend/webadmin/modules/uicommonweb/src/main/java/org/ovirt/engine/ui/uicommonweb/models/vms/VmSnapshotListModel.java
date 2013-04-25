@@ -605,7 +605,7 @@ public class VmSnapshotListModel extends SearchableListModel
         Frontend.RunAction(VdcActionType.AddVmFromSnapshot, parameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void Executed(FrontendActionAsyncResult result) {
+                    public void executed(FrontendActionAsyncResult result) {
 
                         VmSnapshotListModel vmSnapshotListModel = (VmSnapshotListModel) result.getState();
                         vmSnapshotListModel.getWindow().StopProgress();
