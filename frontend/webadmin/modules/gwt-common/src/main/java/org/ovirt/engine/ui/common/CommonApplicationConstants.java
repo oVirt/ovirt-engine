@@ -1156,7 +1156,7 @@ public interface CommonApplicationConstants extends Constants {
 
     // Console popup view
 
-    @DefaultStringValue("Spice")
+    @DefaultStringValue("SPICE")
     String spice();
 
     @DefaultStringValue("Auto")

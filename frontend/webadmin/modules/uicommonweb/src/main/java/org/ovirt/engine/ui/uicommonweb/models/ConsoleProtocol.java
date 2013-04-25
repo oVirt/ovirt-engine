@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
 
 
 public enum ConsoleProtocol {
-    SPICE("Spice", SpiceConsoleModel.class), //$NON-NLS-1$
+    SPICE("SPICE", SpiceConsoleModel.class), //$NON-NLS-1$
     RDP("Remote Desktop", RdpConsoleModel.class), //$NON-NLS-1$
     VNC("VNC", VncConsoleModel.class); //$NON-NLS-1$
 
