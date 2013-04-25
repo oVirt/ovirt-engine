@@ -3,9 +3,8 @@ package org.ovirt.engine.core.utils.gluster;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
 import java.util.Map;
@@ -82,12 +81,13 @@ public class GlusterUtilTest {
 
     @Test
     public void testHasPeersTrue() {
-        assertTrue(glusterUtil.hasPeers(client));
+        assertNotNull(glusterUtil.getPeers(client));
+        assertEquals(2, glusterUtil.getPeers(client).size());
     }
 
     @Test
     public void testHasPeersFalse() {
         doReturn(OUTPUT_XML_NO_PEERS).when(glusterUtil).executePeerStatusCommand(client);
-        assertFalse(glusterUtil.hasPeers(client));
+        assertTrue(glusterUtil.getPeers(client).isEmpty());
     }
 }

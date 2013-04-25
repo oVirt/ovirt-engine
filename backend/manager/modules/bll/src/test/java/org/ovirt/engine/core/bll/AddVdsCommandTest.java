@@ -3,9 +3,12 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -23,6 +26,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.gluster.GlusterUtil;
 import org.ovirt.engine.core.utils.log.Log;
@@ -30,6 +34,7 @@ import org.ovirt.engine.core.utils.ssh.SSHClient;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddVdsCommandTest {
+    private static final String PEER_1 = "peer1";
     private static final Guid vdsId = Guid.NewGuid();
     private AddVdsActionParameters parameters;
 
@@ -43,6 +48,8 @@ public class AddVdsCommandTest {
     private ClusterUtils clusterUtils;
     @Mock
     private GlusterUtil glusterUtil;
+    @Mock
+    private GlusterDBUtils glusterDBUtils;
     @Mock
     private SSHClient sshClient;
     @Mock
@@ -96,6 +103,7 @@ public class AddVdsCommandTest {
         setupCommonMock(false);
     }
 
+    @SuppressWarnings("unchecked")
     private void setupGlusterMock(boolean clusterHasServers, VDS upServer, boolean hasPeers) throws Exception {
         setupCommonMock(true);
 
@@ -104,7 +112,10 @@ public class AddVdsCommandTest {
         doCallRealMethod().when(commandMock).addCanDoActionMessage(any(VdcBllMessages.class));
 
         when(commandMock.getGlusterUtil()).thenReturn(glusterUtil);
-        when(glusterUtil.hasPeers(any(SSHClient.class))).thenReturn(hasPeers);
+        when(glusterUtil.getPeers(any(SSHClient.class))).thenReturn(hasPeers ? Collections.singleton(PEER_1)
+                : Collections.EMPTY_SET);
+
+        when(commandMock.getGlusterDBUtils()).thenReturn(glusterDBUtils);
 
         when(clusterUtils.hasServers(any(Guid.class))).thenReturn(clusterHasServers);
         when(clusterUtils.getUpServer(any(Guid.class))).thenReturn(upServer);
@@ -127,17 +138,28 @@ public class AddVdsCommandTest {
     @Test
     public void canDoActionSucceedsWhenHasPeersThrowsException() throws Exception {
         setupGlusterMock(true, new VDS(), true);
-        when(glusterUtil.hasPeers(any(SSHClient.class))).thenThrow(new RuntimeException());
+        when(glusterUtil.getPeers(any(SSHClient.class))).thenThrow(new RuntimeException());
+
         assertTrue(commandMock.canDoAction());
     }
 
     @Test
     public void canDoActionFailsWhenGlusterServerHasPeers() throws Exception {
         setupGlusterMock(true, new VDS(), true);
+        when(glusterDBUtils.serverExists(any(Guid.class), eq(PEER_1))).thenReturn(false);
+
         assertFalse(commandMock.canDoAction());
         assertTrue(commandMock.getReturnValue()
                 .getCanDoActionMessages()
                 .contains(VdcBllMessages.SERVER_ALREADY_PART_OF_ANOTHER_CLUSTER.toString()));
+    }
+
+    @Test
+    public void canDoActionSucceedsWhenGlusterServerHasPeersThatExistInDB() throws Exception {
+        setupGlusterMock(true, new VDS(), true);
+        when(glusterDBUtils.serverExists(any(Guid.class), eq(PEER_1))).thenReturn(true);
+
+        assertTrue(commandMock.canDoAction());
     }
 
     @Test

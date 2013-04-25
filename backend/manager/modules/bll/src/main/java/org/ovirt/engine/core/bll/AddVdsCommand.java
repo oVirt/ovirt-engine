@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.naming.AuthenticationException;
@@ -50,6 +51,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.gluster.GlusterUtil;
 import org.ovirt.engine.core.utils.ssh.SSHClient;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -383,7 +385,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 sshclient.connect();
                 sshclient.authenticate();
 
-                return isValidGlusterPeer(sshclient);
+                return isValidGlusterPeer(sshclient, vds.getVdsGroupId());
             } catch (AuthenticationException e) {
                 log.errorFormat(
                         "Failed to authenticate session with host {0}",
@@ -411,19 +413,33 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
     /**
      * Checks if the server can be a valid gluster peer. Fails if it is already part of another cluster (when current
-     * cluster is not empty). This is done by executing the 'gluster peer status' command on the server.<br>
-     * Note: In case glusterd is down or not installed on the server (which is a possibility on a new server), the
-     * command can fail. In such cases, we just log it as a debug message and return true.
+     * cluster is not empty). This is done by executing the 'gluster peer status' command on the server.<p>
+     * In case glusterd is down or not installed on the server (which is a possibility on a new server), the command can
+     * fail. In such cases, we just log it as a debug message and return true.<p>
+     * Another interesting case is where one of the peers of the server is already present as part of this cluster in
+     * the engine DB. This means that one ore more hosts were probably added to the gluster cluster using gluster CLI,
+     * and hence this server should be allowed to be added.
      *
      * @param sshclient
      *            SSH client that can be used to execute 'gluster peer status' command on the server
+     * @param clusterId
+     *            ID of the cluster to which the server is being added.
      * @return true if the server is good to be added to a gluster cluster, else false.
      */
-    private boolean isValidGlusterPeer(SSHClient sshclient) {
+    private boolean isValidGlusterPeer(SSHClient sshclient, Guid clusterId) {
         if (isGlusterSupportEnabled() && clusterHasServers()) {
             try {
                 // Must not allow adding a server that already is part of another gluster cluster
-                if (getGlusterUtil().hasPeers(sshclient)) {
+                Set<String> peers = getGlusterUtil().getPeers(sshclient);
+                if (peers.size() > 0) {
+                    for(String peer : peers) {
+                        if(getGlusterDBUtils().serverExists(clusterId, peer)) {
+                            // peer present in cluster. so server being added is valid.
+                            return true;
+                        }
+                    }
+
+                    // none of the peers present in the cluster. fail with appropriate error.
                     return failCanDoAction(VdcBllMessages.SERVER_ALREADY_PART_OF_ANOTHER_CLUSTER);
                 }
             } catch (Exception e) {
@@ -435,6 +451,10 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             }
         }
         return true;
+    }
+
+    protected GlusterDBUtils getGlusterDBUtils() {
+        return GlusterDBUtils.getInstance();
     }
 
     protected GlusterUtil getGlusterUtil() {
