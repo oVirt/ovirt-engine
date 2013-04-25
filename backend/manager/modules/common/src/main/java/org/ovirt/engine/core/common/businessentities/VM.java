@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
@@ -1447,6 +1448,18 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     @Override
     public String toString() {
         return "VM [" + getName() + "]";
+    }
+
+    /**
+     * Returns the required size for saving all the memory used by this VM.
+     * it is useful for determining the size to be allocated in the storage when hibernating
+     * VM or taking a snapshot with memory.
+     *
+     * @return - Memory size for allocation in bytes.
+     */
+    @JsonIgnore
+    public long getTotalMemorySizeInBytes() {
+        return (long) (getVmMemSizeMb() + 200 + (64 * getNumOfMonitors())) * 1024 * 1024;
     }
 
     ///////////////////////////////////////////////

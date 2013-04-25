@@ -2,10 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.HibernateVmParameters;
@@ -14,8 +12,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
@@ -52,7 +48,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
 
     public HibernateVmCommand(T parameters) {
         super(parameters);
-        super.setStoragePoolId(getVm().getStoragePoolId());
+        setStoragePoolId(getVm().getStoragePoolId());
         parameters.setEntityId(getVm().getId());
     }
 
@@ -69,18 +65,11 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
     @Override
     public NGuid getStorageDomainId() {
         if (_storageDomainId.equals(Guid.Empty) && getVm() != null) {
-            List<StorageDomain> domainsInPool = getStorageDomainDAO().getAllForStoragePool(getVm().getStoragePoolId());
-            if (domainsInPool.size() > 0) {
-                for (StorageDomain currDomain : domainsInPool) {
-                    if ((currDomain.getStorageDomainType().equals(StorageDomainType.Master)
-                            || currDomain.getStorageDomainType().equals(StorageDomainType.Data))
-                            && currDomain.getStatus() == StorageDomainStatus.Active
-                            && doesStorageDomainhaveSpaceForRequest(currDomain, (getImageSizeInBytes()
-                                    + getMetaDataSizeInBytes()) / BYTES_IN_GB)) {
-                        _storageDomainId = currDomain.getId();
-                        break;
-                    }
-                }
+            long sizeNeeded = (getVm().getTotalMemorySizeInBytes()
+                    + getMetaDataSizeInBytes()) / BYTES_IN_GB;
+            StorageDomain storageDomain = VmHandler.findStorageDomainForMemory(getVm().getStoragePoolId(), sizeNeeded);
+            if (storageDomain != null) {
+                _storageDomainId = storageDomain.getId();
             }
         }
         return _storageDomainId;
@@ -127,7 +116,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                                             getVm().getStoragePoolId(),
                                             getStorageDomainId().getValue(),
                                             image1GroupId,
-                                            getImageSizeInBytes(),
+                                            getVm().getTotalMemorySizeInBytes(),
                                             getVolumeType(),
                                             VolumeFormat.RAW,
                                             hiberVol1,
@@ -264,10 +253,6 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
         return true;
     }
 
-    protected boolean doesStorageDomainhaveSpaceForRequest(StorageDomain storageDomain, long sizeRequested) {
-        // not calling validate in order not to add the messages per domain
-        return (new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(sizeRequested)).isValid();
-    }
 
     @Override
     protected void setActionMessageParameters() {
@@ -383,15 +368,6 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
     private VolumeType getVolumeType() {
         return (getStoragePool().getstorage_pool_type().isFileDomain()) ? VolumeType.Sparse
                 : VolumeType.Preallocated;
-    }
-
-    /**
-     * Returns the memory size should be allocated in the storage.
-     *
-     * @return - Memory size for allocation in bytes.
-     */
-    private long getImageSizeInBytes() {
-        return (long) (getVm().getVmMemSizeMb() + 200 + (64 * getVm().getNumOfMonitors())) * 1024 * 1024;
     }
 
     /**

@@ -8,6 +8,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
 import org.ovirt.engine.core.common.backendinterfaces.BaseHandler;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -15,6 +16,9 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.EditableField;
 import org.ovirt.engine.core.common.businessentities.EditableOnVmStatusField;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -483,5 +487,33 @@ public class VmHandler {
         return (cdList.size() > 1 || floppyList.size() > 1);
     }
 
+    /**
+     * Returns a <code>StorageDomain</code> in the given <code>StoragePool</code> that has
+     * at least as much as requested free space and can be used to store memory images
+     *
+     * @param storagePoolId
+     *           The storage pool where the search for a domain will be made
+     * @param sizeRequested
+     *           The free size we need to have in the domain, in gigabytes
+     * @return storage domain in the given pool with at least the required amount of free space,
+     *         or null if no such storage domain exists in the pool
+     */
+    public static StorageDomain findStorageDomainForMemory(Guid storagePoolId, long sizeRequested) {
+        List<StorageDomain> domainsInPool = DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(storagePoolId);
+        for (StorageDomain currDomain : domainsInPool) {
+            if ((currDomain.getStorageDomainType().equals(StorageDomainType.Master)
+                    || currDomain.getStorageDomainType().equals(StorageDomainType.Data))
+                    && currDomain.getStatus() == StorageDomainStatus.Active
+                    && doesStorageDomainHaveSpaceForRequest(currDomain, sizeRequested)) {
+                return currDomain;
+            }
+        }
+        return null;
+    }
+
+    protected static boolean doesStorageDomainHaveSpaceForRequest(StorageDomain storageDomain, long sizeRequested) {
+        // not calling validate in order not to add the messages per domain
+        return (new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(sizeRequested)).isValid();
+    }
 }
 
