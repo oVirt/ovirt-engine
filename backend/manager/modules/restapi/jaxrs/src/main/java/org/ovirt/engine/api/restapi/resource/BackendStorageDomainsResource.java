@@ -75,7 +75,7 @@ public class BackendStorageDomainsResource
         return inject(new BackendStorageDomainResource(id, this));
     }
 
-    private Response addNfsOrLocalOrPosix(VdcActionType action, StorageDomain model, StorageDomainStatic entity, Guid hostId) {
+    private Response addDomain(VdcActionType action, StorageDomain model, StorageDomainStatic entity, Guid hostId) {
         StorageServerConnections cnx = mapToCnx(model);
 
         entity.setStorage(addStorageServerConnection(cnx, hostId));
@@ -157,7 +157,7 @@ public class BackendStorageDomainsResource
     private void connectStorageToHost(Guid hostId, StorageType storageType, LogicalUnit unit) {
         StorageServerConnections cnx = StorageDomainHelper.getConnection(storageType, unit.getAddress(), unit.getTarget(), unit.getUsername(), unit.getPassword(), unit.getPort());
         performAction(VdcActionType.ConnectStorageToVds,
-                      new StorageServerConnectionParametersBase(cnx, hostId));
+                new StorageServerConnectionParametersBase(cnx, hostId));
     }
 
     @Override
@@ -176,19 +176,19 @@ public class BackendStorageDomainsResource
             break;
         case NFS:
             validateParameters(storageDomain.getStorage(), "address", "path");
-            resp = addNfsOrLocalOrPosix(VdcActionType.AddNFSStorageDomain, storageDomain, entity, hostId);
+            resp = addDomain(VdcActionType.AddNFSStorageDomain, storageDomain, entity, hostId);
             break;
         case LOCALFS:
             validateParameters(storageDomain.getStorage(), "path");
-            resp = addNfsOrLocalOrPosix(VdcActionType.AddLocalStorageDomain, storageDomain, entity, hostId);
+            resp = addDomain(VdcActionType.AddLocalStorageDomain, storageDomain, entity, hostId);
             break;
         case POSIXFS:
             validateParameters(storageDomain.getStorage(), "path", "vfsType");
-            resp = addNfsOrLocalOrPosix(VdcActionType.AddPosixFsStorageDomain, storageDomain, entity, hostId);
+            resp = addDomain(VdcActionType.AddPosixFsStorageDomain, storageDomain, entity, hostId);
             break;
         case GLUSTERFS:
             validateParameters(storageDomain.getStorage(), "path", "vfsType");
-            resp = addNfsOrLocalOrPosix(VdcActionType.AddGlusterFsStorageDomain, storageDomain, entity, hostId);
+            resp = addDomain(VdcActionType.AddGlusterFsStorageDomain, storageDomain, entity, hostId);
             break;
 
         default:
