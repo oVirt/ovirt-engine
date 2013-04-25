@@ -98,9 +98,8 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
         return vmToAttach;
     }
 
-    private static Guid getPrestartedVmToAttach(NGuid vmPoolId) {
-        List<VmPoolMap> vmPoolMaps = DbFacade.getInstance().getVmPoolDao()
-                .getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Up);
+    private Guid getPrestartedVmToAttach(NGuid vmPoolId) {
+        List<VmPoolMap> vmPoolMaps = getVmPoolDAO().getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Up);
         if (vmPoolMaps != null) {
             for (VmPoolMap map : vmPoolMaps) {
                 if (canAttachPrestartedVmToUser(map.getvm_guid())) {
@@ -111,9 +110,8 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
         return Guid.Empty;
     }
 
-    private static Guid getNonPrestartedVmToAttach(NGuid vmPoolId) {
-        List<VmPoolMap> vmPoolMaps = DbFacade.getInstance().getVmPoolDao()
-                .getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Down);
+    private Guid getNonPrestartedVmToAttach(NGuid vmPoolId) {
+        List<VmPoolMap> vmPoolMaps = getVmPoolDAO().getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Down);
         if (vmPoolMaps != null) {
             for (VmPoolMap map : vmPoolMaps) {
                 if (canAttachNonPrestartedVmToUser(map.getvm_guid())) {
