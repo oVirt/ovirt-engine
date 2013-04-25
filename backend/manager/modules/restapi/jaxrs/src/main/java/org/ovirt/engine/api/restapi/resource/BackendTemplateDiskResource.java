@@ -9,7 +9,7 @@ import org.ovirt.engine.api.resource.TemplateDiskResource;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
-import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -41,6 +41,6 @@ public class BackendTemplateDiskResource extends BackendReadOnlyDeviceResource<D
     }
 
     protected Disk getDisk() {
-        return performGet(VdcQueryType.GetDiskByDiskId, new GetDiskByDiskIdParameters(guid));
+        return performGet(VdcQueryType.GetDiskByDiskId, new IdQueryParameters(guid));
     }
 }

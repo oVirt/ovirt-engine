@@ -1,14 +1,15 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+
 import org.easymock.EasyMock;
-
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Template;
@@ -22,13 +23,11 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.GetVmByVmNameForDataCenterParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.easymock.classextension.EasyMock.expect;
-import org.ovirt.engine.core.common.queries.GetVmByVmNameForDataCenterParameters;
 
 public class BackendTemplatesResourceTest
     extends AbstractBackendCollectionResourceTest<Template, VmTemplate, BackendTemplatesResource> {
@@ -128,7 +127,7 @@ public class BackendTemplatesResourceTest
                 getVdsGroupEntity());
 
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
-                                   GetVmByVmIdParameters.class,
+                                   IdQueryParameters.class,
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[1] },
                                    setUpVm(GUIDS[1]));
@@ -163,7 +162,7 @@ public class BackendTemplatesResourceTest
         setUpHttpHeaderExpectations("Expect", "201-created");
 
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
-                                   GetVmByVmIdParameters.class,
+                                   IdQueryParameters.class,
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[1] },
                                    setUpVm(GUIDS[1]));
@@ -295,7 +294,7 @@ public class BackendTemplatesResourceTest
                 getVdsGroupEntity());
 
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
-                                   GetVmByVmIdParameters.class,
+                                   IdQueryParameters.class,
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[1] },
                                    setUpVm(GUIDS[1]));
@@ -338,7 +337,7 @@ public class BackendTemplatesResourceTest
                 getVdsGroupEntity());
 
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
-                                   GetVmByVmIdParameters.class,
+                                   IdQueryParameters.class,
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[1] },
                                    setUpVm(GUIDS[1]));
@@ -399,7 +398,7 @@ public class BackendTemplatesResourceTest
                 getVdsGroupEntity());
 
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
-                                   GetVmByVmIdParameters.class,
+                                   IdQueryParameters.class,
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[1] },
                                    setUpVm(GUIDS[1]));

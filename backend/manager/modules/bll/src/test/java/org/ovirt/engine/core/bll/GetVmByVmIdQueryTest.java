@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDAO;
 
@@ -15,14 +15,14 @@ import org.ovirt.engine.core.dao.VmDAO;
  * A test case for {@link GetVmByVmIdQuery}.
  * It does not test database implementation, but rather tests that the right delegations to the DAO occur.
  */
-public class GetVmByVmIdQueryTest extends AbstractUserQueryTest<GetVmByVmIdParameters, GetVmByVmIdQuery<GetVmByVmIdParameters>> {
+public class GetVmByVmIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetVmByVmIdQuery<IdQueryParameters>> {
     @Test
     public void testExecuteQuery() {
         Guid vmID = Guid.NewGuid();
         VM expectedResult = new VM();
         expectedResult.setId(vmID);
 
-        GetVmByVmIdParameters paramsMock = getQueryParameters();
+        IdQueryParameters paramsMock = getQueryParameters();
         when(paramsMock.getId()).thenReturn(vmID);
 
         VmDAO vmDAOMock = mock(VmDAO.class);

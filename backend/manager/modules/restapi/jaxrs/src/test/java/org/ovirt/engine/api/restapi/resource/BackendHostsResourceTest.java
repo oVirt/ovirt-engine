@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendHostsResourceTest
@@ -89,8 +89,8 @@ public class BackendHostsResourceTest
     @Test
     public void testRemoveNonExistant() throws Exception{
         setUpGetEntityExpectations(VdcQueryType.GetVdsByVdsId,
-                GetVdsByVdsIdParameters.class,
-                new String[] { "VdsId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { NON_EXISTANT_GUID },
                 null);
         control.replay();
@@ -133,8 +133,8 @@ public class BackendHostsResourceTest
         VDS vds = new VDS();
         vds.setId(GUIDS[0]);
         setUpGetEntityExpectations(VdcQueryType.GetVdsByVdsId,
-                GetVdsByVdsIdParameters.class,
-                new String[] { "VdsId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 vds);
     }
@@ -181,8 +181,8 @@ public class BackendHostsResourceTest
                                   true,
                                   GUIDS[0],
                                   VdcQueryType.GetVdsByVdsId,
-                                  GetVdsByVdsIdParameters.class,
-                                  new String[] { "VdsId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
 
@@ -209,8 +209,8 @@ public class BackendHostsResourceTest
                                   true,
                                   GUIDS[0],
                                   VdcQueryType.GetVdsByVdsId,
-                                  GetVdsByVdsIdParameters.class,
-                                  new String[] { "VdsId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
 
@@ -236,8 +236,8 @@ public class BackendHostsResourceTest
                                   true,
                                   GUIDS[0],
                                   VdcQueryType.GetVdsByVdsId,
-                                  GetVdsByVdsIdParameters.class,
-                                  new String[] { "VdsId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
 
@@ -360,8 +360,8 @@ public class BackendHostsResourceTest
     protected void setUpGetCertificateInfo(int times) throws Exception {
         for (int i=0;i < times;i++){
             setUpGetEntityExpectations(VdcQueryType.GetVdsCertificateSubjectByVdsId,
-                    GetVdsByVdsIdParameters.class,
-                    new String[] { "VdsId" },
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
                     new Object[] { GUIDS[i] },
                     BackendHostsResourceTest.CERTIFICATE_SUBJECT);
         }

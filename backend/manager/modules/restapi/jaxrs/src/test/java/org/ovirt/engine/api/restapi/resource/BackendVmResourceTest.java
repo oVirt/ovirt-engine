@@ -1,5 +1,10 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.getModel;
+import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.setUpEntityExpectations;
+import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.setUpStatisticalEntityExpectations;
+import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.verifyModelSpecific;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,13 +15,13 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.File;
@@ -26,7 +31,6 @@ import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.model.Payloads;
 import org.ovirt.engine.api.model.Statistic;
-import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Ticket;
 import org.ovirt.engine.api.model.VM;
@@ -45,28 +49,22 @@ import org.ovirt.engine.core.common.action.StopVmTypeEnum;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
-
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVdsByNameParameters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.common.action.VmOperationParameterBase;
-
-import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.getModel;
-import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.setUpEntityExpectations;
-import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.setUpStatisticalEntityExpectations;
-import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.verifyModelSpecific;
 
 public class BackendVmResourceTest
         extends AbstractBackendSubResourceTest<VM, org.ovirt.engine.core.common.businessentities.VM, BackendVmResource> {
@@ -760,7 +758,7 @@ public class BackendVmResourceTest
 
         while (times-- > 0) {
             setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
-                                       GetVmByVmIdParameters.class,
+                                       IdQueryParameters.class,
                                        new String[] { "Id" },
                                        new Object[] { GUIDS[0] },
                                        notFound ? null : entity);
@@ -830,7 +828,7 @@ public class BackendVmResourceTest
     protected void setUpGetPayloadExpectations(int index, int times) throws Exception {
         for (int i = 0; i < times; i++) {
             setUpGetEntityExpectations(VdcQueryType.GetVmPayload,
-                                       GetVmByVmIdParameters.class,
+                                       IdQueryParameters.class,
                                        new String[] { "Id" },
                                        new Object[] { GUIDS[index] },
                                        getPayloadModel());
@@ -848,7 +846,7 @@ public class BackendVmResourceTest
     protected void setUpGetNoPayloadExpectations(int index, int times) throws Exception {
         for (int i = 0; i < times; i++) {
             setUpGetEntityExpectations(VdcQueryType.GetVmPayload,
-                                       GetVmByVmIdParameters.class,
+                                       IdQueryParameters.class,
                                        new String[] { "Id" },
                                        new Object[] { GUIDS[index] },
                                        null);
@@ -857,7 +855,7 @@ public class BackendVmResourceTest
 
     private void setUpGetBallooningExpectations() throws Exception {
         setUpGetEntityExpectations(VdcQueryType.IsBalloonEnabled,
-                GetVmByVmIdParameters.class,
+                IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 true);
@@ -865,7 +863,7 @@ public class BackendVmResourceTest
 
     private void setUpGetCertuficateExpectations() throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetVdsCertificateSubjectByVmId,
-                GetVmByVmIdParameters.class,
+                IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 CERTIFICATE);

@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.GetAdGroupByIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
-public class GetAdGroupByIdQuery<P extends GetAdGroupByIdParameters> extends QueriesCommandBase<P> {
+public class GetAdGroupByIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetAdGroupByIdQuery(P parameters) {
         super(parameters);
     }

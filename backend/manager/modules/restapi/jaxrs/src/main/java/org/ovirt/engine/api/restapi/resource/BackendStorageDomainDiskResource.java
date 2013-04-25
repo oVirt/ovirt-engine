@@ -3,8 +3,8 @@ package org.ovirt.engine.api.restapi.resource;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.StorageDomain;
-import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -27,7 +27,7 @@ public class BackendStorageDomainDiskResource extends BackendDiskResource {
     protected Disk performGet(VdcQueryType query, VdcQueryParametersBase params) {
         Disk disk;
         if (QueryHelper.hasMatrixParam(getUriInfo(), UNREGISTERED_CONSTRAINT_PARAMETER)) {
-            VdcQueryReturnValue result = runQuery(VdcQueryType.GetDiskByDiskId, new GetDiskByDiskIdParameters(guid));
+            VdcQueryReturnValue result = runQuery(VdcQueryType.GetDiskByDiskId, new IdQueryParameters(guid));
             if (!result.getSucceeded() || result.getReturnValue() == null) {
                 Guid storageDomainGuid = asGuid(storageDomainId);
                 disk = super.performGet(VdcQueryType.GetUnregisteredDisk, new GetUnregisteredDiskQueryParameters(guid, storageDomainGuid, parent.getStoragePoolIdForDomain(storageDomainGuid)));
@@ -37,7 +37,7 @@ public class BackendStorageDomainDiskResource extends BackendDiskResource {
                 return notFound();
             }
         } else {
-            disk = super.performGet(VdcQueryType.GetDiskByDiskId, new GetDiskByDiskIdParameters(guid));
+            disk = super.performGet(VdcQueryType.GetDiskByDiskId, new IdQueryParameters(guid));
         }
         if (disk.isSetStorageDomains() && !disk.getStorageDomains().getStorageDomains().isEmpty()) {
             for (StorageDomain sd : disk.getStorageDomains().getStorageDomains()) {

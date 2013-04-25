@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -98,7 +98,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
         }
         return performCreate(VdcActionType.AddVds,
                                addParams,
-                               new QueryIdResolver<Guid>(VdcQueryType.GetVdsByVdsId, GetVdsByVdsIdParameters.class));
+                               new QueryIdResolver<Guid>(VdcQueryType.GetVdsByVdsId, IdQueryParameters.class));
     }
 
     @Override
@@ -150,7 +150,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
     public Host addCertificateInfo(Host host) {
         VdcQueryReturnValue result =
             runQuery(VdcQueryType.GetVdsCertificateSubjectByVdsId,
-                    new GetVdsByVdsIdParameters(asGuid(host.getId())));
+                    new IdQueryParameters(asGuid(host.getId())));
 
         if (result != null
             && result.getSucceeded()

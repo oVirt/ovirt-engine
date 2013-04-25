@@ -1,16 +1,16 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.BackendGroupsResourceBase.SUB_COLLECTIONS;
+
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedRolesResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.GroupResource;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
-import org.ovirt.engine.core.common.queries.GetAdGroupByIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-
-import static org.ovirt.engine.api.restapi.resource.BackendGroupsResource.SUB_COLLECTIONS;
 
 public class BackendGroupResource
         extends AbstractBackendSubResource<Group, LdapGroup>
@@ -25,7 +25,7 @@ public class BackendGroupResource
 
     @Override
     public Group get() {
-        return performGet(VdcQueryType.GetAdGroupById, new GetAdGroupByIdParameters(guid));
+        return performGet(VdcQueryType.GetAdGroupById, new IdQueryParameters(guid));
     }
 
     @Override

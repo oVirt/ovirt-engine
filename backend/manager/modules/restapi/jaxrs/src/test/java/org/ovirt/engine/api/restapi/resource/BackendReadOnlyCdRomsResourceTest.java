@@ -3,12 +3,11 @@ package org.ovirt.engine.api.restapi.resource;
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.resource.DeviceResource;
 import org.ovirt.engine.api.resource.ReadOnlyDeviceResource;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendReadOnlyCdRomsResourceTest
         extends AbstractBackendCdRomsResourceTest<BackendReadOnlyCdRomsResource<VM>> {
@@ -18,9 +17,9 @@ public class BackendReadOnlyCdRomsResourceTest
                                     (VM.class,
                                      PARENT_ID,
                                      VdcQueryType.GetVmByVmId,
-                                     new GetVmByVmIdParameters(PARENT_ID)),
+                                     new IdQueryParameters(PARENT_ID)),
               VdcQueryType.GetVmByVmId,
-              new GetVmByVmIdParameters(PARENT_ID),
+              new IdQueryParameters(PARENT_ID),
               "Id");
     }
 

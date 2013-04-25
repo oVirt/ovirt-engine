@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -68,7 +68,7 @@ public class BackendCdRomsResource
     protected VmStatic getUpdatable(String isoPath) {
         VmStatic updatable = getEntity(VM.class,
                                        VdcQueryType.GetVmByVmId,
-                                       new GetVmByVmIdParameters(parentId),
+                                       new IdQueryParameters(parentId),
                                        parentId.toString()).getStaticData();
         updatable.setIsoPath(isoPath);
         return updatable;

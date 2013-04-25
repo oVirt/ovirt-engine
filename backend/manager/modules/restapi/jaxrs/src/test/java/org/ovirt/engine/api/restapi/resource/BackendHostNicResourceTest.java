@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
-import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -243,8 +242,8 @@ public class BackendHostNicResourceTest
     private void setupGetHostExpectations(int times) throws Exception {
         while (times-- > 0) {
             setUpGetEntityExpectations(VdcQueryType.GetVdsByVdsId,
-                    GetVdsByVdsIdParameters.class,
-                    new String[] { "VdsId" },
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
                     new Object[] { PARENT_GUID },
                     getHostModel());
         }
@@ -486,8 +485,8 @@ public class BackendHostNicResourceTest
             VDS vds = new VDS();
             vds.setVdsGroupId(GUIDS[0]);
             setUpEntityQueryExpectations(VdcQueryType.GetVdsByVdsId,
-                    GetVdsByVdsIdParameters.class,
-                    new String[] { "VdsId" },
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
                     new Object[] { PARENT_GUID },
                     vds);
         }

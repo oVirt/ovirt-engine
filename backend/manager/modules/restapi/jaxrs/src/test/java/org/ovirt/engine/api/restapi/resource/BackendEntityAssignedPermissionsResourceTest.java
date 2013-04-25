@@ -5,17 +5,15 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.api.model.User;
-
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.queries.GetDbUserByUserIdParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByPermissionIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -83,10 +81,10 @@ public class BackendEntityAssignedPermissionsResourceTest
         UriInfo uriInfo = setUpUriExpectations(null);
 
         setUpGetEntityExpectations(VdcQueryType.GetDbUserByUserId,
-                GetDbUserByUserIdParameters.class,
-                new String[] { "UserId" },
-                new Object[] { GUIDS[1] },
-                getUserByIdx(1));
+                                    IdQueryParameters.class,
+                                    new String[] {"Id"},
+                                    new Object[] {GUIDS[1]},
+                                    getUserByIdx(1));
         setUpQueryExpectations("");
 
         collection.setUriInfo(uriInfo);

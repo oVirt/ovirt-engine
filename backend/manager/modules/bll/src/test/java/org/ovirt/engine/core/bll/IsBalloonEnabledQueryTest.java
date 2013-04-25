@@ -6,12 +6,12 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 
-public class IsBalloonEnabledQueryTest extends AbstractQueryTest<GetVmByVmIdParameters, IsBalloonEnabledQuery<GetVmByVmIdParameters>> {
+public class IsBalloonEnabledQueryTest extends AbstractQueryTest<IdQueryParameters, IsBalloonEnabledQuery<IdQueryParameters>> {
 
     /** The {@link VmDeviceDAO} mocked for the test */
     private VmDeviceDAO vmDeviceDAOMock;
@@ -40,7 +40,7 @@ public class IsBalloonEnabledQueryTest extends AbstractQueryTest<GetVmByVmIdPara
         params = getQueryParameters();
         when(params.getId()).thenReturn(vmID);
 
-        IsBalloonEnabledQuery<GetVmByVmIdParameters> query = getQuery();
+        IsBalloonEnabledQuery<IdQueryParameters> query = getQuery();
         query.executeQueryCommand();
 
         assertTrue(!((Boolean) query.getQueryReturnValue().getReturnValue()).booleanValue());

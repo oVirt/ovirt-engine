@@ -1,16 +1,21 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.PARENT_ID;
+import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.setUpEntityExpectations;
+import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.verifyModelSpecific;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
@@ -23,23 +28,17 @@ import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
-import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.setUpEntityExpectations;
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.verifyModelSpecific;
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.PARENT_ID;
-import static org.easymock.EasyMock.expect;
 
 public class BackendVmDiskResourceTest
         extends AbstractBackendSubResourceTest<Disk, org.ovirt.engine.core.common.businessentities.Disk, BackendDeviceResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk>> {
@@ -254,8 +253,8 @@ public class BackendVmDiskResourceTest
     @Test
     public void testMoveBySdId() throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetDiskByDiskId,
-                GetDiskByDiskIdParameters.class,
-                new String[] { "DiskId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[1] },
                 getEntity(1));
         setUriInfo(setUpActionExpectations(VdcActionType.MoveDisks,
@@ -294,8 +293,8 @@ public class BackendVmDiskResourceTest
         }
 
         setUpEntityQueryExpectations(VdcQueryType.GetDiskByDiskId,
-                GetDiskByDiskIdParameters.class,
-                new String[] { "DiskId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[1] },
                 getEntity(1));
         setUriInfo(setUpActionExpectations(VdcActionType.MoveDisks,

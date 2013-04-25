@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDAO;
 
@@ -16,7 +16,7 @@ import org.ovirt.engine.core.dao.VdsDAO;
  * A test case for {@link GetVdsCertificateSubjectByVdsIdQuery}.
  * It does not test database implementation, but rather tests that the right delegations to the DAO occur.
  */
-public class GetVdsCertificateSubjectByVdsIdQueryTest extends AbstractUserQueryTest<GetVdsByVdsIdParameters, GetVdsCertificateSubjectByVdsIdQuery<GetVdsByVdsIdParameters>> {
+public class GetVdsCertificateSubjectByVdsIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetVdsCertificateSubjectByVdsIdQuery<IdQueryParameters>> {
     @Test
     public void testExecuteQuery() {
         String hostName = RandomStringUtils.randomAlphabetic(10);
@@ -30,8 +30,8 @@ public class GetVdsCertificateSubjectByVdsIdQueryTest extends AbstractUserQueryT
         vds.setId(vdsID);
         vds.setHostName(hostName);
 
-        GetVdsByVdsIdParameters paramsMock = getQueryParameters();
-        when(paramsMock.getVdsId()).thenReturn(vdsID);
+        IdQueryParameters paramsMock = getQueryParameters();
+        when(paramsMock.getId()).thenReturn(vdsID);
 
         VdsDAO vdsDAOMock = mock(VdsDAO.class);
         when(vdsDAOMock.get(vdsID, getUser().getUserId(), getQueryParameters().isFiltered())).thenReturn(vds);

@@ -22,9 +22,9 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmNameForDataCenterParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -132,7 +132,7 @@ public class BackendTemplatesResource
         if (template.getVm().isSetId()) {
             vm = getEntity(org.ovirt.engine.core.common.businessentities.VM.class,
                            VdcQueryType.GetVmByVmId,
-                           new GetVmByVmIdParameters(asGuid(template.getVm().getId())),
+                           new IdQueryParameters(asGuid(template.getVm().getId())),
                            template.getVm().getId());
         } else if (isFiltered()) {
             Guid dataCenterId = null;

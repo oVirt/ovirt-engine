@@ -1,5 +1,10 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+import static org.ovirt.engine.api.restapi.resource.AbstractBackendCdRomsResourceTest.PARENT_ID;
+import static org.ovirt.engine.api.restapi.resource.AbstractBackendCdRomsResourceTest.setUpEntityExpectations;
+import static org.ovirt.engine.api.restapi.resource.AbstractBackendCdRomsResourceTest.verifyModelSpecific;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,25 +14,18 @@ import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
 import org.ovirt.engine.api.model.File;
-
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.easymock.EasyMock.expect;
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendCdRomsResourceTest.setUpEntityExpectations;
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendCdRomsResourceTest.verifyModelSpecific;
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendCdRomsResourceTest.PARENT_ID;
 
 public class BackendCdRomResourceTest
         extends AbstractBackendSubResourceTest<CdRom, VM, BackendDeviceResource<CdRom, CdRoms, VM>> {
@@ -61,7 +59,7 @@ public class BackendCdRomResourceTest
     protected static BackendCdRomsResource getCollection() {
        return new BackendCdRomsResource(PARENT_ID,
                                         VdcQueryType.GetVmByVmId,
-                                        new GetVmByVmIdParameters(PARENT_ID));
+                                        new IdQueryParameters(PARENT_ID));
     }
 
     protected void init() {
@@ -262,7 +260,7 @@ public class BackendCdRomResourceTest
     protected void setUpEntityQueryExpectations(int times, VMStatus status) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
-                                         GetVmByVmIdParameters.class,
+                                         IdQueryParameters.class,
                                          new String[] { "Id" },
                                          new Object[] { PARENT_ID },
                                          getEntityList(status));
@@ -276,7 +274,7 @@ public class BackendCdRomResourceTest
     protected void setUpGetEntityExpectations(int times, VMStatus status) throws Exception {
         while (times-- > 0) {
             setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
-                                       GetVmByVmIdParameters.class,
+                                       IdQueryParameters.class,
                                        new String[] { "Id" },
                                        new Object[] { PARENT_ID },
                                        status !=null ? getEntity(0, status)

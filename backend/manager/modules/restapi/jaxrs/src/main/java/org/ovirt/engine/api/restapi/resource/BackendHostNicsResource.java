@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -333,7 +332,7 @@ public class BackendHostNicsResource
 
     @SuppressWarnings("unchecked")
     protected List<org.ovirt.engine.core.common.businessentities.network.Network> getClusterNetworks(){
-        VDS vds = getEntity(VDS.class, VdcQueryType.GetVdsByVdsId, new GetVdsByVdsIdParameters(Guid.createGuidFromString(getHostId())), "Host");
+        VDS vds = getEntity(VDS.class, VdcQueryType.GetVdsByVdsId, new IdQueryParameters(Guid.createGuidFromString(getHostId())), "Host");
         return getEntity(List.class, VdcQueryType.GetAllNetworksByClusterId, new IdQueryParameters(vds.getVdsGroupId()), "Networks");
     }
 

@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -30,8 +30,8 @@ public class BackendStorageDomainDiskResourceTest extends AbstractBackendSubReso
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(
                 VdcQueryType.GetDiskByDiskId,
-                GetDiskByDiskIdParameters.class,
-                new String[]{"DiskId"},
+                IdQueryParameters.class,
+                new String[]{"Id"},
                 new Object[]{DISK_ID},
                 getEntity(1));
         control.replay();
@@ -46,8 +46,8 @@ public class BackendStorageDomainDiskResourceTest extends AbstractBackendSubReso
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(
                 VdcQueryType.GetDiskByDiskId,
-                GetDiskByDiskIdParameters.class,
-                new String[] { "DiskId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { DISK_ID },
                 getEntity(1, true));
         control.replay();

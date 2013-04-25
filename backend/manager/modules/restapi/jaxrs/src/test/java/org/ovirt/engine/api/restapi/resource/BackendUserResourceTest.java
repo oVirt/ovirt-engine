@@ -1,17 +1,16 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.BackendUsersResourceTest.GROUPS;
+import static org.ovirt.engine.api.restapi.resource.BackendUsersResourceTest.PARSED_GROUPS;
+
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.queries.GetDbUserByUserIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-
-import static org.ovirt.engine.api.restapi.resource.BackendUsersResourceTest.GROUPS;
-import static org.ovirt.engine.api.restapi.resource.BackendUsersResourceTest.PARSED_GROUPS;
 
 public class BackendUserResourceTest
         extends AbstractBackendSubResourceTest<User, DbUser, BackendUserResource> {
@@ -64,8 +63,8 @@ public class BackendUserResourceTest
 
     protected void setUpGetEntityExpectations(boolean notFound) throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetDbUserByUserId,
-                                   GetDbUserByUserIdParameters.class,
-                                   new String[] { "UserId" },
+                                   IdQueryParameters.class,
+                                   new String[] { "Id" },
                                    new Object[] { GUIDS[0] },
                                    notFound ? null : getEntity(0));
     }

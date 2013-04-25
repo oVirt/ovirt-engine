@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendResourceTest extends AbstractBackendBaseTest {
@@ -94,8 +94,8 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
 
     protected void setUpGetEntityExpectations(boolean filter, boolean getCertInfo) throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetVdsByVdsId,
-                GetVdsByVdsIdParameters.class,
-                new String[] { "VdsId", "Filtered" },
+                IdQueryParameters.class,
+                new String[] { "Id", "Filtered" },
                 new Object[] { GUIDS[0], filter },
                 getEntity(0));
 
@@ -107,8 +107,8 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
 
     protected void setUpGetCertificateInfo() throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetVdsCertificateSubjectByVdsId,
-                GetVdsByVdsIdParameters.class,
-                new String[] { "VdsId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 BackendHostsResourceTest.CERTIFICATE_SUBJECT);
     }

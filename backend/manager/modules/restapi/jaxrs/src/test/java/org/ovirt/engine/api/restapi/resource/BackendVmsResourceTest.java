@@ -45,10 +45,10 @@ import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -82,7 +82,7 @@ public class BackendVmsResourceTest
             vm.setStatisticsData(vmStatistics);
             for (int i=0; i<GUIDS.length-1; i++) {
                 setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
-                        GetVmByVmIdParameters.class,
+                        IdQueryParameters.class,
                         new String[] { "Id" },
                         new Object[] { GUIDS[i] },
                         vm);
@@ -149,7 +149,7 @@ public class BackendVmsResourceTest
     @Test
     public void testRemoveNonExistant() throws Exception{
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
-                GetVmByVmIdParameters.class,
+                IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { NON_EXISTANT_GUID },
                 null);
@@ -165,7 +165,7 @@ public class BackendVmsResourceTest
 
     private void setUpGetEntityExpectations() throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
-                GetVmByVmIdParameters.class,
+                IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 new org.ovirt.engine.core.common.businessentities.VM());
@@ -240,7 +240,7 @@ public class BackendVmsResourceTest
                                   asList(GUIDS[1]),
                                   asList(new AsyncTaskStatus(asyncStatus)),
                                   VdcQueryType.GetVmByVmId,
-                                  GetVmByVmIdParameters.class,
+                                  IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
@@ -267,7 +267,7 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(2, 0);
         setUpGetCertuficateExpectations(2, 0);
         setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
-                                     GetVmByVmIdParameters.class,
+                                     IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[0] },
                                      getEntity(0));
@@ -294,7 +294,7 @@ public class BackendVmsResourceTest
                                   asList(GUIDS[1]),
                                   asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
                                   VdcQueryType.GetVmByVmId,
-                                  GetVmByVmIdParameters.class,
+                                  IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
@@ -320,7 +320,7 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(2, 0);
         setUpGetCertuficateExpectations(2, 0);
         setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
-                                     GetVmByVmIdParameters.class,
+                                     IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[0] },
                                      getEntity(0));
@@ -344,7 +344,7 @@ public class BackendVmsResourceTest
                                   asList(GUIDS[1]),
                                   asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
                                   VdcQueryType.GetVmByVmId,
-                                  GetVmByVmIdParameters.class,
+                                  IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
@@ -373,7 +373,7 @@ public class BackendVmsResourceTest
                                    SearchType.Cluster,
                                    setUpVDSGroup(GUIDS[1]));
         setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
-                                     GetVmByVmIdParameters.class,
+                                     IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[0] },
                                      getEntity(0));
@@ -398,7 +398,7 @@ public class BackendVmsResourceTest
                                   asList(GUIDS[1]),
                                   asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
                                   VdcQueryType.GetVmByVmId,
-                                  GetVmByVmIdParameters.class,
+                                  IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
@@ -482,7 +482,7 @@ public class BackendVmsResourceTest
                                   true,
                                   GUIDS[2],
                                   VdcQueryType.GetVmByVmId,
-                                  GetVmByVmIdParameters.class,
+                                  IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[2] },
                                   getEntity(2));
@@ -522,7 +522,7 @@ public class BackendVmsResourceTest
                                   true,
                                   GUIDS[2],
                                   VdcQueryType.GetVmByVmId,
-                                  GetVmByVmIdParameters.class,
+                                  IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[2] },
                                   getEntity(2));
@@ -560,7 +560,7 @@ public class BackendVmsResourceTest
                                   true,
                                   GUIDS[2],
                                   VdcQueryType.GetVmByVmId,
-                                  GetVmByVmIdParameters.class,
+                                  IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[2] },
                                   getEntity(2));
@@ -595,7 +595,7 @@ public class BackendVmsResourceTest
                                   true,
                                   GUIDS[2],
                                   VdcQueryType.GetVmByVmId,
-                                  GetVmByVmIdParameters.class,
+                                  IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[2] },
                                   getEntity(2));
@@ -633,7 +633,7 @@ public class BackendVmsResourceTest
                                   true,
                                   GUIDS[2],
                                   VdcQueryType.GetVmByVmId,
-                                  GetVmByVmIdParameters.class,
+                                  IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[2] },
                                   getEntity(2));
@@ -679,7 +679,7 @@ public class BackendVmsResourceTest
                                   true,
                                   GUIDS[2],
                                   VdcQueryType.GetVmByVmId,
-                                  GetVmByVmIdParameters.class,
+                                  IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[2] },
                                   getEntity(2));
@@ -721,7 +721,7 @@ public class BackendVmsResourceTest
                                   true,
                                   GUIDS[2],
                                   VdcQueryType.GetVmByVmId,
-                                  GetVmByVmIdParameters.class,
+                                  IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[2] },
                                   getEntity(2));
@@ -783,7 +783,7 @@ public class BackendVmsResourceTest
     private void setUpGetCertuficateExpectations(int times) throws Exception {
         for (int i = 0; i < times; i++) {
             setUpGetEntityExpectations(VdcQueryType.GetVdsCertificateSubjectByVmId,
-                    GetVmByVmIdParameters.class,
+                    IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[i] },
                     CERTIFICATE);
@@ -793,7 +793,7 @@ public class BackendVmsResourceTest
     private void setUpGetCertuficateExpectations(int times, int index) throws Exception {
         for (int i = 0; i < times; i++) {
             setUpGetEntityExpectations(VdcQueryType.GetVdsCertificateSubjectByVmId,
-                    GetVmByVmIdParameters.class,
+                    IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[index] },
                     CERTIFICATE);
@@ -1045,7 +1045,7 @@ public class BackendVmsResourceTest
         VmPayload payload = new VmPayload();
         for (int i = 0; i < times; i++) {
             setUpGetEntityExpectations(VdcQueryType.GetVmPayload,
-                    GetVmByVmIdParameters.class,
+                    IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[i] },
                     payload);
@@ -1056,7 +1056,7 @@ public class BackendVmsResourceTest
         VmPayload payload = new VmPayload();
         for (int i = 0; i < times; i++) {
             setUpGetEntityExpectations(VdcQueryType.GetVmPayload,
-                    GetVmByVmIdParameters.class,
+                    IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[index] },
                     payload);
@@ -1066,7 +1066,7 @@ public class BackendVmsResourceTest
     private void setUpGetBallooningExpectations(int times) throws Exception {
         for (int i = 0; i < times; i++) {
             setUpGetEntityExpectations(VdcQueryType.IsBalloonEnabled,
-                    GetVmByVmIdParameters.class,
+                    IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[i] },
                     true);
@@ -1076,7 +1076,7 @@ public class BackendVmsResourceTest
     private void setUpGetBallooningExpectations(int times, int index) throws Exception {
         for (int i = 0; i < times; i++) {
             setUpGetEntityExpectations(VdcQueryType.IsBalloonEnabled,
-                    GetVmByVmIdParameters.class,
+                    IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[index] },
                     true);

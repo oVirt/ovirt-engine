@@ -1,15 +1,20 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.PARENT_ID;
+import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.setUpEntityExpectations;
+import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.verifyModelSpecific;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.StorageDomain;
@@ -21,18 +26,12 @@ import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.easymock.EasyMock.expect;
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.setUpEntityExpectations;
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.verifyModelSpecific;
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.PARENT_ID;
 
 public class BackendTemplateDiskResourceTest
         extends AbstractBackendSubResourceTest<Disk, org.ovirt.engine.core.common.businessentities.Disk, BackendTemplateDiskResource> {
@@ -108,8 +107,8 @@ public class BackendTemplateDiskResourceTest
     @Test
     public void testCopyBySdId() throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetDiskByDiskId,
-                GetDiskByDiskIdParameters.class,
-                new String[] { "DiskId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[1] },
                 getEntity(1));
         setUriInfo(setUpActionExpectations(VdcActionType.MoveOrCopyDisk,
@@ -147,8 +146,8 @@ public class BackendTemplateDiskResourceTest
                     getStorageDomainEntity(0));
         }
         setUpEntityQueryExpectations(VdcQueryType.GetDiskByDiskId,
-                GetDiskByDiskIdParameters.class,
-                new String[] { "DiskId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[1] },
                 getEntity(1));
         setUriInfo(setUpActionExpectations(VdcActionType.MoveOrCopyDisk,

@@ -46,10 +46,10 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByNameParameters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -224,7 +224,7 @@ public class BackendVmsResource extends
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         return performCreate(VdcActionType.AddVmFromSnapshot,
                                 params,
-                                new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
+                                new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
     }
 
     private Response cloneVmFromTemplate(VmStatic staticVm, VM vm, Guid templateId) {
@@ -236,7 +236,7 @@ public class BackendVmsResource extends
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         return performCreate(VdcActionType.AddVmFromTemplate,
                                params,
-                               new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
+                               new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
     }
 
     private HashMap<Guid, DiskImage> getDisksToClone(Disks disks, Guid templateId) {
@@ -283,7 +283,7 @@ public class BackendVmsResource extends
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         return performCreate(VdcActionType.AddVm,
                                params,
-                               new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
+                               new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
     }
 
     protected Response addVmFromScratch(VmStatic staticVm, VM vm, Guid storageDomainId) {
@@ -296,7 +296,7 @@ public class BackendVmsResource extends
         params.setStorageDomainId(storageDomainId);
         return performCreate(VdcActionType.AddVmFromScratch,
                                params,
-                               new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
+                               new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
     }
 
     private ArrayList<DiskImage> mapDisks(Disks disks) {
@@ -325,7 +325,7 @@ public class BackendVmsResource extends
     }
 
     private void addInlineStatistics(VM vm) {
-        EntityIdResolver<Guid> resolver = new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class);
+        EntityIdResolver<Guid> resolver = new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class);
         VmStatisticalQuery query = new VmStatisticalQuery(resolver, newModel(vm.getId()));
         BackendStatisticsResource<VM, org.ovirt.engine.core.common.businessentities.VM> statisticsResource = inject(new BackendStatisticsResource<VM, org.ovirt.engine.core.common.businessentities.VM>(entityType, Guid.createGuidFromString(vm.getId()), query));
         Statistics statistics = statisticsResource.list();
@@ -386,7 +386,7 @@ public class BackendVmsResource extends
         try {
             VmPayload payload = getEntity(VmPayload.class,
                     VdcQueryType.GetVmPayload,
-                    new GetVmByVmIdParameters(new Guid(vm.getId())),
+                    new IdQueryParameters(new Guid(vm.getId())),
                     null,
                     true);
 
@@ -452,7 +452,7 @@ public class BackendVmsResource extends
     protected void setBallooning(VM vm) {
         Boolean balloonEnabled = getEntity(Boolean.class,
                 VdcQueryType.IsBalloonEnabled,
-                new GetVmByVmIdParameters(new Guid(vm.getId())),
+                new IdQueryParameters(new Guid(vm.getId())),
                 null,
                 true);
         if (!vm.isSetMemoryPolicy()) {
@@ -464,7 +464,7 @@ public class BackendVmsResource extends
     public void setCertificateInfo(VM model) {
         VdcQueryReturnValue result =
                 runQuery(VdcQueryType.GetVdsCertificateSubjectByVmId,
-                        new GetVmByVmIdParameters(asGuid(model.getId())));
+                        new IdQueryParameters(asGuid(model.getId())));
 
         if (result != null && result.getSucceeded() && result.getReturnValue() != null) {
             if (!model.isSetDisplay()) {

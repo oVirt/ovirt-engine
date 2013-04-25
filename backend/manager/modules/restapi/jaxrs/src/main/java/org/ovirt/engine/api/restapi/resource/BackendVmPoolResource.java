@@ -24,10 +24,10 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmPoolByIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
@@ -142,7 +142,7 @@ public class BackendVmPoolResource
                         new VmPoolUserParameters(guid,  getCurrent().get(VdcUser.class), false),
                         action,
                         new VmQueryIdResolver(VdcQueryType.GetVmByVmId,
-                                              GetVmByVmIdParameters.class));
+                                              IdQueryParameters.class));
 
     }
 

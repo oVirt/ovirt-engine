@@ -25,8 +25,8 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetDbUserByUserIdParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByPermissionIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -140,7 +140,7 @@ public class BackendAssignedPermissionsResource
     }
 
     public DbUser getUserById(Guid userId) {
-        GetDbUserByUserIdParameters queryParameters = new GetDbUserByUserIdParameters(userId);
+        IdQueryParameters queryParameters = new IdQueryParameters(userId);
         VdcQueryReturnValue userQueryResponse = runQuery(VdcQueryType.GetDbUserByUserId, queryParameters);
 
         DbUser returnValue = null;

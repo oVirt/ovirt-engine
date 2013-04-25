@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -230,7 +229,7 @@ public class BackendNicsResourceTest
                 VM vm = new VM();
                 vm.setVdsGroupId(GUIDS[0]);
                 setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
-                                             GetVmByVmIdParameters.class,
+                                             IdQueryParameters.class,
                                              new String[] { "Id" },
                                              new Object[] { PARENT_ID },
                                              vm);

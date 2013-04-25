@@ -11,7 +11,7 @@ import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -37,7 +37,7 @@ public class BackendReadOnlyCdRomResourceTest
         return new BackendReadOnlyCdRomsResource<VM>(VM.class,
                                                      PARENT_ID,
                                                      VdcQueryType.GetVmByVmId,
-                                                     new GetVmByVmIdParameters(PARENT_ID));
+                                                     new IdQueryParameters(PARENT_ID));
     }
 
     protected void init() {
@@ -92,7 +92,7 @@ public class BackendReadOnlyCdRomResourceTest
     protected void setUpEntityQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
-                                         GetVmByVmIdParameters.class,
+                                         IdQueryParameters.class,
                                          new String[] { "Id" },
                                          new Object[] { PARENT_ID },
                                          getEntityList());

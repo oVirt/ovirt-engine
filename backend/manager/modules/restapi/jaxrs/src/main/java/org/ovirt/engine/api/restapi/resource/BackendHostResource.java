@@ -38,15 +38,15 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DiscoverSendTargetsQueryParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
-import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 import org.ovirt.engine.core.compat.Guid;
@@ -65,13 +65,13 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     @Override
     public Host get() {
-        return performGet(VdcQueryType.GetVdsByVdsId, new GetVdsByVdsIdParameters(guid));
+        return performGet(VdcQueryType.GetVdsByVdsId, new IdQueryParameters(guid));
     }
 
     @Override
     public Host update(Host incoming) {
         validateEnums(Host.class, incoming);
-        QueryIdResolver<Guid> hostResolver = new QueryIdResolver<Guid>(VdcQueryType.GetVdsByVdsId, GetVdsByVdsIdParameters.class);
+        QueryIdResolver<Guid> hostResolver = new QueryIdResolver<Guid>(VdcQueryType.GetVdsByVdsId, IdQueryParameters.class);
         VDS entity = getEntity(hostResolver, true);
         if (incoming.isSetCluster() && (incoming.getCluster().isSetId() || incoming.getCluster().isSetName())) {
             Guid clusterId = lookupClusterId(incoming);
@@ -306,7 +306,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     @Override
     public StatisticsResource getStatisticsResource() {
-        EntityIdResolver<Guid> resolver = new QueryIdResolver<Guid>(VdcQueryType.GetVdsByVdsId, GetVdsByVdsIdParameters.class);
+        EntityIdResolver<Guid> resolver = new QueryIdResolver<Guid>(VdcQueryType.GetVdsByVdsId, IdQueryParameters.class);
         HostStatisticalQuery query = new HostStatisticalQuery(resolver, newModel(id));
         return inject(new BackendStatisticsResource<Host, VDS>(entityType, guid, query));
     }
@@ -317,7 +317,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     }
 
     protected VDS getEntity() {
-        return getEntity(VDS.class, VdcQueryType.GetVdsByVdsId, new GetVdsByVdsIdParameters(guid), id);
+        return getEntity(VDS.class, VdcQueryType.GetVdsByVdsId, new IdQueryParameters(guid), id);
     }
 
     protected class UpdateParametersProvider implements ParametersProvider<Host, VDS> {

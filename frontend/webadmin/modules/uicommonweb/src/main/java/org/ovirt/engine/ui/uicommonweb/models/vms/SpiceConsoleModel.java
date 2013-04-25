@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.GetImagesListByStoragePoolIdParameters;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -302,7 +301,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SpiceSecureChannels,
                         thisVm.getVdsGroupCompatibilityVersion().toString()));
                 parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.EnableSpiceRootCertificateValidation, AsyncDataProvider.getDefaultConfigurationVersion()));
-                parametersList.add(new GetVmByVmIdParameters(thisVm.getId()));
+                parametersList.add(new IdQueryParameters(thisVm.getId()));
                 parametersList.add(new VdcQueryParametersBase());
                 parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SpiceToggleFullScreenKeys, AsyncDataProvider.getDefaultConfigurationVersion()));
                 parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SpiceReleaseCursorKeys,

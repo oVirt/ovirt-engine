@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetDbUserByUserIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -61,8 +61,8 @@ public class BackendUsersResourceTest
     @Test
     public void testRemoveNonExistant() throws Exception{
         setUpGetEntityExpectations(VdcQueryType.GetDbUserByUserId,
-                GetDbUserByUserIdParameters.class,
-                new String[] { "UserId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { NON_EXISTANT_GUID },
                 null);
         control.replay();
@@ -77,8 +77,8 @@ public class BackendUsersResourceTest
 
     private void setUpGetEntityExpectations() throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetDbUserByUserId,
-                GetDbUserByUserIdParameters.class,
-                new String[] { "UserId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 getEntity(0));
     }
@@ -175,8 +175,8 @@ public class BackendUsersResourceTest
                                   true,
                                   null,
                                   VdcQueryType.GetDbUserByUserId,
-                                  GetDbUserByUserIdParameters.class,
-                                  new String[] { "UserId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
     }

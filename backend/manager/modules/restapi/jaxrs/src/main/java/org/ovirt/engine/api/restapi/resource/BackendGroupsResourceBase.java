@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetAdGroupByIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -159,7 +159,7 @@ public class BackendGroupsResourceBase extends AbstractBackendCollectionResource
     public LdapGroup lookupGroupById(Guid id) {
         return getEntity(LdapGroup.class,
                          VdcQueryType.GetAdGroupById,
-                         new GetAdGroupByIdParameters(id),
+                         new IdQueryParameters(id),
                          id.toString(),
                          true);
     }

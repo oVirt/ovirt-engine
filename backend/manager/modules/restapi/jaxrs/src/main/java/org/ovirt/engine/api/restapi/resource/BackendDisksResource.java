@@ -15,9 +15,8 @@ import org.ovirt.engine.api.restapi.resource.utils.DiskResourceUtils;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -45,7 +44,7 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
             }
         }
         return performCreate(VdcActionType.AddDisk, params,
-                new QueryIdResolver<Guid>(VdcQueryType.GetDiskByDiskId, GetDiskByDiskIdParameters.class));
+                new QueryIdResolver<Guid>(VdcQueryType.GetDiskByDiskId, IdQueryParameters.class));
     }
 
     protected void validateDiskForCreation(Disk disk) {

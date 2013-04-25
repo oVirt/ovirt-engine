@@ -20,9 +20,8 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -64,8 +63,8 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
         setUpEntityQueryExpectations(VdcQueryType.GetDiskByDiskId,
-                GetDiskByDiskIdParameters.class,
-                new String[] { "DiskId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 getEntity(0));
         Disk model = getModel(0);
@@ -79,8 +78,8 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
                 asList(GUIDS[3]),
                 asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
                 VdcQueryType.GetDiskByDiskId,
-                GetDiskByDiskIdParameters.class,
-                new String[] {"DiskId"},
+                IdQueryParameters.class,
+                new String[] {"Id"},
                 new Object[] {GUIDS[0]},
                 getEntity(0));
         Response response = collection.add(model);
@@ -95,8 +94,8 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
         setUpEntityQueryExpectations(VdcQueryType.GetDiskByDiskId,
-                GetDiskByDiskIdParameters.class,
-                new String[] { "DiskId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 getEntity(0));
         Disk model = getModel(0);
@@ -117,8 +116,8 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
                 asList(GUIDS[3]),
                 asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
                 VdcQueryType.GetDiskByDiskId,
-                GetDiskByDiskIdParameters.class,
-                new String[] {"DiskId"},
+                IdQueryParameters.class,
+                new String[] {"Id"},
                 new Object[] {GUIDS[0]},
                 getEntity(0));
         Response response = collection.add(model);

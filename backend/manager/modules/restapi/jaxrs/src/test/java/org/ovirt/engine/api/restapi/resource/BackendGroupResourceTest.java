@@ -3,10 +3,9 @@ package org.ovirt.engine.api.restapi.resource;
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
-import org.ovirt.engine.core.common.queries.GetAdGroupByIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendGroupResourceTest
@@ -66,7 +65,7 @@ public class BackendGroupResourceTest
 
     protected void setUpGetEntityExpectations(boolean notFound) throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetAdGroupById,
-                                   GetAdGroupByIdParameters.class,
+                                   IdQueryParameters.class,
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[0] },
                                    notFound ? null : getEntity(0));

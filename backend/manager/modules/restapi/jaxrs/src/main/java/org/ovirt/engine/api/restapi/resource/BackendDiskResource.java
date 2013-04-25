@@ -6,8 +6,8 @@ import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.DiskResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -24,7 +24,7 @@ public class BackendDiskResource extends AbstractBackendSubResource<Disk, org.ov
 
     @Override
     public StatisticsResource getStatisticsResource() {
-        QueryIdResolver<Guid> resolver = new QueryIdResolver<Guid>(VdcQueryType.GetDiskByDiskId, GetDiskByDiskIdParameters.class);
+        QueryIdResolver<Guid> resolver = new QueryIdResolver<Guid>(VdcQueryType.GetDiskByDiskId, IdQueryParameters.class);
         DiskStatisticalQuery query = new DiskStatisticalQuery(resolver, newModel(id));
         return inject(new BackendStatisticsResource<Disk, org.ovirt.engine.core.common.businessentities.Disk>(entityType, guid, query));
     }
@@ -40,7 +40,7 @@ public class BackendDiskResource extends AbstractBackendSubResource<Disk, org.ov
 
     @Override
     public Disk get() {
-        return performGet(VdcQueryType.GetDiskByDiskId, new GetDiskByDiskIdParameters(guid));
+        return performGet(VdcQueryType.GetDiskByDiskId, new IdQueryParameters(guid));
     }
 
     @Override

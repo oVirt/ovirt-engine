@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -212,7 +211,7 @@ public class BackendVmNicsResource extends BackendNicsResource implements VmNics
     protected Guid getClusterId() {
         Guid clusterId = getEntity(VM.class,
             VdcQueryType.GetVmByVmId,
-            new GetVmByVmIdParameters(parentId), "id").getVdsGroupId();
+            new IdQueryParameters(parentId), "id").getVdsGroupId();
         return clusterId;
     }
 }

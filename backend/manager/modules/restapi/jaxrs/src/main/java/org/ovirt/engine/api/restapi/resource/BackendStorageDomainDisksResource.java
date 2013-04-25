@@ -15,9 +15,9 @@ import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -27,7 +27,7 @@ public class BackendStorageDomainDisksResource extends BackendDisksResource {
     public static final String UNREGISTERED_CONSTRAINT_PARAMETER = "unregistered";
 
     private final QueryIdResolver<Guid> ID_RESOLVER = new QueryIdResolver<Guid>(VdcQueryType.GetDiskByDiskId,
-            GetDiskByDiskIdParameters.class);
+            IdQueryParameters.class);
 
     Guid storageDomainId;
 

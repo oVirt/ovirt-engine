@@ -30,9 +30,9 @@ import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.api.resource.SnapshotsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
-import org.ovirt.engine.api.resource.VmReportedDevicesResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.api.resource.VmNicsResource;
+import org.ovirt.engine.api.resource.VmReportedDevicesResource;
 import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -58,7 +58,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -77,7 +77,7 @@ public class BackendVmResource extends
 
     @Override
     public VM get() {
-        VM vm = performGet(VdcQueryType.GetVmByVmId, new GetVmByVmIdParameters(guid));
+        VM vm = performGet(VdcQueryType.GetVmByVmId, new IdQueryParameters(guid));
         return removeRestrictedInfo(vm);
     }
 
@@ -113,7 +113,7 @@ public class BackendVmResource extends
 
         return removeRestrictedInfo(
                 performUpdate(incoming,
-                             new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class),
+                             new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class),
                              VdcActionType.UpdateVm,
                              new UpdateParametersProvider()));
     }
@@ -134,7 +134,7 @@ public class BackendVmResource extends
     public DevicesResource<CdRom, CdRoms> getCdRomsResource() {
         return inject(new BackendCdRomsResource(guid,
                                                 VdcQueryType.GetVmByVmId,
-                                                new GetVmByVmIdParameters(guid)));
+                                                new IdQueryParameters(guid)));
     }
 
     @Override
@@ -180,7 +180,7 @@ public class BackendVmResource extends
 
     @Override
     public StatisticsResource getStatisticsResource() {
-        EntityIdResolver<Guid> resolver = new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class);
+        EntityIdResolver<Guid> resolver = new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class);
         VmStatisticalQuery query = new VmStatisticalQuery(resolver, newModel(id));
         return inject(new BackendStatisticsResource<VM, org.ovirt.engine.core.common.businessentities.VM>(entityType, guid, query));
     }
@@ -211,7 +211,7 @@ public class BackendVmResource extends
     @Override
     public Response start(Action action) {
         RunVmOnceParams params =
-                map(map(getEntity(entityType, VdcQueryType.GetVmByVmId, new GetVmByVmIdParameters(guid), id, true),
+                map(map(getEntity(entityType, VdcQueryType.GetVmByVmId, new IdQueryParameters(guid), id, true),
                         new VM()),
                         new RunVmOnceParams(guid));
         if (action.isSetVm()) {
@@ -233,7 +233,7 @@ public class BackendVmResource extends
         //REVISE when BE supports default val. for RunVmOnceParams.privateReinitialize
         org.ovirt.engine.core.common.businessentities.VM vm = getEntity(org.ovirt.engine.core.common.businessentities.VM.class,
                                                                         VdcQueryType.GetVmByVmId,
-                                                                        new GetVmByVmIdParameters(guid),
+                                                                        new IdQueryParameters(guid),
                                                                         "VM");
         if(vm.getVmOs().isWindows() && vm.isFirstRun()) {
             params.setReinitialize(true);
@@ -405,7 +405,7 @@ public class BackendVmResource extends
     public void setCertificateInfo(VM model) {
         VdcQueryReturnValue result =
             runQuery(VdcQueryType.GetVdsCertificateSubjectByVmId,
-                    new GetVmByVmIdParameters(asGuid(model.getId())));
+                    new IdQueryParameters(asGuid(model.getId())));
 
         if (result != null && result.getSucceeded() && result.getReturnValue() != null) {
             if (!model.isSetDisplay()) {

@@ -78,9 +78,7 @@ import org.ovirt.engine.core.common.queries.GetTagsByUserGroupIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByUserIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByVmIdParameters;
-import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
 import org.ovirt.engine.core.common.queries.GetVmPoolByIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
@@ -340,7 +338,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetVmByVmId, new GetVmByVmIdParameters(vmId), aQuery);
+        Frontend.RunQuery(VdcQueryType.GetVmByVmId, new IdQueryParameters(vmId), aQuery);
     }
 
     public static void getTimeZoneList(AsyncQuery aQuery) {
@@ -808,7 +806,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetVdsByVdsId, new GetVdsByVdsIdParameters(id), aQuery);
+        Frontend.RunQuery(VdcQueryType.GetVdsByVdsId, new IdQueryParameters(id), aQuery);
     }
 
     public static void getHostListByCluster(AsyncQuery aQuery, String clusterName) {

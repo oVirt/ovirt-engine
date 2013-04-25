@@ -3,9 +3,9 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
-public class GetVdsCertificateSubjectByVdsIdQuery<P extends GetVdsByVdsIdParameters> extends QueriesCommandBase<P> {
+public class GetVdsCertificateSubjectByVdsIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetVdsCertificateSubjectByVdsIdQuery(P parameters) {
         super(parameters);
     }
@@ -15,7 +15,7 @@ public class GetVdsCertificateSubjectByVdsIdQuery<P extends GetVdsByVdsIdParamet
         getQueryReturnValue().setSucceeded(false);
         VDS vds = getDbFacade()
                 .getVdsDao()
-                .get(getParameters().getVdsId(), getUserID(), getParameters().isFiltered());
+                .get(getParameters().getId(), getUserID(), getParameters().isFiltered());
         if (vds != null) {
             getQueryReturnValue().setSucceeded(true);
             getQueryReturnValue()

@@ -1,5 +1,10 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainTemplatesResourceTest.setUpStoragePool;
+import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainVmsResourceTest.setUpStorageDomain;
+import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.setUpEntityExpectations;
+import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.verifyModelSpecific;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +13,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CreationStatus;
@@ -23,18 +27,12 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
-
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainTemplatesResourceTest.setUpStoragePool;
-import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainVmsResourceTest.setUpStorageDomain;
-import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.setUpEntityExpectations;
-import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.verifyModelSpecific;
 
 public class BackendStorageDomainVmResourceTest
     extends AbstractBackendSubResourceTest<VM,
@@ -285,7 +283,7 @@ public class BackendStorageDomainVmResourceTest
         switch (domainType) {
         case Data:
             setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
-                                         GetVmByVmIdParameters.class,
+                                         IdQueryParameters.class,
                                          new String[] { "Id" },
                                          new Object[] { VM_ID },
                                          notFound ? null : getEntity(1));

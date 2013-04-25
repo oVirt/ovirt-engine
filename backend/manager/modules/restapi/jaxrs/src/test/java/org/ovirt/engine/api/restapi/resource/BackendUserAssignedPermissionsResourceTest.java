@@ -4,12 +4,11 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.core.common.queries.GetDbUserByUserIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -50,9 +49,9 @@ public class BackendUserAssignedPermissionsResourceTest
     public void testList() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
         setUpGetEntityExpectations(VdcQueryType.GetDbUserByUserId,
-                GetDbUserByUserIdParameters.class,
-                new String[] { "UserId" },
-                new Object[] { GUIDS[1] },
+                IdQueryParameters.class,
+                new String[] {"Id"},
+                new Object[] {GUIDS[1]},
                 getUserByIdx(1));
         setUpQueryExpectations("");
         collection.setUriInfo(uriInfo);
@@ -64,10 +63,10 @@ public class BackendUserAssignedPermissionsResourceTest
         UriInfo uriInfo = setUpUriExpectations(null);
 
         setUpGetEntityExpectations(VdcQueryType.GetDbUserByUserId,
-                GetDbUserByUserIdParameters.class,
-                new String[] { "UserId" },
-                new Object[] { GUIDS[1] },
-                getUserByIdx(1));
+                                    IdQueryParameters.class,
+                                    new String[] {"Id"},
+                                    new Object[] {GUIDS[1]},
+                                    getUserByIdx(1));
         setUpQueryExpectations("", null, EVERYONE);
 
         collection.setUriInfo(uriInfo);

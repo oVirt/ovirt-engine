@@ -1,14 +1,13 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
-public class GetVdsCertificateSubjectByVmIdQuery <P extends GetVmByVmIdParameters> extends QueriesCommandBase<P> {
+public class GetVdsCertificateSubjectByVmIdQuery <P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetVdsCertificateSubjectByVmIdQuery(P parameters) {
         super(parameters);
     }
@@ -23,7 +22,7 @@ public class GetVdsCertificateSubjectByVmIdQuery <P extends GetVmByVmIdParameter
             if (vm != null) {
                 NGuid vdsId = vm.getRunOnVds();
                 if (vdsId != null) {
-                    returnValue = Backend.getInstance().runInternalQuery(VdcQueryType.GetVdsCertificateSubjectByVdsId, new GetVdsByVdsIdParameters(vdsId.getValue()));
+                    returnValue = Backend.getInstance().runInternalQuery(VdcQueryType.GetVdsCertificateSubjectByVdsId, new IdQueryParameters(vdsId.getValue()));
                 }
             }
         }

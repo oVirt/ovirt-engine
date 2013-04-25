@@ -10,15 +10,14 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Group;
-import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.action.AdElementParametersBase;
+import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.LdapRefStatus;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetAdGroupByIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -99,7 +98,7 @@ public class BackendGroupsResourceTest
 
     private void setUpGetEntityExpectations(Guid entityId, Boolean returnNull) throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetAdGroupById,
-                GetAdGroupByIdParameters.class,
+                IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { entityId },
                 returnNull ? null : getEntity(0));
@@ -145,7 +144,7 @@ public class BackendGroupsResourceTest
                                   true,
                                   null,
                                   VdcQueryType.GetAdGroupById,
-                                  GetAdGroupByIdParameters.class,
+                                  IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
@@ -191,7 +190,7 @@ public class BackendGroupsResourceTest
                                   true,
                                   null,
                                   VdcQueryType.GetAdGroupById,
-                                  GetAdGroupByIdParameters.class,
+                                  IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
@@ -208,7 +207,7 @@ public class BackendGroupsResourceTest
     public void testAddGroupById() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(VdcQueryType.GetAdGroupById,
-                                   GetAdGroupByIdParameters.class,
+                                   IdQueryParameters.class,
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[0] },
                                    getEntity(0));
@@ -220,7 +219,7 @@ public class BackendGroupsResourceTest
                                   true,
                                   null,
                                   VdcQueryType.GetAdGroupById,
-                                  GetAdGroupByIdParameters.class,
+                                  IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));

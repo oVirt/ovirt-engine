@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
-public class GetVdsByVdsIdQuery<P extends GetVdsByVdsIdParameters> extends QueriesCommandBase<P> {
+public class GetVdsByVdsIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetVdsByVdsIdQuery(P parameters) {
         super(parameters);
     }
@@ -12,7 +12,7 @@ public class GetVdsByVdsIdQuery<P extends GetVdsByVdsIdParameters> extends Queri
     protected void executeQueryCommand() {
         VDS vds = getDbFacade()
                 .getVdsDao()
-                .get(getParameters().getVdsId());
+                .get(getParameters().getId());
 
         if (vds != null) {
             vds.setCpuName(CpuFlagsManagerHandler.FindMaxServerCpuByFlags(vds.getCpuFlags(),

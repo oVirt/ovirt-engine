@@ -3,15 +3,14 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
-
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 
 
-public class GetVmPayloadQuery<P extends GetVmByVmIdParameters> extends QueriesCommandBase<P> {
+public class GetVmPayloadQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetVmPayloadQuery(P parameters) {
         super(parameters);
     }

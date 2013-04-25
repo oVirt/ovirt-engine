@@ -1,17 +1,16 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import org.junit.Test;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.junit.Test;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.resource.DeviceResource;
-import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -21,16 +20,16 @@ public class BackendCdRomsResourceTest
     public BackendCdRomsResourceTest() {
         super(new BackendCdRomsResource(PARENT_ID,
                                        VdcQueryType.GetVmByVmId,
-                                       new GetVmByVmIdParameters(PARENT_ID)),
+                                       new IdQueryParameters(PARENT_ID)),
               VdcQueryType.GetVmByVmId,
-              new GetVmByVmIdParameters(PARENT_ID),
+              new IdQueryParameters(PARENT_ID),
               "Id");
     }
 
     @Test
     public void testRemove() throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
-                                     GetVmByVmIdParameters.class,
+                                     IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { PARENT_ID },
                                      getEntity(0),
@@ -48,7 +47,7 @@ public class BackendCdRomsResourceTest
     @Test
     public void testRemoveNonExistant() throws Exception{
         setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
-                GetVmByVmIdParameters.class,
+                IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { PARENT_ID },
                 new VM(),
@@ -75,7 +74,7 @@ public class BackendCdRomsResourceTest
 
     protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
-                                     GetVmByVmIdParameters.class,
+                                     IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { PARENT_ID },
                                      getEntity(0),
@@ -99,7 +98,7 @@ public class BackendCdRomsResourceTest
     public void testAddCdRom() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
-                                     GetVmByVmIdParameters.class,
+                                     IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { PARENT_ID },
                                      getEntity(0),
@@ -113,7 +112,7 @@ public class BackendCdRomsResourceTest
                                   true,
                                   null,
                                   VdcQueryType.GetVmByVmId,
-                                  GetVmByVmIdParameters.class,
+                                  IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { PARENT_ID },
                                   getEntity(0));
@@ -137,7 +136,7 @@ public class BackendCdRomsResourceTest
 
     private void doTestBadAddCdRom(boolean canDo, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
-                                     GetVmByVmIdParameters.class,
+                                     IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { PARENT_ID },
                                      getEntity(0),

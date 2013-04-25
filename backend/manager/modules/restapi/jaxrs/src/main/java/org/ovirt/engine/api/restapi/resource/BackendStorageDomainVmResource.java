@@ -11,7 +11,7 @@ import org.ovirt.engine.api.resource.StorageDomainContentResource;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Disk;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -27,7 +27,7 @@ public class BackendStorageDomainVmResource
 
     @Override
     protected VM getFromDataDomain() {
-        return performGet(VdcQueryType.GetVmByVmId, new GetVmByVmIdParameters(guid));
+        return performGet(VdcQueryType.GetVmByVmId, new IdQueryParameters(guid));
     }
 
     @Override

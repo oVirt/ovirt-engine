@@ -1,5 +1,14 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.verify;
+import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.getModel;
+import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.setUpEntityExpectations;
+import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.setUpStatisticalEntityExpectations;
+import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.verifyModelSpecific;
+import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
@@ -10,15 +19,14 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.FenceType;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.IscsiDetails;
 import org.ovirt.engine.api.model.PowerManagementStatus;
 import org.ovirt.engine.api.model.Statistic;
-import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.core.common.action.ApproveVdsParameters;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
@@ -26,35 +34,26 @@ import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
+import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DiscoverSendTargetsQueryParameters;
-import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.easymock.classextension.EasyMock.expect;
-import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.getModel;
-import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.setUpEntityExpectations;
-import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.setUpStatisticalEntityExpectations;
-import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.verifyModelSpecific;
-import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.verify;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.interfaces.SearchType;
 
 public class BackendHostResourceTest
         extends AbstractBackendSubResourceTest<Host, VDS, BackendHostResource> {
@@ -600,8 +599,8 @@ public class BackendHostResourceTest
     protected void setUpGetEntityExpectations(int times, boolean notFound, VDS entity) throws Exception {
         while (times-- > 0) {
             setUpGetEntityExpectations(VdcQueryType.GetVdsByVdsId,
-                                       GetVdsByVdsIdParameters.class,
-                                       new String[] { "VdsId" },
+                                       IdQueryParameters.class,
+                                       new String[] { "Id" },
                                        new Object[] { GUIDS[0] },
                                        notFound ? null : entity);
         }
@@ -616,8 +615,8 @@ public class BackendHostResourceTest
     private void setUpGetEntityWithNoCertificateInfoExpectations(int times, boolean notFound, VDS entity) throws Exception {
         while (times-- > 0) {
             setUpGetEntityExpectations(VdcQueryType.GetVdsByVdsId,
-                                       GetVdsByVdsIdParameters.class,
-                                       new String[] { "VdsId" },
+                                       IdQueryParameters.class,
+                                       new String[] { "Id" },
                                        new Object[] { GUIDS[0] },
                                        notFound ? null : entity);
         }
@@ -625,8 +624,8 @@ public class BackendHostResourceTest
 
     protected void setUpGetCertificateInfo() throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetVdsCertificateSubjectByVdsId,
-                GetVdsByVdsIdParameters.class,
-                new String[] { "VdsId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 BackendHostsResourceTest.CERTIFICATE_SUBJECT);
     }

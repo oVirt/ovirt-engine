@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
-public class GetVmByVmIdQuery<P extends GetVmByVmIdParameters> extends QueriesCommandBase<P> {
+public class GetVmByVmIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetVmByVmIdQuery(P parameters) {
         super(parameters);
     }
