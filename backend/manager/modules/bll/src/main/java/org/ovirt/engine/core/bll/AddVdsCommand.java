@@ -383,12 +383,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 sshclient.connect();
                 sshclient.authenticate();
 
-                if (isGlusterSupportEnabled()) {
-                    // Must not allow adding a server that already is part of another gluster cluster
-                    if (getGlusterUtil().hasPeers(sshclient)) {
-                        return failCanDoAction(VdcBllMessages.SERVER_ALREADY_PART_OF_ANOTHER_CLUSTER);
-                    }
-                }
+                return isValidGlusterPeer(sshclient);
             } catch (AuthenticationException e) {
                 log.errorFormat(
                         "Failed to authenticate session with host {0}",
@@ -411,7 +406,34 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 }
             }
         }
+        return true;
+    }
 
+    /**
+     * Checks if the server can be a valid gluster peer. Fails if it is already part of another cluster (when current
+     * cluster is not empty). This is done by executing the 'gluster peer status' command on the server.<br>
+     * Note: In case glusterd is down or not installed on the server (which is a possibility on a new server), the
+     * command can fail. In such cases, we just log it as a debug message and return true.
+     *
+     * @param sshclient
+     *            SSH client that can be used to execute 'gluster peer status' command on the server
+     * @return true if the server is good to be added to a gluster cluster, else false.
+     */
+    private boolean isValidGlusterPeer(SSHClient sshclient) {
+        if (isGlusterSupportEnabled() && clusterHasServers()) {
+            try {
+                // Must not allow adding a server that already is part of another gluster cluster
+                if (getGlusterUtil().hasPeers(sshclient)) {
+                    return failCanDoAction(VdcBllMessages.SERVER_ALREADY_PART_OF_ANOTHER_CLUSTER);
+                }
+            } catch (Exception e) {
+                // This can happen if glusterd is not running on the server. Ignore it and let the server get added.
+                // Peer probe will anyway fail later and the server will then go to non-operational status.
+                log.debugFormat("Could not check if server {0} is already part of another gluster cluster. Will allow adding it.",
+                        sshclient.getHost(),
+                        e);
+            }
+        }
         return true;
     }
 

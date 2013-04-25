@@ -6,6 +6,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doNothing;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -24,6 +25,7 @@ import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.gluster.GlusterUtil;
+import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.ssh.SSHClient;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -43,6 +45,8 @@ public class AddVdsCommandTest {
     private GlusterUtil glusterUtil;
     @Mock
     private SSHClient sshClient;
+    @Mock
+    private Log log;
 
     @ClassRule
     public static MockConfigRule configRule =
@@ -104,11 +108,26 @@ public class AddVdsCommandTest {
 
         when(clusterUtils.hasServers(any(Guid.class))).thenReturn(clusterHasServers);
         when(clusterUtils.getUpServer(any(Guid.class))).thenReturn(upServer);
+
+        commandMock.log = this.log;
     }
 
     @Test
     public void canDoActionVirtOnlySucceeds() throws Exception {
         setupVirtMock();
+        assertTrue(commandMock.canDoAction());
+    }
+
+    @Test
+    public void canDoActionSucceedsOnEmptyClusterEvenWhenGlusterServerHasPeers() throws Exception {
+        setupGlusterMock(false, null, true);
+        assertTrue(commandMock.canDoAction());
+    }
+
+    @Test
+    public void canDoActionSucceedsWhenHasPeersThrowsException() throws Exception {
+        setupGlusterMock(true, new VDS(), true);
+        when(glusterUtil.hasPeers(any(SSHClient.class))).thenThrow(new RuntimeException());
         assertTrue(commandMock.canDoAction());
     }
 
