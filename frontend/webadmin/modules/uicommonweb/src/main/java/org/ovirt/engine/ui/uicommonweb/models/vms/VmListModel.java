@@ -464,7 +464,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         this.errorPopupManager = (ErrorPopupManager) TypeResolver.getInstance().Resolve(ErrorPopupManager.class);
     }
 
-    private void AssignTags()
+    private void assignTags()
     {
         if (getWindow() != null)
         {
@@ -476,7 +476,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.setTitle(ConstantsManager.getInstance().getConstants().assignTagsTitle());
         model.setHashName("assign_tags_vms"); //$NON-NLS-1$
 
-        GetAttachedTagsToSelectedVMs(model);
+        getAttachedTagsToSelectedVMs(model);
 
         UICommand tempVar = new UICommand("OnAssignTags", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -492,7 +492,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     public ArrayList<org.ovirt.engine.core.common.businessentities.tags> allAttachedTags;
     public int selectedItemsCounter;
 
-    private void GetAttachedTagsToSelectedVMs(TagListModel model)
+    private void getAttachedTagsToSelectedVMs(TagListModel model)
     {
         ArrayList<Guid> vmIds = new ArrayList<Guid>();
         for (Object item : getSelectedItems())
@@ -519,7 +519,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                             vmListModel.selectedItemsCounter++;
                             if (vmListModel.selectedItemsCounter == vmListModel.getSelectedItems().size())
                             {
-                                PostGetAttachedTags(vmListModel, tagListModel);
+                                postGetAttachedTags(vmListModel, tagListModel);
                             }
 
                         }
@@ -528,7 +528,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
     }
 
-    private void PostGetAttachedTags(VmListModel vmListModel, TagListModel tagListModel)
+    private void postGetAttachedTags(VmListModel vmListModel, TagListModel tagListModel)
     {
         if (vmListModel.getLastExecutedCommand() == getAssignTagsCommand())
         {
@@ -550,18 +550,18 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
         else if (StringHelper.stringsEqual(vmListModel.getLastExecutedCommand().getName(), "OnAssignTags")) //$NON-NLS-1$
         {
-            vmListModel.PostOnAssignTags(tagListModel.getAttachedTagsToEntities());
+            vmListModel.postOnAssignTags(tagListModel.getAttachedTagsToEntities());
         }
     }
 
-    private void OnAssignTags()
+    private void onAssignTags()
     {
         TagListModel model = (TagListModel) getWindow();
 
-        GetAttachedTagsToSelectedVMs(model);
+        getAttachedTagsToSelectedVMs(model);
     }
 
-    public void PostOnAssignTags(Map<Guid, Boolean> attachedTags)
+    public void postOnAssignTags(Map<Guid, Boolean> attachedTags)
     {
         TagListModel model = (TagListModel) getWindow();
         ArrayList<Guid> vmIds = new ArrayList<Guid>();
@@ -597,10 +597,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
         Frontend.RunMultipleAction(VdcActionType.DetachVmFromTag, parameters);
 
-        Cancel();
+        cancel();
     }
 
-    private void Guide()
+    private void guide()
     {
         VmGuideModel model = new VmGuideModel();
         setWindow(model);
@@ -702,17 +702,17 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         setSelectedHasConsoleModels(list);
     }
 
-    private void NewDesktop()
+    private void newDesktop()
     {
-        NewInternal(VmType.Desktop);
+        newInternal(VmType.Desktop);
     }
 
-    private void NewServer()
+    private void newServer()
     {
-        NewInternal(VmType.Server);
+        newInternal(VmType.Server);
     }
 
-    private void NewInternal(VmType vmType)
+    private void newInternal(VmType vmType)
     {
         if (getWindow() != null)
         {
@@ -773,7 +773,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.getCommands().add(cancelCommand);
     }
 
-    private void Edit()
+    private void edit()
     {
         VM vm = (VM) getSelectedItem();
         if (vm == null)
@@ -935,7 +935,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
     }
 
-    private void CreateSnapshot() {
+    private void createSnapshot() {
         VM vm = (VM) getSelectedItem();
         if (vm == null || getWindow() != null) {
             return;
@@ -1027,7 +1027,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         return (List<VM>) returnValue;
     }
 
-    private void GetTemplatesNotPresentOnExportDomain()
+    private void getTemplatesNotPresentOnExportDomain()
     {
         ExportVmModel model = (ExportVmModel) getWindow();
         Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();
@@ -1041,12 +1041,12 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                 (ArrayList<storage_pool>) returnValue;
                         storage_pool storagePool = storagePools.size() > 0 ? storagePools.get(0) : null;
 
-                        vmListModel.PostGetTemplatesNotPresentOnExportDomain(storagePool);
+                        vmListModel.postGetTemplatesNotPresentOnExportDomain(storagePool);
                     }
                 }), storageDomainId);
     }
 
-    private void PostGetTemplatesNotPresentOnExportDomain(storage_pool storagePool)
+    private void postGetTemplatesNotPresentOnExportDomain(storage_pool storagePool)
     {
         ExportVmModel model = (ExportVmModel) getWindow();
         Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();
@@ -1093,17 +1093,19 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                             for (Map.Entry<String, ArrayList<String>> keyValuePair : templateDic.entrySet())
                             {
                                 tempList = keyValuePair.getValue();
-                                tempStr = "Template " + keyValuePair.getKey() + " (for "; //$NON-NLS-1$ //$NON-NLS-2$
+                                StringBuilder sb = new StringBuilder("Template " + keyValuePair.getKey() + " (for "); //$NON-NLS-1$ //$NON-NLS-2$
                                 int i;
                                 for (i = 0; i < tempList.size() - 1; i++)
                                 {
-                                    tempStr += tempList.get(i) + ", "; //$NON-NLS-1$
+                                    sb.append(tempList.get(i));
+                                    sb.append(", "); //$NON-NLS-1$
                                 }
-                                tempStr += tempList.get(i) + ")"; //$NON-NLS-1$
-                                missingTemplates.add(tempStr);
+                                sb.append(tempList.get(i));
+                                sb.append(")"); //$NON-NLS-1$
+                                missingTemplates.add(sb.toString());
                             }
 
-                            vmListModel.PostExportGetMissingTemplates(missingTemplates);
+                            vmListModel.postExportGetMissingTemplates(missingTemplates);
                         }
                     }),
                     storagePool.getId(),
@@ -1111,7 +1113,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
     }
 
-    private void PostExportGetMissingTemplates(ArrayList<String> missingTemplatesFromVms)
+    private void postExportGetMissingTemplates(ArrayList<String> missingTemplatesFromVms)
     {
         ExportVmModel model = (ExportVmModel) getWindow();
         Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();
@@ -1173,7 +1175,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                             public void Executed(FrontendMultipleActionAsyncResult result) {
                                 ExportVmModel localModel = (ExportVmModel) result.getState();
                                 localModel.StopProgress();
-                                Cancel();
+                                cancel();
                             }
                         }, model);
             }
@@ -1199,16 +1201,15 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                         public void Executed(FrontendMultipleActionAsyncResult result) {
                             ExportVmModel localModel = (ExportVmModel) result.getState();
                             localModel.StopProgress();
-                            Cancel();
+                            cancel();
                         }
                     }, model);
         }
     }
 
-    public void OnExport()
+    public void onExport()
     {
         ExportVmModel model = (ExportVmModel) getWindow();
-        Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();
         if (!model.Validate())
         {
             return;
@@ -1216,10 +1217,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         model.StartProgress(null);
 
-        GetTemplatesNotPresentOnExportDomain();
+        getTemplatesNotPresentOnExportDomain();
     }
 
-    private void OnExportNoTemplates()
+    private void onExportNoTemplates()
     {
         ExportVmModel model = (ExportVmModel) getWindow();
         Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();
@@ -1250,7 +1251,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                         ExportVmModel localModel = (ExportVmModel) result.getState();
                         localModel.StopProgress();
-                        Cancel();
+                        cancel();
 
                     }
                 }, model);
@@ -1274,7 +1275,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 entity.getId());
     }
 
-    private void RunOnce()
+    private void runOnce()
     {
         VM vm = (VM) getSelectedItem();
         RunOnceModel model = new WebadminRunOnceModel(vm,
@@ -1284,7 +1285,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.init();
     }
 
-    private void NewTemplate()
+    private void newTemplate()
     {
         VM vm = (VM) getSelectedItem();
         if (vm == null)
@@ -1318,13 +1319,13 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.getIsHighlyAvailable().setEntity(vm.getStaticData().isAutoStartup());
     }
 
-    private void OnNewTemplate()
+    private void onNewTemplate()
     {
         UnitVmModel model = (UnitVmModel) getWindow();
         VM vm = (VM) getSelectedItem();
         if (vm == null)
         {
-            Cancel();
+            cancel();
             return;
         }
 
@@ -1363,7 +1364,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                             }
                             else
                             {
-                                vmListModel.PostNameUniqueCheck();
+                                vmListModel.postNameUniqueCheck();
                             }
 
                         }
@@ -1372,7 +1373,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
     }
 
-    public void PostNameUniqueCheck()
+    public void postNameUniqueCheck()
     {
         UnitVmModel model = (UnitVmModel) getWindow();
         VM vm = (VM) getSelectedItem();
@@ -1441,14 +1442,14 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                         VdcReturnValueBase returnValueBase = result.getReturnValue();
                         if (returnValueBase != null && returnValueBase.getSucceeded())
                         {
-                            vmListModel.Cancel();
+                            vmListModel.cancel();
                         }
 
                     }
                 }, this);
     }
 
-    private void Migrate()
+    private void migrate()
     {
         VM vm = (VM) getSelectedItem();
         if (vm == null)
@@ -1474,12 +1475,12 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
                         VmListModel vmListModel = (VmListModel) target;
-                        vmListModel.PostMigrateGetUpHosts((ArrayList<VDS>) returnValue);
+                        vmListModel.postMigrateGetUpHosts((ArrayList<VDS>) returnValue);
                     }
                 }), vm.getVdsGroupName());
     }
 
-    private void CancelMigration()
+    private void cancelMigration()
     {
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems()) {
@@ -1496,7 +1497,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 }, null);
     }
 
-    private void PostMigrateGetUpHosts(ArrayList<VDS> hosts)
+    private void postMigrateGetUpHosts(ArrayList<VDS> hosts)
     {
         MigrateModel model = (MigrateModel) getWindow();
         NGuid run_on_vds = null;
@@ -1564,7 +1565,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
     }
 
-    private void OnMigrate()
+    private void onMigrate()
     {
         MigrateModel model = (MigrateModel) getWindow();
 
@@ -1591,7 +1592,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                             MigrateModel localModel = (MigrateModel) result.getState();
                             localModel.StopProgress();
-                            Cancel();
+                            cancel();
 
                         }
                     }, model);
@@ -1619,14 +1620,14 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                             MigrateModel localModel = (MigrateModel) result.getState();
                             localModel.StopProgress();
-                            Cancel();
+                            cancel();
 
                         }
                     }, model);
         }
     }
 
-    private void Shutdown()
+    private void shutdown()
     {
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
@@ -1654,7 +1655,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.getCommands().add(tempVar2);
     }
 
-    private void OnShutdown()
+    private void onShutdown()
     {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
@@ -1679,7 +1680,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
                         localModel.StopProgress();
-                        Cancel();
+                        cancel();
 
                     }
                 }, model);
@@ -1713,7 +1714,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.getCommands().add(tempVar2);
     }
 
-    private void OnStop()
+    private void onStop()
     {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
@@ -1738,13 +1739,13 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
                         localModel.StopProgress();
-                        Cancel();
+                        cancel();
 
                     }
                 }, model);
     }
 
-    private void Pause()
+    private void pause()
     {
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
@@ -1762,7 +1763,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 }, null);
     }
 
-    private void Run()
+    private void run()
     {
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
@@ -1784,7 +1785,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 }, null);
     }
 
-    private void OnRemove()
+    private void onRemove()
     {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
@@ -1808,13 +1809,13 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
                         localModel.StopProgress();
-                        Cancel();
+                        cancel();
 
                     }
                 }, model);
     }
 
-    private void ChangeCD()
+    private void changeCD()
     {
         VM vm = (VM) getSelectedItem();
         if (vm == null)
@@ -1863,12 +1864,12 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.getCommands().add(tempVar2);
     }
 
-    private void OnChangeCD()
+    private void onChangeCD()
     {
         VM vm = (VM) getSelectedItem();
         if (vm == null)
         {
-            Cancel();
+            cancel();
             return;
         }
 
@@ -1891,7 +1892,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                         AttachCdModel attachCdModel = (AttachCdModel) result.getState();
                         attachCdModel.StopProgress();
-                        Cancel();
+                        cancel();
 
                     }
                 }, model);
@@ -1904,7 +1905,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         if (model.getIsNew() == false && selectedItem == null)
         {
-            Cancel();
+            cancel();
             return;
         }
 
@@ -2031,7 +2032,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                 VdcReturnValueBase returnValueBase = result.getReturnValue();
                                 if (returnValueBase != null && returnValueBase.getSucceeded())
                                 {
-                                    vmListModel.Cancel();
+                                    vmListModel.cancel();
                                     vmListModel.setGuideContext(returnValueBase.getActionReturnValue());
                                     vmListModel.UpdateActionAvailability();
                                     vmListModel.getGuideCommand().Execute();
@@ -2074,7 +2075,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                         public void Executed(FrontendMultipleActionAsyncResult result) {
                                             VmListModel vmListModel1 = (VmListModel) result.getState();
                                             vmListModel1.getWindow().StopProgress();
-                                            vmListModel1.Cancel();
+                                            vmListModel1.cancel();
                                         }
                                     },
                                     vmListModel);
@@ -2103,7 +2104,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                 public void Executed(FrontendMultipleActionAsyncResult result) {
                                     VmListModel vmListModel1 = (VmListModel) result.getState();
                                     vmListModel1.getWindow().StopProgress();
-                                    vmListModel1.Cancel();
+                                    vmListModel1.cancel();
                                 }
                             },
                             this);
@@ -2147,7 +2148,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                                     VdcReturnValueBase retVal = result1.getReturnValue();
                                                     if (retVal != null && retVal.getSucceeded())
                                                     {
-                                                        vmListModel1.Cancel();
+                                                        vmListModel1.cancel();
                                                     }
 
                                                 }
@@ -2181,7 +2182,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                 VdcReturnValueBase returnValueBase = result.getReturnValue();
                                 if (returnValueBase != null && returnValueBase.getSucceeded())
                                 {
-                                    vmListModel.Cancel();
+                                    vmListModel.cancel();
                                 }
 
                             }
@@ -2190,7 +2191,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
     }
 
-    private void RetrieveIsoImages()
+    private void retrieveIsoImages()
     {
         Object tempVar = getSelectedItem();
         VM vm = (VM) ((tempVar instanceof VM) ? tempVar : null);
@@ -2198,8 +2199,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         {
             return;
         }
-
-        Guid storagePoolId = vm.getStoragePoolId();
 
         getIsoImages().clear();
 
@@ -2209,7 +2208,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         ejectModel.getExecutedEvent().addListener(this);
         getIsoImages().add(ejectModel);
 
-        ArrayList<String> list = new ArrayList<String>();
         ChangeCDModel tempVar4 = new ChangeCDModel();
         tempVar4.setTitle(ConstantsManager.getInstance().getConstants().noCDsTitle());
         getIsoImages().add(tempVar4);
@@ -2245,11 +2243,11 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 null);
     }
 
-    public void Cancel()
+    public void cancel()
     {
         Frontend.Unsubscribe();
 
-        CancelConfirmation();
+        cancelConfirmation();
 
         setGuideContext(null);
         setWindow(null);
@@ -2257,7 +2255,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         UpdateActionAvailability();
     }
 
-    private void CancelConfirmation()
+    private void cancelConfirmation()
     {
         setConfirmWindow(null);
     }
@@ -2386,15 +2384,15 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         if (command == getNewServerCommand())
         {
-            NewServer();
+            newServer();
         }
         else if (command == getNewDesktopCommand())
         {
-            NewDesktop();
+            newDesktop();
         }
         else if (command == getEditCommand())
         {
-            Edit();
+            edit();
         }
         else if (command == getEditConsoleCommand())
         {
@@ -2410,11 +2408,11 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
         else if (command == getRunCommand())
         {
-            Run();
+            run();
         }
         else if (command == getPauseCommand())
         {
-            Pause();
+            pause();
         }
         else if (command == getStopCommand())
         {
@@ -2422,19 +2420,19 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
         else if (command == getShutdownCommand())
         {
-            Shutdown();
+            shutdown();
         }
         else if (command == getMigrateCommand())
         {
-            Migrate();
+            migrate();
         }
         else if (command == getNewTemplateCommand())
         {
-            NewTemplate();
+            newTemplate();
         }
         else if (command == getRunOnceCommand())
         {
-            RunOnce();
+            runOnce();
         }
         else if (command == getExportCommand())
         {
@@ -2442,31 +2440,31 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
         else if (command == getCreateSnapshotCommand())
         {
-            CreateSnapshot();
+            createSnapshot();
         }
         else if (command == getGuideCommand())
         {
-            Guide();
+            guide();
         }
         else if (command == getRetrieveIsoImagesCommand())
         {
-            RetrieveIsoImages();
+            retrieveIsoImages();
         }
         else if (command == getChangeCdCommand())
         {
-            ChangeCD();
+            changeCD();
         }
         else if (command == getAssignTagsCommand())
         {
-            AssignTags();
+            assignTags();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnAssignTags")) //$NON-NLS-1$
         {
-            OnAssignTags();
+            onAssignTags();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
@@ -2474,47 +2472,47 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
-            OnRemove();
+            onRemove();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnExport")) //$NON-NLS-1$
         {
-            OnExport();
+            onExport();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnExportNoTemplates")) //$NON-NLS-1$
         {
-            OnExportNoTemplates();
+            onExportNoTemplates();
         }
         else if (StringHelper.stringsEqual(command.getName(), "CancelConfirmation")) //$NON-NLS-1$
         {
-            CancelConfirmation();
+            cancelConfirmation();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRunOnce")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnNewTemplate")) //$NON-NLS-1$
         {
-            OnNewTemplate();
+            onNewTemplate();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnMigrate")) //$NON-NLS-1$
         {
-            OnMigrate();
+            onMigrate();
         }
         else if (command == getCancelMigrateCommand())
         {
-            CancelMigration();
+            cancelMigration();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnShutdown")) //$NON-NLS-1$
         {
-            OnShutdown();
+            onShutdown();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnStop")) //$NON-NLS-1$
         {
-            OnStop();
+            onStop();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnChangeCD")) //$NON-NLS-1$
         {
-            OnChangeCD();
+            onChangeCD();
         }
         else if (command.getName().equals("closeVncInfo") || // $NON-NLS-1$
                 "OnEditConsoleSave".equals(command.getName())) { //$NON-NLS-1$

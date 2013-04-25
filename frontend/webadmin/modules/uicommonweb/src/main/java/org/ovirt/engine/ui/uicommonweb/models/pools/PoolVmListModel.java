@@ -151,7 +151,7 @@ public class PoolVmListModel extends VmListModel
                     public void Executed(FrontendMultipleActionAsyncResult result) {
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
                         localModel.StopProgress();
-                        Cancel();
+                        cancel();
 
                     }
                 }, model);
@@ -216,7 +216,7 @@ public class PoolVmListModel extends VmListModel
         }
         if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
     }
 }
