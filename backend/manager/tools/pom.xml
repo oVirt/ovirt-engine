@@ -62,22 +62,6 @@
 
   </dependencies>
 
-  <profiles>
-    <profile>
-      <id>enable-tools-itests</id>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration combine.self="override">
-              <excludes/>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
-
   <build>
     <plugins>
       <plugin>
@@ -102,8 +86,22 @@
         <groupId>org.ovirt.engine</groupId>
         <artifactId>jboss-modules-maven-plugin</artifactId>
       </plugin>
-
     </plugins>
   </build>
 
+  <profiles>
+    <profile>
+      <id>enable-tools-itests</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration combine.self="override">
+              <excludes/>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
