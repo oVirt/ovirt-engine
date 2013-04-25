@@ -173,7 +173,6 @@ public class RdpConnector {
                                      var extendedDiscReason = MsRdpClient.ExtendedDisconnectReason;
                                      var errorCodeEventArgs = @org.ovirt.engine.ui.uicommonweb.models.vms.ErrorCodeEventArgs::new(I)(disconnectCode);
                                      disconnectedEvent.@org.ovirt.engine.ui.uicompat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/ui/uicompat/EventArgs;)(model, errorCodeEventArgs);
-                                     $wnd.document.body.removeChild(MsRdpClient);
                                  }
 
                                  var server = this.@org.ovirt.engine.ui.common.uicommon.RdpConnector::getServer()();
