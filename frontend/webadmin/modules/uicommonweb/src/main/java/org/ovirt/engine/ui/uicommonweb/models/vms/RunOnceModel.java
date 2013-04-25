@@ -635,7 +635,7 @@ public abstract class RunOnceModel extends Model
                      if (getFloppyImage().getIsChangable()
                              && getFloppyImage().getSelectedItem() == null)
                      {
-                         getFloppyImage().setSelectedItem(Linq.FirstOrDefault(images));
+                         getFloppyImage().setSelectedItem(Linq.firstOrDefault(images));
                      }
                  }
              }),
@@ -720,7 +720,7 @@ public abstract class RunOnceModel extends Model
                      if (getIsoImage().getIsChangable()
                              && getIsoImage().getSelectedItem() == null)
                      {
-                         getIsoImage().setSelectedItem(Linq.FirstOrDefault(images));
+                         getIsoImage().setSelectedItem(Linq.firstOrDefault(images));
                      }
 
                  }
@@ -740,7 +740,7 @@ public abstract class RunOnceModel extends Model
                     domains.add(0, oldDomain);
                 }
                 getSysPrepDomainName().setItems(domains);
-                String selectedDomain = (oldDomain != null) ? oldDomain : Linq.FirstOrDefault(domains);
+                String selectedDomain = (oldDomain != null) ? oldDomain : Linq.firstOrDefault(domains);
                 if (!StringHelper.stringsEqual(selectedDomain, "")) { //$NON-NLS-1$
                     getSysPrepDomainName().setSelectedItem(selectedDomain);
                 }

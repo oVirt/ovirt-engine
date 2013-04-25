@@ -33,7 +33,7 @@ public class VmDiskListModelBase extends SearchableListModel
     @Override
     public void setItems(Iterable value)
     {
-        ArrayList<Disk> disks = value != null ? Linq.<Disk> Cast(value) : new ArrayList<Disk>();
+        ArrayList<Disk> disks = value != null ? Linq.<Disk> cast(value) : new ArrayList<Disk>();
         ArrayList<Disk> filteredDisks = new ArrayList<Disk>();
         DiskStorageType diskStorageType = (DiskStorageType) getDiskViewType().getEntity();
 

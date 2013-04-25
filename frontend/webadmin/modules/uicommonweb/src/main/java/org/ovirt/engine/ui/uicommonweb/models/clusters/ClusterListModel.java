@@ -324,13 +324,13 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                 {
                     StoragePool selectDataCenter = (StoragePool) clModel.getSystemTreeSelectedItem().getEntity();
 
-                    cModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters,
+                    cModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters,
                             new Linq.DataCenterPredicate(selectDataCenter.getId())));
                     cModel.getDataCenter().setIsChangable(false);
                 }
                 else
                 {
-                    cModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters));
+                    cModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters));
                 }
 
                 UICommand tempVar = new UICommand("OnSave", clModel); //$NON-NLS-1$
@@ -449,7 +449,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         model.setMessage(ConstantsManager.getInstance().getConstants().clustersMsg());
 
         ArrayList<String> list = new ArrayList<String>();
-        for (VDSGroup a : Linq.<VDSGroup> Cast(getSelectedItems()))
+        for (VDSGroup a : Linq.<VDSGroup> cast(getSelectedItems()))
         {
             list.add(a.getname());
         }
@@ -885,7 +885,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         {
             VDSGroup cluster = (VDSGroup) getSystemTreeSelectedItem().getEntity();
 
-            setSelectedItem(Linq.FirstOrDefault(Linq.<VDSGroup> Cast(getItems()),
+            setSelectedItem(Linq.firstOrDefault(Linq.<VDSGroup> cast(getItems()),
                     new Linq.ClusterPredicate(cluster.getId())));
         }
     }

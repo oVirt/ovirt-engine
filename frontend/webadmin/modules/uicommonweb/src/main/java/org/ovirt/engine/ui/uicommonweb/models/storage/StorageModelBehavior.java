@@ -41,7 +41,7 @@ public abstract class StorageModelBehavior extends Model
 
     public List<StoragePool> FilterDataCenter(List<StoragePool> source)
     {
-        return Linq.ToList(Linq.Where(source, new Linq.DataCenterNotStatusPredicate(StoragePoolStatus.NotOperational)));
+        return Linq.toList(Linq.where(source, new Linq.DataCenterNotStatusPredicate(StoragePoolStatus.NotOperational)));
     }
 
     public void UpdateItemsAvailability()
@@ -56,7 +56,7 @@ public abstract class StorageModelBehavior extends Model
     {
         // Filter UnSelectable models from AvailableStorageItems list
         ArrayList<Object> filterredItems = new ArrayList<Object>();
-        ArrayList<IStorageModel> items = Linq.<IStorageModel> Cast(getModel().getItems());
+        ArrayList<IStorageModel> items = Linq.<IStorageModel> cast(getModel().getItems());
         for (IStorageModel model : items)
         {
             if (((Model) model).getIsSelectable())
@@ -74,7 +74,7 @@ public abstract class StorageModelBehavior extends Model
         getModel().UpdatedStorageModels.add(model);
 
         // Filter UnSelectable model from AvailableStorageItems list
-        if (getModel().UpdatedStorageModels.size() == Linq.<IStorageModel> Cast(getModel().getItems()).size())
+        if (getModel().UpdatedStorageModels.size() == Linq.<IStorageModel> cast(getModel().getItems()).size())
         {
             getModel().UpdatedStorageModels.clear();
 

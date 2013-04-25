@@ -104,7 +104,7 @@ public class TemplateStorageListModel extends SearchableListModel
     {
         if (storageDomainModels != null)
         {
-            Linq.Sort(storageDomainModels, new StorageDomainModelByNameComparer());
+            Linq.sort(storageDomainModels, new StorageDomainModelByNameComparer());
             itemsChanging(value, items);
             items = storageDomainModels;
             itemsChanged();
@@ -124,7 +124,7 @@ public class TemplateStorageListModel extends SearchableListModel
                             ArrayList<DiskImage> diskImages = (ArrayList<DiskImage>) returnValue;
 
                             ArrayList<StorageDomain> storageDomains =
-                                    Linq.<StorageDomain> Cast(templateStorageListModel.value);
+                                    Linq.<StorageDomain> cast(templateStorageListModel.value);
                             ArrayList<StorageDomainModel> storageDomainModels = new ArrayList<StorageDomainModel>();
 
                             for (StorageDomain storageDomain : storageDomains) {
@@ -138,7 +138,7 @@ public class TemplateStorageListModel extends SearchableListModel
                                     }
                                 }
 
-                                Linq.Sort(disks, new DiskByAliasComparer());
+                                Linq.sort(disks, new DiskByAliasComparer());
                                 storageDomainModel.setDisks(disks);
                                 storageDomainModels.add(storageDomainModel);
                             }
@@ -167,7 +167,7 @@ public class TemplateStorageListModel extends SearchableListModel
         model.setMessage(ConstantsManager.getInstance().getConstants().templateDisksMsg());
 
         ArrayList<DiskModel> disks =
-                getSelectedItems() != null ? Linq.<DiskModel> Cast(getSelectedItems()) : new ArrayList<DiskModel>();
+                getSelectedItems() != null ? Linq.<DiskModel> cast(getSelectedItems()) : new ArrayList<DiskModel>();
         ArrayList<String> items = new ArrayList<String>();
         for (DiskModel diskModel : disks)
         {
@@ -244,7 +244,7 @@ public class TemplateStorageListModel extends SearchableListModel
     {
         VmTemplate template = (VmTemplate) getEntity();
         ArrayList<StorageDomainModel> selectedItems = getSelectedItems() != null ?
-                Linq.<StorageDomainModel> Cast(getSelectedItems()) : new ArrayList<StorageDomainModel>();
+                Linq.<StorageDomainModel> cast(getSelectedItems()) : new ArrayList<StorageDomainModel>();
 
         getRemoveCommand().setIsExecutionAllowed(isRemoveCommandAvailable());
     }
@@ -252,7 +252,7 @@ public class TemplateStorageListModel extends SearchableListModel
     private boolean isRemoveCommandAvailable()
     {
         ArrayList<DiskModel> disks =
-                getSelectedItems() != null ? Linq.<DiskModel> Cast(getSelectedItems()) : new ArrayList<DiskModel>();
+                getSelectedItems() != null ? Linq.<DiskModel> cast(getSelectedItems()) : new ArrayList<DiskModel>();
 
         if (disks.isEmpty())
         {

@@ -168,7 +168,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
 
         getModel().getTemplate().setItems(templatesList);
 
-        getModel().getTemplate().setSelectedItem(Linq.FirstOrDefault(templatesList,
+        getModel().getTemplate().setSelectedItem(Linq.firstOrDefault(templatesList,
                 oldTemplate != null ? new Linq.TemplatePredicate(oldTemplate.getId())
                         : new Linq.TemplatePredicate(NGuid.Empty)));
 

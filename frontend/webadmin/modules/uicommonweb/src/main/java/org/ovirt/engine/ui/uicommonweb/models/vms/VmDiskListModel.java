@@ -246,9 +246,9 @@ public class VmDiskListModel extends VmDiskListModelBase
     public void setItems(Iterable value)
     {
         ArrayList<Disk> disks =
-                value != null ? Linq.<Disk> Cast(value) : new ArrayList<Disk>();
+                value != null ? Linq.<Disk> cast(value) : new ArrayList<Disk>();
 
-        Linq.Sort(disks, new DiskByAliasComparer());
+        Linq.sort(disks, new DiskByAliasComparer());
         super.setItems(disks);
 
         UpdateActionAvailability();
@@ -562,7 +562,7 @@ public class VmDiskListModel extends VmDiskListModelBase
 
     private boolean isPlugAvailableByDisks(boolean plug) {
         ArrayList<Disk> disks =
-                getSelectedItems() != null ? Linq.<Disk> Cast(getSelectedItems()) : new ArrayList<Disk>();
+                getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
 
         for (Disk disk : disks)
         {
@@ -586,7 +586,7 @@ public class VmDiskListModel extends VmDiskListModelBase
 
     private boolean isMoveCommandAvailable() {
         ArrayList<Disk> disks =
-                getSelectedItems() != null ? Linq.<Disk> Cast(getSelectedItems()) : new ArrayList<Disk>();
+                getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
 
         for (Disk disk : disks) {
             if (!isImageDiskOK(disk) || (!isVmDown() && disk.getPlugged())) {
@@ -608,7 +608,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         }
 
         ArrayList<Disk> disks = getSelectedItems() != null ?
-                Linq.<Disk> Cast(getSelectedItems()) : new ArrayList<Disk>();
+                Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
 
         for (Disk disk : disks) {
             if (!isImageDiskOK(disk)) {
@@ -621,7 +621,7 @@ public class VmDiskListModel extends VmDiskListModelBase
 
     private boolean isRemoveCommandAvailable() {
         ArrayList<Disk> disks =
-                getSelectedItems() != null ? Linq.<Disk> Cast(getSelectedItems()) : new ArrayList<Disk>();
+                getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
 
         for (Disk disk : disks)
         {

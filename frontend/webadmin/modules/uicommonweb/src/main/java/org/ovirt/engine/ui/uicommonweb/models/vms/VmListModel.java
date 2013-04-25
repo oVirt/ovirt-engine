@@ -533,7 +533,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         if (vmListModel.getLastExecutedCommand() == getAssignTagsCommand())
         {
             ArrayList<org.ovirt.engine.core.common.businessentities.tags> attachedTags =
-                    Linq.Distinct(vmListModel.allAttachedTags, new TagsEqualityComparer());
+                    Linq.distinct(vmListModel.allAttachedTags, new TagsEqualityComparer());
             for (org.ovirt.engine.core.common.businessentities.tags tag : attachedTags)
             {
                 int count = 0;
@@ -1468,7 +1468,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.setHashName("migrate_virtual_machine"); //$NON-NLS-1$
         model.setVmsOnSameCluster(true);
         model.setIsAutoSelect(true);
-        model.setVmList(Linq.<VM> Cast(getSelectedItems()));
+        model.setVmList(Linq.<VM> cast(getSelectedItems()));
 
         AsyncDataProvider.GetUpHostListByCluster(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -1552,7 +1552,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         else
         {
             model.getHosts().setItems(hosts);
-            model.getHosts().setSelectedItem(Linq.FirstOrDefault(hosts));
+            model.getHosts().setSelectedItem(Linq.firstOrDefault(hosts));
 
             UICommand tempVar2 = new UICommand("OnMigrate", this); //$NON-NLS-1$
             tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -1832,7 +1832,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         ArrayList<String> images1 =
                 new ArrayList<String>(Arrays.asList(new String[] { "No CDs" })); //$NON-NLS-1$
         attachCdModel.getIsoImage().setItems(images1);
-        attachCdModel.getIsoImage().setSelectedItem(Linq.FirstOrDefault(images1));
+        attachCdModel.getIsoImage().setSelectedItem(Linq.firstOrDefault(images1));
 
         AsyncQuery getIrsImageListCallback = new AsyncQuery();
         getIrsImageListCallback.setModel(this);
@@ -1848,7 +1848,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 _attachCdModel.getIsoImage().setItems(images);
                 if (_attachCdModel.getIsoImage().getIsChangable())
                 {
-                    _attachCdModel.getIsoImage().setSelectedItem(Linq.FirstOrDefault(images));
+                    _attachCdModel.getIsoImage().setSelectedItem(Linq.firstOrDefault(images));
                 }
             }
         };

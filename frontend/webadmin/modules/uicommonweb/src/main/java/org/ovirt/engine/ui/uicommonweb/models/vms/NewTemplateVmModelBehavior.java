@@ -279,7 +279,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                 StorageDomain selectStorage =
                                         (StorageDomain) getSystemTreeSelectedItem().getEntity();
                                 StorageDomain s =
-                                        Linq.FirstOrDefault(activeStorageDomainList,
+                                        Linq.firstOrDefault(activeStorageDomainList,
                                                 new Linq.StoragePredicate(selectStorage.getId()));
                                 activeStorageDomainList =
                                         new ArrayList<StorageDomain>(Arrays.asList(new StorageDomain[] { s }));
@@ -304,7 +304,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                         ArrayList<DiskModel> disks =
                                 (ArrayList<DiskModel>) behavior.getModel().getDisksAllocationModel().getDisks();
 
-                        Linq.Sort(activeStorageDomainList, new Linq.StorageDomainByNameComparer());
+                        Linq.sort(activeStorageDomainList, new Linq.StorageDomainByNameComparer());
                         if (disks != null) {
                             for (DiskModel diskModel : disks) {
                                 diskModel.getStorageDomain().setItems(activeStorageDomainList);

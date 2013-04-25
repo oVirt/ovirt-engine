@@ -287,7 +287,7 @@ public class RoleListModel extends ListWithDetailsModel
         model.setMessage(ConstantsManager.getInstance().getConstants().rolesMsg());
 
         ArrayList<String> list = new ArrayList<String>();
-        for (Role role : Linq.<Role> Cast(getSelectedItems()))
+        for (Role role : Linq.<Role> cast(getSelectedItems()))
         {
             list.add(role.getname());
         }
@@ -574,8 +574,8 @@ public class RoleListModel extends ListWithDetailsModel
         else
         {
 
-            detachActionGroup = Linq.Except(publicAttachedActions, actions);
-            attachActionGroup = Linq.Except(actions, publicAttachedActions);
+            detachActionGroup = Linq.except(publicAttachedActions, actions);
+            attachActionGroup = Linq.except(actions, publicAttachedActions);
 
             Frontend.RunAction(VdcActionType.UpdateRole, new RolesOperationsParameters(role),
                     new IFrontendActionAsyncCallback() {

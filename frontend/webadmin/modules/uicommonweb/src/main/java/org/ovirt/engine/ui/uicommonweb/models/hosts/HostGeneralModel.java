@@ -835,9 +835,9 @@ public class HostGeneralModel extends EntityModel
                             InstallModel model = (InstallModel) target;
 
                             ArrayList<RpmVersion> isos = (ArrayList<RpmVersion>) returnValue;
-                            isos = Linq.OrderByDescending(isos, new Linq.RpmVersionComparer());
+                            isos = Linq.orderByDescending(isos, new Linq.RpmVersionComparer());
                             model.getOVirtISO().setItems(isos);
-                            model.getOVirtISO().setSelectedItem(Linq.FirstOrDefault(isos));
+                            model.getOVirtISO().setSelectedItem(Linq.firstOrDefault(isos));
                             model.getOVirtISO().setIsAvailable(true);
                             model.getOVirtISO().setIsChangable(!isos.isEmpty());
                             model.getHostVersion().setIsAvailable(true);

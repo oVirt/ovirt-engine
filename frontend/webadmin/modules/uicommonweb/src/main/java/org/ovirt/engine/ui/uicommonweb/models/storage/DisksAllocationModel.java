@@ -63,7 +63,7 @@ public class DisksAllocationModel extends EntityModel
     }
 
     public void sortDisks() {
-        Linq.Sort(disks, new DiskModelByAliasComparer());
+        Linq.sort(disks, new DiskModelByAliasComparer());
         onPropertyChanged(new PropertyChangedEventArgs("Disks")); //$NON-NLS-1$
     }
 

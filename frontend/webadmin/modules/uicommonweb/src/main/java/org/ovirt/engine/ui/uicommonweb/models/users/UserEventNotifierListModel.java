@@ -122,7 +122,7 @@ public class UserEventNotifierListModel extends SearchableListModel
 
         ArrayList<event_subscriber> items =
                 getItems() == null ? new ArrayList<event_subscriber>()
-                        : Linq.<event_subscriber> Cast(getItems());
+                        : Linq.<event_subscriber> cast(getItems());
         for (EventNotificationEntity eventType : eventTypes)
         {
             SelectionTreeNodeModel stnm = new SelectionTreeNodeModel();
@@ -213,7 +213,7 @@ public class UserEventNotifierListModel extends SearchableListModel
         }
 
         ArrayList<event_subscriber> existing =
-                getItems() != null ? Linq.<event_subscriber> Cast(getItems())
+                getItems() != null ? Linq.<event_subscriber> cast(getItems())
                         : new ArrayList<event_subscriber>();
         ArrayList<SelectionTreeNodeModel> added = new ArrayList<SelectionTreeNodeModel>();
         ArrayList<event_subscriber> removed = new ArrayList<event_subscriber>();

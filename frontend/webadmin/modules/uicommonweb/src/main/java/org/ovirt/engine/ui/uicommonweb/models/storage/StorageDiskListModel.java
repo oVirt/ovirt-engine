@@ -113,7 +113,7 @@ public class StorageDiskListModel extends SearchableListModel
 
     private void updateActionAvailability() {
         ArrayList<DiskImage> disks = getSelectedItems() != null ?
-                Linq.<DiskImage> Cast(getSelectedItems()) : new ArrayList<DiskImage>();
+                Linq.<DiskImage> cast(getSelectedItems()) : new ArrayList<DiskImage>();
 
         getRemoveCommand().setIsExecutionAllowed(disks.size() > 0 && isRemoveCommandAvailable(disks));
     }

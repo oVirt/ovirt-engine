@@ -15,7 +15,7 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
 
     @Override
     protected void setupSelectedTemplate(ListModel model, List<VmTemplate> templates) {
-        getModel().getTemplate().setSelectedItem(Linq.<VmTemplate> FirstOrDefault(templates));
+        getModel().getTemplate().setSelectedItem(Linq.<VmTemplate> firstOrDefault(templates));
     }
 
     @Override

@@ -205,7 +205,7 @@ public class StorageIsoListModel extends SearchableListModel
 
         if (getItems() != null)
         {
-            ArrayList<EntityModel> oldItems = Linq.ToList((Iterable<EntityModel>) getItems());
+            ArrayList<EntityModel> oldItems = Linq.toList((Iterable<EntityModel>) getItems());
 
             for (EntityModel newItem : items)
             {

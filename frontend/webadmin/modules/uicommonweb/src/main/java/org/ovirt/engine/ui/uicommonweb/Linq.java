@@ -72,10 +72,10 @@ public final class Linq
         @Override
         public int compare(Object x, Object y)
         {
-            return GetValue(x).compareTo(GetValue(y));
+            return getValue(x).compareTo(getValue(y));
         }
 
-        private String GetValue(Object obj)
+        private String getValue(Object obj)
         {
             if (obj instanceof VM)
             {
@@ -299,7 +299,7 @@ public final class Linq
         }
     }
 
-    public static boolean IsHostBelongsToAnyOfClusters(ArrayList<VDSGroup> clusters, VDS host)
+    public static boolean isHostBelongsToAnyOfClusters(ArrayList<VDSGroup> clusters, VDS host)
     {
         for (VDSGroup cluster : clusters)
         {
@@ -318,7 +318,7 @@ public final class Linq
      * @param sdl
      * @return
      */
-    public static boolean IsAnyStorageDomainIsMatserAndActive(List<StorageDomain> sdl)
+    public static boolean isAnyStorageDomainIsMatserAndActive(List<StorageDomain> sdl)
     {
         for (StorageDomain a : sdl)
         {
@@ -331,17 +331,17 @@ public final class Linq
         return false;
     }
 
-    public static boolean IsDataActiveStorageDomain(StorageDomain storageDomain)
+    public static boolean isDataActiveStorageDomain(StorageDomain storageDomain)
     {
         boolean isData = storageDomain.getStorageDomainType() == StorageDomainType.Data ||
                 storageDomain.getStorageDomainType() == StorageDomainType.Master;
 
-        boolean isActive = IsActiveStorageDomain(storageDomain);
+        boolean isActive = isActiveStorageDomain(storageDomain);
 
         return isData && isActive;
     }
 
-    public static boolean IsActiveStorageDomain(StorageDomain storageDomain)
+    public static boolean isActiveStorageDomain(StorageDomain storageDomain)
     {
         boolean isActive = storageDomain.getStatus() != null &&
                 storageDomain.getStatus() == StorageDomainStatus.Active;
@@ -356,7 +356,7 @@ public final class Linq
      *            IList to look in
      * @return Version MinVersion
      */
-    public static Version GetMinVersionByClusters(List<VDSGroup> source)
+    public static Version getMinVersionByClusters(List<VDSGroup> source)
     {
         Version minVersion = source != null && source.size() > 0 ? source.get(0).getcompatibility_version() : null;
 
@@ -380,7 +380,7 @@ public final class Linq
      * @param id
      * @return
      */
-    public static boolean IsSDItemExistInList(ArrayList<StorageDomain> items, Guid id)
+    public static boolean isSDItemExistInList(ArrayList<StorageDomain> items, Guid id)
     {
         for (StorageDomain b : items)
         {
@@ -399,7 +399,7 @@ public final class Linq
      * @param id
      * @return
      */
-    public static boolean IsClusterItemExistInList(List<VDSGroup> items, Guid id)
+    public static boolean isClusterItemExistInList(List<VDSGroup> items, Guid id)
     {
         for (VDSGroup a : items)
         {
@@ -411,7 +411,7 @@ public final class Linq
         return false;
     }
 
-    public static NetworkInterface FindInterfaceByName(ArrayList<NetworkInterface> items, String name)
+    public static NetworkInterface findInterfaceByName(ArrayList<NetworkInterface> items, String name)
     {
         for (NetworkInterface i : items)
         {
@@ -423,7 +423,7 @@ public final class Linq
         return null;
     }
 
-    public static ArrayList<NetworkInterface> VdsNetworkInterfaceListToBase(ArrayList<VdsNetworkInterface> items)
+    public static ArrayList<NetworkInterface> vdsNetworkInterfaceListToBase(ArrayList<VdsNetworkInterface> items)
     {
         ArrayList<NetworkInterface> networkInterfaces = new ArrayList<NetworkInterface>();
         for (VdsNetworkInterface item : items)
@@ -434,7 +434,7 @@ public final class Linq
         return networkInterfaces;
     }
 
-    public static ArrayList<NetworkInterface> VmNetworkInterfaceListToBase(ArrayList<VmNetworkInterface> items)
+    public static ArrayList<NetworkInterface> vmNetworkInterfaceListToBase(ArrayList<VmNetworkInterface> items)
     {
         ArrayList<NetworkInterface> networkInterfaces = new ArrayList<NetworkInterface>();
         for (VmNetworkInterface item : items)
@@ -445,7 +445,7 @@ public final class Linq
         return networkInterfaces;
     }
 
-    public static NetworkInterface FindInterfaceByNetworkName(ArrayList<NetworkInterface> items, String name)
+    public static NetworkInterface findInterfaceByNetworkName(ArrayList<NetworkInterface> items, String name)
     {
         for (NetworkInterface i : items)
         {
@@ -457,7 +457,7 @@ public final class Linq
         return null;
     }
 
-    public static VdsNetworkInterface FindInterfaceByIsBond(ArrayList<VdsNetworkInterface> items)
+    public static VdsNetworkInterface findInterfaceByIsBond(ArrayList<VdsNetworkInterface> items)
     {
         for (VdsNetworkInterface i : items)
         {
@@ -469,7 +469,7 @@ public final class Linq
         return null;
     }
 
-    public static NetworkInterface FindInterfaceNetworkNameNotEmpty(ArrayList<NetworkInterface> items)
+    public static NetworkInterface findInterfaceNetworkNameNotEmpty(ArrayList<NetworkInterface> items)
     {
         for (NetworkInterface i : items)
         {
@@ -481,7 +481,7 @@ public final class Linq
         return null;
     }
 
-    public static ArrayList<NetworkInterface> FindAllInterfaceNetworkNameNotEmpty(ArrayList<NetworkInterface> items)
+    public static ArrayList<NetworkInterface> findAllInterfaceNetworkNameNotEmpty(ArrayList<NetworkInterface> items)
     {
         ArrayList<NetworkInterface> ret = new ArrayList<NetworkInterface>();
         for (NetworkInterface i : items)
@@ -494,7 +494,7 @@ public final class Linq
         return ret;
     }
 
-    public static ArrayList<VdsNetworkInterface> FindAllInterfaceBondNameIsEmpty(ArrayList<VdsNetworkInterface> items)
+    public static ArrayList<VdsNetworkInterface> findAllInterfaceBondNameIsEmpty(ArrayList<VdsNetworkInterface> items)
     {
         ArrayList<VdsNetworkInterface> ret = new ArrayList<VdsNetworkInterface>();
         for (VdsNetworkInterface i : items)
@@ -507,7 +507,7 @@ public final class Linq
         return ret;
     }
 
-    public static ArrayList<VdsNetworkInterface> FindAllInterfaceVlanIdIsEmpty(ArrayList<VdsNetworkInterface> items)
+    public static ArrayList<VdsNetworkInterface> findAllInterfaceVlanIdIsEmpty(ArrayList<VdsNetworkInterface> items)
     {
         ArrayList<VdsNetworkInterface> ret = new ArrayList<VdsNetworkInterface>();
         for (VdsNetworkInterface i : items)
@@ -520,7 +520,7 @@ public final class Linq
         return ret;
     }
 
-    public static Network FindNetworkByName(ArrayList<Network> items, String name)
+    public static Network findNetworkByName(ArrayList<Network> items, String name)
     {
         for (Network n : items)
         {
@@ -532,7 +532,7 @@ public final class Linq
         return null;
     }
 
-    public static ArrayList<VDS> FindAllVDSByPmEnabled(ArrayList<VDS> items)
+    public static ArrayList<VDS> findAllVDSByPmEnabled(ArrayList<VDS> items)
     {
         ArrayList<VDS> ret = new ArrayList<VDS>();
         for (VDS i : items)
@@ -545,7 +545,7 @@ public final class Linq
         return ret;
     }
 
-    public static SanTargetModel FindSanTargetByNotIsConnected(ArrayList<SanTargetModel> items)
+    public static SanTargetModel findSanTargetByNotIsConnected(ArrayList<SanTargetModel> items)
     {
         for (SanTargetModel i : items)
         {
@@ -557,7 +557,7 @@ public final class Linq
         return null;
     }
 
-    public static ArrayList<StorageDomain> FindAllStorageDomainsBySharedStatus(ArrayList<StorageDomain> items,
+    public static ArrayList<StorageDomain> findAllStorageDomainsBySharedStatus(ArrayList<StorageDomain> items,
             StorageDomainSharedStatus status)
     {
         ArrayList<StorageDomain> ret = new ArrayList<StorageDomain>();
@@ -571,7 +571,7 @@ public final class Linq
         return ret;
     }
 
-    public static VdcReturnValueBase FindVdcReturnValueByDescription(ArrayList<VdcReturnValueBase> items,
+    public static VdcReturnValueBase findVdcReturnValueByDescription(ArrayList<VdcReturnValueBase> items,
             String description)
     {
         for (VdcReturnValueBase i : items)
@@ -583,54 +583,6 @@ public final class Linq
         }
         return null;
     }
-
-    /**
-     * Determines if all elements of source satisfy a condition.
-     */
-    // public static bool All<TSource>(IEnumerable<TSource> source, Func<TSource, bool> predicate)
-    // {
-    // foreach (TSource item in source)
-    // if (!predicate(item))
-    // return false;
-
-    // return true;
-    // }
-
-    /**
-     * Find min TSource by TKey.
-     *
-     * <typeparam name="TSource">Source type.</typeparam> <typeparam name="TKey">Min TSource to be found according to
-     * this type.</typeparam>
-     *
-     * @param source
-     *            IEnumerable to iterate for min TSource.
-     * @param selector
-     *            Param by which to search for min TSource.
-     * @return min(IEnumerable<TSource>)
-     */
-    // public static TSource Min<TSource, TKey>(IEnumerable<TSource> source, Func<TSource, TKey> selector)
-    // {
-    // using (IEnumerator<TSource> sIterator = source.GetEnumerator())
-    // {
-    // if (!sIterator.MoveNext()) return default(TSource);
-
-    // IComparer<TKey> comparer = Comparer<TKey>.Default;
-    // TKey minKey = selector(sIterator.Current);
-    // TSource minVal = sIterator.Current;
-
-    // while (sIterator.MoveNext())
-    // {
-    // TSource minCandidate = sIterator.Current;
-    // TKey minCandidateKeyValue = selector(minCandidate);
-    // if (comparer.compare(minCandidateKeyValue, minKey) < 0)
-    // {
-    // minKey = minCandidateKeyValue;
-    // minVal = minCandidate;
-    // }
-    // }
-    // return minVal;
-    // }
-    // }
 
     /**
      * Produces the set difference of two sequences by using the default equality
@@ -647,7 +599,7 @@ public final class Linq
      *            cause those elements to be removed from the returned sequence.
      * @return A sequence that contains the set difference of the elements of two sequences.
      */
-    public static <TSource> ArrayList<TSource> Except(ArrayList<TSource> first,
+    public static <TSource> ArrayList<TSource> except(ArrayList<TSource> first,
             ArrayList<TSource> second)
     {
         ArrayList<TSource> newIEnumerable = new ArrayList<TSource>();
@@ -666,32 +618,7 @@ public final class Linq
         return second == null ? first : newIEnumerable;
     }
 
-    /**
-     * OrderBy
-     *
-     * <typeparam name="TSource">TSource of IEnumerable to sort.</typeparam> <typeparam name="TKey">TKey of IEnumerable
-     * to sort by.</typeparam>
-     *
-     * @param source
-     *            IEnumerable to sort.
-     * @param keySelector
-     *            Key of IEnumerable to sort by.
-     * @return
-     */
-    // public static IEnumerable<TSource> OrderBy<TSource, TKey>(IEnumerable<TSource> source, Func<TSource, TKey>
-    // keySelector)
-    // {
-    // SortedList<TKey, TSource> sl = new SortedList<TKey, TSource>();
-
-    // foreach (TSource item in source)
-    // {
-    // sl.Add(keySelector(item), item);
-    // }
-
-    // return Cast<TSource>(sl.Values);
-    // }
-
-    public static int Count(Iterable source)
+    public static int count(Iterable source)
     {
         int result = 0;
         for (Object item : source)
@@ -702,7 +629,7 @@ public final class Linq
         return result;
     }
 
-    public static <TSource> TSource FirstOrDefault(Iterable<TSource> source)
+    public static <TSource> TSource firstOrDefault(Iterable<TSource> source)
     {
         for (TSource item : source)
         {
@@ -712,10 +639,10 @@ public final class Linq
         return null;
     }
 
-    public static <TSource> boolean All(Iterable<TSource> source, IPredicate<TSource> predicate) {
+    public static <TSource> boolean all(Iterable<TSource> source, IPredicate<TSource> predicate) {
 
         for (TSource item : source) {
-            if (!predicate.Match(item)) {
+            if (!predicate.match(item)) {
                 return false;
             }
         }
@@ -723,13 +650,13 @@ public final class Linq
         return true;
     }
 
-    public static <TSource> Iterable<TSource> Where(Iterable<TSource> source, IPredicate<TSource> predicate)
+    public static <TSource> Iterable<TSource> where(Iterable<TSource> source, IPredicate<TSource> predicate)
     {
         ArrayList<TSource> list = new ArrayList<TSource>();
 
         for (TSource item : source)
         {
-            if (predicate.Match(item))
+            if (predicate.match(item))
             {
                 list.add(item);
             }
@@ -738,9 +665,9 @@ public final class Linq
         return list;
     }
 
-    public static Version SelectHighestVersion(ArrayList<Version> versions)
+    public static Version selectHighestVersion(ArrayList<Version> versions)
     {
-        Version retVersion = FirstOrDefault(versions);
+        Version retVersion = firstOrDefault(versions);
         for (Version version : versions)
         {
             if (version.compareTo(retVersion) > 0)
@@ -751,11 +678,11 @@ public final class Linq
         return retVersion;
     }
 
-    public static <TSource> TSource FirstOrDefault(Iterable<TSource> source, IPredicate<TSource> predicate)
+    public static <TSource> TSource firstOrDefault(Iterable<TSource> source, IPredicate<TSource> predicate)
     {
         for (TSource item : source)
         {
-            if (predicate.Match(item))
+            if (predicate.match(item))
             {
                 return item;
             }
@@ -767,7 +694,7 @@ public final class Linq
     /**
      * Returns a new instance of list containing all items of the provided source.
      */
-    public static <TSource> ArrayList<TSource> ToList(Iterable<TSource> source)
+    public static <TSource> ArrayList<TSource> toList(Iterable<TSource> source)
     {
         ArrayList<TSource> list = new ArrayList<TSource>();
         for (TSource item : source)
@@ -804,7 +731,7 @@ public final class Linq
     // return false;
     // }
 
-    public static <TSource> ArrayList<TSource> Distinct(ArrayList<TSource> source,
+    public static <TSource> ArrayList<TSource> distinct(ArrayList<TSource> source,
             IEqualityComparer<TSource> comparer)
     {
         ArrayList<TSource> list = new ArrayList<TSource>();
@@ -829,26 +756,7 @@ public final class Linq
         return list;
     }
 
-    // public static IDictionary<TKey, IList<TSource>> GroupBy<TSource, TKey>(IEnumerable<TSource> source, Func<TSource,
-    // TKey> keySelector)
-    // {
-    // IDictionary<TKey, IList<TSource>> bag = new Dictionary<TKey, IList<TSource>>();
-    // foreach (TSource item in source)
-    // {
-    // TKey key = keySelector(item);
-    // if (!bag.ContainsKey(key))
-    // {
-    // bag.Add(key, new List<TSource>());
-    // }
-
-    // IList<TSource> list = bag[key];
-    // list.Add(item);
-    // }
-
-    // return bag;
-    // }
-
-    public static <TResult> ArrayList<TResult> Cast(Iterable source)
+    public static <TResult> ArrayList<TResult> cast(Iterable source)
     {
         ArrayList<TResult> list = new ArrayList<TResult>();
         for (Object a : source)
@@ -860,7 +768,7 @@ public final class Linq
         return list;
     }
 
-    public static <T extends Comparable<T>> ArrayList<T> OrderByDescending(List<T> source)
+    public static <T extends Comparable<T>> ArrayList<T> orderByDescending(List<T> source)
     {
         ArrayList<T> list = new ArrayList<T>();
 
@@ -875,7 +783,7 @@ public final class Linq
         return list;
     }
 
-    public static <T> ArrayList<T> OrderByDescending(List<T> source, Comparator<T> comparer)
+    public static <T> ArrayList<T> orderByDescending(List<T> source, Comparator<T> comparer)
     {
         ArrayList<T> list = new ArrayList<T>();
 
@@ -893,11 +801,11 @@ public final class Linq
     /**
      * Sorts a not typed list. Allows to do a sort on a list containing elements of different types.
      */
-    public static void Sort(List source, Comparator comparer) {
+    public static void sort(List source, Comparator comparer) {
         Collections.sort(source, comparer);
     }
 
-    public static List Concat(List... lists)
+    public static List concat(List... lists)
     {
         List result = new ArrayList<Object>();
         for (List list : lists)
@@ -911,7 +819,7 @@ public final class Linq
         return result;
     }
 
-    public static <T> ArrayList<T> Union(ArrayList<ArrayList<T>> lists)
+    public static <T> ArrayList<T> union(ArrayList<ArrayList<T>> lists)
     {
         HashSet<T> set = new HashSet<T>();
 
@@ -923,7 +831,7 @@ public final class Linq
         return new ArrayList<T>(set);
     }
 
-    public static <T> ArrayList<T> Intersection(ArrayList<ArrayList<T>> lists)
+    public static <T> ArrayList<T> intersection(ArrayList<ArrayList<T>> lists)
     {
         ArrayList<T> result = new ArrayList<T>();
 
@@ -958,7 +866,7 @@ public final class Linq
         return list;
     }
 
-    public static <T> ArrayList<EntityModel> ToEntityModelList(ArrayList<T> list)
+    public static <T> ArrayList<EntityModel> toEntityModelList(ArrayList<T> list)
     {
         ArrayList<EntityModel> entityModelList = new ArrayList<EntityModel>();
 
@@ -974,7 +882,7 @@ public final class Linq
         return entityModelList;
     }
 
-    public static ArrayList<DiskModel> FilterDisksByType(ArrayList<DiskModel> diskModels, DiskStorageType type)
+    public static ArrayList<DiskModel> filterDisksByType(ArrayList<DiskModel> diskModels, DiskStorageType type)
     {
         ArrayList<DiskModel> filteredList = new ArrayList<DiskModel>();
 
@@ -990,7 +898,7 @@ public final class Linq
         return filteredList;
     }
 
-    public static DiskModel DiskToModel(Disk disk) {
+    public static DiskModel diskToModel(Disk disk) {
         DiskModel diskModel = new DiskModel();
         diskModel.getAlias().setEntity(disk.getDiskAlias());
 
@@ -1012,7 +920,7 @@ public final class Linq
         return diskModel;
     }
 
-    public static ArrayList<DiskModel> DisksToDiskModelList(ArrayList<Disk> disks) {
+    public static ArrayList<DiskModel> disksToDiskModelList(ArrayList<Disk> disks) {
         ArrayList<DiskModel> diskModels = new ArrayList<DiskModel>();
 
         for (Disk disk : disks) {
@@ -1034,7 +942,7 @@ public final class Linq
         }
 
         @Override
-        public boolean Match(Map.Entry<String, String> source)
+        public boolean match(Map.Entry<String, String> source)
         {
             return StringHelper.stringsEqual(source.getKey(), timeZone);
         }
@@ -1050,7 +958,7 @@ public final class Linq
         }
 
         @Override
-        public boolean Match(ServerCpu source)
+        public boolean match(ServerCpu source)
         {
             return StringHelper.stringsEqual(source.getCpuName(), cpuName);
         }
@@ -1066,7 +974,7 @@ public final class Linq
         }
 
         @Override
-        public boolean Match(Version source)
+        public boolean match(Version source)
         {
             return source.equals(version);
         }
@@ -1082,7 +990,7 @@ public final class Linq
         }
 
         @Override
-        public boolean Match(StoragePool source)
+        public boolean match(StoragePool source)
         {
             return id.equals(source.getId());
         }
@@ -1098,7 +1006,7 @@ public final class Linq
         }
 
         @Override
-        public boolean Match(StoragePool source)
+        public boolean match(StoragePool source)
         {
             return source.getstatus() == status;
         }
@@ -1114,7 +1022,7 @@ public final class Linq
         }
 
         @Override
-        public boolean Match(StoragePool source)
+        public boolean match(StoragePool source)
         {
             return source.getstatus() != status;
         }
@@ -1124,7 +1032,7 @@ public final class Linq
     public final static class CanDoActionSucceedPredicate implements IPredicate<VdcReturnValueBase> {
 
         @Override
-        public boolean Match(VdcReturnValueBase source) {
+        public boolean match(VdcReturnValueBase source) {
             return source.getCanDoAction();
         }
     }
@@ -1139,7 +1047,7 @@ public final class Linq
         }
 
         @Override
-        public boolean Match(VDSGroup source)
+        public boolean match(VDSGroup source)
         {
             return id.equals(source.getId());
         }
@@ -1155,7 +1063,7 @@ public final class Linq
         }
 
         @Override
-        public boolean Match(VDS source)
+        public boolean match(VDS source)
         {
             return source.getId().equals(id);
         }
@@ -1171,7 +1079,7 @@ public final class Linq
         }
 
         @Override
-        public boolean Match(VDS source)
+        public boolean match(VDS source)
         {
             return source.getStatus().equals(status);
         }
@@ -1187,7 +1095,7 @@ public final class Linq
         }
 
         @Override
-        public boolean Match(VmTemplate source)
+        public boolean match(VmTemplate source)
         {
             return source.getId().equals(id);
         }
@@ -1203,7 +1111,7 @@ public final class Linq
         }
 
         @Override
-        public boolean Match(StorageDomain source)
+        public boolean match(StorageDomain source)
         {
             return id.equals(source.getId());
         }
@@ -1218,7 +1126,7 @@ public final class Linq
         }
 
         @Override
-        public boolean Match(StorageDomain source) {
+        public boolean match(StorageDomain source) {
             return name.equals(source.getStorageName());
         }
     }
@@ -1233,7 +1141,7 @@ public final class Linq
         }
 
         @Override
-        public boolean Match(LunModel source)
+        public boolean match(LunModel source)
         {
             return StringHelper.stringsEqual(source.getLunId(), lun.getLunId());
         }
@@ -1249,7 +1157,7 @@ public final class Linq
         }
 
         @Override
-        public boolean Match(SanTargetModel source)
+        public boolean match(SanTargetModel source)
         {
             return StringHelper.stringsEqual(source.getName(), target.getName())
                     && StringHelper.stringsEqual(source.getAddress(), target.getAddress())
@@ -1259,7 +1167,7 @@ public final class Linq
 
     public interface IPredicate<TSource>
     {
-        boolean Match(TSource source);
+        boolean match(TSource source);
     }
 
 

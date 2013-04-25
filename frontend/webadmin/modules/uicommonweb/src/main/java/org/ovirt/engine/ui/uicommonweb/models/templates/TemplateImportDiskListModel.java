@@ -35,7 +35,7 @@ public class TemplateImportDiskListModel extends SearchableListModel
                     for (DiskImage diskImage : diskImageList.getDiskImages()) {
                         list.add(diskImage);
                     }
-                    Linq.Sort(list, new DiskByAliasComparer());
+                    Linq.sort(list, new DiskByAliasComparer());
                     setItems(list);
                     return;
                 }

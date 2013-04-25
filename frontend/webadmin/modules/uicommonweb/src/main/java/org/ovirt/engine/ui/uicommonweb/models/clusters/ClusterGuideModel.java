@@ -288,7 +288,7 @@ public class ClusterGuideModel extends GuideModel
 
                         setWindow(model);
                         model.getCluster().setItems(clusters);
-                        model.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
+                        model.getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
                         model.getCluster().setIsAvailable(false);
 
                         UICommand tempVar = new UICommand("OnSelectHost", ClusterGuideModel.this); //$NON-NLS-1$
@@ -319,7 +319,7 @@ public class ClusterGuideModel extends GuideModel
         }
 
         model.setSelectedHosts(new ArrayList<VDS>());
-        for (EntityModel a : Linq.<EntityModel> Cast(model.getItems()))
+        for (EntityModel a : Linq.<EntityModel> cast(model.getItems()))
         {
             if (a.getIsSelected())
             {
@@ -398,7 +398,7 @@ public class ClusterGuideModel extends GuideModel
                         model.getDataCenter().setItems(dataCenters);
                         if (getEntity().getStoragePoolId() != null)
                         {
-                            model.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters,
+                            model.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters,
                                     new Linq.DataCenterPredicate(clusterGuideModel.getEntity()
                                             .getStoragePoolId()
                                             .getValue())));

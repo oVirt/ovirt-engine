@@ -190,7 +190,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
             return;
         }
 
-        ArrayList<Disk> disks = Linq.<Disk> Cast(value);
+        ArrayList<Disk> disks = Linq.<Disk> cast(value);
         super.setItems(disks);
     }
 
@@ -454,7 +454,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
 
     private boolean isMoveCommandAvailable() {
         ArrayList<Disk> disks =
-                getSelectedItems() != null ? Linq.<Disk> Cast(getSelectedItems()) : new ArrayList<Disk>();
+                getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
 
         Disk firstDisk = disks.get(0);
         if (firstDisk.getDiskStorageType() != DiskStorageType.IMAGE) {
@@ -484,7 +484,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
 
     private boolean isCopyCommandAvailable() {
         ArrayList<Disk> disks =
-                getSelectedItems() != null ? Linq.<Disk> Cast(getSelectedItems()) : new ArrayList<Disk>();
+                getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
 
         Disk firstDisk = disks.get(0);
         if (firstDisk.getDiskStorageType() != DiskStorageType.IMAGE) {
@@ -508,7 +508,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
 
     private boolean isRemoveCommandAvailable() {
         ArrayList<Disk> disks =
-                getSelectedItems() != null ? Linq.<Disk> Cast(getSelectedItems()) : new ArrayList<Disk>();
+                getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
 
         for (Disk disk : disks)
         {

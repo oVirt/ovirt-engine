@@ -246,7 +246,7 @@ public class DataCenterModel extends Model
 
                 if (selectedVersion == null)
                 {
-                    dataCenterModel.getVersion().setSelectedItem(Linq.SelectHighestVersion(list));
+                    dataCenterModel.getVersion().setSelectedItem(Linq.selectHighestVersion(list));
                     if (getEntity() != null)
                     {
                         InitVersion();

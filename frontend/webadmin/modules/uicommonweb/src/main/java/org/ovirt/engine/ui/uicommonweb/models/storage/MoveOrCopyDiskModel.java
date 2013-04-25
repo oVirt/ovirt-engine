@@ -97,7 +97,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         ArrayList<DiskModel> disks = new ArrayList<DiskModel>();
         for (DiskImage disk : getDiskImages())
         {
-            disks.add(Linq.DiskToModel(disk));
+            disks.add(Linq.diskToModel(disk));
         }
         setDisks(disks);
 
@@ -108,14 +108,14 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         for (Disk disk : disks)
         {
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-                allDisks.add(Linq.DiskToModel(disk));
+                allDisks.add(Linq.diskToModel(disk));
             }
         }
     }
 
     protected void onInitStorageDomains(ArrayList<StorageDomain> storages) {
         for (StorageDomain storage : storages) {
-            if (Linq.IsDataActiveStorageDomain(storage)) {
+            if (Linq.isDataActiveStorageDomain(storage)) {
                 getActiveStorageDomains().add(storage);
             }
         }
@@ -151,13 +151,13 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
             // Destination storage domains
             ArrayList<StorageDomain> destStorageDomains =
-                    Linq.Except(getActiveStorageDomains(), sourceStorageDomains);
+                    Linq.except(getActiveStorageDomains(), sourceStorageDomains);
             destStorageDomains = filterStoragesByDatacenterId(destStorageDomains, diskImage.getStoragePoolId());
 
             // Filter storage domains with missing template disk
             boolean isDiskBasedOnTemplate = !diskImage.getParentId().equals(NGuid.Empty);
             if (isDiskBasedOnTemplate) {
-                destStorageDomains = Linq.Except(destStorageDomains, getMissingStorages(destStorageDomains, disk));
+                destStorageDomains = Linq.except(destStorageDomains, getMissingStorages(destStorageDomains, disk));
             }
 
             // Add prohibition reasons

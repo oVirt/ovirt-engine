@@ -194,7 +194,7 @@ public class QuotaUserListModel extends SearchableListModel {
         model.setMessage(ConstantsManager.getInstance().getConstants().assignmentsMsg());
 
         ArrayList<String> list = new ArrayList<String>();
-        for (permissions item : Linq.<permissions> Cast(getSelectedItems()))
+        for (permissions item : Linq.<permissions> cast(getSelectedItems()))
         {
             list.add(item.getOwnerName());
         }

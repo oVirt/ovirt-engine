@@ -215,14 +215,14 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                         break;
                     default:
                         innerVolumeModel.getDataCenter().setItems(dataCenters);
-                        innerVolumeModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters));
+                        innerVolumeModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters));
                         break;
                     }
                 }
                 else
                 {
                     innerVolumeModel.getDataCenter().setItems(dataCenters);
-                    innerVolumeModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters));
+                    innerVolumeModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters));
                 }
 
                 UICommand command = new UICommand("onCreateVolume", volumeListModel); //$NON-NLS-1$
@@ -257,7 +257,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         }
 
         ArrayList<String> list = new ArrayList<String>();
-        for (GlusterVolumeEntity item : Linq.<GlusterVolumeEntity> Cast(getSelectedItems()))
+        for (GlusterVolumeEntity item : Linq.<GlusterVolumeEntity> cast(getSelectedItems()))
         {
             list.add(item.getName());
         }
@@ -348,7 +348,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         getRebalanceCommand().setIsExecutionAllowed(true);
         getOptimizeForVirtStoreCommand().setIsExecutionAllowed(true);
 
-        for (GlusterVolumeEntity volume : Linq.<GlusterVolumeEntity> Cast(getSelectedItems()))
+        for (GlusterVolumeEntity volume : Linq.<GlusterVolumeEntity> cast(getSelectedItems()))
         {
             if (volume.getStatus() == GlusterStatus.UP)
             {
@@ -502,7 +502,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         }
 
         ArrayList<String> list = new ArrayList<String>();
-        for (GlusterVolumeEntity item : Linq.<GlusterVolumeEntity> Cast(getSelectedItems()))
+        for (GlusterVolumeEntity item : Linq.<GlusterVolumeEntity> cast(getSelectedItems()))
         {
             list.add(item.getName());
         }

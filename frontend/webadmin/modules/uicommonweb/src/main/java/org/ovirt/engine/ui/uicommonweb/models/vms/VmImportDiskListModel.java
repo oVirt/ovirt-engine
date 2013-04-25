@@ -28,7 +28,7 @@ public class VmImportDiskListModel extends SearchableListModel
                     list.add((DiskImage) img);
                 }
 
-                Linq.Sort(list, new DiskByAliasComparer());
+                Linq.sort(list, new DiskByAliasComparer());
                 setItems(list);
             }
         }

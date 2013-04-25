@@ -107,7 +107,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         if (openReportCommands.add(reportCommand))
         {
             ArrayList<IVdcQueryable> items =
-                    getSelectedItems() != null ? Linq.<IVdcQueryable> Cast(getSelectedItems())
+                    getSelectedItems() != null ? Linq.<IVdcQueryable> cast(getSelectedItems())
                             : new ArrayList<IVdcQueryable>();
             UpdateReportCommandAvailability(reportCommand, items);
 

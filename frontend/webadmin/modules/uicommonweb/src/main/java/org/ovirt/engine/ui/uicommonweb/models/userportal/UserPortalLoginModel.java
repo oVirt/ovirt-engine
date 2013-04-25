@@ -217,7 +217,7 @@ public class UserPortalLoginModel extends LoginModel
                             model.getPassword().setEntity(""); //$NON-NLS-1$
                             if (returnValue != null)
                             {
-                                model.setMessage(Linq.FirstOrDefault(returnValue.getCanDoActionMessages()));
+                                model.setMessage(Linq.firstOrDefault(returnValue.getCanDoActionMessages()));
                             }
                             model.getUserName().setIsChangable(true);
                             model.getPassword().setIsChangable(true);

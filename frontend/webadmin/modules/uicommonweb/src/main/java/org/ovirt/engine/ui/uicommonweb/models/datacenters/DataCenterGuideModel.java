@@ -278,7 +278,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         ArrayList<VDS> upHosts = new ArrayList<VDS>();
         for (VDS vds : allHosts)
         {
-            if (Linq.IsClusterItemExistInList(clusters, vds.getVdsGroupId()))
+            if (Linq.isClusterItemExistInList(clusters, vds.getVdsGroupId()))
             {
                 hosts.add(vds);
             }
@@ -289,7 +289,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                 availableHosts.add(vds);
             }
 
-            if (vds.getStatus() == VDSStatus.Up && Linq.IsClusterItemExistInList(clusters, vds.getVdsGroupId()))
+            if (vds.getStatus() == VDSStatus.Up && Linq.isClusterItemExistInList(clusters, vds.getVdsGroupId()))
             {
                 upHosts.add(vds);
             }
@@ -423,7 +423,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         }
 
         boolean attachIsoAllowed =
-                (attachedDataStorages.size() > 0 && Linq.IsAnyStorageDomainIsMatserAndActive(attachedDataStorages)
+                (attachedDataStorages.size() > 0 && Linq.isAnyStorageDomainIsMatserAndActive(attachedDataStorages)
                         && isoStorageDomains.size() > 0 && attachedIsoStorages.isEmpty() && upHosts.size() > 0);
 
         // The action is available if there are no storages attached to the
@@ -1214,7 +1214,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         ListModel model = (ListModel) getWindow();
 
         ArrayList<StorageDomain> items = new ArrayList<StorageDomain>();
-        for (EntityModel a : Linq.<EntityModel> Cast(model.getItems()))
+        for (EntityModel a : Linq.<EntityModel> cast(model.getItems()))
         {
             if (a.getIsSelected())
             {
@@ -1447,7 +1447,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
 
                         moveHostModel.getCluster().setItems(clusters);
-                        moveHostModel.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
+                        moveHostModel.getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
 
                         UICommand tempVar = new UICommand("OnSelectHost", dataCenterGuideModel); //$NON-NLS-1$
                         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -1476,7 +1476,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         }
 
         model.setSelectedHosts(new ArrayList<VDS>());
-        for (EntityModel a : Linq.<EntityModel> Cast(model.getItems()))
+        for (EntityModel a : Linq.<EntityModel> cast(model.getItems()))
         {
             if (a.getIsSelected())
             {

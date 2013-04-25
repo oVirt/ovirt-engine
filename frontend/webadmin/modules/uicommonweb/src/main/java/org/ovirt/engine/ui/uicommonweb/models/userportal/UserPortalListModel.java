@@ -879,7 +879,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         ArrayList<String> defaultImages =
                 new ArrayList<String>(Arrays.asList(new String[] { "No CDs" })); //$NON-NLS-1$
         model.getIsoImage().setItems(defaultImages);
-        model.getIsoImage().setSelectedItem(Linq.FirstOrDefault(defaultImages));
+        model.getIsoImage().setSelectedItem(Linq.firstOrDefault(defaultImages));
 
         AsyncQuery getImagesQuery = new AsyncQuery();
         getImagesQuery.setModel(this);
@@ -895,7 +895,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 _attachCdModel.getIsoImage().setItems(images);
                 if (_attachCdModel.getIsoImage().getIsChangable())
                 {
-                    _attachCdModel.getIsoImage().setSelectedItem(Linq.FirstOrDefault(images));
+                    _attachCdModel.getIsoImage().setSelectedItem(Linq.firstOrDefault(images));
                 }
             }
         };
@@ -1224,7 +1224,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                             new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { (StoragePool) result }));
                     UnitVmModel unitModel = (UnitVmModel) userPortalListModel.getWindow();
                     unitModel.getDataCenter().setItems(list);
-                    unitModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(list));
+                    unitModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(list));
 
                 }
             };
@@ -1366,7 +1366,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
             if (!StringHelper.isNullOrEmpty(vm.getTimeZone()))
             {
-                model.getTimeZone().setSelectedItem(Linq.FirstOrDefault(model.getTimeZone().getItems(),
+                model.getTimeZone().setSelectedItem(Linq.firstOrDefault(model.getTimeZone().getItems(),
                         new Linq.TimeZonePredicate(vm.getTimeZone())));
             }
         }
@@ -1437,8 +1437,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             }
 
             // Merge VMs and Pools, and create item models.
-            List all = Linq.Concat(getvms(), filteredPools);
-            Linq.Sort(all, new Linq.VmAndPoolByNameComparer());
+            List all = Linq.concat(getvms(), filteredPools);
+            Linq.sort(all, new Linq.VmAndPoolByNameComparer());
 
             ArrayList<Model> items = new ArrayList<Model>();
             for (Object item : all)

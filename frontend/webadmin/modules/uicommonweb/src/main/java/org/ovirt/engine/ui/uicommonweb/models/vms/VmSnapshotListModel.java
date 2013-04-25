@@ -241,9 +241,9 @@ public class VmSnapshotListModel extends SearchableListModel
     public void setItems(Iterable value)
     {
         ArrayList<Snapshot> snapshots =
-                value != null ? Linq.<Snapshot> Cast(value) : new ArrayList<Snapshot>();
+                value != null ? Linq.<Snapshot> cast(value) : new ArrayList<Snapshot>();
 
-        snapshots = Linq.OrderByDescending(snapshots, new SnapshotByCreationDateCommparer());
+        snapshots = Linq.orderByDescending(snapshots, new SnapshotByCreationDateCommparer());
 
         ArrayList<Snapshot> sortedSnapshots = new ArrayList<Snapshot>();
 
@@ -456,7 +456,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
         model.StopProgress();
 
-        if (returnValues != null && Linq.All(returnValues, new Linq.CanDoActionSucceedPredicate())) {
+        if (returnValues != null && Linq.all(returnValues, new Linq.CanDoActionSucceedPredicate())) {
             Cancel();
         }
     }

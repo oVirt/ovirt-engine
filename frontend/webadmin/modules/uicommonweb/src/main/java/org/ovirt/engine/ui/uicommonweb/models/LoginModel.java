@@ -188,7 +188,7 @@ public class LoginModel extends Model
                 }
 
                 List<String> domains = (List<String>) ReturnValue;
-                loginModel.getDomain().setSelectedItem(Linq.FirstOrDefault(domains));
+                loginModel.getDomain().setSelectedItem(Linq.firstOrDefault(domains));
                 loginModel.getDomain().setItems(domains);
 
             }
@@ -268,7 +268,7 @@ public class LoginModel extends Model
                         loginModel.getPassword().setEntity(""); //$NON-NLS-1$
                         if (returnValue != null)
                         {
-                            loginModel.setMessage(Linq.FirstOrDefault(returnValue.getCanDoActionMessages()));
+                            loginModel.setMessage(Linq.firstOrDefault(returnValue.getCanDoActionMessages()));
                         }
                         loginModel.getUserName().setIsChangable(true);
                         loginModel.getPassword().setIsChangable(true);

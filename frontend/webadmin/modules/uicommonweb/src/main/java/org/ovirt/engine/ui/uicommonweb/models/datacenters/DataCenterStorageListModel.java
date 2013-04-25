@@ -233,7 +233,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         // .ToList()
         // );
         ArrayList<VdcActionParametersBase> pb = new ArrayList<VdcActionParametersBase>();
-        for (StorageDomain a : Linq.<StorageDomain> Cast(getSelectedItems()))
+        for (StorageDomain a : Linq.<StorageDomain> cast(getSelectedItems()))
         {
             pb.add(new StorageDomainPoolParametersBase(a.getId(), getEntity().getId()));
         }
@@ -249,7 +249,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         // .ToList()
         // );
         ArrayList<VdcActionParametersBase> pb = new ArrayList<VdcActionParametersBase>();
-        for (StorageDomain a : Linq.<StorageDomain> Cast(getSelectedItems()))
+        for (StorageDomain a : Linq.<StorageDomain> cast(getSelectedItems()))
         {
             pb.add(new StorageDomainPoolParametersBase(a.getId(), getEntity().getId()));
         }
@@ -304,12 +304,12 @@ public class DataCenterStorageListModel extends SearchableListModel
                     ArrayList<EntityModel> models;
                     models = new ArrayList<EntityModel>();
                     ArrayList<StorageDomain> items =
-                            dcStorageModel.getItems() != null ? new ArrayList<StorageDomain>(Linq.<StorageDomain> Cast(dcStorageModel.getItems()))
+                            dcStorageModel.getItems() != null ? new ArrayList<StorageDomain>(Linq.<StorageDomain> cast(dcStorageModel.getItems()))
                                     : new ArrayList<StorageDomain>();
                     for (StorageDomain a : list)
                     {
                         // if (Linq.All<storage_domains>(items, delegate(storage_domains b) { return b.id != a.id; }))
-                        if (!Linq.IsSDItemExistInList(items, a.getId()))
+                        if (!Linq.isSDItemExistInList(items, a.getId()))
                         {
                             EntityModel tempVar = new EntityModel();
                             tempVar.setEntity(a);
@@ -336,13 +336,13 @@ public class DataCenterStorageListModel extends SearchableListModel
                     ArrayList<EntityModel> models = new ArrayList<EntityModel>();
                     boolean addToList;
                     ArrayList<StorageDomain> items =
-                            dcStorageModel.getItems() != null ? new ArrayList<StorageDomain>(Linq.<StorageDomain> Cast(dcStorageModel.getItems()))
+                            dcStorageModel.getItems() != null ? new ArrayList<StorageDomain>(Linq.<StorageDomain> cast(dcStorageModel.getItems()))
                                     : new ArrayList<StorageDomain>();
                     for (StorageDomain a : list)
                     {
                         addToList = false;
 
-                        if (!Linq.IsSDItemExistInList(items, a.getId())
+                        if (!Linq.isSDItemExistInList(items, a.getId())
                                 && a.getStorageDomainType() == dcStorageModel.getStorageDomainType())
                         {
                             if (dcStorageModel.getStorageDomainType() == StorageDomainType.Data
@@ -451,7 +451,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         // .Select(a => (storage_domains)a.Entity)
         // .ToList();
         ArrayList<StorageDomain> items = new ArrayList<StorageDomain>();
-        for (EntityModel a : Linq.<EntityModel> Cast(model.getItems()))
+        for (EntityModel a : Linq.<EntityModel> cast(model.getItems()))
         {
             if (a.getIsSelected())
             {
@@ -492,7 +492,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantDetachFollowingStoragesMsg());
 
         ArrayList<String> list = new ArrayList<String>();
-        for (StorageDomain item : Linq.<StorageDomain> Cast(getSelectedItems()))
+        for (StorageDomain item : Linq.<StorageDomain> cast(getSelectedItems()))
         {
             list.add(item.getStorageName());
         }
@@ -519,7 +519,7 @@ public class DataCenterStorageListModel extends SearchableListModel
     private String GetLocalStoragesFormattedString()
     {
         String localStorages = ""; //$NON-NLS-1$
-        for (StorageDomain a : Linq.<StorageDomain> Cast(getSelectedItems()))
+        for (StorageDomain a : Linq.<StorageDomain> cast(getSelectedItems()))
         {
             if (a.getStorageType() == StorageType.LOCALFS)
             {
@@ -531,7 +531,7 @@ public class DataCenterStorageListModel extends SearchableListModel
 
     private boolean ContainsLocalStorage(ConfirmationModel model)
     {
-        for (StorageDomain a : Linq.<StorageDomain> Cast(getSelectedItems()))
+        for (StorageDomain a : Linq.<StorageDomain> cast(getSelectedItems()))
         {
             if (a.getStorageType() == StorageType.LOCALFS)
             {
@@ -560,7 +560,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         // A list of 'remove' action parameters
         setpb_remove(new ArrayList<VdcActionParametersBase>());
         String localStorgaeDC = null;
-        for (StorageDomain a : Linq.<StorageDomain> Cast(getSelectedItems()))
+        for (StorageDomain a : Linq.<StorageDomain> cast(getSelectedItems()))
         {
             // For local storage - remove; otherwise - detach
             if (a.getStorageType() == StorageType.LOCALFS && a.getStorageDomainType() != StorageDomainType.ISO)
@@ -694,10 +694,10 @@ public class DataCenterStorageListModel extends SearchableListModel
     private void UpdateActionAvailability()
     {
         ArrayList<StorageDomain> items =
-                getItems() != null ? Linq.<StorageDomain> Cast(getItems())
+                getItems() != null ? Linq.<StorageDomain> cast(getItems())
                         : new ArrayList<StorageDomain>();
         ArrayList<StorageDomain> selectedItems =
-                getSelectedItems() != null ? Linq.<StorageDomain> Cast(getSelectedItems())
+                getSelectedItems() != null ? Linq.<StorageDomain> cast(getSelectedItems())
                         : new ArrayList<StorageDomain>();
 
         if (getEntity() != null)

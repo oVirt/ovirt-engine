@@ -1760,7 +1760,7 @@ public class UnitVmModel extends Model {
         for (Object item : getFirstBootDevice().getItems())
         {
             EntityModel a = (EntityModel) item;
-            if ((BootSequence) a.getEntity() == Linq.FirstOrDefault(items))
+            if ((BootSequence) a.getEntity() == Linq.firstOrDefault(items))
             {
                 firstBootDevice = a;
             }
@@ -1768,7 +1768,7 @@ public class UnitVmModel extends Model {
         getFirstBootDevice().setSelectedItem(firstBootDevice);
 
         ArrayList<EntityModel> secondDeviceOptions =
-                Linq.<EntityModel> Cast(getSecondBootDevice().getItems());
+                Linq.<EntityModel> cast(getSecondBootDevice().getItems());
 
         if (items.size() > 1)
         {
@@ -1872,7 +1872,7 @@ public class UnitVmModel extends Model {
         else
         {
             model.getDataCenter().setItems(list);
-            model.getDataCenter().setSelectedItem(Linq.FirstOrDefault(list));
+            model.getDataCenter().setSelectedItem(Linq.firstOrDefault(list));
         }
     }
 
@@ -1911,11 +1911,11 @@ public class UnitVmModel extends Model {
                 model.getCluster().setItems(clusters);
                 if (clusterGuid == null)
                 {
-                    model.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
+                    model.getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
                 }
                 else
                 {
-                    model.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters,
+                    model.getCluster().setSelectedItem(Linq.firstOrDefault(clusters,
                             new Linq.ClusterPredicate((Guid) clusterGuid)));
                 }
                 break;
@@ -1927,11 +1927,11 @@ public class UnitVmModel extends Model {
             model.getCluster().setItems(clusters);
             if (clusterGuid == null)
             {
-                model.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
+                model.getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
             }
             else
             {
-                model.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters,
+                model.getCluster().setSelectedItem(Linq.firstOrDefault(clusters,
                         new Linq.ClusterPredicate((Guid) clusterGuid)));
             }
         }

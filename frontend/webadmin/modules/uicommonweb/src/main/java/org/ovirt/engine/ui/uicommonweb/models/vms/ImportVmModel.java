@@ -188,7 +188,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                         public void onSuccess(Object model, Object returnValue) {
                             ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
                             getCluster().setItems(clusters);
-                            getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
+                            getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
                             // get storage domains
                             AsyncDataProvider.GetStorageDomainList(new AsyncQuery(ImportVmModel.this,
                                     new INewAsyncCallback() {
@@ -201,7 +201,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                                             filteredStorageDomains =
                                                     new ArrayList<StorageDomain>();
                                             for (StorageDomain domain : storageDomains) {
-                                                if (Linq.IsDataActiveStorageDomain(domain)) {
+                                                if (Linq.isDataActiveStorageDomain(domain)) {
                                                     filteredStorageDomains.add(domain);
                                                 }
                                             }

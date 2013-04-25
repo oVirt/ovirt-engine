@@ -392,7 +392,7 @@ public class StorageDataCenterListModel extends SearchableListModel
         }
 
         ArrayList<StoragePool> items = new ArrayList<StoragePool>();
-        for (EntityModel a : Linq.<EntityModel> Cast(model.getItems()))
+        for (EntityModel a : Linq.<EntityModel> cast(model.getItems()))
         {
             if (a.getIsSelected())
             {
@@ -471,7 +471,7 @@ public class StorageDataCenterListModel extends SearchableListModel
     private String GetLocalStoragesFormattedString()
     {
         String localStorages = ""; //$NON-NLS-1$
-        for (StorageDomain a : Linq.<StorageDomain> Cast(getSelectedItems()))
+        for (StorageDomain a : Linq.<StorageDomain> cast(getSelectedItems()))
         {
             if (a.getStorageType() == StorageType.LOCALFS)
             {
@@ -483,7 +483,7 @@ public class StorageDataCenterListModel extends SearchableListModel
 
     private boolean ContainsLocalStorage(ConfirmationModel model)
     {
-        for (StorageDomain a : Linq.<StorageDomain> Cast(getSelectedItems()))
+        for (StorageDomain a : Linq.<StorageDomain> cast(getSelectedItems()))
         {
             if (a.getStorageType() == StorageType.LOCALFS)
             {
@@ -642,7 +642,7 @@ public class StorageDataCenterListModel extends SearchableListModel
     private void UpdateActionAvailability()
     {
         ArrayList<StorageDomain> items =
-                getSelectedItems() != null ? Linq.<StorageDomain> Cast(getSelectedItems())
+                getSelectedItems() != null ? Linq.<StorageDomain> cast(getSelectedItems())
                         : new ArrayList<StorageDomain>();
 
         getActivateCommand().setIsExecutionAllowed(items.size() == 1

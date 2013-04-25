@@ -137,7 +137,7 @@ public class UserPermissionListModel extends SearchableListModel
         model.setMessage(ConstantsManager.getInstance().getConstants().permissionMsg());
 
         ArrayList<String> list = new ArrayList<String>();
-        for (permissions a : Linq.<permissions> Cast(getSelectedItems()))
+        for (permissions a : Linq.<permissions> cast(getSelectedItems()))
         {
             list.add("Role " + a.getRoleName() + " on User " + a.getOwnerName()); //$NON-NLS-1$ //$NON-NLS-2$
         }

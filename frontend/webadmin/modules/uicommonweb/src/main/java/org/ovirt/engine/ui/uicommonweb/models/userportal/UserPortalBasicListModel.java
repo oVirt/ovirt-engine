@@ -310,8 +310,8 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
             }
 
             // Merge VMs and Pools, and create item models.
-            List all = Linq.Concat(getvms(), filteredPools);
-            Linq.Sort(all, new Linq.VmAndPoolByNameComparer());
+            List all = Linq.concat(getvms(), filteredPools);
+            Linq.sort(all, new Linq.VmAndPoolByNameComparer());
 
             ArrayList<Model> items = new ArrayList<Model>();
             for (Object item : all)

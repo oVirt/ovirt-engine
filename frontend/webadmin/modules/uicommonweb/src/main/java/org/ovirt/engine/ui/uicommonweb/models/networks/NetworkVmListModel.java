@@ -152,7 +152,7 @@ public class NetworkVmListModel extends SearchableListModel
         List<PairQueryable<VmNetworkInterface, VM>> selectedItems =
                 getSelectedItems() != null ? getSelectedItems() : new ArrayList();
         ArrayList<VmNetworkInterface> nics =
-                getSelectedItems() != null ? Linq.<VmNetworkInterface> Cast(getSelectedItems())
+                getSelectedItems() != null ? Linq.<VmNetworkInterface> cast(getSelectedItems())
                         : new ArrayList<VmNetworkInterface>();
 
         for (PairQueryable<VmNetworkInterface, VM> pair : selectedItems)

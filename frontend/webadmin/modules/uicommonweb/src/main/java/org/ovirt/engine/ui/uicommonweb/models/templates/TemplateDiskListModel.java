@@ -153,9 +153,9 @@ public class TemplateDiskListModel extends SearchableListModel
         if (!getStorageDomains().isEmpty() || ignoreStorageDomains)
         {
             ArrayList<DiskImage> disks =
-                    value != null ? Linq.<DiskImage> Cast(value) : new ArrayList<DiskImage>();
+                    value != null ? Linq.<DiskImage> cast(value) : new ArrayList<DiskImage>();
 
-            Linq.Sort(disks, new DiskByAliasComparer());
+            Linq.sort(disks, new DiskByAliasComparer());
             super.setItems(disks);
         }
         else
@@ -168,7 +168,7 @@ public class TemplateDiskListModel extends SearchableListModel
                             TemplateDiskListModel model = (TemplateDiskListModel) target;
                             ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
 
-                            Linq.Sort(storageDomains, new StorageDomainByNameComparer());
+                            Linq.sort(storageDomains, new StorageDomainByNameComparer());
                             setStorageDomains(storageDomains);
                             setItems(model.value);
                         }
@@ -216,7 +216,7 @@ public class TemplateDiskListModel extends SearchableListModel
 
     private boolean isCopyCommandAvailable() {
         ArrayList<DiskImage> disks =
-                getSelectedItems() != null ? Linq.<DiskImage> Cast(getSelectedItems()) : new ArrayList<DiskImage>();
+                getSelectedItems() != null ? Linq.<DiskImage> cast(getSelectedItems()) : new ArrayList<DiskImage>();
 
         for (DiskImage disk : disks)
         {

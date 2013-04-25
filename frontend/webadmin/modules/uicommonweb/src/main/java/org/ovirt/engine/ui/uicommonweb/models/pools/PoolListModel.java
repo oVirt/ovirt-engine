@@ -277,7 +277,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
 
                                 if (vm != null) {
                                     model.getDataCenter().setSelectedItem(null);
-                                    model.getDataCenter().setSelectedItem(Linq.FirstOrDefault(model.getDataCenter()
+                                    model.getDataCenter().setSelectedItem(Linq.firstOrDefault(model.getDataCenter()
                                             .getItems(),
                                             new Linq.DataCenterPredicate(vm.getStoragePoolId())));
                                     model.getDataCenter().setIsChangable(false);
@@ -289,7 +289,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                                 else
                                 {
                                     model.getDataCenter()
-                                            .setSelectedItem(Linq.FirstOrDefault(Linq.<StoragePool> Cast(model.getDataCenter()
+                                            .setSelectedItem(Linq.firstOrDefault(Linq.<StoragePool> cast(model.getDataCenter()
                                                     .getItems())));
                                 }
 
@@ -362,7 +362,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
         model.setMessage(ConstantsManager.getInstance().getConstants().poolsMsg());
 
         ArrayList<String> list = new ArrayList<String>();
-        for (VmPool item : Linq.<VmPool> Cast(getSelectedItems()))
+        for (VmPool item : Linq.<VmPool> cast(getSelectedItems()))
         {
             list.add(item.getName());
         }

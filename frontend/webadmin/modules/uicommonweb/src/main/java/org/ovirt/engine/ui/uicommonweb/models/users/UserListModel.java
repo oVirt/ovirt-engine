@@ -214,7 +214,7 @@ public class UserListModel extends ListWithDetailsModel
         if (userListModel.getLastExecutedCommand() == getAssignTagsCommand())
         {
             ArrayList<org.ovirt.engine.core.common.businessentities.tags> attachedTags =
-                    Linq.Distinct(userListModel.allAttachedTags, new TagsEqualityComparer());
+                    Linq.distinct(userListModel.allAttachedTags, new TagsEqualityComparer());
             for (org.ovirt.engine.core.common.businessentities.tags a : attachedTags)
             {
                 int count = 0;
@@ -359,7 +359,7 @@ public class UserListModel extends ListWithDetailsModel
         model.setMessage(ConstantsManager.getInstance().getConstants().usersMsg());
 
         ArrayList<String> list = new ArrayList<String>();
-        for (DbUser item : Linq.<DbUser> Cast(getSelectedItems()))
+        for (DbUser item : Linq.<DbUser> cast(getSelectedItems()))
         {
             list.add(item.getname());
         }
@@ -494,7 +494,7 @@ public class UserListModel extends ListWithDetailsModel
 
     public void OnRemove()
     {
-        ArrayList<DbUser> items = Linq.<DbUser> Cast(getSelectedItems());
+        ArrayList<DbUser> items = Linq.<DbUser> cast(getSelectedItems());
 
         ArrayList<VdcActionParametersBase> userPrms = new ArrayList<VdcActionParametersBase>();
         ArrayList<VdcActionParametersBase> groupPrms = new ArrayList<VdcActionParametersBase>();

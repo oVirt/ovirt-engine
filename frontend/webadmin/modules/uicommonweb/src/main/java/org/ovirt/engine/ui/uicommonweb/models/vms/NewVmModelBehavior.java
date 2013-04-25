@@ -255,7 +255,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
                                             ArrayList<VmTemplate> templatesByStorage =
                                                     (ArrayList<VmTemplate>) returnValue2;
                                             VmTemplate blankTemplate =
-                                                    Linq.FirstOrDefault(templatesByDataCenter,
+                                                    Linq.firstOrDefault(templatesByDataCenter,
                                                             new Linq.TemplatePredicate(NGuid.Empty));
                                             if (blankTemplate != null)
                                             {
@@ -293,7 +293,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
 
         getModel().getTemplate().setItems(templates);
 
-        getModel().getTemplate().setSelectedItem(Linq.FirstOrDefault(templates,
+        getModel().getTemplate().setSelectedItem(Linq.firstOrDefault(templates,
                 oldTemplate != null ? new Linq.TemplatePredicate(oldTemplate.getId())
                         : new Linq.TemplatePredicate(NGuid.Empty)));
 

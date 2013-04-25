@@ -120,7 +120,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         String oldCdImage = (String) model.getCdImage().getSelectedItem();
         model.getCdImage().setItems(images);
         model.getCdImage().setSelectedItem((oldCdImage != null) ? oldCdImage
-                : Linq.FirstOrDefault(images));
+                : Linq.firstOrDefault(images));
     }
 
     protected void UpdateCdImage()
@@ -220,7 +220,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 selectedTimeZoneEntry : (Map.Entry<String, String>) getModel().getTimeZone().getSelectedItem();
 
         getModel().getTimeZone().setSelectedItem(selectedItem == null ? null :
-            Linq.FirstOrDefault(cachedTimeZones.get(timezoneType), new Linq.TimeZonePredicate(selectedItem.getKey())));
+            Linq.firstOrDefault(cachedTimeZones.get(timezoneType), new Linq.TimeZonePredicate(selectedItem.getKey())));
     }
 
     private Entry<String, String> getTimezoneEntryByKey(String key, Iterable<Entry<String, String>> timeZones) {
@@ -279,7 +279,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         behavior.getModel().getDomain().setItems(domains);
                         behavior.getModel()
                                 .getDomain()
-                                .setSelectedItem((oldDomain != null) ? oldDomain : Linq.FirstOrDefault(domains));
+                                .setSelectedItem((oldDomain != null) ? oldDomain : Linq.firstOrDefault(domains));
 
                     }
                 }, getModel().getHash()),
@@ -368,7 +368,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
         else
         {
-            getModel().getPriority().setSelectedItem(Linq.FirstOrDefault(items));
+            getModel().getPriority().setSelectedItem(Linq.firstOrDefault(items));
         }
     }
 
@@ -383,7 +383,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             Guid vdsId = hostGuid.getValue();
             if (getModel().getDefaultHost().getItems() != null)
             {
-                getModel().getDefaultHost().setSelectedItem(Linq.FirstOrDefault(getModel().getDefaultHost().getItems(),
+                getModel().getDefaultHost().setSelectedItem(Linq.firstOrDefault(getModel().getDefaultHost().getItems(),
                         new Linq.HostPredicate(vdsId)));
             }
             getModel().getIsAutoAssign().setEntity(false);
@@ -443,8 +443,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         else
                         {
                             model.getDefaultHost().setItems(hosts);
-                            model.getDefaultHost().setSelectedItem(oldDefaultHost != null ? Linq.FirstOrDefault(hosts,
-                                    new Linq.HostPredicate(oldDefaultHost.getId())) : Linq.FirstOrDefault(hosts));
+                            model.getDefaultHost().setSelectedItem(oldDefaultHost != null ? Linq.firstOrDefault(hosts,
+                                    new Linq.HostPredicate(oldDefaultHost.getId())) : Linq.firstOrDefault(hosts));
                         }
                         ChangeDefualtHost();
 
@@ -605,7 +605,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
                 boolean provisioning = (Boolean) behavior.getModel().getProvisioning().getEntity();
                 ArrayList<DiskModel> disks = (ArrayList<DiskModel>) behavior.getModel().getDisks();
-                Linq.Sort(activeStorageDomains, new Linq.StorageDomainByNameComparer());
+                Linq.sort(activeStorageDomains, new Linq.StorageDomainByNameComparer());
 
                 for (DiskModel diskModel : disks) {
                     ArrayList<StorageDomain> availableDiskStorageDomains = new ArrayList<StorageDomain>();
@@ -618,7 +618,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
                     // Set target storage domains
                     availableDiskStorageDomains = provisioning ? activeStorageDomains : activeDiskStorageDomains;
-                    Linq.Sort(availableDiskStorageDomains, new Linq.StorageDomainByNameComparer());
+                    Linq.sort(availableDiskStorageDomains, new Linq.StorageDomainByNameComparer());
                     diskModel.getStorageDomain().setItems(availableDiskStorageDomains);
 
                     diskModel.getStorageDomain().setChangeProhibitionReason(
@@ -635,7 +635,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         ArrayList<StorageDomain> list = new ArrayList<StorageDomain>();
         for (StorageDomain a : storageDomains)
         {
-            if (Linq.IsDataActiveStorageDomain(a))
+            if (Linq.isDataActiveStorageDomain(a))
             {
                 list.add(a);
             }
@@ -645,7 +645,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage)
         {
             StorageDomain selectStorage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
-            StorageDomain sd = Linq.FirstOrDefault(list, new Linq.StoragePredicate(selectStorage.getId()));
+            StorageDomain sd = Linq.firstOrDefault(list, new Linq.StoragePredicate(selectStorage.getId()));
             list = new ArrayList<StorageDomain>(Arrays.asList(new StorageDomain[] { sd }));
         }
 

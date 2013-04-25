@@ -137,7 +137,7 @@ public class ListModelSuggestBox extends Composite implements EditorWidget<Objec
 
     @Override
     public void setAcceptableValues(Collection<Object> values) {
-        Collection<String> stringValues = Linq.Cast(values);
+        Collection<String> stringValues = Linq.cast(values);
         suggestOracle.clear();
         suggestOracle.addAll(stringValues);
         suggestOracle.setDefaultSuggestionsFromText(stringValues);

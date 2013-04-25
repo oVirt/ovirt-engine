@@ -178,7 +178,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                         StoragePool selectDataCenter =
                                 (StoragePool) quotaListModel.getSystemTreeSelectedItem().getEntity();
 
-                        quotaModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenterList,
+                        quotaModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenterList,
                                 new Linq.DataCenterPredicate(selectDataCenter.getId())));
                         quotaModel.getDataCenter().setIsChangable(false);
                     }
@@ -586,7 +586,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
         ArrayList<VdcActionParametersBase> prms = new ArrayList<VdcActionParametersBase>();
         QuotaCRUDParameters crudParameters;
-        for (Quota a : Linq.<Quota> Cast(getSelectedItems()))
+        for (Quota a : Linq.<Quota> cast(getSelectedItems()))
         {
             crudParameters = new QuotaCRUDParameters();
             crudParameters.setQuotaId(a.getId());
@@ -622,7 +622,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         model.setMessage(ConstantsManager.getInstance().getConstants().quotasMsg());
 
         ArrayList<String> list = new ArrayList<String>();
-        for (Quota a : Linq.<Quota> Cast(getSelectedItems()))
+        for (Quota a : Linq.<Quota> cast(getSelectedItems()))
         {
             list.add(a.getQuotaName());
         }

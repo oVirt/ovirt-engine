@@ -145,10 +145,10 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
             ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) getModel().getCluster().getItems();
             VDSGroup selectCluster =
-                    Linq.FirstOrDefault(clusters, new Linq.ClusterPredicate(vmBase.getVdsGroupId()));
+                    Linq.firstOrDefault(clusters, new Linq.ClusterPredicate(vmBase.getVdsGroupId()));
 
             getModel().getCluster().setSelectedItem((selectCluster != null) ? selectCluster
-                    : Linq.FirstOrDefault(clusters));
+                    : Linq.firstOrDefault(clusters));
 
             // Update display protocol selected item
             EntityModel displayProtocol = null;
@@ -282,7 +282,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
         getModel().getTemplate().setItems(templates);
 
-        getModel().getTemplate().setSelectedItem(Linq.FirstOrDefault(templates,
+        getModel().getTemplate().setSelectedItem(Linq.firstOrDefault(templates,
                 oldTemplate != null ? new Linq.TemplatePredicate(oldTemplate.getId())
                         : new Linq.TemplatePredicate(Guid.Empty)));
     }

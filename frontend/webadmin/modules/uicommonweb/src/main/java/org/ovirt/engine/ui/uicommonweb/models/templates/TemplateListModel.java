@@ -161,7 +161,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
     @Override
     protected boolean entitiesSelectedOnDifferentDataCenters()
     {
-        ArrayList<VmTemplate> templates = Linq.<VmTemplate> Cast(getSelectedItems());
+        ArrayList<VmTemplate> templates = Linq.<VmTemplate> cast(getSelectedItems());
 
         Map<NGuid, ArrayList<VmTemplate>> t =
                 new HashMap<NGuid, ArrayList<VmTemplate>>();
@@ -335,7 +335,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         model.setMessage(ConstantsManager.getInstance().getConstants().templatesMsg());
 
         ArrayList<String> items = new ArrayList<String>();
-        ArrayList<VmTemplate> templates = Linq.<VmTemplate> Cast(getSelectedItems());
+        ArrayList<VmTemplate> templates = Linq.<VmTemplate> cast(getSelectedItems());
         for (VmTemplate template : templates)
         {
             if (!template.getId().equals(NGuid.Empty))
@@ -553,7 +553,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
     {
         if (getSelectedItems() != null)
         {
-            ArrayList<VmTemplate> templates = Linq.<VmTemplate> Cast(getSelectedItems());
+            ArrayList<VmTemplate> templates = Linq.<VmTemplate> cast(getSelectedItems());
             for (VmTemplate template : templates)
             {
                 if (template != null && template.getId().equals(NGuid.Empty))

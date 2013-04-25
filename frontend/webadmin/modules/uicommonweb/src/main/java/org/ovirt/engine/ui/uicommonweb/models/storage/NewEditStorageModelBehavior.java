@@ -18,7 +18,7 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
         super.UpdateItemsAvailability();
 
         // Allow Data storage type corresponding to the selected data-center type + ISO and Export that are NFS only:
-        for (IStorageModel item : Linq.<IStorageModel> Cast(getModel().getItems()))
+        for (IStorageModel item : Linq.<IStorageModel> cast(getModel().getItems()))
         {
             Model model = (Model) item;
 

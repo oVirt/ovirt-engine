@@ -190,7 +190,7 @@ public class ClusterNetworkListModel extends SearchableListModel
 
     private ClusterNetworkManageModel createNetworkList(List<Network> dcNetworks) {
         List<ClusterNetworkModel> networkList = new ArrayList<ClusterNetworkModel>();
-        java.util.ArrayList<Network> clusterNetworks = Linq.<Network> Cast(getItems());
+        java.util.ArrayList<Network> clusterNetworks = Linq.<Network> cast(getItems());
         for (Network network : dcNetworks) {
             ClusterNetworkModel networkManageModel;
             int index = clusterNetworks.indexOf(network);
@@ -226,7 +226,7 @@ public class ClusterNetworkListModel extends SearchableListModel
         final ClusterNetworkManageModel windowModel = (ClusterNetworkManageModel) getWindow();
 
         List<ClusterNetworkModel> manageList = windowModel.getItems();
-        List<Network> existingClusterNetworks = Linq.<Network> Cast(getItems());
+        List<Network> existingClusterNetworks = Linq.<Network> cast(getItems());
         final ArrayList<VdcActionParametersBase> toAttach = new ArrayList<VdcActionParametersBase>();
         final ArrayList<VdcActionParametersBase> toDetach = new ArrayList<VdcActionParametersBase>();
 

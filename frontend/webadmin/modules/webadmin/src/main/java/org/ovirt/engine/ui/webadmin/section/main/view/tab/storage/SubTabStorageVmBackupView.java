@@ -174,7 +174,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if (getDetailModel().getAppListModel().getItems() != null) {
-                    applicationsTable.setRowData(Linq.ToList(getDetailModel().getAppListModel().getItems()));
+                    applicationsTable.setRowData(Linq.toList(getDetailModel().getAppListModel().getItems()));
                 } else {
                     applicationsTable.setRowData(new ArrayList<String>());
                 }

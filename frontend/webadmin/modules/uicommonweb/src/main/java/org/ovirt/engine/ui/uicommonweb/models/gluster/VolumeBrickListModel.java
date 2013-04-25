@@ -440,7 +440,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         removeBrickModel.setStripeCount(volumeEntity.getStripeCount());
 
         if (!canRemoveBricks(volumeEntity.getVolumeType(),
-                Linq.<GlusterBrickEntity> Cast(getSelectedItems()),
+                Linq.<GlusterBrickEntity> cast(getSelectedItems()),
                 volumeEntity.getBricks(),
                 removeBrickModel))
         {
@@ -477,7 +477,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         model.setNote(ConstantsManager.getInstance().getConstants().removeBricksWarning());
 
         ArrayList<String> list = new ArrayList<String>();
-        for (GlusterBrickEntity item : Linq.<GlusterBrickEntity> Cast(getSelectedItems()))
+        for (GlusterBrickEntity item : Linq.<GlusterBrickEntity> cast(getSelectedItems()))
         {
             list.add(item.getQualifiedName());
         }

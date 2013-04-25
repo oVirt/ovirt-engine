@@ -818,7 +818,7 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    ArrayList<VDS> list = Linq.<VDS> Cast((ArrayList<IVdcQueryable>) source);
+                    ArrayList<VDS> list = Linq.<VDS> cast((ArrayList<IVdcQueryable>) source);
                     return list;
                 }
 
@@ -836,7 +836,7 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    ArrayList<VDS> list = Linq.<VDS> Cast((ArrayList<IVdcQueryable>) source);
+                    ArrayList<VDS> list = Linq.<VDS> cast((ArrayList<IVdcQueryable>) source);
                     return list;
                 }
 
@@ -1041,7 +1041,7 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    ArrayList<VDS> list = Linq.<VDS> Cast((Iterable) source);
+                    ArrayList<VDS> list = Linq.<VDS> cast((Iterable) source);
                     return list;
                 }
 
@@ -1833,7 +1833,7 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    ArrayList<VDS> list = Linq.<VDS> Cast((ArrayList<IVdcQueryable>) source);
+                    ArrayList<VDS> list = Linq.<VDS> cast((ArrayList<IVdcQueryable>) source);
                     return list;
                 }
 
@@ -1956,7 +1956,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                ArrayList<VM> vms = Linq.<VM> Cast((ArrayList<IVdcQueryable>) source);
+                ArrayList<VM> vms = Linq.<VM> cast((ArrayList<IVdcQueryable>) source);
                 return vms;
             }
         };
@@ -1968,7 +1968,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                ArrayList<VM> vms = Linq.<VM> Cast((ArrayList<IVdcQueryable>) source);
+                ArrayList<VM> vms = Linq.<VM> cast((ArrayList<IVdcQueryable>) source);
                 return vms;
             }
         };

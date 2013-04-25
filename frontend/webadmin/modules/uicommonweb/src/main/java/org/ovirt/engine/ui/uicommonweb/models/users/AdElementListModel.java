@@ -193,7 +193,7 @@ public class AdElementListModel extends SearchableListModel
 
     protected void populateDomains(List<String> domains){
         getDomain().setItems(domains);
-        getDomain().setSelectedItem(Linq.FirstOrDefault(domains));
+        getDomain().setSelectedItem(Linq.firstOrDefault(domains));
     }
 
     protected void populateRoles(List<Role> roles){

@@ -169,12 +169,12 @@ public abstract class SanStorageModel extends SanStorageModelBase
         {
             List<SanTargetModel> items = (List<SanTargetModel>) getItems();
 
-            for (SanTargetModel target : Linq.ToList(items))
+            for (SanTargetModel target : Linq.toList(items))
             {
                 boolean found = false;
 
                 // Ensure remove targets that are not in last dicovered targets list.
-                if (Linq.FirstOrDefault(lastDiscoveredTargets, new Linq.TargetPredicate(target)) != null)
+                if (Linq.firstOrDefault(lastDiscoveredTargets, new Linq.TargetPredicate(target)) != null)
                 {
                     found = true;
                 }
@@ -183,7 +183,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
                     // Ensure remove targets that are not contain already included LUNs.
                     for (LunModel lun : target.getLuns())
                     {
-                        LunModel foundItem = Linq.FirstOrDefault(includedLUNs, new Linq.LunPredicate(lun));
+                        LunModel foundItem = Linq.firstOrDefault(includedLUNs, new Linq.LunPredicate(lun));
                         if (foundItem == null)
                         {
                             found = true;
@@ -203,9 +203,9 @@ public abstract class SanStorageModel extends SanStorageModelBase
             List<LunModel> items = (List<LunModel>) getItems();
 
             // Ensure remove targets that are not contain already included LUNs.
-            for (LunModel lun : Linq.ToList(items))
+            for (LunModel lun : Linq.toList(items))
             {
-                LunModel foundItem = Linq.FirstOrDefault(includedLUNs, new Linq.LunPredicate(lun));
+                LunModel foundItem = Linq.firstOrDefault(includedLUNs, new Linq.LunPredicate(lun));
                 if (foundItem == null)
                 {
                     items.remove(lun);
@@ -338,7 +338,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
             {
                 for (SanTargetModel newItem : newTargets)
                 {
-                    if (Linq.FirstOrDefault(items, new Linq.TargetPredicate(newItem)) == null)
+                    if (Linq.firstOrDefault(items, new Linq.TargetPredicate(newItem)) == null)
                     {
                         items.add(newItem);
                     }
@@ -379,7 +379,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
             {
                 for (LunModel newItem : newLuns)
                 {
-                    LunModel existingItem = Linq.FirstOrDefault(items, new Linq.LunPredicate(newItem));
+                    LunModel existingItem = Linq.firstOrDefault(items, new Linq.LunPredicate(newItem));
                     if (existingItem == null)
                     {
                         items.add(newItem);
@@ -414,14 +414,14 @@ public abstract class SanStorageModel extends SanStorageModelBase
         {
             for (SanTargetModel target : lun.getTargets())
             {
-                SanTargetModel item = Linq.FirstOrDefault(targets, new Linq.TargetPredicate(target));
+                SanTargetModel item = Linq.firstOrDefault(targets, new Linq.TargetPredicate(target));
                 if (item == null)
                 {
                     item = target;
                     targets.add(item);
                 }
 
-                LunModel currLun = Linq.FirstOrDefault(item.getLuns(), new Linq.LunPredicate(lun));
+                LunModel currLun = Linq.firstOrDefault(item.getLuns(), new Linq.LunPredicate(lun));
                 if (currLun == null) {
                     item.getLuns().add(lun);
                 } else {
@@ -491,14 +491,14 @@ public abstract class SanStorageModel extends SanStorageModelBase
         {
             for (SanTargetModel target : lun.getTargets())
             {
-                SanTargetModel item = Linq.FirstOrDefault(list, new Linq.TargetPredicate(target));
+                SanTargetModel item = Linq.firstOrDefault(list, new Linq.TargetPredicate(target));
                 if (item == null)
                 {
                     item = target;
                     list.add(item);
                 }
 
-                if (Linq.FirstOrDefault(item.getLuns(), new Linq.LunPredicate(lun)) == null)
+                if (Linq.firstOrDefault(item.getLuns(), new Linq.LunPredicate(lun)) == null)
                 {
                     item.getLuns().add(lun);
                 }
@@ -508,7 +508,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
         // Merge with last discovered targets list.
         for (SanTargetModel target : lastDiscoveredTargets)
         {
-            if (Linq.FirstOrDefault(list, new Linq.TargetPredicate(target)) == null)
+            if (Linq.firstOrDefault(list, new Linq.TargetPredicate(target)) == null)
             {
                 list.add(target);
             }
@@ -527,14 +527,14 @@ public abstract class SanStorageModel extends SanStorageModelBase
         {
             for (LunModel lun : target.getLuns())
             {
-                LunModel item = Linq.FirstOrDefault(list, new Linq.LunPredicate(lun));
+                LunModel item = Linq.firstOrDefault(list, new Linq.LunPredicate(lun));
                 if (item == null)
                 {
                     item = lun;
                     list.add(item);
                 }
 
-                if (Linq.FirstOrDefault(item.getTargets(), new Linq.TargetPredicate(target)) == null)
+                if (Linq.firstOrDefault(item.getTargets(), new Linq.TargetPredicate(target)) == null)
                 {
                     item.getTargets().add(target);
                 }
@@ -549,7 +549,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
     private void ProposeDiscover()
     {
         boolean proposeDiscover =
-                !getProposeDiscoverTargets() && (getItems() == null || Linq.Count(getItems()) == 0);
+                !getProposeDiscoverTargets() && (getItems() == null || Linq.count(getItems()) == 0);
 
         setProposeDiscoverTargets(proposeDiscover);
     }
@@ -581,7 +581,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
                 for (LunModel lun : item.getLuns())
                 {
                     if (lun.getIsSelected() && !lun.getIsIncluded()
-                            && Linq.FirstOrDefault(luns, new Linq.LunPredicate(lun)) == null)
+                            && Linq.firstOrDefault(luns, new Linq.LunPredicate(lun)) == null)
                     {
                         luns.add(lun);
                     }
@@ -594,7 +594,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
             for (LunModel lun : items)
             {
                 if (lun.getIsSelected() && !lun.getIsIncluded()
-                        && Linq.FirstOrDefault(luns, new Linq.LunPredicate(lun)) == null)
+                        && Linq.firstOrDefault(luns, new Linq.LunPredicate(lun)) == null)
                 {
                     luns.add(lun);
                 }

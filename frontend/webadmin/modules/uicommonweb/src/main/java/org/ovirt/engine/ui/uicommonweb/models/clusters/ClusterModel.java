@@ -961,7 +961,7 @@ public class ClusterModel extends EntityModel
                 clusterModel.getCPU().setItems(cpus);
 
                 clusterModel.getCPU().setSelectedItem(oldSelectedCpu != null ?
-                        Linq.FirstOrDefault(cpus, new Linq.ServerCpuPredicate(oldSelectedCpu.getCpuName())) : null);
+                        Linq.firstOrDefault(cpus, new Linq.ServerCpuPredicate(oldSelectedCpu.getCpuName())) : null);
 
                 if (clusterModel.getCPU().getSelectedItem() == null || !isCPUinitialized)
                 {
@@ -1030,11 +1030,11 @@ public class ClusterModel extends EntityModel
                     }
                     else
                     {
-                        clusterModel.getVersion().setSelectedItem(Linq.SelectHighestVersion(versions));
+                        clusterModel.getVersion().setSelectedItem(Linq.selectHighestVersion(versions));
                     }
                 }
                 else if (clusterModel.getIsEdit()) {
-                    clusterModel.getVersion().setSelectedItem(Linq.FirstOrDefault(versions,
+                    clusterModel.getVersion().setSelectedItem(Linq.firstOrDefault(versions,
                             new Linq.VersionPredicate(clusterModel.getEntity().getcompatibility_version())));
                 }
             }

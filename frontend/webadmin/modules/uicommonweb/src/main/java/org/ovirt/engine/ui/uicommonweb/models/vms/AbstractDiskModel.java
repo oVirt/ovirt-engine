@@ -314,8 +314,8 @@ public abstract class AbstractDiskModel extends DiskModel
                     }
                 }
 
-                Linq.Sort(filteredStorageDomains, new Linq.StorageDomainByNameComparer());
-                StorageDomain storage = Linq.FirstOrDefault(filteredStorageDomains);
+                Linq.sort(filteredStorageDomains, new Linq.StorageDomainByNameComparer());
+                StorageDomain storage = Linq.firstOrDefault(filteredStorageDomains);
 
                 diskModel.getStorageDomain().setItems(filteredStorageDomains);
                 diskModel.getStorageDomain().setSelectedItem(storage);
@@ -570,11 +570,11 @@ public abstract class AbstractDiskModel extends DiskModel
                 public void onSuccess(Object target, Object returnValue) {
                     AbstractDiskModel model = (AbstractDiskModel) target;
                     ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
-                    Linq.Sort(disks, new Linq.DiskByAliasComparer());
-                    ArrayList<DiskModel> diskModels = Linq.DisksToDiskModelList(disks);
+                    Linq.sort(disks, new Linq.DiskByAliasComparer());
+                    ArrayList<DiskModel> diskModels = Linq.disksToDiskModelList(disks);
 
-                    model.getInternalAttachableDisks().setItems(Linq.ToEntityModelList(
-                            Linq.FilterDisksByType(diskModels, DiskStorageType.IMAGE)));
+                    model.getInternalAttachableDisks().setItems(Linq.toEntityModelList(
+                            Linq.filterDisksByType(diskModels, DiskStorageType.IMAGE)));
                 }
             }, getHash()), getVm().getStoragePoolId(), getVm().getId());
 
@@ -584,11 +584,11 @@ public abstract class AbstractDiskModel extends DiskModel
                 public void onSuccess(Object target, Object returnValue) {
                     AbstractDiskModel model = (AbstractDiskModel) target;
                     ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
-                    Linq.Sort(disks, new Linq.DiskByAliasComparer());
-                    ArrayList<DiskModel> diskModels = Linq.DisksToDiskModelList(disks);
+                    Linq.sort(disks, new Linq.DiskByAliasComparer());
+                    ArrayList<DiskModel> diskModels = Linq.disksToDiskModelList(disks);
 
-                    model.getExternalAttachableDisks().setItems(Linq.ToEntityModelList(
-                            Linq.FilterDisksByType(diskModels, DiskStorageType.LUN)));
+                    model.getExternalAttachableDisks().setItems(Linq.toEntityModelList(
+                            Linq.filterDisksByType(diskModels, DiskStorageType.LUN)));
                 }
             }, getHash()), null, getVm().getId());
         }

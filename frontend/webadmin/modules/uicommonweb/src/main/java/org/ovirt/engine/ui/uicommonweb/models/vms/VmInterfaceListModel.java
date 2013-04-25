@@ -232,7 +232,7 @@ public class VmInterfaceListModel extends SearchableListModel
         }
 
         ArrayList<VmNetworkInterface> nics =
-                getSelectedItems() != null ? Linq.<VmNetworkInterface> Cast(getSelectedItems())
+                getSelectedItems() != null ? Linq.<VmNetworkInterface> cast(getSelectedItems())
                         : new ArrayList<VmNetworkInterface>();
 
         for (VmNetworkInterface nic : nics)

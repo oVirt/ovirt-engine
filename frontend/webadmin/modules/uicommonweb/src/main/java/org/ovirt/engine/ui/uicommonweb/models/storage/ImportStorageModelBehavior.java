@@ -17,7 +17,7 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
     @Override
     public List<StoragePool> FilterDataCenter(List<StoragePool> source)
     {
-        return Linq.ToList(Linq.Where(source, new Linq.DataCenterStatusPredicate(StoragePoolStatus.Up)));
+        return Linq.toList(Linq.where(source, new Linq.DataCenterStatusPredicate(StoragePoolStatus.Up)));
     }
 
     @Override
@@ -27,7 +27,7 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
 
         StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
 
-        for (IStorageModel item : Linq.<IStorageModel> Cast(getModel().getItems()))
+        for (IStorageModel item : Linq.<IStorageModel> cast(getModel().getItems()))
         {
             if (item.getRole() == StorageDomainType.ISO)
             {

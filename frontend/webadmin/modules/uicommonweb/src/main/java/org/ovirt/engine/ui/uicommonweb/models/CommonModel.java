@@ -404,7 +404,7 @@ public class CommonModel extends ListModel
     private void UpdateHasSelectedTags()
     {
         ArrayList<TagModel> selectedTags =
-                getTagList().getSelectedItems() != null ? Linq.<TagModel> Cast(getTagList().getSelectedItems())
+                getTagList().getSelectedItems() != null ? Linq.<TagModel> cast(getTagList().getSelectedItems())
                         : new ArrayList<TagModel>();
 
         setHasSelectedTags(getSelectedItem() != null && selectedTags.size() > 0);

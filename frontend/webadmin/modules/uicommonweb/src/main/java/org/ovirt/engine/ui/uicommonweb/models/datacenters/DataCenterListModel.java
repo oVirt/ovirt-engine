@@ -151,7 +151,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         else
         {
             ArrayList<Object> objL = new ArrayList<Object>();
-            for (StoragePool a : Linq.<StoragePool> Cast(getSelectedItems()))
+            for (StoragePool a : Linq.<StoragePool> cast(getSelectedItems()))
             {
                 objL.add(a.getId());
             }
@@ -361,7 +361,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         model.setMessage(ConstantsManager.getInstance().getConstants().dataCentersMsg());
 
         ArrayList<String> list = new ArrayList<String>();
-        for (StoragePool a : Linq.<StoragePool> Cast(getSelectedItems()))
+        for (StoragePool a : Linq.<StoragePool> cast(getSelectedItems()))
         {
             list.add(a.getname());
         }
@@ -388,7 +388,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         model.getLatch().setIsChangable(true);
 
         ArrayList<String> list = new ArrayList<String>();
-        for (StoragePool a : Linq.<StoragePool> Cast(getSelectedItems()))
+        for (StoragePool a : Linq.<StoragePool> cast(getSelectedItems()))
         {
             list.add(a.getname());
         }
@@ -487,7 +487,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                     }
                 }
                 List<StorageDomain> items = new ArrayList<StorageDomain>();
-                for (EntityModel a : Linq.<EntityModel> Cast(windowModel.getItems()))
+                for (EntityModel a : Linq.<EntityModel> cast(windowModel.getItems()))
                 {
                     if (a.getIsSelected())
                     {
@@ -548,7 +548,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         }
 
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
-        for (StoragePool a : Linq.<StoragePool> Cast(getSelectedItems()))
+        for (StoragePool a : Linq.<StoragePool> cast(getSelectedItems()))
         {
             parameters.add(new StoragePoolParametersBase(a.getId()));
         }
@@ -781,7 +781,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         {
             StoragePool dataCenter = (StoragePool) getSystemTreeSelectedItem().getEntity();
 
-            setSelectedItem(Linq.FirstOrDefault(Linq.<StoragePool> Cast(getItems()),
+            setSelectedItem(Linq.firstOrDefault(Linq.<StoragePool> cast(getItems()),
                     new Linq.DataCenterPredicate(dataCenter.getId())));
         }
     }
@@ -811,7 +811,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
     private void UpdateActionAvailability()
     {
         ArrayList<StoragePool> items =
-                getSelectedItems() != null ? new ArrayList<StoragePool>(Linq.<StoragePool> Cast(getSelectedItems()))
+                getSelectedItems() != null ? new ArrayList<StoragePool>(Linq.<StoragePool> cast(getSelectedItems()))
                         : new ArrayList<StoragePool>();
 
         boolean isAllDown = true;

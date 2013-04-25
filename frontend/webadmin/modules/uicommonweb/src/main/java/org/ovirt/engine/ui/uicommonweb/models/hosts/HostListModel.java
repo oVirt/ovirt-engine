@@ -385,7 +385,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         if (hostListModel.getLastExecutedCommand() == getAssignTagsCommand())
         {
             ArrayList<org.ovirt.engine.core.common.businessentities.tags> attachedTags =
-                    Linq.Distinct(hostListModel.allAttachedTags, new TagsEqualityComparer());
+                    Linq.distinct(hostListModel.allAttachedTags, new TagsEqualityComparer());
             for (org.ovirt.engine.core.common.businessentities.tags tag : attachedTags)
             {
                 int count = 0;
@@ -627,14 +627,14 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                         break;
                     default:
                         innerHostModel.getDataCenter().setItems(dataCenters);
-                        innerHostModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters));
+                        innerHostModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters));
                         break;
                     }
                 }
                 else
                 {
                     innerHostModel.getDataCenter().setItems(dataCenters);
-                    innerHostModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters));
+                    innerHostModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters));
                 }
 
 
@@ -959,7 +959,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         Set<Guid> clusters = new HashSet<Guid>();
         ArrayList<String> list = new ArrayList<String>();
-        for (VDS item : Linq.<VDS> Cast(getSelectedItems()))
+        for (VDS item : Linq.<VDS> cast(getSelectedItems()))
         {
             list.add(item.getName());
             clusters.add(item.getVdsGroupId());
@@ -1195,10 +1195,10 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         if (dataCenters != null)
         {
             model.getDataCenter().setItems(dataCenters);
-            model.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters,
+            model.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters,
                     new Linq.DataCenterPredicate(vds.getStoragePoolId())));
             if (model.getDataCenter().getSelectedItem() == null) {
-                model.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters));
+                model.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters));
             }
         }
 
@@ -1213,11 +1213,11 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                     .setItems(new ArrayList<VDSGroup>(Arrays.asList(new VDSGroup[] { tempVar })));
         }
         clusters = (ArrayList<VDSGroup>) model.getCluster().getItems();
-        model.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters,
+        model.getCluster().setSelectedItem(Linq.firstOrDefault(clusters,
                 new Linq.ClusterPredicate(vds.getVdsGroupId())));
         if (model.getCluster().getSelectedItem() == null)
         {
-            model.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
+            model.getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
         }
 
         if (vds.getStatus() != VDSStatus.Maintenance && vds.getStatus() != VDSStatus.PendingApproval)
@@ -1609,7 +1609,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         {
             VDS host = (VDS) getSystemTreeSelectedItem().getEntity();
 
-            setSelectedItem(Linq.FirstOrDefault(Linq.<VDS> Cast(getItems()), new Linq.HostPredicate(host.getId())));
+            setSelectedItem(Linq.firstOrDefault(Linq.<VDS> cast(getItems()), new Linq.HostPredicate(host.getId())));
         }
     }
 
@@ -1627,9 +1627,9 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     private void UpdateActionAvailability()
     {
         ArrayList<VDS> items =
-                getSelectedItems() != null ? Linq.<VDS> Cast(getSelectedItems()) : new ArrayList<VDS>();
+                getSelectedItems() != null ? Linq.<VDS> cast(getSelectedItems()) : new ArrayList<VDS>();
 
-        boolean isAllPMEnabled = Linq.FindAllVDSByPmEnabled(items).size() == items.size();
+        boolean isAllPMEnabled = Linq.findAllVDSByPmEnabled(items).size() == items.size();
 
         getEditCommand().setIsExecutionAllowed(items.size() == 1
                 && VdcActionUtils.CanExecute(items, VDS.class, VdcActionType.UpdateVds));
@@ -1728,7 +1728,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
     private void UpdateConfigureLocalStorageCommandAvailability1() {
 
-        ArrayList<VDS> items = getSelectedItems() != null ? Linq.<VDS> Cast(getSelectedItems()) : new ArrayList<VDS>();
+        ArrayList<VDS> items = getSelectedItems() != null ? Linq.<VDS> cast(getSelectedItems()) : new ArrayList<VDS>();
 
         getConfigureLocalStorageCommand().setIsExecutionAllowed(items.size() == 1
                 && items.get(0).getStatus() == VDSStatus.Maintenance);

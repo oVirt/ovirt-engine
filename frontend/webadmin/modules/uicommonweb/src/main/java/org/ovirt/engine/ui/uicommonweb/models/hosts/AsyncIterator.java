@@ -58,7 +58,7 @@ public class AsyncIterator<T> {
         setCounter(0);
 
         // Call complete method in case source is an empty list.
-        if (Linq.Count(getSource()) == 0) {
+        if (Linq.count(getSource()) == 0) {
             if (getComplete() != null) {
                 getComplete().run(null, null);
             }
@@ -98,7 +98,7 @@ public class AsyncIterator<T> {
                             // Call complete method even when there is no match.
                             iterator.setCounter(iterator.getCounter() + 1);
 
-                            if (!iterator.getStopped() && iterator.getCounter() == Linq.Count(iterator.getSource())) {
+                            if (!iterator.getStopped() && iterator.getCounter() == Linq.count(iterator.getSource())) {
                                 callComplete = true;
                             }
 

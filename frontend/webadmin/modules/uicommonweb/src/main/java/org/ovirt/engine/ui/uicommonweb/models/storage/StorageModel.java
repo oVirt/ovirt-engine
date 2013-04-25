@@ -450,14 +450,14 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                                 storageModel.getDataCenter().setItems(dataCenters);
                                 if (oldSelectedItem != null)
                                 {
-                                    storageModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters,
+                                    storageModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters,
                                             new Linq.DataCenterPredicate(oldSelectedItem.getId())));
                                 }
                                 else
                                 {
                                     storageModel.getDataCenter()
-                                            .setSelectedItem(getStorage() == null ? Linq.FirstOrDefault(dataCenters)
-                                                    : Linq.FirstOrDefault(dataCenters,
+                                            .setSelectedItem(getStorage() == null ? Linq.firstOrDefault(dataCenters)
+                                                    : Linq.firstOrDefault(dataCenters,
                                                             new Linq.DataCenterPredicate(UnassignedDataCenterId)));
                                 }
 
@@ -486,7 +486,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                                             new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dataCentersWithStorage.get(0) }));
                                 }
                                 storageModel.getDataCenter().setItems(dataCenters);
-                                storageModel.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters));
+                                storageModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters));
 
                             }
                         },
@@ -595,7 +595,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
     public void PostUpdateHost(Iterable<VDS> hosts)
     {
         // Filter hosts
-        hosts = Linq.Where(hosts, new Linq.HostStatusPredicate(VDSStatus.Up));
+        hosts = Linq.where(hosts, new Linq.HostStatusPredicate(VDSStatus.Up));
 
         // Allow only hosts with version above 2.2 for export storage.
         ArrayList<VDS> list = new ArrayList<VDS>();
@@ -622,12 +622,12 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 
         // Try to select previously selected host.
         if (oldSelectedItem != null) {
-            selectedItem = Linq.FirstOrDefault(hosts, new Linq.HostPredicate(oldSelectedItem.getId()));
+            selectedItem = Linq.firstOrDefault(hosts, new Linq.HostPredicate(oldSelectedItem.getId()));
         }
 
         // Select a default - first host in the list.
         if (selectedItem == null) {
-            selectedItem = Linq.FirstOrDefault(hosts);
+            selectedItem = Linq.firstOrDefault(hosts);
         }
 
         getHost().setItems(hosts);

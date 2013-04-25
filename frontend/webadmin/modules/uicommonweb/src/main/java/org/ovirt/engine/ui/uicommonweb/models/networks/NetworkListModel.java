@@ -126,7 +126,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
                             findDc(networkModel.getNetwork().getDataCenterId().getValue(), dataCenters);
                     networkModel.getDataCenters().setSelectedItem(currentDc);
                 } else {
-                    networkModel.getDataCenters().setSelectedItem(Linq.FirstOrDefault(dataCenters));
+                    networkModel.getDataCenters().setSelectedItem(Linq.firstOrDefault(dataCenters));
                 }
 
             }

@@ -256,11 +256,11 @@ public class EventListModel extends ListWithDetailsModel
             list.add(0, item);
         }
         getItemsChangedEvent().raise(this, EventArgs.Empty);
-        setLastEvent(Linq.FirstOrDefault(list));
+        setLastEvent(Linq.firstOrDefault(list));
 
         // If there are no data for this entity, the LastEvent has to be fired in order
         // to stop the progress animation (SearchableTabModelProvider).
-        if (Linq.FirstOrDefault(list) == null) {
+        if (Linq.firstOrDefault(list) == null) {
             onPropertyChanged(new PropertyChangedEventArgs("LastEvent")); //$NON-NLS-1$
         }
     }

@@ -754,7 +754,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
             if (!found)
             {
-                setSelectedItem(Linq.FirstOrDefault(getSelectedItems()));
+                setSelectedItem(Linq.firstOrDefault(getSelectedItems()));
             }
         }
 
@@ -837,7 +837,7 @@ public class HostInterfaceListModel extends SearchableListModel
                         }
                     }
 
-                    ArrayList<Network> unAttachedNetworks = Linq.Except(networksByCluster, attachedNetworks);
+                    ArrayList<Network> unAttachedNetworks = Linq.except(networksByCluster, attachedNetworks);
 
                     // adding selected network names to list.
                     boolean isVlanSelected = false;
@@ -1027,7 +1027,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 final VdsNetworkInterface item = (VdsNetworkInterface) hostInterfaceListModel.getSelectedItem();
                 final HostManagementNetworkModel managementModel =
                         (HostManagementNetworkModel) hostInterfaceListModel.getWindow();
-                Network networkToEdit = Linq.FindNetworkByName(clusterNetworks, item.getNetworkName());
+                Network networkToEdit = Linq.findNetworkByName(clusterNetworks, item.getNetworkName());
 
                 managementModel.setEntity(networkToEdit);
 
@@ -1051,7 +1051,7 @@ public class HostInterfaceListModel extends SearchableListModel
                         String defaultInterfaceName = tmpDefaultInterfaceName.toString();
                         managementModel.getInterface().setItems(interfaces);
                         managementModel.getInterface()
-                                .setSelectedItem(Linq.FindInterfaceByName(Linq.VdsNetworkInterfaceListToBase(interfaces),
+                                .setSelectedItem(Linq.findInterfaceByName(Linq.vdsNetworkInterfaceListToBase(interfaces),
                                         defaultInterfaceName));
                         if (item.getBonded() != null && item.getBonded().equals(true))
                         {
@@ -1347,7 +1347,7 @@ public class HostInterfaceListModel extends SearchableListModel
                     }
                 }
 
-                ArrayList<Network> unAttachedNetworks = Linq.Except(networksByCluster, attachedNetworks);
+                ArrayList<Network> unAttachedNetworks = Linq.except(networksByCluster, attachedNetworks);
 
                 // adding selected network names to list.
                 boolean isVlanSelected = false;
@@ -1404,7 +1404,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 innerBondModel.getNetwork().setSelectedItem(selectedNetwork);
 
                 // Interface bond = selectedItems.FirstOrDefault(a => a.is_bond.HasValue && a.is_bond.Value);
-                VdsNetworkInterface bond = Linq.FindInterfaceByIsBond(getSelectedItems());
+                VdsNetworkInterface bond = Linq.findInterfaceByIsBond(getSelectedItems());
                 if (bond != null)
                 // one of the bond items is a bond itself -> don't
                 // allocate a new bond name, edit the existing one:
@@ -1438,7 +1438,7 @@ public class HostInterfaceListModel extends SearchableListModel
                             }
                             bModel.getBond().setItems(bondNames);
                             // ((List<Interface>)model.Bond.Options).Sort(a => a.name);
-                            bModel.getBond().setSelectedItem(Linq.FirstOrDefault(bondNames));
+                            bModel.getBond().setSelectedItem(Linq.firstOrDefault(bondNames));
                             boolean hasManagement = false;
                             for (VdsNetworkInterface innerItem : innerHostInterfaceListModel.getSelectedItemsWithVlans())
                             {
@@ -1472,9 +1472,9 @@ public class HostInterfaceListModel extends SearchableListModel
             boolean isAnyManagement)
     {
         ArrayList<NetworkInterface> baseSelectedItems =
-                Linq.VdsNetworkInterfaceListToBase(getSelectedItemsWithVlans());
+                Linq.vdsNetworkInterfaceListToBase(getSelectedItemsWithVlans());
         VdsNetworkInterface interfaceWithNetwork =
-                (VdsNetworkInterface) Linq.FindInterfaceNetworkNameNotEmpty(baseSelectedItems);
+                (VdsNetworkInterface) Linq.findInterfaceNetworkNameNotEmpty(baseSelectedItems);
 
         innerBondModel.getCheckConnectivity().setIsChangable(interfaceWithNetwork != null);
         innerBondModel.getCheckConnectivity().setIsAvailable(interfaceWithNetwork != null
@@ -1569,7 +1569,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
         // Interface interfaceWithNetwork = items.FirstOrDefault(a => !string.IsNullOrEmpty(a.network_name));
         VdsNetworkInterface interfaceWithNetwork =
-                (VdsNetworkInterface) Linq.FindInterfaceNetworkNameNotEmpty(Linq.VdsNetworkInterfaceListToBase(selectedItems));
+                (VdsNetworkInterface) Linq.findInterfaceNetworkNameNotEmpty(Linq.vdsNetworkInterfaceListToBase(selectedItems));
 
         // look for lines with vlans
         ArrayList<HostInterfaceLineModel> itemList =
@@ -1792,7 +1792,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 Network defaultNetwork = new Network();
                 VdsNetworkInterface nic = (VdsNetworkInterface) getSelectedItem();
                 defaultNetwork.setName(nic.getNetworkName());
-                Network tempVar = Linq.FindNetworkByName(networks, nic.getNetworkName());
+                Network tempVar = Linq.findNetworkByName(networks, nic.getNetworkName());
                 Network net = (tempVar != null) ? tempVar : defaultNetwork;
 
                 hostInterfaceListModel.StartProgress(null);
@@ -1849,7 +1849,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
         String nicName = (String) model.getEntity();
         final VdsNetworkInterface nic =
-                (VdsNetworkInterface) Linq.FindInterfaceByName(Linq.VdsNetworkInterfaceListToBase(getAllItems()),
+                (VdsNetworkInterface) Linq.findInterfaceByName(Linq.vdsNetworkInterfaceListToBase(getAllItems()),
                         nicName);
 
         if (nic == null)
@@ -1904,7 +1904,7 @@ public class HostInterfaceListModel extends SearchableListModel
                         ArrayList<Network> networks = (ArrayList<Network>) ReturnValue;
                         Network defaultNetwork = new Network();
                         defaultNetwork.setName(nic.getNetworkName());
-                        Network tempVar3 = Linq.FindNetworkByName(networks, nic.getNetworkName());
+                        Network tempVar3 = Linq.findNetworkByName(networks, nic.getNetworkName());
                         Network net = (tempVar3 != null) ? tempVar3 : defaultNetwork;
 
                         hostInterfaceModel.StartProgress(null);
@@ -2123,7 +2123,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
         String nicName = (String) model.getEntity();
         final VdsNetworkInterface nic =
-                (VdsNetworkInterface) Linq.FindInterfaceByName(Linq.<NetworkInterface> Cast(getInterfaceItems()),
+                (VdsNetworkInterface) Linq.findInterfaceByName(Linq.<NetworkInterface> cast(getInterfaceItems()),
                         nicName);
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -2135,7 +2135,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 ArrayList<Network> networks = (ArrayList<Network>) ReturnValue;
                 Network defaultNetwork = new Network();
                 defaultNetwork.setName(nic.getNetworkName());
-                Network tempVar = Linq.FindNetworkByName(networks, nic.getNetworkName());
+                Network tempVar = Linq.findNetworkByName(networks, nic.getNetworkName());
                 Network net = (tempVar != null) ? tempVar : defaultNetwork;
 
                 hostInterfaceListModel.StartProgress(null);
@@ -2218,9 +2218,9 @@ public class HostInterfaceListModel extends SearchableListModel
                 && host.getStatus() != VDSStatus.NonResponsive
                 && selectedItems.size() >= 2
                 && !IsAnyBond(selectedItems)
-                && Linq.FindAllInterfaceNetworkNameNotEmpty(Linq.VdsNetworkInterfaceListToBase(selectedItems)).size() <= 1
-                && Linq.FindAllInterfaceBondNameIsEmpty(selectedItems).size() == selectedItems.size()
-                && Linq.FindAllInterfaceVlanIdIsEmpty(selectedItems).size() == selectedItems.size());
+                && Linq.findAllInterfaceNetworkNameNotEmpty(Linq.vdsNetworkInterfaceListToBase(selectedItems)).size() <= 1
+                && Linq.findAllInterfaceBondNameIsEmpty(selectedItems).size() == selectedItems.size()
+                && Linq.findAllInterfaceVlanIdIsEmpty(selectedItems).size() == selectedItems.size());
 
         // to bond, selected lines must not have more that 1 networks (vlan or not)
         if (getItems() != null)

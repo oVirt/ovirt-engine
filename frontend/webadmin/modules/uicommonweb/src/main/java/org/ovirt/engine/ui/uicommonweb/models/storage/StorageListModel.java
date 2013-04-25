@@ -806,7 +806,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 StorageDomain storage = (StorageDomain) storageListModel.getSelectedItem();
                 ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
                 removeStorageModel.getHostList().setItems(hosts);
-                removeStorageModel.getHostList().setSelectedItem(Linq.FirstOrDefault(hosts));
+                removeStorageModel.getHostList().setSelectedItem(Linq.firstOrDefault(hosts));
                 removeStorageModel.getFormat()
                         .setIsAvailable(storage.getStorageDomainType() == StorageDomainType.ISO
                                 || storage.getStorageDomainType() == StorageDomainType.ImportExport);
@@ -1084,7 +1084,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         {
             StorageDomain storage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
 
-            setSelectedItem(Linq.FirstOrDefault(Linq.<StorageDomain>Cast(getItems()),
+            setSelectedItem(Linq.firstOrDefault(Linq.<StorageDomain> cast(getItems()),
                     new Linq.StoragePredicate(storage.getId())));
         }
     }
@@ -1133,7 +1133,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     private void updateActionAvailability()
     {
         ArrayList<StorageDomain> items =
-                getSelectedItems() != null ? Linq.<StorageDomain> Cast(getSelectedItems())
+                getSelectedItems() != null ? Linq.<StorageDomain> cast(getSelectedItems())
                         : new ArrayList<StorageDomain>();
 
         StorageDomain item = (StorageDomain) getSelectedItem();
@@ -1143,7 +1143,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         getEditCommand().setIsExecutionAllowed(items.size() == 1 && isEditAvailable(item));
 
         getRemoveCommand().setIsExecutionAllowed(items.size() == 1
-                && Linq.FindAllStorageDomainsBySharedStatus(items, StorageDomainSharedStatus.Unattached).size() == items.size());
+                && Linq.findAllStorageDomainsBySharedStatus(items, StorageDomainSharedStatus.Unattached).size() == items.size());
 
         getDestroyCommand().setIsExecutionAllowed(item != null && items.size() == 1
                 && item.getStatus() != StorageDomainStatus.Active);
@@ -2094,7 +2094,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
     public void ImportFileStorageAddDomain(ArrayList<StorageDomain> domains)
     {
-        StorageDomain sdToAdd = Linq.FirstOrDefault(domains);
+        StorageDomain sdToAdd = Linq.firstOrDefault(domains);
         StorageDomainStatic sdsToAdd = sdToAdd == null ? null : sdToAdd.getStorageStaticData();
 
         StorageDomainManagementParameter params = new StorageDomainManagementParameter(sdsToAdd);
@@ -2255,7 +2255,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     @Override
     protected void setReportModelResourceId(ReportModel reportModel, String idParamName, boolean isMultiple) {
         ArrayList<StorageDomain> items =
-                getSelectedItems() != null ? Linq.<StorageDomain> Cast(getSelectedItems())
+                getSelectedItems() != null ? Linq.<StorageDomain> cast(getSelectedItems())
                         : new ArrayList<StorageDomain>();
 
         if (idParamName != null) {
