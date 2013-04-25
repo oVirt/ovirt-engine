@@ -30,6 +30,8 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolLi
     }
 
     void initTable(ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         getTable().addColumn(new VmStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
@@ -48,7 +50,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolLi
                 return object.getRunOnVdsName();
             }
         };
-        getTable().addColumn(hostColumn, constants.hostVm());
+        getTable().addColumn(hostColumn, constants.hostVm(), "200px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> ipColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -56,7 +58,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolLi
                 return object.getVmIp();
             }
         };
-        getTable().addColumn(ipColumn, constants.ipVm());
+        getTable().addColumn(ipColumn, constants.ipVm(), "200px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
             @Override
@@ -64,7 +66,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolLi
                 return object.getStatus();
             }
         };
-        getTable().addColumn(statusColumn, constants.statusVm());
+        getTable().addColumn(statusColumn, constants.statusVm(), "200px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> uptimeColumn = new UptimeColumn<VM>() {
             @Override
@@ -72,7 +74,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolLi
                 return object.getRoundedElapsedTime();
             }
         };
-        getTable().addColumn(uptimeColumn, constants.uptimeVm());
+        getTable().addColumn(uptimeColumn, constants.uptimeVm(), "200px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> consoleConnectedUserColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -80,7 +82,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolLi
                 return object.getConsoleCurentUserName();
             }
         };
-        getTable().addColumn(consoleConnectedUserColumn, constants.consoleConnectedUserVm());
+        getTable().addColumn(consoleConnectedUserColumn, constants.consoleConnectedUserVm(), "200px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> loggedInUserColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -88,7 +90,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolLi
                 return object.getGuestCurentUserName();
             }
         };
-        getTable().addColumn(loggedInUserColumn, constants.loggedInUserVm());
+        getTable().addColumn(loggedInUserColumn, constants.loggedInUserVm(), "200px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.detachVm()) {
             @Override

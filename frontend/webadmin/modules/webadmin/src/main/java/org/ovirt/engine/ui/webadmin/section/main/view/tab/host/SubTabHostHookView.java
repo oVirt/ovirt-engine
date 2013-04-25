@@ -24,13 +24,15 @@ public class SubTabHostHookView extends AbstractSubTabTableView<VDS, Map<String,
     }
 
     void initTable(ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         TextColumnWithTooltip<Map<String, String>> eventColumn = new TextColumnWithTooltip<Map<String, String>>() {
             @Override
             public String getValue(Map<String, String> object) {
                 return object.get("EventName"); //$NON-NLS-1$
             }
         };
-        getTable().addColumn(eventColumn, constants.eventNameHook());
+        getTable().addColumn(eventColumn, constants.eventNameHook(), "220px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<Map<String, String>> scriptColumn = new TextColumnWithTooltip<Map<String, String>>() {
             @Override
@@ -38,7 +40,7 @@ public class SubTabHostHookView extends AbstractSubTabTableView<VDS, Map<String,
                 return object.get("ScriptName"); //$NON-NLS-1$
             }
         };
-        getTable().addColumn(scriptColumn, constants.scriptNameHook());
+        getTable().addColumn(scriptColumn, constants.scriptNameHook(), "220px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<Map<String, String>> propNameColumn = new TextColumnWithTooltip<Map<String, String>>() {
             @Override
@@ -46,7 +48,7 @@ public class SubTabHostHookView extends AbstractSubTabTableView<VDS, Map<String,
                 return object.get("PropertyName"); //$NON-NLS-1$
             }
         };
-        getTable().addColumn(propNameColumn, constants.propertyNameHook());
+        getTable().addColumn(propNameColumn, constants.propertyNameHook(), "220px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<Map<String, String>> propValueColumn = new TextColumnWithTooltip<Map<String, String>>() {
             @Override
@@ -54,7 +56,7 @@ public class SubTabHostHookView extends AbstractSubTabTableView<VDS, Map<String,
                 return object.get("PropertyValue"); //$NON-NLS-1$
             }
         };
-        getTable().addColumn(propValueColumn, constants.propertyValueHook());
+        getTable().addColumn(propValueColumn, constants.propertyValueHook(), "250px"); //$NON-NLS-1$
     }
 
 }

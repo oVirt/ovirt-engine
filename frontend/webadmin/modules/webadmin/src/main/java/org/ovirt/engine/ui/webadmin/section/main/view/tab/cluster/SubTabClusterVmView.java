@@ -28,6 +28,7 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
     }
 
     void initTable(ApplicationConstants constants) {
+        getTable().enableColumnResizing();
 
         getTable().addColumn(new VmStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
@@ -37,7 +38,7 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
                 return object.getName();
             }
         };
-        getTable().addColumn(nameColumn, constants.nameVm());
+        getTable().addColumn(nameColumn, constants.nameVm(), "220px"); //$NON-NLS-1$
 
         getTable().addColumn(new VmTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
@@ -47,7 +48,7 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
                 return object.getStatus();
             }
         };
-        getTable().addColumn(statusColumn, constants.statusVm());
+        getTable().addColumn(statusColumn, constants.statusVm(), "220px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> uptimeColumn = new UptimeColumn<VM>() {
             @Override
@@ -55,7 +56,7 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
                 return object.getRoundedElapsedTime();
             }
         };
-        getTable().addColumn(uptimeColumn, constants.uptimeVm());
+        getTable().addColumn(uptimeColumn, constants.uptimeVm(), "220px"); //$NON-NLS-1$
     }
 
 }

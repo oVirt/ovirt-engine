@@ -29,6 +29,8 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
     }
 
     void initTable(final ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         getTable().addColumn(new HostStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VDS> nameColumn = new TextColumnWithTooltip<VDS>() {
@@ -37,7 +39,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
                 return object.getName();
             }
         };
-        getTable().addColumn(nameColumn, constants.nameClusterHost());
+        getTable().addColumn(nameColumn, constants.nameClusterHost(), "220px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VDS> hostColumn = new TextColumnWithTooltip<VDS>() {
             @Override
@@ -45,7 +47,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
                 return object.getHostName();
             }
         };
-        getTable().addColumn(hostColumn, constants.hostIpClusterHost());
+        getTable().addColumn(hostColumn, constants.hostIpClusterHost(), "220px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VDS> statusColumn = new EnumColumn<VDS, VDSStatus>() {
             @Override
@@ -53,7 +55,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
                 return object.getStatus();
             }
         };
-        getTable().addColumn(statusColumn, constants.statusClusterHost());
+        getTable().addColumn(statusColumn, constants.statusClusterHost(), "120px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly)) {
             TextColumnWithTooltip<VDS> loadColumn = new TextColumnWithTooltip<VDS>() {
@@ -63,7 +65,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
                     return ConstantsManager.getInstance().getMessages().numberOfVmsForHostsLoad(numOfActiveVMs);
                 }
             };
-            getTable().addColumn(loadColumn, constants.loadClusterHost());
+            getTable().addColumn(loadColumn, constants.loadClusterHost(), "120px"); //$NON-NLS-1$
         }
 
         if (ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly)) {
@@ -74,7 +76,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
                 }
 
             };
-            getTable().addColumn(consoleColumn, constants.overriddenConsoleAddress());
+            getTable().addColumn(consoleColumn, constants.overriddenConsoleAddress(), "220px"); //$NON-NLS-1$
         }
     }
 }

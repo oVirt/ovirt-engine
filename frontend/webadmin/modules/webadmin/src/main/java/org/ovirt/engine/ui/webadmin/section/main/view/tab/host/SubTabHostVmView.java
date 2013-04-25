@@ -43,6 +43,8 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
     }
 
     void initTable(ApplicationResources resources, ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         getTable().addColumn(new VmStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
@@ -51,7 +53,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
                 return object.getName();
             }
         };
-        getTable().addColumn(nameColumn, constants.nameVm());
+        getTable().addColumn(nameColumn, constants.nameVm(), "160px"); //$NON-NLS-1$
 
         getTable().addColumn(new VmTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
@@ -61,7 +63,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
                 return object.getVdsGroupName();
             }
         };
-        getTable().addColumn(clusterColumn, constants.clusterVm());
+        getTable().addColumn(clusterColumn, constants.clusterVm(), "160px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> ipColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -69,7 +71,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
                 return object.getVmIp();
             }
         };
-        getTable().addColumn(ipColumn, constants.ipVm());
+        getTable().addColumn(ipColumn, constants.ipVm(), "200px"); //$NON-NLS-1$
 
         PercentColumn<VM> memColumn = new PercentColumn<VM>() {
             @Override
@@ -77,7 +79,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
                 return object.getUsageMemPercent();
             }
         };
-        getTable().addColumn(memColumn, constants.memoryVm());
+        getTable().addColumn(memColumn, constants.memoryVm(), "120px"); //$NON-NLS-1$
 
         PercentColumn<VM> cpuColumn = new PercentColumn<VM>() {
             @Override
@@ -85,7 +87,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
                 return object.getUsageCpuPercent();
             }
         };
-        getTable().addColumn(cpuColumn, constants.cpuVm());
+        getTable().addColumn(cpuColumn, constants.cpuVm(), "120px"); //$NON-NLS-1$
 
         PercentColumn<VM> netColumn = new PercentColumn<VM>() {
             @Override
@@ -93,7 +95,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
                 return object.getUsageNetworkPercent();
             }
         };
-        getTable().addColumn(netColumn, constants.networkVm());
+        getTable().addColumn(netColumn, constants.networkVm(), "120px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
             @Override
@@ -107,7 +109,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
                 return object.getStatus();
             }
         };
-        getTable().addColumn(statusColumn, constants.statusVm());
+        getTable().addColumn(statusColumn, constants.statusVm(), "130px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> hostColumn = new UptimeColumn<VM>() {
             @Override
@@ -115,7 +117,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
                 return object.getRoundedElapsedTime();
             }
         };
-        getTable().addColumn(hostColumn, constants.uptimeVm());
+        getTable().addColumn(hostColumn, constants.uptimeVm(), "110px"); //$NON-NLS-1$
 
         // add action buttons
         getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.suspendVm(),
