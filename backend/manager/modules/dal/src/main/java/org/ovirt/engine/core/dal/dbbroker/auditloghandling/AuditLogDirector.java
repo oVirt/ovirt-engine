@@ -14,7 +14,6 @@ import java.util.regex.Pattern;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.compat.ApplicationException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.TypeCompat;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -755,7 +754,7 @@ public final class AuditLogDirector {
             return ResourceBundle.getBundle(APP_ERRORS_MESSAGES_FILE_NAME);
         } catch (MissingResourceException e) {
             log.error("Could not load audit log messages from the file " + APP_ERRORS_MESSAGES_FILE_NAME);
-            throw new ApplicationException(e);
+            throw e;
         }
     }
 

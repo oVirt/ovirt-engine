@@ -1,17 +1,6 @@
 package org.ovirt.engine.core.common.errors;
 
-import org.ovirt.engine.core.compat.*;
-
-public class VdcBLLException extends ApplicationException implements java.io.Serializable {
-    // protected VdcBLLException(SerializationInfo info, StreamingContext
-    // context)
-    // {
-    // super(info, context);
-    // VDSError tempVar = new VDSError();
-    // tempVar.setCode((VdcBllErrors)info.GetValue("errorCode",
-    // VdcBllErrors.class));
-    // setVdsError(tempVar);
-    // }
+public class VdcBLLException extends RuntimeException {
 
     private static final long serialVersionUID = 9070362191178977106L;
 
@@ -35,21 +24,6 @@ public class VdcBLLException extends ApplicationException implements java.io.Ser
         tempVar.setCode(errCode);
         setVdsError(tempVar);
     }
-
-    // @Override
-    // public void GetObjectData(SerializationInfo info, StreamingContext
-    // context)
-    // {
-    // info.AddValue("errorCode", getErrorCode());
-    // super.GetObjectData(info, context);
-    // }
-
-    // void ISerializable.GetObjectData(SerializationInfo info, StreamingContext
-    // context)
-    // {
-    // info.AddValue("errorCode", mErrorCode);
-    // base.GetObjectData(info, context);
-    // }
 
     private VDSError privateVdsError;
 

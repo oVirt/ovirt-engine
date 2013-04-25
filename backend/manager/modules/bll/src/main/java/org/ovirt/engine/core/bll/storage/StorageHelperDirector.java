@@ -5,7 +5,6 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.compat.ApplicationException;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -54,7 +53,7 @@ public class StorageHelperDirector {
         } catch (Exception ex) {
             log.error("StorageHelperDirector Error:: exception was encountered during InitializeHelpers() execution",
                     ex);
-            throw new ApplicationException("JTODO missing exception", ex);
+            throw new RuntimeException(ex);
         }
     }
 

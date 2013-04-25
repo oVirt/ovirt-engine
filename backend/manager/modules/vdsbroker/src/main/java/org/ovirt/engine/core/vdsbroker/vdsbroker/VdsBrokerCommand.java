@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
-import org.ovirt.engine.core.compat.ApplicationException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -91,11 +90,6 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
         } catch (VDSExceptionBase ex) {
             PrintReturnValue();
             throw ex;
-        } catch (ApplicationException ex) {
-            log.errorFormat("Failed in {0} method", getCommandName());
-            log.error("Exception", ex);
-            PrintReturnValue();
-            throw new VDSProtocolException(ex);
         } catch (XmlRpcRunTimeException ex) {
             Throwable rootCause = ExceptionUtils.getRootCause(ex);
             VDSNetworkException networkException = new VDSNetworkException(rootCause);

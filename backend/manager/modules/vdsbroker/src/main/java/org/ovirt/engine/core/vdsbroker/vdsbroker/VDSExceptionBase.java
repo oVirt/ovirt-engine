@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.errors.*;
+import org.ovirt.engine.core.common.errors.VDSError;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 
-public class VDSExceptionBase extends ApplicationException {
+public class VDSExceptionBase extends RuntimeException {
 
     private static final long serialVersionUID = 5709501011970689110L;
 
