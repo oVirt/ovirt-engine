@@ -257,11 +257,10 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
         }
 
-        return
+        return validate(new SnapshotsValidator().vmNotDuringSnapshot(vm.getId()))
                 // This check was added to prevent migration of VM while its disks are being migrated
                 // TODO: replace it with a better solution
-                validate(new DiskImagesValidator(ImagesHandler.getPluggedImagesForVm(vm.getId())).diskImagesNotLocked())
-                && validate(new SnapshotsValidator().vmNotDuringSnapshot(vm.getId()))
+                && validate(new DiskImagesValidator(ImagesHandler.getPluggedImagesForVm(vm.getId())).diskImagesNotLocked())
                 && getVdsSelector().canFindVdsToRunOn(getReturnValue().getCanDoActionMessages(), true);
     }
 
