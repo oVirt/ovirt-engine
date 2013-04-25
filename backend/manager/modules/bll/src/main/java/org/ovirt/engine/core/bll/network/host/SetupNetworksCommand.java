@@ -61,7 +61,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
             return false;
         }
 
-        if (!(SUPPORTED_HOST_STATUSES.contains(vds.getStatus()) || (vds.getStatus() == VDSStatus.Unassigned && isInternalExecution()))) {
+        if (!(SUPPORTED_HOST_STATUSES.contains(vds.getStatus()) || (vds.getStatus() == VDSStatus.Installing && isInternalExecution()))) {
             addCanDoActionMessage(VdcBllMessages.VAR__HOST_STATUS__UP_MAINTENANCE_OR_NON_OPERATIONAL);
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
             return false;

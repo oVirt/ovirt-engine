@@ -4,17 +4,24 @@ import java.io.File;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.ovirt.engine.core.bll.network.NetworkConfigurator;
+import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.InstallVdsParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 
 @NonTransactiveCommandAttribute
 public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsCommand<T> {
@@ -115,8 +122,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                     e
                 );
                 setSucceeded(false);
-                _failureMessage = getErrorMessage(e.getMessage());
-                addCustomValue("FailedInstallMessage", _failureMessage);
+                _failureMessage = e.getMessage();
             }
             finally {
                 if (upgrade != null) {
@@ -138,7 +144,14 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 T parameters = getParameters();
                 installer = new VdsDeploy(getVds());
                 installer.setCorrelationId(getCorrelationId());
-                installer.setReboot(parameters.isRebootAfterInstallation());
+                boolean configureNetworkUsingHostDeploy =
+                        !VersionSupport.isActionSupported(VdcActionType.SetupNetworks,
+                                getVds().getVdsGroupCompatibilityVersion());
+                installer.setReboot(parameters.isRebootAfterInstallation() && configureNetworkUsingHostDeploy);
+                if (configureNetworkUsingHostDeploy) {
+                    installer.setManagementNetwork(NetworkUtils.getEngineNetwork());
+                }
+
                 switch (getVds().getVdsType()) {
                 case VDS:
                     installer.setUser("root");
@@ -164,9 +177,25 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                         )
                     );
                 }
+                setVdsStatus(VDSStatus.Installing);
                 installer.execute();
-                if (getVds().getStatus() == VDSStatus.Reboot) {
+
+                switch (installer.getDeployStatus()) {
+                case Failed:
+                    throw new VdsInstallException(VDSStatus.InstallFailed, StringUtils.EMPTY);
+                case Incomplete:
+                    throw new VdsInstallException(VDSStatus.InstallFailed, "Partial installation");
+                case Reboot:
+                    setVdsStatus(VDSStatus.Reboot);
                     RunSleepOnReboot();
+                    break;
+                case Complete:
+                    if (!configureNetworkUsingHostDeploy) {
+                        configureManagementNetwork();
+                    }
+                default:
+                    setVdsStatus(VDSStatus.Initializing);
+                    break;
                 }
                 log.infoFormat(
                     "After Installation host {0}, {1}",
@@ -175,16 +204,11 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 );
                 setSucceeded(true);
             }
+            catch (VdsInstallException e) {
+                handleError(e, e.getStatus());
+            }
             catch (Exception e) {
-                log.errorFormat(
-                    "Host installation failed for host {0}, {1}.",
-                    getVds().getId(),
-                    getVds().getName(),
-                    e
-                );
-                setSucceeded(false);
-                _failureMessage = getErrorMessage(e.getMessage());
-                addCustomValue("FailedInstallMessage", _failureMessage);
+                handleError(e, VDSStatus.InstallFailed);
             }
             finally {
                 if (installer != null) {
@@ -192,6 +216,37 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 }
             }
             return;
+        }
+    }
+
+    private void handleError(Exception e, VDSStatus status) {
+        log.errorFormat(
+            "Host installation failed for host {0}, {1}.",
+            getVds().getId(),
+            getVds().getName(),
+            e
+        );
+        setVdsStatus(status);
+        setSucceeded(false);
+        _failureMessage = e.getMessage();
+    }
+
+    private void configureManagementNetwork() {
+        final NetworkConfigurator networkConfigurator = new NetworkConfigurator(getVds());
+        if (!networkConfigurator.awaitVdsmResponse()) {
+            throw new VdsInstallException(VDSStatus.NonResponsive,
+                    "Network error during communication with the host");
+        }
+
+        try {
+            networkConfigurator.refreshNetworkConfiguration();
+            networkConfigurator.createManagementNetworkIfRequired();
+        } catch (VDSNetworkException e) {
+            throw new VdsInstallException(VDSStatus.NonResponsive,
+                    "Network error during communication with the host", e);
+        } catch (Exception e) {
+            throw new VdsInstallException(VDSStatus.NonOperational,
+                    "Failed to configure manamgent network on the host", e);
         }
     }
 
@@ -224,6 +279,16 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
         return retValue;
     }
 
+    /**
+     * Set vds object status.
+     *
+     * @param status
+     *            new status.
+     */
+    private void setVdsStatus(VDSStatus status) {
+        runVdsCommand(VDSCommandType.SetVdsStatus, new SetVdsStatusVDSCommandParameters(getVdsId(), status));
+    }
+
     private boolean isOvirtReInstallOrUpgrade() {
         return getParameters().getIsReinstallOrUpgrade() && getVds().getVdsType() == VDSType.oVirtNode;
     }
@@ -232,4 +297,22 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
         return (StringUtils.isEmpty(msg) ? GENERIC_ERROR : msg);
     }
 
+    @SuppressWarnings("serial")
+    private static class VdsInstallException extends RuntimeException {
+        private VDSStatus status;
+
+        VdsInstallException(VDSStatus status, String message) {
+            super(message);
+            this.status = status;
+        }
+
+        VdsInstallException(VDSStatus status, String message, Exception cause) {
+            super(message, cause);
+            this.status = status;
+        }
+
+        public VDSStatus getStatus() {
+            return status;
+        }
+    }
 }

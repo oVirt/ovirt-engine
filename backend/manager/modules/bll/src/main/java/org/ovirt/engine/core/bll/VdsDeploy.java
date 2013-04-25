@@ -23,7 +23,6 @@ import org.apache.commons.collections.EnumerationUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -70,6 +69,7 @@ import org.ovirt.ovirt_host_deploy.constants.VdsmEnv;
  */
 public class VdsDeploy implements SSHDialog.Sink {
 
+    public static enum DeployStatus {Complete, Incomplete, Failed, Reboot};
     private static final int THREAD_JOIN_TIMEOUT = 20 * 1000; // milliseconds
     private static final String IPTABLES_CUSTOM_RULES_PLACE_HOLDER = "@CUSTOM_RULES@";
     private static final String BOOTSTRAP_CUSTOM_ENVIRONMENT_PLACE_HOLDER = "@ENVIRONMENT@";
@@ -92,6 +92,8 @@ public class VdsDeploy implements SSHDialog.Sink {
     private boolean _goingToReboot = false;
     private boolean _aborted = false;
     private boolean _installIncomplete = false;
+    private String _managementNetwork = null;
+    private DeployStatus _deployStatus = DeployStatus.Failed;
 
     private String _certificate;
     private String _iptables = "";
@@ -171,23 +173,6 @@ public class VdsDeploy implements SSHDialog.Sink {
             @Override
             public Void runInTransaction() {
                 DbFacade.getInstance().getVdsStaticDao().update(_vds.getStaticData());
-                return null;
-            }
-        });
-    }
-
-    /**
-     * Set vds object status.
-     * For this simple task, no need to go via command mechanism.
-     * @param status new status.
-     */
-    private void _setVdsStatus(VDSStatus status) {
-        _vds.setStatus(status);
-
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                DbFacade.getInstance().getVdsDynamicDao().update(_vds.getDynamicData());
                 return null;
             }
         });
@@ -412,11 +397,22 @@ public class VdsDeploy implements SSHDialog.Sink {
             return null;
         }},
         new Callable<Object>() { public Object call() throws Exception {
-            _parser.cliEnvironmentSet(
-                VdsmEnv.MANAGEMENT_BRIDGE_NAME,
-                NetworkUtils.getEngineNetwork()
-            );
-            return null;
+            if (_managementNetwork != null) {
+                _parser.cliEnvironmentSet(
+                    VdsmEnv.MANAGEMENT_BRIDGE_NAME,
+                    _managementNetwork
+                );
+             }
+            else if (_isNode) {
+                _parser.cliEnvironmentSet(
+                    VdsmEnv.MANAGEMENT_BRIDGE_NAME,
+                    NetworkUtils.getEngineNetwork()
+                );
+            }
+            else {
+                 _parser.cliNoop();
+             }
+             return null;
         }},
         new Callable<Object>() { public Object call() throws Exception {
             String minimal = Config.<String> GetValue(ConfigValues.BootstrapMinimalVdsmVersion);
@@ -838,6 +834,16 @@ public class VdsDeploy implements SSHDialog.Sink {
         _reboot = reboot;
     }
 
+    /**
+     * Set the management network name to be configured on the host. If set <code>null</code>, the network will not be
+     * configured on the host.
+     *
+     * @param managementNetwork
+     */
+    public void setManagementNetwork(String managementNetwork) {
+        _managementNetwork = managementNetwork;
+    }
+
     public void setCorrelationId(String correlationId) {
         _correlationId = correlationId;
         _messages.setCorrelationId(_correlationId);
@@ -885,14 +891,21 @@ public class VdsDeploy implements SSHDialog.Sink {
     }
 
     /**
+     * Returns the installation status
+     *
+     * @return the installation status
+     */
+    public DeployStatus getDeployStatus() {
+        return _deployStatus;
+    }
+
+    /**
      * Main method.
      * Execute the command and initiate the dialog.
      */
     public void execute() throws Exception {
         InputStream in = null;
         try {
-            _setVdsStatus(VDSStatus.Installing);
-
             _dialog.setHost(_vds.getHostName());
             _dialog.connect();
             _messages.post(
@@ -939,13 +952,12 @@ public class VdsDeploy implements SSHDialog.Sink {
                 );
             }
             else if (_goingToReboot) {
-                _setVdsStatus(VDSStatus.Reboot);
+                _deployStatus = DeployStatus.Reboot;
             }
             else if (_installIncomplete) {
-                _setVdsStatus(VDSStatus.InstallFailed);
-            }
-            else {
-                _setVdsStatus(VDSStatus.NonResponsive);
+                _deployStatus = DeployStatus.Incomplete;
+            } else {
+                _deployStatus = DeployStatus.Complete;
             }
         }
         catch (TimeLimitExceededException e){
@@ -958,7 +970,6 @@ public class VdsDeploy implements SSHDialog.Sink {
                 InstallerMessages.Severity.ERROR,
                 "Processing stopped due to timeout"
             );
-            _setVdsStatus(VDSStatus.InstallFailed);
             throw e;
         }
         catch(Exception e) {
@@ -967,7 +978,6 @@ public class VdsDeploy implements SSHDialog.Sink {
                 _vds.getHostName(),
                 e
             );
-            _setVdsStatus(VDSStatus.InstallFailed);
 
             if (_failException == null) {
                 throw e;

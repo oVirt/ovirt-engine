@@ -4,13 +4,15 @@ import java.io.Serializable;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class VersionSupport implements Serializable {
 
@@ -52,5 +54,23 @@ public class VersionSupport implements Serializable {
             }
         }
         return isVersionSupported;
+    }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @param action
+     *            The action type to check for
+     * @return <code>true</code> if the action is supported for the version, <code>false</code> if it's not.
+     * @throws NullPointerException
+     *             if an entry is missing from the action_version_map table for the queried action type
+     */
+    public static boolean isActionSupported(VdcActionType action, Version version) {
+        Version minimalVersion =
+                new Version(DbFacade.getInstance()
+                        .getActionGroupDao()
+                        .getActionVersionMapByActionType(action)
+                        .getcluster_minimal_version());
+        return version.compareTo(minimalVersion) >= 0;
     }
 }
