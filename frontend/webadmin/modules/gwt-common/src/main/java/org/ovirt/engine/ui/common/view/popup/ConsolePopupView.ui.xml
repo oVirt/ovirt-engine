@@ -29,41 +29,57 @@ xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.console">
 		.ctrlAltDelContentWidget {
 			width: 300px;
 		}
+
+		.threeNextToEachOther {
+		    float:left;
+		    display:inline;
+		    width: 30%;
+	    }
+
+	    .protocolPanel {
+	        float: left;
+	    }
+
 	</ui:style>
 
-	<d:SimpleDialogPanel width="350px" height="380px">
+	<d:SimpleDialogPanel width="500px" height="420px">
 		<d:content>
 			<g:FlowPanel addStyleNames="{style.fullWidth}">
-				<g:FlowPanel addStyleNames="{style.fullWidth}">
+				<g:FlowPanel>
 					<g:Label ui:field="consoleTitle" addStyleNames="{style.labelStyle}" />
-					<e:EntityModelRadioButtonEditor ui:field="spiceRadioButton" />
-					<e:EntityModelRadioButtonEditor ui:field="vncRadioButton" />
-					<e:EntityModelRadioButtonEditor ui:field="remoteDesktopRadioButton" />
+					<g:FlowPanel>
+						<e:EntityModelRadioButtonEditor ui:field="spiceRadioButton" addStyleNames="{style.threeNextToEachOther}"/>
+						<e:EntityModelRadioButtonEditor ui:field="vncRadioButton" addStyleNames="{style.threeNextToEachOther}"/>
+						<e:EntityModelRadioButtonEditor ui:field="remoteDesktopRadioButton" addStyleNames="{style.threeNextToEachOther}" />
+					</g:FlowPanel>
 				</g:FlowPanel>
 
-				<g:FlowPanel ui:field="spicePanel" addStyleNames="{style.fullWidth}">
+				<g:FlowPanel ui:field="spicePanel" addStyleNames="{style.protocolPanel}">
+					<g:Label ui:field="consoleInvocation" text="{constants.consoleInvocation}" addStyleNames="{style.labelStyle}" />
+					<e:EntityModelRadioButtonEditor ui:field="spiceAutoImplRadioButton" title="{constants.spiceInvokeAuto}"/>
+					<e:EntityModelRadioButtonEditor ui:field="spiceNativeImplRadioButton" title="{constants.spiceInvokeNative}"/>
+					<e:EntityModelRadioButtonEditor ui:field="spicePluginImplRadioButton" title="{constants.spiceInvokePlugin}"/>
+
 					<g:Label ui:field="spiceTitle" text="{constants.spiceOptions}" addStyleNames="{style.labelStyle}" />
-					<e:EntityModelRadioButtonEditor ui:field="spiceAutoImplRadioButton" />
-					<e:EntityModelRadioButtonEditor ui:field="spiceNativeImplRadioButton" />
-					<e:EntityModelRadioButtonEditor ui:field="spicePluginImplRadioButton" />
 					<w:EntityModelValueCheckBoxEditor ui:field="ctrlAltDel" />
 					<w:EntityModelValueCheckBoxEditor ui:field="enableUsbAutoshare" />
 					<w:EntityModelValueCheckBoxEditor ui:field="openInFullScreen" />
 					<w:EntityModelValueCheckBoxEditor ui:field="enableSpiceProxy" />
+
+					<g:FlowPanel ui:field="wanOptionsPanel" >
+						<w:EntityModelValueCheckBoxEditor ui:field="wanEnabled" />
+					</g:FlowPanel>
+
+					<g:FlowPanel ui:field="disableSmartcardPanel" >
+						<w:EntityModelValueCheckBoxEditor ui:field="disableSmartcard" />
+					</g:FlowPanel>
 				</g:FlowPanel>
 
-				<g:FlowPanel ui:field="rdpPanel" addStyleNames="{style.fullWidth}">
+				<g:FlowPanel ui:field="rdpPanel" addStyleNames="{style.protocolPanel}">
 					<g:Label text="{constants.rdpOptions}" addStyleNames="{style.labelStyle}" />
 					<w:EntityModelValueCheckBoxEditor ui:field="useLocalDrives" />
 				</g:FlowPanel>
 
-				<g:FlowPanel ui:field="wanOptionsPanel" addStyleNames="{style.fullWidth}">
-					<w:EntityModelValueCheckBoxEditor ui:field="wanEnabled" />
-				</g:FlowPanel>
-
-				<g:FlowPanel ui:field="disableSmartcardPanel" addStyleNames="{style.fullWidth}">
-					<w:EntityModelValueCheckBoxEditor ui:field="disableSmartcard" />
-				</g:FlowPanel>
 			</g:FlowPanel>
 		</d:content>
 	</d:SimpleDialogPanel>

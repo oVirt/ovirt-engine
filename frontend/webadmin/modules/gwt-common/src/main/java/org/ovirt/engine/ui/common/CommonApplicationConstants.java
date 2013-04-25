@@ -1210,10 +1210,31 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("SPICE Options")
     String spiceOptions();
 
+    @DefaultStringValue("If there is a SPICE plugin installed in your browser, it is used for invoking the console session. Otherwise SPICE configuration file is downloaded.")
+    String spiceInvokeAuto();
+
+    @DefaultStringValue("Downloads a SPICE configuration file to be opened by a SPICE client installed on your system.")
+    String spiceInvokeNative();
+
+    @DefaultStringValue("Uses SPICE browser plugin for invoking console session. For this you must have SPICE console plugin installed in your browser.")
+    String spiceInvokePlugin();
+
+    @DefaultStringValue("Console Invocation")
+    String consoleInvocation();
+
     @DefaultStringValue("VNC console access is not supported from the user portal.<br/>" +
             "Please ask the administrator to configure this " +
             "virtual machine to use SPICE for console access.")
     String vncNotSupportedMsg();
+
+    @DefaultStringValue("SPICE isn't available for this machine. For enabling it, change the VM console protocol.")
+    String spiceNotAvailable();
+
+    @DefaultStringValue("RDP isn't available for this machine.")
+    String rdpNotAvailable();
+
+    @DefaultStringValue("VNC isn't available for this machine. For enabling it, change the VM console protocol.")
+    String vncNotAvailable();
 
     @DefaultStringValue("Your browser/platform does not support console opening")
     String browserNotSupportedMsg();
@@ -1229,4 +1250,5 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("No items to display")
     String noItemsToDisplay();
+
 }

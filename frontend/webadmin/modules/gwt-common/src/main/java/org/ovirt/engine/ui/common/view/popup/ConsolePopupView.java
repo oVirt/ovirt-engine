@@ -115,6 +115,8 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     @WithElementId
     EntityModelValueCheckBoxEditor<ConsoleModel> wanEnabled;
 
+    private final CommonApplicationConstants constants;
+
     private final CommonApplicationMessages messages;
 
     private ConsolePopupModel model;
@@ -125,6 +127,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
             CommonApplicationConstants constants,
             CommonApplicationMessages messages) {
         super(eventBus, resources);
+        this.constants = constants;
         this.messages = messages;
 
         spiceRadioButton = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
@@ -295,15 +298,6 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     @SuppressWarnings("unchecked")
     @Override
     public void flushToPrivateModel() {
-        flushCheckBoxes(
-                ctrlAltDel,
-                enableUsbAutoshare,
-                openInFullScreen,
-                enableSpiceProxy,
-                useLocalDrives,
-                wanEnabled,
-                disableSmartcard);
-
         if (spiceRadioButton.asRadioButton().getValue()) {
             setSelectedProtocol(ConsoleProtocol.SPICE);
             setSelectedSpiceImpl();
@@ -313,6 +307,14 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
             setSelectedProtocol(ConsoleProtocol.VNC);
         }
 
+        flushCheckBoxes(
+                ctrlAltDel,
+                enableUsbAutoshare,
+                openInFullScreen,
+                enableSpiceProxy,
+                useLocalDrives,
+                wanEnabled,
+                disableSmartcard);
     }
 
     private void setSelectedSpiceImpl() {
@@ -349,17 +351,20 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
 
     @Override
     public void setSpiceAvailable(boolean visible) {
-        spiceRadioButton.setVisible(visible);
+        spiceRadioButton.setEnabled(visible);
+        spiceRadioButton.setTitle(visible ? "" : constants.spiceNotAvailable());
     }
 
     @Override
     public void setRdpAvailable(boolean visible) {
-        remoteDesktopRadioButton.setVisible(visible);
+        remoteDesktopRadioButton.setEnabled(visible);
+        remoteDesktopRadioButton.setTitle(visible ? "" : constants.rdpNotAvailable());
     }
 
     @Override
     public void setVncAvailable(boolean visible) {
-        vncRadioButton.setVisible(visible);
+        vncRadioButton.setEnabled(visible);
+        vncRadioButton.setTitle(visible ? "" : constants.vncNotAvailable());
     }
 
     @Override
