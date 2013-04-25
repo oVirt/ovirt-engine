@@ -777,7 +777,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         }
     }
 
-    private void CleanConnection(StorageServerConnections connection, Guid hostId) {
+    private void cleanConnection(StorageServerConnections connection, Guid hostId) {
         Frontend.RunAction(VdcActionType.RemoveStorageServerConnection, new StorageServerConnectionParametersBase(connection, hostId),
                 null, this);
     }
@@ -796,7 +796,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantToRemoveTheStorageDomainMsg());
         model.getFormat().setIsAvailable(false);
 
-        AsyncDataProvider.GetHostListByStatus(new AsyncQuery(new Object[] {this, model}, new INewAsyncCallback() {
+        AsyncDataProvider.GetHostListByStatus(new AsyncQuery(new Object[]{this, model}, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
 
@@ -808,8 +808,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 removeStorageModel.getHostList().setItems(hosts);
                 removeStorageModel.getHostList().setSelectedItem(Linq.FirstOrDefault(hosts));
                 removeStorageModel.getFormat()
-                    .setIsAvailable(storage.getStorageDomainType() == StorageDomainType.ISO
-                        || storage.getStorageDomainType() == StorageDomainType.ImportExport);
+                        .setIsAvailable(storage.getStorageDomainType() == StorageDomainType.ISO
+                                || storage.getStorageDomainType() == StorageDomainType.ImportExport);
 
                 if (hosts.isEmpty()) {
 
@@ -906,18 +906,18 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.StartProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.ForceRemoveStorageDomain,
-            new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] {new StorageDomainParametersBase(storageDomain.getId())})),
-            new IFrontendMultipleActionAsyncCallback() {
-                @Override
-                public void Executed(FrontendMultipleActionAsyncResult result) {
+                new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[]{new StorageDomainParametersBase(storageDomain.getId())})),
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendMultipleActionAsyncResult result) {
 
-                    ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                    localModel.StopProgress();
-                    Cancel();
+                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                        localModel.StopProgress();
+                        Cancel();
 
-                }
-            },
-            model);
+                    }
+                },
+                model);
     }
 
     private void OnSave()
@@ -1084,7 +1084,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         {
             StorageDomain storage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
 
-            setSelectedItem(Linq.FirstOrDefault(Linq.<StorageDomain> Cast(getItems()),
+            setSelectedItem(Linq.FirstOrDefault(Linq.<StorageDomain>Cast(getItems()),
                     new Linq.StoragePredicate(storage.getId())));
         }
     }
@@ -1344,7 +1344,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             public void Executed(FrontendActionAsyncResult result) {
 
                 StorageListModel storageListModel = (StorageListModel) result.getState();
-                storageListModel.CleanConnection(storageListModel.connection, storageListModel.hostId);
+                storageListModel.cleanConnection(storageListModel.connection, storageListModel.hostId);
                 storageListModel.OnFinish(storageListModel.context, false, storageListModel.storageModel);
             }
         };
@@ -1468,7 +1468,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             public void Executed(FrontendActionAsyncResult result) {
 
                 StorageListModel storageListModel = (StorageListModel) result.getState();
-                storageListModel.CleanConnection(storageListModel.connection, storageListModel.hostId);
+                storageListModel.cleanConnection(storageListModel.connection, storageListModel.hostId);
                 storageListModel.OnFinish(storageListModel.context, false, storageListModel.storageModel);
             }
         };
@@ -1678,7 +1678,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             public void Executed(FrontendActionAsyncResult result) {
 
                 StorageListModel storageListModel = (StorageListModel) result.getState();
-                storageListModel.CleanConnection(storageListModel.connection, storageListModel.hostId);
+                storageListModel.cleanConnection(storageListModel.connection, storageListModel.hostId);
                 storageListModel.OnFinish(storageListModel.context, false, storageListModel.storageModel);
 
             }
@@ -1847,7 +1847,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
                 if (storageListModel.removeConnection)
                 {
-                    storageListModel.CleanConnection(storageListModel.connection, storageListModel.hostId);
+                    storageListModel.cleanConnection(storageListModel.connection, storageListModel.hostId);
                     storageListModel.removeConnection = false;
                 }
 
