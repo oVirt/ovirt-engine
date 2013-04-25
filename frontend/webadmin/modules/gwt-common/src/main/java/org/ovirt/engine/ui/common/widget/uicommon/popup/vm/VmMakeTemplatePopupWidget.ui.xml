@@ -6,7 +6,7 @@
 
 	<ui:style  type="org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmMakeTemplatePopupWidget.WidgetStyle">
 		.editorLabel {
-			width: 360px;
+			width: 100%;
 		}
 
 		.messagePanel {
