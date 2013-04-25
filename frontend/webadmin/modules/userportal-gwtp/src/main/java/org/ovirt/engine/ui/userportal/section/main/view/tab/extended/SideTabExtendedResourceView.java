@@ -190,11 +190,19 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
         Window.addResizeHandler(new ResizeHandler() {
             @Override
             public void onResize(ResizeEvent resizeEvent) {
-                vcpuExpanderContent.setHeight((infoBoxCpu.getOffsetHeight() - INFO_BOX_UPPER_PART_HEIGHT) + "px"); //$NON-NLS-1$
-                memoryExpanderContent.setHeight((infoBoxMemory.getOffsetHeight() - INFO_BOX_UPPER_PART_HEIGHT) + "px"); //$NON-NLS-1$
-                vmTable.setHeight((bottomLayoutPanel.getOffsetHeight() - STORAGE_BOX_UPPER_PART_HEIGHT) + "px"); //$NON-NLS-1$
+                vcpuExpanderContent.setHeight(numOrZero(infoBoxCpu.getOffsetHeight() - INFO_BOX_UPPER_PART_HEIGHT) + "px"); //$NON-NLS-1$
+                memoryExpanderContent.setHeight(numOrZero(infoBoxMemory.getOffsetHeight() - INFO_BOX_UPPER_PART_HEIGHT) + "px"); //$NON-NLS-1$
+                vmTable.setHeight(numOrZero(bottomLayoutPanel.getOffsetHeight() - STORAGE_BOX_UPPER_PART_HEIGHT) + "px"); //$NON-NLS-1$
             }
         });
+    }
+
+    private int numOrZero(int num) {
+        if (num < 0) {
+            return 0;
+        } else {
+            return num;
+        }
     }
 
     private void localize() {
