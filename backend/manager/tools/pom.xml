@@ -65,9 +65,16 @@
   <profiles>
     <profile>
       <id>enable-tools-itests</id>
-      <properties>
-        <test>**/*Test.java</test>
-      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration combine.self="override">
+              <excludes/>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 
@@ -80,7 +87,12 @@
             <additionalClasspathElement>${basedir}/**/src/test/java</additionalClasspathElement>
           </additionalClasspathElements>
           <excludes>
-            <exclude>**/*Test.java</exclude>
+            <exclude>**/EngineConfigLogicTest.java</exclude>
+            <exclude>**/EngineConfigTest.java</exclude>
+            <exclude>**/MailSenderTest.java</exclude>
+            <exclude>**/StandaloneDataSourceTest.java</exclude>
+            <exclude>**/NotificationServiceTest.java</exclude>
+            <exclude>**/EngineMonitorServiceTest.java</exclude>
           </excludes>
         </configuration>
       </plugin>
