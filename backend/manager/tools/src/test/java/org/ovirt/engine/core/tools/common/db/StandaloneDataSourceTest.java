@@ -19,7 +19,9 @@ public class StandaloneDataSourceTest {
             Assert.assertNotNull(connection);
         }
         finally {
-            connection.close();
+            if (connection != null) {
+                connection.close();
+            }
         }
     }
 

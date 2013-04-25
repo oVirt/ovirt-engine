@@ -47,7 +47,8 @@ public class ExecutionMessageDirectorTest {
                 }
             }
         } catch (RuntimeException e) {
-            fail("Missing entry in enum " + testEnum.getSimpleName() + " for key " + testKey);
+            String test = (testEnum != null) ? testEnum.getSimpleName() : "[null]";
+            fail("Missing entry in enum " + test + " for key " + testKey);
         }
     }
 
