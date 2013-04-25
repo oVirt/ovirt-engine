@@ -786,7 +786,7 @@ public class VdsBrokerObjectsBuilder {
             }
             return Boolean.parseBoolean(input.get(name).toString());
         }
-        return null;
+        return Boolean.FALSE;
     }
 
     private static void initDisks(Map<String, Object> vmStruct, VmDynamic vm) {
