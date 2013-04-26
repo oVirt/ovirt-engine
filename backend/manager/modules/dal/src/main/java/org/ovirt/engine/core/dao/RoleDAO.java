@@ -22,25 +22,6 @@ public interface RoleDAO extends GenericDao<Role, Guid> {
     Role getByName(String name);
 
     /**
-     * Retrieves all roles for the specified Ad element.
-     *
-     * @param id
-     *            the Ad element
-     * @return the list of roles
-     */
-    List<Role> getAllForAdElement(Guid id);
-
-    /**
-     * This seems to be a redundant method, but the stored procedure is different from the one for
-     * {@link #getAllForAdElement(Guid)}.
-     *
-     * @param id
-     *            the Ad element
-     * @return the list of roles
-     */
-    List<Role> getForAdElement(Guid id);
-
-    /**
      * This method gets the Roles for the given user and its groups. The purpose of this method is to be able to get
      * roles even if the user is not already added to DB, by getting the roles for his groups
      *

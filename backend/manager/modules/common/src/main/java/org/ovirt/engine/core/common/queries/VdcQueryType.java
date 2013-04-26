@@ -149,18 +149,14 @@ public enum VdcQueryType implements Serializable {
 
     // Multi Level Administration queries
     GetAllRoles(VdcQueryAuthType.User),
-    GetRolesByAdElement,
-    GetRolesByAdElementIdAndNullTag,
     GetRoleById(VdcQueryAuthType.User),
     GetRoleByName,
     GetPermissionById(VdcQueryAuthType.User),
     GetPermissionByRoleId,
     GetPermissionsByAdElement,
     HasAdElementReconnectPermission(VdcQueryAuthType.User),
-    GetRolesByAdElementId,
     GetPermissionsByAdElementId(VdcQueryAuthType.User),
     GetRoleActionGroupsByRoleId(VdcQueryAuthType.User),
-    GetRolesForDelegationByUser,
     GetPermissionsForObject(VdcQueryAuthType.User),
     GetAllStoragePools(VdcQueryAuthType.User),
     GetDataCentersWithPermittedActionOnClusters(VdcQueryAuthType.User),

@@ -92,50 +92,6 @@ public class RoleDAOTest extends BaseDAOTestCase {
     }
 
     /**
-     * Ensures an empty collection is returned when no roles exist for the specified ad element.
-     */
-    @Test
-    public void testGetAllRolesForAdElementWithInvalidId() {
-        List<Role> result = dao.getAllForAdElement(Guid.NewGuid());
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-    }
-
-    /**
-     * Ensures that a collection of roles are returned.
-     */
-    @Test
-    public void testGetAllRolesForAdElement() {
-        List<Role> result = dao.getAllForAdElement(USER_ID);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-    }
-
-    /**
-     * Ensures an empty collection is returned if the ad element is invalid.
-     */
-    @Test
-    public void testGetAllRolesForUserAndGroupByAdElementWithInvalidAdElement() {
-        List<Role> result = dao.getAllForAdElement(Guid.NewGuid());
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-    }
-
-    /**
-     * Ensures the right collection of roles is returned.
-     */
-    @Test
-    public void testGetAllRolesForUserAndGroupByAdElement() {
-        List<Role> result = dao.getAllForAdElement(USER_ID);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-    }
-
-    /**
      * Ensures the right collection of roles is returned
      */
     @Test
