@@ -26,11 +26,7 @@ EventsResource {
 
     @Override
     public Events list() {
-        if (isFiltered()) {
-            return mapCollection(getBackendCollection(VdcQueryType.GetAllEventMessages, new VdcQueryParametersBase()));
-        } else {
-            return mapCollection(getBackendCollection());
-        }
+        return mapCollection(getBackendCollection());
     }
 
     private Events mapCollection(List<AuditLog> entities) {
@@ -48,7 +44,11 @@ EventsResource {
     }
 
     private List<AuditLog> getBackendCollection() {
-        return getBackendCollection(SearchType.AuditLog);
+        if (isFiltered()) {
+            return getBackendCollection(VdcQueryType.GetAllEventMessages, new VdcQueryParametersBase());
+        } else {
+            return getBackendCollection(SearchType.AuditLog);
+        }
     }
 
     public Event lookupEvent(String id) {
