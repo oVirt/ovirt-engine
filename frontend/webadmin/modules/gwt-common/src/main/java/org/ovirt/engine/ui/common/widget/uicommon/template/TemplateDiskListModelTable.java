@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.system.ClientStorage;
@@ -28,13 +29,15 @@ public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends
 
     @Override
     public void initTable(CommonApplicationConstants constants) {
-        TextColumnWithTooltip<DiskImage> nameColumn = new TextColumnWithTooltip<DiskImage>() {
+        getTable().enableColumnResizing();
+
+        TextColumnWithTooltip<DiskImage> aliasColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
-                return object.getDiskAlias(); //$NON-NLS-1$
+                return object.getDiskAlias();
             }
         };
-        getTable().addColumn(nameColumn, constants.nameDisk());
+        getTable().addColumn(aliasColumn, constants.aliasDisk(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> provisionedSizeColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
@@ -42,7 +45,7 @@ public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends
                 return String.valueOf(object.getSizeInGigabytes()) + " GB"; //$NON-NLS-1$
             }
         };
-        getTable().addColumn(provisionedSizeColumn, constants.provisionedSizeDisk());
+        getTable().addColumn(provisionedSizeColumn, constants.provisionedSizeDisk(), "150px"); //$NON-NLS-1$
 
         DiskSizeColumn<DiskImage> actualSizeColumn = new DiskSizeColumn<DiskImage>(DiskSizeUnit.GIGABYTE) {
             @Override
@@ -51,7 +54,16 @@ public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends
             }
         };
 
-        getTable().addColumn(actualSizeColumn, constants.sizeDisk());
+        getTable().addColumn(actualSizeColumn, constants.sizeDisk(), "150px"); //$NON-NLS-1$
+
+        TextColumnWithTooltip<DiskImage> statusColumn = new EnumColumn<DiskImage, ImageStatus>() {
+            @Override
+            protected ImageStatus getRawValue(DiskImage object) {
+                return object.getImageStatus();
+            }
+        };
+
+        getTable().addColumn(statusColumn, constants.statusDisk(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> allocationColumn = new EnumColumn<DiskImage, VolumeType>() {
             @Override
@@ -59,7 +71,7 @@ public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends
                 return VolumeType.forValue(object.getVolumeType().getValue());
             }
         };
-        getTable().addColumn(allocationColumn, constants.allocationDisk());
+        getTable().addColumn(allocationColumn, constants.allocationDisk(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> interfaceColumn = new EnumColumn<DiskImage, DiskInterface>() {
             @Override
@@ -67,7 +79,7 @@ public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends
                 return object.getDiskInterface();
             }
         };
-        getTable().addColumn(interfaceColumn, constants.interfaceDisk());
+        getTable().addColumn(interfaceColumn, constants.interfaceDisk(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DiskImage> dateCreatedColumn = new FullDateTimeColumn<DiskImage>() {
             @Override
@@ -76,7 +88,16 @@ public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends
             }
         };
 
-        getTable().addColumn(dateCreatedColumn, constants.creationDateDisk());
+        getTable().addColumn(dateCreatedColumn, constants.creationDateDisk(), "150px"); //$NON-NLS-1$
+
+        TextColumnWithTooltip<DiskImage> descriptionColumn = new TextColumnWithTooltip<DiskImage>() {
+            @Override
+            public String getValue(DiskImage object) {
+                return object.getDescription();
+            }
+        };
+
+        getTable().addColumn(descriptionColumn, constants.descriptionDisk(), "150px"); //$NON-NLS-1$
     }
 
 }

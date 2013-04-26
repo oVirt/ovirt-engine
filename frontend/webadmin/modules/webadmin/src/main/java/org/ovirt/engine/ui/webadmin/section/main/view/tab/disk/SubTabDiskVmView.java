@@ -56,7 +56,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
                 return object.getName();
             }
         };
-        getTable().addColumn(nameColumn, constants.nameVm(), "160px"); //$NON-NLS-1$
+        getTable().addColumn(nameColumn, constants.nameVm(), "140px"); //$NON-NLS-1$
 
         getTable().addColumn(new VmTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
@@ -66,7 +66,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
                 return object.getVdsGroupName();
             }
         };
-        getTable().addColumn(clusterColumn, constants.clusterVm(), "160px"); //$NON-NLS-1$
+        getTable().addColumn(clusterColumn, constants.clusterVm(), "140px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> ipColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -74,7 +74,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
                 return object.getVmIp();
             }
         };
-        getTable().addColumn(ipColumn, constants.ipVm(), "160px"); //$NON-NLS-1$
+        getTable().addColumn(ipColumn, constants.ipVm(), "140px"); //$NON-NLS-1$
 
         PercentColumn<VM> memColumn = new PercentColumn<VM>() {
             @Override
@@ -82,7 +82,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
                 return object.getUsageMemPercent();
             }
         };
-        getTable().addColumn(memColumn, constants.memoryVm(), "160px"); //$NON-NLS-1$
+        getTable().addColumn(memColumn, constants.memoryVm(), "140px"); //$NON-NLS-1$
 
         PercentColumn<VM> cpuColumn = new PercentColumn<VM>() {
             @Override
@@ -90,7 +90,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
                 return object.getUsageCpuPercent();
             }
         };
-        getTable().addColumn(cpuColumn, constants.cpuVm(), "160px"); //$NON-NLS-1$
+        getTable().addColumn(cpuColumn, constants.cpuVm(), "140px"); //$NON-NLS-1$
 
         PercentColumn<VM> netColumn = new PercentColumn<VM>() {
             @Override
@@ -98,7 +98,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
                 return object.getUsageNetworkPercent();
             }
         };
-        getTable().addColumn(netColumn, constants.networkVm());
+        getTable().addColumn(netColumn, constants.networkVm(), "140px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
             @Override
@@ -106,7 +106,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
                 return object.getStatus();
             }
         };
-        getTable().addColumn(statusColumn, constants.statusVm(), "160px"); //$NON-NLS-1$
+        getTable().addColumn(statusColumn, constants.statusVm(), "140px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> hostColumn = new UptimeColumn<VM>() {
             @Override
@@ -114,7 +114,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
                 return object.getRoundedElapsedTime();
             }
         };
-        getTable().addColumn(hostColumn, constants.uptimeVm(), "160px"); //$NON-NLS-1$
+        getTable().addColumn(hostColumn, constants.uptimeVm(), "140px"); //$NON-NLS-1$
     }
 
 }

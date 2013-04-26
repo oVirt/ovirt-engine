@@ -35,13 +35,15 @@ public class SubTabDiskTemplateView extends AbstractSubTabTableView<Disk, VmTemp
     }
 
     void initTable(ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         TextColumnWithTooltip<VmTemplate> nameColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
                 return object.getName();
             }
         };
-        getTable().addColumn(nameColumn, constants.nameTemplate());
+        getTable().addColumn(nameColumn, constants.nameTemplate(), "200px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmTemplate> disksColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
@@ -49,7 +51,7 @@ public class SubTabDiskTemplateView extends AbstractSubTabTableView<Disk, VmTemp
                 return String.valueOf(object.getDiskMap().size());
             }
         };
-        getTable().addColumn(disksColumn, constants.disksTemplate());
+        getTable().addColumn(disksColumn, constants.disksTemplate(), "200px"); //$NON-NLS-1$
 
         DiskSizeColumn<VmTemplate> sizeColumn = new DiskSizeColumn<VmTemplate>() {
             @Override
@@ -58,7 +60,7 @@ public class SubTabDiskTemplateView extends AbstractSubTabTableView<Disk, VmTemp
             }
         };
 
-        getTable().addColumn(sizeColumn, constants.actualSizeTemplate());
+        getTable().addColumn(sizeColumn, constants.actualSizeTemplate(), "200px"); //$NON-NLS-1$
 
         FullDateTimeColumn<VmTemplate> dateColumn = new FullDateTimeColumn<VmTemplate>() {
             @Override
@@ -66,7 +68,7 @@ public class SubTabDiskTemplateView extends AbstractSubTabTableView<Disk, VmTemp
                 return object.getCreationDate();
             }
         };
-        getTable().addColumn(dateColumn, constants.creationDateTemplate());
+        getTable().addColumn(dateColumn, constants.creationDateTemplate(), "200px"); //$NON-NLS-1$
     }
 
 }

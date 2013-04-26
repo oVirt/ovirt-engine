@@ -78,7 +78,7 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase> extends Abs
                 DisksViewColumns.diskStatusColumn, constants.empty(), all || images || luns, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.aliasColumn, constants.aliasDisk(), all || images || luns, "80px"); //$NON-NLS-1$
+                DisksViewColumns.aliasColumn, constants.aliasDisk(), all || images || luns, "120px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.bootableDiskColumn,
@@ -93,16 +93,16 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase> extends Abs
                 DisksViewColumns.lunDiskColumn.getHeaderHtml(), all, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.sizeColumn, constants.provisionedSizeDisk(), all || images || luns, "100px"); //$NON-NLS-1$
+                DisksViewColumns.sizeColumn, constants.provisionedSizeDisk(), all || images || luns, "110px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.actualSizeColumn, constants.sizeDisk(), images, "120px"); //$NON-NLS-1$
+                DisksViewColumns.actualSizeColumn, constants.sizeDisk(), images, "110px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.allocationColumn, constants.allocationDisk(), images, "125px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.storageDomainsColumn, constants.storageDomainDisk(), images, "165px"); //$NON-NLS-1$
+                DisksViewColumns.storageDomainsColumn, constants.storageDomainDisk(), images, "125px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.dateCreatedColumn, constants.creationDateDisk(), images, "120px"); //$NON-NLS-1$
