@@ -4,6 +4,15 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.GuidUtils;
 
 public class ADLdapGuidEncoder implements LdapGuidEncoder {
+    private static final ADLdapGuidEncoder instance = new ADLdapGuidEncoder();
+
+    public static ADLdapGuidEncoder getInstance() {
+        return instance;
+    }
+
+    private ADLdapGuidEncoder() {
+        // Empty on purpose.
+    }
 
     @Override
     public String encodeGuid(Guid guid) {
