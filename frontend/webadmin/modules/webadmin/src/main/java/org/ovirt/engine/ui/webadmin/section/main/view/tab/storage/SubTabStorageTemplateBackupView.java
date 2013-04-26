@@ -32,6 +32,8 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
     }
 
     void initTable(final ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         TextColumnWithTooltip<VmTemplate> nameColumn =
                 new TextColumnWithTooltip<VmTemplate>() {
                     @Override
@@ -39,7 +41,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
                         return object.getName();
                     }
                 };
-        getTable().addColumn(nameColumn, constants.nameTemplate());
+        getTable().addColumn(nameColumn, constants.nameTemplate(), "160px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmTemplate> originColumn =
                 new TextColumnWithTooltip<VmTemplate>() {
@@ -49,7 +51,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
                                 .toString();
                     }
                 };
-        getTable().addColumn(originColumn, constants.originTemplate());
+        getTable().addColumn(originColumn, constants.originTemplate(), "160px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmTemplate> memoryColumn =
                 new TextColumnWithTooltip<VmTemplate>() {
@@ -58,7 +60,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
                         return String.valueOf(object.getMemSizeMb()) + " MB"; //$NON-NLS-1$
                     }
                 };
-        getTable().addColumn(memoryColumn,constants.memoryTemplate());
+        getTable().addColumn(memoryColumn, constants.memoryTemplate(), "160px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmTemplate> cpuColumn =
                 new TextColumnWithTooltip<VmTemplate>() {
@@ -67,7 +69,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
                         return String.valueOf(object.getNumOfCpus());
                     }
                 };
-        getTable().addColumn(cpuColumn, constants.cpusVm());
+        getTable().addColumn(cpuColumn, constants.cpusVm(), "160px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmTemplate> diskColumn =
                 new TextColumnWithTooltip<VmTemplate>() {
@@ -76,7 +78,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
                         return String.valueOf(object.getDiskList().size());
                     }
                 };
-        getTable().addColumn(diskColumn, constants.disksTemplate());
+        getTable().addColumn(diskColumn, constants.disksTemplate(), "160px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmTemplate> creationDateColumn =
                 new GeneralDateTimeColumn<VmTemplate>() {
@@ -85,7 +87,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
                         return object.getCreationDate();
                     }
                 };
-        getTable().addColumn(creationDateColumn, constants.creationDateTemplate());
+        getTable().addColumn(creationDateColumn, constants.creationDateTemplate(), "160px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmTemplate> exportDateColumn =
             new GeneralDateTimeColumn<VmTemplate>() {
@@ -94,7 +96,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
                     return object.getExportDate();
                 }
             };
-        getTable().addColumn(exportDateColumn, constants.exportDateTemplate());
+        getTable().addColumn(exportDateColumn, constants.exportDateTemplate(), "160px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.restoreVm()) {
             @Override

@@ -25,13 +25,15 @@ public class SubTabStorageIsoView extends AbstractSubTabTableView<StorageDomain,
     }
 
     void initTable(ApplicationResources resources, final ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         TextColumnWithTooltip<EntityModel> fileNameColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
                 return object.getTitle();
             }
         };
-        getTable().addColumn(fileNameColumn, constants.fileNameIso());
+        getTable().addColumn(fileNameColumn, constants.fileNameIso(), "500px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<EntityModel> typeColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
@@ -39,7 +41,7 @@ public class SubTabStorageIsoView extends AbstractSubTabTableView<StorageDomain,
                 return object.getEntity().toString();
             }
         };
-        getTable().addColumn(typeColumn, constants.typeIso());
+        getTable().addColumn(typeColumn, constants.typeIso(), "200px"); //$NON-NLS-1$
 
         getTable().showRefreshButton();
     }
