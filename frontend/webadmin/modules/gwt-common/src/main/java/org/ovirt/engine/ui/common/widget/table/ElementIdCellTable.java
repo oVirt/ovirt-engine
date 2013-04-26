@@ -2,9 +2,11 @@ package org.ovirt.engine.ui.common.widget.table;
 
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.widget.table.column.ColumnWithElementId;
+import org.ovirt.engine.ui.common.widget.table.resize.ColumnResizeCellTable;
 
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ProvidesKey;
@@ -12,8 +14,11 @@ import com.google.gwt.view.client.ProvidesKey;
 /**
  * A {@link CellTable} which adds support for configuring column DOM element IDs through {@link ColumnWithElementId}
  * interface.
+ *
+ * @param <T>
+ *            Table row data type.
  */
-public abstract class ElementIdCellTable<T> extends CellTable<T> implements HasElementId {
+public class ElementIdCellTable<T> extends ColumnResizeCellTable<T> implements HasElementId {
 
     private String elementId = DOM.createUniqueId();
 
@@ -47,6 +52,12 @@ public abstract class ElementIdCellTable<T> extends CellTable<T> implements HasE
         super(keyProvider);
     }
 
+    @Override
+    public void insertColumn(int beforeIndex, Column<T, ?> col, Header<?> header, Header<?> footer) {
+        super.insertColumn(beforeIndex, col, header, footer);
+        configureElementId(col);
+    }
+
     /**
      * Sets up the element ID for the given column, if the column implements {@link ColumnWithElementId}.
      */
@@ -68,9 +79,15 @@ public abstract class ElementIdCellTable<T> extends CellTable<T> implements HasE
     @Override
     public void setElementId(String elementId) {
         this.elementId = elementId;
+
+        // Update existing columns
+        for (int i = 0; i < getColumnCount(); i++) {
+            configureElementId(getColumn(i));
+        }
     }
 
     public String getElementId() {
         return elementId;
     }
+
 }

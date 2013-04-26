@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.widget.table;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -10,22 +9,16 @@ import org.ovirt.engine.ui.common.uicommon.model.DeferredModelCommandInvoker;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.AbstractActionPanel;
 import org.ovirt.engine.ui.common.widget.label.NoItemsLabel;
-import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
-import org.ovirt.engine.ui.common.widget.table.resize.HasResizableColumns;
-import org.ovirt.engine.ui.common.widget.table.resize.ResizableHeader;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.TableCellElement;
-import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.dom.client.TableRowElement;
-import com.google.gwt.dom.client.TableSectionElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
@@ -36,18 +29,14 @@ import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.AsyncHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.google.gwt.user.cellview.client.RowStyles;
-import com.google.gwt.user.cellview.client.SafeHtmlHeader;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
@@ -68,17 +57,14 @@ import com.google.gwt.view.client.SelectionModel;
  * <li>{@link #actionPanel} widget into which action button widgets will be rendered
  * <li>{@link #prevPageButton} widget representing the "previous page" button
  * <li>{@link #nextPageButton} widget representing the "next page" button
- * <li>{@link #refreshPageButton} widget representing the "refresh current page" button
  * <li>{@link #tableContainer} widget for displaying the actual table
+ * <li>{@link #tableHeaderContainer} widget for displaying the table header
  * </ul>
  *
  * @param <T>
  *            Table row data type.
  */
-public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> implements ActionTable<T>, HasResizableColumns<T> {
-
-    // Minimum width of a column used with column resizing, in pixels
-    private static final int RESIZE_MINIMUM_COLUMN_WIDTH = 30;
+public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> implements ActionTable<T> {
 
     // Click event type
     private static final String CLICK = "click"; //$NON-NLS-1$
@@ -97,9 +83,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     @UiField
     public SimplePanel tableHeaderContainer;
 
-    @UiField
-    public SimplePanel tableOverhead;
-
     private final OrderedMultiSelectionModel<T> selectionModel;
 
     @WithElementId("content")
@@ -112,11 +95,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
 
     private boolean multiSelectionDisabled;
     private final int[] mousePosition = new int[2];
-
-    private boolean columnResizingEnabled = false;
-
-    // Reference to an empty, no-width column used with resizable columns
-    private Column<T, ?> emptyNoWidthColumn;
 
     // Table container's horizontal scroll position, used to align table header with main table
     private int tableContainerHorizontalScrollPosition = 0;
@@ -137,8 +115,9 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
                     selectionModel.setMultiSelectEnabled(event.getCtrlKey());
                     selectionModel.setMultiRangeSelectEnabled(event.getShiftKey());
                 }
+
                 // Remove focus from the table so refreshes won't try to focus on the
-                // selected row. This important when the user has scrolled the selected
+                // selected row. This is important when the user has scrolled the selected
                 // row off the screen, we don't want the browser to scroll back.
                 table.setFocus(false);
                 super.onBrowserEvent2(event);
@@ -191,7 +170,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
 
         };
 
-        // Can't do this in the onBrowserEvent, as the GWT Cell table doesn't support double click.
+        // Can't do this in the onBrowserEvent, as GWT CellTable doesn't support double click.
         this.table.addDomHandler(new DoubleClickHandler() {
             @Override
             public void onDoubleClick(DoubleClickEvent event) {
@@ -205,7 +184,26 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         }, DoubleClickEvent.getType());
 
         // Create table header row
-        this.tableHeader = new ActionCellTable<T>(dataProvider, headerResources);
+        this.tableHeader = new ActionCellTable<T>(dataProvider, headerResources) {
+
+            @Override
+            public void onResizeEnd(Column<T, ?> column, Element headerElement) {
+                super.onResizeEnd(column, headerElement);
+
+                // Redraw main table
+                table.redraw();
+            }
+
+            @Override
+            public void resizeColumn(Column<T, ?> column, int newWidth) {
+                super.resizeColumn(column, newWidth);
+
+                // Resize the corresponding column in main table
+                table.resizeColumn(column, newWidth);
+            }
+
+        };
+
         this.tableHeader.setRowData(new ArrayList<T>());
         this.showDefaultHeader = headerResources == null;
 
@@ -426,81 +424,21 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         getDataProvider().goForward();
     }
 
-    void addColumn(Column<T, ?> column, Header<?> header) {
-        table.addColumn(column, header);
-        tableHeader.addColumn(column, header);
-
-        // Configure column content element ID options
-        table.configureElementId(column);
-
-        // Resizable columns require empty, no-width column to be the last table column
-        if (columnResizingEnabled) {
-            if (emptyNoWidthColumn != null) {
-                table.removeColumn(emptyNoWidthColumn);
-                tableHeader.removeColumn(emptyNoWidthColumn);
-            }
-
-            emptyNoWidthColumn = new EmptyColumn<T>();
-            table.addColumn(emptyNoWidthColumn);
-            tableHeader.addColumn(emptyNoWidthColumn);
-        }
-    }
-
     void setColumnWidth(Column<T, ?> column, String width) {
         table.setColumnWidth(column, width);
         tableHeader.setColumnWidth(column, width);
-
-        // Update cell widths
-        int columnIndex = table.getColumnIndex(column);
-        for (TableCellElement cell : getTableBodyCells(columnIndex)) {
-            cell.getStyle().setProperty("width", width); //$NON-NLS-1$
-        }
-        for (TableCellElement cell : getTableHeaderCells(columnIndex)) {
-            cell.getStyle().setProperty("width", width); //$NON-NLS-1$
-        }
-    }
-
-    List<TableCellElement> getTableBodyCells(int columnIndex) {
-        TableElement tableElement = table.getElement().cast();
-        TableSectionElement firstTBodyElement = tableElement.getTBodies().getItem(0);
-        return firstTBodyElement != null ? getCells(firstTBodyElement.getRows(), columnIndex)
-                : Collections.<TableCellElement> emptyList();
-    }
-
-    List<TableCellElement> getTableHeaderCells(int columnIndex) {
-        Element tableHeaderElement = showDefaultHeader ? table.getElement() : tableHeader.getElement();
-        TableElement tableHeaderElementCast = tableHeaderElement.cast();
-        TableSectionElement tHeadElement = tableHeaderElementCast.getTHead();
-        return tHeadElement != null ? getCells(tHeadElement.getRows(), columnIndex)
-                : Collections.<TableCellElement> emptyList();
-    }
-
-    List<TableCellElement> getCells(NodeList<TableRowElement> rows, int columnIndex) {
-        List<TableCellElement> result = new ArrayList<TableCellElement>();
-        for (int i = 0; i < rows.getLength(); i++) {
-            TableCellElement cell = rows.getItem(i).getCells().getItem(columnIndex);
-            if (cell != null) {
-                result.add(cell);
-            }
-        }
-        return result;
-    }
-
-    Header<?> getHeader(Column<T, ?> column, String headerTextOrHtml, boolean allowHtml) {
-        SafeHtml text = allowHtml ? SafeHtmlUtils.fromSafeConstant(headerTextOrHtml)
-                : SafeHtmlUtils.fromString(headerTextOrHtml);
-        return columnResizingEnabled ? new ResizableHeader<T>(text, column, this) : new SafeHtmlHeader(text);
     }
 
     /**
-     * Adds a new table column, without specifying the column width.
+     * Adds a new column, without specifying column width.
      */
     public void addColumn(Column<T, ?> column, String headerText) {
-        addColumn(column, getHeader(column, headerText, false));
+        table.addColumn(column, headerText);
+        tableHeader.addColumn(column, headerText);
     }
 
     /**
-     * Adds a new table column, using the given column width.
+     * Adds a new column, setting the column width.
      */
     public void addColumn(Column<T, ?> column, String headerText, String width) {
         addColumn(column, headerText);
@@ -508,24 +446,25 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     }
 
     /**
-     * Adds a new table column with HTML in the header text, without specifying the column width.
+     * Adds a new column with HTML header text, without specifying column width.
      * <p>
-     * {@code headerHtml} must honor the {@link SafeHtml} contract as specified in
-     * {@link SafeHtmlUtils#fromSafeConstant(String) fromSafeConstant}.
+     * {@code headerHtml} must honor the SafeHtml contract as specified in
+     * {@link com.google.gwt.safehtml.shared.SafeHtmlUtils#fromSafeConstant(String) SafeHtmlUtils.fromSafeConstant}.
      */
     public void addColumnWithHtmlHeader(Column<T, ?> column, String headerHtml) {
-        addColumn(column, getHeader(column, headerHtml, true));
+        table.addColumnWithHtmlHeader(column, headerHtml);
+        tableHeader.addColumnWithHtmlHeader(column, headerHtml);
     }
 
     /**
-     * Adds a new table column with HTML in the header text, using the given column width.
+     * Adds a new column with HTML header text, setting the column width.
      * <p>
-     * {@code headerHtml} must honor the {@link SafeHtml} contract as specified in
-     * {@link SafeHtmlUtils#fromSafeConstant(String) fromSafeConstant}.
+     * {@code headerHtml} must honor the SafeHtml contract as specified in
+     * {@link com.google.gwt.safehtml.shared.SafeHtmlUtils#fromSafeConstant(String) SafeHtmlUtils.fromSafeConstant}.
      */
     public void addColumnWithHtmlHeader(Column<T, ?> column, String headerHtml, String width) {
-        addColumnWithHtmlHeader(column, headerHtml);
-        setColumnWidth(column, width);
+        table.addColumnWithHtmlHeader(column, headerHtml, width);
+        tableHeader.addColumnWithHtmlHeader(column, headerHtml, width);
     }
 
     /**
@@ -540,28 +479,18 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
      * Ensures that the given column is added (or removed), unless it's already present (or absent).
      */
     public void ensureColumnPresent(Column<T, ?> column, String headerText, boolean present) {
-        ensureColumnPresent(column, headerText, present, null);
+        table.ensureColumnPresent(column, headerText, present);
+        tableHeader.ensureColumnPresent(column, headerText, present);
     }
 
     /**
      * Ensures that the given column is added (or removed), unless it's already present (or absent).
      * <p>
-     * This method also sets the width of the column in case the column needs to be added.
+     * This method also sets the column width in case the column needs to be added.
      */
     public void ensureColumnPresent(Column<T, ?> column, String headerText, boolean present, String width) {
-        if (present) {
-            if (table.getColumnIndex(column) != -1) {
-                removeColumn(column);
-            }
-
-            if (width == null) {
-                addColumnWithHtmlHeader(column, headerText);
-            } else {
-                addColumnWithHtmlHeader(column, headerText, width);
-            }
-        } else if (!present && table.getColumnIndex(column) != -1) {
-            removeColumn(column);
-        }
+        table.ensureColumnPresent(column, headerText, present, width);
+        tableHeader.ensureColumnPresent(column, headerText, present, width);
     }
 
     /**
@@ -569,38 +498,15 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
      * <p>
      * This method should be called before calling any {@code addColumn} methods.
      * <p>
-     * After calling this method, each column must have an explicit width defined in PX units.
+     * <em>After calling this method, each column must have an explicit width defined in PX units, otherwise the resize
+     * behavior will not function properly.</em>
      */
     public void enableColumnResizing() {
         // Column resizing is supported only when the tableHeader widget is visible
-        columnResizingEnabled = !showDefaultHeader;
-    }
-
-    @Override
-    public void onResizeStart(Column<T, ?> column, Element headerElement) {
-        headerElement.getStyle().setBackgroundColor("#D6DCFF"); //$NON-NLS-1$
-    }
-
-    @Override
-    public void onResizeEnd(Column<T, ?> column, Element headerElement) {
-        headerElement.getStyle().clearBackgroundColor();
-
-        // Redraw main table
-        table.redraw();
-
-        // Note: DO NOT redraw tableHeader, as this would cause header cell elements
-        // to be re-created, and any event handlers attached to original header cell
-        // elements would be lost
-    }
-
-    @Override
-    public void resizeColumn(Column<T, ?> column, int newWidth) {
-        setColumnWidth(column, newWidth + "px"); //$NON-NLS-1$
-    }
-
-    @Override
-    public int getMinimumColumnWidth(Column<T, ?> column) {
-        return RESIZE_MINIMUM_COLUMN_WIDTH;
+        if (!showDefaultHeader) {
+            table.enableColumnResizing();
+            tableHeader.enableColumnResizing();
+        }
     }
 
     @Override

@@ -160,6 +160,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
         this(isMultiple ? SelectionMode.MULTIPLE : SelectionMode.SINGLE, resources, hideCheckbox, showSelectAllCheckbox);
     }
 
+    @SuppressWarnings("unchecked")
     public EntityModelCellTable(SelectionMode selectionMode,
             Resources resources,
             boolean hideCheckbox,
@@ -183,7 +184,6 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
 
         // Handle selection
         getSelectionModel().addSelectionChangeHandler(new Handler() {
-            @SuppressWarnings("unchecked")
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
                 if ((EntityModelCellTable.this.listModel == null)
@@ -238,8 +238,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
                     }
                 };
                 if (showSelectAllCheckbox) {
-                    final SelectAllCheckBoxHeader<EntityModel> selectAllHeader = new SelectAllCheckBoxHeader<EntityModel>() {
-
+                    SelectAllCheckBoxHeader<EntityModel> selectAllHeader = new SelectAllCheckBoxHeader<EntityModel>() {
                         @Override
                         protected void selectionChanged(Boolean value) {
                             if (listModel == null || listModel.getItems() == null) {
@@ -257,8 +256,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
                         }
                     };
                     addColumn(checkColumn, selectAllHeader);
-                }
-                else {
+                } else {
                     addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant(constants.htmlNonBreakingSpace()));
                 }
             }
@@ -304,10 +302,14 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
         super.addColumn(column, headerHtml);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Note that this method shadows original signature semantics, replacing {@code footerString} with {@code width}.
+     */
     @Override
     public void addColumn(Column column, String headerString, String width) {
-        super.addColumn(column, headerString);
-        super.setColumnWidth(column, width);
+        addColumnAndSetWidth(column, headerString, width);
     }
 
     public void addColumn(Column column, Header<?> header, String width) {
@@ -315,6 +317,11 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
         super.setColumnWidth(column, width);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Note that this method shadows original signature semantics, replacing {@code footerString} with {@code width}.
+     */
     @Override
     public void insertColumn(int beforeIndex, Column column, String headerString, String width) {
         super.insertColumn(beforeIndex, column, headerString);
@@ -323,12 +330,6 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
 
     public void setLoadingState(LoadingState state) {
         super.onLoadingStateChanged(state);
-    }
-
-    @Override
-    public void insertColumn(int beforeIndex, Column col, Header header, Header footer) {
-        super.insertColumn(beforeIndex, col, header, footer);
-        configureElementId(col);
     }
 
     @SuppressWarnings("unchecked")

@@ -22,6 +22,7 @@ import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class SimpleActionTable<T> extends AbstractActionTable<T> {
@@ -32,6 +33,9 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
 
     @UiField
     Style style;
+
+    @UiField
+    SimplePanel tableOverhead;
 
     @UiField
     HTMLPanel barPanel;

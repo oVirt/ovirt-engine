@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.PopupTableResources;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.table.column.RadioboxCell;
 import org.ovirt.engine.ui.common.widget.table.header.SelectAllCheckBoxHeader;
+import org.ovirt.engine.ui.common.widget.table.resize.ColumnResizeCellTable;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -26,7 +27,7 @@ import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 
-public class IVdcQueryableCellTable<IVdcQueryable, M extends ListModel> extends CellTable<IVdcQueryable> implements HasEditorDriver<M> {
+public class IVdcQueryableCellTable<IVdcQueryable, M extends ListModel> extends ColumnResizeCellTable<IVdcQueryable> implements HasEditorDriver<M> {
 
     private static final int DEFAULT_PAGESIZE = 1000;
     private static final int CHECK_COLUMN_WIDTH = 27;
@@ -36,7 +37,7 @@ public class IVdcQueryableCellTable<IVdcQueryable, M extends ListModel> extends 
     private M listModel;
 
     public IVdcQueryableCellTable() {
-        super(DEFAULT_PAGESIZE, (Resources) GWT.create(PopupTableResources.class));
+        super(DEFAULT_PAGESIZE, (CellTable.Resources) GWT.create(PopupTableResources.class));
 
         SingleSelectionModel<IVdcQueryable> selectionModel = new SingleSelectionModel<IVdcQueryable>();
         setSelectionModel(selectionModel);
