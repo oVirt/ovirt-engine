@@ -31,6 +31,8 @@ public class SubTabClusterGlusterHookView extends AbstractSubTabTableView<VDSGro
     }
 
     void initTable(final ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         getTable().addColumn(new GlusterHookSyncStatusColumn(), constants.empty(), "10px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<GlusterHookEntity> nameColumn = new TextColumnWithTooltip<GlusterHookEntity>() {
@@ -39,7 +41,7 @@ public class SubTabClusterGlusterHookView extends AbstractSubTabTableView<VDSGro
                 return object.getName();
             }
         };
-        getTable().addColumn(nameColumn, constants.nameHook());
+        getTable().addColumn(nameColumn, constants.nameHook(), "200px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<GlusterHookEntity> glusterCommandColumn = new TextColumnWithTooltip<GlusterHookEntity>() {
             @Override
@@ -47,7 +49,7 @@ public class SubTabClusterGlusterHookView extends AbstractSubTabTableView<VDSGro
                 return object.getGlusterCommand();
             }
         };
-        getTable().addColumn(glusterCommandColumn, constants.glusterVolumeEventHook());
+        getTable().addColumn(glusterCommandColumn, constants.glusterVolumeEventHook(), "100px"); //$NON-NLS-1$;
 
         TextColumnWithTooltip<GlusterHookEntity> stageColumn = new EnumColumn<GlusterHookEntity, GlusterHookStage>() {
 
@@ -56,7 +58,7 @@ public class SubTabClusterGlusterHookView extends AbstractSubTabTableView<VDSGro
                 return object.getStage();
             }
         };
-        getTable().addColumn(stageColumn, constants.stageHook());
+        getTable().addColumn(stageColumn, constants.stageHook(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<GlusterHookEntity> statusColumn = new EnumColumn<GlusterHookEntity, GlusterHookStatus>() {
 
@@ -65,7 +67,7 @@ public class SubTabClusterGlusterHookView extends AbstractSubTabTableView<VDSGro
                 return object.getStatus();
             }
         };
-        getTable().addColumn(statusColumn, constants.statusHook());
+        getTable().addColumn(statusColumn, constants.statusHook(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<GlusterHookEntity> contentTypeColumn =
                 new EnumColumn<GlusterHookEntity, GlusterHookContentType>() {
@@ -75,7 +77,7 @@ public class SubTabClusterGlusterHookView extends AbstractSubTabTableView<VDSGro
                         return object.getContentType();
                     }
                 };
-        getTable().addColumn(contentTypeColumn, constants.contentTypeHook());
+        getTable().addColumn(contentTypeColumn, constants.contentTypeHook(), "150px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterHookEntity>(constants.enableHook()) {
             @Override

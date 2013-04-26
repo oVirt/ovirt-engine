@@ -31,13 +31,15 @@ public class SubTabVolumeParameterView extends AbstractSubTabTableView<GlusterVo
     }
 
     void initTable(ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         TextColumnWithTooltip<GlusterVolumeOptionEntity> optionKeyColumn = new TextColumnWithTooltip<GlusterVolumeOptionEntity>() {
             @Override
             public String getValue(GlusterVolumeOptionEntity option) {
                 return option.getKey();
             }
         };
-        getTable().addColumn(optionKeyColumn, constants.optionKeyVolumeParameter());
+        getTable().addColumn(optionKeyColumn, constants.optionKeyVolumeParameter(), "400px"); //$NON-NLS-1$
         TextColumnWithTooltip<GlusterVolumeOptionEntity> optionValueColumn =
                 new TextColumnWithTooltip<GlusterVolumeOptionEntity>() {
                     @Override
@@ -45,7 +47,7 @@ public class SubTabVolumeParameterView extends AbstractSubTabTableView<GlusterVo
                         return option.getValue();
                     }
                 };
-        getTable().addColumn(optionValueColumn, constants.optionValueVolumeParameter());
+        getTable().addColumn(optionValueColumn, constants.optionValueVolumeParameter(), "400px"); //$NON-NLS-1$;
 
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeOptionEntity>(constants.addVolumeParameter()) {
             @Override

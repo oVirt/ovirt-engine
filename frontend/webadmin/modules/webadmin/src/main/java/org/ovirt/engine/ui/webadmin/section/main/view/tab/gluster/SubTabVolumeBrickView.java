@@ -33,13 +33,15 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
     }
 
     void initTable(ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         TextColumnWithTooltip<GlusterBrickEntity> serverColumn = new TextColumnWithTooltip<GlusterBrickEntity>() {
             @Override
             public String getValue(GlusterBrickEntity brick) {
                 return brick.getServerName();
             }
         };
-        getTable().addColumn(serverColumn, constants.serverVolumeBrick());
+        getTable().addColumn(serverColumn, constants.serverVolumeBrick(), "300px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<GlusterBrickEntity> directoryColumn = new TextColumnWithTooltip<GlusterBrickEntity>() {
             @Override
@@ -47,7 +49,7 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
                 return brick.getBrickDirectory();
             }
         };
-        getTable().addColumn(directoryColumn, constants.brickDirectoryVolumeBrick());
+        getTable().addColumn(directoryColumn, constants.brickDirectoryVolumeBrick(), "400px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<GlusterBrickEntity> statusColumn =
                 new EnumColumn<GlusterBrickEntity, GlusterStatus>() {
@@ -57,7 +59,7 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
                         return object.getStatus();
                     }
                 };
-        getTable().addColumn(statusColumn, constants.statusBrick());
+        getTable().addColumn(statusColumn, constants.statusBrick(), "200px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterBrickEntity>(constants.addBricksBrick()) {
             @Override
