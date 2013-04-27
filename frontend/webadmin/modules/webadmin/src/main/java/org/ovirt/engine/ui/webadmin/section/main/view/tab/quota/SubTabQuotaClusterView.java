@@ -33,6 +33,8 @@ public class SubTabQuotaClusterView extends AbstractSubTabTableView<Quota, Quota
     }
 
     private void initTable(final ApplicationConstants constants, final ApplicationMessages messages) {
+        getTable().enableColumnResizing();
+
         getTable().addColumn(new TextColumnWithTooltip<QuotaVdsGroup>() {
             @Override
             public String getValue(QuotaVdsGroup object) {
@@ -40,7 +42,8 @@ public class SubTabQuotaClusterView extends AbstractSubTabTableView<Quota, Quota
                         : object.getVdsGroupName();
             }
         },
-                constants.nameCluster());
+                constants.nameCluster(),
+                "300px"); //$NON-NLS-1$
 
         getTable().addColumn(new TextColumnWithTooltip<QuotaVdsGroup>() {
             @Override
@@ -54,7 +57,7 @@ public class SubTabQuotaClusterView extends AbstractSubTabTableView<Quota, Quota
                 }
             }
         },
-                constants.usedMemoryTotalCluster());
+                constants.usedMemoryTotalCluster(), "300px"); //$NON-NLS-1$
 
         getTable().addColumn(new TextColumnWithTooltip<QuotaVdsGroup>() {
             @Override
@@ -68,7 +71,7 @@ public class SubTabQuotaClusterView extends AbstractSubTabTableView<Quota, Quota
                 }
             }
         },
-                constants.runningCpuTotalCluster());
+                constants.runningCpuTotalCluster(), "300px"); //$NON-NLS-1$
     }
 
 }

@@ -24,6 +24,8 @@ public class SubTabUserQuotaView extends AbstractSubTabTableView<DbUser, Quota, 
     }
 
     void initTable(ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         getTable().addColumn(new QuotaDcStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         getTable().addColumn(new TextColumnWithTooltip<Quota>() {
@@ -31,44 +33,20 @@ public class SubTabUserQuotaView extends AbstractSubTabTableView<DbUser, Quota, 
             public String getValue(Quota object) {
                 return object.getQuotaName() == null ? "" : object.getQuotaName(); //$NON-NLS-1$
             }
-        }, constants.nameQuota());
+        }, constants.nameQuota(), "300px"); //$NON-NLS-1$
 
         getTable().addColumn(new TextColumnWithTooltip<Quota>() {
             @Override
             public String getValue(Quota object) {
                 return object.getDescription() == null ? "" : object.getDescription(); //$NON-NLS-1$
             }
-        }, constants.descriptionQuota());
+        }, constants.descriptionQuota(), "300px"); //$NON-NLS-1$
         getTable().addColumn(new TextColumnWithTooltip<Quota>() {
             @Override
             public String getValue(Quota object) {
                 return object.getStoragePoolName() == null ? "" : object.getStoragePoolName(); //$NON-NLS-1$
             }
-        }, constants.dcQuota());
-//        getTable().addColumn(new TextColumnWithTooltip<Quota>() {
-//            @Override
-//            public String getValue(Quota object) {
-//                return (object.getMemSizeMBUsage() == null ? "0" : object.getMemSizeMBUsage().toString()) + "/" //$NON-NLS-1$ //$NON-NLS-2$
-//                        + (object.getMemSizeMB() == null ? "*" : object.getMemSizeMB().toString()) + " GB"; //$NON-NLS-1$ //$NON-NLS-2$
-//            }
-//        },
-//                constants.usedMemoryQuota());
-//        getTable().addColumn(new TextColumnWithTooltip<Quota>() {
-//            @Override
-//            public String getValue(Quota object) {
-//                return (object.getVirtualCpuUsage() == null ? "0" : object.getVirtualCpuUsage().toString()) + "/" //$NON-NLS-1$ //$NON-NLS-2$
-//                        + (object.getVirtualCpu() == null ? "*" : object.getVirtualCpu().toString()); //$NON-NLS-1$
-//            }
-//        },
-//                constants.runningCpuQuota());
-//        getTable().addColumn(new TextColumnWithTooltip<Quota>() {
-//            @Override
-//            public String getValue(Quota object) {
-//                return (object.getStorageSizeGBUsage() == null ? "0" : object.getStorageSizeGBUsage().toString()) + "/" //$NON-NLS-1$ //$NON-NLS-2$
-//                        + (object.getStorageSizeGB() == null ? "*" : object.getStorageSizeGB().toString()) + " GB"; //$NON-NLS-1$ //$NON-NLS-2$
-//            }
-//        },
-//                constants.usedStorageQuota());
+        }, constants.dcQuota(), "300px"); //$NON-NLS-1$
     }
 
 }

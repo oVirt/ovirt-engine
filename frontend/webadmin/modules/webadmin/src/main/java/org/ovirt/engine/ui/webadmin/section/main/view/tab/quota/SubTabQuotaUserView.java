@@ -35,6 +35,8 @@ public class SubTabQuotaUserView extends AbstractSubTabTableView<Quota, permissi
     }
 
     private void initTable(ApplicationConstants constants) {
+        getTable().enableColumnResizing();
+
         getTable().addColumn(new PermissionTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<permissions> userColumn = new TextColumnWithTooltip<permissions>() {
@@ -43,7 +45,7 @@ public class SubTabQuotaUserView extends AbstractSubTabTableView<Quota, permissi
                 return object.getOwnerName();
             }
         };
-        getTable().addColumn(userColumn, constants.userUser());
+        getTable().addColumn(userColumn, constants.userUser(), "400px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<permissions> permissionColumn = new ObjectNameColumn<permissions>() {
             @Override
@@ -53,7 +55,7 @@ public class SubTabQuotaUserView extends AbstractSubTabTableView<Quota, permissi
                 };
             }
         };
-        getTable().addColumn(permissionColumn, constants.inheritedFromUser());
+        getTable().addColumn(permissionColumn, constants.inheritedFromUser(), "400px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<permissions>(constants.addUser()) {
             @Override

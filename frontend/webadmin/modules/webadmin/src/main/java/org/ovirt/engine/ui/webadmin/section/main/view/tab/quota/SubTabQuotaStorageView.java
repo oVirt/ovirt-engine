@@ -39,6 +39,8 @@ public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, Quota
     }
 
     private void initTable(final ApplicationConstants constants, final ApplicationMessages messages) {
+        getTable().enableColumnResizing();
+
         getTable().addColumn(new TextColumnWithTooltip<QuotaStorage>() {
             @Override
             public String getValue(QuotaStorage object) {
@@ -46,7 +48,8 @@ public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, Quota
                         : object.getStorageName();
             }
         },
-                constants.nameQuotaStorage());
+                constants.nameQuotaStorage(),
+                "400px"); //$NON-NLS-1$
 
         getTable().addColumn(new TextColumnWithEditableTooltip<QuotaStorage>() {
             @Override
@@ -72,6 +75,6 @@ public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, Quota
                 return textCellWithEditableTooltip;
             }
         },
-                constants.usedStorageTotalQuotaStorage());
+                constants.usedStorageTotalQuotaStorage(), "400px"); //$NON-NLS-1$
     }
 }
