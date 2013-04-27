@@ -818,13 +818,13 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Storage Type")
     String storageTypeVmDiskPopup();
 
-    @DefaultStringValue("Wipe after delete")
+    @DefaultStringValue("Wipe After Delete")
     String wipeAfterDeleteVmDiskPopup();
 
-    @DefaultStringValue("Is bootable")
+    @DefaultStringValue("Is Bootable")
     String isBootableVmDiskPopup();
 
-    @DefaultStringValue("Is shareable")
+    @DefaultStringValue("Is Shareable")
     String isShareableVmDiskPopup();
 
     @DefaultStringValue("Activate")
