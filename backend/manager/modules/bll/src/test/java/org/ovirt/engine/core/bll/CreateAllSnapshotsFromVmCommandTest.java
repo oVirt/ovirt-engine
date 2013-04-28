@@ -68,6 +68,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
     public void testPositiveCanDoActionWithNoDisks() {
         setUpGeneralValidations();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
+        doReturn(Guid.NewGuid()).when(cmd).getStorageDomainId();
         assertTrue(cmd.canDoAction());
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().isEmpty());
     }
@@ -169,6 +170,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
         setUpGeneralValidations();
         setUpDiskValidations();
         doReturn(getNonEmptyDiskList()).when(cmd).getDisksList();
+        doReturn(Guid.NewGuid()).when(cmd).getStorageDomainId();
         assertTrue(cmd.canDoAction());
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().isEmpty());
     }

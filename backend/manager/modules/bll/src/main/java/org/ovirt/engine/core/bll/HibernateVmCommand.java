@@ -37,6 +37,11 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOperationCommandBase<T> {
     private boolean isHibernateVdsProblematic = false;
+
+    /** The size for the snapshot's meta data which is vm related properties at the
+     *  time the snapshot was taken */
+    public static final long META_DATA_SIZE_IN_BYTES = 10 * 1024;
+
     /**
      * Constructor for command creation when compensation is applied on startup
      *
@@ -66,7 +71,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
     public NGuid getStorageDomainId() {
         if (_storageDomainId.equals(Guid.Empty) && getVm() != null) {
             long sizeNeeded = (getVm().getTotalMemorySizeInBytes()
-                    + getMetaDataSizeInBytes()) / BYTES_IN_GB;
+                    + META_DATA_SIZE_IN_BYTES) / BYTES_IN_GB;
             StorageDomain storageDomain = VmHandler.findStorageDomainForMemory(getVm().getStoragePoolId(), sizeNeeded);
             if (storageDomain != null) {
                 _storageDomainId = storageDomain.getId();
@@ -156,7 +161,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                                             getStorageDomainId()
                                                     .getValue(),
                                             image2GroupId,
-                                            getMetaDataSizeInBytes(),
+                                            META_DATA_SIZE_IN_BYTES,
                                             VolumeType.Sparse,
                                             VolumeFormat.COW,
                                             hiberVol2,
@@ -248,7 +253,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
             return failCanDoAction(VdcBllMessages.VM_CANNOT_SUSPEND_VM_FROM_POOL);
         }
         if (getStorageDomainId().equals(Guid.Empty)) {
-            return failCanDoAction(VdcBllMessages.VM_CANNOT_SUSPEND_NO_SUITABLE_DOMAIN_FOUND);
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
         }
         return true;
     }
@@ -368,15 +373,6 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
     private VolumeType getVolumeType() {
         return (getStoragePool().getstorage_pool_type().isFileDomain()) ? VolumeType.Sparse
                 : VolumeType.Preallocated;
-    }
-
-    /**
-     * Returns the meta data that should be allocated when saving state of image.
-     *
-     * @return - Meta data size for allocation in bytes.
-     */
-    private long getMetaDataSizeInBytes() {
-        return (long) 10 * 1024;
     }
 
     private static Log log = LogFactory.getLog(HibernateVmCommand.class);

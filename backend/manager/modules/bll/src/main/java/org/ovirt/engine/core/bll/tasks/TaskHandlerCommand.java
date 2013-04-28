@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.tasks;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -27,4 +29,8 @@ public interface TaskHandlerCommand<T extends VdcActionParametersBase> {
             VdcObjectType entityType,
             Guid... entityIds);
 
+    Guid createTask(AsyncTaskCreationInfo asyncTaskCreationInfo,
+            VdcActionType parentCommand);
+
+    ArrayList<Guid> getTaskIdList();
 }

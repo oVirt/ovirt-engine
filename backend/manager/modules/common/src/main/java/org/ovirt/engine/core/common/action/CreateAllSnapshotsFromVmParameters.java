@@ -18,7 +18,7 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
     @ValidDescription(message = "VALIDATION.DISK_IMAGE.DESCRIPTION.INVALID", groups = { CreateEntity.class })
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE, groups = { CreateEntity.class},
             message = "VALIDATION_DISK_IMAGE_DESCRIPTION_MAX")
-    private String _description;
+    private String description;
 
     private boolean needsLocking = true;
     /** Used to store the vm status when the command start, will be used to check if the vm went down during the execution */
@@ -27,16 +27,24 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
     /** Used to indicate the type of snapshot to take */
     private SnapshotType snapshotType;
 
+    /** Used to indicate whether the memory should be saved as part of this snapshot or not */
+    private boolean saveMemory;
+
     public CreateAllSnapshotsFromVmParameters() {
     }
 
     public CreateAllSnapshotsFromVmParameters(Guid vmId, String description) {
         super(vmId);
-        _description = description;
+        this.description = description;
+    }
+
+    public CreateAllSnapshotsFromVmParameters(Guid vmId, String description, boolean saveMemory) {
+        this(vmId, description);
+        this.saveMemory = saveMemory;
     }
 
     public String getDescription() {
-        return _description;
+        return description;
     }
 
     public SnapshotType getSnapshotType() {
@@ -57,6 +65,14 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
      */
     public void setSnapshotType(SnapshotType snapshotType) {
         this.snapshotType = snapshotType;
+    }
+
+    public boolean isSaveMemory() {
+        return saveMemory;
+    }
+
+    public void setSaveMemory(boolean saveMemory) {
+        this.saveMemory = saveMemory;
     }
 
     public boolean isNeedsLocking() {

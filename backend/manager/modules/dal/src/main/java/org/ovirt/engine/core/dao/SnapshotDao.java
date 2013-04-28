@@ -61,6 +61,20 @@ public interface SnapshotDao extends GenericDao<Snapshot, Guid>, StatusAwareDao<
      */
     Snapshot get(Guid vmId, SnapshotType type);
 
+    /**
+     * Return the <b>first</b> {@link Snapshot} that matches the given parameters.<br>
+     * <b>Note:</b> If more than one snapshot answers to the parameters, only the first will be returned (oldest by
+     * creation date).
+     *
+     * @param vmId
+     *            The id of the VM to check for.
+     * @param type
+     *            The type of snapshot.
+     * @param status
+     *            The status of the snapshot.
+     * @return The snapshot, or <code>null</code> if it doesn't exist.
+     */
+    Snapshot get(Guid vmId, SnapshotType type, SnapshotStatus status);
 
     /**
      * Return the {@link Snapshot} <b>first</b> id that matches the given parameters.<br>

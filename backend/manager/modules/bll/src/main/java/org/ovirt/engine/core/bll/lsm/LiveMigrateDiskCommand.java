@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.lsm;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -85,6 +86,16 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     @Override
     public VdcActionType getActionType() {
         return super.getActionType();
+    }
+
+    @Override
+    public Guid createTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
+        return super.createTask(asyncTaskCreationInfo, parentCommand);
+    }
+
+    @Override
+    public ArrayList<Guid> getTaskIdList() {
+        return super.getTaskIdList();
     }
 
     @Override

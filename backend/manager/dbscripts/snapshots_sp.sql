@@ -154,6 +154,24 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetSnapshotByVmIdAndTypeAndStatus(
+    v_vm_id UUID,
+    v_snapshot_type VARCHAR(32),
+    v_status VARCHAR(32))
+RETURNS SETOF snapshots
+AS $procedure$
+BEGIN
+    RETURN QUERY
+    SELECT *
+    FROM   snapshots
+    WHERE  vm_id = v_vm_id
+    AND    snapshot_type = v_snapshot_type
+    AND    status = v_status
+    ORDER BY creation_date ASC
+    LIMIT 1;
+END; $procedure$
+LANGUAGE plpgsql;
+
 
 
 

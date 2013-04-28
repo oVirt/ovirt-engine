@@ -95,6 +95,7 @@ public class SnapshotsManager {
                 SnapshotType.ACTIVE,
                 vm,
                 false,
+                StringUtils.EMPTY,
                 compensationContext);
     }
 
@@ -120,7 +121,8 @@ public class SnapshotsManager {
             SnapshotType snapshotType,
             VM vm,
             final CompensationContext compensationContext) {
-        return addSnapshot(snapshotId, description, SnapshotStatus.LOCKED, snapshotType, vm, true, compensationContext);
+        return addSnapshot(snapshotId, description, SnapshotStatus.LOCKED,
+                snapshotType, vm, true, StringUtils.EMPTY, compensationContext);
     }
 
     /**
@@ -148,6 +150,7 @@ public class SnapshotsManager {
             SnapshotType snapshotType,
             VM vm,
             boolean saveVmConfiguration,
+            String memoryVolume,
             final CompensationContext compensationContext) {
         final Snapshot snapshot = new Snapshot(snapshotId,
                 snapshotStatus,
@@ -157,7 +160,7 @@ public class SnapshotsManager {
                 description,
                 new Date(),
                 vm.getAppList(),
-                StringUtils.EMPTY);
+                memoryVolume);
 
         getSnapshotDao().save(snapshot);
         compensationContext.snapshotNewEntity(snapshot);

@@ -90,6 +90,16 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     }
 
     @Override
+    public Guid createTask(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
+        return super.createTask(asyncTaskCreationInfo, parentCommand);
+    }
+
+    @Override
+    public ArrayList<Guid> getTaskIdList() {
+        return super.getTaskIdList();
+    }
+
+    @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
 

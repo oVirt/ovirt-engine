@@ -904,9 +904,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot suspend VM that belongs to a  VM-Pool.")
     String VM_CANNOT_SUSPEND_VM_FROM_POOL();
 
-    @DefaultStringValue("Cannot suspend VM. No active data Storage Domain with enough storage was found in the Data Center.")
-    String VM_CANNOT_SUSPEND_NO_SUITABLE_DOMAIN_FOUND();
-
     @DefaultStringValue("User is not authorized to perform this action.")
     String USER_NOT_AUTHORIZED_TO_PERFORM_ACTION();
 
@@ -966,6 +963,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Storage connection doesn't exist.")
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST();
+
+    @DefaultStringValue("Cannot ${action} ${type}. No active data Storage Domain with enough storage was found in the Data Center.")
+    String ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND();
 
     @DefaultStringValue("Cannot ${action} ${type}. Storage connection already exists.")
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS();
@@ -1365,6 +1365,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. This template is currently in use to create VM ${VmName}.")
     String ACTION_TYPE_FAILED_TEMPLATE_IS_USED_FOR_CREATE_VM();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Snapshot is currently being created for VM ${VmName}.")
+    String ACTION_TYPE_FAILED_SNAPSHOT_IS_BEING_TAKEN_FOR_VM();
 
     @DefaultStringValue("Cannot ${action} ${type}. This disk is currently in use to create VM ${VmName}.")
     String ACTION_TYPE_FAILED_DISK_IS_USED_FOR_CREATE_VM();
