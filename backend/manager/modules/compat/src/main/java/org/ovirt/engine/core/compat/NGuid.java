@@ -79,7 +79,7 @@ public class NGuid implements Serializable, Comparable<NGuid> {
     @Override
     public String toString() {
         if (uuid == null)
-            return null;
+            return "[null]";
         else
             return uuid.toString();
     }
