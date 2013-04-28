@@ -12,12 +12,14 @@ import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
-import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -173,32 +175,30 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     private EventResult runConnectHostToPoolEvent(final Guid storagePoolId, final VDS vds) {
         EventResult result = new EventResult(true, EventType.VDSCONNECTTOPOOL);
         StoragePool storagePool = getStoragePoolDAO().get(storagePoolId);
-        Guid masterDomainIdFromDb = getStorageDomainDAO().getMasterStorageDomainIdForPool(storagePoolId);
+        StorageDomain masterDomain = getStorageDomainDAO().getStorageDomainByTypeAndPool(storagePoolId, StorageDomainType.Master);
+        boolean shouldProceedVdsStats = true;
         try {
             runVdsCommand(VDSCommandType.ConnectStoragePool,
                     new ConnectStoragePoolVDSCommandParameters(vds.getId(), storagePoolId,
-                            vds.getVdsSpmId(), masterDomainIdFromDb,
-                            storagePool.getmaster_domain_version())).getSucceeded();
+                            vds.getVdsSpmId(), masterDomain.getId(),
+                            storagePool.getmaster_domain_version()));
         } catch (VdcBLLException e) {
-            if (e.getErrorCode() == VdcBllErrors.StoragePoolWrongMaster
-                    || e.getErrorCode() == VdcBllErrors.StoragePoolMasterNotFound) {
-                boolean returnValue =
-                        Backend.getInstance()
-                                .runInternalAction(VdcActionType.ReconstructMasterDomain,
-                                        new ReconstructMasterParameters(vds.getStoragePoolId(),
-                                                masterDomainIdFromDb, vds.getId(), true)).getSucceeded();
-                result = new EventResult(returnValue, EventType.RECONSTRUCT);
+            if (e.getErrorCode() != VdcBllErrors.VDS_NETWORK_ERROR &&
+                    (masterDomain.getStatus() == StorageDomainStatus.InActive
+                    || masterDomain.getStatus() == StorageDomainStatus.Unknown)) {
+                shouldProceedVdsStats = false;
+                log.infoFormat("Could not connect host {0} to pool {1}, as the master domain is in inactive/unknown status - not failing the operation",
+                        vds.getName(),
+                        storagePool
+                                .getname());
             } else {
                 log.errorFormat("Could not connect host {0} to pool {1}", vds.getName(), storagePool
                         .getname());
                 result.setSuccess(false);
             }
-        } catch (RuntimeException exp) {
-            log.errorFormat("Could not connect host {0} to pool {1}", vds.getName(), storagePool
-                    .getname());
-            result.setSuccess(false);
         }
-        if (result.isSuccess() && result.getEventType() != EventType.RECONSTRUCT) {
+
+        if (result.isSuccess() && shouldProceedVdsStats) {
             result.setSuccess(proceedVdsStats());
             if (!result.isSuccess()) {
                 AuditLogDirector.log(new AuditLogableBase(getVdsId()),

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
@@ -14,13 +15,24 @@ import org.ovirt.engine.core.compat.NGuid;
  */
 public interface StorageDomainDAO extends DAO, SearchDAO<StorageDomain>, AutoRecoverDAO<StorageDomain> {
     /**
-     * Retrieves the master storage domain for the specified pool.
+     * Retrieves the master storage domain id for the specified pool.
      *
      * @param pool
      *            the storage pool
      * @return the master storage domain
      */
     Guid getMasterStorageDomainIdForPool(Guid pool);
+
+    /**
+     * Retrieves storage domain for the specified pool by type.
+     *
+     * @param pool
+     *            the storage pool
+     * @param type
+     *            the storage domain type
+     * @return the master storage domain
+     */
+    StorageDomain getStorageDomainByTypeAndPool(Guid pool, StorageDomainType type);
 
     /**
      * Retrieves the master storage domain for the specified pool.

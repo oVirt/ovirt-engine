@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
@@ -50,6 +51,14 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
 
         assertNotNull(result);
         assertEquals(EXISTING_DOMAIN_ID, result);
+    }
+
+    @Test
+    public void testGetstorage_domain_by_type_for_storagePoolId() {
+        StorageDomain result = dao.getStorageDomainByTypeAndPool(EXISTING_STORAGE_POOL_ID, StorageDomainType.Master);
+
+        assertNotNull(result);
+        assertGetResult(result);
     }
 
     /**

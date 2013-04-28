@@ -28,6 +28,15 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
     }
 
     @Override
+    public StorageDomain getStorageDomainByTypeAndPool(Guid pool, StorageDomainType type) {
+        return getCallsHandler().executeRead("Getstorage_domain_by_type_and_storagePoolId",
+                StorageDomainRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("storage_pool_id", pool)
+                        .addValue("storage_domain_type", type.getValue()));
+    }
+
+    @Override
     public Guid getIsoStorageDomainIdForPool(Guid pool) {
         return getStorageDomainIdForPoolByType(pool, StorageDomainType.ISO);
     }
@@ -187,12 +196,9 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
      */
     private Guid getStorageDomainIdForPoolByType(Guid pool, StorageDomainType type) {
         Guid returnValue = Guid.Empty;
-        List<StorageDomain> domains = getAllForStoragePool(pool);
-        for (StorageDomain domain : domains) {
-            if (domain.getStorageDomainType() == type) {
-                returnValue = domain.getId();
-                break;
-            }
+        StorageDomain domain = getStorageDomainByTypeAndPool(pool, type);
+        if (domain != null) {
+            returnValue = domain.getId();
         }
         return returnValue;
     }

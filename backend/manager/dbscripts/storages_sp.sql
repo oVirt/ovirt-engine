@@ -474,6 +474,18 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION Getstorage_domain_by_type_and_storagePoolId(v_storage_domain_type INTEGER, v_storage_pool_id UUID)
+RETURNS SETOF storage_domains
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM storage_domains
+   WHERE storage_pool_id = v_storage_pool_id
+   AND storage_domain_type = v_storage_domain_type;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 Create or replace FUNCTION Getstorage_domains_By_connection(v_connection CHARACTER VARYING)
 RETURNS SETOF storage_domains
    AS $procedure$
