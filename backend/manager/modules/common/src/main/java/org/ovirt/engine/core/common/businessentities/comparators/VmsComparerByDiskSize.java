@@ -1,6 +1,8 @@
-package org.ovirt.engine.core.common.businessentities;
+package org.ovirt.engine.core.common.businessentities.comparators;
 
 import java.io.Serializable;
+
+import org.ovirt.engine.core.common.businessentities.VM;
 
 public class VmsComparerByDiskSize implements java.util.Comparator<VM>, Serializable {
     private static final long serialVersionUID = -3546735706731409532L;

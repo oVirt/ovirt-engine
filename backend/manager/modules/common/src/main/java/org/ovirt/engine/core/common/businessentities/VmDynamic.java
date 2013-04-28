@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityGuidComparator;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;

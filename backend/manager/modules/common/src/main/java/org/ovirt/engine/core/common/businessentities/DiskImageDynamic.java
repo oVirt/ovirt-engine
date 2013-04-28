@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityGuidComparator;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 

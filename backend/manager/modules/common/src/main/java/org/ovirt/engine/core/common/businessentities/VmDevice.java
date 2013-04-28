@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityComparator;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 

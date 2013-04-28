@@ -3,9 +3,9 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.ImagesComparerByName;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmsComparerByDiskSize;
+import org.ovirt.engine.core.common.businessentities.comparators.ImagesComparerByName;
+import org.ovirt.engine.core.common.businessentities.comparators.VmsComparerByDiskSize;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryTopSizeVmsParameters;

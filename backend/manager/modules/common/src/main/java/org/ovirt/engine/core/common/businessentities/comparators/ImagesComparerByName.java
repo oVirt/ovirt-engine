@@ -1,6 +1,8 @@
-package org.ovirt.engine.core.common.businessentities;
+package org.ovirt.engine.core.common.businessentities.comparators;
 
 import java.io.Serializable;
+
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 
 public class ImagesComparerByName implements java.util.Comparator<DiskImage>, Serializable {
     private static final long serialVersionUID = -6854346772820338515L;

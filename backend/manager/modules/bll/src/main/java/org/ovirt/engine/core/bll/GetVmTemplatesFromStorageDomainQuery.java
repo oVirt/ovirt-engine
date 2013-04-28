@@ -3,9 +3,9 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.ImagesComparerByName;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.VmTemplateComparerByDiskSize;
+import org.ovirt.engine.core.common.businessentities.comparators.ImagesComparerByName;
+import org.ovirt.engine.core.common.businessentities.comparators.VmTemplateComparerByDiskSize;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 

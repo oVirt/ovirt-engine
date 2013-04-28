@@ -150,8 +150,8 @@
 		<include name="common/businessentities/FileRepoMetaData.java" />
 		<include name="common/businessentities/RepoFileMetaData.java" />
 		<include name="common/businessentities/ImageFileType.java" />
-		<include name="common/businessentities/BusinessEntityGuidComparator.java" />
-		<include name="common/businessentities/BusinessEntityComparator.java" />
+		<include name="common/businessentities/comparators/BusinessEntityGuidComparator.java" />
+		<include name="common/businessentities/comparators/BusinessEntityComparator.java" />
                 <include name="common/businessentities/Identifiable.java" />
 		<include name="common/businessentities/VmGuestAgentInterface.java" />
 		<include name="common/job/*.java" />

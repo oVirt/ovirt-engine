@@ -1,7 +1,9 @@
-package org.ovirt.engine.core.common.businessentities;
+package org.ovirt.engine.core.common.businessentities.comparators;
 
 import java.io.Serializable;
 import java.util.Comparator;
+
+import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 
 /**
  * Generic for implementing a business entity comparator based on ID comparison

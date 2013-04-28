@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmsComparer;
+import org.ovirt.engine.core.common.businessentities.comparators.VmsComparer;
 import org.ovirt.engine.core.common.vdscommands.SetVmStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVdsVMsClearedVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;

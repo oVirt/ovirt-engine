@@ -1,6 +1,8 @@
-package org.ovirt.engine.core.common.businessentities;
+package org.ovirt.engine.core.common.businessentities.comparators;
 
 import java.io.Serializable;
+
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 
 public class VmTemplateComparerByDiskSize implements
         java.util.Comparator<VmTemplate>, Serializable {
