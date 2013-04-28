@@ -127,11 +127,11 @@ ARTIFACTS = \
 
 # List of files that will be generated from templates:
 GENERATED = \
-	backend/manager/conf/engine.conf.defaults \
-	backend/manager/tools/src/main/shell/engine-prolog.sh \
-	backend/manager/tools/src/main/conf/engine-config-log4j.xml \
-	backend/manager/tools/src/main/conf/engine-manage-domains-log4j.xml \
-	backend/manager/tools/src/main/conf/engine-notifier-log4j.xml \
+	packaging/bin/engine-prolog.sh \
+	packaging/conf/engine.conf.defaults \
+	packaging/etc/engine-config/log4j.xml \
+	packaging/etc/engine-manage-domains/log4j.xml \
+	packaging/etc/notifier/log4j.xml \
 	packaging/services/config.py \
 	packaging/services/ovirt-engine.systemd \
 	packaging/services/ovirt-engine.sysv \
@@ -273,7 +273,7 @@ install_setup:
 	@echo "*** Deploying setup executables"
 
 	# Configuration files:
-	install -m 644 packaging/fedora/setup/engine-config-install.properties $(DESTDIR)$(DATA_DIR)/conf
+	install -m 644 packaging/conf/engine-config-install.properties $(DESTDIR)$(DATA_DIR)/conf
 	install -m 644 packaging/fedora/setup/iptables.default $(DESTDIR)$(DATA_DIR)/conf
 	install -m 644 packaging/fedora/setup/firewalld.ovirt.xml $(DESTDIR)$(SYSCONF_DIR)/firewalld/services/ovirt.xml
 	install -m 644 packaging/fedora/setup/nfs.sysconfig $(DESTDIR)$(DATA_DIR)/conf
@@ -330,36 +330,36 @@ install_sec:
 	install -dm 755 $(DESTDIR)$(PKG_PKI_DIR)/requests
 
 	# Configuration files:
-	install -m 644 backend/manager/conf/ca/openssl.conf $(DESTDIR)$(PKG_PKI_DIR)
-	install -m 644 backend/manager/conf/ca/cacert.template.in $(DESTDIR)$(PKG_PKI_DIR)
-	install -m 644 backend/manager/conf/ca/cert.template.in $(DESTDIR)$(PKG_PKI_DIR)
+	install -m 644 packaging/etc/pki/openssl.conf $(DESTDIR)$(PKG_PKI_DIR)
+	install -m 644 packaging/etc/pki/cacert.template.in $(DESTDIR)$(PKG_PKI_DIR)
+	install -m 644 packaging/etc/pki/cert.template.in $(DESTDIR)$(PKG_PKI_DIR)
 
 	# Scripts:
-	install -m 755 backend/manager/conf/ca/*.sh $(DESTDIR)$(PKG_PKI_DIR)
-	install -m 644 backend/manager/conf/ca/*.lock $(DESTDIR)$(PKG_PKI_DIR)
+	install -m 755 packaging/etc/pki/*.sh $(DESTDIR)$(PKG_PKI_DIR)
+	install -m 644 packaging/etc/pki/*.lock $(DESTDIR)$(PKG_PKI_DIR)
 
 install_config:
 	@echo "*** Deploying engine-config & engine-manage-domains"
 
 	# Configuration files for the configuration tool:
-	install -m 644 backend/manager/tools/src/main/conf/engine-config.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config/
-	install -m 644 backend/manager/tools/src/main/conf/engine-config*.properties $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config/
-	install -m 644 backend/manager/tools/src/main/conf/engine-config-log4j.xml $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config/log4j.xml
+	install -m 644 packaging/etc/engine-config/engine-config.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config/
+	install -m 644 packaging/etc/engine-config/engine-config*.properties $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config/
+	install -m 644 packaging/etc/engine-config/log4j.xml $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config/log4j.xml
 
 	# Main program for the configuration tool:
-	install -m 750 backend/manager/tools/src/main/shell/engine-config.sh $(DESTDIR)$(DATA_DIR)/bin
+	install -m 750 packaging/bin/engine-config.sh $(DESTDIR)$(DATA_DIR)/bin
 	ln -sf $(DATA_DIR)/bin/engine-config.sh $(DESTDIR)$(BIN_DIR)/engine-config
 
 	# Configuration files for the domain management tool:
-	install -m 644 backend/manager/tools/src/main/conf/engine-manage-domains.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-manage-domains/
-	install -m 644 backend/manager/tools/src/main/conf/engine-manage-domains-log4j.xml $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-manage-domains/log4j.xml
+	install -m 644 packaging/etc/engine-manage-domains/engine-manage-domains.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-manage-domains/
+	install -m 644 packaging/etc/engine-manage-domains/log4j.xml $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-manage-domains/
 
 	# Main program for the domain management tool:
-	install -m 750 backend/manager/tools/src/main/shell/engine-manage-domains.sh $(DESTDIR)$(DATA_DIR)/bin
+	install -m 750 packaging/bin/engine-manage-domains.sh $(DESTDIR)$(DATA_DIR)/bin
 	ln -sf $(DATA_DIR)/bin/engine-manage-domains.sh $(DESTDIR)$(BIN_DIR)/engine-manage-domains
 
 	# Script to encrypt passwords:
-	install -m 750 backend/manager/tools/src/main/shell/engine-encrypt-passwd.sh $(DESTDIR)$(DATA_DIR)/bin
+	install -m 750 packaging/bin/engine-encrypt-passwd.sh $(DESTDIR)$(DATA_DIR)/bin
 
 	# Install man pages
 	install -m 644 packaging/man/engine-manage-domains.8 $(DESTDIR)$(MAN_DIR)/man8/
@@ -367,7 +367,7 @@ install_config:
 install_sysprep:
 	@echo "*** Deploying sysperp"
 	@install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/sysprep
-	install -m 644 backend/manager/conf/sysprep/* $(DESTDIR)$(PKG_SYSCONF_DIR)/sysprep
+	install -m 644 packaging/etc/sysprep/* $(DESTDIR)$(PKG_SYSCONF_DIR)/sysprep
 
 install_notification_service:
 	@echo "*** Deploying notification service"
@@ -375,12 +375,12 @@ install_notification_service:
 	install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/notifier
 
 	# Configuration files:
-	install -m 644 backend/manager/tools/src/main/conf/engine-notifier-log4j.xml $(DESTDIR)$(PKG_SYSCONF_DIR)/notifier/log4j.xml
-	install -m 640 backend/manager/tools/src/main/conf/engine-notifier.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/notifier/notifier.conf
+	install -m 644 packaging/etc/notifier/log4j.xml $(DESTDIR)$(PKG_SYSCONF_DIR)/notifier/log4j.xml
+	install -m 640 packaging/etc/notifier/notifier.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/notifier/notifier.conf
 
 	# Main program:
-	install -m 755 backend/manager/tools/src/main/shell/engine-notifier.sh $(DESTDIR)$(DATA_DIR)/bin/engine-notifier.sh
-	install -m 755 backend/manager/tools/src/main/shell/engine-notifier-service.sh $(DESTDIR)$(SYSCONF_DIR)/rc.d/init.d/engine-notifierd
+	install -m 755 packaging/bin/engine-notifier.sh $(DESTDIR)$(DATA_DIR)/bin/engine-notifier.sh
+	install -m 755 packaging/bin/engine-notifier-service.sh $(DESTDIR)$(SYSCONF_DIR)/rc.d/init.d/engine-notifierd
 
 install_db_scripts:
 	@echo "*** Deploying Database scripts"
@@ -394,18 +394,18 @@ install_misc:
 	@echo "*** Copying additional files"
 
 	# Shell scripts used by several programs:
-	install -m 755 backend/manager/tools/src/main/shell/engine-prolog.sh $(DESTDIR)$(DATA_DIR)/bin
+	install -m 755 packaging/bin/engine-prolog.sh $(DESTDIR)$(DATA_DIR)/bin
 
 	# Other misc things:
-	install -m 644 backend/manager/conf/jaas.conf $(DESTDIR)$(DATA_DIR)/conf
-	install -m 644 backend/manager/conf/engine.conf.defaults $(DESTDIR)$(DATA_DIR)/conf
-	install -m 644 backend/manager/conf/engine.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/
+	install -m 644 packaging/conf/jaas.conf $(DESTDIR)$(DATA_DIR)/conf
+	install -m 644 packaging/conf/engine.conf.defaults $(DESTDIR)$(DATA_DIR)/conf
+	install -m 644 packaging/etc/engine.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/
 	install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/engine.conf.d
 	install -m 755 packaging/resources/ovirtlogrot.sh ${DESTDIR}$(DATA_DIR)/scripts/
 	install -m 755 packaging/resources/ovirt-cron ${DESTDIR}$(SYSCONF_DIR)/cron.daily/
 
 	# USB filter:
-	install -m 644 frontend/usbfilter.txt $(DESTDIR)$(PKG_SYSCONF_DIR)
+	install -m 644 packaging/etc/usbfilter.txt $(DESTDIR)$(PKG_SYSCONF_DIR)
 
 	# Create a version file
 	echo $(DISPLAY_VERSION) > $(DESTDIR)$(DATA_DIR)/conf/version
