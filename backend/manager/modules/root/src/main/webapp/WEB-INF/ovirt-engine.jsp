@@ -44,9 +44,9 @@
                 <c:if test="${requestScope['locale'].toString() == 'en_US'}">
                     <c:set var="localeParam" value=""/>
                 </c:if>
-                <div><a href="UserPortal/org.ovirt.engine.ui.userportal.UserPortal/UserPortal.html${localeParam}"><fmt:message key="splash.menu.userportal" /></a></div>
-                <div><a href="webadmin/webadmin/WebAdmin.html${localeParam}"><fmt:message key="splash.menu.adminportal" /></a></div>
-                <div><a href="OvirtEngineWeb/RedirectServlet?Page=Reports"><fmt:message key="splash.menu.reportsportal" /></a></div>
+                <div><a href="/UserPortal/org.ovirt.engine.ui.userportal.UserPortal/UserPortal.html${localeParam}"><fmt:message key="splash.menu.userportal" /></a></div>
+                <div><a href="/webadmin/webadmin/WebAdmin.html${localeParam}"><fmt:message key="splash.menu.adminportal" /></a></div>
+                <div><a href="/OvirtEngineWeb/RedirectServlet?Page=Reports"><fmt:message key="splash.menu.reportsportal" /></a></div>
             </div>
         </div>
         <div class="locale_select_panel">

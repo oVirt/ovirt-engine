@@ -20,7 +20,6 @@
     </Proxy>
 
     Redirect /ovirt-engine /ovirt-engine/
-    Redirect /ovirt-engine.html /ovirt-engine/
 
     <Location /ovirt-engine/>
         ProxyPass ajp://localhost:@JBOSS_AJP_PORT@/

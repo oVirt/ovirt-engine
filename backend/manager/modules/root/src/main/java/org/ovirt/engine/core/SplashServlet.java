@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
 /**
  * This Servlet serves the splash page to allow users to select either web admin or user portal.
  */
-@WebServlet(value = "/index")
+@WebServlet(value = "/ovirt-engine")
 public class SplashServlet extends HttpServlet {
     /**
      * Logger.
@@ -48,7 +48,7 @@ public class SplashServlet extends HttpServlet {
         log.info("Detected Locale: " + userLocale.toLanguageTag());
         request.setAttribute(LOCALE_KEYS, getLocaleKeys());
         setCookie(response, userLocale);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/index.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/ovirt-engine.jsp");
         response.setContentType("text/html;charset=UTF-8");
         if (dispatcher != null) {
             dispatcher.include(request, response);

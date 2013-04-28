@@ -67,7 +67,7 @@ public class SplashServletTest {
         responseCookie.setSecure(false); //Doesn't have to be secure.
         responseCookie.setMaxAge(Integer.MAX_VALUE); //Doesn't expire.
         when(mockRequest.getAttribute(LocaleFilter.LOCALE)).thenReturn(Locale.JAPANESE);
-        when(mockRequest.getRequestDispatcher("/WEB-INF/index.jsp")).thenReturn(mockDispatcher);
+        when(mockRequest.getRequestDispatcher("/WEB-INF/ovirt-engine.jsp")).thenReturn(mockDispatcher);
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockRequest).setAttribute("localeKeys", localeKeys);
         verify(mockResponse).addCookie(cookieCaptor.capture());
