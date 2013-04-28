@@ -669,8 +669,8 @@ public class HostModel extends Model
 
         setPmVariants(new ListModel());
         List<String> pmVariants = new ArrayList<String>();
-        pmVariants.add("Primary");      //$NON-NLS-1$
-        pmVariants.add("Secondary");    //$NON-NLS-1$
+        pmVariants.add(ConstantsManager.getInstance().getConstants().primaryPmVariant());
+        pmVariants.add(ConstantsManager.getInstance().getConstants().secondaryPmVariant());
         getPmVariants().setItems(pmVariants);
         getPmVariants().setSelectedItem(pmVariants.get(0));
 

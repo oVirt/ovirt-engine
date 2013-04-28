@@ -1826,4 +1826,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("SMT Enabled")
     String smtEnabled();
+
+    @DefaultStringValue("Primary")
+    String primaryPmVariant();
+
+    @DefaultStringValue("Secondary")
+    String secondaryPmVariant();
 }
