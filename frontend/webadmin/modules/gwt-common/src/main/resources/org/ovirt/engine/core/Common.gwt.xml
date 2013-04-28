@@ -123,8 +123,6 @@
 		<include name="common/businessentities/VmOsType.java" />
 		<include name="common/businessentities/OsType.java" />
 		<include name="common/businessentities/VmPoolType.java" />
-		<include name="common/businessentities/VmsComparer.java" />
-		<include name="common/businessentities/VmsComparerByDiskSize.java" />
 		<include name="common/businessentities/VmStatic.java" />
 		<include name="common/businessentities/VmStatistics.java" />
 		<include name="common/businessentities/VMStatus.java" />
