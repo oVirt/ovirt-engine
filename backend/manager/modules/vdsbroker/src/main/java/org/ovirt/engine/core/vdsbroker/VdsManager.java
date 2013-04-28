@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
+import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.config.Config;
@@ -594,6 +595,17 @@ public class VdsManager {
         }
     }
 
+    private long calcTimeoutToFence(int vmCount, VdsSpmStatus spmStatus) {
+        int spmIndicator = 0;
+        if (spmStatus != VdsSpmStatus.None) {
+            spmIndicator = 1;
+        }
+        return TimeUnit.SECONDS.toMillis((int)(
+                // delay time can be fracture number, casting it to int should be enough
+                Config.<Integer> GetValue(ConfigValues.TimeoutToResetVdsInSeconds) +
+                (Config.<Double> GetValue(ConfigValues.DelayResetForSpmInSeconds) * spmIndicator) +
+                (Config.<Double> GetValue(ConfigValues.DelayResetPerVmInSeconds) * vmCount)));
+    }
     /**
      * Handle network exception, return true if save vdsDynamic to DB is needed.
      *
@@ -603,8 +615,8 @@ public class VdsManager {
     public boolean handleNetworkException(VDSNetworkException ex, VDS vds) {
         if (vds.getStatus() != VDSStatus.Down) {
             if (mUnrespondedAttempts.get() < Config.<Integer> GetValue(ConfigValues.VDSAttemptsToResetCount)
-                    || lastUpdate
-                            + (TimeUnit.SECONDS.toMillis(Config.<Integer> GetValue(ConfigValues.TimeoutToResetVdsInSeconds))) > System.currentTimeMillis()) {
+                    || (lastUpdate
+                            + calcTimeoutToFence(vds.getVmCount(), vds.getSpmStatus())) > System.currentTimeMillis()) {
                 boolean result = false;
                 if (vds.getStatus() != VDSStatus.Connecting && vds.getStatus() != VDSStatus.PreparingForMaintenance
                         && vds.getStatus() != VDSStatus.NonResponsive) {

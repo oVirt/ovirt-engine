@@ -460,6 +460,8 @@ select fn_db_add_config_value('SysPrepWindows2012x64Path','/etc/ovirt-engine/sys
 select fn_db_add_config_value('SysPrepXPPath','/etc/ovirt-engine/sysprep/sysprep.xp','general');
 select fn_db_add_config_value('ThrottlerMaxWaitForVdsUpdateInMillis','10000','general');
 select fn_db_add_config_value('TimeoutToResetVdsInSeconds','60','general');
+select fn_db_add_config_value('DelayResetForSpmInSeconds','20','general');
+select fn_db_add_config_value('DelayResetPerVmInSeconds','0.5','general');
 select fn_db_add_config_value('TimeToReduceFailedRunOnVdsInMinutes','30','general');
 select fn_db_add_config_value('TruststorePass','NoSoup4U','general');
 --Handling Truststore URL

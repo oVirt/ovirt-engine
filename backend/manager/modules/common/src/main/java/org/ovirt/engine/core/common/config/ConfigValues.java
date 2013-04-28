@@ -1356,6 +1356,16 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     MigrationNetworkEnabled(502),
 
+    @Reloadable
+    @TypeConverterAttribute(Double.class)
+    @DefaultValueAttribute("20")
+    DelayResetForSpmInSeconds(503),
+
+    @Reloadable
+    @TypeConverterAttribute(Double.class)
+    @DefaultValueAttribute("0.5")
+    DelayResetPerVmInSeconds(504),
+
     Invalid(65535);
 
     private int intValue;
