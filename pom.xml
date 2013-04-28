@@ -89,6 +89,12 @@
     <jbosssx-bare.version>2.0.4</jbosssx-bare.version>
     <log4j.version>1.2.16</log4j.version>
     <infinispan.version>5.2.5.Final</infinispan.version>
+
+    <!-- Plugins Versions -->
+    <maven-surefire-plugin.version>2.7.2</maven-surefire-plugin.version>
+    <maven-resources-plugin.version>2.4.3</maven-resources-plugin.version>
+    <exec-maven-plugin.version>1.2</exec-maven-plugin.version>
+    <maven-ejb-plugin.version>2.3</maven-ejb-plugin.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -421,6 +427,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-ejb-plugin</artifactId>
+          <version>${maven-ejb-plugin.version}</version>
           <configuration>
             <ejbVersion>3.1</ejbVersion>
             <generateClient>true</generateClient>
@@ -439,6 +446,21 @@
           <configuration>
             <useProjectReferences>true</useProjectReferences>
           </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>${maven-resources-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>${exec-maven-plugin.version}</version>
         </plugin>
         <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
         <plugin>
