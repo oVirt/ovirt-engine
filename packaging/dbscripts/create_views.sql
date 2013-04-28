@@ -409,10 +409,6 @@ FROM vm_templates_view
 INNER JOIN vm_device vd ON vd.vm_id = vm_templates_view.vmt_guid
 INNER JOIN images ON images.image_group_id = vd.device_id AND images.active = TRUE;
 
-
-
-
-
 CREATE OR REPLACE VIEW vm_templates_storage_domain
 AS
 	SELECT            vm_templates.vm_guid AS vmt_guid, vm_templates.vm_name AS name, vm_templates.mem_size_mb,
@@ -457,6 +453,24 @@ FROM                  vm_static AS vm_templates_1 INNER JOIN
                       image_storage_domain_map ON image_storage_domain_map.image_id = images_1.image_guid
                       LEFT OUTER JOIN quota quota on quota.id = vm_templates_1.quota_id
 WHERE                 entity_type = 'TEMPLATE' OR entity_type = 'INSTANCE_TYPE' OR entity_type = 'IMAGE_TYPE';
+
+
+CREATE OR REPLACE VIEW instance_types_view
+AS
+	SELECT * from vm_templates_view where entity_type = 'INSTANCE_TYPE';
+
+CREATE OR REPLACE VIEW instance_types_storage_domain
+AS
+	SELECT * from vm_templates_storage_domain where entity_type = 'INSTANCE_TYPE';
+
+
+CREATE OR REPLACE VIEW image_types_view
+AS
+	SELECT * from vm_templates_view where entity_type = 'IMAGE_TYPE';
+
+CREATE OR REPLACE VIEW image_types_storage_domain
+AS
+	SELECT * from vm_templates_storage_domain where entity_type = 'IMAGE_TYPE';
 
 
 CREATE OR REPLACE VIEW vm_pool_map_view

@@ -42,6 +42,10 @@ public final class SearchObjects {
     public static final String NETWORK_HOST_OBJ_NAME = "HOST_NETWORK";
     public static final String PROVIDER_OBJ_NAME = "PROVIDER";
     public static final String PROVIDER_PLU_OBJ_NAME = "PROVIDERS";
+    public static final String INSTANCE_TYPE_OBJ_NAME = "INSTANCETYPE";
+    public static final String INSTANCE_TYPE_PLU_OBJ_NAME = "INSTANCETYPES";
+    public static final String IMAGE_TYPE_OBJ_NAME = "IMAGETYPE";
+    public static final String IMAGE_TYPE_PLU_OBJ_NAME = "IMAGETYPES";
 
     //special searches
     private static final String ALERT = "EVENTS: severity=alert";
@@ -87,6 +91,10 @@ public final class SearchObjects {
             add(HOST_BY_CPU.toLowerCase());
             add(DATACENTER_BY_NAME.toLowerCase());
             add(VM_BY_STATUS.toLowerCase());
+            add(INSTANCE_TYPE_OBJ_NAME.toLowerCase() + SEPARATOR);
+            add(INSTANCE_TYPE_PLU_OBJ_NAME.toLowerCase() + SEPARATOR);
+            add(IMAGE_TYPE_OBJ_NAME.toLowerCase() + SEPARATOR);
+            add(IMAGE_TYPE_PLU_OBJ_NAME.toLowerCase() + SEPARATOR);
         }
     });
 

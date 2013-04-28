@@ -27,6 +27,8 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         mVerbs.add(SearchObjects.QUOTA_OBJ_NAME);
         mVerbs.add(SearchObjects.NETWORK_PLU_OBJ_NAME);
         mVerbs.add(SearchObjects.PROVIDER_PLU_OBJ_NAME);
+        mVerbs.add(SearchObjects.INSTANCE_TYPE_PLU_OBJ_NAME);
+        mVerbs.add(SearchObjects.IMAGE_TYPE_PLU_OBJ_NAME);
 
         buildCompletions();
         mVerbs.add(SearchObjects.VM_OBJ_NAME);
@@ -40,6 +42,8 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         mVerbs.add(SearchObjects.GLUSTER_VOLUME_OBJ_NAME);
         mVerbs.add(SearchObjects.NETWORK_OBJ_NAME);
         mVerbs.add(SearchObjects.PROVIDER_OBJ_NAME);
+        mVerbs.add(SearchObjects.INSTANCE_TYPE_OBJ_NAME);
+        mVerbs.add(SearchObjects.IMAGE_TYPE_OBJ_NAME);
 
         // vms - vds
         addJoin(SearchObjects.VM_OBJ_NAME, "run_on_vds", SearchObjects.VDS_OBJ_NAME, "vds_id");
@@ -62,8 +66,14 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         // templates - storage domain
         addJoin(SearchObjects.TEMPLATE_OBJ_NAME, "storage_id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "id");
 
+        // image-type - storage domain
+        addJoin(SearchObjects.IMAGE_TYPE_OBJ_NAME, "storage_id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "id");
+
         // templates - vm template network interface
         addJoin(SearchObjects.TEMPLATE_OBJ_NAME, "vmt_guid", SearchObjects.VM_NETWORK_INTERFACE_OBJ_NAME, "vmt_guid");
+
+        // instance-types - vm template network interface
+        addJoin(SearchObjects.INSTANCE_TYPE_OBJ_NAME, "vmt_guid", SearchObjects.VM_NETWORK_INTERFACE_OBJ_NAME, "vmt_guid");
 
         // vds - storage domain
         addJoin(SearchObjects.VDS_OBJ_NAME, "storage_id", SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, "id");
@@ -185,6 +195,18 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                             "vm_templates_storage_domain",
                             "vmt_guid",
                             "name ASC "));
+                    put(SearchObjects.INSTANCE_TYPE_OBJ_NAME, new EntitySearchInfo(new TemplateCrossRefAutoCompleter(),
+                            new VmTemplateConditionFieldAutoCompleter(),
+                            "instance_types_view",
+                            "instance_types_storage_domain",
+                            "vmt_guid",
+                            "name ASC "));
+                    put(SearchObjects.IMAGE_TYPE_OBJ_NAME, new EntitySearchInfo(new TemplateCrossRefAutoCompleter(),
+                            new VmTemplateConditionFieldAutoCompleter(),
+                            "image_types_view",
+                            "image_types_storage_domain",
+                            "vmt_guid",
+                            "name ASC "));
                     put(SearchObjects.VDC_USER_OBJ_NAME, new EntitySearchInfo(new UserCrossRefAutoCompleter(),
                             new VdcUserConditionFieldAutoCompleter(),
                             "vdc_users",
@@ -304,6 +326,8 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         {
             put(SearchObjects.AUDIT_PLU_OBJ_NAME, SearchObjects.AUDIT_OBJ_NAME);
             put(SearchObjects.TEMPLATE_PLU_OBJ_NAME, SearchObjects.TEMPLATE_OBJ_NAME);
+            put(SearchObjects.INSTANCE_TYPE_PLU_OBJ_NAME, SearchObjects.INSTANCE_TYPE_OBJ_NAME);
+            put(SearchObjects.IMAGE_TYPE_PLU_OBJ_NAME, SearchObjects.INSTANCE_TYPE_OBJ_NAME);
             put(SearchObjects.VDC_USER_PLU_OBJ_NAME, SearchObjects.VDC_USER_OBJ_NAME);
             put(SearchObjects.VDS_PLU_OBJ_NAME, SearchObjects.VDS_OBJ_NAME);
             put(SearchObjects.VM_PLU_OBJ_NAME, SearchObjects.VM_OBJ_NAME);

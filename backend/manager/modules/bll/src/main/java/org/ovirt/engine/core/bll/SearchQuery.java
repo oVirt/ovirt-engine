@@ -123,6 +123,14 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             returnValue = searchProviders();
             break;
         }
+        case InstanceType: {
+            returnValue = searchInstanceTypes();
+            break;
+        }
+        case ImageType: {
+            returnValue = searchVMTemplates();
+            break;
+        }
         default: {
             log.errorFormat("Search object type not handled: {0}", getParameters().getSearchTypeValue());
             break;
@@ -212,6 +220,9 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 return data;
             }
         });
+    }
+    private List<VmTemplate> searchInstanceTypes() {
+        return genericSearch(getDbFacade().getVmTemplateDao(), true, null);
     }
 
     private final <T extends IVdcQueryable> List<T> genericSearch(final SearchDAO<T> dao,
