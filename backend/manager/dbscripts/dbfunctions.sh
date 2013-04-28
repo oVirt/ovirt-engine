@@ -266,7 +266,7 @@ get_files() {
 
 is_view_or_sp_changed() {
     files=$(get_files "upgrade" 3)
-    md5sum_file=.${DATABASE}.scripts.md5
+    md5sum_file=${MD5DIR}/.${DATABASE}.scripts.md5
     md5sum_tmp_file=${md5sum_file}.tmp
     md5sum $files create_*views.sql *_sp.sql > ${md5sum_tmp_file}
     diff -s -q ${md5sum_file} ${md5sum_tmp_file} >& /dev/null
@@ -304,10 +304,12 @@ run_upgrade_files() {
         comment=""
         updated=0
         validate_version_uniqueness
-        is_view_or_sp_changed
+        if [ "${NOMD5}" = "false" ]; then
+            is_view_or_sp_changed
+        fi
 
         # Checks if a view or sp file has been changed
-        if [ $? -ne 0 ]; then
+        if [[ $? -ne 0 || "${NOMD5}" = "true" ]]; then
             echo "upgrade script detected a change in Config, View or Stored Procedure..."
             run_pre_upgrade
             updated=1
@@ -382,8 +384,6 @@ run_upgrade_files() {
         # restore views & SPs if dropped
         if [ $updated -eq 1 ]; then
             run_post_upgrade
-            # auto generate .schema file
-            pg_dump -f .schema -F p -n public -s -U ${USERNAME} ${DATABASE} -h ${SERVERNAME} -p ${PORT}  >& /dev/null
         else
 	    echo "database is up to date."
         fi

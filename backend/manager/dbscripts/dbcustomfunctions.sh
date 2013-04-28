@@ -16,6 +16,8 @@ set_defaults() {
     VERBOSE=false
     LOGFILE="$ME.log"
     DBOBJECT_OWNER="engine"
+    NOMD5="false"
+    MD5DIR="$(pwd)"
     LC_ALL="C"
     export LC_ALL
 

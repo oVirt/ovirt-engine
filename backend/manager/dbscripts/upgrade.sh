@@ -39,7 +39,7 @@ source ./dbcustomfunctions.sh
 set_defaults
 
 usage() {
-    printf "Usage: ${ME} [-h] [-s SERVERNAME] [-p PORT] [-d DATABASE] [-u USERNAME] [-f VERSION] [-c] [-v]\n"
+    printf "Usage: ${ME} [-h] [-s SERVERNAME] [-p PORT] [-d DATABASE] [-u USERNAME] [-f VERSION] [-c] [-g] [-m MD5DIR] [-v]\n"
     printf "\n"
     printf "\t-s SERVERNAME - The database servername for the database (def. ${SERVERNAME})\n"
     printf "\t-p PORT       - The database port for the database       (def. ${PORT})\n"
@@ -48,6 +48,8 @@ usage() {
     printf "\t-l LOGFILE    - The logfile for capturing output         (def. ${LOGFILE}\n"
     printf "\t-f VERSION    - Force upgrading from specified version   (def. ${VERSION}\n"
     printf "\t-c            - Force cleaning tasks and compensation info.\n"
+    printf "\t-g NOMD5      - Do not generate MD55 for files (generated in dev env only) (def. ${NOMD5}\n"
+    printf "\t-m MD5DIR     - The directory for generated MD5 files (generated in dev env only) (def. ${MD5DIR}\n"
     printf "\t-v            - Turn on verbosity (WARNING: lots of output)\n"
     printf "\t-h            - This help text.\n"
     printf "\n"
@@ -61,7 +63,7 @@ DEBUG () {
     fi
 }
 
-while getopts hs:d:u:p:l:f:cv option; do
+while getopts hs:d:u:p:l:f:m:gcv option; do
     case $option in
         s) SERVERNAME=$OPTARG;;
         p) PORT=$OPTARG;;
@@ -70,6 +72,8 @@ while getopts hs:d:u:p:l:f:cv option; do
         l) LOGFILE=$OPTARG;;
         f) VERSION=$OPTARG;;
         c) CLEAN_TASKS=true;;
+        m) MD5DIR=$OPTARG;;
+        g) NOMD5=true;;
         v) VERBOSE=true;;
         h) ret=0 && usage;;
        \?) ret=1 && usage;;
