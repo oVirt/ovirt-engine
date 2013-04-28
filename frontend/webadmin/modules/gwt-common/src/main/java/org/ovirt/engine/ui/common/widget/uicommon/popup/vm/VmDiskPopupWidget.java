@@ -351,7 +351,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 return diskImage.getStoragesNames().get(0);
             }
         };
-        internalDiskTable.addColumn(storageDomainColumn, constants.storageDomainVmDiskTable(), "100px"); //$NON-NLS-1$
+        internalDiskTable.addColumn(storageDomainColumn, constants.storageDomainVmDiskTable(), "115px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<EntityModel> interfaceColumn = new EnumColumn<EntityModel, DiskInterface>() {
             @Override
@@ -360,7 +360,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 return disk.getDiskInterface();
             }
         };
-        internalDiskTable.addColumn(interfaceColumn, constants.interfaceVmDiskPopup(), "90px"); //$NON-NLS-1$
+        internalDiskTable.addColumn(interfaceColumn, constants.interfaceVmDiskPopup(), "105px"); //$NON-NLS-1$
 
         internalDiskTable.addColumn(new ImageResourceColumn<EntityModel>() {
             @Override
