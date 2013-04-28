@@ -2,14 +2,10 @@ package org.ovirt.engine.core.vdsbroker;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.ovirt.engine.core.common.errors.VDSError;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.dal.VdcCommandBase;
-import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSExceptionBase;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 
 public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCommandBase {
     private P _parameters;
@@ -58,18 +54,9 @@ public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCom
             _returnValue = new VDSReturnValue();
             getVDSReturnValue().setSucceeded(true);
             executeVDSCommand();
-        } catch (VDSNetworkException ex) {
-            setVdsNetworkError(ex);
-        } catch (IRSErrorException ex) {
-            getVDSReturnValue().setSucceeded(false);
-            getVDSReturnValue().setExceptionString(ex.toString());
-            getVDSReturnValue().setExceptionObject(ex);
-            getVDSReturnValue().setVdsError(ex.getVdsError());
-            logException(ex);
         } catch (RuntimeException ex) {
             setVdsRuntimeError(ex);
         }
-
     }
 
     protected void setVdsRuntimeError(RuntimeException ex) {
@@ -88,18 +75,6 @@ public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCom
             }
         }
 
-        logException(ex);
-    }
-
-    protected void setVdsNetworkError(VDSNetworkException ex) {
-        getVDSReturnValue().setSucceeded(false);
-        getVDSReturnValue().setExceptionString(ex.toString());
-        getVDSReturnValue().setExceptionObject(ex);
-        VDSError tempVar = ex.getVdsError();
-        VDSError tempVar2 = new VDSError();
-        tempVar2.setCode(VdcBllErrors.VDS_NETWORK_ERROR);
-        tempVar2.setMessage(ex.getMessage());
-        getVDSReturnValue().setVdsError((tempVar != null) ? tempVar : tempVar2);
         logException(ex);
     }
 

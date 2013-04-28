@@ -212,7 +212,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 switch (errorCode) {
                 case Done: // should never get here with errorCode = 'Done' though
                 case exist:
-                case PROTOCOL_ERROR: // probably wrong xml format sent.
+                case VDS_NETWORK_ERROR: // probably wrong xml format sent.
                     throw e;
                 default:
                 }

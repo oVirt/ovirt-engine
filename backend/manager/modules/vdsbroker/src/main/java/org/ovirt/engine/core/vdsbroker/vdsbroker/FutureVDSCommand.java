@@ -7,11 +7,11 @@ import java.util.concurrent.TimeoutException;
 
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.VDSError;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 
 /**
  * This class is used for the non-blocking VDSM API. It uses Future API to fetch the response from the actual http
@@ -19,8 +19,6 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  *
  */
 public abstract class FutureVDSCommand<P extends VdsIdVDSCommandParametersBase> extends VdsBrokerCommand<P> implements FutureVDSCall<VDSReturnValue> {
-
-    private static Log log = LogFactory.getLog(BrokerCommandBase.class);
 
     public FutureVDSCommand(P parameters) {
         super(parameters);
@@ -75,7 +73,9 @@ public abstract class FutureVDSCommand<P extends VdsIdVDSCommandParametersBase> 
             ProceedProxyReturnValue();
         } catch (TimeoutException e) {
             httpTask.cancel(true);
-            setVdsNetworkError(new VDSNetworkException(new RuntimeException(e.getCause())));
+            VDSNetworkException ex = new VDSNetworkException("Timeout during xml-rpc call");
+            ex.setVdsError(new VDSError(VdcBllErrors.VDS_NETWORK_ERROR, "Timeout during xml-rpc call"));
+            setVdsRuntimeError(ex);
             log.error("Timeout waiting for VDSM response. " + e);
             throw e;
         } catch (Exception e) {

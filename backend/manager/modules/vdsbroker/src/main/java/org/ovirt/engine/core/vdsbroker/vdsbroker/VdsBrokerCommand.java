@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import java.io.IOException;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.errors.VDSError;
@@ -16,8 +15,6 @@ import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
 public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> extends BrokerCommandBase<P> {
     private final IVdsServer mVdsBroker;
     private VDS mVds;
-    private static final String msgFormat = "XML RPC error in command {0} ( {1} ), the error was: {2}, {3} ";
-
     /**
      * Construct the command using the parameters and the {@link VDS} which is loaded from the DB.
      *
@@ -93,20 +90,7 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
         } catch (XmlRpcRunTimeException ex) {
             Throwable rootCause = ExceptionUtils.getRootCause(ex);
             VDSNetworkException networkException = new VDSNetworkException(rootCause);
-            if ((ex.isNetworkError() || rootCause instanceof IOException)) {
-                log.debugFormat(msgFormat,
-                        getCommandName(),
-                        getAdditionalInformation(),
-                        ex.getMessage(),
-                        rootCause.getMessage());
-            } else {
-                log.errorFormat(msgFormat,
-                        getCommandName(),
-                        getAdditionalInformation(),
-                        ex.getMessage(),
-                        rootCause.getMessage());
-                networkException.setVdsError(new VDSError(VdcBllErrors.PROTOCOL_ERROR, rootCause.toString()));
-            }
+            networkException.setVdsError(new VDSError(VdcBllErrors.VDS_NETWORK_ERROR, rootCause.toString()));
             PrintReturnValue();
             throw networkException;
         }
