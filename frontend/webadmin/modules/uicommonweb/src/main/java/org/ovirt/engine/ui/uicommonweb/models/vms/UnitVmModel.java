@@ -924,11 +924,8 @@ public class UnitVmModel extends Model {
 
     public void setIsDisksAvailable(boolean value)
     {
-        if (isDisksAvailable != value)
-        {
-            isDisksAvailable = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsDisksAvailable")); //$NON-NLS-1$
-        }
+        isDisksAvailable = value;
+        onPropertyChanged(new PropertyChangedEventArgs("IsDisksAvailable")); //$NON-NLS-1$
     }
 
     private boolean isHostAvailable;
