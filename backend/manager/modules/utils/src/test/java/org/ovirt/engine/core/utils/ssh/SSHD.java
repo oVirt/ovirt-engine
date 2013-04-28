@@ -43,7 +43,7 @@ public class SSHD {
 
         @Override
         public boolean authenticate(String user, PublicKey key, ServerSession session) {
-            return user.equals(user) && _key.equals(key);
+            return _user.equals(user) && _key.equals(key);
         }
     }
 
