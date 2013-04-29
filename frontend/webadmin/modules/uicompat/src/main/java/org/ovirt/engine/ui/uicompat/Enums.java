@@ -205,24 +205,6 @@ public interface Enums extends LocalizedEnums {
 
     String VmInterfaceType___pv();
 
-    String TabType___Hosts();
-
-    String TabType___Vms();
-
-    String TabType___Users();
-
-    String TabType___Templates();
-
-    String TabType___Events();
-
-    String TabType___DataCenters();
-
-    String TabType___Clusters();
-
-    String TabType___Storage();
-
-    String TabType___Pools();
-
     String VDSType___VDS();
 
     String VDSType___oVirtNode();
