@@ -58,7 +58,6 @@ public class TarTest {
             try {
                 fis = new FileInputStream(fullFile);
                 is = new DigestInputStream(fis, fmd);
-                StringBuffer content = new StringBuffer(1024);
                 byte buf[] = new byte[1024];
                 int n;
                 while ((n = is.read(buf)) != -1);

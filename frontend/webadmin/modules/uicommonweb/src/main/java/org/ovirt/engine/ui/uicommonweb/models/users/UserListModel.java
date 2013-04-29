@@ -143,8 +143,6 @@ public class UserListModel extends ListWithDetailsModel
 
     private void GetAttachedTagsToSelectedUsers(TagListModel model)
     {
-        HashMap<Guid, Boolean> tags = new HashMap<Guid, Boolean>();
-
         ArrayList<Guid> userIds = new ArrayList<Guid>();
         ArrayList<Guid> grpIds = new ArrayList<Guid>();
 

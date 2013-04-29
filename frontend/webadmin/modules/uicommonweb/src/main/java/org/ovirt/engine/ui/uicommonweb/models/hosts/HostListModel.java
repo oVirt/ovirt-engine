@@ -343,8 +343,6 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
     private void GetAttachedTagsToSelectedHosts(TagListModel model)
     {
-        HashMap<Guid, Boolean> tags = new HashMap<Guid, Boolean>();
-
         ArrayList<Guid> hostIds = new ArrayList<Guid>();
 
         for (Object item : getSelectedItems())

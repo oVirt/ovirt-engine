@@ -166,7 +166,6 @@ public class LoginValidatorTest extends Assert {
 
     private ServerResponse setUpLogoutExpectations() {
         VdcReturnValueBase result = control.createMock(VdcReturnValueBase.class);
-        Principal principal = new Principal(USER, SECRET, DOMAIN);
         VdcUser user = control.createMock(VdcUser.class);
         expect(current.get(VdcUser.class)).andReturn(user);
         expect(user.getUserId()).andReturn(GUID);
