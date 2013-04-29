@@ -59,7 +59,7 @@ public class JobWrapper implements Job {
             }
             methodToRun.invoke(instance, methodParams);
         } catch (Exception e) {
-            log.error("failed to invoke sceduled method " + methodName, e);
+            log.error("Failed to invoke scheduled method " + methodName, e);
             JobExecutionException jee = new JobExecutionException("failed to execute job");
             jee.setStackTrace(e.getStackTrace());
             throw jee;
