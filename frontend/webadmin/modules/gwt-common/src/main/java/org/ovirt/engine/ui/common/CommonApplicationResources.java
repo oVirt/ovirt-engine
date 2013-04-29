@@ -208,6 +208,12 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("images/vms.png")
     ImageResource vmsImage();
 
+    @Source("images/login.png")
+    ImageResource loginIcon();
+
+    @Source("images/login_disabled.png")
+    ImageResource loginDisabledIcon();
+
     // Network
     @Source("images/network/icn_plugged.png")
     ImageResource pluggedNetworkImage();

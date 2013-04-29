@@ -145,7 +145,7 @@ public class SanTargetModel extends EntityModel
     public SanTargetModel()
     {
         setLoggedInEvent(new Event(LoggedInEventDefinition));
-        setLoginCommand(new UICommand("Login", this)); //$NON-NLS-1$
+        setLoginCommand(new UICommand("", this)); //$NON-NLS-1$
         setLunsList(new ListModel());
     }
 

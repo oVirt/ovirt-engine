@@ -104,7 +104,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             public String getValue(SanTargetModel model) {
                 return ""; //$NON-NLS-1$
             }
-        }, constants.empty(), "70px"); //$NON-NLS-1$
+        }, constants.empty(), "35px"); //$NON-NLS-1$
         table.addColumn(new TextColumn<SanTargetModel>() {
             @Override
             public String getValue(SanTargetModel model) {
@@ -123,7 +123,9 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
     private void addLoginButton(HorizontalPanel panel, SanTargetModel rootModel) {
         final UiCommandButton loginButton = new UiCommandButton();
         loginButton.setCommand(rootModel.getLoginCommand());
-        loginButton.setLabel(constants.storageIscsiPopupLoginButtonLabel());
+        loginButton.setTitle(constants.storageIscsiPopupLoginButtonLabel());
+        loginButton.setImage(rootModel.getLoginCommand().getIsExecutionAllowed() ?
+                resources.loginIcon() : resources.loginDisabledIcon());
         loginButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -133,9 +135,10 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         });
         loginButton.getElement().getStyle().setFloat(Float.RIGHT);
         loginButton.getElement().getStyle().setMarginRight(2, Unit.PX);
+        loginButton.getElement().getStyle().setProperty("lineHeight", "18px"); //$NON-NLS-1$ //$NON-NLS-2$
 
         panel.add(loginButton);
-        panel.setCellWidth(loginButton, "60px"); //$NON-NLS-1$
+        panel.setCellWidth(loginButton, "30px"); //$NON-NLS-1$
     }
 
     private void additemToRootNodePanel(HorizontalPanel panel,

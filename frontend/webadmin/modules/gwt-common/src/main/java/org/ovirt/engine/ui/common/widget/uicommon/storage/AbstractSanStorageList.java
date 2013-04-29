@@ -6,6 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -52,6 +53,7 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
 
     protected static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
     protected static final CommonApplicationMessages messages = GWT.create(CommonApplicationMessages.class);
+    protected static final CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
 
     public AbstractSanStorageList(SanStorageModelBase model) {
         this(model, false, false);
