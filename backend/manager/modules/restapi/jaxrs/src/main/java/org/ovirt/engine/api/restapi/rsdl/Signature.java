@@ -3,7 +3,7 @@ package org.ovirt.engine.api.restapi.rsdl;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Signature {
+public class Signature implements Cloneable {
     private Map<Object, Object> mandatoryArguments = new HashMap<Object, Object>();
     private Map<Object, Object> optionalArguments = new HashMap<Object, Object>();
 

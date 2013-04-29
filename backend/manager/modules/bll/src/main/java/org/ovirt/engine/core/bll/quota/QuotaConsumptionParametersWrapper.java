@@ -7,7 +7,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QuotaConsumptionParametersWrapper {
+public class QuotaConsumptionParametersWrapper implements Cloneable {
 
     private List<QuotaConsumptionParameter> parameters;
 

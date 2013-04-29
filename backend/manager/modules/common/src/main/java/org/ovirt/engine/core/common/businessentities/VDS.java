@@ -13,7 +13,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
 
-public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid>, Nameable {
+public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid>, Nameable, Cloneable {
     private static final long serialVersionUID = -7893976203379789926L;
     private VdsStatic mVdsStatic;
     private VdsDynamic mVdsDynamic;
