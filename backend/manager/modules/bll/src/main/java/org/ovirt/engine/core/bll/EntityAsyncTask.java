@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
@@ -29,12 +28,6 @@ public class EntityAsyncTask extends SPMAsyncTask {
 
     private static final Map<Object, EntityMultiAsyncTasks> _multiTasksByEntities =
             new HashMap<Object, EntityMultiAsyncTasks>();
-
-    private static final AtomicInteger _endActionsInProgress = new AtomicInteger(0);
-
-    public static int getEndActionsInProgress() {
-        return _endActionsInProgress.get();
-    }
 
     private static EntityMultiAsyncTasks GetEntityMultiAsyncTasksByContainerId(Object containerID) {
         EntityMultiAsyncTasks entityInfo = null;
@@ -110,7 +103,6 @@ public class EntityAsyncTask extends SPMAsyncTask {
                     entityInfo.getActionType());
 
             entityInfo.MarkAllWithAttemptingEndAction();
-            _endActionsInProgress.incrementAndGet();
             ThreadPoolUtil.execute(new Runnable() {
                 @SuppressWarnings("synthetic-access")
                 @Override
@@ -177,7 +169,6 @@ public class EntityAsyncTask extends SPMAsyncTask {
         finally {
             boolean isTaskGroupSuccess = dbAsyncTask.getActionParameters().getTaskGroupSuccess();
             handleEndActionResult(entityInfo, vdcReturnValue, context, isTaskGroupSuccess);
-            _endActionsInProgress.decrementAndGet();
         }
     }
 
