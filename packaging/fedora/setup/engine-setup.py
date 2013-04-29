@@ -121,7 +121,7 @@ def initSequences():
                                               { 'title'     : output_messages.INFO_FIND_JAVA,
                                                 'functions' : [_findJavaHome, _editSysconfigJava]},
                                               { 'title'     : output_messages.INFO_CREATE_CA,
-                                                'functions' : [_createCA]},
+                                                'functions' : [_createCA, _editSysconfigPKI]},
                                               { 'title'     : output_messages.INFO_UPD_ENGINE_CONF,
                                                 'functions' : [_editSysconfigProtocols] },
                                               { 'title'     : output_messages.INFO_SET_DB_CONFIGURATION,
@@ -1288,17 +1288,9 @@ def _updateVDCOptions():
     #1st we update the keystore and CA related paths, only then we can set the passwords and the rest options
     options = (
         {
-            "CABaseDirectory":[basedefs.DIR_OVIRT_PKI, 'text'],
-            "keystoreUrl":[basedefs.FILE_ENGINE_KEYSTORE, 'text'],
-            "CertificateFileName":[basedefs.FILE_ENGINE_CERT, 'text'],
-            "TruststoreUrl":[basedefs.FILE_TRUSTSTORE, 'text'],
             "ENGINEEARLib":["%s/engine.ear" %(basedefs.DIR_ENGINE), 'text'],
-            "CACertificatePath":[basedefs.FILE_CA_CRT_SRC, 'text'],
-            "CertAlias":["1", 'text'],
-            "keystorePass":[basedefs.CONST_KEY_PASS, 'text'],
         },
         {
-            "TruststorePass":[basedefs.CONST_CA_PASS, 'text'],
             "LocalAdminPassword":[controller.CONF["AUTH_PASS"], 'pass'],
             "SSLEnabled":[ "true", 'text'],
             "UseSecureConnectionWithServers":[ "true", 'text'],
@@ -1316,7 +1308,6 @@ def _updateVDCOptions():
             "InstallVds":["true", 'text'],
             "ConfigDir":["/etc/ovirt-engine", 'text'],
             "DataDir":["/usr/share/ovirt-engine", 'text'],
-            "SignScriptName":["SignReq.sh", 'text'],
             "OrganizationName":[controller.CONF["ORG_NAME"], 'text'],
             "ProductRPMVersion":[utils.getEngineVersion(), 'text'],
             "AdminPassword":[controller.CONF["AUTH_PASS"], 'pass']
@@ -2167,6 +2158,18 @@ def _editSysconfigProtocols():
 
 def _editSysconfigJava():
     utils.editEngineSysconfigJava(javaHome=controller.CONF["JAVA_HOME"])
+
+def _editSysconfigPKI():
+    utils.editEngineSysconfigPKI(
+        pkidir=basedefs.DIR_OVIRT_PKI,
+        caCerticate=basedefs.FILE_CA_CRT_SRC,
+        enigneStore=basedefs.FILE_ENGINE_KEYSTORE,
+        engineStorePassword=basedefs.CONST_KEY_PASS,
+        engineStoreAlias="1",
+        engineCerticate=basedefs.FILE_ENGINE_CERT,
+        trustStore=basedefs.FILE_TRUSTSTORE,
+        trustStorePassword=basedefs.CONST_KEY_PASS,
+    )
 
 def startRhevmDbRelatedServices():
     """

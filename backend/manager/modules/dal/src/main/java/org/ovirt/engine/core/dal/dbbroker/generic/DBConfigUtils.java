@@ -16,8 +16,9 @@ import org.ovirt.engine.core.common.config.Reloadable;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdcOptionDAO;
-import org.ovirt.engine.core.utils.crypt.EncryptionUtils;
 import org.ovirt.engine.core.utils.ConfigUtilsBase;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
+import org.ovirt.engine.core.utils.crypt.EncryptionUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
@@ -96,6 +97,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
             }
 
             if (optionBehaviour != null) {
+                EngineLocalConfig config = EngineLocalConfig.getInstance();
                 Map<String, Object> values = null;
                 switch (optionBehaviour.behaviour()) {
                 // split string by comma for List<string> constructor
@@ -104,9 +106,9 @@ public class DBConfigUtils extends ConfigUtilsBase {
                     break;
                 case Password:
                     try {
-                        String keyFile = getValueFromDBDefault(ConfigValues.keystoreUrl);
-                        String passwd = getValueFromDBDefault(ConfigValues.keystorePass);
-                        String alias = getValueFromDBDefault(ConfigValues.CertAlias);
+                        String keyFile = config.getPKIEngineStore().getAbsolutePath();
+                        String passwd = config.getPKIEngineStorePassword();
+                        String alias = config.getPKIEngineStoreAlias();
                         result = EncryptionUtils.decrypt((String) result, keyFile, passwd, alias);
                     } catch (Exception e) {
                         log.errorFormat("Failed to decrypt value for property {0} will be used encrypted value",
@@ -114,9 +116,9 @@ public class DBConfigUtils extends ConfigUtilsBase {
                     }
                     break;
                 case DomainsPasswordMap:
-                    String keyFile = getValueFromDBDefault(ConfigValues.keystoreUrl);
-                    String passwd = getValueFromDBDefault(ConfigValues.keystorePass);
-                    String alias = getValueFromDBDefault(ConfigValues.CertAlias);
+                    String keyFile = config.getPKIEngineStore().getAbsolutePath();
+                    String passwd = config.getPKIEngineStorePassword();
+                    String alias = config.getPKIEngineStoreAlias();
                     result = new DomainsPasswordMap((String) result, keyFile, passwd, alias);
                     break;
                 case ValueDependent:

@@ -146,6 +146,9 @@ FILE_ENGINE_CONF_PROTOCOLS="%s/50-setup-protocols.conf" % DIR_ENGINE_CONF
 # File containing the setup generated java configuration of the engine:
 FILE_ENGINE_CONF_JAVA="%s/50-setup-java.conf" % DIR_ENGINE_CONF
 
+# File containing the setup generated java configuration of the engine:
+FILE_ENGINE_CONF_PKI="%s/50-setup-pki.conf" % DIR_ENGINE_CONF
+
 # This file will be automatically created when the engine goes into
 # maintenance mode during upgrades and automatically removed when the
 # engine goes back into normal mode once the upgrade is finished:

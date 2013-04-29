@@ -198,9 +198,10 @@ public class VdsDeploy implements SSHDialog.Sink {
      * @return ssh public key.
      */
     protected static String _getEngineSSHPublicKey() {
-        final String keystoreFile = Config.<String>GetValue(ConfigValues.keystoreUrl);
-        final String alias = Config.<String>GetValue(ConfigValues.CertAlias);
-        final char[] password = Config.<String>GetValue(ConfigValues.keystorePass).toCharArray();
+        final EngineLocalConfig config = EngineLocalConfig.getInstance();
+        final String keystoreFile = config.getPKIEngineStore().getAbsolutePath();
+        final char[] password = config.getPKIEngineStorePassword().toCharArray();
+        final String alias = config.getPKIEngineStoreAlias();
 
         InputStream in = null;
         try {

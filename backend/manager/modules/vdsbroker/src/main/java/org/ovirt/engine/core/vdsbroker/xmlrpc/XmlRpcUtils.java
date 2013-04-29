@@ -31,6 +31,7 @@ import org.apache.xmlrpc.client.util.ClientFactory;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -47,10 +48,11 @@ public class XmlRpcUtils {
         if (Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers)) {
             URL keystoreUrl;
             try {
-                keystoreUrl = new URL("file://" + Config.resolveKeyStorePath());
-                String keystorePassword = Config.<String> GetValue(ConfigValues.keystorePass);
-                URL truststoreUrl = new URL("file://" + Config.resolveTrustStorePath());
-                String truststorePassword = Config.<String> GetValue(ConfigValues.TruststorePass);
+                EngineLocalConfig config = EngineLocalConfig.getInstance();
+                keystoreUrl = new URL("file://" + config.getPKIEngineStore().getAbsolutePath());
+                String keystorePassword = config.getPKIEngineStorePassword();
+                URL truststoreUrl = new URL("file://" + config.getPKITrustStore().getAbsolutePath());
+                String truststorePassword = config.getPKITrustStorePassword();
 
                 // registering the https protocol with a socket factory that
                 // provides client authentication.

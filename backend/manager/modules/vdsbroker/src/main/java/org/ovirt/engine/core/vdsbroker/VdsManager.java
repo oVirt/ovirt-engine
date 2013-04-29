@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.vdsbroker;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -35,6 +34,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.utils.log.Log;
@@ -147,7 +147,7 @@ public class VdsManager {
         }
         // if ssl is on and no certificate file
         if (Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers)
-                && !new File(Config.resolveCertificatePath()).exists()) {
+                && !EngineLocalConfig.getInstance().getPKIEngineStore().exists()) {
             if (_vds.getStatus() != VDSStatus.Maintenance && _vds.getStatus() != VDSStatus.InstallFailed) {
                 setStatus(VDSStatus.NonResponsive, _vds);
                 UpdateDynamicData(_vds.getDynamicData());

@@ -140,4 +140,36 @@ public class EngineLocalConfig extends LocalConfig {
     public URL getExternalHttpsUrl(String path) throws MalformedURLException {
         return new URL("https", getHost(), getExternalHttpsPort(), path);
     }
+
+    public File getPKIDir() {
+        return getFile("ENGINE_PKI");
+    }
+
+    public File getPKICACert() {
+        return getFile("ENGINE_PKI_CA");
+    }
+
+    public File getPKIEngineCert() {
+        return getFile("ENGINE_PKI_ENGINE_CERT");
+    }
+
+    public File getPKITrustStore() {
+        return getFile("ENGINE_PKI_TRUST_STORE");
+    }
+
+    public String getPKITrustStorePassword() {
+        return getProperty("ENGINE_PKI_TRUST_STORE_PASSWORD");
+    }
+
+    public File getPKIEngineStore() {
+        return getFile("ENGINE_PKI_ENGINE_STORE");
+    }
+
+    public String getPKIEngineStorePassword() {
+        return getProperty("ENGINE_PKI_ENGINE_STORE_PASSWORD");
+    }
+
+    public String getPKIEngineStoreAlias() {
+        return getProperty("ENGINE_PKI_ENGINE_STORE_ALIAS");
+    }
 }

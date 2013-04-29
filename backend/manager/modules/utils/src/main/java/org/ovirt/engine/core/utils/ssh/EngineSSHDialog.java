@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.utils.ssh;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +15,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.crypt.OpenSSHUtils;
 
 /**
@@ -58,9 +60,10 @@ public class EngineSSHDialog extends SSHDialog {
      * Use default engine ssh key.
      */
     public void useDefaultKeyPair() throws KeyStoreException {
-        final String alias = Config.<String>GetValue(ConfigValues.CertAlias);
-        final String p12 = Config.<String>GetValue(ConfigValues.keystoreUrl);
-        final char[] password = Config.<String>GetValue(ConfigValues.keystorePass).toCharArray();
+        EngineLocalConfig config = EngineLocalConfig.getInstance();
+        final File p12 = config.getPKIEngineStore();
+        final char[] password = config.getPKIEngineStorePassword().toCharArray();
+        final String alias = config.getPKIEngineStoreAlias();
 
         KeyStore.PrivateKeyEntry entry;
         InputStream in = null;

@@ -1244,6 +1244,32 @@ def editEngineSysconfigJava(javaHome):
     logging.debug("Engine has been configured")
     handler.close()
 
+def editEngineSysconfigPKI(
+    pkidir,
+    caCerticate,
+    enigneStore,
+    engineStorePassword,
+    engineStoreAlias,
+    engineCerticate,
+    trustStore,
+    trustStorePassword,
+):
+    # Load the file:
+    handler = TextConfigFileHandler(basedefs.FILE_ENGINE_CONF_PKI, readExisting=False)
+    handler.open()
+    handler.editParam("ENGINE_PKI", pkidir)
+    handler.editParam("ENGINE_PKI_CA", caCerticate)
+    handler.editParam("ENGINE_PKI_ENGINE_CERT", engineCerticate)
+    handler.editParam("ENGINE_PKI_ENGINE_STORE", enigneStore)
+    handler.editParam("ENGINE_PKI_ENGINE_STORE_PASSWORD", engineStorePassword)
+    handler.editParam("ENGINE_PKI_ENGINE_STORE_ALIAS", engineStoreAlias)
+    handler.editParam("ENGINE_PKI_TRUST_STORE", trustStore)
+    handler.editParam("ENGINE_PKI_TRUST_STORE_PASSWORD", trustStorePassword)
+    handler.close()
+
+    chownToEngine(basedefs.FILE_ENGINE_CONF_PKI)
+    os.chmod(basedefs.FILE_ENGINE_CONF_PKI, 0o640)
+
 def encryptEngineDBPass(password, maskList):
     """
     Encryptes the jboss postgres db password

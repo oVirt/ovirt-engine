@@ -425,7 +425,11 @@ class DB():
             if options.ignore_tasks:
                 cmd.extend(["-c"])
 
-            output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_UPDATE_DB)
+            env = {
+                'ENGINE_CERTIFICATE': basedefs.FILE_ENGINE_CERT,
+            }
+
+            output, rc = utils.execCmd(cmdList=cmd, envDict=env, failOnError=True, msg=MSG_ERROR_UPDATE_DB)
             logging.debug("DB Update completed successfully")
 
         finally:
@@ -1203,7 +1207,7 @@ def main(options):
     startEngineService = [startEngine]
     preupgradeFunc = [preupgradeUUIDCheck]
     upgradeFunc = [rhyum.update, generateEngineConf, setupVarPrivileges,
-        updateHttpdConf,
+        updateHttpdConf, utils.editEngineSysconfigPKI,
     ]
     postFunc = [modifyUUIDs, ca.commit, runPost, deleteEngineSysconfig]
     engineService = basedefs.ENGINE_SERVICE_NAME

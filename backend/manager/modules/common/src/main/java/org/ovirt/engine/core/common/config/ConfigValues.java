@@ -303,16 +303,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("60")
     AutoRepoDomainRefreshTime(99),
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("certs/ca.pem")
-    CACertificatePath(100),
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("ca")
-    CABaseDirectory(101),
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("certs/engine.cer")
-    CertificateFileName(102),
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     InstallVds(108),
@@ -603,26 +593,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("100")
     OvfItemsCountPerUpdate(232),
 
-    // JTODO - temporarily using values from 256 for Java specific options
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("keys/engine.p12")
-    keystoreUrl(256),
-
-    // TODO: handle password behavior
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("NoSoup4U")
-    // @OptionBehaviourAttribute(behaviour = OptionBehaviour.Password)
-    keystorePass(257),
-
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute(".truststore")
-    TruststoreUrl(258),
-
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("NoSoup4U")
-    @OptionBehaviourAttribute(behaviour = OptionBehaviour.Password)
-    TruststorePass(259),
-
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("(GMT) GMT Standard Time")
     DefaultTimeZone(260),
@@ -630,17 +600,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("389")
     LDAPServerPort(263),
-
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("SignReq.bat")
-    SignScriptName(264),
-
-    // PKCS#12 store contains only one key
-    // Alias is almost always "1"
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("1")
-    CertAlias(265),
 
     @Reloadable
     @TypeConverterAttribute(Boolean.class)

@@ -64,14 +64,6 @@ select fn_db_add_config_value('AutoRecoverySchedule','0 0/5 * * * ?','general');
 select fn_db_add_config_value('AutoRegistrationDefaultVdsGroupID','99408929-82CF-4DC7-A532-9D998063FA95','general');
 select fn_db_add_config_value('AutoRepoDomainRefreshTime','60','general');
 select fn_db_add_config_value('BlockMigrationOnSwapUsagePercentage','0','general');
---Handling CA Base Directory
-select fn_db_add_config_value('CABaseDirectory','','general');
---Handling CA certificate path
-select fn_db_add_config_value('CACertificatePath','ca/certs.pem','general');
---Handling Certificate alias
-select fn_db_add_config_value('CertAlias','1','general');
---Handling Certificate File Name
-select fn_db_add_config_value('CertificateFileName','','general');
 select fn_db_add_config_value('CipherSuite','DEFAULT','general');
 --Handling Configuration directory for ENGINE
 select fn_db_add_config_value('ConfigDir','/etc/engine','general');
@@ -259,9 +251,7 @@ select fn_db_add_config_value('IPTablesConfigForVirt',
 select fn_db_add_config_value('IsMultilevelAdministrationOn','true','general');
 select fn_db_add_config_value('JobCleanupRateInMinutes','10','general');
 select fn_db_add_config_value('JobPageSize','100','general');
-select fn_db_add_config_value('keystorePass','','general');
 --Handling Keystore URL
-select fn_db_add_config_value('keystoreUrl','','general');
 select fn_db_add_config_value('LdapQueryPageSize','1000','general');
 select fn_db_add_config_value('LDAPQueryTimeout','30','general');
 select fn_db_add_config_value('LDAPConnectTimeout','30','general');
@@ -413,7 +403,6 @@ select fn_db_add_config_value('ShareableDiskEnabled','true','3.2');
 select fn_db_add_config_value('ShareableDiskEnabled','true','3.3');
 select fn_db_add_config_value('SignCertTimeoutInSeconds','30','general');
 --Handling Script name for signing
-select fn_db_add_config_value('SignScriptName','SignReq.sh','general');
 select fn_db_add_config_value('SpiceDriverNameInGuest','RHEV-Spice','general');
 select fn_db_add_config_value('SpiceReleaseCursorKeys','shift+f12','general');
 select fn_db_add_config_value('SpiceToggleFullScreenKeys','shift+f11','general');
@@ -466,9 +455,6 @@ select fn_db_add_config_value('TimeoutToResetVdsInSeconds','60','general');
 select fn_db_add_config_value('DelayResetForSpmInSeconds','20','general');
 select fn_db_add_config_value('DelayResetPerVmInSeconds','0.5','general');
 select fn_db_add_config_value('TimeToReduceFailedRunOnVdsInMinutes','30','general');
-select fn_db_add_config_value('TruststorePass','NoSoup4U','general');
---Handling Truststore URL
-select fn_db_add_config_value('TruststoreUrl','.truststore','general');
 select fn_db_add_config_value('UknownTaskPrePollingLapse','60000','general');
 select fn_db_add_config_value('UserDefinedVMProperties','','3.0');
 select fn_db_add_config_value('UserDefinedVMProperties','','3.1');
@@ -540,7 +526,6 @@ select fn_db_add_config_value('LogMaxSwapUsedThresholdInPercentage', '95', 'gene
 
 select fn_db_update_config_value('AutoRecoveryAllowedTypes','{\"storage domains\":\"true\",\"hosts\":\"true\"}','general');
 select fn_db_update_config_value('BootstrapMinimalVdsmVersion','4.9','general');
-select fn_db_update_config_value('CertAlias','1','general');
 select fn_db_update_config_value('DBEngine','Postgres','general');
 select fn_db_update_config_value('DefaultTimeZone','(GMT) GMT Standard Time','general');
 select fn_db_update_config_value('FenceAgentDefaultParams','ilo3:lanplus,power_wait=4;ilo4:lanplus,power_wait=4','general');
@@ -607,7 +592,6 @@ select fn_db_update_config_value('IPTablesConfigForGluster',
 -A INPUT -p tcp -m tcp --dport 49152:49251 -j ACCEPT
 ','general');
 select fn_db_update_config_value('IsMultilevelAdministrationOn','true','general');
-select fn_db_update_config_value('keystoreUrl','keys/engine.p12','general');
 select fn_db_update_config_value('MaxNumOfVmCpus','64','3.0');
 select fn_db_update_config_value('MaxNumOfVmCpus','160','3.1');
 select fn_db_update_config_value('MaxNumOfVmCpus','160','3.2');
@@ -628,7 +612,6 @@ select fn_db_update_config_value('SpiceDriverNameInGuest','{"windows": "RHEV-Spi
 select fn_db_update_config_value('SupportedClusterLevels','3.0,3.1,3.2,3.3','general');
 select fn_db_update_config_value('SupportedStorageFormats','0,2,3','3.1,3.2,3.3');
 select fn_db_update_config_value('SupportedVDSMVersions','4.9,4.10','general');
-select fn_db_update_config_value('TruststoreUrl','.truststore','general');
 select fn_db_update_config_value('VdcVersion','3.3.0.0','general');
 select fn_db_update_config_value('ProductRPMVersion','3.3.0.0','general');
 select fn_db_update_config_value('VdsFenceOptionMapping','apc:secure=secure,port=ipport,slot=port;apc_snmp:secure=secure,port=ipport,slot=port;bladecenter:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port;drac5:secure=secure,slot=port;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;ilo2:secure=ssl,port=ipport;ipmilan:;ilo3:;ilo4:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port','general');
@@ -668,10 +651,14 @@ select fn_db_delete_config_value('AsyncPollingCyclesBeforeCallbackCleanup','gene
 select fn_db_delete_config_value('AsyncPollingCyclesBeforeRefreshSuspend','general');
 select fn_db_delete_config_value('AutoMode','general');
 select fn_db_delete_config_value('AutoSuspendTimeInMinutes','general');
+select fn_db_delete_config_value('CABaseDirectory','general');
+select fn_db_delete_config_value('CACertificatePath','general');
 select fn_db_delete_config_value('CAEngineKey','general');
 select fn_db_delete_config_value('CBCCertificateScriptName','general');
 select fn_db_delete_config_value('CBCCloseCertificateScriptName','general');
 select fn_db_delete_config_value('CbcCheckOnVdsChange','general');
+select fn_db_delete_config_value('CertAlias','general');
+select fn_db_delete_config_value('CertificateFileName','general');
 select fn_db_delete_config_value('CertificateFingerPrint','general');
 select fn_db_delete_config_value('CertificatePassword','general');
 select fn_db_delete_config_value('CustomPublicConfig_AppsWebSite','general');
@@ -688,6 +675,8 @@ select fn_db_delete_config_value('ENMailUser','general');
 select fn_db_delete_config_value('FreeSpaceCriticalLow','general');
 select fn_db_delete_config_value('HotPlugSupportedOsList','general');
 select fn_db_delete_config_value('ImagesSyncronizationTimeout','general');
+select fn_db_delete_config_value('keystorePass','general');
+select fn_db_delete_config_value('keystoreUrl','general');
 select fn_db_delete_config_value('LdapServers','3.0');
 select fn_db_delete_config_value('LicenseCertificateFingerPrint','general');
 select fn_db_delete_config_value('LogDBCommands','general');
@@ -721,6 +710,7 @@ select fn_db_delete_config_value('RenewGuestIpOnVdsSubnetChange','general');
 select fn_db_delete_config_value('RenewGuestIpOnVdsSubnetChangeOnParseError','general');
 select fn_db_delete_config_value('RpmsRepositoryUrl','general');
 select fn_db_delete_config_value('SignLockFile','general');
+select fn_db_delete_config_value('SignScriptName','general');
 select fn_db_delete_config_value('SQLServerI18NPrefix','general');
 select fn_db_delete_config_value('SQLServerLikeSyntax','general');
 select fn_db_delete_config_value('SQLServerPagingSyntax','general');
@@ -730,6 +720,8 @@ select fn_db_delete_config_value('ScriptsPath','general');
 select fn_db_delete_config_value('SearchesRefreshRateInSeconds','general');
 select fn_db_delete_config_value('SelectCommandTimeout','general');
 select fn_db_delete_config_value('SysPrep3.0Path','general');
+select fn_db_delete_config_value('TruststorePass','general');
+select fn_db_delete_config_value('TruststoreUrl','general');
 select fn_db_delete_config_value('UseENGINERepositoryRPMs','general');
 select fn_db_delete_config_value('UseVdsBrokerInProc','general');
 select fn_db_delete_config_value('VM64BitMaxMemorySizeInMB','general');

@@ -41,8 +41,6 @@ public class NotificationProperties {
     public static final String ENGINE_MONITOR_RETRIES = "ENGINE_MONITOR_RETRIES";
     public static final String SSL_IGNORE_CERTIFICATE_ERRORS = "SSL_IGNORE_CERTIFICATE_ERRORS";
     public static final String SSL_IGNORE_HOST_VERIFICATION = "SSL_IGNORE_HOST_VERIFICATION";
-    public static final String keystoreUrlVersion = "keystoreUrlVersion";
-    public static final String keystorePassVersion = "keystorePassVersion";
     public static final String ENGINE_PID = "ENGINE_PID";
     public static final String DEFAULT_ENGINE_PID = "/var/run/ovirt-engine.pid";
 

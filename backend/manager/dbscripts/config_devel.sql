@@ -1,7 +1,4 @@
 select fn_db_update_config_value('AdminPassword','letmein!','general');
-select fn_db_update_config_value('CABaseDirectory','ca','general');
-select fn_db_update_config_value('CertAlias','1','general');
-select fn_db_update_config_value('CertificateFileName','certs/engine.cer','general');
 select fn_db_update_config_value('ENGINEEARLib','%JBOSS_HOME%/server/engine-slimmed/deploy/engine.ear','general');
 select fn_db_update_config_value('InstallVds', 'false','general');
 select fn_db_update_config_value('SSLEnabled', 'false','general');
@@ -13,5 +10,3 @@ select fn_db_update_config_value('SysPrepWindows7Path','backend/manager/conf/sys
 select fn_db_update_config_value('SysPrepWindows7x64Path','backend/manager/conf/sysprep/sysprep.w7x64','general');
 select fn_db_update_config_value('SysPrepXPPath','backend/manager/conf/sysprep/sysprep.xp','general');
 select fn_db_update_config_value('UseSecureConnectionWithServers', 'false','general');
-select fn_db_update_config_value('keystorePass','NoSoup4U','general');
-select fn_db_update_config_value('keystoreUrl','keys/engine.p12','general');

@@ -18,6 +18,7 @@ import java.util.TimeZone;
 import org.apache.commons.codec.binary.Base64;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -29,7 +30,7 @@ public class OpenSslCAWrapper {
         InputStream in = null;
 
         try {
-            in = new FileInputStream(Config.resolveCACertificatePath());
+            in = new FileInputStream(EngineLocalConfig.getInstance().getPKICACert());
 
             final CertificateFactory cf = CertificateFactory.getInstance("X.509");
             final Certificate certificate = cf.generateCertificate(in);
@@ -61,8 +62,10 @@ public class OpenSslCAWrapper {
         String label,
         String hostname
     ) throws IOException {
-        File pkicertdir = new File(Config.resolveCABasePath(), "certs");
-        File pkireqdir = new File(Config.resolveCABasePath(), "requests");
+        EngineLocalConfig config = EngineLocalConfig.getInstance();
+        File pkicertdir = new File(config.getPKIDir(), "certs");
+        File pkireqdir = new File(config.getPKIDir(), "requests");
+        File signRequestBatch = new File(config.getPKIDir(), "SignReq.sh");
         String reqFileName = String.format("%1$sreq.pem", label);
         String certFileName = String.format("%1$scert.pem", label);
 
@@ -92,7 +95,8 @@ public class OpenSslCAWrapper {
                 reqFileName,
                 hostname,
                 Config.<Integer> GetValue(ConfigValues.VdsCertificateValidityInYears) * 365,
-                certFileName
+                certFileName,
+                signRequestBatch
             )
         ) {
             throw new RuntimeException("Certificate enrollment failed");
@@ -105,16 +109,16 @@ public class OpenSslCAWrapper {
         String requestFileName,
         String hostname,
         int days,
-        String signedCertificateFileName
+        String signedCertificateFileName,
+        File signRequestBatch
     ) {
         log.debug("Entered signCertificateRequest");
         boolean returnValue = true;
-        String signRequestBatch = Config.resolveSignScriptPath();
-        if (new File(signRequestBatch).exists()) {
+        if (signRequestBatch.exists()) {
             String organization = Config.<String> GetValue(ConfigValues.OrganizationName);
             Integer signatureTimeout = Config.<Integer> GetValue(ConfigValues.SignCertTimeoutInSeconds);
             String[] command_array =
-                    createCommandArray(signatureTimeout, signRequestBatch, requestFileName,
+                    createCommandArray(signatureTimeout, signRequestBatch.getAbsolutePath(), requestFileName,
                             hostname, organization, days,
                             signedCertificateFileName);
             returnValue = runCommandArray(command_array, signatureTimeout);
@@ -226,8 +230,9 @@ public class OpenSslCAWrapper {
             int days,
             String signedCertificateFileName) {
         log.debug("Building command array for Sign Certificate request script");
-        String baseDirectoryPath = Config.resolveCABasePath();
-        String keystorePass = Config.<String> GetValue(ConfigValues.keystorePass);
+        EngineLocalConfig config = EngineLocalConfig.getInstance();
+        String baseDirectoryPath = config.getPKIDir().getAbsolutePath();
+        String keystorePass = config.getPKIEngineStorePassword();
         Calendar yesterday = Calendar.getInstance();
         yesterday.add(Calendar.DATE, -1);
         SimpleDateFormat format = new SimpleDateFormat("yyMMddHHmmssZ");

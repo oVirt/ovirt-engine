@@ -5,9 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigCommon;
-import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.crypt.EncryptionUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -30,9 +28,10 @@ public class DbFacadeUtils {
         if (StringUtils.isEmpty(password)) {
             return password;
         }
-        String keyFile = Config.resolveKeyStorePath();
-        String passwd = Config.<String> GetValue(ConfigValues.keystorePass, ConfigCommon.defaultConfigurationVersion);
-        String alias = Config.<String> GetValue(ConfigValues.CertAlias, ConfigCommon.defaultConfigurationVersion);
+        EngineLocalConfig config = EngineLocalConfig.getInstance();
+        String keyFile = config.getPKIEngineStore().getAbsolutePath();
+        String passwd = config.getPKIEngineStorePassword();
+        String alias = config.getPKIEngineStoreAlias();
         try {
             return EncryptionUtils.encrypt(password, keyFile, passwd, alias);
         } catch (Exception e) {
@@ -44,9 +43,10 @@ public class DbFacadeUtils {
         if (StringUtils.isEmpty(password)) {
             return password;
         }
-        String keyFile = Config.resolveKeyStorePath();
-        String passwd = Config.<String> GetValue(ConfigValues.keystorePass, ConfigCommon.defaultConfigurationVersion);
-        String alias = Config.<String> GetValue(ConfigValues.CertAlias, ConfigCommon.defaultConfigurationVersion);
+        EngineLocalConfig config = EngineLocalConfig.getInstance();
+        String keyFile = config.getPKIEngineStore().getAbsolutePath();
+        String passwd = config.getPKIEngineStorePassword();
+        String alias = config.getPKIEngineStoreAlias();
         try {
             return EncryptionUtils.decrypt(password, keyFile, passwd, alias);
         } catch (Exception e) {

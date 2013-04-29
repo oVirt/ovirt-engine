@@ -12,8 +12,8 @@ import org.ovirt.engine.core.config.EngineConfigCLIParser;
 import org.ovirt.engine.core.config.EngineConfigLogic;
 import org.ovirt.engine.core.config.db.ConfigDAO;
 import org.ovirt.engine.core.config.entity.ConfigKey;
-import org.ovirt.engine.core.config.entity.ConfigKeyFactory;
 import org.ovirt.engine.core.tools.ToolConsole;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.crypt.EncryptionUtils;
 
 public class PasswordValueHelper implements ValueHelper {
@@ -23,7 +23,6 @@ public class PasswordValueHelper implements ValueHelper {
     // The console:
     private static final ToolConsole console = ToolConsole.getInstance();
 
-    private static ConfigDAO configDAO;
     private static String certAlias;
     private static String keyStoreURL;
     private static String keyStorePass;
@@ -32,17 +31,10 @@ public class PasswordValueHelper implements ValueHelper {
 
     static {
         try {
-            configDAO = EngineConfig.getInstance().getEngineConfigLogic().getConfigDAO();
-            ConfigKeyFactory keyFactory = ConfigKeyFactory.getInstance();
-            certAlias =
-                configDAO.getKey(keyFactory.generateBlankConfigKey("CertAlias", "String"))
-                .getValue();
-            keyStoreURL =
-                configDAO.getKey(keyFactory.generateBlankConfigKey("keystoreUrl", "String"))
-                .getValue();
-            keyStorePass =
-                configDAO.getKey(keyFactory.generateBlankConfigKey("keystorePass", "String"))
-                .getValue();
+            EngineLocalConfig config = EngineLocalConfig.getInstance();
+            keyStoreURL = config.getPKIEngineStore().getAbsolutePath();
+            keyStorePass = config.getPKIEngineStorePassword();
+            certAlias = config.getPKIEngineStoreAlias();
         }
         catch (Exception exception) {
             String msg = "Error loading private key.";

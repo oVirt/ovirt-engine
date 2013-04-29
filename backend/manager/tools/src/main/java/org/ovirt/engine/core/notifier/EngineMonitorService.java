@@ -203,15 +203,9 @@ public class EngineMonitorService implements Runnable {
      * @throws NotificationServiceException
      */
     private void createConcreteSSLSocketFactory() throws NotificationServiceException {
-        String keystorePass =
-                getConfigurationProperty(ConfigValues.keystorePass.name(),
-                        prop.get(NotificationProperties.keystorePassVersion));
-        String keystoreUrl =
-                getConfigurationProperty(ConfigValues.keystoreUrl.name(),
-                        prop.get(NotificationProperties.keystoreUrlVersion));
-
-        validateConfigurationProperty(keystorePass);
-        validateConfigurationProperty(keystoreUrl);
+        EngineLocalConfig config = EngineLocalConfig.getInstance();
+        String keystorePass = config.getPKIEngineStorePassword();
+        String keystoreUrl = config.getPKIEngineStore().getAbsolutePath();
 
         try {
             String sslProtocol = prop.get(NotificationProperties.SSL_PROTOCOL);
@@ -272,15 +266,6 @@ public class EngineMonitorService implements Runnable {
         }
         catch (MalformedURLException exception) {
             throw new NotificationServiceException("Can't get engine health servlet URL.", exception);
-        }
-    }
-
-    private void validateConfigurationProperty(String propertyValue) throws NotificationServiceException {
-        final String MISSING_PROPERTY_ERROR = "Empty or missing property '%s' from vdc_options table";
-        if (StringUtils.isEmpty(propertyValue)) {
-            String errorMessage = String.format(MISSING_PROPERTY_ERROR, ConfigValues.keystorePass.name());
-            log.error(errorMessage);
-            throw new NotificationServiceException(errorMessage);
         }
     }
 
@@ -481,55 +466,6 @@ public class EngineMonitorService implements Runnable {
         catch (SQLException exception) {
             throw new NotificationServiceException("Failed to obtain database connectivity", exception);
         }
-    }
-
-    /**
-     * Retrieves property from vdc_option table by its name
-     * @param propertyName
-     *            property name to retrieve
-     * @param propertyVersion
-     *            the property version
-     * @return the property value or null if doesn't exists or failed to retrieve
-     */
-    private String getConfigurationProperty(String propertyName, String propertyVersion) {
-        final String GET_CONFIGURATION_PROPERTY_SQL =
-                "select option_value from vdc_options where option_name = ? and version = ?";
-        Connection connection = null;
-        PreparedStatement pStmt = null;
-        String propertyValue = null;
-        ResultSet rs = null;
-
-        if (StringUtils.isEmpty(propertyVersion)) {
-            propertyVersion = ConfigCommon.defaultConfigurationVersion;
-        }
-
-        try {
-            connection = ds.getConnection();
-            pStmt = connection.prepareStatement(GET_CONFIGURATION_PROPERTY_SQL);
-            pStmt.setString(1, propertyName);
-            pStmt.setString(2, propertyVersion);
-            rs = pStmt.executeQuery();
-            if (rs.next()) {
-                propertyValue = rs.getString(1);
-            }
-            if (propertyValue == null && !ConfigCommon.defaultConfigurationVersion.equals(propertyVersion)) {
-                rs.close();
-                pStmt.setString(1, propertyName);
-                pStmt.setString(2, ConfigCommon.defaultConfigurationVersion);
-                rs = pStmt.executeQuery();
-                if (rs.next()) {
-                    propertyValue = rs.getString(1);
-                }
-                log.warn(MessageFormat.format("Property {0} does not exists on vdc_option with version {1}. Trying to obtain it with default version.",
-                        propertyName,
-                        propertyVersion));
-            }
-        } catch (Exception e) {
-            log.error(MessageFormat.format("Failed to retrieve property {0} from the database", propertyName), e);
-        } finally {
-            DbUtils.closeQuietly(rs,pStmt,connection);
-        }
-        return propertyValue;
     }
 
 }
