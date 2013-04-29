@@ -12,10 +12,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -174,14 +176,14 @@ public class ServletUtilsTest {
        HttpServletResponse mockResponse = mock(HttpServletResponse.class);
        ServletOutputStream responseOut = mock(ServletOutputStream.class);
        when(mockResponse.getOutputStream()).thenReturn(responseOut);
-       File file = new File("/etc/favicon.png");
+       File file = createTempPng();
        ServletUtils.sendFile(mockRequest, mockResponse, file, "application/xml");
        //Check that the mime type was set to the one passed in, instead of the one associated with the file
        verify(mockResponse).setContentType("application/xml");
        //Check the file length is set right.
-       verify(mockResponse).setContentLength((int)file.length());
+       verify(mockResponse).setContentLength((int) file.length());
        //Make sure the stream is written to.
-       verify(responseOut).write((byte[])anyObject(), eq(0), anyInt());
+       verify(responseOut).write((byte[]) anyObject(), eq(0), anyInt());
     }
 
     /**
@@ -194,13 +196,29 @@ public class ServletUtilsTest {
        HttpServletResponse mockResponse = mock(HttpServletResponse.class);
        ServletOutputStream responseOut = mock(ServletOutputStream.class);
        when(mockResponse.getOutputStream()).thenReturn(responseOut);
-       File file = new File("/etc/favicon.png");
+       File file = createTempPng();
        ServletUtils.sendFile(mockRequest, mockResponse, file, null);
        //Check that the mime type was set to the one passed in, instead of the one associated with the file
        verify(mockResponse).setContentType("image/png");
        //Check the file length is set right.
-       verify(mockResponse).setContentLength((int)file.length());
+       verify(mockResponse).setContentLength((int) file.length());
        //Make sure the stream is written to.
-       verify(responseOut).write((byte[])anyObject(), eq(0), anyInt());
+       verify(responseOut).write((byte[]) anyObject(), eq(0), anyInt());
+    }
+
+    private File createTempPng() {
+        try {
+            File file = File.createTempFile("favicon", ".png");
+            file.deleteOnExit();
+            BufferedImage img = new BufferedImage(256, 256,
+                    BufferedImage.TYPE_INT_RGB);
+            if (!ImageIO.write(img, "PNG", file)) {
+                fail("Unable to write temporary image file");
+            }
+            return file;
+        } catch (IOException ioe) {
+            fail("IOException thrown: " + ioe.getMessage());
+            return null;
+        }
     }
 }
