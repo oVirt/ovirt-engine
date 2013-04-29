@@ -181,7 +181,7 @@ public class HostSetupNetworksModel extends EntityModel {
         NetworkItemModel<?> op1 = nic1 == null ? network1 : nic1;
         NetworkItemModel<?> op2 = nic2 == null ? network2 : nic2;
 
-        if (op1 == null || (op1 == null && op2 == null)) {
+        if (op1 == null || op2 == null) {
             throw new IllegalArgumentException("null Operands"); //$NON-NLS-1$
         }
 
