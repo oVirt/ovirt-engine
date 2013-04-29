@@ -244,10 +244,10 @@ public class VmDeviceUtils {
                     addSoundCard(vm.getStaticData(), vm.getVdsGroupCompatibilityVersion());
                 }
             }
-            int numOfMonitors = (vm.getDisplayType() == DisplayType.vnc) ? Math.max(1, vm.getNumOfMonitors()) : vm.getNumOfMonitors();
+            int numOfMonitors = (vmBase.getDefaultDisplayType() == DisplayType.vnc) ? Math.max(1, vmBase.getNumOfMonitors()) : vmBase.getNumOfMonitors();
             // create Video device. Multiple if display type is spice
             for (int i = 0; i < numOfMonitors; i++) {
-                addVideoDevice(vm);
+                addVideoDevice(vmBase);
             }
 
         }
@@ -286,7 +286,7 @@ public class VmDeviceUtils {
         copyVmDevices(srcId, dstId, vm, vmBase, isVm, devices, disks, ifaces);
     }
 
-    private static void addVideoDevice(VM vm) {
+    private static void addVideoDevice(VmBase vm) {
         addManagedDevice(
                 new VmDeviceId(Guid.NewGuid(),vm.getId()),
                 VmDeviceType.VIDEO,

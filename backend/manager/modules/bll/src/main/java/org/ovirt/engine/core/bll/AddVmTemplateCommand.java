@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,7 +35,9 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -60,6 +63,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     private final List<DiskImage> mImages = new ArrayList<DiskImage>();
     private List<PermissionSubject> permissionCheckSubject;
     protected Map<Guid, DiskImage> diskInfoDestinationMap;
+    private boolean isVmInDb;
 
     /**
      * A list of the new disk images which were saved for the Template.
@@ -84,13 +88,24 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             setVdsGroupId(parameterMasterVm.getVdsGroupId());
         }
         if (getVm() != null) {
-            VmHandler.updateDisksFromDb(getVm());
+            updateVmDisks();
             setStoragePoolId(getVm().getStoragePoolId());
+            isVmInDb = true;
+        } else if (getVdsGroup() != null) {
+            VM vm = new VM(parameterMasterVm, new VmDynamic(), null);
+            vm.setDisplayType(parameterMasterVm.getDefaultDisplayType());
+            vm.setVdsGroupCompatibilityVersion(getVdsGroup().getcompatibility_version());
+            setVm(vm);
+            setStoragePoolId(getVdsGroup().getStoragePoolId());
         }
         diskInfoDestinationMap = parameters.getDiskInfoDestinationMap();
         if (diskInfoDestinationMap == null) {
             diskInfoDestinationMap = new HashMap<Guid, DiskImage>();
         }
+    }
+
+    protected void updateVmDisks() {
+        VmHandler.updateDisksFromDb(getVm());
     }
 
     @Override
@@ -111,12 +126,15 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     @Override
     protected void executeCommand() {
         // get vm status from db to check its really down before locking
-        VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(getVmId());
-        if (vmDynamic.getStatus() != VMStatus.Down) {
-            throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
-        }
+        // relevant only if template created from vm
+        if (isVmInDb) {
+            VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(getVmId());
+            if (vmDynamic.getStatus() != VMStatus.Down) {
+                throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
+            }
 
-        VmHandler.LockVm(vmDynamic, getCompensationContext());
+            VmHandler.LockVm(vmDynamic, getCompensationContext());
+        }
         setActionReturnValue(Guid.Empty);
         setVmTemplateId(Guid.NewGuid());
         getParameters().setVmTemplateId(getVmTemplateId());
@@ -138,7 +156,20 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 addPermission();
                 AddVmTemplateImages();
                 List<VmNetworkInterface> vmInterfaces = addVmInterfaces();
-                VmDeviceUtils.copyVmDevices(getVmId(), getVmTemplateId(), newDiskImages, vmInterfaces);
+                if (isVmInDb) {
+                    VmDeviceUtils.copyVmDevices(getVmId(), getVmTemplateId(), newDiskImages, vmInterfaces);
+                } else {
+                    // sending true for isVm in order to create basic devices needed
+                    VmDeviceUtils.copyVmDevices(getVmId(),
+                            getVmTemplateId(),
+                            getVm(),
+                            getVmTemplate(),
+                            true,
+                            Collections.<VmDevice> emptyList(),
+                            newDiskImages,
+                            vmInterfaces);
+                }
+
                 setSucceeded(true);
                 return null;
             }
@@ -154,7 +185,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     @Override
     protected boolean canDoAction() {
-        if (getVdsGroup() == null || !getVm().getStoragePoolId().equals(getVdsGroup().getStoragePoolId())) {
+        if (getVdsGroup() == null) {
             addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
             return false;
         }
@@ -171,11 +202,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
-        if (!validateVmNotDuringSnapshot()) {
-            return false;
-        }
-
-        if (getVm().getStatus() != VMStatus.Down) {
+        if (isVmInDb && getVm().getStatus() != VMStatus.Down) {
             addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_CREATE_TEMPLATE_FROM_DOWN_VM.toString());
             return false;
         }
@@ -186,86 +213,105 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
 
         // Check that the USB policy is legal
-        if (!VmHandler.isUsbPolicyLegal(getParameters().getVm().getUsbPolicy(), getParameters().getVm().getOs(), getVdsGroup(), getReturnValue().getCanDoActionMessages())) {
+        if (!VmHandler.isUsbPolicyLegal(getParameters().getVm().getUsbPolicy(),
+                getParameters().getVm().getOs(),
+                getVdsGroup(),
+                getReturnValue().getCanDoActionMessages())) {
             return false;
         }
 
-        Map<Guid, List<DiskImage>> sourceImageDomainsImageMap = new HashMap<Guid, List<DiskImage>>();
-        for (DiskImage image : mImages) {
-            MultiValueMapUtils.addToMap(image.getStorageIds().get(0), image, sourceImageDomainsImageMap);
-            if (!diskInfoDestinationMap.containsKey(image.getId())) {
-                Guid destStorageId =
-                        getParameters().getDestinationStorageDomainId() != null ? getParameters().getDestinationStorageDomainId()
-                                : image.getStorageIds().get(0);
-                ArrayList<Guid> storageIds = new ArrayList<Guid>();
-                storageIds.add(destStorageId);
-                image.setStorageIds(storageIds);
-                diskInfoDestinationMap.put(image.getId(), image);
-            }
-        }
-
-        if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {
-            return false;
-        }
-
-        List<DiskImage> diskImagesToCheck = ImagesHandler.filterImageDisks(mImages, true, false);
-        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskImagesToCheck);
-        if (!validate(diskImagesValidator.diskImagesNotIllegal()) ||
-                !validate(diskImagesValidator.diskImagesNotLocked())) {
-            return false;
-        }
-
-        MultipleStorageDomainsValidator storageDomainsValidator =
-                new MultipleStorageDomainsValidator(getStoragePoolId(), sourceImageDomainsImageMap.keySet());
-        if (!validate(storageDomainsValidator.allDomainsExistAndActive())) {
-            return false;
-        }
-
-        Map<Guid, StorageDomain> storageDomains = new HashMap<Guid, StorageDomain>();
-        Set<Guid> destImageDomains = getStorageGuidSet();
-        destImageDomains.removeAll(sourceImageDomainsImageMap.keySet());
-        for (Guid destImageDomain : destImageDomains) {
-            StorageDomain storage = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
-                    destImageDomain, getVm().getStoragePoolId());
-            if (storage == null) {
-                // if storage is null then we need to check if it doesn't exist or
-                // domain is not in the same storage pool as the vm
-                if (DbFacade.getInstance().getStorageDomainStaticDao().get(destImageDomain) == null) {
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST.toString());
-                } else {
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_IN_STORAGE_POOL);
-                }
-                return false;
-            }
-            if (storage.getStatus() == null || storage.getStatus() != StorageDomainStatus.Active) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL.toString());
-                return false;
-            }
-
-            if (storage.getStorageDomainType() == StorageDomainType.ImportExport
-                    || storage.getStorageDomainType() == StorageDomainType.ISO) {
-
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
-                return false;
-            }
-            storageDomains.put(destImageDomain, storage);
-        }
-        // update vm snapshots for storage free space check
-        ImagesHandler.fillImagesBySnapshots(getVm());
-
-        Map<StorageDomain, Integer> domainMap =
-                StorageDomainValidator.getSpaceRequirementsForStorageDomains(
-                        ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), true, false),
-                        storageDomains,
-                        diskInfoDestinationMap);
-        for (Map.Entry<StorageDomain, Integer> entry : domainMap.entrySet()) {
-            if (!doesStorageDomainhaveSpaceForRequest(entry.getKey(), entry.getValue())) {
-                return false;
-            }
-        }
-        return AddVmCommand.CheckCpuSockets(getParameters().getMasterVm().getNumOfSockets(),
+        return imagesRelatedChecks() && AddVmCommand.CheckCpuSockets(getParameters().getMasterVm().getNumOfSockets(),
                 getParameters().getMasterVm().getCpuPerSocket(), getVdsGroup()
                         .getcompatibility_version().toString(), getReturnValue().getCanDoActionMessages());
+    }
+
+    private boolean imagesRelatedChecks() {
+        // images related checks
+        if (!mImages.isEmpty()) {
+            if (!getVm().getStoragePoolId().equals(getVdsGroup().getStoragePoolId())) {
+                addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
+                return false;
+            }
+            if (!validateVmNotDuringSnapshot()) {
+                return false;
+            }
+
+            Map<Guid, List<DiskImage>> sourceImageDomainsImageMap = new HashMap<Guid, List<DiskImage>>();
+            for (DiskImage image : mImages) {
+                MultiValueMapUtils.addToMap(image.getStorageIds().get(0), image, sourceImageDomainsImageMap);
+                if (!diskInfoDestinationMap.containsKey(image.getId())) {
+                    Guid destStorageId =
+                            getParameters().getDestinationStorageDomainId() != null ? getParameters().getDestinationStorageDomainId()
+                                    : image.getStorageIds().get(0);
+                    ArrayList<Guid> storageIds = new ArrayList<Guid>();
+                    storageIds.add(destStorageId);
+                    image.setStorageIds(storageIds);
+                    diskInfoDestinationMap.put(image.getId(), image);
+                }
+            }
+
+            if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {
+                return false;
+            }
+
+            List<DiskImage> diskImagesToCheck = ImagesHandler.filterImageDisks(mImages, true, false);
+            DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskImagesToCheck);
+            if (!validate(diskImagesValidator.diskImagesNotIllegal()) ||
+                    !validate(diskImagesValidator.diskImagesNotLocked())) {
+                return false;
+            }
+
+            MultipleStorageDomainsValidator storageDomainsValidator =
+                    new MultipleStorageDomainsValidator(getStoragePoolId(), sourceImageDomainsImageMap.keySet());
+            if (!validate(storageDomainsValidator.allDomainsExistAndActive())) {
+                return false;
+            }
+
+            Map<Guid, StorageDomain> storageDomains = new HashMap<Guid, StorageDomain>();
+            Set<Guid> destImageDomains = getStorageGuidSet();
+            destImageDomains.removeAll(sourceImageDomainsImageMap.keySet());
+            for (Guid destImageDomain : destImageDomains) {
+                StorageDomain storage = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
+                        destImageDomain, getVm().getStoragePoolId());
+                if (storage == null) {
+                    // if storage is null then we need to check if it doesn't exist or
+                    // domain is not in the same storage pool as the vm
+                    if (DbFacade.getInstance().getStorageDomainStaticDao().get(destImageDomain) == null) {
+                        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST.toString());
+                    } else {
+                        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_IN_STORAGE_POOL);
+                    }
+                    return false;
+                }
+                if (storage.getStatus() == null || storage.getStatus() != StorageDomainStatus.Active) {
+                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL.toString());
+                    return false;
+                }
+
+                if (storage.getStorageDomainType() == StorageDomainType.ImportExport
+                        || storage.getStorageDomainType() == StorageDomainType.ISO) {
+
+                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+                    return false;
+                }
+                storageDomains.put(destImageDomain, storage);
+            }
+            // update vm snapshots for storage free space check
+            ImagesHandler.fillImagesBySnapshots(getVm());
+
+            Map<StorageDomain, Integer> domainMap =
+                    StorageDomainValidator.getSpaceRequirementsForStorageDomains(
+                            ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), true, false),
+                            storageDomains,
+                            diskInfoDestinationMap);
+
+            for (Map.Entry<StorageDomain, Integer> entry : domainMap.entrySet()) {
+                if (!doesStorageDomainhaveSpaceForRequest(entry.getKey(), entry.getValue())) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     protected boolean doesStorageDomainhaveSpaceForRequest(StorageDomain storageDomain, long spaceForRequest) {
@@ -411,7 +457,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     private void endUnlockOps() {
-        VmHandler.UnLockVm(getVm());
+        if (isVmInDb) {
+            VmHandler.UnLockVm(getVm());
+        }
         VmTemplateHandler.UnLockVmTemplate(getVmTemplateId());
     }
 

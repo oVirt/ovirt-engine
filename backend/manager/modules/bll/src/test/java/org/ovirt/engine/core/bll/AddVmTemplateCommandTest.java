@@ -69,7 +69,17 @@ public class AddVmTemplateCommandTest {
         AddVmTemplateParameters params = new AddVmTemplateParameters(vm, "templateName", "Template for testing");
 
         // Using the compensation constructor since the normal one contains DB access
-        cmd = spy(new AddVmTemplateCommand<AddVmTemplateParameters>(params));
+        cmd = spy(new AddVmTemplateCommand<AddVmTemplateParameters>(params) {
+
+            @Override
+            protected void updateVmDisks() {
+            }
+
+            @Override
+            public VM getVm() {
+                return vm;
+            }
+        });
         doReturn(vmDao).when(cmd).getVmDAO();
         doReturn(vdsGroupDao).when(cmd).getVdsGroupDAO();
         cmd.setVmId(vmId);
