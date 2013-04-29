@@ -317,7 +317,6 @@ public class Backend implements BackendInternal {
         VdcReturnValueBase returnValue = null;
 
         // Evaluate and set the correlationId on the parameters, fails on invalid correlation id
-        boolean hasCorrelationId = StringUtils.isNotEmpty(parameters.getCorrelationId());
         returnValue = ExecutionHandler.evaluateCorrelationId(parameters);
         if (returnValue != null) {
             log.warnFormat("CanDoAction of action {0} failed. Reasons: {1}", actionType,
@@ -328,7 +327,7 @@ public class Backend implements BackendInternal {
         CommandBase<?> command = CommandsFactory.CreateCommand(actionType, parameters);
         command.setInternalExecution(runAsInternal);
         command.setContext(context);
-        ExecutionHandler.prepareCommandForMonitoring(command, actionType, runAsInternal, hasCorrelationId);
+        ExecutionHandler.prepareCommandForMonitoring(command, actionType, runAsInternal);
 
         returnValue = command.executeAction();
         returnValue.setCorrelationId(parameters.getCorrelationId());

@@ -178,8 +178,7 @@ public class ExecutionHandler {
      */
     public static void prepareCommandForMonitoring(CommandBase<?> command,
             VdcActionType actionType,
-            boolean runAsInternal,
-            boolean hasCorrelationId) {
+            boolean runAsInternal) {
 
         ExecutionContext context = command.getExecutionContext();
         if (context == null) {
@@ -187,7 +186,7 @@ public class ExecutionHandler {
         }
 
         try {
-            boolean isMonitored = shouldMonitorCommand(actionType, runAsInternal, hasCorrelationId);
+            boolean isMonitored = shouldMonitorCommand(actionType, runAsInternal);
 
             // A monitored job is created for monitored external flows
             if (isMonitored || context.isJobRequired()) {
@@ -218,13 +217,11 @@ public class ExecutionHandler {
      *            The action type
      * @param isInternal
      *            Indicator of action invocation method
-     * @param hasCorrelationId
-     *            Indicates if the current command was executed under a correlation-ID
      * @return true if the command should be monitored, else false.
      */
-    private static boolean shouldMonitorCommand(VdcActionType actionType, boolean isInternal, boolean hasCorrelationId) {
+    private static boolean shouldMonitorCommand(VdcActionType actionType, boolean isInternal) {
 
-        return (actionType.isActionMonitored() || hasCorrelationId) && !isInternal;
+        return actionType.isActionMonitored() && !isInternal;
     }
 
     /**
