@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -143,15 +142,13 @@ public class MultipleActionsRunner {
         CommandBase<?> command = getCommands().get(currentCanDoActionId);
         String actionType = command.getActionType().toString();
         try {
-            log.infoFormat("Start time: {0}. Start running CanDoAction for command number {1}/{2} (Command type: {3})",
-                    new Date(),
+            log.infoFormat("Start running CanDoAction for command number {0}/{1} (Command type: {2})",
                     currentCanDoActionId + 1,
                     totalSize,
                     actionType);
             return command.canDoActionOnly();
         } finally {
-            log.infoFormat("End time: {0}. Finish handling CanDoAction for command number {1}/{2} (Command type: {3})",
-                    new Date(),
+            log.infoFormat("Finish handling CanDoAction for command number {0}/{1} (Command type: {2})",
                     currentCanDoActionId + 1,
                     totalSize,
                     actionType);
