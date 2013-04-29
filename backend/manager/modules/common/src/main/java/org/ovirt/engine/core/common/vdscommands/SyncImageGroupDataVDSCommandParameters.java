@@ -29,6 +29,6 @@ public class SyncImageGroupDataVDSCommandParameters extends TargetDomainImageGro
 
     @Override
     public String toString() {
-        return String.format("%s, syncType=%b", super.toString(), getSyncType());
+        return String.format("%s, syncType=%s", super.toString(), getSyncType());
     }
 }
