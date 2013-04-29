@@ -106,8 +106,13 @@ public class BackendEntityAssignedPermissionsResourceTest
     @Override
     protected void verifyModel(Permission model, int index) {
         super.verifyModel(model, index);
-        assertTrue(model.isSetUser());
-        assertEquals(GUIDS[1].toString(), model.getUser().getId());
+        if (index == 0) {
+            assertTrue(model.isSetUser());
+            assertEquals(GUIDS[1].toString(), model.getUser().getId());
+        } else {
+            assertTrue(model.isSetGroup());
+            assertEquals(GUIDS[1].toString(), model.getGroup().getId());
+        }
     }
 }
 

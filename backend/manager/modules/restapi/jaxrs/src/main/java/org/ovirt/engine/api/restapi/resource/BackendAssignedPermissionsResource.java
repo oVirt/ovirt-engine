@@ -33,7 +33,6 @@ import org.ovirt.engine.core.common.queries.GetDbUserByUserIdParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class BackendAssignedPermissionsResource
         extends AbstractBackendCollectionResource<Permission, permissions>
@@ -175,11 +174,11 @@ public class BackendAssignedPermissionsResource
      */
     public Permission map(permissions entity, DbUser user) {
         Permission template = new Permission();
-        if (entity.getad_element_id() != null && user != null) {
+        if (entity.getad_element_id() != null) {
             if (isUser(user)) {
                 template.setUser(new User());
                 template.getUser().setId(entity.getad_element_id().toString());
-            } else if (entity.getad_element_id() != null) {
+            } else {
                 template.setGroup(new Group());
                 template.getGroup().setId(entity.getad_element_id().toString());
             }
@@ -188,8 +187,8 @@ public class BackendAssignedPermissionsResource
     }
 
     //REVISIT: fix once BE can distinguish between the user and group
-    private boolean isUser(DbUser user) {
-        return StringHelper.isNullOrEmpty(user.getusername()) ? false : true;
+    private static boolean isUser(DbUser user) {
+        return user != null && !user.getIsGroup();
     }
 
     /**
