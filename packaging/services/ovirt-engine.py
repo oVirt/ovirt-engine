@@ -396,7 +396,8 @@ class EngineDaemon(service.Daemon):
             '-c', os.path.basename(jbossConfigFile),
         ])
 
-        self._engineEnv = os.environ.copy().update({
+        self._engineEnv = os.environ.copy()
+        self._engineEnv.update({
             'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin',
             'LANG': 'en_US.UTF-8',
             'LC_ALL': 'en_US.UTF-8',
