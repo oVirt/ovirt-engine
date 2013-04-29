@@ -635,6 +635,9 @@ select fn_db_update_config_value('VmGracefulShutdownMessage','System Administrat
 select fn_db_update_config_value('DisconnectPoolOnReconstruct','0,2,3','general');
 select fn_db_update_config_value('SupportBridgesReportByVDSM','false','3.1');
 select fn_db_update_config_value('AgentAppName','ovirt-guest-agent-common,ovirt-guest-agent','general');
+select fn_db_update_config_value('VM64BitMaxMemorySizeInMB','2097152','3.1');
+select fn_db_update_config_value('VM64BitMaxMemorySizeInMB','2097152','3.2');
+select fn_db_update_config_value('VM64BitMaxMemorySizeInMB','2097152','3.3');
 
 
 ------------------------------------------------------------------------------------
