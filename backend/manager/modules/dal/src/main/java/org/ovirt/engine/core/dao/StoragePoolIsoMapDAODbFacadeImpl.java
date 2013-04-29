@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.StorageDomainOwnerType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
@@ -24,7 +23,6 @@ public class StoragePoolIsoMapDAODbFacadeImpl extends BaseDAODbFacade implements
             entity.setstorage_id(Guid.createGuidFromString(rs.getString("storage_id")));
             entity.setstorage_pool_id(NGuid.createGuidFromString(rs.getString("storage_pool_id")));
             entity.setstatus(StorageDomainStatus.forValue(rs.getInt("status")));
-            entity.setowner(StorageDomainOwnerType.forValue(rs.getInt("owner")));
             return entity;
         }
     }
@@ -43,7 +41,7 @@ public class StoragePoolIsoMapDAODbFacadeImpl extends BaseDAODbFacade implements
     public void save(StoragePoolIsoMap map) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("storage_id",
                 map.getstorage_id()).addValue("storage_pool_id", map.getstorage_pool_id()).addValue("status",
-                map.getstatus()).addValue("owner", map.getowner());
+                map.getstatus());
         getCallsHandler().executeModification("Insertstorage_pool_iso_map", parameterSource);
     }
 
@@ -51,7 +49,7 @@ public class StoragePoolIsoMapDAODbFacadeImpl extends BaseDAODbFacade implements
     public void update(StoragePoolIsoMap map) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("storage_id",
                 map.getstorage_id()).addValue("storage_pool_id", map.getstorage_pool_id()).addValue("status",
-                map.getstatus()).addValue("owner", map.getowner());
+                map.getstatus());
 
         getCallsHandler().executeModification("Updatestorage_pool_iso_map", parameterSource);
     }

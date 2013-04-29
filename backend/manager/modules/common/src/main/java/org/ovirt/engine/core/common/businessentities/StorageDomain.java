@@ -215,14 +215,6 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntity<Guid>
         getStoragePoolIsoMapData().setstatus(status);
     }
 
-    public StorageDomainOwnerType getOwner() {
-        return getStoragePoolIsoMapData().getowner();
-    }
-
-    public void setOwner(StorageDomainOwnerType owner) {
-        getStoragePoolIsoMapData().setowner(owner);
-    }
-
     private String storagePoolName;
 
     public String getStoragePoolName() {

@@ -62,29 +62,11 @@ public class StoragePoolIsoMap implements BusinessEntity<StoragePoolIsoMapId> {
         }
     }
 
-    private Integer persistentOwner = StorageDomainOwnerType.Unknown.getValue();
-
-    public StorageDomainOwnerType getowner() {
-        if (persistentOwner == null) {
-            return null;
-        }
-        return StorageDomainOwnerType.forValue(persistentOwner);
-    }
-
-    public void setowner(StorageDomainOwnerType value) {
-        if (value == null) {
-            persistentOwner = null;
-        } else {
-            persistentOwner = value.getValue();
-        }
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((persistentOwner == null) ? 0 : persistentOwner.hashCode());
         result = prime * result
               + ((persistentStorageDomainStatus == null) ? 0 : persistentStorageDomainStatus.hashCode());
         return result;
@@ -103,7 +85,6 @@ public class StoragePoolIsoMap implements BusinessEntity<StoragePoolIsoMapId> {
         }
         StoragePoolIsoMap other = (StoragePoolIsoMap) obj;
         return (ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(persistentOwner, other.persistentOwner)
                 && ObjectUtils.objectsEqual(persistentStorageDomainStatus, other.persistentStorageDomainStatus));
     }
 }

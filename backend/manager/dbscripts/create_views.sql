@@ -257,7 +257,6 @@ storage_domain_static.id as id,
 		storage_domain_static.storage_domain_type as storage_domain_type,
                 storage_domain_static.storage_domain_format_type as storage_domain_format_type,
         storage_domain_static.last_time_used_as_master as last_time_used_as_master,
-        storage_pool_iso_map.owner as owner,
         fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id,storage_pool_iso_map.status,storage_domain_static.storage_domain_type) as storage_domain_shared_status,
 	storage_domain_static.recoverable as recoverable
 FROM    storage_domain_static
@@ -275,7 +274,7 @@ storage_domain_static.id as id, storage_domain_static.storage as storage, storag
 		storage_domain_static.storage_type as storage_type, storage_domain_static.storage_domain_type as storage_domain_type,
                 storage_domain_static.storage_domain_format_type as storage_domain_format_type,
         storage_domain_static.last_time_used_as_master as last_time_used_as_master,
-		null as owner, null as storage_pool_id, null as storage_pool_name,
+		null as storage_pool_id, null as storage_pool_name,
 		storage_domain_dynamic.available_disk_size as available_disk_size,
 		storage_domain_dynamic.used_disk_size as used_disk_size,
 		fn_get_disk_commited_value_by_storage(storage_domain_static.id) as commited_disk_size,
@@ -299,7 +298,7 @@ SELECT
                           WHEN status_table.is_multi_domain THEN NULL
                           WHEN status_table.status IS NULL THEN 2 -- in case domain is unattached
                           ELSE status_table.status END as status,
-                null as owner, null as storage_pool_id, null as storage_pool_name,
+                null as storage_pool_id, null as storage_pool_name,
                 storage_domain_dynamic.available_disk_size as available_disk_size,
                 storage_domain_dynamic.used_disk_size as used_disk_size,
                 fn_get_disk_commited_value_by_storage(storage_domain_static.id) as commited_disk_size,
@@ -882,7 +881,7 @@ AS
 SELECT     storage_pool.id as id, storage_pool.name as name, storage_pool.description as description, storage_pool.storage_pool_type as storage_pool_type, storage_pool.status as status,
 		   storage_pool.master_domain_version as master_domain_version, storage_pool.spm_vds_id as spm_vds_id, storage_pool.compatibility_version as compatibility_version, storage_pool._create_date as _create_date,
 		   storage_pool._update_date as _update_date, storage_pool_iso_map.storage_id as storage_id, storage_pool_iso_map.storage_pool_id as storage_pool_id,
-		   storage_pool_iso_map.owner as owner, storage_domain_static.storage_type as storage_type, storage_domain_static.storage_domain_type as storage_domain_type,
+		   storage_domain_static.storage_type as storage_type, storage_domain_static.storage_domain_type as storage_domain_type,
                    storage_domain_static.storage_domain_format_type as storage_domain_format_type,
 		   storage_domain_static.storage_name as storage_name, storage_domain_static.storage as storage,
 		   storage_domain_static.last_time_used_as_master as last_time_used_as_master
