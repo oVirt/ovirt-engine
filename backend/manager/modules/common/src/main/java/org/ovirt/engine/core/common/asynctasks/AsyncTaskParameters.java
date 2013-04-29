@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.common.asynctasks;
 
+import java.io.Serializable;
+
 import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.compat.Guid;
 
-public class AsyncTaskParameters {
+public class AsyncTaskParameters implements Serializable {
     private AsyncTasks privateDbAsyncTask;
 
     public AsyncTasks getDbAsyncTask() {
