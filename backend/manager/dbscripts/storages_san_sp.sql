@@ -222,24 +222,6 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Updatestorage_pool_iso_map(v_storage_id UUID,
-	v_storage_pool_id UUID,
-	v_status INTEGER)
-RETURNS VOID
-
-	--The [storage_pool_iso_map] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-   AS $procedure$
-BEGIN
-      UPDATE storage_pool_iso_map
-      SET status = v_status
-      WHERE storage_id = v_storage_id and storage_pool_id = v_storage_pool_id;
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-
-
 Create or replace FUNCTION Deletestorage_pool_iso_map(v_storage_id UUID,
 	v_storage_pool_id UUID)
 RETURNS VOID

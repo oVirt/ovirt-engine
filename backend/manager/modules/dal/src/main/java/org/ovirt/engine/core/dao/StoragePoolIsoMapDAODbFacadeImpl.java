@@ -47,11 +47,7 @@ public class StoragePoolIsoMapDAODbFacadeImpl extends BaseDAODbFacade implements
 
     @Override
     public void update(StoragePoolIsoMap map) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("storage_id",
-                map.getstorage_id()).addValue("storage_pool_id", map.getstorage_pool_id()).addValue("status",
-                map.getstatus());
-
-        getCallsHandler().executeModification("Updatestorage_pool_iso_map", parameterSource);
+        updateStatus(map.getId(), map.getstatus());
     }
 
     @Override
