@@ -34,6 +34,10 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
         extends GetCapabilitiesVDSCommand<P> {
     public CollectVdsNetworkDataVDSCommand(P parameters) {
         super(parameters);
+        if (getVds() == null) {
+            setVdsAndVdsStatic(DbFacade.getInstance().getVdsDao().get(parameters.getVdsId()));
+            parameters.setVds(getVds());
+        }
     }
 
     @Override

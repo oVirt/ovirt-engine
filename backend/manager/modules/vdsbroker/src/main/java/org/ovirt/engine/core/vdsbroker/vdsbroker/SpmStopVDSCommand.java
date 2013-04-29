@@ -9,11 +9,12 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends VdsBrokerCommand<P> {
     public SpmStopVDSCommand(P parameters) {
-        super(parameters);
+        super(parameters, DbFacade.getInstance().getVdsDao().get(parameters.getVdsId()));
     }
 
     @Override

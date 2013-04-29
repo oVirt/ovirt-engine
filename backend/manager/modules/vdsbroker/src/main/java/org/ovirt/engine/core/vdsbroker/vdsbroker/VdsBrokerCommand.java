@@ -2,6 +2,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -14,7 +15,8 @@ import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
 
 public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> extends BrokerCommandBase<P> {
     private final IVdsServer mVdsBroker;
-    private VDS mVds;
+    private VdsStatic vdsStatic;
+    private VDS vds;
     /**
      * Construct the command using the parameters and the {@link VDS} which is loaded from the DB.
      *
@@ -24,7 +26,6 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
     public VdsBrokerCommand(P parameters) {
         super(parameters);
         mVdsBroker = initializeVdsBroker(parameters.getVdsId());
-        mVds = getDbFacade().getVdsDao().get(parameters.getVdsId());
     }
 
     /**
@@ -37,8 +38,9 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
      */
     protected VdsBrokerCommand(P parameters, VDS vds) {
         super(parameters);
-        mVdsBroker = initializeVdsBroker(parameters.getVdsId());
-        mVds = vds;
+        this.mVdsBroker = initializeVdsBroker(parameters.getVdsId());
+        this.vds = vds;
+        this.vdsStatic = vds.getStaticData();
     }
 
     protected IVdsServer initializeVdsBroker(Guid vdsId) {
@@ -61,19 +63,27 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
 
     @Override
     protected String getAdditionalInformation() {
-        if (getVds() != null) {
-            return String.format("HostName = %1$s", getVds().getName());
+        if (getAndSetVdsStatic() != null) {
+            return String.format("HostName = %1$s", getAndSetVdsStatic().getName());
         } else {
             return super.getAdditionalInformation();
         }
     }
 
-    protected VDS getVds() {
-        return mVds;
+    private VdsStatic getAndSetVdsStatic() {
+        if (vdsStatic == null) {
+            vdsStatic = getDbFacade().getVdsStaticDao().get(getParameters().getVdsId());
+        }
+        return vdsStatic;
     }
 
-    protected void setVds(VDS value) {
-        mVds = value;
+    protected VDS getVds() {
+        return vds;
+    }
+
+    protected void setVdsAndVdsStatic(VDS vds) {
+        this.vds = vds;
+        this.vdsStatic = vds.getStaticData();
     }
 
     protected DbFacade getDbFacade() {
@@ -98,12 +108,12 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
         // TODO: look for invalid certificates error handling
         catch (RuntimeException e) {
             PrintReturnValue();
-            if (getVds() == null) {
+            if (getAndSetVdsStatic() == null) {
                 log.errorFormat("Failed in {0} method, for vds id: {1}",
                         getCommandName(), getParameters().getVdsId());
             } else {
                 log.errorFormat("Failed in {0} method, for vds: {1}; host: {2}",
-                        getCommandName(), getVds().getName(), getVds().getHostName());
+                        getCommandName(), getAndSetVdsStatic().getName(), getAndSetVdsStatic().getHostName());
             }
             throw e;
         }

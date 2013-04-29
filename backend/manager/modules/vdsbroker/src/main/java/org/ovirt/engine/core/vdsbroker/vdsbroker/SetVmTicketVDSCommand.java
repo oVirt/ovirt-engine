@@ -7,6 +7,7 @@ import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.core.common.vdscommands.*;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class SetVmTicketVDSCommand<P extends SetVmTicketVDSCommandParameters> extends VdsBrokerCommand<P> {
     private Guid mVmId = new Guid();
@@ -15,7 +16,7 @@ public class SetVmTicketVDSCommand<P extends SetVmTicketVDSCommandParameters> ex
     private String connectionAction = "disconnect";
 
     public SetVmTicketVDSCommand(P parameters) {
-        super(parameters);
+        super(parameters, DbFacade.getInstance().getVdsDao().get(parameters.getVdsId()));
         mVmId = parameters.getVmId();
         mTicket = parameters.getTicket();
         mValidTime = parameters.getValidTime();

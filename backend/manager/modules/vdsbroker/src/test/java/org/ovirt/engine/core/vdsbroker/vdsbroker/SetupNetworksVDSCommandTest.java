@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -192,9 +192,9 @@ public class SetupNetworksVDSCommandTest {
     private SetupNetworksVDSCommand<SetupNetworksVdsCommandParameters> createCommand(
             SetupNetworksVdsCommandParameters parameters) {
         final DbFacade dbFacade = mock(DbFacade.class);
-        final VdsDAO vdsDao = mock(VdsDAO.class);
+        final VdsStaticDAO vdsStaticDao = mock(VdsStaticDAO.class);
 
-        when(dbFacade.getVdsDao()).thenReturn(vdsDao);
+        when(dbFacade.getVdsStaticDao()).thenReturn(vdsStaticDao);
 
         // No way to avoid these calls by regular mocking, so must implement anonymously.
         return new SetupNetworksVDSCommand<SetupNetworksVdsCommandParameters>(parameters) {

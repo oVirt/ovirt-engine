@@ -10,14 +10,9 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 public abstract class VmStatsVdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> extends VdsBrokerCommand<P> {
     protected VMInfoListReturnForXmlRpc mVmListReturn;
 
-    public VmStatsVdsBrokerCommand(P parameters) {
-        super(parameters);
-    }
-
     protected VmStatsVdsBrokerCommand(P parameters, VDS vds) {
         super(parameters, vds);
     }
-
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {

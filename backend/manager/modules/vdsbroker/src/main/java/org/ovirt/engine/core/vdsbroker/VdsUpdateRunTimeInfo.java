@@ -1098,7 +1098,7 @@ public class VdsUpdateRunTimeInfo {
      */
     protected Map[] getVmInfo(List<String> vmsToUpdate) {
         return (Map[]) (new FullListVdsCommand<FullListVDSCommandParameters>(
-                new FullListVDSCommandParameters(_vds.getId(), vmsToUpdate)).executeWithReturnValue());
+                new FullListVDSCommandParameters(_vds, vmsToUpdate)).executeWithReturnValue());
     }
 
     private boolean shouldLogDeviceDetails(String deviceType) {

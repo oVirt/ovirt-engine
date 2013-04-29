@@ -16,7 +16,7 @@ public class SpmStatusVDSCommand<P extends SpmStatusVDSCommandParameters> extend
     private SpmStatusReturnForXmlRpc _result;
 
     public SpmStatusVDSCommand(P parameters) {
-        super(parameters, null);
+        super(parameters);
     }
 
     @Override

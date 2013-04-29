@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import java.util.List;
 
-import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.common.businessentities.VDS;
 
 /**
  * This class is for the list verb that supports getting "full" VM data for a given list of VMs
@@ -11,11 +11,8 @@ public class FullListVDSCommandParameters extends VdsIdAndVdsVDSCommandParameter
 
     private List<String> vmIds;
 
-    public FullListVDSCommandParameters() {
-    }
-
-    public FullListVDSCommandParameters(Guid vdsId, List<String> vmIds) {
-        super(vdsId);
+    public FullListVDSCommandParameters(VDS vds, List<String> vmIds) {
+        super(vds);
         this.vmIds = vmIds;
     }
 

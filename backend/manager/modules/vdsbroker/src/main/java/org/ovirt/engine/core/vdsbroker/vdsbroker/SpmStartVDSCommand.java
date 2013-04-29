@@ -17,9 +17,11 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
 public class SpmStartVDSCommand<P extends SpmStartVDSCommandParameters> extends VdsBrokerCommand<P> {
     public SpmStartVDSCommand(P parameters) {
         super(parameters);
+        vdsId = parameters.getVdsId();
     }
 
     private OneUuidReturnForXmlRpc _result;
+    private Guid vdsId;
 
     @Override
     protected void ExecuteVdsBrokerCommand() {
@@ -39,7 +41,7 @@ public class SpmStartVDSCommand<P extends SpmStartVDSCommandParameters> extends 
             taskStatus = (AsyncTaskStatus) ResourceManager
                     .getInstance()
                     .runVdsCommand(VDSCommandType.HSMGetTaskStatus,
-                            new HSMTaskGuidBaseVDSCommandParameters(getVds().getId(), taskId)).getReturnValue();
+                            new HSMTaskGuidBaseVDSCommandParameters(vdsId, taskId)).getReturnValue();
             log.debugFormat("spmStart polling - task status: {0}", taskStatus.getStatus().toString());
         } while (taskStatus.getStatus() != AsyncTaskStatusEnum.finished
                 && taskStatus.getStatus() != AsyncTaskStatusEnum.unknown);
@@ -53,7 +55,7 @@ public class SpmStartVDSCommand<P extends SpmStartVDSCommandParameters> extends 
         SpmStatusResult spmStatus = (SpmStatusResult) ResourceManager
                 .getInstance()
                 .runVdsCommand(VDSCommandType.SpmStatus,
-                        new SpmStatusVDSCommandParameters(getVds().getId(), getParameters().getStoragePoolId()))
+                        new SpmStatusVDSCommandParameters(vdsId, getParameters().getStoragePoolId()))
                 .getReturnValue();
         if (spmStatus != null) {
             log.infoFormat("spmStart polling ended, spm status: {0}", spmStatus.getSpmStatus().toString());
@@ -62,7 +64,7 @@ public class SpmStartVDSCommand<P extends SpmStartVDSCommandParameters> extends 
         }
         try {
             ResourceManager.getInstance().runVdsCommand(VDSCommandType.HSMClearTask,
-                    new HSMTaskGuidBaseVDSCommandParameters(getVds().getId(), taskId));
+                    new HSMTaskGuidBaseVDSCommandParameters(vdsId, taskId));
         } catch (java.lang.Exception e) {
             log.errorFormat("Could not clear spmStart task (id - {0}), continuing with SPM selection.", taskId);
         }

@@ -6,12 +6,13 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.*;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.*;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class CreateVGVDSCommand<P extends CreateVGVDSCommandParameters> extends VdsBrokerCommand<P> {
     private OneUuidReturnForXmlRpc _result;
 
     public CreateVGVDSCommand(P parameters) {
-        super(parameters);
+        super(parameters, DbFacade.getInstance().getVdsDao().get(parameters.getVdsId()));
     }
 
     @Override
