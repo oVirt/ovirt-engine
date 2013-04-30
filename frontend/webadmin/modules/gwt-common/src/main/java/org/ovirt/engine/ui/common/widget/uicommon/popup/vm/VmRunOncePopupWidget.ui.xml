@@ -3,6 +3,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" 
 	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+	xmlns:vm="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.vm"
 	xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value">
 
 	<ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
@@ -52,7 +53,8 @@
 			width: 98%;
 		}
 
-		.extraOptionsPanel {
+		.initialRunSubPanelLabel {
+			font-weight: bold;
 			margin-left: 10px;
 			margin-bottom: 3px;
 		}
@@ -139,6 +141,10 @@
 			background: transparent;
 			border: 1px solid transparent;
 		}
+
+        .cloudInitLabel {
+            font-weight: bold !important;
+        }
 	</ui:style>
 
 	<g:FlowPanel>
@@ -187,13 +193,23 @@
 		</g:DisclosurePanel>
 
         <g:DisclosurePanel ui:field="initialRunPanel" label="{constants.runOncePopupInitialRunLabel}" addStyleNames="{style.panelStyle}">
-            <g:VerticalPanel addStyleNames="{style.initialRunPanel}">
-				<g:Label ui:field="initialRunLabel" addStyleNames="{style.extraOptionsPanel}" />
-				<w:ComboBox ui:field="sysPrepDomainNameComboBox" />
-				<e:EntityModelCheckBoxEditor ui:field="useAlternateCredentialsEditor" addStyleNames="{style.sysprepOption}" />
-				<e:EntityModelTextBoxEditor ui:field="sysPrepUserNameEditor" addStyleNames="{style.sysprepOption}" />
-				<e:EntityModelTextBoxEditor ui:field="sysPrepPasswordEditor" addStyleNames="{style.sysprepOption}" />
-			</g:VerticalPanel>
+			<g:FlowPanel>
+	            <g:VerticalPanel ui:field="sysprepSubPanel" addStyleNames="{style.initialRunPanel}">
+					<g:Label addStyleNames="{style.initialRunSubPanelLabel}" text="{constants.runOncePopupSysprepLabel}" />
+					<g:Label ui:field="sysprepToEnableLabel" addStyleNames="{style.sysprepOption}" />
+					<g:VerticalPanel ui:field="sysprepOptions">
+						<w:ComboBox ui:field="sysPrepDomainNameComboBox" />
+						<e:EntityModelCheckBoxEditor ui:field="useAlternateCredentialsEditor" addStyleNames="{style.sysprepOption}" />
+						<e:EntityModelTextBoxEditor ui:field="sysPrepUserNameEditor" addStyleNames="{style.sysprepOption}" />
+						<e:EntityModelTextBoxEditor ui:field="sysPrepPasswordEditor" addStyleNames="{style.sysprepOption}" />
+					</g:VerticalPanel>
+				</g:VerticalPanel>
+
+	            <g:VerticalPanel ui:field="cloudInitSubPanel" addStyleNames="{style.initialRunPanel}">
+                        <e:EntityModelCheckBoxEditor ui:field="cloudInitEnabledEditor" />
+					<vm:CloudInitWidget ui:field="cloudInitWidget"/>
+				</g:VerticalPanel>
+			</g:FlowPanel>
 		</g:DisclosurePanel>
 
         <g:DisclosurePanel ui:field="hostPanel" label="{constants.hostVmPopup}" addStyleNames="{style.panelStyle}">

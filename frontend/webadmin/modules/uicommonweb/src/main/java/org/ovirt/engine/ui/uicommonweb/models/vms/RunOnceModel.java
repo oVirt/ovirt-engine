@@ -37,6 +37,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 @SuppressWarnings("unused")
 public abstract class RunOnceModel extends Model
 {
+    // Boot Options tab
 
     public static final String RUN_ONCE_COMMAND = "OnRunOnce"; //$NON-NLS-1$
 
@@ -134,6 +135,8 @@ public abstract class RunOnceModel extends Model
         privateKernel_path = value;
     }
 
+    // Linux Boot Options tab
+
     private EntityModel privateKernel_parameters;
 
     public EntityModel getKernel_parameters()
@@ -145,6 +148,8 @@ public abstract class RunOnceModel extends Model
     {
         privateKernel_parameters = value;
     }
+
+    // Initial Boot tab - Sysprep
 
     private ListModel privateSysPrepDomainName;
 
@@ -218,6 +223,20 @@ public abstract class RunOnceModel extends Model
         privateIsSysprepEnabled = value;
     }
 
+    private EntityModel privateIsSysprepPossible;
+
+    public EntityModel getIsSysprepPossible()
+    {
+        return privateIsSysprepPossible;
+    }
+
+    private void setIsSysprepPossible(EntityModel value)
+    {
+        privateIsSysprepPossible = value;
+    }
+
+    // Initialization
+
     private EntityModel privateIsVmFirstRun;
 
     public EntityModel getIsVmFirstRun()
@@ -241,6 +260,46 @@ public abstract class RunOnceModel extends Model
     {
         privateIsLinuxOptionsAvailable = value;
     }
+
+    // Initial Boot tab - Cloud-Init
+
+    public CloudInitModel privateCloudInitModel;
+
+    public CloudInitModel getCloudInit()
+    {
+        return privateCloudInitModel;
+    }
+
+    public void setCloudInit(CloudInitModel value)
+    {
+        privateCloudInitModel = value;
+    }
+
+    private EntityModel privateIsCloudInitEnabled;
+
+    public EntityModel getIsCloudInitEnabled()
+    {
+        return privateIsCloudInitEnabled;
+    }
+
+    private void setIsCloudInitEnabled(EntityModel value)
+    {
+        privateIsCloudInitEnabled = value;
+    }
+
+    private EntityModel privateIsCloudInitPossible;
+
+    public EntityModel getIsCloudInitPossible()
+    {
+        return privateIsCloudInitPossible;
+    }
+
+    private void setIsCloudInitPossible(EntityModel value)
+    {
+        privateIsCloudInitPossible = value;
+    }
+
+    // Custom Properties tab
 
     private KeyValueModel customPropertySheet;
 
@@ -300,6 +359,8 @@ public abstract class RunOnceModel extends Model
         privateDisplayConsole_Vnc_IsSelected = value;
     }
 
+    // Display Protocol tab
+
     private EntityModel privateDisplayConsole_Spice_IsSelected;
 
     public EntityModel getDisplayConsole_Spice_IsSelected()
@@ -311,6 +372,8 @@ public abstract class RunOnceModel extends Model
     {
         privateDisplayConsole_Spice_IsSelected = value;
     }
+
+    // Misc
 
     private boolean privateIsLinuxOS;
 
@@ -394,7 +457,8 @@ public abstract class RunOnceModel extends Model
         }
     }
 
-    // host tab
+    // Host tab
+
     private ListModel defaultHost;
 
     public ListModel getDefaultHost() {
@@ -423,23 +487,31 @@ public abstract class RunOnceModel extends Model
     // variable was changed from a boolean to an Enum.
     public InitializationType getInitializationType()
     {
-        if ((Boolean) getAttachFloppy().getEntity()
+        if (getAttachFloppy().getEntity() != null
+                && (Boolean) getAttachFloppy().getEntity()
                 && "[sysprep]".equals(getFloppyImage().getSelectedItem())) { //$NON-NLS-1$
             return InitializationType.Sysprep;
+        } else if (getIsCloudInitEnabled().getEntity() != null
+                && (Boolean) getIsCloudInitEnabled().getEntity()) {
+            return InitializationType.CloudInit;
         } else {
             return InitializationType.None;
         }
     }
 
-    public String getFloppyImagePath()
-    {
-        if ((Boolean) getAttachFloppy().getEntity())
-        {
+    public String getFloppyImagePath() {
+        if ((Boolean) getAttachFloppy().getEntity()) {
             return getInitializationType() == InitializationType.Sysprep
                     ? "" : (String) getFloppyImage().getSelectedItem(); //$NON-NLS-1$
+        } else {
+            return ""; //$NON-NLS-1$
         }
-        else
-        {
+    }
+
+    public String getIsoImagePath() {
+        if ((Boolean) getAttachIso().getEntity()) {
+            return (String) getIsoImage().getSelectedItem();
+        } else {
             return ""; //$NON-NLS-1$
         }
     }
@@ -462,6 +534,7 @@ public abstract class RunOnceModel extends Model
         this.customPropertiesKeysList = customPropertiesKeysList;
         this.commandTarget = commandTarget;
 
+        // Boot Options tab
         setAttachFloppy(new EntityModel());
         getAttachFloppy().getEntityChangedEvent().addListener(this);
         setFloppyImage(new ListModel());
@@ -469,13 +542,16 @@ public abstract class RunOnceModel extends Model
         setAttachIso(new EntityModel());
         getAttachIso().getEntityChangedEvent().addListener(this);
         setIsoImage(new ListModel());
+        getIsoImage().getSelectedItemChangedEvent().addListener(this);
         setDisplayProtocol(new ListModel());
         setBootSequence(new BootSequenceModel());
 
+        // Linux Boot Options tab
         setKernel_parameters(new EntityModel());
         setKernel_path(new EntityModel());
         setInitrd_path(new EntityModel());
 
+        // Initial Boot tab - Sysprep
         setSysPrepDomainName(new ListModel());
         getSysPrepDomainName().getSelectedItemChangedEvent().addListener(this);
         setSysPrepSelectedDomainName(new EntityModel());
@@ -484,34 +560,47 @@ public abstract class RunOnceModel extends Model
         setSysPrepPassword(new EntityModel().setIsChangable(false));
 
         setIsSysprepEnabled(new EntityModel());
+        setIsSysprepPossible(new EntityModel());
         setIsVmFirstRun(new EntityModel(false));
         getIsVmFirstRun().getEntityChangedEvent().addListener(this);
         setUseAlternateCredentials(new EntityModel(false));
         getUseAlternateCredentials().getEntityChangedEvent().addListener(this);
 
+        // Initial Boot tab - Cloud-Init
+        setIsCloudInitEnabled(new EntityModel());
+        setIsCloudInitPossible(new EntityModel());
+
+        setCloudInit(new CloudInitModel());
+
+        // Custom Properties tab
         setCustomProperties(new EntityModel());
         setCustomPropertySheet(new KeyValueModel());
 
         setRunAndPause(new EntityModel(false));
         setRunAsStateless(new EntityModel(false));
 
+        // Display Protocol tab
         setDisplayConsole_Spice_IsSelected(new EntityModel());
         getDisplayConsole_Spice_IsSelected().getEntityChangedEvent().addListener(this);
         setDisplayConsole_Vnc_IsSelected(new EntityModel());
         getDisplayConsole_Vnc_IsSelected().getEntityChangedEvent().addListener(this);
 
-        setIsLinuxOptionsAvailable(new EntityModel());
-
-        // host tab
+        // Host tab
         setDefaultHost(new ListModel());
         getDefaultHost().getSelectedItemChangedEvent().addListener(this);
 
         setIsAutoAssign(new EntityModel());
         getIsAutoAssign().getEntityChangedEvent().addListener(this);
 
+        // availability/visibility
+        setIsLinuxOptionsAvailable(new EntityModel(false));
+
         setIsHostTabVisible(true);
 
         setIsCustomPropertiesSheetVisible(true);
+
+        setIsLinuxOS(false);
+        setIsWindowsOS(false);
 
         runOnceCommand = new UICommand(RunOnceModel.RUN_ONCE_COMMAND, this)
          .setTitle(ConstantsManager.getInstance().getConstants().ok())
@@ -544,6 +633,8 @@ public abstract class RunOnceModel extends Model
         getIsVmFirstRun().setEntity(!vm.isInitialized());
         getSysPrepDomainName().setSelectedItem(vm.getVmDomain());
 
+        getCloudInit().init(vm, null);
+
         setCustomPropertiesKeysList(customPropertiesKeysList);
 
         updateDomainList();
@@ -571,8 +662,7 @@ public abstract class RunOnceModel extends Model
         RunVmOnceParams params = new RunVmOnceParams();
         params.setVmId(vm.getId());
         params.setBootSequence(getBootSequence().getSequence());
-        params.setDiskPath((Boolean) getAttachIso().getEntity() ? (String) getIsoImage().getSelectedItem()
-                : ""); //$NON-NLS-1$
+        params.setDiskPath(getIsoImagePath());
         params.setFloppyPath(getFloppyImagePath());
         params.setKvmEnable(getHwAcceleration());
         params.setRunAndPause((Boolean) getRunAndPause().getEntity());
@@ -605,7 +695,9 @@ public abstract class RunOnceModel extends Model
             params.setSysPrepPassword((String) getSysPrepPassword().getEntity());
         }
 
-        params.setCloudInitParameters(null);
+        if (getIsCloudInitEnabled() != null && (Boolean) getIsCloudInitEnabled().getEntity()) {
+            params.setCloudInitParameters(getCloudInit().buildCloudInitParameters());
+        }
 
         EntityModel displayProtocolSelectedItem = (EntityModel) getDisplayProtocol().getSelectedItem();
         params.setUseVnc((DisplayType) displayProtocolSelectedItem.getEntity() == DisplayType.vnc);
@@ -732,7 +824,6 @@ public abstract class RunOnceModel extends Model
                                 && getIsoImage().getSelectedItem() == null) {
                             getIsoImage().setSelectedItem(Linq.firstOrDefault(images));
                         }
-
                     }
                 }),
                 vm.getStoragePoolId(), forceRefresh);
@@ -765,7 +856,11 @@ public abstract class RunOnceModel extends Model
 
         if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition))
         {
-            if (sender == getFloppyImage())
+            if (sender == getIsoImage())
+            {
+                IsoImage_SelectedItemChanged();
+            }
+            else if (sender == getFloppyImage())
             {
                 floppyImage_SelectedItemChanged();
             }
@@ -811,12 +906,13 @@ public abstract class RunOnceModel extends Model
     {
         getIsoImage().setIsChangable((Boolean) getAttachIso().getEntity());
         getBootSequence().getCdromOption().setIsChangable((Boolean) getAttachIso().getEntity());
+        updateInitialRunFields();
     }
 
     private void attachFloppy_EntityChanged()
     {
         getFloppyImage().setIsChangable((Boolean) getAttachFloppy().getEntity());
-        updateIsSysprepEnabled();
+        updateInitialRunFields();
     }
 
     private void useAlternateCredentials_EntityChanged()
@@ -832,12 +928,17 @@ public abstract class RunOnceModel extends Model
 
     private void isVmFirstRun_EntityChanged()
     {
-        updateIsSysprepEnabled();
+        updateInitialRunFields();
     }
 
     private void floppyImage_SelectedItemChanged()
     {
-        updateIsSysprepEnabled();
+        updateInitialRunFields();
+    }
+
+    private void IsoImage_SelectedItemChanged()
+    {
+        updateInitialRunFields();
     }
 
     private void sysPrepDomainName_SelectedItemChanged()
@@ -851,15 +952,15 @@ public abstract class RunOnceModel extends Model
         }
     }
 
-    // Sysprep section is displayed only when VM's OS-type is 'Windows'
-    // and [Reinitialize-sysprep == true || IsVmFirstRun == true (IsVmFirstRun == !VM.is_initialized) and no attached
-    // floppy]
-    private void updateIsSysprepEnabled()
+    // Sysprep/cloud-init sections displayed only with proper OS type (Windows
+    // or Linux, respectively) and when proper floppy or CD is attached.
+    // Currently vm.isFirstRun() status is not considered.
+    public void updateInitialRunFields()
     {
-        boolean isFloppyAttached = (Boolean) getAttachFloppy().getEntity();
-        boolean isVmFirstRun = (Boolean) getIsVmFirstRun().getEntity();
-
-        getIsSysprepEnabled().setEntity(getIsWindowsOS() && getInitializationType() == InitializationType.Sysprep);
+        getIsSysprepPossible().setEntity(getIsWindowsOS());
+        getIsSysprepEnabled().setEntity(getInitializationType() == InitializationType.Sysprep);
+        getIsCloudInitPossible().setEntity(getIsLinuxOS());
+        getIsCloudInitEnabled().setEntity(getInitializationType() == InitializationType.CloudInit);
     }
 
     public boolean validate() {
@@ -907,13 +1008,16 @@ public abstract class RunOnceModel extends Model
             getDefaultHost().setIsValid(true);
         }
 
+        boolean cloudInitIsValid = getCloudInit().validate();
+
         return getIsoImage().getIsValid()
                 && getFloppyImage().getIsValid()
                 && getKernel_path().getIsValid()
                 && getInitrd_path().getIsValid()
                 && getKernel_parameters().getIsValid()
                 && getDefaultHost().getIsValid()
-                && customPropertyValidation;
+                && customPropertyValidation
+                && cloudInitIsValid;
     }
 
     @Override

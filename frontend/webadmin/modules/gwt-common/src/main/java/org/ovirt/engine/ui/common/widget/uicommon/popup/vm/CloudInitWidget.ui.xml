@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+             xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label"
+             xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+
+	<ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
+
+	<ui:style type="org.ovirt.engine.ui.common.widget.uicommon.popup.vm.CloudInitWidget.Style">
+		.verticalPanel>* {
+			display: block;
+			clear: both;
+		}
+		.horizontalPanel>* {
+			float: left;
+		}
+		.optionCheckbox {
+			width: 150px;
+		}
+		.primaryOption {
+			margin-left: 30px;
+		}
+		.primaryOptionComboBox {
+			margin-left: 40px;
+		}
+		.nestedOption {
+			margin-left: 27px;
+			margin-right: 5px;
+			font-family: Arial Unicode MS,Arial,sans-serif !important;
+		}
+		.comboBoxControlMargin {
+			margin-top: 3px;
+			margin-bottom: 5px;
+			margin-left: 32px;
+		}
+		.labelSep {
+			margin-left: 12px;
+			margin-right: 12px;
+		}
+		.buttonStyle {
+			margin-right: 7px;
+			width: 9px;
+			height: 10px;
+			padding-left: 2px;
+			padding-top: 2px;
+		}
+		.displayNone {
+			display: none !important;
+		}
+		.dnsDivider {
+			margin: 0px 5px 5px 5px;
+			border: 0;
+			height: 1px;
+			color: #444444;
+			background-color: #444444;
+		}
+	</ui:style>
+
+	<g:FlowPanel ui:field="cloudInitOptions" addStyleNames="{style.verticalPanel}">
+		<g:FlowPanel addStyleNames="{style.horizontalPanel}">
+			<e:EntityModelCheckBoxEditor ui:field="hostnameEnabledEditor" addStyleNames="{style.optionCheckbox}" />
+			<e:EntityModelTextBoxEditor ui:field="hostnameEditor" addStyleNames="{style.primaryOption}" />
+		</g:FlowPanel>
+
+		<g:FlowPanel addStyleNames="{style.horizontalPanel}">
+			<e:EntityModelCheckBoxEditor ui:field="networkEnabledEditor" addStyleNames="{style.optionCheckbox}" />
+			<w:ComboBox ui:field="networkComboBox" addStyleNames="{style.primaryOptionComboBox}" />
+		</g:FlowPanel>
+		<g:FlowPanel addStyleNames="{style.horizontalPanel} {style.comboBoxControlMargin}">
+			<g:Label ui:field="networkSelectLabel" />
+			<g:Label ui:field="networkLabelSepSelectAdd" addStyleNames="{style.labelSep}" />
+			<g:PushButton ui:field="networkAddButton" addStyleNames="{style.buttonStyle}">
+				<g:upFace image='{resources.increaseIcon}' />
+			</g:PushButton>
+			<g:Label ui:field="networkAddLabel" />
+			<g:Label ui:field="networkLabelSepAddRemove" addStyleNames="{style.labelSep}" />
+			<g:PushButton ui:field="networkRemoveButton" addStyleNames="{style.buttonStyle}">
+				<g:upFace image='{resources.decreaseIcon}' />
+			</g:PushButton>
+			<g:Label ui:field="networkRemoveLabel" />
+		</g:FlowPanel>
+		<g:FlowPanel ui:field="networkOptions" addStyleNames="{style.nestedOption}">
+			<e:EntityModelCheckBoxEditor ui:field="networkDhcpEditor" />
+			<e:EntityModelTextBoxEditor ui:field="networkIpAddressEditor" />
+			<e:EntityModelTextBoxEditor ui:field="networkNetmaskEditor" />
+			<e:EntityModelTextBoxEditor ui:field="networkGatewayEditor" />
+			<e:EntityModelCheckBoxEditor ui:field="networkStartOnBootEditor" />
+			<g:HTMLPanel><hr class="{style.dnsDivider}" /></g:HTMLPanel>
+			<e:EntityModelTextBoxEditor ui:field="dnsServers" />
+			<e:EntityModelTextBoxEditor ui:field="dnsSearchDomains" />
+		</g:FlowPanel>
+
+		<g:FlowPanel addStyleNames="{style.horizontalPanel}">
+			<e:EntityModelCheckBoxEditor ui:field="authorizedKeysEnabledEditor" addStyleNames="{style.optionCheckbox}" />
+			<e:EntityModelTextAreaEditor ui:field="authorizedKeysEditor" addStyleNames="{style.primaryOption}" />
+		</g:FlowPanel>
+
+		<g:FlowPanel addStyleNames="{style.horizontalPanel}">
+			<e:EntityModelCheckBoxEditor ui:field="regenerateKeysEnabledEditor" addStyleNames="{style.optionCheckbox}" />
+		</g:FlowPanel>
+
+		<g:FlowPanel addStyleNames="{style.horizontalPanel}">
+			<e:EntityModelCheckBoxEditor ui:field="timeZoneEnabledEditor" addStyleNames="{style.optionCheckbox}" />
+			<e:ListModelListBoxEditor ui:field="timeZoneEditor" addStyleNames="{style.primaryOption}" />
+		</g:FlowPanel>
+
+		<g:FlowPanel addStyleNames="{style.horizontalPanel}">
+			<e:EntityModelCheckBoxEditor ui:field="rootPasswordEnabledEditor" addStyleNames="{style.optionCheckbox}" />
+			<e:EntityModelPasswordBoxEditor ui:field="rootPasswordEditor" addStyleNames="{style.primaryOption}" />
+		</g:FlowPanel>
+		<g:FlowPanel addStyleNames="{style.nestedOption}">
+			<e:EntityModelPasswordBoxEditor ui:field="rootPasswordVerificationEditor" />
+		</g:FlowPanel>
+
+		<g:FlowPanel addStyleNames="{style.horizontalPanel}">
+			<e:EntityModelCheckBoxEditor ui:field="attachmentEnabledEditor" addStyleNames="{style.optionCheckbox}" />
+			<w:ComboBox ui:field="attachmentComboBox" addStyleNames="{style.primaryOptionComboBox}" />
+		</g:FlowPanel>
+		<g:FlowPanel addStyleNames="{style.horizontalPanel} {style.comboBoxControlMargin}">
+			<g:Label ui:field="attachmentSelectLabel" />
+			<g:Label ui:field="attachmentLabelSepSelectAdd" addStyleNames="{style.labelSep}" />
+			<g:PushButton ui:field="attachmentAddButton" addStyleNames="{style.buttonStyle}">
+				<g:upFace image='{resources.increaseIcon}' />
+			</g:PushButton>
+			<g:Label ui:field="attachmentAddLabel" />
+			<g:Label ui:field="attachmentLabelSepAddRemove" addStyleNames="{style.labelSep}" />
+			<g:PushButton ui:field="attachmentRemoveButton" addStyleNames="{style.buttonStyle}">
+				<g:upFace image='{resources.decreaseIcon}' />
+			</g:PushButton>
+			<g:Label ui:field="attachmentRemoveLabel" />
+		</g:FlowPanel>
+		<g:FlowPanel ui:field="attachmentOptions" addStyleNames="{style.nestedOption}">
+			<e:ListModelListBoxEditor ui:field="attachmentTypeEditor" />
+			<e:EntityModelTextAreaEditor ui:field="attachmentContentEditor" />
+		</g:FlowPanel>
+	</g:FlowPanel>
+</ui:UiBinder>

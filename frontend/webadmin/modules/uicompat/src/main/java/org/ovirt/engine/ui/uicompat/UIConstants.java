@@ -2020,4 +2020,26 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Ballooning is only available for Cluster compatibility version 3.3 and higher")
     String ballooningNotAvailable();
+
+    // Cloud-Init
+    @DefaultStringValue("Passwords do not match")
+    String cloudInitRootPasswordMatchMessage();
+
+    @DefaultStringValue("List can contain zero or more IP addresses separated by spaces, each in the form xxx.xxx.xxx.xxx")
+    String cloudInitDnsServerListMessage();
+
+    @DefaultStringValue("ethX [Click to Change]")
+    String cloudInitNewNetworkItem();
+
+    @DefaultStringValue("/path [Click to Change]")
+    String cloudInitNewAttachmentItem();
+
+    @DefaultStringValue("Plain Text")
+    String cloudInitAttachmentTypePlainText();
+
+    @DefaultStringValue("Base64")
+    String cloudInitAttachmentTypeBase64();
+
+    @DefaultStringValue("Content must be Base64")
+    String cloudInitBase64Message();
 }

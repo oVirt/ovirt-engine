@@ -65,6 +65,8 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         String attachImageSelectBoxLabel();
 
         String attachImageSelectbox();
+
+        String cloudInitLabel();
     }
 
     @UiField
@@ -84,6 +86,23 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
     @UiField
     @WithElementId
+    VerticalPanel sysprepSubPanel;
+
+    @UiField
+    @WithElementId
+    VerticalPanel sysprepOptions;
+
+    @UiField
+    @WithElementId
+    VerticalPanel cloudInitSubPanel;
+
+    @UiField
+    @Ignore
+    @WithElementId("cloudInitWidget")
+    CloudInitWidget cloudInitWidget;
+
+    @UiField
+    @WithElementId
     DisclosurePanel hostPanel;
 
     @UiField
@@ -93,10 +112,6 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @UiField
     @WithElementId
     DisclosurePanel customPropertiesPanel;
-
-    @UiField
-    @Ignore
-    Label initialRunLabel;
 
     @UiField
     @Path(value = "floppyImage.selectedItem")
@@ -151,6 +166,10 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @WithElementId("sysPrepDomainNameComboBox")
     ComboBox sysPrepDomainNameComboBox;
 
+    @UiField
+    @Ignore
+    Label sysprepToEnableLabel;
+
     @Path(value = "sysPrepDomainName.selectedItem")
     @WithElementId("sysPrepDomainNameListBox")
     ListModelListBoxEditor<Object> sysPrepDomainNameListBoxEditor;
@@ -173,6 +192,11 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @Path(value = "sysPrepPassword.entity")
     @WithElementId("sysPrepPassword")
     EntityModelTextBoxEditor sysPrepPasswordEditor;
+
+    @UiField(provided = true)
+    @Path(value = "isCloudInitEnabled.entity")
+    @WithElementId("isCloudInitEnabled")
+    EntityModelCheckBoxEditor cloudInitEnabledEditor;
 
     @UiField(provided = true)
     @Path(value = "displayConsole_Vnc_IsSelected.entity")
@@ -248,7 +272,6 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         localize();
         addStyles();
         ViewIdHandler.idHandler.generateAndSetIds(this);
-
         driver.initialize(this);
     }
 
@@ -266,11 +289,14 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         kernelParamsEditor.setLabel(constants.runOncePopupKernelParamsLabel());
 
         // WindowsSysprep
-        initialRunLabel.setText(constants.runOncePopupInitialRunLabel());
+        sysprepToEnableLabel.setText(constants.runOnceSysPrepToEnableLabel());
         sysPrepDomainNameListBoxEditor.setLabel(constants.runOncePopupSysPrepDomainNameLabel());
         useAlternateCredentialsEditor.setLabel(constants.runOnceUseAlternateCredentialsLabel());
         sysPrepUserNameEditor.setLabel(constants.runOncePopupSysPrepUserNameLabel());
         sysPrepPasswordEditor.setLabel(constants.runOncePopupSysPrepPasswordLabel());
+
+        // Linux Cloud-Init
+        cloudInitEnabledEditor.setLabel(constants.runOncePopupCloudInitLabel());
 
         // Display Protocol
         displayConsoleVncEditor.setLabel(constants.runOncePopupDisplayConsoleVncLabel());
@@ -286,6 +312,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         runAsStatelessEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         runAndPauseEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         useAlternateCredentialsEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        cloudInitEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     void initRadioButtonEditors() {
@@ -326,7 +353,9 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
     void addStyles() {
         linuxBootOptionsPanel.setVisible(false);
-        initialRunPanel.setVisible(true);
+        initialRunPanel.setVisible(false);
+        sysprepSubPanel.setVisible(false);
+        cloudInitSubPanel.setVisible(false);
         hostPanel.setVisible(true);
         attachFloppyEditor.addContentWidgetStyleName(style.attachImageCheckBoxLabel());
         attachIsoEditor.addContentWidgetStyleName(style.attachImageCheckBoxLabel());
@@ -334,6 +363,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         isoImageEditor.addLabelStyleName(style.attachImageSelectBoxLabel());
         floppyImageEditor.addContentWidgetStyleName(style.attachImageSelectbox());
         isoImageEditor.addContentWidgetStyleName(style.attachImageSelectbox());
+        cloudInitEnabledEditor.addContentWidgetStyleName(style.cloudInitLabel());
     }
 
     @Override
@@ -353,8 +383,40 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         object.getIsLinuxOptionsAvailable().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                boolean toShow = (Boolean) isLinuxOptionsAvailable.getEntity();
-                linuxBootOptionsPanel.setVisible(toShow);
+                boolean isLinux = (Boolean) isLinuxOptionsAvailable.getEntity();
+                linuxBootOptionsPanel.setVisible(isLinux);
+            }
+        });
+
+        object.getIsCloudInitEnabled().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                boolean selected = (Boolean) object.getIsCloudInitEnabled().getEntity();
+                cloudInitWidget.setVisible(selected);
+            }
+        });
+        object.getIsSysprepEnabled().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                boolean selected = (Boolean) object.getIsSysprepEnabled().getEntity();
+                sysprepOptions.setVisible(selected);
+                sysprepToEnableLabel.setVisible(!selected);
+            }
+        });
+
+        object.getIsCloudInitPossible().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                cloudInitSubPanel.setVisible((Boolean) object.getIsCloudInitPossible().getEntity());
+                initialRunPanel.setVisible(cloudInitSubPanel.isVisible() || sysprepSubPanel.isVisible());
+            }
+        });
+
+        object.getIsSysprepPossible().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                sysprepSubPanel.setVisible((Boolean) object.getIsSysprepPossible().getEntity());
+                initialRunPanel.setVisible(cloudInitSubPanel.isVisible() || sysprepSubPanel.isVisible());
             }
         });
 
@@ -409,6 +471,8 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         // Update BootSequence ListBox
         bootSequenceModel = object.getBootSequence();
         UpdateBootSequenceListBox();
+
+        cloudInitWidget.edit(object.getCloudInit());
     }
 
     @UiHandler("refreshButton")
@@ -524,6 +588,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
     @Override
     public RunOnceModel flush() {
+        cloudInitWidget.flush();
         return driver.flush();
     }
 

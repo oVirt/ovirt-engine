@@ -119,6 +119,12 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Initial Run")
     String runOncePopupInitialRunLabel();
 
+    @DefaultStringValue("Windows Sysprep")
+    String runOncePopupSysprepLabel();
+
+    @DefaultStringValue("To enable Sysprep, attach the \"[sysprep]\" Floppy to this VM.")
+    String runOnceSysPrepToEnableLabel();
+
     @DefaultStringValue("Domain")
     String runOncePopupSysPrepDomainNameLabel();
 
@@ -131,8 +137,128 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Password")
     String runOncePopupSysPrepPasswordLabel();
 
+    @DefaultStringValue("Cloud-Init")
+    String runOncePopupCloudInitLabel();
+
     @DefaultStringValue("Boot Sequence:")
     String runOncePopupBootSequenceLabel();
+
+    @DefaultStringValue("Hostname")
+    String cloudInitHostnameLabel();
+
+    @DefaultStringValue("SSH Authorized Keys")
+    String cloudInitAuthorizedKeysLabel();
+
+    @DefaultStringValue("Regenerate System SSH Keys")
+    String cloudInitRegenerateKeysLabel();
+
+    @DefaultStringValue("Time Zone")
+    String cloudInitTimeZoneLabel();
+
+    @DefaultStringValue("Root Password")
+    String cloudInitRootPasswordLabel();
+
+    @DefaultStringValue("Verify Root Password")
+    String cloudInitRootPasswordVerificationLabel();
+
+    @DefaultStringValue("Network")
+    String cloudInitNetworkLabel();
+
+    @DefaultStringValue("Select network above")
+    String cloudInitNetworkSelectLabel();
+
+    @DefaultStringValue("Use DHCP")
+    String cloudInitNetworkDhcpLabel();
+
+    @DefaultStringValue("IP Address")
+    String cloudInitNetworkIpAddressLabel();
+
+    @DefaultStringValue("Netmask")
+    String cloudInitNetworkNetmaskLabel();
+
+    @DefaultStringValue("Gateway")
+    String cloudInitNetworkGatewayLabel();
+
+    @DefaultStringValue("Start on Boot")
+    String cloudInitNetworkStartOnBootLabel();
+
+    @DefaultStringValue("DNS Servers")
+    String cloudInitDnsServersLabel();
+
+    @DefaultStringValue("DNS Search Domains")
+    String cloudInitDnsSearchDomainsLabel();
+
+    @DefaultStringValue("File Attachment")
+    String cloudInitAttachmentLabel();
+
+    @DefaultStringValue("Select pathname above")
+    String cloudInitAttachmentSelectLabel();
+
+    @DefaultStringValue("Content Type")
+    String cloudInitAttachmentTypeLabel();
+
+    @DefaultStringValue("Content")
+    String cloudInitAttachmentContentLabel();
+
+    @DefaultStringValue("Add new")
+    String cloudInitObjectAddLabel();
+
+    @DefaultStringValue("Remove selected")
+    String cloudInitObjectRemoveLabel();
+
+    @DefaultStringValue("Enter the hostname to be assigned to the guest")
+    String cloudInitHostnameToolTip();
+
+    @DefaultStringValue("Add SSH keys (separated by newlines) to be added to the root user's authorized_keys file")
+    String cloudInitAuthorizedKeysToolTip();
+
+    @DefaultStringValue("Regenerate system SSH keys (typically in /etc/ssh)")
+    String cloudInitRegenerateKeysToolTip();
+
+    @DefaultStringValue("Select the guest's time zone")
+    String cloudInitTimeZoneToolTip();
+
+    @DefaultStringValue("Choose a root password for the guest")
+    String cloudInitRootPasswordToolTip();
+
+    @DefaultStringValue("Verify the root password for the guest")
+    String cloudInitRootPasswordVerificationToolTip();
+
+    @DefaultStringValue("Enter the name of a network interface, e.g. \"eth0\"")
+    String cloudInitNetworkToolTip();
+
+    @DefaultStringValue("Enable to use DHCP on the selected network interface")
+    String cloudInitNetworkDhcpToolTip();
+
+    @DefaultStringValue("Enter the IP address for the selected network interface")
+    String cloudInitNetworkIpAddressToolTip();
+
+    @DefaultStringValue("Enter the netmask (dotted-quad format) for the selected network interface")
+    String cloudInitNetworkNetmaskToolTip();
+
+    @DefaultStringValue("Enter the gateway for the selected network interface")
+    String cloudInitNetworkGatewayToolTip();
+
+    @DefaultStringValue("Enable to start the selected network interface when the guest boots")
+    String cloudInitNetworkStartOnBootToolTip();
+
+    @DefaultStringValue("Enter a space-separated list of DNS server IP addresses")
+    String cloudInitDnsServersToolTip();
+
+    @DefaultStringValue("Enter a space-separated list of DNS search domains")
+    String cloudInitDnsSearchDomainsToolTip();
+
+    @DefaultStringValue("Enter the full pathname where this file should be saved on the guest")
+    String cloudInitAttachmentToolTip();
+
+    @DefaultStringValue("Choose the input encoding type for the selected attachment")
+    String cloudInitAttachmentTypeToolTip();
+
+    @DefaultStringValue("Enter the attachment content")
+    String cloudInitAttachmentContentTextToolTip();
+
+    @DefaultStringValue("Enter the attachment content encoded in base-64")
+    String cloudInitAttachmentContentBase64ToolTip();
 
     @DefaultStringValue("Name")
     String makeTemplatePopupNameLabel();
