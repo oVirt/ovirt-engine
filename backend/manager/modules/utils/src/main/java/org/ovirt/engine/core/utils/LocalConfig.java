@@ -38,6 +38,9 @@ public class LocalConfig {
     private Map<String, String> values = new HashMap<String, String>();
 
     protected void loadConfig(String defaultsPath, String varsPath) {
+        // Set basic defaults
+        values.put("SENSITIVE_KEYS", "");
+
         // This is the list of configuration files that will be loaded and
         // merged (the initial size is 2 because usually we will have only two
         // configuration files to merge, the defaults and the variables):
@@ -95,10 +98,14 @@ public class LocalConfig {
         if (log.isInfoEnabled()) {
             Set<String> keys = values.keySet();
             List<String> list = new ArrayList<String>(keys.size());
+            List<String> sensitiveKeys = Arrays.asList(getSensitiveKeys());
             list.addAll(keys);
             Collections.sort(list);
             for (String key : list) {
-                String value = values.get(key);
+                String value = "***";
+                if (!sensitiveKeys.contains(key)) {
+                    value = values.get(key);
+                }
                 log.info("Value of property \"" + key + "\" is \"" + value + "\".");
             }
         }
@@ -396,5 +403,9 @@ public class LocalConfig {
     public File getFile(String key) {
         String value = getProperty(key);
         return new File(value);
+    }
+
+    public String[] getSensitiveKeys() {
+        return getProperty("SENSITIVE_KEYS").split(",");
     }
 }

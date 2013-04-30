@@ -7,6 +7,12 @@
 #
 
 #
+# Comma separated list of keys
+# not to be logged.
+#
+SENSITIVE_KEYS=""
+
+#
 # The location of the Java virtual machine used by the engine:
 #
 JAVA_HOME=/usr/lib/jvm/jre-1.7.0-openjdk.x86_64
@@ -136,6 +142,7 @@ ENGINE_HTTPS_PROTOCOLS=SSLv3,TLSv1,TLSv1.1,TLSv1.2
 # Database connection details (note that the password is
 # encrypted):
 #
+SENSITIVE_KEYS="${SENSITIVE_KEYS},ENGINE_DB_PASSWORD"
 ENGINE_DB_DRIVER=org.postgresql.Driver
 ENGINE_DB_URL=jdbc:postgresql://localhost/engine
 ENGINE_DB_SSL=false
