@@ -180,7 +180,7 @@
     <profile>
       <id>all-langs</id>
       <properties>
-        <gwt.locale>en_US,es,fr,ja,pt_BR,zh_CN,de</gwt.locale>
+        <gwt.locale>en_US,es_ES,fr_FR,ja_JP,pt_BR,zh_CN,de_DE</gwt.locale>
       </properties>
     </profile>
   </profiles>
