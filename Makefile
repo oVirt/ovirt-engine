@@ -52,11 +52,13 @@ PID_DIR=$(LOCALSTATE_DIR)/run
 SYSCONF_DIR=$(PREFIX)/etc
 DATAROOT_DIR=$(PREFIX)/share
 MAN_DIR=$(DATAROOT_DIR)/man
+DOC_DIR=$(DATEROOT_DIR)/doc
 DATA_DIR=$(DATAROOT_DIR)/$(ENGINE_NAME)
 MAVENPOM_DIR=$(DATAROOT_DIR)/maven-poms
 JAVA_DIR=$(DATAROOT_DIR)/java
 PKG_SYSCONF_DIR=$(SYSCONF_DIR)/$(ENGINE_NAME)
 PKG_PKI_DIR=$(SYSCONF_DIR)/pki/$(ENGINE_NAME)
+PKG_DOC_DIR=$(DOC_DIR)/$(ENGINE_NAME)
 PKG_EAR_DIR=$(DATA_DIR)/engine.ear
 PKG_JBOSS_MODULES=$(DATA_DIR)/modules
 PKG_CACHE_DIR=$(LOCALSTATE_DIR)/cache/$(ENGINE_NAME)
@@ -64,6 +66,7 @@ PKG_LOG_DIR=$(LOCALSTATE_DIR)/log/$(ENGINE_NAME)
 PKG_TMP_DIR=$(LOCALSTATE_DIR)/tmp/$(ENGINE_NAME)
 PKG_USER=ovirt
 PKG_GROUP=ovirt
+SPICE_DIR=/usr/share/spice
 RPMBUILD=rpmbuild
 PYTHON=python
 PYTHON_DIR:=$(shell $(PYTHON) -c "from distutils.sysconfig import get_python_lib as f;print(f())")
@@ -116,6 +119,7 @@ ARTIFACTS = \
 	-e "s|@ENGINE_LOG@|$(PKG_LOG_DIR)|g" \
 	-e "s|@ENGINE_TMP@|$(PKG_TMP_DIR)|g" \
 	-e "s|@ENGINE_USR@|$(DATA_DIR)|g" \
+	-e "s|@ENGINE_DOC@|$(PKG_DOC_DIR)|g" \
 	-e "s|@ENGINE_VAR@|$(ENGINE_STATE)|g" \
 	-e "s|@ENGINE_CACHE@|$(PKG_CACHE_DIR)|g" \
 	-e "s|@ENGINE_PID@|$(PID_DIR)/$(ENGINE_NAME).pid|g" \
@@ -123,6 +127,7 @@ ARTIFACTS = \
 	-e "s|@RPM_RELEASE@|$(RPM_RELEASE)|g" \
 	-e "s|@PACKAGE_NAME@|$(PACKAGE_NAME)|g" \
 	-e "s|@PACKAGE_VERSION@|$(PACKAGE_VERSION)|g" \
+	-e "s|@SPICE_DIR@|$(SPICE_DIR)|g" \
 	$< > $@
 
 # List of files that will be generated from templates:

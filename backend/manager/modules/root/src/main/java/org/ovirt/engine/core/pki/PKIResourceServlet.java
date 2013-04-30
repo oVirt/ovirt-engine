@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.crypt.OpenSSHUtils;
 
 /**
@@ -65,6 +66,8 @@ public class PKIResourceServlet extends HttpServlet {
                     )
                 );
             }
+
+            this.resourceLocation = EngineLocalConfig.getInstance().expandString(this.resourceLocation);
         }
         catch(Exception e) {
             log.error("Cannot initialize", e);

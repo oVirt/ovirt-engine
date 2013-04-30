@@ -38,6 +38,7 @@
 %global engine_name ovirt-engine
 %global engine_etc %{_sysconfdir}/%{engine_name}
 %global engine_data %{_datadir}/%{engine_name}
+%global engine_doc %{_docdir}/%{engine_name}
 %global engine_ear %{engine_data}/engine.ear
 %global engine_java %{_javadir}/%{engine_name}
 %global engine_pki %{_sysconfdir}/pki/%{engine_name}
@@ -103,11 +104,13 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	PID_DIR=%{_localstatedir}/run \\\
 	DATAROOT_DIR=%{_datadir} \\\
 	MAN_DIR=%{_mandir} \\\
+	DOC_DIR=%{_docdir} \\\
 	PYTHON=%{__python} \\\
 	PYTHON_DIR=%{python_sitelib} \\\
 	JAVA_DIR=%{_javadir} \\\
 	MAVENPOM_DIR=%{_mavenpomdir} \\\
 	PKG_SYSCONF_DIR=%{engine_etc} \\\
+	PKG_DOC_DIR=%{engine_doc} \\\
 	PKG_EAR_DIR=%{engine_ear} \\\
 	PKG_PKI_DIR=%{engine_pki} \\\
 	PKG_JBOSS_MODULES=%{engine_jboss_modules} \\\

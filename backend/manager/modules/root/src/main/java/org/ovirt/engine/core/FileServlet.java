@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.ServletUtils;
 
 /**
@@ -84,7 +85,7 @@ public class FileServlet extends HttpServlet {
         }
 
         // Create the base file object:
-        base = new File(name);
+        base = new File(EngineLocalConfig.getInstance().expandString(name));
     }
 
     @Override

@@ -12,7 +12,7 @@
     <servlet-class>org.ovirt.engine.core.pki.PKIResourceServlet</servlet-class>
     <init-param>
       <param-name>resource-location</param-name>
-      <param-value>/etc/pki/ovirt-engine/ca.pem</param-value>
+      <param-value>${ENGINE_PKI_CA}</param-value>
     </init-param>
     <init-param>
       <param-name>output-format</param-name>
@@ -30,7 +30,7 @@
     <servlet-class>org.ovirt.engine.core.pki.PKIResourceServlet</servlet-class>
     <init-param>
       <param-name>resource-location</param-name>
-      <param-value>/etc/pki/ovirt-engine/certs/engine.cer</param-value>
+      <param-value>${ENGINE_PKI_ENGINE_CERT}</param-value>
     </init-param>
     <init-param>
       <param-name>output-alias</param-name>
@@ -63,7 +63,7 @@
     <servlet-class>org.ovirt.engine.core.DocsServlet</servlet-class>
     <init-param>
       <param-name>file</param-name>
-      <param-value>/usr/share/doc/ovirt-engine/manual</param-value>
+      <param-value>${ENGINE_DOC}/manual</param-value>
     </init-param>
   </servlet>
   <servlet-mapping>
@@ -81,7 +81,7 @@
     </init-param>
     <init-param>
       <param-name>file</param-name>
-      <param-value>/usr/share/spice/SpiceX.cab</param-value>
+      <param-value>${SPICE_DIR}/SpiceX.cab</param-value>
     </init-param>
   </servlet>
   <servlet-mapping>
@@ -99,7 +99,7 @@
     </init-param>
     <init-param>
       <param-name>file</param-name>
-      <param-value>/usr/share/spice/SpiceVersion.txt</param-value>
+      <param-value>${SPICE_DIR}/SpiceVersion.txt</param-value>
     </init-param>
   </servlet>
   <servlet-mapping>
@@ -117,7 +117,7 @@
     </init-param>
     <init-param>
       <param-name>file</param-name>
-      <param-value>/usr/share/spice/SpiceX_x64.cab</param-value>
+      <param-value>${SPICE_DIR}/SpiceX_x64.cab</param-value>
     </init-param>
   </servlet>
   <servlet-mapping>
@@ -135,7 +135,7 @@
     </init-param>
     <init-param>
       <param-name>file</param-name>
-      <param-value>/usr/share/spice/SpiceVersion_x64.txt</param-value>
+      <param-value>${SPICE_DIR}/SpiceVersion_x64.txt</param-value>
     </init-param>
   </servlet>
   <servlet-mapping>
@@ -153,7 +153,7 @@
     </init-param>
     <init-param>
       <param-name>file</param-name>
-      <param-value>/etc/ovirt-engine/usbfilter.txt</param-value>
+      <param-value>${ENGINE_ETC}/usbfilter.txt</param-value>
     </init-param>
   </servlet>
   <servlet-mapping>
