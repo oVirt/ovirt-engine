@@ -341,8 +341,20 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             }
         } finally {
             freeLockExecute();
+            if (!getReturnValue().getSucceeded()) {
+                clearAsyncTasksWithOutVdsmId();
+            }
         }
         return getReturnValue();
+    }
+
+    private void clearAsyncTasksWithOutVdsmId() {
+        for (Guid asyncTaskId : getReturnValue().getTaskPlaceHolderIdList()) {
+            AsyncTasks task = getAsyncTaskDao().get(asyncTaskId);
+            if (Guid.isNullOrEmpty(task.getVdsmTaskId())) {
+                AsyncTaskManager.failTaskWithoutVdsmId(task);
+            }
+        }
     }
 
     private void determineExecutionReason() {
@@ -1278,19 +1290,25 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     public Guid persistAsyncTaskPlaceHolder(VdcActionType parentCommand) {
-        Guid retValue = Guid.Empty;
+        Guid taskId = Guid.Empty;
 
         try {
             AsyncTasks task = createAsyncTask(new AsyncTaskCreationInfo(), parentCommand);
-            retValue = task.getTaskId();
+            taskId = task.getTaskId();
             AsyncTaskUtils.addOrUpdateTaskInDB(task, null, EMPTY_GUID_ARRAY);
+            addToReturnValueTaskPlaceHolderIdList(taskId);
         } catch (RuntimeException ex) {
             log.errorFormat("Error during persistAsyncTaskPlaceHolders for command: {0}. Exception {1}", getClass().getName(), ex);
         }
 
-        return retValue;
+        return taskId;
     }
 
+    private void addToReturnValueTaskPlaceHolderIdList(Guid taskId) {
+        if (!getReturnValue().getTaskPlaceHolderIdList().contains(taskId)) {
+            getReturnValue().getTaskPlaceHolderIdList().add(taskId);
+        }
+    }
     /**
      * Use this method in order to create task in the AsyncTaskManager in a safe way. If you use this method within a
      * certain command, make sure that the command implemented the ConcreteCreateTask method.

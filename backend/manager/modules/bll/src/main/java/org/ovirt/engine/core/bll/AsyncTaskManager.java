@@ -11,6 +11,9 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.AsyncTaskUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -26,6 +29,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.DateTime;
@@ -37,6 +41,7 @@ import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
@@ -84,6 +89,11 @@ public final class AsyncTaskManager {
         _cacheTimeInMinutes = Config.<Integer> GetValue(ConfigValues.AsyncTaskStatusCachingTimeInMinutes);
         tasksInDbAfterRestart = new ConcurrentHashMap<Guid, List<AsyncTasks>>();
         for (AsyncTasks task: DbFacade.getInstance().getAsyncTaskDao().getAll()) {
+            if (Guid.isNullOrEmpty(task.getVdsmTaskId())) {
+                log.infoFormat("Failing task {0} as it does not have a vdsm id.", task.getTaskId());
+                failTaskWithoutVdsmId(task);
+                continue;
+            }
             tasksInDbAfterRestart.putIfAbsent(task.getStoragePoolId(), new ArrayList<AsyncTasks>());
             List<AsyncTasks> tasksPerStoragePool = tasksInDbAfterRestart.get(task.getStoragePoolId());
             tasksInDbAfterRestart.put(task.getStoragePoolId(), tasksPerStoragePool);
@@ -168,6 +178,61 @@ public final class AsyncTaskManager {
             }
         }
         return false;
+    }
+
+    public static void failTaskWithoutVdsmId(final AsyncTasks task) {
+        ThreadPoolUtil.execute(new Runnable() {
+            @SuppressWarnings("synthetic-access")
+            @Override
+            public void run() {
+                TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
+                    @Override
+                    public Object runInTransaction() {
+                        logAndFailTaskWithoutVdsmId(task);
+                        return null;
+                    }
+                });
+            }
+        });
+    }
+
+    private static void logAndFailTaskWithoutVdsmId(final AsyncTasks task) {
+        log.infoFormat(
+                "Failing task with out vdsm id and AsyncTaskType {0} : Task '{1}' Parent Command {2}",
+                task.getTaskType(),
+                task.getTaskId(),
+                (task.getaction_type()));
+        task.getTaskParameters().setTaskGroupSuccess(false);
+        ExecutionHandler.endTaskStep(task.getStepId(), JobExecutionStatus.FAILED);
+        removeTaskFromDbByTaskId(task.getTaskId());
+        if (task.getTaskType() == AsyncTaskType.unknown) {
+            log.infoFormat(
+                    "Not calling endAction for task with out vdsm id and AsyncTaskType {0} : Task '{1}' Parent Command {2}",
+                    task.getTaskType(),
+                    task.getTaskId(),
+                    (task.getaction_type()));
+            return;
+        }
+        Guid stepId = task.getStepId();
+        ExecutionContext context = null;
+        if (stepId != null) {
+            context = ExecutionHandler.createFinalizingContext(stepId);
+        }
+        Backend.getInstance().endAction(task.getaction_type(),
+                task.getActionParameters(),
+                new CommandContext(context));
+    }
+
+    protected static void removeTaskFromDbByTaskId(Guid taskId) {
+        try {
+            if (DbFacade.getInstance().getAsyncTaskDao().remove(taskId) != 0) {
+                log.infoFormat("Removed task {0} from DataBase", taskId);
+            }
+        } catch (RuntimeException e) {
+            log.error(String.format(
+                    "Removing task %1$s from DataBase threw an exception.",
+                    taskId), e);
+        }
     }
 
     private boolean isCurrentTaskLookedFor(Guid id, SPMAsyncTask task) {

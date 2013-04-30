@@ -16,7 +16,13 @@ public class VdcReturnValueBase implements Serializable {
     private boolean _isSyncronious;
     private Object _returnValue;
     private String _description = "";
-    private ArrayList<Guid> _taskIdList = new ArrayList<Guid>();
+    /**
+     * Holds the ids of the async task place holders in the database.
+     * On server restart this list  used to clean up and fail all the tasks
+     * that have place holders but don't have a vdsm task id.
+     */
+    private ArrayList<Guid> taskPlaceHolderIdList = new ArrayList<Guid>();
+    private ArrayList<Guid> taskIdList = new ArrayList<Guid>();
     private ArrayList<Guid> _internalIdList = new ArrayList<Guid>();
     private boolean _endActionTryAgain = true;
     private ArrayList<String> _executeFailedMessages = new ArrayList<String>();
@@ -93,11 +99,19 @@ public class VdcReturnValueBase implements Serializable {
     }
 
     public ArrayList<Guid> getTaskIdList() {
-        return _taskIdList;
+        return taskIdList;
     }
 
     public void setTaskIdList(ArrayList<Guid> value) {
-        _taskIdList = value;
+        taskIdList = value;
+    }
+
+    public ArrayList<Guid> getTaskPlaceHolderIdList() {
+        return taskPlaceHolderIdList;
+    }
+
+    public void setTaskPlaceHolderIdList(ArrayList<Guid> value) {
+        taskPlaceHolderIdList = value;
     }
 
     public ArrayList<Guid> getInternalTaskIdList() {

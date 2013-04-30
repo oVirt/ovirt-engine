@@ -27,6 +27,9 @@ public class VdcReturnValueBase_CustomFieldSerializer {
 		vrvb.setIsSyncronious(streamReader.readBoolean());
 		vrvb.setActionReturnValue(streamReader.readObject());
 		vrvb.setDescription(streamReader.readString());
+                java.util.ArrayList<Guid> asyncTaskIdList = (java.util.ArrayList<Guid>) streamReader
+				.readObject();
+		vrvb.setTaskPlaceHolderIdList(asyncTaskIdList);
 		java.util.ArrayList<Guid> taskIdList = (java.util.ArrayList<Guid>) streamReader
 				.readObject();
 		vrvb.setTaskIdList(taskIdList);
@@ -45,6 +48,7 @@ public class VdcReturnValueBase_CustomFieldSerializer {
 		streamWriter.writeBoolean(instance.getIsSyncronious());
 		streamWriter.writeObject(instance.getActionReturnValue());
 		streamWriter.writeString(instance.getDescription());
+                streamWriter.writeObject(instance.getTaskPlaceHolderIdList());
 		streamWriter.writeObject(instance.getTaskIdList());
 		streamWriter.writeBoolean(instance.getEndActionTryAgain());
 		streamWriter.writeObject(instance.getFault());
