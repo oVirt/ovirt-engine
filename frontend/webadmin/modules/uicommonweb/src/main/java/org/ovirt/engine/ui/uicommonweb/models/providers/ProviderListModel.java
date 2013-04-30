@@ -23,8 +23,11 @@ import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 
-public class ProviderListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
-{
+public class ProviderListModel extends ListWithDetailsModel implements ISupportSystemTreeContext {
+
+    private static final String CMD_ADD = "Add"; //$NON-NLS-1$
+    private static final String CMD_REMOVE = "Remove"; //$NON-NLS-1$
+
     private UICommand addCommand;
     private UICommand removeCommand;
 
@@ -39,140 +42,13 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
         // setSearchObjects(new String[] { SearchObjects.PROVIDER_OBJ_NAME, SearchObjects.PROVIDER_PLU_OBJ_NAME });
         setAvailableInModes(ApplicationMode.VirtOnly);
 
-        setAddCommand(new UICommand("Add", this)); //$NON-NLS-1$
-        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
+        setAddCommand(new UICommand(CMD_ADD, this));
+        setRemoveCommand(new UICommand(CMD_REMOVE, this));
 
         updateActionAvailability();
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
-    }
-
-    public void add() {
-        if (getWindow() != null)
-        {
-            return;
-        }
-
-        final ProviderModel providerModel = new ProviderModel(this);
-        setWindow(providerModel);
-    }
-
-    public void remove() {
-        Frontend.RunAction(VdcActionType.RemoveProvider, new ProviderParameters((Provider) getSelectedItem()),
-                new IFrontendActionAsyncCallback() {
-
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        getSearchCommand().execute();
-                    }
-
-                });
-    }
-
-    @Override
-    protected void initDetailModels() {
-        super.initDetailModels();
-
-        ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-
-        list.add(new ProviderGeneralModel());
-
-        setDetailModels(list);
-    }
-
-    @Override
-    public boolean isSearchStringMatch(String searchString) {
-        return searchString.trim().toLowerCase().startsWith("provider"); //$NON-NLS-1$
-    }
-
-    @Override
-    protected void syncSearch() {
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
-                setItems((List<Provider>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
-            }
-        };
-
-        VdcQueryParametersBase params =
-                new VdcQueryParametersBase();
-        params.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetAllProviders,
-                params,
-                asyncQuery);
-    }
-
-    @Override
-    protected void asyncSearch() {
-        // super.AsyncSearch();
-        //
-        // setAsyncResult(Frontend.RegisterSearch(getSearchString(), SearchType.Provider, getSearchPageSize()));
-        // setItems(getAsyncResult().getData());
-    }
-
-    @Override
-    protected void onSelectedItemChanged() {
-        super.onSelectedItemChanged();
-        updateActionAvailability();
-    }
-
-    @Override
-    protected void selectedItemsChanged() {
-        super.selectedItemsChanged();
-        updateActionAvailability();
-    }
-
-    private void updateActionAvailability() {
-        List tempVar = getSelectedItems();
-        ArrayList selectedItems =
-                (ArrayList) ((tempVar != null) ? tempVar : new ArrayList());
-
-        getRemoveCommand().setIsExecutionAllowed(selectedItems.size() > 0);
-    }
-
-    @Override
-    public void executeCommand(UICommand command) {
-        super.executeCommand(command);
-
-        if (command == getAddCommand())
-        {
-            add();
-        }
-        else if (command == getRemoveCommand())
-        {
-            remove();
-        }
-    }
-
-    @Override
-    public SystemTreeItemModel getSystemTreeSelectedItem() {
-        return systemTreeSelectedItem;
-    }
-
-    @Override
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
-        if (systemTreeSelectedItem != value)
-        {
-            systemTreeSelectedItem = value;
-            onSystemTreeSelectedItemChanged();
-        }
-    }
-
-    private void onSystemTreeSelectedItemChanged() {
-        updateActionAvailability();
-    }
-
-    @Override
-    public Provider getEntity() {
-        return (Provider) super.getEntity();
-    }
-
-    @Override
-    protected String getListName() {
-        return "ProviderListModel"; //$NON-NLS-1$
     }
 
     public UICommand getAddCommand() {
@@ -190,4 +66,112 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
     private void setRemoveCommand(UICommand value) {
         removeCommand = value;
     }
+
+    @Override
+    protected void initDetailModels() {
+        super.initDetailModels();
+
+        ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
+
+        list.add(new ProviderGeneralModel());
+
+        setDetailModels(list);
+    }
+
+    @Override
+    protected String getListName() {
+        return "ProviderListModel"; //$NON-NLS-1$
+    }
+
+    @Override
+    public SystemTreeItemModel getSystemTreeSelectedItem() {
+        return systemTreeSelectedItem;
+    }
+
+    @Override
+    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
+        if (systemTreeSelectedItem != value) {
+            systemTreeSelectedItem = value;
+            onSystemTreeSelectedItemChanged();
+        }
+    }
+
+    private void onSystemTreeSelectedItemChanged() {
+        updateActionAvailability();
+    }
+
+    @Override
+    protected void onSelectedItemChanged() {
+        super.onSelectedItemChanged();
+        updateActionAvailability();
+    }
+
+    @Override
+    protected void selectedItemsChanged() {
+        super.selectedItemsChanged();
+        updateActionAvailability();
+    }
+
+    @SuppressWarnings("rawtypes")
+    private void updateActionAvailability() {
+        List tempVar = getSelectedItems();
+        List selectedItems = (tempVar != null) ? tempVar : new ArrayList();
+
+        getRemoveCommand().setIsExecutionAllowed(selectedItems.size() > 0);
+    }
+
+    @Override
+    public boolean isSearchStringMatch(String searchString) {
+        return searchString.trim().toLowerCase().startsWith("provider"); //$NON-NLS-1$
+    }
+
+    @Override
+    protected void syncSearch() {
+        AsyncQuery asyncQuery = new AsyncQuery();
+        asyncQuery.asyncCallback = new INewAsyncCallback() {
+
+            @SuppressWarnings("unchecked")
+            @Override
+            public void onSuccess(Object model, Object ReturnValue) {
+                setItems((List<Provider>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+            }
+        };
+
+        VdcQueryParametersBase params =
+                new VdcQueryParametersBase();
+        params.setRefresh(getIsQueryFirstTime());
+        Frontend.RunQuery(VdcQueryType.GetAllProviders,
+                params,
+                asyncQuery);
+    }
+
+    private void add() {
+        if (getWindow() != null) {
+            return;
+        }
+        setWindow(new ProviderModel(this));
+    }
+
+    private void remove() {
+        Frontend.RunAction(VdcActionType.RemoveProvider, new ProviderParameters((Provider) getSelectedItem()),
+                new IFrontendActionAsyncCallback() {
+
+                    @Override
+                    public void executed(FrontendActionAsyncResult result) {
+                        getSearchCommand().execute();
+                    }
+                });
+    }
+
+    @Override
+    public void executeCommand(UICommand command) {
+        super.executeCommand(command);
+
+        if (command == getAddCommand()) {
+            add();
+        } else if (command == getRemoveCommand()) {
+            remove();
+        }
+    }
+
 }
