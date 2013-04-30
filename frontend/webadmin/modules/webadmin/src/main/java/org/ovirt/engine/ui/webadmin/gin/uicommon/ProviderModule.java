@@ -34,7 +34,8 @@ public class ProviderModule extends AbstractGinModule {
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ProviderListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
 
-                if (lastExecutedCommand == getModel().getAddCommand()) {
+                if (lastExecutedCommand == getModel().getAddCommand()
+                        || lastExecutedCommand == getModel().getEditCommand()) {
                     return providerPopupProvider.get();
                 } else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);

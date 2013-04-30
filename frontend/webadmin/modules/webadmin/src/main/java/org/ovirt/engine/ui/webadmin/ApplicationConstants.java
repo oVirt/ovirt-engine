@@ -2656,6 +2656,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Add")
     String addProvider();
 
+    @DefaultStringValue("Edit")
+    String editProvider();
+
     @DefaultStringValue("Remove")
     String removeProvider();
 

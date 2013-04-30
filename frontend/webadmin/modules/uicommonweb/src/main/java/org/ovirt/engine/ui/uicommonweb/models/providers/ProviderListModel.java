@@ -26,9 +26,11 @@ import org.ovirt.engine.ui.uicompat.ObservableCollection;
 public class ProviderListModel extends ListWithDetailsModel implements ISupportSystemTreeContext {
 
     private static final String CMD_ADD = "Add"; //$NON-NLS-1$
+    private static final String CMD_EDIT = "Edit"; //$NON-NLS-1$
     private static final String CMD_REMOVE = "Remove"; //$NON-NLS-1$
 
     private UICommand addCommand;
+    private UICommand editCommand;
     private UICommand removeCommand;
 
     private SystemTreeItemModel systemTreeSelectedItem;
@@ -43,6 +45,7 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
         setAvailableInModes(ApplicationMode.VirtOnly);
 
         setAddCommand(new UICommand(CMD_ADD, this));
+        setEditCommand(new UICommand(CMD_EDIT, this));
         setRemoveCommand(new UICommand(CMD_REMOVE, this));
 
         updateActionAvailability();
@@ -57,6 +60,14 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
 
     private void setAddCommand(UICommand value) {
         addCommand = value;
+    }
+
+    public UICommand getEditCommand() {
+        return editCommand;
+    }
+
+    private void setEditCommand(UICommand value) {
+        editCommand = value;
     }
 
     public UICommand getRemoveCommand() {
@@ -117,6 +128,7 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
         List tempVar = getSelectedItems();
         List selectedItems = (tempVar != null) ? tempVar : new ArrayList();
 
+        getEditCommand().setIsExecutionAllowed(selectedItems.size() == 1);
         getRemoveCommand().setIsExecutionAllowed(selectedItems.size() > 0);
     }
 
@@ -149,7 +161,14 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
         if (getWindow() != null) {
             return;
         }
-        setWindow(new ProviderModel(this));
+        setWindow(new AddProviderModel(this));
+    }
+
+    private void edit() {
+        if (getWindow() != null) {
+            return;
+        }
+        setWindow(new EditProviderModel(this, (Provider) getSelectedItem()));
     }
 
     private void remove() {
@@ -169,6 +188,8 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
 
         if (command == getAddCommand()) {
             add();
+        } else if (command == getEditCommand()) {
+            edit();
         } else if (command == getRemoveCommand()) {
             remove();
         }

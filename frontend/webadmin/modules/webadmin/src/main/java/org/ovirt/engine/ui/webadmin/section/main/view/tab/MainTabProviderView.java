@@ -72,6 +72,13 @@ public class MainTabProviderView extends AbstractMainTabWithDetailsTableView<Pro
             }
         });
 
+        getTable().addActionButton(new WebAdminButtonDefinition<Provider>(constants.editProvider()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getEditCommand();
+            }
+        });
+
         getTable().addActionButton(new WebAdminButtonDefinition<Provider>(constants.removeProvider()) {
             @Override
             protected UICommand resolveCommand() {

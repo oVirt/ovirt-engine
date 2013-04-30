@@ -18,6 +18,8 @@ public class ProviderModel extends Model {
     private static final String CMD_CANCEL = "Cancel"; //$NON-NLS-1$
 
     private final ListModel sourceListModel;
+    private final VdcActionType action;
+    private final Provider provider;
 
     private EntityModel privateName;
     private EntityModel privateDescription;
@@ -47,15 +49,14 @@ public class ProviderModel extends Model {
         privateUrl = value;
     }
 
-    public ProviderModel(ListModel sourceListModel) {
+    public ProviderModel(ListModel sourceListModel, VdcActionType action, Provider provider) {
         this.sourceListModel = sourceListModel;
+        this.action = action;
+        this.provider = provider;
 
-        setName(new EntityModel());
-        setDescription(new EntityModel());
-        setUrl(new EntityModel());
-
-        setTitle(ConstantsManager.getInstance().getConstants().addProviderTitle());
-        setHashName("add_provider"); //$NON-NLS-1$
+        setName(new EntityModel(provider.getName()));
+        setDescription(new EntityModel(provider.getDescription()));
+        setUrl(new EntityModel(provider.getUrl()));
 
         UICommand tempVar = new UICommand(CMD_SAVE, this);
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -80,12 +81,11 @@ public class ProviderModel extends Model {
             return;
         }
 
-        Provider provider = new Provider();
         provider.setName((String) privateName.getEntity());
         provider.setDescription((String) privateDescription.getEntity());
         provider.setUrl((String) privateUrl.getEntity());
 
-        Frontend.RunAction(VdcActionType.AddProvider, new ProviderParameters(provider));
+        Frontend.RunAction(action, new ProviderParameters(provider));
         cancel();
     }
 
