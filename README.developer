@@ -1,0 +1,134 @@
+Developer mode installation
+===========================
+
+
+PREPARATIONS
+------------
+
+PREREQUISITES
+
+Install the following system components:
+
+ - jdk-7 / openjdk-7-jdk / icedtea-7
+ - bash
+ - openssl
+ - postgresql-server postgresql
+ - python-m2crypto / m2crypto
+ - python-psycopg2 / psycopg
+ - python-cheetah / cheetah
+ - python-daemon
+ - otopi >= 1.0.2
+ - ovirt-host-deploy
+ - jboss-as (optional)
+ - maven-3 (optional)
+
+Maven-3 is required, download and extract if not installed using
+distribution package management, and add to PATH.
+
+>=Jboss 7.1.1 is required, download and extract it if not installed
+using distribution package management.
+
+POSTGRESQL ACCESSIBILITY
+
+Configure postgresql to accept user and password:
+
+Locate pg_hba.conf within your distribution,
+common locations are:
+ - /var/lib/pgsql/data/pg_hba.conf
+ - /etc/postgresql-*/pg_hba.conf
+
+Within pg_hba.conf set method to 'password' for
+127.0.0.1/32 and ::1/128.
+
+restart postgresql service.
+
+DATABASE CREATION
+
+Create database for ovirt-engine, usually the following
+sequence should work:
+
+# su - postgres -c "psql -d template1"
+template1=# create user engine password 'engine';
+template1=# drop database engine;
+template1=# create database engine owner engine;
+
+
+DEVELOPMENT
+-----------
+
+ENVIRONMENT
+
+Development environment is supported only under non-root account. Do
+not run this sequence as root.
+
+BUILD
+
+To build and install ovirt-engine at your home folder under ovirt-engine
+directory, use:
+
+$ make clean install-dev PREFIX=$HOME/ovirt-engine
+
+BUILD_FLAGS
+    By default admin console and user portal components are built.
+    If not required (2nd build and on), BUILD_FLAGS="" can be specified.
+
+EXTRA_BUILD_FLAGS_DEV
+    Any maven build flags requires for building.
+
+    For example, if your machine is low on memory, use:
+    EXTRA_BUILD_FLAGS_DEV="-Dgwt-plugin.localWorkers=2"
+
+EXTRA_BUILD_FLAGS_DEV_GWT
+    By default, only the gecko1_8 support is built, building all
+    permutations is possible by specifying EXTRA_BUILD_FLAGS_DEV_GWT="".
+
+BUILD_TEST_FLAGS
+    By default, unit tests are disabled, to enable specify
+    BUILD_TEST_FLAGS=""
+
+DEV_REBUILD
+    If non java components where modified, DEV_REBUILD="0" can be
+    specified to skip java build.
+
+SETUP
+
+To setup the product use the following command:
+
+$ $HOME/ovirt-engine/bin/engine-setup-2
+
+If Jboss is installed not via distribution package management,
+add the following parameter, provided JBOSS_HOME environment contains
+the location of the Jboss installation:
+   --jboss-home="${JBOSS_HOME}"
+
+REFRESH
+
+If there are no significant changes, such as file structure or database
+schema, there is no need to run the setup again, 'make install-dev <args>'
+will overwrite files as required.
+
+Do remember to restart the engine service.
+
+If there is a significant change, safest path is to stop service, remove
+$HOME/ovirt-engine directory, build and setup.
+
+The $HOME/ovirt-engine/bin/engine-cleanup-2 is also available to cleanup
+the environment, it is useful for application changes, less for packaging
+changes.
+
+ADMINISTRATION
+
+Most utilities and services are operational, including PKI, host deploy.
+
+To start/stop the engine service use:
+
+$ $HOME/ovirt-engine/share/ovirt-engine/services/ovirt-engine.py start
+
+While the service is running, this command will not exit.
+Press <Ctrl>-C to stop service.
+
+Acess using HTTP or HTTPS:
+ - http://<server>:8080
+ - http://<server>:8443
+
+Debug port is available at port 127.0.0.1:8787

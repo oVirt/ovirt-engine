@@ -43,6 +43,10 @@ endif
 ifneq ($(BUILD_LOCALES),0)
 BUILD_FLAGS:=$(BUILD_FLAGS) -P all-langs
 endif
+BUILD_TEST_FLAGS=-D skipTests
+EXTRA_BUILD_FLAGS_DEV=
+EXTRA_BUILD_FLAGS_DEV_GWT=-D gwt.userAgent=gecko1_8
+BUILD_TARGET=deploy
 ENGINE_NAME=$(PACKAGE_NAME)
 PREFIX=/usr/local
 LOCALSTATE_DIR=$(PREFIX)/var
@@ -69,7 +73,8 @@ PKG_GROUP=ovirt
 SPICE_DIR=/usr/share/spice
 RPMBUILD=rpmbuild
 PYTHON=python
-PYTHON_DIR:=$(shell $(PYTHON) -c "from distutils.sysconfig import get_python_lib as f;print(f())")
+PYTHON_SYS_DIR:=$(shell $(PYTHON) -c "from distutils.sysconfig import get_python_lib as f;print(f())")
+PYTHON_DIR=$(PYTHON_SYS_DIR)
 
 OUTPUT_RPMBUILD=$(shell pwd -P)/tmp.rpmbuild
 OUTPUT_DIR=output
@@ -79,6 +84,7 @@ ARCH=noarch
 BUILD_FILE=tmp.built
 MAVEN_OUTPUT_DIR_DEFAULT=$(shell pwd -P)/tmp.repos
 MAVEN_OUTPUT_DIR=$(MAVEN_OUTPUT_DIR_DEFAULT)
+DEV_REBUILD=1
 
 ARTIFACTS = \
 	backend \
@@ -129,6 +135,7 @@ ARTIFACTS = \
 	-e "s|@RPM_RELEASE@|$(RPM_RELEASE)|g" \
 	-e "s|@PACKAGE_NAME@|$(PACKAGE_NAME)|g" \
 	-e "s|@PACKAGE_VERSION@|$(PACKAGE_VERSION)|g" \
+	-e "s|@DISPLAY_VERSION@|$(DISPLAY_VERSION)|g" \
 	-e "s|@SPICE_DIR@|$(SPICE_DIR)|g" \
 	$< > $@
 
@@ -145,6 +152,7 @@ GENERATED = \
 	packaging/services/ovirt-engine.sysv \
 	packaging/services/ovirt-engine-notifier.systemd \
 	packaging/services/ovirt-engine-notifier.sysv \
+	packaging/setup/ovirt_engine_setup/config.py \
 	ovirt-engine.spec \
 	$(NULL)
 
@@ -162,9 +170,9 @@ $(BUILD_FILE):
 	$(MVN) \
 		$(BUILD_FLAGS) \
 		$(EXTRA_BUILD_FLAGS) \
-		-D skipTests \
+		$(BUILD_TEST_FLAGS) \
 		-D altDeploymentRepository=install::default::file://$(MAVEN_OUTPUT_DIR) \
-		deploy
+		$(BUILD_TARGET)
 	touch $(BUILD_FILE)
 
 clean:
@@ -337,6 +345,17 @@ install_setup:
 	install -m 640 backend/manager/tools/dbutils/fkvalidator_sp.sql $(DESTDIR)$(DATA_DIR)/scripts/dbutils
 	install -m 750 backend/manager/tools/dbutils/validatedb.sh $(DESTDIR)$(DATA_DIR)/scripts/dbutils
 
+	( cd packaging && find setup -name '*.py' ) | while read f; do \
+		install -dm 755 "$$(dirname "$(DESTDIR)$(DATA_DIR)/$$f")"; \
+		install -m 644 "packaging/$$f" "$(DESTDIR)$(DATA_DIR)/$$f"; \
+	done
+	install -dm 755 "$(DESTDIR)$(DATA_DIR)/setup/bin"
+	install -m 755 packaging/setup/bin/ovirt-engine-setup "$(DESTDIR)$(DATA_DIR)/setup/bin"
+	install -m 644 packaging/setup/bin/ovirt-engine-setup.env "$(DESTDIR)$(DATA_DIR)/setup/bin"
+	install -m 755 packaging/setup/bin/ovirt-engine-remove "$(DESTDIR)$(DATA_DIR)/setup/bin"
+	ln -sf "$(DATA_DIR)/setup/bin/ovirt-engine-setup" "$(DESTDIR)$(BIN_DIR)/engine-setup-2"
+	ln -sf "$(DATA_DIR)/setup/bin/ovirt-engine-remove" "$(DESTDIR)$(BIN_DIR)/engine-cleanup-2"
+
 install_aio_plugin:
 	install -m 644 packaging/fedora/setup/plugins/all_in_one_100.py $(DESTDIR)$(DATA_DIR)/scripts/plugins
 	install -dm 755 $(DESTDIR)$(DATA_DIR)/firewalld/aio
@@ -447,3 +466,21 @@ install_service:
 	install -m 755 packaging/services/ovirt-engine.py $(DESTDIR)$(DATA_DIR)/services
 	install -m 755 packaging/services/ovirt-engine.systemd $(DESTDIR)$(DATA_DIR)/services
 	install -m 755 packaging/services/ovirt-engine.sysv $(DESTDIR)$(DATA_DIR)/services
+
+install-dev:
+	[ "$(DEV_REBUILD)" != 0 ] && rm -f "$(BUILD_FILE)" || :
+	rm -f $(GENERATED)
+	$(MAKE) \
+		install \
+		EXTRA_BUILD_FLAGS="$(EXTRA_BUILD_FLAGS_DEV_GWT) $(EXTRA_BUILD_FLAGS_DEV)" \
+		PYTHON_DIR="$(PREFIX)$(PYTHON_SYS_DIR)" \
+		$(NULL)
+	install -d "$(DESTDIR)$(LOCALSTATE_DIR)/tmp"
+	install -d "$(DESTDIR)$(LOCALSTATE_DIR)/run/notifier"
+	install -d "$(DESTDIR)$(LOCALSTATE_DIR)/cache/ovirt-engine"
+	install -d "$(DESTDIR)$(LOCALSTATE_DIR)/lib/ovirt-engine/backups"
+	install -d "$(DESTDIR)$(LOCALSTATE_DIR)/lib/ovirt-engine/deployments"
+	install -d "$(DESTDIR)$(LOCALSTATE_DIR)/lib/ovirt-engine/content"
+	install -d "$(DESTDIR)$(LOCALSTATE_DIR)/log/ovirt-engine/host-deploy"
+	install -d "$(DESTDIR)$(LOCALSTATE_DIR)/log/ovirt-engine/notifier"
+	install -d "$(DESTDIR)$(LOCALSTATE_DIR)/log/ovirt-engine/engine-manage-domains"

@@ -1,0 +1,321 @@
+#
+# ovirt-engine-setup -- ovirt engine setup
+# Copyright (C) 2013 Red Hat, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+
+"""Connection plugin."""
+
+
+import os
+import socket
+import tempfile
+import gettext
+_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
+
+
+import psycopg2
+
+
+from otopi import constants as otopicons
+from otopi import util
+from otopi import transaction
+from otopi import plugin
+
+
+from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup import util as osetuputil
+from ovirt_engine_setup import database
+from ovirt_engine_setup import dialog
+
+
+@util.export
+class Plugin(plugin.PluginBase):
+    """Connection plugin."""
+
+    class DBTransaction(transaction.TransactionElement):
+        """yum transaction element."""
+
+        def __init__(self, parent):
+            self._parent = parent
+
+        def __str__(self):
+            return _("Database Transaction")
+
+        def prepare(self):
+            pass
+
+        def abort(self):
+            connection = self._parent.environment[osetupcons.DBEnv.CONNECTION]
+            if connection is not None:
+                connection.rollback()
+                self._parent.environment[osetupcons.DBEnv.CONNECTION] = None
+
+        def commit(self):
+            connection = self._parent.environment[osetupcons.DBEnv.CONNECTION]
+            if connection is not None:
+                connection.commit()
+
+    def __init__(self, context):
+        super(Plugin, self).__init__(context=context)
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_INIT,
+    )
+    def _init(self):
+        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+            self.DBTransaction(self)
+        )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        name=osetupcons.Stages.DB_CONNECTION_CUSTOMIZATION,
+        before=[
+            osetupcons.Stages.DIALOG_TITLES_E_DATABASE,
+        ],
+        after=[
+            osetupcons.Stages.DIALOG_TITLES_S_DATABASE,
+        ],
+    )
+    def _customization(self):
+        interactive = None in (
+            self.environment[osetupcons.DBEnv.HOST],
+            self.environment[osetupcons.DBEnv.PORT],
+            self.environment[osetupcons.DBEnv.DATABASE],
+            self.environment[osetupcons.DBEnv.USER],
+            self.environment[osetupcons.DBEnv.PASSWORD],
+        )
+
+        if interactive:
+            self.dialog.note(
+                text=_(
+                    "\n"
+                    "ATTENTION\n"
+                    "\n"
+                    "Manual action required.\n"
+                    "Please create database for ovirt-engine use. "
+                    "Use the following commands as an example:\n"
+                    "\n"
+                    "create user engine password 'engine';\n"
+                    "create database engine owner engine;\n"
+                    "\n"
+                    "Make sure that database can be accessed remotely.\n"
+                    "\n"
+                ),
+            )
+        else:
+            self.dialog.note(
+                text=_('Using existing credentials'),
+            )
+
+        connectionValid = False
+        while not connectionValid:
+            host = self.environment[osetupcons.DBEnv.HOST]
+            port = self.environment[osetupcons.DBEnv.PORT]
+            secured = self.environment[osetupcons.DBEnv.SECURED]
+            securedHostValidation = self.environment[
+                osetupcons.DBEnv.SECURED_HOST_VALIDATION
+            ]
+            db = self.environment[osetupcons.DBEnv.DATABASE]
+            user = self.environment[osetupcons.DBEnv.USER]
+            password = self.environment[osetupcons.DBEnv.PASSWORD]
+
+            if host is None:
+                while True:
+                    host = self.dialog.queryString(
+                        name='OVESETUP_DB_HOST',
+                        note=_('Database host [@DEFAULT@]: '),
+                        prompt=True,
+                        default=osetupcons.Defaults.DEFAULT_DB_HOST,
+                    )
+                    try:
+                        socket.getaddrinfo(host, None)
+                        break  # do while missing in python
+                    except socket.error as e:
+                        self.logger.error(
+                            _('Host is invalid: {error}').format(
+                                error=e.strerror
+                            )
+                        )
+
+            if port is None:
+                while True:
+                    try:
+                        port = osetuputil.parsePort(
+                            self.dialog.queryString(
+                                name='OVESETUP_DB_PORT',
+                                note=_('Database port [@DEFAULT@]: '),
+                                prompt=True,
+                                default=osetupcons.Defaults.DEFAULT_DB_PORT,
+                            )
+                        )
+                        break  # do while missing in python
+                    except ValueError:
+                        pass
+
+            if secured is None:
+                secured = dialog.queryBoolean(
+                    dialog=self.dialog,
+                    name='OVESETUP_DB_SECURED',
+                    note=_(
+                        'Database secured connection (@VALUES@) '
+                        '[@DEFAULT@]: '
+                    ),
+                    prompt=True,
+                    default=osetupcons.Defaults.DEFAULT_DB_SECURED,
+                )
+
+            if not secured:
+                securedHostValidation = False
+
+            if securedHostValidation is None:
+                securedHostValidation = dialog.queryBoolean(
+                    dialog=self.dialog,
+                    name='OVESETUP_DB_SECURED_HOST_VALIDATION',
+                    note=_(
+                        'Validate host name in secured connection (@VALUES@) '
+                        '[@DEFAULT@]: '
+                    ),
+                    prompt=True,
+                    default=True,
+                ) == 'yes'
+
+            if db is None:
+                db = self.dialog.queryString(
+                    name='OVESETUP_DB_DATABASE',
+                    note=_('Database name [@DEFAULT@]: '),
+                    prompt=True,
+                    default=osetupcons.Defaults.DEFAULT_DB_DATABASE,
+                )
+
+            if user is None:
+                user = self.dialog.queryString(
+                    name='OVESETUP_DB_USER',
+                    note=_('Database user [@DEFAULT@]: '),
+                    prompt=True,
+                    default=osetupcons.Defaults.DEFAULT_DB_USER,
+                )
+
+            if password is None:
+                password = self.dialog.queryString(
+                    name='OVESETUP_DB_PASSWORD',
+                    note=_('Database password: '),
+                    prompt=True,
+                    hidden=True,
+                )
+
+                self.environment[otopicons.CoreEnv.LOG_FILTER].append(password)
+
+            dbenv = {
+                osetupcons.DBEnv.HOST: host,
+                osetupcons.DBEnv.PORT: port,
+                osetupcons.DBEnv.SECURED: secured,
+                osetupcons.DBEnv.SECURED_HOST_VALIDATION: (
+                    securedHostValidation
+                ),
+                osetupcons.DBEnv.USER: user,
+                osetupcons.DBEnv.PASSWORD: password,
+                osetupcons.DBEnv.DATABASE: db,
+            }
+
+            utils = database.OvirtUtils(environment=self.environment)
+            if interactive:
+                try:
+                    utils.tryDatabaseConnect(dbenv)
+                    self.environment.update(dbenv)
+                    connectionValid = True
+                except RuntimeError as e:
+                    self.logger.error(
+                        _('Cannot connect to database: {error}').format(
+                            error=e,
+                        )
+                    )
+            else:
+                # this is usally reached in provisioning
+                # or if full ansewr file
+                self.environment.update(dbenv)
+                connectionValid = True
+
+        try:
+            self.environment[
+                osetupcons.DBEnv.NEW_DATABASE
+            ] = utils.isNewDatabase()
+        except:
+            self.logger.debug('database connection failed', exc_info=True)
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
+        name=osetupcons.Stages.DB_CREDENTIALS_AVAILABLE,
+    )
+    def _pgpass(self):
+        fd, pgpass = tempfile.mkstemp(
+            prefix='pgpass',
+            suffix='.tmp',
+        )
+        os.chmod(pgpass, 0o600)
+        with open(pgpass, 'w') as f:
+            f.write(
+                (
+                    '# DB USER credentials.\n'
+                    '{host}:{port}:{database}:{user}:{password}\n'
+                ).format(
+                    host=self.environment[osetupcons.DBEnv.HOST],
+                    port=self.environment[osetupcons.DBEnv.PORT],
+                    database=self.environment[osetupcons.DBEnv.DATABASE],
+                    user=self.environment[osetupcons.DBEnv.USER],
+                    password=self.environment[osetupcons.DBEnv.PASSWORD],
+                ),
+            )
+
+        self.environment[
+            osetupcons.DBEnv.PGPASS_FILE
+        ] = pgpass
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
+        name=osetupcons.Stages.DB_CONNECTION_AVAILABLE,
+        after=[
+            osetupcons.Stages.DB_SCHEMA,
+        ],
+    )
+    def _connection(self):
+        # must be here as we do not have database at validation
+        self.environment[
+            osetupcons.DBEnv.CONNECTION
+        ] = psycopg2.connect(
+            host=self.environment[osetupcons.DBEnv.HOST],
+            port=self.environment[osetupcons.DBEnv.PORT],
+            user=self.environment[osetupcons.DBEnv.USER],
+            password=self.environment[osetupcons.DBEnv.PASSWORD],
+            database=self.environment[osetupcons.DBEnv.DATABASE],
+        )
+        self.environment[
+            osetupcons.DBEnv.STATEMENT
+        ] = database.Statement(
+            environment=self.environment,
+        )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CLEANUP,
+    )
+    def _cleanup(self):
+        f = self.environment[
+            osetupcons.DBEnv.PGPASS_FILE
+        ]
+        if f is not None and os.path.exists(f):
+            os.unlink(f)
+
+
+# vim: expandtab tabstop=4 shiftwidth=4

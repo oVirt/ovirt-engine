@@ -51,4 +51,5 @@ packaging/etc/notifier/log4j.xml
 packaging/services/config.py
 packaging/services/*.systemd
 packaging/services/*.sysv
+packaging/setup/ovirt_engine_setup/config.py
 ovirt-engine.spec

@@ -238,6 +238,13 @@ Requires: nfs-utils
 Requires: python-cheetah
 Requires: yum
 Requires: python-daemon
+Requires: python-psycopg2
+Requires: iproute
+Requires: openssh
+Requires: openssl
+Requires: m2crypto
+Requires: python-paramiko
+Requires: otopi >= 1.0.2
 
 %description setup
 Setup and upgrade scripts for %{product_name_short}
@@ -418,6 +425,17 @@ touch %{buildroot}%{engine_pki}/cacert.template
 touch %{buildroot}%{engine_pki}/cert.template
 touch %{buildroot}%{engine_pki}/database.txt
 touch %{buildroot}%{engine_pki}/serial.txt
+
+install -d "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d"
+cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf" << __EOF__
+[environment:default]
+OVESETUP_APACHE/configureRootRedirectionDefault=bool:True
+__EOF__
+cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-aio.conf" << __EOF__
+[environment:default]
+OVESETUP_AIO/enable=bool:True
+__EOF__
+
 
 %preun
 if [ "$1" -eq 0 ]
@@ -628,8 +646,12 @@ fi
 
 %files setup
 
+%config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf
+
 # Links to the main programs:
 %{_bindir}/engine-setup
+%{_bindir}/engine-setup-2
+%{_bindir}/engine-cleanup-2
 %{_bindir}/engine-upgrade
 %{_bindir}/engine-check-update
 %{_bindir}/engine-cleanup
@@ -653,6 +675,13 @@ fi
 
 # DB-related tools
 %{engine_data}/scripts/dbutils
+
+# Setup
+%{engine_data}/setup/bin/ovirt-engine-setup
+%{engine_data}/setup/bin/ovirt-engine-remove
+%{engine_data}/setup/bin/ovirt-engine-setup.env
+%{engine_data}/setup/ovirt_engine_setup/*.py*
+%{engine_data}/setup/plugins/*/*/*.py*
 
 # Firewalld configuration
 %{engine_data}/firewalld/base
@@ -679,6 +708,7 @@ fi
 %files setup-plugin-allinone
 %{engine_data}/scripts/plugins/all_in_one_100.py*
 %{engine_data}/firewalld/aio
+%config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-aio.conf
 
 
 %files dbscripts
@@ -708,7 +738,7 @@ fi
 
 
 %files userportal
-%config(noreplace) %{engine_etc}/usbfilter.txt
+%config %{engine_etc}/usbfilter.txt
 %{engine_ear}/userportal.war
 
 
