@@ -13,6 +13,6 @@ public class GetAllDbUsersQuery<P extends VdcQueryParametersBase>
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
                 DbFacade.getInstance().getDbUserDao()
-                        .get(getUserID()));
+                        .getAll(getUserID(), getParameters().isFiltered()));
     }
 }

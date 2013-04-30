@@ -103,11 +103,14 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromUsers() RETURNS SETOF users
+Create or replace FUNCTION GetAllFromUsers(v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF users
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT users.*
-      FROM users;
+      FROM users
+      WHERE (NOT v_is_filtered OR EXISTS (SELECT 1
+                                   FROM   users u, user_db_users_permissions_view p
+                                   WHERE  u.user_id = v_user_id AND u.user_id = p.ad_element_id));
 END; $procedure$
 LANGUAGE plpgsql;
 

@@ -1426,6 +1426,13 @@ CREATE OR REPLACE VIEW user_object_permissions_view AS
    JOIN user_flat_groups ON user_flat_groups.granted_id = permissions.ad_element_id
    WHERE permissions.ad_element_id != getGlobalIds('everyone');
 
+-- Permissions to view users in db
+CREATE OR REPLACE VIEW user_db_users_permissions_view AS
+ SELECT DISTINCT permissions.ad_element_id, roles_groups.role_id, roles_groups.action_group_id
+   FROM permissions
+   JOIN roles_groups ON permissions.role_id = roles_groups.role_id
+   WHERE roles_groups.action_group_id = 502;
+
 CREATE OR REPLACE VIEW vm_device_view
 AS
 SELECT device_id, vm_id, type, device, address, boot_order, spec_params,

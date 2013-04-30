@@ -47,6 +47,13 @@ public interface DbUserDAO extends DAO, SearchDAO<DbUser> {
     List<DbUser> getAll();
 
     /**
+     * Retrieves all users
+     *
+     * @return the list of entries
+     */
+    List<DbUser> getAll(Guid userID, boolean isFiltered);
+
+    /**
      * Saves the user.
      *
      * @param user
