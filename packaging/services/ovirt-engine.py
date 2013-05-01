@@ -29,13 +29,10 @@ import config
 import service
 
 
-class EngineDaemon(service.Daemon):
-    """
-    The engine daemon
-    """
+class Daemon(service.Daemon):
 
     def __init__(self):
-        super(EngineDaemon, self).__init__()
+        super(Daemon, self).__init__()
 
     def _processTemplate(self, template, dir):
         out = os.path.join(
@@ -237,7 +234,7 @@ class EngineDaemon(service.Daemon):
         if not os.path.exists(config.ENGINE_DEFAULT_FILE):
             raise RuntimeError(
                 _(
-                    "The engine configuration defaults file '{file}' "
+                    "The configuration defaults file '{file}' "
                     "required but missing"
                 ).format(
                     file=config.ENGINE_DEFAULT_FILE,
@@ -412,14 +409,14 @@ class EngineDaemon(service.Daemon):
         })
 
     def daemonStdHandles(self):
-        engineConsoleLog = open(
+        consoleLog = open(
             os.path.join(
                 self._config.getString('ENGINE_LOG'),
                 'console.log'
             ),
             'w+',
         )
-        return (engineConsoleLog, engineConsoleLog)
+        return (consoleLog, consoleLog)
 
     def daemonContext(self):
         self.daemonAsExternalProcess(
@@ -440,7 +437,7 @@ class EngineDaemon(service.Daemon):
 
 if __name__ == '__main__':
     service.setupLogger()
-    d = EngineDaemon()
+    d = Daemon()
     d.run()
 
 

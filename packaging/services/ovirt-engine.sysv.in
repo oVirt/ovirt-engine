@@ -14,12 +14,14 @@
 # Source function library.
 . /etc/rc.d/init.d/functions
 
-[ -f /etc/sysconfig/ovirt-engine ] && . /etc/sysconfig/ovirt-engine
+NAME="ovirt-engine"
+PROG="oVirt Engine"
+
+[ -f "/etc/sysconfig/${NAME}" ] && . "/etc/sysconfig/${NAME}"
 
 RETVAL=0
-PROG="oVirt Engine"
-LOCKFILE="/var/lock/subsys/ovirt-engine"
-PIDFILE="${PIDFILE:-/var/run/ovirt-engine.pid}"
+LOCKFILE="/var/lock/subsys/${NAME}"
+PIDFILE="${PIDFILE:-/var/run/${NAME}.pid}"
 USER="@ENGINE_USER@"
 
 # See how we were called.
@@ -34,10 +36,10 @@ case "$1" in
 		touch "${PIDFILE}"
 		chown "${USER}" "${PIDFILE}"
 		daemon --user "${USER}" --pidfile="${PIDFILE}" \
-			/usr/share/ovirt-engine/services/ovirt-engine.py \
+			"${ENGINE_USR}/services/${NAME}.py" \
 				--pidfile="${PIDFILE}" \
 				--background \
-				${OVIRT_ENGINE_EXTRA_ARGS} \
+				${EXTRA_ARGS} \
 				start
 		RETVAL=$?
 		echo
