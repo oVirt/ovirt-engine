@@ -36,7 +36,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendAssignedPermissionsResource
         extends AbstractBackendCollectionResource<Permission, permissions>
-        implements AssignedPermissionsResource, Serializable {
+        implements AssignedPermissionsResource {
 
     private Guid targetId;
     private VdcQueryType queryType;
