@@ -1099,7 +1099,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 .append(getClass().getSimpleName());
 
         if (hasTaskHandlers()) {
-            logInfo.append("Task handler: ").append(getCurrentTaskHandler().getClass().getSimpleName());
+            logInfo.append(" Task handler: ").append(getCurrentTaskHandler().getClass().getSimpleName());
         }
 
         logInfo.append(" internal: ").append(isInternalExecution()).append(".");
