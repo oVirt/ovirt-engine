@@ -61,7 +61,10 @@ public class EncryptionUtilsTest {
         final String plain = "Test123!32@";
         final AtomicBoolean failed = new AtomicBoolean();
 
-        for (int i=0;i<100;i++) {
+        // StringBuffer is used instead of StringBuilder since it's thread-safe
+        final StringBuffer failures = new StringBuffer();
+        for (int i = 0; i < 100; i++) {
+            final int threadCount = i;
             l.add (
                 new Thread(
                     new Runnable() {
@@ -69,11 +72,13 @@ public class EncryptionUtilsTest {
                         public void run() {
                             try {
                                 String encrypted = EncryptionUtils.encrypt(plain, keyStoreURL, keyStorePass, certAlias);
-                                String plain2 = EncryptionUtils.decrypt(encrypted, keyStoreURL, keyStorePass, certAlias);
-                                if (!plain.equals(plain2)) {
+                                String actualDecrypted = EncryptionUtils.decrypt(encrypted, keyStoreURL, keyStorePass, certAlias);
+                                if (!plain.equals(actualDecrypted)) {
+                                    String failure = String.format("Failure in test %d, plain is %s%n",
+                                                            threadCount,
+                                                            actualDecrypted);
+                                    failures.append(failure);
                                     failed.set(true);
-                                    System.out.println("BAD");
-                                    System.out.println("plain2: " + plain2);
                                 }
                             }
                             catch (Exception e) {
@@ -92,6 +97,6 @@ public class EncryptionUtilsTest {
             t.join();
         }
 
-        assertFalse(failed.get());
+        assertFalse(failures.toString(), failed.get());
     }
 }
