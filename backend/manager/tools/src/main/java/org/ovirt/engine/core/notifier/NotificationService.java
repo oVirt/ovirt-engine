@@ -16,8 +16,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.ovirt.engine.core.common.EventNotificationMethods;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.EventAuditLogSubscriber;
@@ -41,7 +40,7 @@ import org.ovirt.engine.core.utils.db.DbUtils;
  */
 public class NotificationService implements Runnable {
 
-    private static final Log log = LogFactory.getLog(NotificationService.class);
+    private static final Logger log = Logger.getLogger(NotificationService.class);
 
     private DataSource ds;
     private Map<String, String> prop = null;

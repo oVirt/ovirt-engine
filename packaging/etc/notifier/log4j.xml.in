@@ -25,14 +25,10 @@
     </appender>
 
     <root>
-        <priority value="ERROR" />
+        <priority value="INFO" />
         <!-- appender-ref ref="CONSOLE" /-->
         <appender-ref ref="FILE" />
     </root>
-
-    <logger name="org.ovirt.engine.core">
-        <level value="INFO"/>
-    </logger>
 
 </log4j:configuration>
 

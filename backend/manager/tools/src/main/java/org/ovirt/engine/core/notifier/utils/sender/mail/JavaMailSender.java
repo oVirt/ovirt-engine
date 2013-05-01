@@ -17,8 +17,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 
 /**
@@ -26,7 +25,7 @@ import org.ovirt.engine.core.notifier.utils.NotificationProperties;
  */
 public class JavaMailSender {
 
-    private static final Log log = LogFactory.getLog(JavaMailSender.class);
+    private static final Logger log = Logger.getLogger(JavaMailSender.class);
     private Session session = null;
     private InternetAddress from = null;
     private InternetAddress replyTo = null;

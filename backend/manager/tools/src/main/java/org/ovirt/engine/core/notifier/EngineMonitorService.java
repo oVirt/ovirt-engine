@@ -31,8 +31,7 @@ import javax.net.ssl.X509TrustManager;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.config.ConfigCommon;
@@ -53,7 +52,7 @@ import org.ovirt.engine.core.utils.db.DbUtils;
  */
 public class EngineMonitorService implements Runnable {
 
-    private static final Log log = LogFactory.getLog(EngineMonitorService.class);
+    private static final Logger log = Logger.getLogger(EngineMonitorService.class);
     private static final String ENGINE_NOT_RESPONDING_ERROR = "Engine server is not responding.";
     private static final String ENGINE_RESPONDING_MESSAGE = "Engine server is up and running.";
     private static final String HEALTH_SERVLET_PATH = "/OvirtEngineWeb/HealthStatus";

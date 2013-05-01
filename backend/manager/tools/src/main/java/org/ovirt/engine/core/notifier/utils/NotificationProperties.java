@@ -8,8 +8,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.ovirt.engine.core.notifier.NotificationServiceException;
 
 /**
@@ -52,7 +51,7 @@ public class NotificationProperties {
      */
     public static final String DAYS_TO_SEND_ON_STARTUP = "DAYS_TO_SEND_ON_STARTUP";
 
-    private static final Log log = LogFactory.getLog(NotificationProperties.class);
+    private static final Logger log = Logger.getLogger(NotificationProperties.class);
 
     /**
      * Reads a properties file into a Map of <String,String> key-value pairs

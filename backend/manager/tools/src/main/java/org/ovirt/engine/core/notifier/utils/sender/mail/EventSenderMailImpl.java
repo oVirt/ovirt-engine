@@ -8,8 +8,7 @@ import java.util.Map;
 import javax.mail.MessagingException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.ovirt.engine.core.common.businessentities.EventAuditLogSubscriber;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 import org.ovirt.engine.core.notifier.utils.sender.EventSender;
@@ -30,7 +29,7 @@ import org.ovirt.engine.core.notifier.utils.sender.EventSenderResult;
  */
 public class EventSenderMailImpl implements EventSender {
 
-    private static final Log log = LogFactory.getLog(EventSenderMailImpl.class);
+    private static final Logger log = Logger.getLogger(EventSenderMailImpl.class);
     private JavaMailSender mailSender;
     private String hostName;
     private boolean isBodyHtml = false;

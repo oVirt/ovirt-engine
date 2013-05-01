@@ -4,8 +4,7 @@ import java.io.File;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.ovirt.engine.core.notifier.NotificationServiceException;
 
 /**
@@ -15,7 +14,7 @@ import org.ovirt.engine.core.notifier.NotificationServiceException;
 public class NotificationConfigurator {
 
     private static final String DEFAULT_CONF_FILE_LOCATION = "/etc/engine/notifier/notifier.conf";
-    private static final Log log = LogFactory.getLog(NotificationConfigurator.class);
+    private static final Logger log = Logger.getLogger(NotificationConfigurator.class);
     private Map<String, String> prop = null;
 
     /**
