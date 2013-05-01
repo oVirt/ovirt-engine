@@ -36,17 +36,4 @@ public class SearchQueryFotmatter implements LdapQueryFormatter<LdapQueryExecuti
                         queryMetadata.getReturningAttributes(),
                         queryMetadata.getQueryData().getDomain());
     }
-
-    public static void main(String[] args) {
-        String filter = "(&($LDAP_USER_ACCOUNT)($GIVENNAME=ggry))";
-        EnumMap<SearchLangageLDAPTokens, String> map =
-                new EnumMap<SearchLangageLDAPTokens, String>(SearchLangageLDAPTokens.class);
-        map.put(SearchLangageLDAPTokens.$GIVENNAME, "givenname");
-        map.put(SearchLangageLDAPTokens.$USER_ACCOUNT_TYPE, "samaccountname");
-
-        for (Entry<SearchLangageLDAPTokens, String> tokenEntry : map.entrySet()) {
-            filter = StringUtils.replace(filter, tokenEntry.getKey().name(), tokenEntry.getValue());
-        }
-        System.out.println(filter);
-    }
 }
