@@ -40,6 +40,9 @@ public class SystemTreeItemCell extends AbstractCell<SystemTreeItemModel> {
         case DataCenter:
             imageResource = applicationResources.dataCenterImage();
             break;
+        case DataCenters:
+            imageResource = applicationResources.dataCentersImage();
+            break;
         case Cluster_Gluster:
             imageResource = applicationResources.glusterClusterImage();
             break;

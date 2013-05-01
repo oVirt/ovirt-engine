@@ -36,6 +36,9 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/datacenter.png")
     ImageResource dataCenterImage();
 
+    @Source("images/datacenters.png")
+    ImageResource dataCentersImage();
+
     @Source("images/desktop.gif")
     ImageResource desktopImage();
 

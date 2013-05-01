@@ -30,7 +30,7 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
     private static final SystemTreeResources res = GWT.create(SystemTreeResources.class);
 
     private static final int ALL_LEVELS = Integer.MAX_VALUE;
-    private static final int ITEM_LEVEL = 2;
+    private static final int ITEM_LEVEL = 3;
 
     interface WidgetUiBinder extends UiBinder<Widget, SystemTree> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);

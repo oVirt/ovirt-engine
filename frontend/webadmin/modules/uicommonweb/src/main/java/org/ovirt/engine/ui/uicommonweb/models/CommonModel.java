@@ -506,7 +506,8 @@ public class CommonModel extends ListModel
 
         // Update items availability depending on system tree selection.
         dataCenterList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
-                || model.getType() == SystemTreeItemType.Storage || model.getType() == SystemTreeItemType.System);
+                || model.getType() == SystemTreeItemType.Storage || model.getType() == SystemTreeItemType.System
+                || model.getType() == SystemTreeItemType.DataCenters);
 
         clusterList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
                 || model.getType() == SystemTreeItemType.Clusters || model.getType() == SystemTreeItemType.Cluster
@@ -636,6 +637,7 @@ public class CommonModel extends ListModel
         } else {
             switch (model.getType())
             {
+            case DataCenters:
             case DataCenter:
                 setSelectedItem(dataCenterList);
                 break;
@@ -1011,6 +1013,11 @@ public class CommonModel extends ListModel
 
             switch (model.getType())
             {
+            case DataCenters:
+                if (dataCenterList.isSearchStringMatch(source)) {
+                    prefix.argvalue = "DataCenter:"; //$NON-NLS-1$
+                }
+                break;
             case DataCenter: {
                 if (dataCenterList.isSearchStringMatch(source))
                 {

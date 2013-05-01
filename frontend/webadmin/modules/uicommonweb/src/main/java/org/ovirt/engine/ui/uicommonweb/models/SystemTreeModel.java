@@ -393,6 +393,13 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
         systemItem.setIsSelected(true);
         systemItem.setTitle(ConstantsManager.getInstance().getConstants().systemTitle());
 
+        // Add Data Centers node under System
+        SystemTreeItemModel dataCentersItem = new SystemTreeItemModel();
+        dataCentersItem.setType(SystemTreeItemType.DataCenters);
+        dataCentersItem.setTitle(ConstantsManager.getInstance().getConstants().dataCentersTitle());
+        systemItem.getChildren().add(dataCentersItem);
+
+        // Populate everything under Data Centers
         for (VdcQueryReturnValue returnValue : result.getReturnValues())
         {
             ++count;
@@ -408,7 +415,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             dataCenterItem.setTitle(getDataCenters().get(count).getname());
             dataCenterItem.setParent(systemItem);
             dataCenterItem.setEntity(getDataCenters().get(count));
-            systemItem.getChildren().add(dataCenterItem);
+            dataCentersItem.getChildren().add(dataCenterItem);
 
             SystemTreeItemModel storagesItem = new SystemTreeItemModel();
             storagesItem.setType(SystemTreeItemType.Storages);

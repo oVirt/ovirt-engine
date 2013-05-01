@@ -4,6 +4,7 @@ package org.ovirt.engine.ui.uicommonweb.models;
 public enum SystemTreeItemType
 {
     System,
+    DataCenters,
     DataCenter,
     Storages,
     Storage,
