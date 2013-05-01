@@ -10,11 +10,12 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.notifier.NotificationServiceException;
+import org.ovirt.engine.core.utils.LocalConfig;
 
 /**
  * Defines properties uses by the event notification service
  */
-public class NotificationProperties {
+public class NotificationProperties extends LocalConfig {
     /**
      * Email parameters
      */
@@ -54,56 +55,36 @@ public class NotificationProperties {
 
     private static final Logger log = Logger.getLogger(NotificationProperties.class);
 
-    /**
-     * Reads a properties file into a Map of <String,String> key-value pairs
-     * @param propertiesFile
-     *            the system dependent file name
-     * @return a map which holds the properties from file
-     * @throws NotificationServiceException
-     *             exception for error reading the file
-     */
-    public static Map<String, String> readPropertiesFile(String propertiesFile) throws NotificationServiceException {
-        FileInputStream inStream = null;
-        Properties properties = new Properties();
-        try {
-            inStream = new FileInputStream(propertiesFile);
-            properties.load(inStream);
-        } catch (IOException e) {
-            throw new NotificationServiceException("Failed to read configuration file " + propertiesFile, e);
-        } finally {
-            if (inStream != null) {
-                try {
-                    inStream.close();
-                } catch (Exception e) {
-                    throw new NotificationServiceException("Failed to close configuration file stream", e);
-                }
-            }
-        }
-        return fillPropertiesMap(properties);
+    // Default files for defaults and overridden values:
+    private static String DEFAULTS_PATH = "/usr/share/ovirt-engine/conf/notifier.conf.defaults";
+    private static String VARS_PATH = "/etc/ovirt-engine/notifier/notifier.conf";
+
+    // This is a singleton and this is the instance:
+    private static final NotificationProperties instance = new NotificationProperties();
+
+    public static NotificationProperties getInstance() {
+        return instance;
     }
 
-    /**
-     * Populates properties collection, reporting on misconfigured properties. Is a duplicated property defined on
-     * configuration file, warning is filed and the later property will be used.
-     * @param properties
-     *            properties which read from configuration file
-     * @return a collections holds unique representation of the configuration properties
-     */
-    private static Map<String, String> fillPropertiesMap(Properties properties) {
-        Map<String, String> prop = new HashMap<String, String>(properties.size());
-        Set<Entry<Object, Object>> entrySet = properties.entrySet();
-        String key;
-        String value;
-        for (Entry<Object, Object> entry : entrySet) {
-            key = (String) entry.getKey();
-            value = (String) entry.getValue();
-            if (prop.containsKey(key)) {
-                log.error(String.format("Duplicate property [%s] is defined in configuration file. Using property with value [%s]",
-                        key,
-                        value));
-            }
-            prop.put(key, value);
-        }
-        return prop;
+    public static void setDefaults(String defaultsPath, String varsPath) {
+        DEFAULTS_PATH = defaultsPath;
+        VARS_PATH = varsPath;
     }
+
+    private NotificationProperties() {
+        // Locate the defaults file and add it to the list:
+        String defaultsPath = System.getenv("ENGINE_NOTIFIER_DEFAULTS");
+        if (defaultsPath == null) {
+            defaultsPath = DEFAULTS_PATH;
+        }
+
+        // Locate the overridden values file and add it to the list:
+        String varsPath = System.getenv("ENGINE_NOTIFIER_VARS");
+        if (varsPath == null) {
+            varsPath = VARS_PATH;
+        }
+
+        loadConfig(defaultsPath, varsPath);
+    }
+
 }

@@ -13,41 +13,11 @@ import org.ovirt.engine.core.notifier.NotificationServiceException;
  */
 public class NotificationConfigurator {
 
-    private static final String DEFAULT_CONF_FILE_LOCATION = "/etc/engine/notifier/notifier.conf";
     private static final Logger log = Logger.getLogger(NotificationConfigurator.class);
     private Map<String, String> prop = null;
 
-    /**
-     * Creates a {@code NotificationConfigurator} by evaluating properties values from a given file.
-     * @param confFile
-     *            a path to the configuration file
-     * @throws NotificationServiceException
-     */
-    public NotificationConfigurator(String confFile) throws NotificationServiceException {
-        setConfigurationFile(confFile);
-    }
-
-    /**
-     * Set local configuration file for the notification service override the default configuration file
-     * @param localConfFile
-     *            the path of the alternate configuration file
-     * @throws NotificationServiceException
-     */
-    private void setConfigurationFile(String localConfFile) throws NotificationServiceException {
-        String confFileLocation;
-        if (StringUtils.isNotEmpty(localConfFile)) {
-            confFileLocation = localConfFile;
-            log.info("Starting event notification service with configuration file: " + confFileLocation);
-        } else {
-            confFileLocation = DEFAULT_CONF_FILE_LOCATION;
-            log.info("Starting event notification service with default configuration file: " + confFileLocation);
-        }
-        File file = new File(confFileLocation);
-        if (!file.canRead()) {
-            throw new NotificationServiceException("Configuration file does not exist or missing permissions: "
-                    + file.getAbsoluteFile());
-        }
-        prop = NotificationProperties.readPropertiesFile(confFileLocation);
+    public NotificationConfigurator() {
+        prop = NotificationProperties.getInstance().getProperties();
     }
 
     /**

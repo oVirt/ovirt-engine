@@ -7,71 +7,71 @@
 # Notification Service Configuration: #
 #-------------------------------------#
 # Interval (in seconds) between iterations of dispatching messages to subscribers. Default is 120 seconds.
-#INTERVAL_IN_SECONDS=120
+INTERVAL_IN_SECONDS=120
 
 # The SMTP mail server address. Required.
 MAIL_SERVER=
 
-# The default port of non-secured SMTP server is 25, for secured (ssl enabled) 465.
-#MAIL_PORT=25
-#MAIL_PORT_SSL=465
+# The SMTP port
+MAIL_PORT=25
+MAIL_PORT_SSL=465
 
 # Required if SSL enabled to authenticate the user. Used also to specify 'from' user address if mail server
 # supports, when MAIL_FROM is not set. Address is in RFC822 format
-#MAIL_USER=
+MAIL_USER=
 
 # Required to authenticate the user if mail server requires authentication or if SSL is enabled
-#MAIL_PASSWORD=
+MAIL_PASSWORD=
 
-# Indicates whether SSL should be used to communicate with mail server. Default is false.
-#MAIL_ENABLE_SSL=true
+# Indicates whether SSL should be used to communicate with mail server.
+MAIL_ENABLE_SSL=false
 
-# If set to true, sends a message in HTML format. Default is false.
-#HTML_MESSAGE_FORMAT=true
+# If set to true, sends a message in HTML format.
+HTML_MESSAGE_FORMAT=false
 
 # Specifies 'from' address on sent mail in RFC822 format, if supported by mail server.
-#MAIL_FROM=
+MAIL_FROM=
 
 # Specifies 'reply-to' address on sent mail in RFC822 format.
-#MAIL_REPLY_TO=
+MAIL_REPLY_TO=
 
-# Amount of days to keep dispatched events on history table. If not set, events remain on history table.
-#DAYS_TO_KEEP_HISTORY=30
+# Amount of days to keep dispatched events on history table. If 0, events remain on history table.
+DAYS_TO_KEEP_HISTORY=0
 
 # This parameter specifies how many days of old events are processed and sent
 # when the notifier starts. If set to 2, for example, the notifier will
 # process and send the events of the last two days, older events will just
 # be marked as processed and won't be sent. The default is 0, so no old
 # messages will be sent at all during startup.
-#DAYS_TO_SEND_ON_STARTUP=0
+DAYS_TO_SEND_ON_STARTUP=0
 
 #----------------------------------#
 # Engine Monitoring Configuration: #
 #----------------------------------#
 # Interval (in seconds) between engine server monitoring iterations. Interval is being measured from
-# the time an iteration is completed. Default is 300 seconds.
-#ENGINE_INTERVAL_IN_SECONDS=300
+# the time an iteration is completed.
+ENGINE_INTERVAL_IN_SECONDS=300
 
-# Number of retries to monitor server status per iteration. Default is 3 retries.
-#ENGINE_MONITOR_RETRIES=3
+# Number of retries to monitor server status per iteration.
+ENGINE_MONITOR_RETRIES=3
 
-# Time (in seconds) to wait between retries. Default is 30 seconds.
-#ENGINE_TIMEOUT_IN_SECONDS=30
+# Time (in seconds) to wait between retries.
+ENGINE_TIMEOUT_IN_SECONDS=30
 
-# If running Jboss in secure mode, should be set to true. Default is false.
-#IS_HTTPS_PROTOCOL=true
+# If running Jboss in secure mode, should be set to true.
+IS_HTTPS_PROTOCOL=false
 
-# Specifies the protocol used by Jboss Configuration Connector when SSL is enabled. Default is 'TLS'.
-#SSL_PROTOCOL=TLS
+# Specifies the protocol used by Jboss Configuration Connector when SSL is enabled.
+SSL_PROTOCOL=TLS
 
-# If running Jboss in secure mode, and wishes to ignore SSL errors, should set to true. Default is false.
-#SSL_IGNORE_CERTIFICATE_ERRORS=false
+# If running Jboss in secure mode, and wishes to ignore SSL errors, should set to true.
+SSL_IGNORE_CERTIFICATE_ERRORS=false
 
 # If running Jboss in secure mode, and wishes to ignore hostname verification, should set to true. Default is false.
 # If setting this property to 'true', SSL_IGNORE_CERTIFICATE_ERRORS considered to be set to 'true' as well: disabling host name
 # verification means that it will not be verified against the certification, therefore certification errors are ignored.
-#SSL_IGNORE_HOST_VERIFICATION=false
+SSL_IGNORE_HOST_VERIFICATION=false
 
-# Specifies whether to repeat auditing of failure messages of non-responding engine server. Default is false (meaning
-# repeated failure messages will NOT be sent to the subscribers)
-#REPEAT_NON_RESPONSIVE_NOTIFICATION=false
+# Specifies whether to repeat auditing of failure messages of non-responding engine server. false means
+# repeated failure messages will NOT be sent to the subscribers.
+REPEAT_NON_RESPONSIVE_NOTIFICATION=false

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.ovirt.engine.core.notifier.NotificationServiceException;
@@ -14,22 +15,17 @@ public class NotificationConfiguratorTest {
 
     @BeforeClass
     static public void initConfigurator() {
-        try {
-            config = new NotificationConfigurator("src/test/resources/conf/error-notifier.conf");
-        } catch (NotificationServiceException e) {
-            e.printStackTrace();
-        }
+        File c = new File("src/test/resources/conf/notifier.conf");
+        NotificationProperties.setDefaults(c.getAbsolutePath(), null);
+
+        config = new NotificationConfigurator();
         assertNotNull(config);
     }
 
     @Test
     public void testConfiguration() {
         NotificationConfigurator configurator = null;
-        try {
-            configurator = new NotificationConfigurator("src/test/resources/conf/notifier.conf");
-        } catch (NotificationServiceException e) {
-            e.printStackTrace();
-        }
+        configurator = new NotificationConfigurator();
 
         assertNotNull(configurator);
 

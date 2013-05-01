@@ -42,16 +42,12 @@ public class Notifier {
         long engineMonitorInterval;
         long notificationInterval;
         try {
-            String configurationFile = null;
-            if (args != null && args.length == 1) {
-                configurationFile = args[0];
-            }
-            notificationConf = new NotificationConfigurator(configurationFile);
+            notificationConf = new NotificationConfigurator();
 
             // This check will be not mandatory when SMS is implemented.
             String mailServer = notificationConf.getProperties().get(NotificationProperties.MAIL_SERVER);
             if ( mailServer == null || mailServer.isEmpty() ) {
-                throw new IllegalArgumentException("Check configuration file, " + configurationFile + " MAIL_SERVER is missing");
+                throw new IllegalArgumentException("Check configuration file, MAIL_SERVER is missing");
             }
 
             notificationService = new NotificationService(notificationConf);

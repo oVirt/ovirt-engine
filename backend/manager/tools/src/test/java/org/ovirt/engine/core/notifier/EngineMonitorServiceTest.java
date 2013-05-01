@@ -2,8 +2,10 @@ package org.ovirt.engine.core.notifier;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
 import org.junit.Test;
 import org.ovirt.engine.core.notifier.utils.NotificationConfigurator;
+import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 
 /**
  * The test engage the engine monitor service, which sample the server status and report upon its status.
@@ -13,8 +15,10 @@ public class EngineMonitorServiceTest {
     public void testNotificationService() {
         EngineMonitorService engineMonitorService = null;
         try {
-            engineMonitorService =
-                    new EngineMonitorService(new NotificationConfigurator("src/test/resources/conf/notifier.conf"));
+            File config = new File("src/test/resources/conf/notifier.conf");
+            NotificationProperties.setDefaults(config.getAbsolutePath(), null);
+
+            engineMonitorService = new EngineMonitorService(new NotificationConfigurator());
         } catch (NotificationServiceException e) {
             e.printStackTrace();
         }

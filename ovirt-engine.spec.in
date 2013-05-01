@@ -706,7 +706,7 @@ fi
 
 # Configuration files for the notifier:
 %dir %{engine_etc}/notifier
-%config(noreplace) %attr(-, %{engine_user}, %{engine_group}) %{engine_etc}/notifier/notifier.conf
+%dir %{engine_etc}/notifier/notifier.conf.d
 %{engine_etc}/notifier/log4j.xml
 
 # Jar files:

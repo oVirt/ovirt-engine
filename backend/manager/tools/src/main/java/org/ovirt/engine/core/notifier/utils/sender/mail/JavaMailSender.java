@@ -45,11 +45,8 @@ public class JavaMailSender {
         // enable SSL
         if (Boolean.valueOf(aMailProps.get(NotificationProperties.MAIL_ENABLE_SSL))) {
             mailSessionProps.put("mail.transport.protocol", "smtps");
-            String portString = aMailProps.get(NotificationProperties.MAIL_PORT_SSL);
-            if (StringUtils.isNotEmpty(portString)) {
-                mailSessionProps.put("mail.smtps.socketFactory.port", portString);
-                mailSessionProps.put("mail.smtp.port", portString);
-            }
+            mailSessionProps.put("mail.smtp.port", aMailProps.get(NotificationProperties.MAIL_PORT_SSL));
+            mailSessionProps.put("mail.smtps.socketFactory.port", aMailProps.get(NotificationProperties.MAIL_PORT_SSL));
             mailSessionProps.put("mail.smtps.auth", "true");
             mailSessionProps.put("mail.smtps.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
             mailSessionProps.put("mail.smtps.socketFactory.fallback", false);
@@ -57,10 +54,7 @@ public class JavaMailSender {
             this.isSSL = true;
         } else {
             mailSessionProps.put("mail.transport.protocol", "smtp");
-            String portString = aMailProps.get(NotificationProperties.MAIL_PORT);
-            if (StringUtils.isNotEmpty(portString)) {
-                mailSessionProps.put("mail.smtp.port", portString);
-            }
+            mailSessionProps.put("mail.smtp.port", aMailProps.get(NotificationProperties.MAIL_PORT));
         }
 
         String password = aMailProps.get(NotificationProperties.MAIL_PASSWORD);

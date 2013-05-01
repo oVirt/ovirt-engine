@@ -390,7 +390,8 @@ install_notification_service:
 
 	# Configuration files:
 	install -m 644 packaging/etc/notifier/log4j.xml $(DESTDIR)$(PKG_SYSCONF_DIR)/notifier/log4j.xml
-	install -m 640 packaging/etc/notifier/notifier.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/notifier/notifier.conf
+	install -d -m 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/notifier/notifier.conf.d
+	install -m 640 packaging/conf/notifier.conf.defaults $(DESTDIR)$(DATA_DIR)/conf/notifier.conf.defaults
 
 	# Main program:
 	install -m 755 packaging/bin/engine-notifier.sh $(DESTDIR)$(DATA_DIR)/bin/engine-notifier.sh

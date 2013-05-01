@@ -214,6 +214,15 @@ public class LocalConfig {
     }
 
     /**
+     * Get all properties.
+     *
+     * @return map of all properties.
+     */
+    public Map<String, String> getProperties() {
+        return values;
+    }
+
+    /**
      * Get the value of a property given its name.
      *
      * @param key the name of the property

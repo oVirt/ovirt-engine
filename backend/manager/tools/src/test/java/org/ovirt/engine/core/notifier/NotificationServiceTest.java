@@ -2,8 +2,10 @@ package org.ovirt.engine.core.notifier;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
 import org.junit.Test;
 import org.ovirt.engine.core.notifier.utils.NotificationConfigurator;
+import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 
 /**
  * The tests runs a single loop
@@ -32,8 +34,11 @@ public class NotificationServiceTest {
     public void testNotificationService() {
         NotificationService notificationService = null;
         try {
+            File config = new File("src/test/resources/conf/notifier.conf");
+            NotificationProperties.setDefaults(config.getAbsolutePath(), null);
+
             notificationService =
-                    new NotificationService(new NotificationConfigurator("src/test/resources/conf/notifier.conf"));
+                    new NotificationService(new NotificationConfigurator());
         } catch (NotificationServiceException e) {
             e.printStackTrace();
         }
