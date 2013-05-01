@@ -3,7 +3,6 @@ package org.ovirt.engine.core.config;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,29 +28,14 @@ public class EngineConfigCLIParserTest {
         assertEquals(ConfigActionType.ACTION_LIST, parser.getConfigAction());
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testParseNoAction() {
-        System.out.println("Testing parse args with no action...");
-        try {
-            parser.parse(new String[] { "-b", "-t", "filename" });
-            // An exception should be thrown
-            fail();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        System.out.println("\n");
+        parser.parse(new String[] { "-b", "-t", "filename" });
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testParseActionNotFirst() throws Exception {
-        System.out.println("Testing parse args with action not first...");
-        try {
-            parser.parse(new String[] { "-b", "-a", "filename" });
-            // An exception should be thrown
-            fail();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        parser.parse(new String[] { "-b", "-a", "filename" });
     }
 
     @Test
