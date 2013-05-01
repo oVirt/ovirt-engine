@@ -3,6 +3,29 @@
 # The daemon consists of two major services: notification service and engine monitoring.
 #
 
+#
+# The location of the Java virtual machine used by the engine:
+#
+JAVA_HOME=/usr/lib/jvm/jre-1.7.0-openjdk.x86_64
+
+#
+# The location of the application server used by the engine:
+#
+JBOSS_HOME=/usr/share/jboss-as
+
+#
+# Important directories used by the engine:
+#
+ENGINE_ETC="@ENGINE_ETC@"
+ENGINE_LOG="@ENGINE_LOG@"
+ENGINE_USR="@ENGINE_USR@"
+
+#
+# Service timeouts
+#
+NOTIFIER_STOP_TIME=30
+NOTIFIER_STOP_INTERVAL=1
+
 #-------------------------------------#
 # Notification Service Configuration: #
 #-------------------------------------#

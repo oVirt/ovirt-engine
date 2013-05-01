@@ -274,10 +274,31 @@ The web administration interface to %{product_name_short}
 Summary: %{product_name_short} Tools
 Group: Virtualization/Management
 Requires: %{name} = %{version}-%{release}
+Requires: java
+
+%if %{install_systemd}
+Requires(post): systemd
+Requires(preun): systemd
+Requires(postun): systemd
+%endif
 
 %description tools
 %{product_name_short} Tools
 
+%post tools
+%if %{install_systemd}
+%systemd_post ovirt-engine-notifier.service
+%endif
+
+%postun tools
+%if %{install_systemd}
+%systemd_postun ovirt-engine-notifier.service
+%endif
+
+%preun tools
+%if %{install_systemd}
+%systemd_preun ovirt-engine-notifier.service
+%endif
 
 %package setup-plugin-allinone
 Summary: All-in-one plugin for %{product_name_short}'s setup
@@ -377,12 +398,14 @@ done
 %if %{install_systemd}
 install -dm 755 "%{buildroot}%{_unitdir}"
 cp "%{buildroot}%{engine_data}/services/ovirt-engine.systemd" "%{buildroot}%{_unitdir}/ovirt-engine.service"
+cp "%{buildroot}%{engine_data}/services/ovirt-engine-notifier.systemd" "%{buildroot}%{_unitdir}/ovirt-engine-notifier.service"
 %endif
 
 # Install System V init scripts:
 %if %{install_systemv}
 install -dm 755 "%{buildroot}%{_initddir}"
 cp "%{buildroot}%{engine_data}/services/ovirt-engine.sysv" "%{buildroot}%{_initddir}/ovirt-engine"
+cp "%{buildroot}%{engine_data}/services/ovirt-engine-notifier.sysv" "%{buildroot}%{_initddir}/ovirt-engine-notifier"
 %endif
 
 # backward compatibly (pre-3.3.0)
@@ -476,6 +499,11 @@ fi
 %config(noreplace) %{engine_etc}/engine.conf
 %dir %{engine_etc}/engine.conf.d
 
+# Services common
+%{engine_data}/services/__init__.py
+%{engine_data}/services/config.py
+%{engine_data}/services/service.py
+
 # Jar files used by all the components:
 %dir %{engine_java}
 %{engine_java}/common.jar
@@ -508,7 +536,7 @@ fi
 %dir %{engine_data}/ui-plugins
 
 # Files needed by the service:
-%{engine_data}/services
+%{engine_data}/services/ovirt-engine.*
 %if %{install_systemd}
 %{_unitdir}/ovirt-engine.service
 %endif
@@ -629,6 +657,14 @@ fi
 %{_mandir}/man8/engine-setup.*
 %{_mandir}/man8/engine-upgrade.*
 
+# Configuration files
+%{engine_data}/conf/iptables.default
+%{engine_data}/conf/engine-config-install.properties
+%{engine_data}/conf/nfs.sysconfig
+%{engine_data}/conf/ovirt-engine-proxy.conf.in
+%{engine_data}/conf/ovirt-engine-root-redirect.conf.in
+%{engine_data}/conf/version
+
 # Plugins directory:
 %dir %{engine_data}/scripts/plugins
 %{engine_data}/scripts/plugins/example_plugin_000.py*
@@ -682,9 +718,7 @@ fi
 %{engine_data}/bin/engine-config.sh
 %{engine_data}/bin/engine-encrypt-passwd.sh
 %{engine_data}/bin/engine-manage-domains.sh
-%{engine_data}/bin/engine-notifier.sh
 %{engine_data}/bin/engine-prolog.sh
-%{_initddir}/engine-notifierd
 
 # Links to the scripts:
 %{_bindir}/engine-config
@@ -707,10 +741,15 @@ fi
 # Configuration files for the notifier:
 %dir %{engine_etc}/notifier
 %dir %{engine_etc}/notifier/notifier.conf.d
-%{engine_etc}/notifier/log4j.xml
+%config %{engine_etc}/notifier/log4j.xml
+%{engine_data}/services/ovirt-engine-notifier.*
 
 # Jar files:
 %{engine_java}/tools.jar
+
+# Config files:
+%{engine_data}/conf/jaas.conf
+%{engine_data}/conf/notifier.conf.defaults
 
 # POM files:
 %if %{install_poms}
@@ -722,6 +761,14 @@ fi
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/notifier
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_run}/notifier
 
+# Files needed by the service:
+%{engine_data}/services
+%if %{install_systemd}
+%{_unitdir}/ovirt-engine-notifier.service
+%endif
+%if %{install_systemv}
+%{_initddir}/ovirt-engine-notifier
+%endif
 
 %changelog
 * Thu Jan 17 2013 Juan Hernandez <juan.hernandez@redhat.com> - 3.3.0-1

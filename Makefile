@@ -112,6 +112,8 @@ ARTIFACTS = \
 	sed \
 	-e "s|@ENGINE_DEFAULTS@|$(DATA_DIR)/conf/engine.conf.defaults|g" \
 	-e "s|@ENGINE_VARS@|$(PKG_SYSCONF_DIR)/engine.conf|g" \
+	-e "s|@ENGINE_NOTIFIER_DEFAULTS@|$(DATA_DIR)/conf/notifier.conf.defaults|g" \
+	-e "s|@ENGINE_NOTIFIER_VARS@|$(PKG_SYSCONF_DIR)/notifier/notifier.conf|g" \
 	-e "s|@ENGINE_USER@|$(PKG_USER)|g" \
 	-e "s|@ENGINE_GROUP@|$(PKG_GROUP)|g" \
 	-e "s|@ENGINE_ETC@|$(PKG_SYSCONF_DIR)|g" \
@@ -141,6 +143,8 @@ GENERATED = \
 	packaging/services/config.py \
 	packaging/services/ovirt-engine.systemd \
 	packaging/services/ovirt-engine.sysv \
+	packaging/services/ovirt-engine-notifier.systemd \
+	packaging/services/ovirt-engine-notifier.sysv \
 	ovirt-engine.spec \
 	$(NULL)
 
@@ -181,7 +185,6 @@ install: \
 	install_artifacts \
 	install_config \
 	install_sysprep \
-	install_notification_service \
 	install_db_scripts \
 	install_setup \
 	install_misc \
@@ -189,6 +192,7 @@ install: \
 	install_aio_plugin \
 	install_jboss_modules \
 	install_service \
+	install_notification_service \
 	$(NULL)
 
 ovirt-engine.spec: version.mak
@@ -389,14 +393,12 @@ install_notification_service:
 
 	install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/notifier
 
-	# Configuration files:
 	install -m 644 packaging/etc/notifier/log4j.xml $(DESTDIR)$(PKG_SYSCONF_DIR)/notifier/log4j.xml
 	install -d -m 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/notifier/notifier.conf.d
-	install -m 640 packaging/conf/notifier.conf.defaults $(DESTDIR)$(DATA_DIR)/conf/notifier.conf.defaults
-
-	# Main program:
-	install -m 755 packaging/bin/engine-notifier.sh $(DESTDIR)$(DATA_DIR)/bin/engine-notifier.sh
-	install -m 755 packaging/bin/engine-notifier-service.sh $(DESTDIR)$(SYSCONF_DIR)/rc.d/init.d/engine-notifierd
+	install -m 644 packaging/conf/notifier.conf.defaults $(DESTDIR)$(DATA_DIR)/conf/notifier.conf.defaults
+	install -m 755 packaging/services/ovirt-engine-notifier.py $(DESTDIR)$(DATA_DIR)/services
+	install -m 755 packaging/services/ovirt-engine-notifier.systemd $(DESTDIR)$(DATA_DIR)/services
+	install -m 755 packaging/services/ovirt-engine-notifier.sysv $(DESTDIR)$(DATA_DIR)/services
 
 install_db_scripts:
 	@echo "*** Deploying Database scripts"
@@ -420,6 +422,12 @@ install_misc:
 	install -m 755 packaging/resources/ovirtlogrot.sh ${DESTDIR}$(DATA_DIR)/scripts/
 	install -m 755 packaging/resources/ovirt-cron ${DESTDIR}$(SYSCONF_DIR)/cron.daily/
 
+	# Service common
+	install -dm 755 $(DESTDIR)$(DATA_DIR)/services
+	install -m 644 packaging/services/__init__.py $(DESTDIR)$(DATA_DIR)/services
+	install -m 644 packaging/services/config.py $(DESTDIR)$(DATA_DIR)/services
+	install -m 644 packaging/services/service.py $(DESTDIR)$(DATA_DIR)/services
+
 	# USB filter:
 	install -m 644 packaging/etc/usbfilter.txt $(DESTDIR)$(PKG_SYSCONF_DIR)
 
@@ -437,10 +445,6 @@ install_service:
 	@echo "*** Deploying service"
 
 	# Install the files:
-	install -dm 755 $(DESTDIR)$(DATA_DIR)/services
-	install -m 644 packaging/services/__init__.py $(DESTDIR)$(DATA_DIR)/services
-	install -m 644 packaging/services/config.py $(DESTDIR)$(DATA_DIR)/services
-	install -m 644 packaging/services/service.py $(DESTDIR)$(DATA_DIR)/services
 	install -m 644 packaging/services/ovirt-engine.xml.in $(DESTDIR)$(DATA_DIR)/services
 	install -m 644 packaging/services/ovirt-engine-logging.properties.in $(DESTDIR)$(DATA_DIR)/services
 	install -m 755 packaging/services/ovirt-engine.py $(DESTDIR)$(DATA_DIR)/services

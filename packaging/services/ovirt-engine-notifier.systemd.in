@@ -1,0 +1,13 @@
+[Unit]
+Description=oVirt Engine Notifier
+After=network.service postgresql.service
+
+[Service]
+Type=simple
+User=@ENGINE_USER@
+Group=@ENGINE_GROUP@
+ExecStart=@ENGINE_USR@/services/ovirt-engine-notifier.py $EXTRA_ARGS start
+EnvironmentFile=-/etc/sysconfig/ovirt-engine-notifier
+
+[Install]
+WantedBy=multi-user.target

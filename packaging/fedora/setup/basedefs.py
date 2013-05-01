@@ -19,7 +19,8 @@ ENGINE_USER_NAME="ovirt"
 ENGINE_GROUP_NAME="ovirt"
 HTTPD_SERVICE_NAME="httpd"
 HTTP_PORT_POLICY="http_port_t"
-NOTIFIER_SERVICE_NAME = "engine-notifierd"
+NOTIFIER_SERVICE_NAME = "ovirt-engine-notifier"
+NOTIFIER_SERVICE_OLD_NAME = "engine-notifierd"
 ETL_SERVICE_NAME = "ovirt-engine-dwhd"
 FREEIPA_RPM = "freeipa-server"
 IPA_RPM = "ipa-server"
@@ -136,6 +137,8 @@ DIR_ENGINE_SYSCONFIG="%s.d" % FILE_ENGINE_SYSCONFIG
 # Files containing the local configuration of the engine:
 FILE_ENGINE_CONF="/etc/ovirt-engine/engine.conf"
 DIR_ENGINE_CONF="%s.d" % FILE_ENGINE_CONF
+FILE_ENGINE_NOTIFIER_CONF="/etc/ovirt-engine/notifier/notifier.conf"
+DIR_ENGINE_NOTIFIER_CONF="%s.d" % FILE_ENGINE_NOTIFIER_CONF
 
 # File containing the setup generated database configuration of the engine:
 FILE_ENGINE_CONF_DATABASE="%s/50-setup-database.conf" % DIR_ENGINE_CONF
@@ -145,6 +148,7 @@ FILE_ENGINE_CONF_PROTOCOLS="%s/50-setup-protocols.conf" % DIR_ENGINE_CONF
 
 # File containing the setup generated java configuration of the engine:
 FILE_ENGINE_CONF_JAVA="%s/50-setup-java.conf" % DIR_ENGINE_CONF
+FILE_ENGINE_NOTIFIER_CONF_JAVA="%s/50-setup-java.conf" % DIR_ENGINE_NOTIFIER_CONF
 
 # File containing the setup generated java configuration of the engine:
 FILE_ENGINE_CONF_PKI="%s/50-setup-pki.conf" % DIR_ENGINE_CONF

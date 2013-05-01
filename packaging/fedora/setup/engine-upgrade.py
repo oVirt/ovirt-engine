@@ -644,7 +644,7 @@ def addAdditionalMessages(addReports=False):
         messages.append(MSG_INFO_REPORTS)
 
 
-def stopDbRelatedServices(etlService, notificationService):
+def stopDbRelatedServices(etlService, notificationServices):
     """
     shut down etl and notifier services
     in order to disconnect any open sessions to the db
@@ -659,18 +659,19 @@ def stopDbRelatedServices(etlService, notificationService):
             messages.append(MSG_ERR_FAILED_STOP_SERVICE % etlService.name)
 
     # If the ovirt-engine-notifierd service is up, then try and stop it.
-    if notificationService.isServiceAvailable():
-        try:
-            (status, rc) = notificationService.status()
-            if utils.verifyStringFormat(status, ".*running.*"):
-                logging.debug("stopping %s service.", notificationService.name)
-                notificationService.stop()
-        except:
-            logging.warn("Failed to stop %s service", notificationService.name)
-            logging.warn(traceback.format_exc())
-            messages.append(MSG_ERR_FAILED_STOP_SERVICE % notificationService.name)
+    for s in notificationServices:
+        if s.isServiceAvailable():
+            try:
+                (status, rc) = s.status()
+                if utils.verifyStringFormat(status, ".*running.*"):
+                    logging.debug("stopping %s service.", s.name)
+                    s.stop()
+            except:
+                logging.warn("Failed to stop %s service", s.name)
+                logging.warn(traceback.format_exc())
+                messages.append(MSG_ERR_FAILED_STOP_SERVICE % s.name)
 
-def startDbRelatedServices(etlService, notificationService):
+def startDbRelatedServices(etlService, notificationServices):
     """
     bring back any service we stopped
     we won't start services that are down
@@ -682,11 +683,13 @@ def startDbRelatedServices(etlService, notificationService):
             logging.warn("Failed to start %s", etlService.name)
             messages.append(MSG_ERR_FAILED_START_SERVICE % etlService.name)
 
-    if notificationService.isServiceAvailable():
-        (output, rc) = notificationService.conditionalStart()
-        if rc != 0:
-            logging.warn("Failed to start %s: exit code %d", notificationService.name, rc)
-            messages.append(MSG_ERR_FAILED_START_SERVICE % notificationService.name)
+    for s in notificationServices:
+        if s.isServiceAvailable():
+            (output, rc) = s.conditionalStart()
+            if rc != 0:
+                logging.warn("Failed to start %s: exit code %d", s.name, rc)
+                messages.append(MSG_ERR_FAILED_START_SERVICE % s.name)
+            break
 
 def unsupportedVersionsPresent(oldversion=UNSUPPORTED_VERSION, dbName=basedefs.DB_NAME):
     """ Check whether there are UNSUPPORTED_VERSION
@@ -1213,7 +1216,10 @@ def main(options):
     engineService = basedefs.ENGINE_SERVICE_NAME
     # define db connections services
     etlService = utils.Service(basedefs.ETL_SERVICE_NAME)
-    notificationService = utils.Service(basedefs.NOTIFIER_SERVICE_NAME)
+    notificationServices = (
+        utils.Service(basedefs.NOTIFIER_SERVICE_NAME),
+        utils.Service(basedefs.NOTIFIER_SERVICE_OLD_NAME),
+    )
 
     # Check for the available free space in required locations:
     # 1. DB backups location
@@ -1288,7 +1294,7 @@ def main(options):
                     # Stopping engine
                     runFunc(stopEngineService, MSG_INFO_STOP_ENGINE % engineService)
                     if updateRelatedToDB:
-                        runFunc([[stopDbRelatedServices, etlService, notificationService]], MSG_INFO_STOP_DB)
+                        runFunc([[stopDbRelatedServices, etlService, notificationServices]], MSG_INFO_STOP_DB)
 
                         try:
                             # Validate DB first
@@ -1318,7 +1324,7 @@ def main(options):
                         # If something went wrong, restart DB services and the engine
                         except:
                             logging.error(traceback.format_exc())
-                            runFunc([[startDbRelatedServices, etlService, notificationService]], MSG_INFO_START_DB)
+                            runFunc([[startDbRelatedServices, etlService, notificationServices]], MSG_INFO_START_DB)
                             runFunc(startEngineService, MSG_INFO_START_ENGINE % engineService)
                             raise
 
@@ -1353,7 +1359,7 @@ def main(options):
                     runFunc([[db.rename, basedefs.DB_NAME]], MSG_INFO_RESTORE_DB)
 
                     # Bring up any services we shut down before db upgrade
-                    startDbRelatedServices(etlService, notificationService)
+                    startDbRelatedServices(etlService, notificationServices)
 
                 # CA restore
                 runFunc([ca.prepare], MSG_INFO_PKI_PREPARE)

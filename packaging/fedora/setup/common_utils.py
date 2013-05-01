@@ -1232,17 +1232,12 @@ def editEngineSysconfigProtocols(proxyEnabled, fqdn, http, https):
     handler.close()
 
 def editEngineSysconfigJava(javaHome):
-    # Load the file:
-    logging.debug("Loading text file handler")
-    handler = TextConfigFileHandler(basedefs.FILE_ENGINE_CONF_JAVA, readExisting=False)
-    handler.open()
-
-    # Save the Java home:
-    handler.editParam("JAVA_HOME", javaHome)
-
-    # Save and close the file:
-    logging.debug("Engine has been configured")
-    handler.close()
+    for f in (basedefs.FILE_ENGINE_CONF_JAVA, basedefs.FILE_ENGINE_NOTIFIER_CONF_JAVA):
+        handler = TextConfigFileHandler(f, readExisting=False)
+        handler.open()
+        handler.editParam("JAVA_HOME", javaHome)
+        logging.debug("Engine has been configured")
+        handler.close()
 
 def editEngineSysconfigPKI(
     pkidir,

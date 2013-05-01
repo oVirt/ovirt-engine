@@ -49,7 +49,7 @@ MSG_ERR_CANT_FIND_PGPASS_FILE="Could not find DB password file %s. Skipping DB c
 MSG_INFO_DONE = "DONE"
 MSG_INFO_ERROR = "ERROR"
 MSG_INFO_STOP_ENGINE = "Stopping %s service" % basedefs.ENGINE_SERVICE_NAME
-MSG_INFO_STOP_NOTIFIERD = "Stopping engine-notifierd service"
+MSG_INFO_STOP_NOTIFIERD = "Stopping engine notifier service"
 MSG_INFO_BACKUP_DB = "Backing Up Database"
 MSG_INFO_REMOVE_DB = "Removing Database"
 MSG_INFO_REMOVE_CA = "Removing CA"
@@ -432,11 +432,12 @@ def stopEngine():
         raise OSError(MSG_ERR_FAILED_ENGINE_SERVICE_STILL_RUN)
 
 def stopNotifier():
-    logging.debug("stoping engine-notifierd service.")
+    logging.debug("stoping engine notifier service.")
 
-    notifier = utils.Service(basedefs.NOTIFIER_SERVICE_NAME)
-    if notifier.isServiceAvailable():
-        notifier.stop(True)
+    for s in (basedefs.NOTIFIER_SERVICE_NAME, basedefs.NOTIFIER_SERVICE_OLD_NAME):
+        notifier = utils.Service(s)
+        if notifier.isServiceAvailable():
+            notifier.stop(True)
 
 def runFunc(funcs, dispString):
     sys.stdout.write("%s..." % dispString)
