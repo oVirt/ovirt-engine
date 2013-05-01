@@ -133,11 +133,11 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
     }
 
     protected void updateInputTitle(ArrayList<String> grayOutReasons, Element input) {
-        String title = constants.empty();
+        StringBuilder title = new StringBuilder(constants.empty());
         for (String reason : grayOutReasons) {
-            title += reason + constants.space();
+            title.append(reason).append(constants.space());
         }
-        input.setTitle(title);
+        input.setTitle(title.toString());
     }
 
     protected void updateSelectedLunWarning(LunModel lunModel) {

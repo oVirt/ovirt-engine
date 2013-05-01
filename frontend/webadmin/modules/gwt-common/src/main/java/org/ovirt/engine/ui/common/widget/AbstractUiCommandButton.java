@@ -57,11 +57,13 @@ public abstract class AbstractUiCommandButton extends Composite implements HasUi
 
         // Use prohibition reasons for tooltip if exist.
         String title = "";  //$NON-NLS-1$
+        StringBuilder sb = new StringBuilder();
         if (!command.getExecuteProhibitionReasons().isEmpty()) {
             for (String reason : command.getExecuteProhibitionReasons()) {
-                title += reason + ",";  //$NON-NLS-1$
+                sb.append(reason).append(",");  //$NON-NLS-1$
             }
-            if (!title.equals("")) //$NON-NLS-1$
+            title = sb.toString();
+            if (title.length() != 0)
             {
                 title = title.substring(0, title.length() -1);
             }

@@ -17,15 +17,15 @@ public class DetailsRenderer<V> extends AbstractRenderer<ArrayList<ValueLabel<V>
 
     @Override
     public String render(ArrayList<ValueLabel<V>> widgets) {
-        String formattedStr = ""; //$NON-NLS-1$
+        StringBuilder formattedStr = new StringBuilder();
 
         for (int i = 0; i < widgets.size(); i++) {
-            formattedStr += widgets.get(i).getElement().getInnerHTML() + " " + delimiters[i]; //$NON-NLS-1$
+            formattedStr.append(widgets.get(i).getElement().getInnerHTML()).append(" ").append(delimiters[i]); //$NON-NLS-1$
             if (i < widgets.size() - 1) {
-                formattedStr += ", "; //$NON-NLS-1$
+                formattedStr.append(", "); //$NON-NLS-1$
             }
         }
 
-        return formattedStr;
+        return formattedStr.toString();
     }
 }

@@ -524,7 +524,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
             ArrayList<StoragePool> dataCenterList =
                     (ArrayList<StoragePool>) getDataCenter().getItems();
             ArrayList<StoragePool> localDCList = new ArrayList<StoragePool>();
-            String dataCenterQueryLine = ""; //$NON-NLS-1$
+            StringBuilder dataCenterQueryLine = new StringBuilder();
 
             for (StoragePool storagePool : dataCenterList)
             {
@@ -539,9 +539,9 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                 int i = 0;
                 for (; i < localDCList.size() - 1; i++)
                 {
-                    dataCenterQueryLine += "datacenter=" + localDCList.get(i).getname() + " or "; //$NON-NLS-1$ //$NON-NLS-2$
+                    dataCenterQueryLine.append("datacenter=").append(localDCList.get(i).getname()).append(" or "); //$NON-NLS-1$ //$NON-NLS-2$
                 }
-                dataCenterQueryLine += "datacenter=" + localDCList.get(i).getname(); //$NON-NLS-1$
+                dataCenterQueryLine.append("datacenter=").append(localDCList.get(i).getname()); //$NON-NLS-1$
 
                 AsyncQuery _asyncQuery = new AsyncQuery();
                 _asyncQuery.setModel(this);
@@ -556,7 +556,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                         storageModel.PostUpdateHost(hosts);
                     }
                 };
-                Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Hosts: status=Up " + dataCenterQueryLine, //$NON-NLS-1$
+                Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Hosts: status=Up " + dataCenterQueryLine.toString(), //$NON-NLS-1$
                         SearchType.VDS), _asyncQuery);
             }
         }

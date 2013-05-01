@@ -29,24 +29,24 @@ public class DomainsConfigurationEntry {
     }
 
     public String getDomainsConfigurationEntry() {
-        String configurationEntry = "";
+        StringBuilder configurationEntry = new StringBuilder();
         boolean firstEntry = true;
 
         for ( Entry<String,String> currEntry: valuePerDomain.entrySet() ) {
             if (!firstEntry) {
-                configurationEntry += domainSeperator;
+                configurationEntry.append(domainSeperator);
             } else {
                 firstEntry = false;
             }
 
-            configurationEntry += currEntry.getKey();
+            configurationEntry.append(currEntry.getKey());
 
             if (currEntry.getValue() != null) {
-                configurationEntry += valueSeperator + currEntry.getValue();
+                configurationEntry.append(valueSeperator).append(currEntry.getValue());
             }
 
         }
-        return configurationEntry;
+        return configurationEntry.toString();
     }
 
     // This method returns the entry for logging purposes

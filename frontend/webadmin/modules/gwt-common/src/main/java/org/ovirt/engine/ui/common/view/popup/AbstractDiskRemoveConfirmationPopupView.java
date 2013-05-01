@@ -58,16 +58,13 @@ public abstract class AbstractDiskRemoveConfirmationPopupView extends RemoveConf
     }
 
     String getFormattedNote() {
-        String formattedNote = constants.empty();
+        StringBuilder formattedNote = new StringBuilder(constants.empty());
 
         for (int i = 0; i < notes.size(); i++) {
             String note = notes.get(i);
-            formattedNote += constants.lineBreak();
-            formattedNote += constants.htmlTab();
-            formattedNote += note;
-
+            formattedNote.append(constants.lineBreak()).append(constants.htmlTab()).append(note);
         }
 
-        return formattedNote;
+        return formattedNote.toString();
     }
 }

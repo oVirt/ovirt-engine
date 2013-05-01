@@ -42,15 +42,15 @@ public class MultipleLdapQueryExecutionFormatter extends LdapQueryExecutionForma
     }
 
     protected String getFilter(LdapQueryMetadata queryMetadata, Object[] filterParameters) {
-        String filter = prefix;
+        StringBuilder filter = new StringBuilder(prefix);
 
         for (Object currObject : filterParameters) {
-            filter += String.format(queryMetadata.getFilter(), currObject);
+            filter.append(String.format(queryMetadata.getFilter(), currObject));
         }
 
-        filter += suffix;
+        filter.append(suffix);
 
-        return filter;
+        return filter.toString();
     }
 
     public String getPrefix() {

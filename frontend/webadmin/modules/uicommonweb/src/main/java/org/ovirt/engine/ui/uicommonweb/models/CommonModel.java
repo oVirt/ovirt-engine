@@ -983,17 +983,17 @@ public class CommonModel extends ListModel
             String entityClause = array[0];
             String searchClause = array[1];
 
-            String tagsClause = ""; //$NON-NLS-1$
+            StringBuilder tagsClause = new StringBuilder();
             for (TagModel tag : tags)
             {
-                tagsClause += ("tag=" + tag.getName().getEntity()); //$NON-NLS-1$
+                tagsClause.append("tag=").append(tag.getName().getEntity()); //$NON-NLS-1$
                 if (tag != tags.get(tags.size() - 1))
                 {
-                    tagsClause += " or "; //$NON-NLS-1$
+                    tagsClause.append(" or "); //$NON-NLS-1$
                 }
             }
 
-            prefix.argvalue = entityClause + ": " + tagsClause; //$NON-NLS-1$
+            prefix.argvalue = entityClause + ": " + tagsClause.toString(); //$NON-NLS-1$
             search.argvalue = regex.replace(searchClause, "").trim(); //$NON-NLS-1$
         }
         // Split for system tree.

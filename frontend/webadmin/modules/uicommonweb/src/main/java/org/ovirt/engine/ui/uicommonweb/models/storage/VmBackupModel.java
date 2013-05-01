@@ -447,14 +447,14 @@ public class VmBackupModel extends ManageBackupModel {
                         if (retVals != null
                                 && vmBackupModel.getSelectedItems().size() == retVals
                                         .size()) {
-                            String importedVms = ""; //$NON-NLS-1$
+                            StringBuilder importedVms = new StringBuilder();
                             int counter = 0;
                             boolean toShowConfirmWindow = false;
                             for (Object item : vmBackupModel.getSelectedItems()) {
                                 VM vm = (VM) item;
                                 if (retVals.get(counter) != null
                                         && retVals.get(counter).getCanDoAction()) {
-                                    importedVms += vm.getName() + ", "; //$NON-NLS-1$
+                                    importedVms.append(vm.getName()).append(", "); //$NON-NLS-1$
                                     toShowConfirmWindow = true;
                                 }
                                 counter++;
@@ -468,10 +468,9 @@ public class VmBackupModel extends ManageBackupModel {
                                         .getConstants()
                                         .importVirtualMachinesTitle());
                                 confirmModel.setHashName("import_virtual_machine"); //$NON-NLS-1$
-                                importedVms = StringHelper.trimEnd(importedVms.trim(), ',');
                                 confirmModel.setMessage(ConstantsManager.getInstance()
                                         .getMessages()
-                                        .importProcessHasBegunForVms(importedVms));
+                                        .importProcessHasBegunForVms(StringHelper.trimEnd(importedVms.toString().trim(), ',')));
                                 UICommand tempVar2 = new UICommand("CancelConfirm", //$NON-NLS-1$
                                         vmBackupModel);
                                 tempVar2.setTitle(ConstantsManager.getInstance().getConstants().close());

@@ -11,23 +11,23 @@ public class PasswordDomainsConfigurationEntry extends DomainsConfigurationEntry
     // This method returns the entry for logging purposes
     @Override
     public String getDomainsLoggingEntry() {
-        String configurationEntry = "";
+        StringBuilder configurationEntry = new StringBuilder();
         boolean firstEntry = true;
 
         for (Entry<String, String> currEntry : valuePerDomain.entrySet()) {
             if (!firstEntry) {
-                configurationEntry += domainSeperator;
+                configurationEntry.append(domainSeperator);
             } else {
                 firstEntry = false;
             }
 
-            configurationEntry += currEntry.getKey();
+            configurationEntry.append(currEntry.getKey());
 
             if (currEntry.getValue() != null) {
-                configurationEntry += valueSeperator + LOGGING_PASSWORD;
+                configurationEntry.append(valueSeperator).append(LOGGING_PASSWORD);
             }
 
         }
-        return configurationEntry;
+        return configurationEntry.toString();
     }
 }

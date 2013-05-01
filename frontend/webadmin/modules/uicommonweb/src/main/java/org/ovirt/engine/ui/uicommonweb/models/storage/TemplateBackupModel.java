@@ -231,14 +231,14 @@ public class TemplateBackupModel extends VmBackupModel
                         if (retVals != null && templateBackupModel.getSelectedItems().size() == retVals.size())
                         {
 
-                            String importedTemplates = ""; //$NONNLS1$
+                            StringBuilder importedTemplates = new StringBuilder();
                             int counter = 0;
                             boolean toShowConfirmWindow = false;
                             for (Object a : templateBackupModel.getSelectedItems())
                             {
                                 VmTemplate template = (VmTemplate) a;
                                 if (retVals.get(counter) != null && retVals.get(counter).getCanDoAction()) {
-                                    importedTemplates += template.getName() + ", "; //$NON-NLS-1$
+                                    importedTemplates.append(template.getName()).append(", "); //$NON-NLS-1$
                                     toShowConfirmWindow = true;
                                 }
                                 counter++;
@@ -250,10 +250,9 @@ public class TemplateBackupModel extends VmBackupModel
                                         .getConstants()
                                         .importTemplatesTitle());
                                 confirmModel.setHashName("import_template"); //$NON-NLS-1$
-                                importedTemplates = StringHelper.trimEnd(importedTemplates.trim(), ',');
                                 confirmModel.setMessage(ConstantsManager.getInstance()
                                         .getMessages()
-                                        .importProcessHasBegunForTemplates(importedTemplates));
+                                        .importProcessHasBegunForTemplates(StringHelper.trimEnd(importedTemplates.toString().trim(), ',')));
                                 UICommand tempVar = new UICommand("CancelConfirm", templateBackupModel); //$NON-NLS-1$
                                 tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
                                 tempVar.setIsDefault(true);

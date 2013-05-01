@@ -75,17 +75,17 @@ public class BootSequenceModel extends ListModel
 
     public BootSequence getSequence()
     {
-        String str = ""; //$NON-NLS-1$
+        StringBuilder str = new StringBuilder();
         for (EntityModel a : getItems())
         {
             if (a.getIsChangable())
             {
                 BootSequence bs = (BootSequence) a.getEntity();
-                str += bs.toString();
+                str.append(bs.toString());
             }
         }
 
-        return !str.equals("") ? BootSequence.valueOf(str) : null;  //$NON-NLS-1$
+        return !str.equals("") ? BootSequence.valueOf(str.toString()) : null;  //$NON-NLS-1$
     }
 
     public BootSequenceModel()

@@ -89,18 +89,20 @@ public class CustomPropertyValidation implements IValidation
             }
             if (!contains)
             {
-                String parameters = ""; //$NON-NLS-1$
+                StringBuilder parameters = new StringBuilder();
 
                 for (String keyValue : getCustomPropertiesKeysList())
                 {
-                    parameters += keyValue.substring(0, keyValue.indexOf('=')) + ", "; //$NON-NLS-1$
+                    parameters.append(keyValue.substring(0, keyValue.indexOf('='))).append(", "); //$NON-NLS-1$
                 }
-                parameters = parameters.substring(0, parameters.length() - 2);
+                if (parameters.length() >= 2) {
+                    parameters.delete(parameters.length() - 2, parameters.length() - 1);
+                }
 
                 String reasonStr =
                         ConstantsManager.getInstance()
                                 .getMessages()
-                                .customPropertyOneOfTheParamsIsntSupported(parameters);
+                                .customPropertyOneOfTheParamsIsntSupported(parameters.toString());
 
                 ArrayList<String> reason = new ArrayList<String>();
                 reason.add(reasonStr);

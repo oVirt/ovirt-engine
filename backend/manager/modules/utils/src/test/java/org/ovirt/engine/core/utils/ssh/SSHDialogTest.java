@@ -378,9 +378,9 @@ public class SSHDialogTest {
         final int NUM = 10000;
         final int FACTOR = 5;
 
-        String longText = "";
+        StringBuilder longText = new StringBuilder();
         for (int i=0;i<NUM/FACTOR;i++) {
-            longText += LINE + "\n";
+            longText.append(LINE).append("\n");
         }
 
         List<String> expect = new LinkedList<String>();
@@ -392,7 +392,7 @@ public class SSHDialogTest {
         List<String> send = new LinkedList<String>();
         for (int i=0;i<NUM;i++) {
             if (i % (NUM/FACTOR) == 0) {
-                send.add(longText);
+                send.add(longText.toString());
             }
             else {
                 send.add(null);

@@ -518,12 +518,12 @@ public class DataCenterStorageListModel extends SearchableListModel
 
     private String GetLocalStoragesFormattedString()
     {
-        String localStorages = ""; //$NON-NLS-1$
+        StringBuilder localStorages = new StringBuilder();
         for (StorageDomain a : Linq.<StorageDomain> cast(getSelectedItems()))
         {
             if (a.getStorageType() == StorageType.LOCALFS)
             {
-                localStorages += a.getStorageName() + ", "; //$NON-NLS-1$
+                localStorages.append(a.getStorageName()).append(", "); //$NON-NLS-1$
             }
         }
         return localStorages.substring(0, localStorages.length() - 2);

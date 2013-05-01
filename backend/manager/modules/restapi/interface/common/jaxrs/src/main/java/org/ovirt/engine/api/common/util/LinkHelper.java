@@ -848,16 +848,16 @@ public class LinkHelper {
      * @return the combined head and params
      */
     public static String combine(String head, List<ParametersSet> params) {
-        String combined_params = "";
+        StringBuilder combined_params = new StringBuilder();
         if (params != null) {
            for (ParametersSet ps : params) {
                for (Parameter param : ps.getParameters()) {
-                   combined_params += String.format(MATRIX_PARAMETER_TEMPLATE, param.getName(), param.getValue());
+                   combined_params.append(String.format(MATRIX_PARAMETER_TEMPLATE, param.getName(), param.getValue()));
               }
-
            }
         }
-        return head + combined_params;
+        combined_params.insert(0, head);
+        return combined_params.toString();
     }
 
     /**

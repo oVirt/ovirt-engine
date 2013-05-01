@@ -56,12 +56,12 @@ public class TaskListModel extends SearchableListModel {
                             correlationTaskMap.put(rootTask.getCorrelationId(), entry);
                             String[] taskDescreptionArray =
                                     rootTask.getCorrelationId().replace(_WEBADMIN_, "").split("_"); //$NON-NLS-1$ //$NON-NLS-2$
-                            String taskDesc = ""; //$NON-NLS-1$
+                            StringBuilder taskDesc = new StringBuilder();
                             for (int i = 1; i < taskDescreptionArray.length; i++) {
-                                taskDesc += taskDescreptionArray[i] + " "; //$NON-NLS-1$
+                                taskDesc.append(taskDescreptionArray[i]).append(" "); //$NON-NLS-1$
                             }
                             rootTask.setId(task.getId());
-                            rootTask.setDescription(taskDesc);
+                            rootTask.setDescription(taskDesc.toString());
                             taskListWithCorrelationFilter.add(rootTask);
                         }
                         Map.Entry<Job, ArrayList<Job>> entry = correlationTaskMap.get(task.getCorrelationId());
