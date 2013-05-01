@@ -373,13 +373,13 @@ done
 # Install the systemd files:
 %if %{install_systemd}
 install -dm 755 "%{buildroot}%{_unitdir}"
-cp "%{buildroot}%{engine_data}/services/ovirt-engine.systemd" "%{buildroot}%{_unitdir}/%{engine_name}.service"
+cp "%{buildroot}%{engine_data}/services/ovirt-engine.systemd" "%{buildroot}%{_unitdir}/ovirt-engine.service"
 %endif
 
 # Install System V init scripts:
 %if %{install_systemv}
-install -dm 755 "%{buildroot}%{_sysconfdir}/rc.d/init.d"
-cp "%{buildroot}%{engine_data}/services/ovirt-engine.sysv" "%{buildroot}%{_sysconfdir}/rc.d/init.d/ovirt-engine"
+install -dm 755 "%{buildroot}%{_initddir}"
+cp "%{buildroot}%{engine_data}/services/ovirt-engine.sysv" "%{buildroot}%{_initddir}/ovirt-engine"
 %endif
 
 # backward compatibly (pre-3.3.0)
@@ -507,7 +507,7 @@ fi
 # Files needed by the service:
 %{engine_data}/services
 %if %{install_systemd}
-%{_unitdir}/%{engine_name}.service
+%{_unitdir}/ovirt-engine.service
 %endif
 %if %{install_systemv}
 %{_initddir}/ovirt-engine
