@@ -593,7 +593,8 @@ public class CommonModel extends ListModel
                 || model.getType() == SystemTreeItemType.System || model.getType() == SystemTreeItemType.DataCenter
                 || model.getType() == SystemTreeItemType.Cluster || model.getType() == SystemTreeItemType.Host);
 
-        providerList.setIsAvailable(model.getType() == SystemTreeItemType.System);
+        providerList.setIsAvailable(model.getType() == SystemTreeItemType.System
+                || model.getType() == SystemTreeItemType.Providers || model.getType() == SystemTreeItemType.Provider);
 
         // Select a default item depending on system tree selection.
         ListModel oldSelectedItem = getSelectedItem();
@@ -670,6 +671,10 @@ public class CommonModel extends ListModel
             case Networks:
             case Network:
                 setSelectedItem(networkList);
+                break;
+            case Providers:
+            case Provider:
+                setSelectedItem(providerList);
                 break;
             default:
                 // webadmin: redirect to default tab in case no tab is selected.
@@ -1264,6 +1269,16 @@ public class CommonModel extends ListModel
                     prefix.argvalue = "Template : Vnic.network_name = " + model.getTitle() + " datacenter = " + model.getParent().getTitle(); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
+                break;
+            case Providers:
+                if (providerList.isSearchStringMatch(source)) {
+                    prefix.argvalue = "Provider:"; //$NON-NLS-1$
+                }
+                break;
+            case Provider:
+                if (providerList.isSearchStringMatch(source)) {
+                    prefix.argvalue = "Provider: name = " + model.getTitle(); //$NON-NLS-1$
+                }
                 break;
             }
 

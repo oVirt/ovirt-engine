@@ -19,7 +19,9 @@ public enum SystemTreeItemType
     Volume,
     Volumes,
     Networks,
-    Network;
+    Network,
+    Providers,
+    Provider;
 
     public int getValue()
     {

@@ -79,6 +79,13 @@ public class SystemTreeItemCell extends AbstractCell<SystemTreeItemModel> {
         case Networks:
             imageResource = applicationResources.networksTreeImage();
             break;
+        case Provider:
+            imageResource = applicationResources.providerImage();
+            break;
+        case Providers:
+            imageResource = applicationResources.providersImage();
+            break;
+
         default:
             imageResource = applicationResources.questionMarkImage();
         }

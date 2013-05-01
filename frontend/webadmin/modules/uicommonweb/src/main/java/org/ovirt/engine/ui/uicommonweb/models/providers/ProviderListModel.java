@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.GetAllProvidersParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -145,8 +145,8 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
             }
         };
 
-        VdcQueryParametersBase params =
-                new VdcQueryParametersBase();
+        GetAllProvidersParameters params =
+                new GetAllProvidersParameters();
         params.setRefresh(getIsQueryFirstTime());
         Frontend.RunQuery(VdcQueryType.GetAllProviders,
                 params,

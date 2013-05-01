@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -13,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.queries.GetAllProvidersParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -113,6 +115,16 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
         privateDataCenters = value;
     }
 
+    private List<Provider> privateProviders;
+
+    private List<Provider> getProviders() {
+        return privateProviders;
+    }
+
+    private void setProviders(List<Provider> value) {
+        privateProviders = value;
+    }
+
     private HashMap<Guid, ArrayList<VDSGroup>> privateClusterMap;
 
     public HashMap<Guid, ArrayList<VDSGroup>> getClusterMap()
@@ -189,7 +201,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
     {
         super.syncSearch();
 
-        AsyncQuery dcQuery = new AsyncQuery();
+        final AsyncQuery dcQuery = new AsyncQuery();
         dcQuery.setModel(this);
         dcQuery.asyncCallback = new INewAsyncCallback() {
             @Override
@@ -334,7 +346,19 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                 AsyncDataProvider.getClusterList(clusterQuery);
             }
         };
-        AsyncDataProvider.getDataCenterList(dcQuery);
+
+        AsyncQuery providersQuery = new AsyncQuery();
+        providersQuery.setModel(this);
+        providersQuery.asyncCallback = new INewAsyncCallback() {
+
+            @SuppressWarnings("unchecked")
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                setProviders((List<Provider>) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                AsyncDataProvider.getDataCenterList(dcQuery);
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.GetAllProviders, new GetAllProvidersParameters(), providersQuery);
     }
 
     @Override
@@ -545,6 +569,21 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                 }
             }
         }
+
+        // Add Providers node under System
+        SystemTreeItemModel providersItem = new SystemTreeItemModel();
+        providersItem.setType(SystemTreeItemType.Providers);
+        providersItem.setTitle(ConstantsManager.getInstance().getConstants().externalProvidersTitle());
+        systemItem.getChildren().add(providersItem);
+
+        // Populate with providers
+        for (Provider provider : getProviders()) {
+            SystemTreeItemModel providerItem = new SystemTreeItemModel();
+            providerItem.setType(SystemTreeItemType.Provider);
+            providerItem.setTitle(provider.getName());
+            providersItem.getChildren().add(providerItem);
+        }
+
         if (!ApplicationModeHelper.getUiMode().equals(ApplicationMode.AllModes)) {
             ApplicationModeHelper.filterSystemTreeByApplictionMode(systemItem);
         }

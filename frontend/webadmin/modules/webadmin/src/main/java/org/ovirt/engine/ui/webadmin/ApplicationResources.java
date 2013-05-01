@@ -140,6 +140,12 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/plus.png")
     ImageResource plusImage();
 
+    @Source("images/icon_provider.png")
+    ImageResource providerImage();
+
+    @Source("images/icon_providers.png")
+    ImageResource providersImage();
+
     //    @Source("images/question_mark.png")
     //    ImageResource questionMarkImage();
 
