@@ -10,7 +10,7 @@ set_defaults
 
 CERTIFICATE="/etc/pki/ovirt-engine/certs/engine.cer"
 FIXIT=false
-CONFIG_SELECT_CMD="select a.option_name as key , a.option_value as val  from vdc_options a where (option_name ilike '%%password' or option_name ilike '%%pass') and length(option_value) > 0 and length(option_value)  < 100;"
+CONFIG_SELECT_CMD="select a.option_name as key , a.option_value as val  from vdc_options a where (option_name ilike '%%password' or option_name ilike '%%pass') and option_name not ilike 'keystorePass' and length(option_value) > 0 and length(option_value)  < 100;"
 HOST_PM_PRIMARY_SELECT_CMD="select a.vds_id as key, a.pm_password as val from vds_static a where pm_enabled and length(pm_password) > 0 and length(pm_password) < 100;"
 HOST_PM_SECONDARY_SELECT_CMD="select a.vds_id as key, a.pm_secondary_password as val from vds_static a where pm_enabled and length(pm_secondary_password) > 0 and length(pm_secondary_password) < 100;"
 STORAGE_SELECT_CMD="select a.connection as key , a.password as val from storage_server_connections a where length(password) > 0 and length(password) < 100;"
