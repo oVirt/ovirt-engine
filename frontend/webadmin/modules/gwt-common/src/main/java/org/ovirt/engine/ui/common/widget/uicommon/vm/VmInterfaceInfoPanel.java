@@ -81,6 +81,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
 
     private void initStatitsticsTable() {
         statisticsTable = new EntityModelCellTable<ListModel>(false, true);
+        statisticsTable.enableColumnResizing();
 
         TextColumnWithTooltip<VmNetworkInterface> rxColumn = new RxTxRateColumn<VmNetworkInterface>() {
             @Override
@@ -99,7 +100,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
         };
 
         statisticsTable.addColumn(rxColumn,
-                templates.sub(constants.rxInterface(), constants.mbps()));
+                templates.sub(constants.rxInterface(), constants.mbps()), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> txColumn = new RxTxRateColumn<VmNetworkInterface>() {
             @Override
@@ -118,7 +119,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
         };
 
         statisticsTable.addColumn(txColumn,
-                templates.sub(constants.txInterface(), constants.mbps()));
+                templates.sub(constants.txInterface(), constants.mbps()), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> dropsColumn = new SumUpColumn<VmNetworkInterface>() {
             @Override
@@ -128,7 +129,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
             }
         };
         statisticsTable.addColumn(dropsColumn,
-                templates.sub(constants.dropsInterface(), constants.pkts()));
+                templates.sub(constants.dropsInterface(), constants.pkts()), "150px"); //$NON-NLS-1$
 
         statisticsTable.setRowData(new ArrayList<EntityModel>());
         statisticsTable.setWidth("100%", true); //$NON-NLS-1$
@@ -137,6 +138,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
 
     private void initGuestAgentDataTable() {
         guestAgentDataTable = new EntityModelCellTable<ListModel>(false, true);
+        guestAgentDataTable.enableColumnResizing();
 
         TextColumnWithTooltip<VmGuestAgentInterface> nameColumn = new TextColumnWithTooltip<VmGuestAgentInterface>() {
 
@@ -147,7 +149,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
 
         };
         guestAgentDataTable.addColumn(nameColumn,
-                constants.nameVmGuestAgent());
+                constants.nameVmGuestAgent(), "150px"); //$NON-NLS-1$
 
         SafeHtmlWithSafeHtmlTooltipColumn<VmGuestAgentInterface> ipv4Column =
                 new SafeHtmlWithSafeHtmlTooltipColumn<VmGuestAgentInterface>() {
@@ -172,7 +174,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
                     }
                 };
         guestAgentDataTable.addColumn(ipv4Column,
-                constants.ipv4VmGuestAgent());
+                constants.ipv4VmGuestAgent(), "100px"); //$NON-NLS-1$
 
         SafeHtmlWithSafeHtmlTooltipColumn<VmGuestAgentInterface> ipv6Column =
                 new SafeHtmlWithSafeHtmlTooltipColumn<VmGuestAgentInterface>() {
@@ -198,7 +200,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
                 };
 
         guestAgentDataTable.addColumn(ipv6Column,
-                constants.ipv6VmGuestAgent());
+                constants.ipv6VmGuestAgent(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmGuestAgentInterface> macColumn = new TextColumnWithTooltip<VmGuestAgentInterface>() {
 
@@ -209,7 +211,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
 
         };
         guestAgentDataTable.addColumn(macColumn,
-                constants.macVmGuestAgent());
+                constants.macVmGuestAgent(), "150px"); //$NON-NLS-1$
 
         guestAgentDataTable.setRowData(new ArrayList<EntityModel>());
         guestAgentDataTable.setWidth("100%", true); //$NON-NLS-1$

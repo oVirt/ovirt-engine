@@ -312,6 +312,10 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
         addColumnAndSetWidth(column, headerString, width);
     }
 
+    public void addColumn(Column column, SafeHtml headerHtml, String width) {
+        addColumnAndSetWidth(column, headerHtml, width);
+    }
+
     public void addColumn(Column column, Header<?> header, String width) {
         super.addColumn(column, header);
         super.setColumnWidth(column, width);
