@@ -39,6 +39,7 @@ MSG_ERROR_CONNECT_DB = "Error: Couldn't connect to the database server.\
 Check that connection is working and rerun the cleanup utility"
 MSG_ERROR_BACKUP_DB = "Error: Database backup failed"
 MSG_ERROR_DROP_DB = "Error: DB drop operation failed. Check that there are no active connection to the '%s' DB"
+MSG_ERROR_DROP_USER = "Warning: Could not drop user '%s' from database"
 MSG_ERROR_CHECK_LOG = "Error: Cleanup failed.\nplease check log at %s"
 MSG_ERR_FAILED_ENGINE_SERVICE_STILL_RUN = "Error: Can't stop ovirt-engine service. Please shut it down manually."
 MSG_ERR_FAILED_STP_ENGINE_SERVICE = "Error: Can't stop ovirt-engine"
@@ -356,6 +357,17 @@ class DB():
             if rc:
                 logging.error(MSG_ERROR_DROP_DB % dbname)
                 raise Exception(MSG_ERROR_DROP_DB % dbname)
+        cmd = [
+            basedefs.EXEC_DROPUSER,
+            "-w",
+            "-U", basedefs.DB_ADMIN,
+            "-h", DB_HOST,
+            "-p", DB_PORT,
+            basedefs.DB_USER,
+        ]
+        output, rc = utils.execCmd(cmdList=cmd, failOnError=False, msg=MSG_ERROR_DROP_USER, envDict=self.env)
+        if rc:
+            logging.warning(MSG_ERROR_DROP_USER % basedefs.DB_USER)
         self.dropped = True
         logging.debug("DB Drop completed successfully")
 
