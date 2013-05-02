@@ -324,6 +324,7 @@ install_setup:
 	install -m 640 backend/manager/tools/dbutils/taskcleaner_sp.sql $(DESTDIR)$(DATA_DIR)/scripts/dbutils
 	install -m 750 backend/manager/tools/dbutils/fkvalidator.sh $(DESTDIR)$(DATA_DIR)/scripts/dbutils
 	install -m 640 backend/manager/tools/dbutils/fkvalidator_sp.sql $(DESTDIR)$(DATA_DIR)/scripts/dbutils
+	install -m 750 backend/manager/tools/dbutils/encodingvalidator.sh $(DESTDIR)$(DATA_DIR)/scripts/dbutils
 	install -m 750 backend/manager/tools/dbutils/validatedb.sh $(DESTDIR)$(DATA_DIR)/scripts/dbutils
 
 install_aio_plugin:

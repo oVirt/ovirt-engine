@@ -16,13 +16,14 @@ set_defaults
 
 
 usage() {
-    printf "Usage: ${ME} [-h] [-s SERVERNAME [-p PORT]] [-u USERNAME] [-l LOGFILE] [-f] [-v]\n"
+    printf "Usage: ${ME} [-h] [-s SERVERNAME [-p PORT]] [-u USERNAME] [-l LOGFILE] [-q] [-f] [-v]\n"
     printf "\n"
     printf "\t-s SERVERNAME - The database servername for the database  (def. ${SERVERNAME})\n"
     printf "\t-p PORT       - The database port for the database        (def. ${PORT})\n"
     printf "\t-u USERNAME   - The admin username for the database.\n"
     printf "\t-l LOGFILE    - The logfile for capturing output          (def. ${LOGFILE})\n"
     printf "\t-f            - Fix the template1 database encoding to be UTF8.\n"
+    printf "\t-q            - Quiet operation: do not ask questions, assume 'yes' when fixing.\n"
     printf "\t-v            - Turn on verbosity                         (WARNING: lots of output)\n"
     printf "\t-h            - This help text.\n"
     printf "\n"
@@ -37,14 +38,16 @@ DEBUG () {
 }
 
 FIXIT=false
+QUIET=false
 
-while getopts hs:u:p:l:fv option; do
+while getopts hs:u:p:l:qdfv option; do
     case $option in
         s) SERVERNAME=$OPTARG;;
         p) PORT=$OPTARG;;
         u) USERNAME=$OPTARG;;
         l) LOGFILE=$OPTARG;;
         f) FIXIT=true;;
+        q) QUIET=true;;
         v) VERBOSE=true;;
         h) ret=0 && usage;;
        \?) ret=1 && usage;;
@@ -84,7 +87,7 @@ fix_template1_encoding() {
     run "${CMD}" template1
 }
 
-if [ "${FIXIT}" = "true" ]; then
+if [[ "${FIXIT}" = "true" && "${QUIET}" == "false" ]]; then
     echo "Caution, this operation should be used with care. Please contact support prior to running this command"
     echo "Are you sure you want to proceed? [y/n]"
     read answer
@@ -94,10 +97,6 @@ if [ "${FIXIT}" = "true" ]; then
        popd>/dev/null
        exit 1
     fi
-else
-    encoding=$(get)
-    echo ${encoding}
-    exit 0
 fi
 
 encoding=$(get)
@@ -105,6 +104,9 @@ encoding=$(get)
 if [[ "${encoding}" = "UTF8" || "${encoding}" = "utf8" ]]; then
    echo "Database template1 has already UTF8 default encoding configured. nothing to do, exiting..."
    exit 0
+elif [ "${FIXIT}" = "false" ]; then
+   echo "Database template1 is configured with an incompatible encoding: ${encoding}"
+   exit 1
 fi
 
 fix_template1_encoding
