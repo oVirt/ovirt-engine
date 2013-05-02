@@ -12,7 +12,4 @@ public class VmsComparer implements Comparator<VM>, Serializable {
     public int compare(VM o1, VM o2) {
         return o1.getPriority() - o2.getPriority();
     }
-
-    public VmsComparer() {
-    }
 }

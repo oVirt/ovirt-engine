@@ -12,7 +12,4 @@ public class InterfaceComparerByMAC implements Comparator<NetworkInterface<?>>, 
     public int compare(NetworkInterface<?> x, NetworkInterface<?> y) {
         return (x.getMacAddress().compareTo(y.getMacAddress()));
     }
-
-    public InterfaceComparerByMAC() {
-    }
 }

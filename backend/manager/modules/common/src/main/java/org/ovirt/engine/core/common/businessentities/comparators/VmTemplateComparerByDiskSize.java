@@ -12,7 +12,4 @@ public class VmTemplateComparerByDiskSize implements Comparator<VmTemplate>, Ser
     public int compare(VmTemplate x, VmTemplate y) {
         return (int) (x.getActualDiskSize() - y.getActualDiskSize());
     }
-
-    public VmTemplateComparerByDiskSize() {
-    }
 }
