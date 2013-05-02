@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.common.businessentities.comparators;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 
-public class VmTemplateComparerByDiskSize implements
-        java.util.Comparator<VmTemplate>, Serializable {
+public class VmTemplateComparerByDiskSize implements Comparator<VmTemplate>, Serializable {
     private static final long serialVersionUID = -1620249078971769528L;
 
     @Override
