@@ -299,6 +299,8 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
 
     private void initInternalDiskTable(final CommonApplicationConstants constants,
             final CommonApplicationResources resources) {
+        internalDiskTable.enableColumnResizing();
+
         TextColumnWithTooltip<EntityModel> aliasColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
@@ -306,7 +308,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 return diskImage.getDiskAlias();
             }
         };
-        internalDiskTable.addColumn(aliasColumn, constants.aliasVmDiskTable());
+        internalDiskTable.addColumn(aliasColumn, constants.aliasVmDiskTable(), "85px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<EntityModel> descriptionColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
@@ -315,7 +317,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 return diskImage.getDiskDescription();
             }
         };
-        internalDiskTable.addColumn(descriptionColumn, constants.descriptionVmDiskTable());
+        internalDiskTable.addColumn(descriptionColumn, constants.descriptionVmDiskTable(), "85px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<EntityModel> idColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
@@ -324,7 +326,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 return diskImage.getId().toString();
             }
         };
-        internalDiskTable.addColumn(idColumn, constants.idVmDiskTable());
+        internalDiskTable.addColumn(idColumn, constants.idVmDiskTable(), "85px"); //$NON-NLS-1$
 
         DiskSizeColumn<EntityModel> sizeColumn = new DiskSizeColumn<EntityModel>() {
             @Override
@@ -360,7 +362,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 return disk.getDiskInterface();
             }
         };
-        internalDiskTable.addColumn(interfaceColumn, constants.interfaceVmDiskPopup(), "105px"); //$NON-NLS-1$
+        internalDiskTable.addColumn(interfaceColumn, constants.interfaceVmDiskPopup(), "95px"); //$NON-NLS-1$
 
         internalDiskTable.addColumn(new ImageResourceColumn<EntityModel>() {
             @Override
@@ -386,6 +388,8 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
 
     private void initExternalDiskTable(final CommonApplicationConstants constants,
             final CommonApplicationResources resources) {
+        externalDiskTable.enableColumnResizing();
+
         TextColumnWithTooltip<EntityModel> aliasColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
