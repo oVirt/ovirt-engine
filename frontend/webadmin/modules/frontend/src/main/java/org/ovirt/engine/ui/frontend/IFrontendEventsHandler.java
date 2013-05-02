@@ -13,8 +13,6 @@ public interface IFrontendEventsHandler {
 
     Boolean isRaiseErrorModalPanel(VdcQueryType queryType);
 
-    void runActionFailed(List<VdcReturnValueBase> returnValues);
-
     void runActionExecutionFailed(VdcActionType action, VdcFault fault);
 
     void runMultipleActionFailed(VdcActionType action, List<VdcReturnValueBase> returnValues, List<VdcFault> faults);

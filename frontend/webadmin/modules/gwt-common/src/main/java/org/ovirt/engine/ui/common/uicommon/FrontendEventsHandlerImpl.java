@@ -41,12 +41,6 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
     }
 
     @Override
-    public void runActionFailed(List<VdcReturnValueBase> returnValues) {
-        errorPopupManager.show(
-                messages.uiCommonRunActionFailed(ErrorMessageFormatter.formatReturnValues(returnValues)));
-    }
-
-    @Override
     public void runActionExecutionFailed(VdcActionType action, VdcFault fault) {
         if (isRaiseErrorModalPanel(action, fault))
             errorPopupManager.show(messages.uiCommonRunActionExecutionFailed(

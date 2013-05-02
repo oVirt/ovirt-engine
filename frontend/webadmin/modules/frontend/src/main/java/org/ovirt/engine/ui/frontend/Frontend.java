@@ -769,7 +769,6 @@ public class Frontend {
             List<VdcReturnValueBase> failed = new ArrayList<VdcReturnValueBase>();
             failed.add(result);
             translateErrors(failed);
-            getEventsHandler().runActionFailed(failed);
             callback.executed(f);
         } else if (result.getIsSyncronious() && result.getSucceeded() == false) {
             runActionExecutionFailed(actionType, result.getFault());
