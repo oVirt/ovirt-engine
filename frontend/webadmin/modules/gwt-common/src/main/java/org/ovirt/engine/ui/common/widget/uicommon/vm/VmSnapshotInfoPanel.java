@@ -115,6 +115,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
 
     private void initDisksTable() {
         disksTable = new EntityModelCellTable<ListModel>(false, true);
+        disksTable.enableColumnResizing();
 
         disksTable.addColumn(new DiskImageStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
@@ -180,7 +181,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
                 return object.getDiskDescription();
             }
         };
-        disksTable.addColumn(descriptionColumn, constants.descriptionDisk());
+        disksTable.addColumn(descriptionColumn, constants.descriptionDisk(), "80px"); //$NON-NLS-1$
 
         disksTable.setRowData(new ArrayList<EntityModel>());
         disksTable.setWidth("100%", true); //$NON-NLS-1$
@@ -189,6 +190,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
 
     private void initNicsTable() {
         nicsTable = new EntityModelCellTable<ListModel>(false, true);
+        nicsTable.enableColumnResizing();
 
         TextColumnWithTooltip<VmNetworkInterface> nameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
@@ -196,7 +198,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
                 return object.getName();
             }
         };
-        nicsTable.addColumn(nameColumn, constants.nameInterface());
+        nicsTable.addColumn(nameColumn, constants.nameInterface(), "80px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> networkNameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
@@ -204,7 +206,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
                 return object.getNetworkName();
             }
         };
-        nicsTable.addColumn(networkNameColumn, constants.networkNameInterface());
+        nicsTable.addColumn(networkNameColumn, constants.networkNameInterface(), "80px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> typeColumn = new EnumColumn<VmNetworkInterface, VmInterfaceType>() {
             @Override
@@ -212,7 +214,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
                 return VmInterfaceType.forValue(object.getType());
             }
         };
-        nicsTable.addColumn(typeColumn, constants.typeInterface());
+        nicsTable.addColumn(typeColumn, constants.typeInterface(), "80px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> macColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
@@ -220,7 +222,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
                 return object.getMacAddress();
             }
         };
-        nicsTable.addColumn(macColumn, constants.macInterface());
+        nicsTable.addColumn(macColumn, constants.macInterface(), "80px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> speedColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
@@ -232,7 +234,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
                 }
             }
         };
-        nicsTable.addColumn(speedColumn, templates.sub(constants.speedInterface(), constants.mbps()));
+        nicsTable.addColumn(speedColumn, templates.sub(constants.speedInterface(), constants.mbps()), "80px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> rxColumn = new RxTxRateColumn<VmNetworkInterface>() {
             @Override
@@ -249,7 +251,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
                 }
             }
         };
-        nicsTable.addColumn(rxColumn, templates.sub(constants.rxInterface(), constants.mbps()));
+        nicsTable.addColumn(rxColumn, templates.sub(constants.rxInterface(), constants.mbps()), "80px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> txColumn = new RxTxRateColumn<VmNetworkInterface>() {
             @Override
@@ -266,7 +268,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
                 }
             }
         };
-        nicsTable.addColumn(txColumn, templates.sub(constants.txInterface(), constants.mbps()));
+        nicsTable.addColumn(txColumn, templates.sub(constants.txInterface(), constants.mbps()), "80px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> dropsColumn = new SumUpColumn<VmNetworkInterface>() {
             @Override
@@ -275,7 +277,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
                         object.getStatistics().getTransmitDropRate() };
             }
         };
-        nicsTable.addColumn(dropsColumn, templates.sub(constants.dropsInterface(), constants.pkts()));
+        nicsTable.addColumn(dropsColumn, templates.sub(constants.dropsInterface(), constants.pkts()), "80px"); //$NON-NLS-1$
 
         nicsTable.setRowData(new ArrayList<EntityModel>());
         nicsTable.setWidth("100%", true); //$NON-NLS-1$
