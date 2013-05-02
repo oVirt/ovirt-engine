@@ -81,11 +81,11 @@ public class SplashServletTest {
 
     private List<String> createLocaleKeys() {
         List<String> keys = new ArrayList<String>();
-        keys.add("de");
+        keys.add("de_DE");
         keys.add("en_US");
-        keys.add("es");
-        keys.add("fr");
-        keys.add("ja");
+        keys.add("es_ES");
+        keys.add("fr_FR");
+        keys.add("ja_JP");
         keys.add("pt_BR");
         keys.add("zh_CN");
         return keys;
