@@ -5,7 +5,6 @@ import org.ovirt.engine.ui.uicommonweb.models.HasConsoleModel;
 
 public interface ConsoleUtils {
 
-    public boolean isSpiceAvailable();
     public boolean isRDPAvailable();
 
     public boolean canOpenSpiceConsole(HasConsoleModel item);

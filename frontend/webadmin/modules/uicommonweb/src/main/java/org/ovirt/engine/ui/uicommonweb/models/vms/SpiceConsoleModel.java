@@ -86,9 +86,6 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
         setSpiceImplementation(
                 ClientConsoleMode.valueOf((String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ClientConsoleModeDefault)));
-        getConfigurator().Configure(getspice());
-
-        getspice().getConnectedEvent().addListener(this);
     }
 
     public ISpice getspice() {
@@ -97,9 +94,8 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
     /**
      * Sets implementation of ISpice which will be used (either implementation
-     * that uses spice browser plugin or the one using configuration servlet).
-     *
-     * The result implementation is based on db config.
+     * that uses spice browser plugin or the one using configuration servlet)
+     * and performs sets initial configuration as well (different for WA/UP).
      *
      * Default mode is "Auto" (spice browser plugin is used only if it is
      * installed).
@@ -120,6 +116,12 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 setspice(pluginSpice.detectBrowserPlugin() ? pluginSpice
                         : (ISpice) TypeResolver.getInstance().Resolve(ISpiceNative.class));
             break;
+        }
+
+        getConfigurator().Configure(getspice());
+
+        if (!getspice().getConnectedEvent().getListeners().contains(this)) {
+            getspice().getConnectedEvent().addListener(this);
         }
     }
 

@@ -120,7 +120,7 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
     }
 
     protected void loadSpiceData(HasConsoleModel model, KeyMaker keyMaker) {
-        if (!consoleUtils.isSpiceAvailable() || !(model.getDefaultConsoleModel() instanceof SpiceConsoleModel)) {
+        if (!(model.getDefaultConsoleModel() instanceof SpiceConsoleModel)) {
             // don't read spice options if the spice console is not available anymore
             return;
         }

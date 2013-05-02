@@ -16,7 +16,6 @@ import com.google.inject.Inject;
 
 public class ConsoleUtilsImpl implements ConsoleUtils {
 
-    private Boolean spiceAvailable;
     private Boolean rdpAvailable;
 
     private final CommonApplicationConstants constants;
@@ -71,38 +70,16 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
 
     @Override
     public boolean canOpenSpiceConsole(HasConsoleModel item) {
-        if (item.isPool() || !isSpiceAvailable())
+        if (item.isPool()) {
             return false;
+        }
 
-        if (isSpiceAvailable() &&
-                item.getDefaultConsoleModel().getConnectCommand().getIsAvailable() &&
-                item.getDefaultConsoleModel().getConnectCommand().getIsExecutionAllowed()) {
+        if (item.getDefaultConsoleModel().getConnectCommand().getIsAvailable() &&
+            item.getDefaultConsoleModel().getConnectCommand().getIsExecutionAllowed()) {
             return true;
         }
 
         return false;
-    }
-
-    @Override
-    public boolean isSpiceAvailable() {
-        if (spiceAvailable == null) {
-            switch (configurator.getClientConsoleMode()) {
-            case Plugin:
-                spiceAvailable = configurator.isClientWindowsExplorer() || configurator.isClientLinuxFirefox();
-                break;
-            case Native:
-                spiceAvailable = true;
-                break;
-            case Auto:
-                spiceAvailable = true;
-                break;
-            default:
-                spiceAvailable = false;
-                break;
-            }
-            GWT.log("Determining if Spice console is available on current platform, result:" + spiceAvailable); //$NON-NLS-1$
-        }
-        return spiceAvailable;
     }
 
     @Override
@@ -124,11 +101,11 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
             return ""; //$NON-NLS-1$
         }
 
-        if (!(isRDPAvailable() || isSpiceAvailable())) {
+        if (!(isRDPAvailable())) {
             return constants.browserNotSupportedMsg();
         }
 
-        boolean isSpice = item.getDefaultConsoleModel() instanceof SpiceConsoleModel && isSpiceAvailable();
+        boolean isSpice = item.getDefaultConsoleModel() instanceof SpiceConsoleModel;
         boolean isRdp = item.getAdditionalConsoleModel() != null && isRDPAvailable();
 
         if (!isSpice && !isRdp) {
@@ -148,7 +125,7 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
 
         if (item.getAdditionalConsoleModel() != null && isRDPAvailable() && ConsoleProtocol.RDP.equals(selectedProtocol)) {
             return ConsoleProtocol.RDP;
-        } else if (item.getDefaultConsoleModel() instanceof SpiceConsoleModel && isSpiceAvailable() &&
+        } else if (item.getDefaultConsoleModel() instanceof SpiceConsoleModel &&
                 ConsoleProtocol.SPICE.equals(selectedProtocol)) {
             return ConsoleProtocol.SPICE;
         } else if (item.getDefaultConsoleModel() instanceof VncConsoleModel) {
@@ -221,7 +198,7 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
     @Override
     public boolean isWanOptionsAvailable(HasConsoleModel model) {
         boolean spiceAvailable =
-                model.getDefaultConsoleModel() instanceof SpiceConsoleModel && isSpiceAvailable();
+                model.getDefaultConsoleModel() instanceof SpiceConsoleModel;
         boolean isWindowsVm = model.getVM().getOs().isWindows();
         boolean spiceGuestAgentInstalled = model.getVM().getSpiceDriverVersion() != null;
 
@@ -233,6 +210,7 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
         return configurator.isSpiceProxyDefined();
     }
 
+    @Override
     public boolean isBrowserPluginSupported() {
         return configurator.isClientLinuxFirefox() || configurator.isClientWindowsExplorer();
     }

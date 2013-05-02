@@ -162,7 +162,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         HasConsoleModel currentItem = model.getModel();
 
         boolean spiceAvailable =
-                currentItem.getDefaultConsoleModel() instanceof SpiceConsoleModel && consoleUtils.isSpiceAvailable();
+                currentItem.getDefaultConsoleModel() instanceof SpiceConsoleModel;
 
         boolean vncAvailable =
                 currentItem.getDefaultConsoleModel() instanceof VncConsoleModel;

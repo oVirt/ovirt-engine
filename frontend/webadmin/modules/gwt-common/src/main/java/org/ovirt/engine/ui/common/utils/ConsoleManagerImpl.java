@@ -68,8 +68,6 @@ public class ConsoleManagerImpl implements ConsoleManager {
     private String showSpiceConsole(HasConsoleModel model) {
         if (consoleUtils.canOpenSpiceConsole(model)) {
             model.getDefaultConsoleModel().getConnectCommand().Execute();
-        } else if (!consoleUtils.isSpiceAvailable()) {
-            return createErrorMessage(model, "SPICE"); //$NON-NLS-1$
         }
 
         return null;
