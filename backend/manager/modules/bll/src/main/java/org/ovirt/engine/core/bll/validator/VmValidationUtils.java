@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.common.utils;
+package org.ovirt.engine.core.bll.validator;
 
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.config.Config;

@@ -222,9 +222,6 @@
 		<!-- UiCommon -->
 		<include name="common/VdcActionUtils.java" />
 
-		<!-- Validations -->
-		<include name="common/utils/VmValidationUtils.java" />
-
 		<!-- Backend Validation framework -->
 		<include name="common/validation/annotation/HostnameOrIp.java" />
 		<include name="common/validation/group/**" />
