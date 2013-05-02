@@ -9,11 +9,7 @@ public class VmsComparer implements java.util.Comparator<VM>, Serializable {
 
     @Override
     public int compare(VM o1, VM o2) {
-        return Compare(o1, o2);
-    }
-
-    public int Compare(VM x, VM y) {
-        return x.getPriority() - y.getPriority();
+        return o1.getPriority() - o2.getPriority();
     }
 
     public VmsComparer() {

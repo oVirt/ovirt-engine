@@ -38,7 +38,7 @@ public class MigrateVMActionRunner extends SortedMultipleActionsRunnerBase {
                 VM vm1 = vms.get(o1.getVmId());
                 VM vm2 = vms.get(o2.getVmId());
 
-                return vmComparator.Compare(vm1, vm2);
+                return vmComparator.compare(vm1, vm2);
             }
 
         }));
