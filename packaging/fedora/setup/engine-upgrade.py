@@ -1235,156 +1235,156 @@ def main(options):
         raise Exception(MSG_ERROR_INCOMPATIBLE_UPGRADE)
 
     rhyum.clean()
-
-    with rhyum.transaction():
-        # Check for upgrade, else exit
-        runFunc([rhyum.begin], MSG_INFO_CHECK_UPDATE)
-        if rhyum.emptyTransaction:
-            logging.debug(MSG_INFO_NO_UPGRADE_AVAIL)
-            print MSG_INFO_NO_UPGRADE_AVAIL
-            sys.exit(0)
-
-        packages = rhyum.getPackages()
-        name_packages = [p['name'] for p in packages]
-
-        print MSG_INFO_UPGRADE_AVAIL % (len(packages))
-        for p in packages:
-            print " * %s" % p['display_name']
-        if options.check_update:
-            sys.exit(100)
-
-        if RPM_SETUP in name_packages and not options.force_current_setup_rpm:
-            logging.debug(MSG_ERROR_NEW_SETUP_AVAIL)
-            print MSG_ERROR_NEW_SETUP_AVAIL
-            sys.exit(3)
-
-        # Make sure we will be able to rollback
-        if not rhyum.rollbackAvailable(packages) and options.yum_rollback:
-            logging.debug(MSG_ERROR_NO_ROLLBACK_AVAIL)
-            print MSG_ERROR_NO_ROLLBACK_AVAIL
-            print MSG_ERROR_CHECK_LOG % logFile
-            sys.exit(2)
-
-        # Update is related to database if:
-        # 1. database related package is updated
-        # 2. CA upgrade is going to alter parameters within database
-        # 3. UUID update will take place
-        updateRelatedToDB = False
-        for package in RPM_BACKEND, RPM_DBSCRIPTS:
-            if package in name_packages:
-                updateRelatedToDB = True
-                logging.debug("related to database package %s" % package)
-        updateRelatedToDB = updateRelatedToDB or ca.mayUpdateDB()
-        updateRelatedToDB = updateRelatedToDB or hostids
-
-        # No rollback in this case
-        try:
-            # We ask the user before stoping ovirt-engine or take command line option
-            if options.unattended_upgrade or checkEngine(engineService):
-                # Stopping engine
-                runFunc(stopEngineService, MSG_INFO_STOP_ENGINE % engineService)
-                if updateRelatedToDB:
-                    runFunc([[stopDbRelatedServices, etlService, notificationService]], MSG_INFO_STOP_DB)
-
-                    try:
-                        # Validate DB first
-                        violations, issues_found = checkDb()
-
-                        # If violations found, show them
-                        # and ask for cleanup
-                        if issues_found:
-                            if utils.askYesNo(
-                                MSG_CLEAR_DB_INCONSISTENCIES % violations
-                            ) is True:
-                                fixDb()
-                            else:
-                                raise Exception(
-                                    "User decided to skip db fix"
-                                )
-
-                        if not options.ignore_tasks:
-
-                            # Check and clean zombie tasks.
-                            if zombieTasksFound():
-                                runFunc([clearZombieTasks], output_messages.MSG_CLEAN_ASYNC)
-
-                            # Check that there are no running tasks/compensations
-                            checkRunningTasks()
-
-                    # If something went wrong, restart DB services and the engine
-                    except:
-                        logging.error(traceback.format_exc())
-                        runFunc([[startDbRelatedServices, etlService, notificationService]], MSG_INFO_START_DB)
-                        runFunc(startEngineService, MSG_INFO_START_ENGINE % engineService)
-                        raise
-
-            else:
-                # This means that user chose not to stop ovirt-engine
-                logging.debug("exiting gracefully")
-                print MSG_INFO_STOP_INSTALL_EXIT
+    try:
+        with rhyum.transaction():
+            # Check for upgrade, else exit
+            runFunc([rhyum.begin], MSG_INFO_CHECK_UPDATE)
+            if rhyum.emptyTransaction:
+                logging.debug(MSG_INFO_NO_UPGRADE_AVAIL)
+                print MSG_INFO_NO_UPGRADE_AVAIL
                 sys.exit(0)
 
-            # Preupgrade checks
-            runFunc(preupgradeFunc, MSG_INFO_PREUPGRADE)
+            packages = rhyum.getPackages()
+            name_packages = [p['name'] for p in packages]
 
-            # Backup DB
-            if updateRelatedToDB:
-                runFunc([db.backup], MSG_INFO_BACKUP_DB)
-                runFunc([[db.rename, DB_NAME_TEMP]], MSG_INFO_RENAME_DB)
+            print MSG_INFO_UPGRADE_AVAIL % (len(packages))
+            for p in packages:
+                print " * %s" % p['display_name']
+            if options.check_update:
+                sys.exit(100)
 
-        except Exception as e:
-            print e
-            raise
+            if RPM_SETUP in name_packages and not options.force_current_setup_rpm:
+                logging.debug(MSG_ERROR_NEW_SETUP_AVAIL)
+                print MSG_ERROR_NEW_SETUP_AVAIL
+                sys.exit(3)
 
-        # In case of failure, do rollback
-        try:
-            # yum update
-            runFunc(upgradeFunc, MSG_INFO_YUM_UPDATE)
+            # Make sure we will be able to rollback
+            if not rhyum.rollbackAvailable(packages) and options.yum_rollback:
+                logging.debug(MSG_ERROR_NO_ROLLBACK_AVAIL)
+                print MSG_ERROR_NO_ROLLBACK_AVAIL
+                print MSG_ERROR_CHECK_LOG % logFile
+                sys.exit(2)
 
-            # check if update is relevant to db update
-            if updateRelatedToDB:
+            # Update is related to database if:
+            # 1. database related package is updated
+            # 2. CA upgrade is going to alter parameters within database
+            # 3. UUID update will take place
+            updateRelatedToDB = False
+            for package in RPM_BACKEND, RPM_DBSCRIPTS:
+                if package in name_packages:
+                    updateRelatedToDB = True
+                    logging.debug("related to database package %s" % package)
+            updateRelatedToDB = updateRelatedToDB or ca.mayUpdateDB()
+            updateRelatedToDB = updateRelatedToDB or hostids
 
-                # Update the db and restore its name back
-                runFunc([db.update], MSG_INFO_DB_UPDATE)
-                runFunc([[db.rename, basedefs.DB_NAME]], MSG_INFO_RESTORE_DB)
+            # No rollback in this case
+            try:
+                # We ask the user before stoping ovirt-engine or take command line option
+                if options.unattended_upgrade or checkEngine(engineService):
+                    # Stopping engine
+                    runFunc(stopEngineService, MSG_INFO_STOP_ENGINE % engineService)
+                    if updateRelatedToDB:
+                        runFunc([[stopDbRelatedServices, etlService, notificationService]], MSG_INFO_STOP_DB)
 
-                # Bring up any services we shut down before db upgrade
-                startDbRelatedServices(etlService, notificationService)
+                        try:
+                            # Validate DB first
+                            violations, issues_found = checkDb()
 
-            # CA restore
-            runFunc([ca.prepare], MSG_INFO_PKI_PREPARE)
+                            # If violations found, show them
+                            # and ask for cleanup
+                            if issues_found:
+                                if utils.askYesNo(
+                                    MSG_CLEAR_DB_INCONSISTENCIES % violations
+                                ) is True:
+                                    fixDb()
+                                else:
+                                    raise Exception(
+                                        "User decided to skip db fix"
+                                    )
 
-            # post install conf
-            runFunc(postFunc, MSG_INFO_RUN_POST)
+                            if not options.ignore_tasks:
 
-        except:
-            logging.error(traceback.format_exc())
-            logging.error("Rolling back update")
+                                # Check and clean zombie tasks.
+                                if zombieTasksFound():
+                                    runFunc([clearZombieTasks], output_messages.MSG_CLEAN_ASYNC)
 
-            print MSG_ERROR_UPGRADE
-            print MSG_INFO_REASON%(sys.exc_info()[1])
+                                # Check that there are no running tasks/compensations
+                                checkRunningTasks()
 
-            # CA restore
-            runFunc([ca.rollback], MSG_INFO_PKI_ROLLBACK)
+                        # If something went wrong, restart DB services and the engine
+                        except:
+                            logging.error(traceback.format_exc())
+                            runFunc([[startDbRelatedServices, etlService, notificationService]], MSG_INFO_START_DB)
+                            runFunc(startEngineService, MSG_INFO_START_ENGINE % engineService)
+                            raise
 
-            # allow db restore
-            if updateRelatedToDB:
-                try:
-                    runFunc([db.restore], MSG_INFO_DB_RESTORE)
-                except:
-                    # This Exception have already been logged, so just pass along
-                    pass
+                else:
+                    # This means that user chose not to stop ovirt-engine
+                    logging.debug("exiting gracefully")
+                    print MSG_INFO_STOP_INSTALL_EXIT
+                    sys.exit(0)
 
-            raise
+                # Preupgrade checks
+                runFunc(preupgradeFunc, MSG_INFO_PREUPGRADE)
 
-        finally:
-            # start engine
-            runFunc([startEngine], MSG_INFO_START_ENGINE % engineService)
+                # Backup DB
+                if updateRelatedToDB:
+                    runFunc([db.backup], MSG_INFO_BACKUP_DB)
+                    runFunc([[db.rename, DB_NAME_TEMP]], MSG_INFO_RENAME_DB)
 
-        # Print log location on success
-        addAdditionalMessages(etlService.isServiceAvailable())
-        print "\n%s\n" % MSG_INFO_UPGRADE_OK
-        printMessages()
+            except Exception as e:
+                print e
+                raise
+
+            # In case of failure, do rollback
+            try:
+                # yum update
+                runFunc(upgradeFunc, MSG_INFO_YUM_UPDATE)
+
+                # check if update is relevant to db update
+                if updateRelatedToDB:
+
+                    # Update the db and restore its name back
+                    runFunc([db.update], MSG_INFO_DB_UPDATE)
+                    runFunc([[db.rename, basedefs.DB_NAME]], MSG_INFO_RESTORE_DB)
+
+                    # Bring up any services we shut down before db upgrade
+                    startDbRelatedServices(etlService, notificationService)
+
+                # CA restore
+                runFunc([ca.prepare], MSG_INFO_PKI_PREPARE)
+
+                # post install conf
+                runFunc(postFunc, MSG_INFO_RUN_POST)
+
+            except:
+                logging.error(traceback.format_exc())
+                logging.error("Rolling back update")
+
+                print MSG_ERROR_UPGRADE
+                print MSG_INFO_REASON%(sys.exc_info()[1])
+
+                # CA restore
+                runFunc([ca.rollback], MSG_INFO_PKI_ROLLBACK)
+
+                # allow db restore
+                if updateRelatedToDB:
+                    try:
+                        runFunc([db.restore], MSG_INFO_DB_RESTORE)
+                    except:
+                        # This Exception have already been logged, so just pass along
+                        pass
+
+                raise
+
+    finally:
+        # start engine after the rollback
+        runFunc([startEngine], MSG_INFO_START_ENGINE % engineService)
+
+    # Print log location on success
+    addAdditionalMessages(etlService.isServiceAvailable())
+    print "\n%s\n" % MSG_INFO_UPGRADE_OK
+    printMessages()
 
 
 if __name__ == '__main__':
