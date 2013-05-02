@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
-import org.ovirt.engine.core.common.utils.LexoNumericComparator;
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 

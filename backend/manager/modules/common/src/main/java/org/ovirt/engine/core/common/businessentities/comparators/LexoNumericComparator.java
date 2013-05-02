@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.common.utils;
+package org.ovirt.engine.core.common.businessentities.comparators;
 
 import java.io.Serializable;
 import java.util.Comparator;

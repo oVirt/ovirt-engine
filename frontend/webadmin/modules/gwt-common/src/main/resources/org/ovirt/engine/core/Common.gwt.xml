@@ -134,7 +134,8 @@
 		<include name="common/businessentities/ImageFileType.java" />
 		<include name="common/businessentities/comparators/BusinessEntityGuidComparator.java" />
 		<include name="common/businessentities/comparators/BusinessEntityComparator.java" />
-                <include name="common/businessentities/Identifiable.java" />
+		<include name="common/businessentities/comparators/LexoNumericComparator.java" />
+        <include name="common/businessentities/Identifiable.java" />
 		<include name="common/businessentities/VmGuestAgentInterface.java" />
 		<include name="common/job/*.java" />
 
@@ -162,7 +163,6 @@
 		<include name="common/AuditLogSeverity.java" />
 		<include name="common/users/VdcUser.java" />
 		<include name="common/utils/EnumUtils.java" />
-		<include name="common/utils/LexoNumericComparator.java" />
 		<include name="common/utils/ListUtils.java" />
 		<include name="common/utils/ObjectUtils.java" />
 		<include name="common/utils/VmDeviceType.java" />
