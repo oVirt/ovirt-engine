@@ -98,11 +98,11 @@ public class SpiceMenu
     }
 
     private String formatSpiceMenuItem(int parentId, int itemId, String itemText, int itemCode) {
-        return new StringBuilder(parentId)
+        return new StringBuilder(Integer.toString(parentId))
             .append("\r").append(itemId) //$NON-NLS-1$
             .append("\r").append(itemText) //$NON-NLS-1$
             .append("\r").append(itemCode) //$NON-NLS-1$
-            .append("\n").toString(); //$NON-NLS-1$
+            .append("\r\n").toString(); //$NON-NLS-1$
     }
 
 }

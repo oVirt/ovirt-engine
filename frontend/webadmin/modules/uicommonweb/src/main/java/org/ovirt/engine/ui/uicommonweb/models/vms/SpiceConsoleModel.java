@@ -439,30 +439,6 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         int id = 1;
         menu = new SpiceMenu();
 
-        menu.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_CTRL_ALT_DEL, ConstantsManager.getInstance()
-                .getConstants()
-                .send()
-                + " " + ctrlAltDelTranslated //$NON-NLS-1$
-                + "\t" + ctrlAltEndTranslated, "")); //$NON-NLS-1$ //$NON-NLS-2$
-        menu.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_TOGGLE_FULL_SCREEN, ConstantsManager.getInstance()
-                .getConstants()
-                .toggleFullScreen()
-                + "\t" //$NON-NLS-1$
-                + toggleFullScreenKeysTranslated, "")); //$NON-NLS-1$
-
-        SpiceMenuContainerItem specialKes =
-                new SpiceMenuContainerItem(id, ConstantsManager.getInstance().getConstants().specialKeys());
-        menu.getItems().add(specialKes);
-
-        specialKes.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_SHIFT_F11,
-                toggleFullScreenKeysTranslated, "")); //$NON-NLS-1$
-        specialKes.getItems()
-                .add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_SHIFT_F12, releaseCursorKeysTranslated, "")); //$NON-NLS-1$
-        specialKes.getItems().add(new SpiceMenuCommandItem(ID_SYS_MENU_SEND_CTRL_ALT_END,
-                ctrlAltEndTranslated, "")); //$NON-NLS-1$
-        menu.getItems().add(new SpiceMenuSeparatorItem(id));
-        id++;
-
         SpiceMenuContainerItem changeCDItem =
                 new SpiceMenuContainerItem(id, ConstantsManager.getInstance().getConstants().changeCd());
         id++;

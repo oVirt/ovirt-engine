@@ -271,6 +271,7 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                    var usbAutoShare = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getUsbAutoShare()();
                                                    var usbFilter = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getUsbFilter()();
                                                    var disconnectedEvent = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getDisconnectedEvent()();
+                                                   var menuItemSelectedEvent = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getMenuItemSelectedEvent()();
                                                    var connectedEvent = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::getConnectedEvent()();
                                                    var wanOptionsEnabled = this.@org.ovirt.engine.ui.common.uicommon.SpicePluginImpl::isWanOptionsEnabled()();
                                                    // the !! is there to convert the value to boolean because it is returned as int
@@ -288,6 +289,8 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
 
                                                    var client = $wnd.document.getElementById(id);
                                                    client.attachEvent('onreadystatechange', onReadyStateChange);
+                                                   client.attachEvent('onmenuitemselected', onMenuItemSelected);
+
                                                    tryToConnect();
 
                                                    function tryToConnect() {
@@ -298,7 +301,7 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                    client.hostIP = hostIp;
                                                    client.port = port;
                                                    client.Title = title;
-                                                   client.dynamicMenu = "";
+                                                   client.dynamicMenu = menu;
                                                    client.fullScreen = fullScreen;
                                                    client.Password = password;
                                                    client.NumberOfMonitors = numberOfMonitors;
@@ -357,6 +360,11 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                    // Refresh grid on disconnect (to re-enable console button)
                                                    // var gridRefreshManager = @org.ovirt.engine.ui.userportal.client.components.GridRefreshManager::getInstance()();
                                                    // gridRefreshManager.@org.ovirt.engine.ui.userportal.client.components.GridRefreshManager::refreshGrids()();
+                                                   }
+
+                                                   function onMenuItemSelected(itemId) {
+                                                   var spiceMenuItemEventArgs = @org.ovirt.engine.ui.uicommonweb.models.vms.SpiceMenuItemEventArgs::new(I)(itemId);
+                                                   menuItemSelectedEvent.@org.ovirt.engine.ui.uicompat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/ui/uicompat/EventArgs;)(model, spiceMenuItemEventArgs);
                                                    }
                                                    }-*/;
 
