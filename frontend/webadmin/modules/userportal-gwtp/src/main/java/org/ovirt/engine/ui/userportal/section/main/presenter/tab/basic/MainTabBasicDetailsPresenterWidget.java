@@ -1,7 +1,11 @@
 package org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.presenter.popup.ConsoleModelChangedEvent;
 import org.ovirt.engine.ui.common.presenter.popup.ConsoleModelChangedEvent.ConsoleModelChangedHandler;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
@@ -47,16 +51,20 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
 
     private final ConsoleUtils consoleUtils;
     private final ApplicationMessages messages;
+    private final Map<ConsoleProtocol, String> consoleTypeToName = new HashMap<ConsoleProtocol, String>();
 
     @Inject
     public MainTabBasicDetailsPresenterWidget(EventBus eventBus,
             ViewDef view,
             final UserPortalBasicListProvider modelProvider,
             final ConsoleUtils consoleUtils,
-            final ApplicationMessages messages) {
+            final ApplicationMessages messages,
+            final CommonApplicationConstants constants) {
         super(eventBus, view);
         this.consoleUtils = consoleUtils;
         this.messages = messages;
+
+        initConsoleTypeToNameMap(constants);
 
         listenOnSelectedItemEvent(modelProvider);
 
@@ -75,6 +83,12 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
             }
 
         });
+    }
+
+    private void initConsoleTypeToNameMap(CommonApplicationConstants constants) {
+        consoleTypeToName.put(ConsoleProtocol.SPICE, constants.spice());
+        consoleTypeToName.put(ConsoleProtocol.RDP, constants.remoteDesktop());
+        consoleTypeToName.put(ConsoleProtocol.VNC, constants.vnc());
     }
 
     protected void listenOnConsoleModelChangeEvent(EventBus eventBus, final UserPortalBasicListProvider modelProvider) {
@@ -163,10 +177,10 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
 
     private String determineProtocolMessage(ConsoleProtocol protocol, HasConsoleModel item) {
         if (consoleUtils.isSmartcardGloballyEnabled(item) && !consoleUtils.isSmartcardEnabledOverriden(item)) {
-            return messages.consoleWithSmartcard(protocol.displayName);
+            return messages.consoleWithSmartcard(consoleTypeToName.get(protocol));
         }
 
-        return protocol.displayName;
+        return consoleTypeToName.get(protocol);
     }
 
     private boolean isEditConsoleEnabled(UserPortalItemModel item) {
