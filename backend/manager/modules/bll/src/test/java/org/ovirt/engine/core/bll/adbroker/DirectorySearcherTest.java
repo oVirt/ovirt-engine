@@ -20,7 +20,6 @@ import java.util.concurrent.TimeoutException;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -64,12 +63,8 @@ public class DirectorySearcherTest extends AbstractLdapTest {
         DirectorySearcher dirSearcher = mockDirectorySearcher(urls);
         GetRootDSETask task1 = mockRootDSETask(dirSearcher, "mydomain", urls.get(0));
         GetRootDSETask task2 = mockRootDSETask(dirSearcher, "mydomain", urls.get(1));
-        try {
-            assertTrue(task1.call());
-            assertTrue(task2.call());
-        } catch (Exception e) {
-            Assert.fail("one of the servers was failed to return rootDSE record due to " + e.getMessage());
-        }
+        assertTrue(task1.call());
+        assertTrue(task2.call());
     }
 
     protected GetRootDSETask mockRootDSETask(DirectorySearcher dirSearcher, String domain, URI url) {
@@ -79,46 +74,29 @@ public class DirectorySearcherTest extends AbstractLdapTest {
         return task;
     }
 
-    @Test
+    @Test(expected = TimeoutException.class)
     public void testGetRootDSEFirstSeverUnreachable() throws Exception {
         List<URI> urls = new ArrayList<URI>();
         urls.add(new URI(BAD_URL));
         urls.add(new URI("ldap://ldap1.example.com:389"));
         DirectorySearcher dirSearcher = mockDirectorySearcher(urls);
-        try {
-            execute(new GetRootDSETask(dirSearcher, "mydomain", urls.get(0)));
-        } catch (Exception e) {
-            // server should timeout!
-            return;
-        }
-        Assert.fail("Get rootDSE task passed with no timeout. Investigate why the task completed instead of throwing TimeoutException");
+        execute(new GetRootDSETask(dirSearcher, "mydomain", urls.get(0)));
     }
 
-    @Test
+    @Test(expected = TimeoutException.class)
     public void testGetRootDSENoServers() throws Exception {
         List<URI> urls = new ArrayList<URI>();
         DirectorySearcher dirSearcher = mockDirectorySearcher(urls);
-        try {
-            GetRootDSETask getRootDSETask = new GetRootDSETask(dirSearcher, "mydomain", null);
-            execute(getRootDSETask);
-        } catch (Exception e) {
-            // should fail
-            return;
-        }
-        Assert.fail("Task didn't exited with error");
+        GetRootDSETask getRootDSETask = new GetRootDSETask(dirSearcher, "mydomain", null);
+        execute(getRootDSETask);
     }
 
-    @Test
+    @Test(expected = TimeoutException.class)
     public void testGetRootDSENoReachableLdapServers() throws Exception {
         List<URI> urls = new ArrayList<URI>();
         urls.add(new URI(BAD_URL));
         DirectorySearcher dirSearcher = mockDirectorySearcher(urls);
-        try {
-            execute(new GetRootDSETask(dirSearcher, "mydomain", urls.get(0)));
-        } catch (TimeoutException ok) {
-            return;
-        }
-        Assert.fail("Task ended with error which is not timout or no error at all");
+        execute(new GetRootDSETask(dirSearcher, "mydomain", urls.get(0)));
     }
 
     private DirectorySearcher mockDirectorySearcher(final List<URI> urls) {
