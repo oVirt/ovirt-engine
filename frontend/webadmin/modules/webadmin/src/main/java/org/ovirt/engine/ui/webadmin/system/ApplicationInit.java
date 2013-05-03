@@ -119,7 +119,7 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
             @Override
             public void execute() {
                 // Assume the REST API session has been acquired and is still active
-                restApiSessionManager.reuseCurrentSession();
+                restApiSessionManager.reuseSession();
             }
         });
     }
