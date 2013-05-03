@@ -93,13 +93,13 @@ public class GlusterVolumeConditionFieldAutoCompleter extends BaseConditionField
     }
 
     private static void addField(String fieldName, Class<?> fieldType, String columnName) {
-        fields.add(new AutoCompletionField(fieldName, fieldName, fieldType, columnName));
+        fields.add(new AutoCompletionField(fieldName, fieldType, columnName));
     }
 
     private void buildDictionaries() {
         // Build the field name auto completion dictionary
         for (AutoCompletionField field : fields) {
-            mVerbs.put(field.fieldName, field.displayName);
+            mVerbs.put(field.fieldName, field.fieldName);
         }
         buildCompletions();
 
@@ -119,13 +119,11 @@ public class GlusterVolumeConditionFieldAutoCompleter extends BaseConditionField
 
     private static final class AutoCompletionField {
         protected final String fieldName;
-        protected final String displayName;
         protected final Class<?> fieldType;
         protected final String columnName;
 
-        public AutoCompletionField(String fieldName, String displayName, Class<?> fieldType, String columnName) {
+        public AutoCompletionField(String fieldName, Class<?> fieldType, String columnName) {
             this.fieldName = fieldName;
-            this.displayName = displayName;
             this.fieldType = fieldType;
             this.columnName = columnName;
         }
