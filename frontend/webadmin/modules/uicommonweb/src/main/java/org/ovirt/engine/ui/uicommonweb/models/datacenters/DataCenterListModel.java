@@ -263,7 +263,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
     {
         super.asyncSearch();
 
-        setAsyncResult(Frontend.RegisterSearch(getSearchString(), SearchType.StoragePool, getSearchPageSize()));
+        setAsyncResult(null);
         setItems(getAsyncResult().getData());
     }
 

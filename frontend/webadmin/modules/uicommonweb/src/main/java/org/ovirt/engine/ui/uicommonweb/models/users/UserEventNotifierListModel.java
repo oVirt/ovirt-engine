@@ -97,8 +97,7 @@ public class UserEventNotifierListModel extends SearchableListModel
     {
         super.asyncSearch();
 
-        setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetEventSubscribersBySubscriberIdGrouped,
-                new GetEventSubscribersBySubscriberIdParameters(getEntity().getuser_id())));
+        setAsyncResult(null);
         setItems(getAsyncResult().getData());
     }
 

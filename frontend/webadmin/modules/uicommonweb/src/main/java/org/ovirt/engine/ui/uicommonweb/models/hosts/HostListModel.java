@@ -1568,7 +1568,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     {
         super.asyncSearch();
 
-        setAsyncResult(Frontend.RegisterSearch(getSearchString(), SearchType.VDS, getSearchPageSize()));
+        setAsyncResult(null);
         setItems(getAsyncResult().getData());
     }
 

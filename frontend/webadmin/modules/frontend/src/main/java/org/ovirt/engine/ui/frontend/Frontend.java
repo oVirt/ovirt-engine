@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.errors.VdcFault;
-import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -101,6 +100,9 @@ public class Frontend {
 
     private static Event frontendNotLoggedInEvent = new Event("NotLoggedIn", Frontend.class); //$NON-NLS-1$
 
+    /**
+     * empty callback.
+     */
     private final static NullableFrontendActionAsyncCallback NULLABLE_ASYNC_CALLBACK = new NullableFrontendActionAsyncCallback();
 
     public static Event getFrontendFailureEvent() {
@@ -203,10 +205,10 @@ public class Frontend {
         dumpQueryDetails(queryType, parameters);
         logger.finer("Frontend: Invoking async runQuery."); //$NON-NLS-1$
         raiseQueryStartedEvent(queryType, callback.getContext());
-        GenericApiGWTServiceAsync service = GenericApiGWTServiceAsync.Util.getInstance();
+        final GenericApiGWTServiceAsync service = GenericApiGWTServiceAsync.Util.getInstance();
         service.RunQuery(queryType, parameters, new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onFailure(Throwable caught) {
+            public void onFailure(final Throwable caught) {
                 try {
                     if (ignoreFailure(caught)) {
                         return;
@@ -226,13 +228,13 @@ public class Frontend {
             }
 
             @Override
-            public void onSuccess(VdcQueryReturnValue result) {
+            public void onSuccess(final VdcQueryReturnValue result) {
                 try {
                     logger.finer("Succesful returned result from RunQuery."); //$NON-NLS-1$
 
                     if (!result.getSucceeded()) {
-                        logger.log(Level.WARNING, "Failure while invoking ReturnQuery [" + result.getExceptionString() //$NON-NLS-1$
-                                + "]"); //$NON-NLS-1$
+                        logger.log(Level.WARNING, "Failure while invoking ReturnQuery [" //$NON-NLS-1$
+                                + result.getExceptionString() + "]"); //$NON-NLS-1$
                         if (getEventsHandler() != null) {
                             ArrayList<VdcQueryReturnValue> failedResult = new ArrayList<VdcQueryReturnValue>();
                             failedResult.add(result);
@@ -248,22 +250,20 @@ public class Frontend {
                         if (callback.getConverter() != null) {
                             callback.getDel().onSuccess(callback.getModel(),
                                     callback.getConverter().Convert(result.getReturnValue(), callback));
-                        }
-                        else {
+                        } else {
                             callback.getDel().onSuccess(callback.getModel(), result);
                         }
                     }
 
                     raiseQueryCompleteEvent(queryType, callback.getContext());
-                }
-                finally {
+                } finally {
                     if (isHandleSequentialQueries) {
                         handleSequentialQueries(queryWrapper.getKey());
                     }
                 }
             }
 
-            private void handleSequentialQueries(String key) {
+            private void handleSequentialQueries(final String key) {
                 currentRequests.remove(queryWrapper.getKey());
 
                 QueryWrapper wrapper = pendingRequests.get(key);
@@ -276,10 +276,10 @@ public class Frontend {
         });
     }
 
-    private static boolean isHandleSequentialQueries(QueryWrapper queryWrapper) {
+    private static boolean isHandleSequentialQueries(final QueryWrapper queryWrapper) {
         // currently we support only search, because we can id the search pattern and sender
-        return queryWrapper.getQueryType() == VdcQueryType.Search &&
-                queryWrapper.getParameters() instanceof SearchParameters;
+        return queryWrapper.getQueryType() == VdcQueryType.Search
+                && queryWrapper.getParameters() instanceof SearchParameters;
     }
 
     public static void RunPublicQuery(final VdcQueryType queryType,
@@ -292,7 +292,7 @@ public class Frontend {
         GenericApiGWTServiceAsync service = GenericApiGWTServiceAsync.Util.getInstance();
         service.RunPublicQuery(queryType, parameters, new AsyncCallback<VdcQueryReturnValue>() {
             @Override
-            public void onFailure(Throwable caught) {
+            public void onFailure(final Throwable caught) {
                 if (ignoreFailure(caught)) {
                     return;
                 }
@@ -305,12 +305,12 @@ public class Frontend {
             }
 
             @Override
-            public void onSuccess(VdcQueryReturnValue result) {
+            public void onSuccess(final VdcQueryReturnValue result) {
                 logger.finer("Succesful returned result from RunQuery."); //$NON-NLS-1$
 
                 if (!result.getSucceeded()) {
-                    logger.log(Level.WARNING, "Failure while invoking ReturnQuery [" + result.getExceptionString() //$NON-NLS-1$
-                            + "]"); //$NON-NLS-1$
+                    logger.log(Level.WARNING, "Failure while invoking ReturnQuery [" //$NON-NLS-1$
+                            + result.getExceptionString() + "]"); //$NON-NLS-1$
                     if (getEventsHandler() != null) {
 
                         ArrayList<VdcQueryReturnValue> failedResult = new ArrayList<VdcQueryReturnValue>();
@@ -359,7 +359,7 @@ public class Frontend {
         GenericApiGWTServiceAsync service = GenericApiGWTServiceAsync.Util.getInstance();
         service.RunMultipleQueries(queryTypeList, queryParamsList, new AsyncCallback<ArrayList<VdcQueryReturnValue>>() {
             @Override
-            public void onFailure(Throwable caught) {
+            public void onFailure(final Throwable caught) {
                 if (ignoreFailure(caught)) {
                     return;
                 }
@@ -373,14 +373,15 @@ public class Frontend {
             }
 
             @Override
-            public void onSuccess(ArrayList<VdcQueryReturnValue> result) {
+            public void onSuccess(final ArrayList<VdcQueryReturnValue> result) {
                 logger.finer("Succesful returned result from RunMultipleQueries!"); //$NON-NLS-1$
                 FrontendMultipleQueryAsyncResult f =
                         new FrontendMultipleQueryAsyncResult(queryTypeList, queryParamsList, result);
 
                 for (VdcQueryReturnValue currQRV : result) {
                     if (!currQRV.getSucceeded()) {
-                        logger.log(Level.WARNING, "Failure while invoking ReturnQuery [" + currQRV.getExceptionString() //$NON-NLS-1$
+                        logger.log(Level.WARNING, "Failure while invoking ReturnQuery [" //$NON-NLS-1$
+                                + currQRV.getExceptionString()
                                 + "]"); //$NON-NLS-1$
 
                         if (getEventsHandler() != null) {
@@ -410,12 +411,9 @@ public class Frontend {
     }
 
     private static void raiseQueryEvent(final Event queryEvent, final VdcQueryType queryType, final String context) {
-        if (context != null && subscribedQueryTypes != null)
-        {
-            for (VdcQueryType vdcQueryType : subscribedQueryTypes)
-            {
-                if (queryType.equals(vdcQueryType))
-                {
+        if (context != null && subscribedQueryTypes != null) {
+            for (VdcQueryType vdcQueryType : subscribedQueryTypes) {
+                if (queryType.equals(vdcQueryType)) {
                     currentContext = context;
                     queryEvent.raise(Frontend.class, EventArgs.Empty);
                 }
@@ -443,12 +441,25 @@ public class Frontend {
         }
     }
 
+    /**
+     * Run an action of the specified action type using the passed in parameters. No object state.
+     * @param actionType The action type of the action to perform.
+     * @param parameters The parameters of the action.
+     * @param callback The callback to call when the action is completed.
+     */
     public static void RunAction(final VdcActionType actionType,
             final VdcActionParametersBase parameters,
             final IFrontendActionAsyncCallback callback) {
         RunAction(actionType, parameters, callback, null);
     }
 
+    /**
+     * Run an action of the specified action type using the passed in parameters, also pass in a state object
+     * @param actionType The action type of the action to perform.
+     * @param parameters The parameters of the action.
+     * @param callback The callback to call when the action is completed.
+     * @param state The state object.
+     */
     public static void RunAction(final VdcActionType actionType,
             final VdcActionParametersBase parameters,
             final IFrontendActionAsyncCallback callback,
@@ -457,7 +468,11 @@ public class Frontend {
     }
 
     /**
-     * Note: the given callback must not be null
+     * Note: the given callback must not be null.
+     * @param actionType The type of action to run.
+     * @param parameters The parameters for the action.
+     * @param callback The callback to call on failure.
+     * @param state The state object.
      */
     private static void runActionImpl(final VdcActionType actionType,
             final VdcActionParametersBase parameters,
@@ -469,7 +484,7 @@ public class Frontend {
         GenericApiGWTServiceAsync service = GenericApiGWTServiceAsync.Util.getInstance();
         service.RunAction(actionType, parameters, new AsyncCallback<VdcReturnValueBase>() {
             @Override
-            public void onFailure(Throwable caught) {
+            public void onFailure(final Throwable caught) {
                 if (ignoreFailure(caught)) {
                     return;
                 }
@@ -480,7 +495,7 @@ public class Frontend {
             }
 
             @Override
-            public void onSuccess(VdcReturnValueBase result) {
+            public void onSuccess(final VdcReturnValueBase result) {
                 logger.finer("Frontend: sucessfully executed RunAction, determining result!"); //$NON-NLS-1$
                 handleActionResult(actionType, parameters, result, callback, state);
             }
@@ -488,34 +503,21 @@ public class Frontend {
     }
 
     /**
-     * @deprecated Please use async runAction instead, sync operations are not supported
+     * {@code RunAction} without callback.
+     * @param actionType The action type of the action to run.
+     * @param parameters The parameters to the action.
      */
-    @Deprecated
     public static void RunAction(final VdcActionType actionType, final VdcActionParametersBase parameters) {
-        logger.warning("Sync RunAction is invoked, this is not supported! replace the call with the async method!"); //$NON-NLS-1$
-        dumpActionDetails(actionType, parameters);
-
-        GenericApiGWTServiceAsync service = GenericApiGWTServiceAsync.Util.getInstance();
-
-        service.RunAction(actionType, parameters, new AsyncCallback<VdcReturnValueBase>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                if (ignoreFailure(caught)) {
-                    return;
-                }
-                logger.log(Level.SEVERE, "Failed to execute RunAction: " + caught, caught); //$NON-NLS-1$
-                failureEventHandler(caught);
-                failureEventHandler(caught);
-            }
-
-            @Override
-            public void onSuccess(VdcReturnValueBase result) {
-                logger.finer("Frontend: sucessfully executed RunAction, determining result!"); //$NON-NLS-1$
-                handleActionResult(actionType, parameters, result, NULLABLE_ASYNC_CALLBACK, null);
-            }
-        });
+        RunAction(actionType, parameters, Frontend.NULLABLE_ASYNC_CALLBACK);
     }
 
+    /**
+     * Identical to 5 parameter RunMultipleAction, but isRunOnlyIfAllCanDoPass is false.
+     * @param actionType The action type of the actions to run.
+     * @param parameters The parameters to the actions.
+     * @param callback The callback to call after the operation happens.
+     * @param state A state object.
+     */
     public static void RunMultipleAction(final VdcActionType actionType,
             final ArrayList<VdcActionParametersBase> parameters,
             final IFrontendMultipleActionAsyncCallback callback,
@@ -525,7 +527,7 @@ public class Frontend {
 
     public static void RunMultipleAction(final VdcActionType actionType,
             final ArrayList<VdcActionParametersBase> parameters,
-            boolean isRunOnlyIfAllCanDoPass,
+            final boolean isRunOnlyIfAllCanDoPass,
             final IFrontendMultipleActionAsyncCallback callback,
             final Object state) {
         GenericApiGWTServiceAsync service = GenericApiGWTServiceAsync.Util.getInstance();
@@ -535,7 +537,7 @@ public class Frontend {
                 isRunOnlyIfAllCanDoPass,
                 new AsyncCallback<ArrayList<VdcReturnValueBase>>() {
                     @Override
-                    public void onFailure(Throwable caught) {
+                    public void onFailure(final Throwable caught) {
                         if (ignoreFailure(caught)) {
                             return;
                         }
@@ -543,12 +545,13 @@ public class Frontend {
                         failureEventHandler(caught);
 
                         if (callback != null) {
-                            callback.executed(new FrontendMultipleActionAsyncResult(actionType, parameters, null, state));
+                            callback.executed(new FrontendMultipleActionAsyncResult(actionType, parameters, null,
+                                    state));
                         }
                     }
 
                     @Override
-                    public void onSuccess(ArrayList<VdcReturnValueBase> result) {
+                    public void onSuccess(final ArrayList<VdcReturnValueBase> result) {
                         logger.finer("Frontend: sucessfully executed RunAction, determining result!"); //$NON-NLS-1$
 
                         ArrayList<VdcReturnValueBase> failed = new ArrayList<VdcReturnValueBase>();
@@ -576,10 +579,12 @@ public class Frontend {
     }
 
     /**
-     * @deprecated Please use async RunMultipleAction instead, sync operations are not supported
+     * RunMultipleActions without passing in a callback or state.
+     * @param actionType The type of action to perform.
+     * @param parameters The parameters of the action.
      */
-    @Deprecated
-    public static void RunMultipleAction(VdcActionType actionType, ArrayList<VdcActionParametersBase> parameters) {
+    public static void RunMultipleAction(final VdcActionType actionType,
+            final ArrayList<VdcActionParametersBase> parameters) {
         RunMultipleAction(actionType, parameters, null, null);
     }
 
@@ -587,8 +592,7 @@ public class Frontend {
             final ArrayList<VdcActionParametersBase> parameters,
             final ArrayList<IFrontendActionAsyncCallback> callbacks,
             final IFrontendActionAsyncCallback failureCallback,
-            final Object state)
-    {
+            final Object state) {
         if (actionTypes.isEmpty() || parameters.isEmpty() || callbacks.isEmpty())
         {
             return;
@@ -597,29 +601,32 @@ public class Frontend {
         RunAction(actionTypes.get(0), parameters.get(0),
                 new IFrontendActionAsyncCallback() {
                     @Override
-                    public void executed(FrontendActionAsyncResult result) {
+                    public void executed(final FrontendActionAsyncResult result) {
                         VdcReturnValueBase returnValue = result.getReturnValue();
                         boolean success = returnValue != null && returnValue.getSucceeded();
-                        if (success || failureCallback == null)
-                        {
+                        if (success || failureCallback == null) {
                             IFrontendActionAsyncCallback callback = callbacks.get(0);
-                            if (callback != null)
-                            {
+                            if (callback != null) {
                                 callback.executed(result);
                             }
                             actionTypes.remove(0);
                             parameters.remove(0);
                             callbacks.remove(0);
                             RunMultipleActions(actionTypes, parameters, callbacks, failureCallback, state);
-                        }
-                        else
-                        {
+                        } else {
                             failureCallback.executed(result);
                         }
                     }
                 }, state);
     }
 
+    /**
+     * ASynchronous user login.
+     * @param userName The name of the user.
+     * @param password The password of the user.
+     * @param domain The domain to check for the user.
+     * @param callback The callback to call when the operation is finished.
+     */
     public static void LoginAsync(final String userName,
             final String password,
             final String domain,
@@ -629,7 +636,7 @@ public class Frontend {
         GenericApiGWTServiceAsync service = GenericApiGWTServiceAsync.Util.getInstance();
         service.Login(userName, password, domain, new AsyncCallback<VdcReturnValueBase>() {
             @Override
-            public void onSuccess(VdcReturnValueBase result) {
+            public void onSuccess(final VdcReturnValueBase result) {
                 logger.finer("Succesful returned result from Login."); //$NON-NLS-1$
                 setLoggedInUser(null);
                 List<VdcReturnValueBase> failed = new ArrayList<VdcReturnValueBase>();
@@ -642,7 +649,7 @@ public class Frontend {
             }
 
             @Override
-            public void onFailure(Throwable caught) {
+            public void onFailure(final Throwable caught) {
                 if (ignoreFailure(caught)) {
                     return;
                 }
@@ -663,7 +670,7 @@ public class Frontend {
         GenericApiGWTServiceAsync service = GenericApiGWTServiceAsync.Util.getInstance();
         service.logOff(vdcUser, new AsyncCallback<VdcReturnValueBase>() {
             @Override
-            public void onSuccess(VdcReturnValueBase result) {
+            public void onSuccess(final VdcReturnValueBase result) {
                 logger.finer("Succesful returned result from Logoff."); //$NON-NLS-1$
                 callback.asyncCallback.onSuccess(callback.getModel(), result);
                 if (getLoginHandler() != null) {
@@ -672,7 +679,7 @@ public class Frontend {
             }
 
             @Override
-            public void onFailure(Throwable caught) {
+            public void onFailure(final Throwable caught) {
                 if (ignoreFailure(caught)) {
                     return;
                 }
@@ -684,18 +691,26 @@ public class Frontend {
         });
     }
 
+    /**
+     * Checks if the user is logged.
+     * @return {@code true} if the user is logged in, false otherwise.
+     */
     public static Boolean getIsUserLoggedIn() {
         return getLoggedInUser() != null;
     }
 
+    /**
+     * Gets the logged in user, the result is passed to the passed in callback method.
+     * @param callback The callback handler to call after getting the logged in user.
+     */
     public static void getLoggedInUser(final IAsyncCallback<VdcUser> callback) {
         logger.finer("Determining whether user is logged in..."); //$NON-NLS-1$
 
-        GenericApiGWTServiceAsync service = GenericApiGWTServiceAsync.Util.getInstance();
+        final GenericApiGWTServiceAsync service = GenericApiGWTServiceAsync.Util.getInstance();
 
         service.getLoggedInUser(new AsyncCallback<VdcUser>() {
             @Override
-            public void onFailure(Throwable caught) {
+            public void onFailure(final Throwable caught) {
                 if (ignoreFailure(caught)) {
                     return;
                 }
@@ -705,7 +720,7 @@ public class Frontend {
             }
 
             @Override
-            public void onSuccess(VdcUser result) {
+            public void onSuccess(final VdcUser result) {
                 logger.finer("Sucessfully executed sync getIsUserLoggedIn!"); //$NON-NLS-1$
                 callback.onSuccess(result);
             }
@@ -806,26 +821,6 @@ public class Frontend {
             fault.setMessage(translatedMessage);
             getEventsHandler().runActionExecutionFailed(actionType, fault);
         }
-    }
-
-    /**
-     * @deprecated Not supported
-     */
-    @Deprecated
-    public static RegistrationResult RegisterQuery(VdcQueryType queryType,
-            VdcQueryParametersBase paramenters) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * @deprecated Not supported
-     */
-    @Deprecated
-    public static RegistrationResult RegisterSearch(String searchString,
-            SearchType entityType, int searchPageSize) {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     public static void Subscribe(VdcQueryType[] queryTypes)

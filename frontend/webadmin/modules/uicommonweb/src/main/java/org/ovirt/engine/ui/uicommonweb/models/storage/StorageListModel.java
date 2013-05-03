@@ -261,7 +261,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     {
         super.asyncSearch();
 
-        setAsyncResult(Frontend.RegisterSearch(getSearchString(), SearchType.StorageDomain, getSearchPageSize()));
+        setAsyncResult(null);
         setItems(getAsyncResult().getData());
     }
 

@@ -79,8 +79,7 @@ public class TemplateStorageListModel extends SearchableListModel
 
         VmTemplate template = (VmTemplate) getEntity();
 
-        setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetStorageDomainsByVmTemplateId,
-                new GetStorageDomainsByVmTemplateIdQueryParameters(template.getId())));
+        setAsyncResult(null);
         setItems(getAsyncResult().getData());
     }
 

@@ -142,8 +142,7 @@ public class TemplateDiskListModel extends SearchableListModel
     {
         super.asyncSearch();
 
-        setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetVmTemplatesDisks,
-                new GetVmTemplatesDisksParameters(getEntityStronglyTyped().getId())));
+        setAsyncResult(null);
         setItems(getAsyncResult().getData());
     }
 

@@ -424,7 +424,7 @@ public class UserListModel extends ListWithDetailsModel
     {
         super.asyncSearch();
 
-        setAsyncResult(Frontend.RegisterSearch(getSearchString(), SearchType.DBUser, getSearchPageSize()));
+        setAsyncResult(null);
         setItems(getAsyncResult().getData());
     }
 

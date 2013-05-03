@@ -98,8 +98,7 @@ public class RolePermissionListModel extends SearchableListModel
             return;
         }
 
-        setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetPermissionByRoleId,
-                new MultilevelAdministrationByRoleIdParameters(getEntity().getId())));
+        setAsyncResult(null);
         setItems(getAsyncResult().getData());
     }
 

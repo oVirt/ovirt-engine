@@ -284,7 +284,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
     {
         super.asyncSearch();
 
-        setAsyncResult(Frontend.RegisterSearch(getSearchString(), SearchType.VmTemplate, getSearchPageSize()));
+        setAsyncResult(null);
         setItems(getAsyncResult().getData());
     }
 

@@ -667,7 +667,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     {
         super.asyncSearch();
 
-        setAsyncResult(Frontend.RegisterSearch(getSearchString(), SearchType.VM, getSearchPageSize()));
+        setAsyncResult(null);
         setItems(getAsyncResult().getData());
     }
 

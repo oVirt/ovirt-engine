@@ -146,8 +146,7 @@ public class ClusterNetworkListModel extends SearchableListModel
     {
         super.asyncSearch();
 
-        setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetAllNetworksByClusterId,
-                new IdQueryParameters(getEntity().getId())));
+        setAsyncResult(null);
         setItems(getAsyncResult().getData());
     }
 
@@ -156,8 +155,7 @@ public class ClusterNetworkListModel extends SearchableListModel
         Network network = (Network) getSelectedItem();
 
         Frontend.RunAction(VdcActionType.UpdateDisplayToVdsGroup, new DisplayNetworkToVdsGroupParameters(getEntity(),
-                network,
-                true));
+                network, true));
     }
 
     public void manage()

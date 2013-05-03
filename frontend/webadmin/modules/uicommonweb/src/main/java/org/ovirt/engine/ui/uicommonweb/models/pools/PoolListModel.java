@@ -202,7 +202,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
     {
         super.asyncSearch();
 
-        setAsyncResult(Frontend.RegisterSearch(getSearchString(), SearchType.VmPools, getSearchPageSize()));
+        setAsyncResult(null);
         setItems(getAsyncResult().getData());
     }
 

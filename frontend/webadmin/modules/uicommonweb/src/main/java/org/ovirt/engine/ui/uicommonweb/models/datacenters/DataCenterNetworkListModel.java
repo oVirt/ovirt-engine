@@ -139,8 +139,7 @@ public class DataCenterNetworkListModel extends SearchableListModel
     {
         super.asyncSearch();
 
-        setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetAllNetworks,
-                new IdQueryParameters(getEntity().getId())));
+        setAsyncResult(null);
         setItems(getAsyncResult().getData());
     }
 

@@ -118,8 +118,7 @@ public class UserPermissionListModel extends SearchableListModel
     {
         super.asyncSearch();
 
-        setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetPermissionsByAdElementId,
-                new MultilevelAdministrationByAdElementIdParameters(getEntity().getuser_id())));
+        setAsyncResult(null);
         setItems(getAsyncResult().getData());
     }
 

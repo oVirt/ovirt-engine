@@ -71,8 +71,7 @@ public class SystemPermissionListModel extends SearchableListModel
     {
         super.asyncSearch();
 
-        setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetSystemPermissions, new VdcQueryParametersBase()));
-        setItems(getAsyncResult().getData());
+        setAsyncResult(null);
     }
 
     @Override

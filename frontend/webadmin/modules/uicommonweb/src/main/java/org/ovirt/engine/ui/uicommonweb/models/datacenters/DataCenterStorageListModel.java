@@ -220,8 +220,7 @@ public class DataCenterStorageListModel extends SearchableListModel
     {
         super.asyncSearch();
 
-        setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetStorageDomainsByStoragePoolId,
-                new StoragePoolQueryParametersBase(getEntity().getId())));
+        setAsyncResult(null);
         setItems(getAsyncResult().getData());
     }
 

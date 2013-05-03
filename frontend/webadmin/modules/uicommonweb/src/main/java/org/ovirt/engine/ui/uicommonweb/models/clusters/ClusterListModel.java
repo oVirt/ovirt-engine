@@ -287,7 +287,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     {
         super.asyncSearch();
 
-        setAsyncResult(Frontend.RegisterSearch(getSearchString(), SearchType.Cluster, getSearchPageSize()));
+        setAsyncResult(null);
         setItems(getAsyncResult().getData());
     }
 

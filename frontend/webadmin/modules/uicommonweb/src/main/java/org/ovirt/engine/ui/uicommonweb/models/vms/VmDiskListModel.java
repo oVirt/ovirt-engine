@@ -237,8 +237,7 @@ public class VmDiskListModel extends VmDiskListModelBase
 
         VM vm = getEntity();
 
-        setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetAllDisksByVmId,
-                new GetAllDisksByVmIdParameters(vm.getId())));
+        setAsyncResult(null);
         setItems(getAsyncResult().getData());
     }
 

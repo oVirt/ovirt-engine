@@ -120,7 +120,7 @@ public class PermissionListModel extends SearchableListModel
         tempVar.setObjectId(getEntityGuid());
         tempVar.setVdcObjectType(objType);
         tempVar.setDirectOnly(directOnly);
-        setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetPermissionsForObject, tempVar));
+        setAsyncResult(null);
 
         setItems(getAsyncResult().getData());
     }

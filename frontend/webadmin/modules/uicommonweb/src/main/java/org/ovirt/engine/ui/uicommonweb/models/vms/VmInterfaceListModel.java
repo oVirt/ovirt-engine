@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -141,8 +140,7 @@ public class VmInterfaceListModel extends SearchableListModel
 
         VM vm = getEntity();
 
-        setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetVmInterfacesByVmId,
-                new IdQueryParameters(vm.getId())));
+        setAsyncResult(null);
         setItems(getAsyncResult().getData());
     }
 
