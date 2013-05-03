@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.tasks;
 
 public enum AsyncTaskState {
     Initializing,

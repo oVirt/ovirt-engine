@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.tasks;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +13,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.ovirt.engine.core.bll.tasks.AsyncTaskUtils;
+import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -347,7 +347,7 @@ public final class AsyncTaskManager {
         return dbAsyncTask.getaction_type();
     }
 
-    protected static void removeTaskFromDbByTaskId(Guid taskId) {
+    public static void removeTaskFromDbByTaskId(Guid taskId) {
         try {
             if (DbFacade.getInstance().getAsyncTaskDao().remove(taskId) != 0) {
                 log.infoFormat("Removed task {0} from DataBase", taskId);
@@ -507,7 +507,7 @@ public final class AsyncTaskManager {
     /**
      * Get a Set of all the storage pool id's of tasks that should pool.
      *
-     * @see org.ovirt.engine.core.bll.SPMAsyncTask#getShouldPoll()
+     * @see SPMAsyncTask#getShouldPoll()
      * @return - Set of active tasks.
      */
     private Set<Guid> getPoolIdsTasks() {

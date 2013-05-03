@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.SPMAsyncTask;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskEntity;
 import org.ovirt.engine.core.common.businessentities.AsyncTasks;

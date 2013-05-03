@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.tasks.AsyncTaskManager;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

@@ -2,6 +2,9 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import org.ovirt.engine.core.bll.tasks.AsyncTaskState;
+import org.ovirt.engine.core.bll.tasks.CommandAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.EndedTaskInfo;
 import org.ovirt.engine.core.common.asynctasks.EndedTasksInfo;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;

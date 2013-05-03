@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.ovirt.engine.core.bll.AsyncTaskManager;
+import org.ovirt.engine.core.bll.tasks.AsyncTaskManager;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;

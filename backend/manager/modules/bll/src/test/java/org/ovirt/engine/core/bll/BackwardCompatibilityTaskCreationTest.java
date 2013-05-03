@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.tasks.CommandAsyncTask;
+import org.ovirt.engine.core.bll.tasks.SPMAsyncTask;
+import org.ovirt.engine.core.bll.tasks.AsyncTaskState;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;

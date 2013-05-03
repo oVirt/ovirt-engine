@@ -1,9 +1,10 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.tasks;
 
 import static org.ovirt.engine.core.common.config.ConfigValues.UknownTaskPrePollingLapse;
 
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
@@ -124,11 +125,11 @@ public class SPMAsyncTask {
     /**
      * Use this to hold unknown tasks from polling, to overcome bz673695 without a complete re-haul to the
      * AsyncTaskManager and CommandBase.
-     * @TODO remove this and re-factor {@link AsyncTaskManager}
+     * @TODO remove this and re-factor {@link org.ovirt.engine.core.bll.tasks.AsyncTaskManager}
      * @return true when the time passed after creating the task is bigger than
      *         <code>ConfigValues.UknownTaskPrePollingLapse</code>
-     * @see AsyncTaskManager
-     * @see CommandBase
+     * @see org.ovirt.engine.core.bll.tasks.AsyncTaskManager
+     * @see org.ovirt.engine.core.bll.CommandBase
      * @since 3.0
      */
     boolean isTaskOverPrePollingLapse() {
