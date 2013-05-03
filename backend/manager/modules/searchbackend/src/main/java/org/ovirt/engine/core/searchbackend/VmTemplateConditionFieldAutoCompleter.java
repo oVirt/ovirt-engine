@@ -8,20 +8,20 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 
 public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public VmTemplateConditionFieldAutoCompleter() {
-        mVerbs.put("NAME", "NAME");
-        mVerbs.put("DOMAIN", "DOMAIN");
-        mVerbs.put("OS", "OS");
-        mVerbs.put("CREATIONDATE", "CREATIONDATE");
-        mVerbs.put("CHILDCOUNT", "CHILEDCOUNT");
-        mVerbs.put("MEM", "MEM");
-        mVerbs.put("DESCRIPTION", "DESCRIPTION");
-        mVerbs.put("STATUS", "STATUS");
-        mVerbs.put("CLUSTER", "CLUSTER");
-        mVerbs.put("DATACENTER", "DATACENTER");
-        mVerbs.put("QUOTA", "QUOTA");
+        mVerbs.add("NAME");
+        mVerbs.add("DOMAIN");
+        mVerbs.add("OS");
+        mVerbs.add("CREATIONDATE");
+        mVerbs.add("CHILDCOUNT");
+        mVerbs.add("MEM");
+        mVerbs.add("DESCRIPTION");
+        mVerbs.add("STATUS");
+        mVerbs.add("CLUSTER");
+        mVerbs.add("DATACENTER");
+        mVerbs.add("QUOTA");
 
         buildCompletions();
-        mVerbs.put("_VMT_ID", "_VMT_ID");
+        mVerbs.add("_VMT_ID");
         // Building the types dict
         getTypeDictionary().put("NAME", String.class);
         getTypeDictionary().put("DOMAIN", String.class);

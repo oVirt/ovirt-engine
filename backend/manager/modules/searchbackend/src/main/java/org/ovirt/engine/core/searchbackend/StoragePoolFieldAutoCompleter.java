@@ -6,10 +6,10 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 public class StoragePoolFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public StoragePoolFieldAutoCompleter() {
         // Building the basic vervs Dict
-        mVerbs.put("NAME", "NAME");
-        mVerbs.put("DESCRIPTION", "DESCRIPTION");
-        mVerbs.put("TYPE", "TYPE");
-        mVerbs.put("STATUS", "STATUS");
+        mVerbs.add("NAME");
+        mVerbs.add("DESCRIPTION");
+        mVerbs.add("TYPE");
+        mVerbs.add("STATUS");
 
         // Building the autoCompletion Dict
         buildCompletions();

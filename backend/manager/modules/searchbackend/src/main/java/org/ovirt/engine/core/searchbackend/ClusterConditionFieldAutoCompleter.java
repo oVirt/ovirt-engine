@@ -4,9 +4,9 @@ package org.ovirt.engine.core.searchbackend;
 public class ClusterConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public ClusterConditionFieldAutoCompleter() {
         // Building the basic vervs Dict
-        mVerbs.put("NAME", "NAME");
-        mVerbs.put("DESCRIPTION", "DESCRIPTION");
-        mVerbs.put("INITIALIZED", "INITIALIZED");
+        mVerbs.add("NAME");
+        mVerbs.add("DESCRIPTION");
+        mVerbs.add("INITIALIZED");
 
         // Building the autoCompletion Dict
         buildCompletions();

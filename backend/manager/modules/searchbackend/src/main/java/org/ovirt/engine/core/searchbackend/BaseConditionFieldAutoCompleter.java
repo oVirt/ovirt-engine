@@ -72,7 +72,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
     }
 
     protected void buildBasicValidationTable() {
-        for (String key : mVerbs.keySet()) {
+        for (String key : mVerbs) {
             final List<ValueValidationFunction> curList = new ArrayList<ValueValidationFunction>();
             final Class<?> curType = typeDict.get(key);
             if (curType == java.math.BigDecimal.class) {

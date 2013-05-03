@@ -7,8 +7,8 @@ public class NetworkClusterConditionFieldAutoCompleter extends BaseConditionFiel
 
     public NetworkClusterConditionFieldAutoCompleter() {
         // Building the basic verbs dict.
-        mVerbs.put(NETWORK_NAME, NETWORK_NAME);
-        mVerbs.put(CLUSTER_NAME, CLUSTER_NAME);
+        mVerbs.add(NETWORK_NAME);
+        mVerbs.add(CLUSTER_NAME);
 
         // Building the autoCompletion dict.
         buildCompletions();

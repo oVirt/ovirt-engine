@@ -7,7 +7,7 @@ public class AdGroupConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
     public AdGroupConditionFieldAutoCompleter() {
         super();
         // Building the basic vervs Dict
-        mVerbs.put("NAME", "NAME");
+        mVerbs.add("NAME");
 
         // Building the autoCompletion Dict
         buildCompletions();
@@ -19,7 +19,7 @@ public class AdGroupConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         columnNameDict.put("NAME", "$CN");
 
         // Building the validation dict
-        for (String key : mVerbs.keySet()) {
+        for (String key : mVerbs) {
             validationDict.put(key, Collections.singletonList(validCharacters));
         }
     }

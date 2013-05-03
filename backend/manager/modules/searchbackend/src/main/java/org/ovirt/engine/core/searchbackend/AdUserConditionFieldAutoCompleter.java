@@ -5,9 +5,9 @@ import java.util.Collections;
 public class AdUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public AdUserConditionFieldAutoCompleter() {
         // Building the basic vervs Dict
-        mVerbs.put("NAME", "NAME");
-        mVerbs.put("USERNAME", "USERNAME");
-        mVerbs.put("ALLNAMES", "ALLNAMES");
+        mVerbs.add("NAME");
+        mVerbs.add("USERNAME");
+        mVerbs.add("ALLNAMES");
 
         // Building the types dict
         getTypeDictionary().put("NAME", String.class);
@@ -17,9 +17,9 @@ public class AdUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCom
         columnNameDict.put("USERNAME", "$SAMACCOUNTNAME");
 
         if ("LDAP".equalsIgnoreCase(SyntaxCheckerFactory.getConfigAuthenticationMethod())) {
-            mVerbs.put("LASTNAME", "LASTNAME");
-            mVerbs.put("DEPARTMENT", "DEPARTMENT");
-            mVerbs.put("TITLE", "TITLE");
+            mVerbs.add("LASTNAME");
+            mVerbs.add("DEPARTMENT");
+            mVerbs.add("TITLE");
 
             getTypeDictionary().put("LASTNAME", String.class);
             getTypeDictionary().put("DEPARTMENT", String.class);
@@ -34,7 +34,7 @@ public class AdUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCom
         buildCompletions();
 
         // Building the validation dict
-        for (String key : mVerbs.keySet()) {
+        for (String key : mVerbs) {
             validationDict.put(key, Collections.singletonList(validCharacters));
         }
     }

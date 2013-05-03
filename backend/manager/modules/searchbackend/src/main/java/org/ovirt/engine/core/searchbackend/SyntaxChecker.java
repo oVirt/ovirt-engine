@@ -42,7 +42,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         mPluralAC = new BaseAutoCompleter("S");
         mSortbyAC = new BaseAutoCompleter("SORTBY");
         mPageAC = new BaseAutoCompleter("PAGE");
-        mSortDirectionAC = new BaseAutoCompleter(new String[] { "ASC", "DESC" });
+        mSortDirectionAC = new BaseAutoCompleter( "ASC", "DESC" );
         mAndAC = new BaseAutoCompleter("AND");
         mOrAC = new BaseAutoCompleter("OR");
         mDotAC = new BaseAutoCompleter(".");

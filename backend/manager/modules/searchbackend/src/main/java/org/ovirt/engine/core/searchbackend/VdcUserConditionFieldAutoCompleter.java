@@ -13,17 +13,17 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
     public VdcUserConditionFieldAutoCompleter() {
         super();
         // Building the basic vervs Dict
-        mVerbs.put("NAME", "NAME");
-        mVerbs.put("LASTNAME", "LASTNAME");
-        mVerbs.put("USRNAME", "USRNAME");
-        mVerbs.put("DEPARTMENT", "DEPARTMENT");
-        mVerbs.put("GROUP", "GROUP");
-        mVerbs.put("TITLE", "TITLE");
-        mVerbs.put("STATUS", "STATUS");
-        mVerbs.put("ROLE", "ROLE");
-        mVerbs.put("TAG", "TAG");
-        mVerbs.put("POOL", "POOL");
-        mVerbs.put("TYPE", "TYPE");
+        mVerbs.add("NAME");
+        mVerbs.add("LASTNAME");
+        mVerbs.add("USRNAME");
+        mVerbs.add("DEPARTMENT");
+        mVerbs.add("GROUP");
+        mVerbs.add("TITLE");
+        mVerbs.add("STATUS");
+        mVerbs.add("ROLE");
+        mVerbs.add("TAG");
+        mVerbs.add("POOL");
+        mVerbs.add("TYPE");
 
         // Building the autoCompletion Dict
         buildCompletions();

@@ -12,7 +12,7 @@ public class EnumNameAutoCompleter extends BaseAutoCompleter implements IConditi
      */
     public <T extends Enum<T>> EnumNameAutoCompleter(Class<T> enumerationType) {
         for (T enumMember : enumerationType.getEnumConstants()) {
-            mVerbs.put(enumMember.name(), enumMember.name());
+            mVerbs.add(enumMember.name());
         }
         buildCompletions();
     }

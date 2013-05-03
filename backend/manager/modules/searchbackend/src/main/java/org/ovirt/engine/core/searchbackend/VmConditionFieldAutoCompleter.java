@@ -14,30 +14,30 @@ import org.ovirt.engine.core.compat.TimeSpan;
 public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public VmConditionFieldAutoCompleter() {
         // Building the basic vervs Dict
-        mVerbs.put("NAME", "NAME");
-        mVerbs.put("STATUS", "STATUS");
-        mVerbs.put("IP", "IP");
-        mVerbs.put("UPTIME", "UPTIME");
-        mVerbs.put("DOMAIN", "DOMAIN");
-        mVerbs.put("OS", "OS");
-        mVerbs.put("CREATIONDATE", "CREATIONDATE");
-        mVerbs.put("ADDRESS", "ADDRESS");
-        mVerbs.put("CPU_USAGE", "CPU_USAGE");
-        mVerbs.put("MEM_USAGE", "MEM_USAGE");
-        mVerbs.put("NETWORK_USAGE", "NETWORK_USAGE");
-        mVerbs.put("MEMORY", "MEMORY");
-        mVerbs.put("APPS", "APPS");
-        mVerbs.put("CLUSTER", "CLUSTER");
-        mVerbs.put("POOL", "POOL");
-        mVerbs.put("LOGGEDINUSER", "LOGGEDINUSER");
-        mVerbs.put("TAG", "TAG");
-        mVerbs.put("DATACENTER", "DATACENTER");
-        mVerbs.put("TYPE", "TYPE");
-        mVerbs.put("QUOTA", "QUOTA");
-        mVerbs.put("HOST", "HOST");
+        mVerbs.add("NAME");
+        mVerbs.add("STATUS");
+        mVerbs.add("IP");
+        mVerbs.add("UPTIME");
+        mVerbs.add("DOMAIN");
+        mVerbs.add("OS");
+        mVerbs.add("CREATIONDATE");
+        mVerbs.add("ADDRESS");
+        mVerbs.add("CPU_USAGE");
+        mVerbs.add("MEM_USAGE");
+        mVerbs.add("NETWORK_USAGE");
+        mVerbs.add("MEMORY");
+        mVerbs.add("APPS");
+        mVerbs.add("CLUSTER");
+        mVerbs.add("POOL");
+        mVerbs.add("LOGGEDINUSER");
+        mVerbs.add("TAG");
+        mVerbs.add("DATACENTER");
+        mVerbs.add("TYPE");
+        mVerbs.add("QUOTA");
+        mVerbs.add("HOST");
         // Building the autoCompletion Dict
         buildCompletions();
-        mVerbs.put("_VM_ID", "_VM_ID");
+        mVerbs.add("_VM_ID");
 
         // Building the types dict
         getTypeDictionary().put("NAME", String.class);

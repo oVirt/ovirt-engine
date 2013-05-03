@@ -11,21 +11,21 @@ import org.ovirt.engine.core.compat.StringHelper;
 
 public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public DiskConditionFieldAutoCompleter() {
-        // Building the basic verbs dict.
-        mVerbs.put("ALIAS", "ALIAS");
-        mVerbs.put("DESCRIPTION", "DESCRIPTION");
-        mVerbs.put("PROVISIONED_SIZE", "PROVISIONED_SIZE");
-        mVerbs.put("SIZE", "SIZE");
-        mVerbs.put("ACTUAL_SIZE", "ACTUAL_SIZE");
-        mVerbs.put("CREATION_DATE", "CREATION_DATE");
-        mVerbs.put("BOOTABLE", "BOOTABLE");
-        mVerbs.put("SHAREABLE", "SHAREABLE");
-        mVerbs.put("STATUS", "STATUS");
-        mVerbs.put("DISK_TYPE", "DISK_TYPE");
-        mVerbs.put("NUMBER_OF_VMS", "NUMBER_OF_VMS");
-        mVerbs.put("VM_NAMES", "VM_NAMES");
-        mVerbs.put("QUOTA", "QUOTA");
-        mVerbs.put("ID", "ID");
+        // Building the basic verbs set.
+        mVerbs.add("ALIAS");
+        mVerbs.add("DESCRIPTION");
+        mVerbs.add("PROVISIONED_SIZE");
+        mVerbs.add("SIZE");
+        mVerbs.add("ACTUAL_SIZE");
+        mVerbs.add("CREATION_DATE");
+        mVerbs.add("BOOTABLE");
+        mVerbs.add("SHAREABLE");
+        mVerbs.add("STATUS");
+        mVerbs.add("DISK_TYPE");
+        mVerbs.add("NUMBER_OF_VMS");
+        mVerbs.add("VM_NAMES");
+        mVerbs.add("QUOTA");
+        mVerbs.add("ID");
 
         // Building the autoCompletion dict.
         buildCompletions();

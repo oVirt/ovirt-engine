@@ -2,12 +2,8 @@ package org.ovirt.engine.core.searchbackend;
 
 public class AdSearchObjecAutoCompleter extends BaseAutoCompleter {
     public AdSearchObjecAutoCompleter() {
-        super();
-        mVerbs.put(SearchObjects.AD_USER_PLU_OBJ_NAME, SearchObjects.AD_USER_PLU_OBJ_NAME);
-        mVerbs.put(SearchObjects.AD_GROUP_PLU_OBJ_NAME, SearchObjects.AD_GROUP_PLU_OBJ_NAME);
-        buildCompletions();
-        mVerbs.put(SearchObjects.AD_USER_OBJ_NAME, SearchObjects.AD_USER_OBJ_NAME);
-        mVerbs.put(SearchObjects.AD_GROUP_OBJ_NAME, SearchObjects.AD_GROUP_OBJ_NAME);
+        super(new String[] { SearchObjects.AD_USER_PLU_OBJ_NAME, SearchObjects.AD_GROUP_PLU_OBJ_NAME },
+                new String[] { SearchObjects.AD_USER_OBJ_NAME, SearchObjects.AD_GROUP_OBJ_NAME });
     }
 
     @Override

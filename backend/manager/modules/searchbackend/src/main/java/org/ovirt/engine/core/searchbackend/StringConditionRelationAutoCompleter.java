@@ -5,6 +5,6 @@ public final class StringConditionRelationAutoCompleter extends BaseAutoComplete
     public final static StringConditionRelationAutoCompleter INSTANCE = new StringConditionRelationAutoCompleter();
 
     private StringConditionRelationAutoCompleter() {
-        super(new String[] { "=", "!=" });
+        super("=", "!=");
     }
 }

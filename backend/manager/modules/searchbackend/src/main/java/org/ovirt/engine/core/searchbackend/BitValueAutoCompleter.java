@@ -5,9 +5,9 @@ public class BitValueAutoCompleter extends BaseAutoCompleter implements IConditi
 
     public BitValueAutoCompleter() {
         mBitValues.put("TRUE", 1);
-        mVerbs.put("TRUE", "TRUE");
+        mVerbs.add("TRUE");
         mBitValues.put("FALSE", 0);
-        mVerbs.put("FALSE", "FALSE");
+        mVerbs.add("FALSE");
         buildCompletions();
     }
 

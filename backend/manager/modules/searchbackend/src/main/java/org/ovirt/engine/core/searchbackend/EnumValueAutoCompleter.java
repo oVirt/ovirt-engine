@@ -15,7 +15,7 @@ public class EnumValueAutoCompleter extends BaseAutoCompleter implements ICondit
             String ValName = val.name().toUpperCase();
             try {
                 mEnumValues.put(ValName, val.getValue());
-                mVerbs.put(ValName, ValName);
+                mVerbs.add(ValName);
             } catch (RuntimeException e) {
                 log.error("EnumValueAutoCompleter. Failed to add " + ValName + " .Exception : " + e.getMessage(), e);
             }

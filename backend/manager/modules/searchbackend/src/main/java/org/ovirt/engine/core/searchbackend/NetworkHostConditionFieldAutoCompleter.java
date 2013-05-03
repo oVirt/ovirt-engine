@@ -5,7 +5,7 @@ public class NetworkHostConditionFieldAutoCompleter extends BaseConditionFieldAu
 
     public NetworkHostConditionFieldAutoCompleter() {
         // Building the basic verbs dict.
-        mVerbs.put(HOST_NAME, HOST_NAME);
+        mVerbs.add(HOST_NAME);
 
         // Building the autoCompletion dict.
         buildCompletions();

@@ -7,31 +7,31 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
     public AuditLogConditionFieldAutoCompleter() {
         super();
         // Building the basic vervs Dict
-        mVerbs.put("TYPE", "TYPE");
-        mVerbs.put("SEVERITY", "SEVERITY");
-        mVerbs.put("MESSAGE", "MESSAGE");
-        mVerbs.put("TIME", "TIME");
-        mVerbs.put("USRNAME", "USRNAME");
-        mVerbs.put("EVENT_HOST", "EVENT_HOST");
-        mVerbs.put("EVENT_VM", "EVENT_VM");
-        mVerbs.put("EVENT_TEMPLATE", "EVENT_TEMPLATE");
-        mVerbs.put("EVENT_STORAGE", "EVENT_STORAGE");
-        mVerbs.put("EVENT_DATACENTER", "EVENT_DATACENTER");
-        mVerbs.put("EVENT_VOLUME", "EVENT_VOLUME");
-        mVerbs.put("CORRELATION_ID", "CORRELATION_ID");
-        mVerbs.put("ORIGIN", "ORIGIN");
-        mVerbs.put("CUSTOM_EVENT_ID", "CUSTOM_EVENT_ID");
-        mVerbs.put("DELETED", "DELETED");
+        mVerbs.add("TYPE");
+        mVerbs.add("SEVERITY");
+        mVerbs.add("MESSAGE");
+        mVerbs.add("TIME");
+        mVerbs.add("USRNAME");
+        mVerbs.add("EVENT_HOST");
+        mVerbs.add("EVENT_VM");
+        mVerbs.add("EVENT_TEMPLATE");
+        mVerbs.add("EVENT_STORAGE");
+        mVerbs.add("EVENT_DATACENTER");
+        mVerbs.add("EVENT_VOLUME");
+        mVerbs.add("CORRELATION_ID");
+        mVerbs.add("ORIGIN");
+        mVerbs.add("CUSTOM_EVENT_ID");
+        mVerbs.add("DELETED");
         buildCompletions();
         // These search options remain hidden from the autocompletion
         // but still available for the user interface
-        mVerbs.put("_EVENT_VM_ID", "_EVENT_VM_ID");
-        mVerbs.put("_EVENT_TEMPLATE_ID", "_EVENT_TEMPLATE_ID");
-        mVerbs.put("_EVENT_STORAGE_ID", "_EVENT_STORAGE_ID");
-        mVerbs.put("_EVENT_HOST_ID", "_EVENT_HOST_ID");
-        mVerbs.put("_EVENT_DATACENTER_ID", "_EVENT_DATACENTER_ID");
-        mVerbs.put("_EVENT_QUOTA_ID", "_EVENT_QUOTA_ID");
-        mVerbs.put("USRID", "USRID");
+        mVerbs.add("_EVENT_VM_ID");
+        mVerbs.add("_EVENT_TEMPLATE_ID");
+        mVerbs.add("_EVENT_STORAGE_ID");
+        mVerbs.add("_EVENT_HOST_ID");
+        mVerbs.add("_EVENT_DATACENTER_ID");
+        mVerbs.add("_EVENT_QUOTA_ID");
+        mVerbs.add("USRID");
         // Building the autoCompletion Dict
         // Building the types dict
         getTypeDictionary().put("TYPE", Integer.class);

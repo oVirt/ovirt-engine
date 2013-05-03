@@ -12,7 +12,7 @@ public class DateEnumValueAutoCompleter extends BaseAutoCompleter implements ICo
         for (E val : enumerationType.getEnumConstants()) {
             String ValName = val.name().toUpperCase();
             mEnumValues.put(ValName, val.getValue());
-            mVerbs.put(ValName, ValName);
+            mVerbs.add(ValName);
         }
         AddDaysOfWeek();
         buildCompletions();
@@ -24,7 +24,7 @@ public class DateEnumValueAutoCompleter extends BaseAutoCompleter implements ICo
         for (int i = -2; i > -8; i--) {
             day = DateTime.getNow().AddDays(i).getDayOfWeek().toString();
             mEnumValues.put(day, dayIndex);
-            mVerbs.put(day, day);
+            mVerbs.add(day);
             dayIndex++;
         }
 

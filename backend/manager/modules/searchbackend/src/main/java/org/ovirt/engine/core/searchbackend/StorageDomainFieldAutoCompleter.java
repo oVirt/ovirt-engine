@@ -7,13 +7,13 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public StorageDomainFieldAutoCompleter() {
         // Building the basic vervs Dict
-        mVerbs.put("NAME", "NAME");
-        mVerbs.put("STATUS", "STATUS");
-        mVerbs.put("DATACENTER", "DATACENTER");
-        mVerbs.put("TYPE", "TYPE");
-        mVerbs.put("SIZE", "SIZE");
-        mVerbs.put("USED", "USED");
-        mVerbs.put("COMMITTED", "COMMITTED");
+        mVerbs.add("NAME");
+        mVerbs.add("STATUS");
+        mVerbs.add("DATACENTER");
+        mVerbs.add("TYPE");
+        mVerbs.add("SIZE");
+        mVerbs.add("USED");
+        mVerbs.add("COMMITTED");
 
         // Building the autoCompletion Dict
         buildCompletions();

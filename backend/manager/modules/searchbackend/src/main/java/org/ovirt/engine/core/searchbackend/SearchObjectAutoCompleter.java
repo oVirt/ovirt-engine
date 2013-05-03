@@ -13,31 +13,31 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
 
     public SearchObjectAutoCompleter() {
 
-        mVerbs.put(SearchObjects.VM_PLU_OBJ_NAME, SearchObjects.VM_PLU_OBJ_NAME);
-        mVerbs.put(SearchObjects.VDC_POOL_PLU_OBJ_NAME, SearchObjects.VDC_POOL_PLU_OBJ_NAME);
-        mVerbs.put(SearchObjects.VDS_PLU_OBJ_NAME, SearchObjects.VDS_PLU_OBJ_NAME);
-        mVerbs.put(SearchObjects.TEMPLATE_PLU_OBJ_NAME, SearchObjects.TEMPLATE_PLU_OBJ_NAME);
-        mVerbs.put(SearchObjects.AUDIT_PLU_OBJ_NAME, SearchObjects.AUDIT_PLU_OBJ_NAME);
-        mVerbs.put(SearchObjects.VDC_USER_PLU_OBJ_NAME, SearchObjects.VDC_USER_PLU_OBJ_NAME);
-        mVerbs.put(SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME, SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME);
-        mVerbs.put(SearchObjects.DISK_PLU_OBJ_NAME, SearchObjects.DISK_PLU_OBJ_NAME);
-        mVerbs.put(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME, SearchObjects.VDC_STORAGE_POOL_OBJ_NAME);
-        mVerbs.put(SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME);
-        mVerbs.put(SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME, SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME);
-        mVerbs.put(SearchObjects.QUOTA_OBJ_NAME, SearchObjects.QUOTA_OBJ_NAME);
-        mVerbs.put(SearchObjects.NETWORK_PLU_OBJ_NAME, SearchObjects.NETWORK_PLU_OBJ_NAME);
+        mVerbs.add(SearchObjects.VM_PLU_OBJ_NAME);
+        mVerbs.add(SearchObjects.VDC_POOL_PLU_OBJ_NAME);
+        mVerbs.add(SearchObjects.VDS_PLU_OBJ_NAME);
+        mVerbs.add(SearchObjects.TEMPLATE_PLU_OBJ_NAME);
+        mVerbs.add(SearchObjects.AUDIT_PLU_OBJ_NAME);
+        mVerbs.add(SearchObjects.VDC_USER_PLU_OBJ_NAME);
+        mVerbs.add(SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME);
+        mVerbs.add(SearchObjects.DISK_PLU_OBJ_NAME);
+        mVerbs.add(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME);
+        mVerbs.add(SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME);
+        mVerbs.add(SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME);
+        mVerbs.add(SearchObjects.QUOTA_OBJ_NAME);
+        mVerbs.add(SearchObjects.NETWORK_PLU_OBJ_NAME);
 
         buildCompletions();
-        mVerbs.put(SearchObjects.VM_OBJ_NAME, SearchObjects.VM_OBJ_NAME);
-        mVerbs.put(SearchObjects.VDC_POOL_OBJ_NAME, SearchObjects.VDC_POOL_OBJ_NAME);
-        mVerbs.put(SearchObjects.DISK_OBJ_NAME, SearchObjects.DISK_OBJ_NAME);
-        mVerbs.put(SearchObjects.VDS_OBJ_NAME, SearchObjects.VDS_OBJ_NAME);
-        mVerbs.put(SearchObjects.TEMPLATE_OBJ_NAME, SearchObjects.TEMPLATE_OBJ_NAME);
-        mVerbs.put(SearchObjects.AUDIT_OBJ_NAME, SearchObjects.AUDIT_OBJ_NAME);
-        mVerbs.put(SearchObjects.VDC_USER_OBJ_NAME, SearchObjects.VDC_USER_OBJ_NAME);
-        mVerbs.put(SearchObjects.VDC_CLUSTER_OBJ_NAME, SearchObjects.VDC_CLUSTER_OBJ_NAME);
-        mVerbs.put(SearchObjects.GLUSTER_VOLUME_OBJ_NAME, SearchObjects.GLUSTER_VOLUME_OBJ_NAME);
-        mVerbs.put(SearchObjects.NETWORK_OBJ_NAME, SearchObjects.NETWORK_OBJ_NAME);
+        mVerbs.add(SearchObjects.VM_OBJ_NAME);
+        mVerbs.add(SearchObjects.VDC_POOL_OBJ_NAME);
+        mVerbs.add(SearchObjects.DISK_OBJ_NAME);
+        mVerbs.add(SearchObjects.VDS_OBJ_NAME);
+        mVerbs.add(SearchObjects.TEMPLATE_OBJ_NAME);
+        mVerbs.add(SearchObjects.AUDIT_OBJ_NAME);
+        mVerbs.add(SearchObjects.VDC_USER_OBJ_NAME);
+        mVerbs.add(SearchObjects.VDC_CLUSTER_OBJ_NAME);
+        mVerbs.add(SearchObjects.GLUSTER_VOLUME_OBJ_NAME);
+        mVerbs.add(SearchObjects.NETWORK_OBJ_NAME);
 
         // vms - vds
         addJoin(SearchObjects.VM_OBJ_NAME, "run_on_vds", SearchObjects.VDS_OBJ_NAME, "vds_id");

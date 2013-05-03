@@ -12,7 +12,6 @@ public class GlusterVolumeCrossRefAutoCompleter extends SearchObjectsBaseAutoCom
     public final static GlusterVolumeCrossRefAutoCompleter INSTANCE = new GlusterVolumeCrossRefAutoCompleter();
 
     private GlusterVolumeCrossRefAutoCompleter() {
-        mVerbs.put(SearchObjects.VDC_CLUSTER_OBJ_NAME, SearchObjects.VDC_CLUSTER_OBJ_NAME);
-        buildCompletions();
+        super(SearchObjects.VDC_CLUSTER_OBJ_NAME);
     }
 }

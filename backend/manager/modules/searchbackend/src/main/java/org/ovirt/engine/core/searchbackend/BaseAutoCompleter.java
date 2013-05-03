@@ -1,14 +1,17 @@
 package org.ovirt.engine.core.searchbackend;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.compat.DayOfWeek;
 
 public class BaseAutoCompleter implements IAutoCompleter {
-    protected final Map<String, String> mVerbs = new HashMap<String, String>();
+    protected final Set<String> mVerbs = new HashSet<String>();
     protected final Map<String, List<String>> mVerbCompletion =
             new HashMap<String, List<String>>();
 
@@ -17,20 +20,27 @@ public class BaseAutoCompleter implements IAutoCompleter {
     }
 
     public BaseAutoCompleter(String text) {
-        mVerbs.put(text, text);
+        acceptAll(text);
         buildCompletions();
     }
 
-    public BaseAutoCompleter(String[] text) {
-        for (String s : text) {
-            mVerbs.put(s, s);
-        }
+    public BaseAutoCompleter(String... text) {
+        acceptAll(text);
         buildCompletions();
+    }
+
+    public BaseAutoCompleter(String[] text, String[] noAutocomplete) {
+        this(text);
+        acceptAll(noAutocomplete);
+    }
+
+    protected final void acceptAll(final String... tokens) {
+        Collections.addAll(mVerbs, tokens);
     }
 
     protected final void buildCompletions() {
         final List<String> emptyKeyList = new ArrayList<String>();
-        for (String title : mVerbs.keySet()) {
+        for (String title : mVerbs) {
             emptyKeyList.add(changeCaseDisplay(title));
             for (int idx = 1; idx <= title.length(); idx++) {
                 String curKey = title.substring(0, idx);
@@ -57,7 +67,7 @@ public class BaseAutoCompleter implements IAutoCompleter {
 
     @Override
     public final boolean validate(String text) {
-        return (text != null) ? mVerbs.containsKey(text.toUpperCase()) : false;
+        return (text != null) ? mVerbs.contains(text.toUpperCase()) : false;
     }
 
     @Override
