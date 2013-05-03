@@ -38,8 +38,8 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.NeutronAgentModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.NeutronPluginTranslator;
-import org.ovirt.engine.ui.uicommonweb.validation.BaseI18NValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.HostAddressValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.HostnameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.KeyValuePairValidation;
@@ -1575,18 +1575,7 @@ public abstract class HostModel extends Model
 
     public boolean validate()
     {
-        getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new LengthValidation(255),
-                new BaseI18NValidation() {
-            @Override
-            protected String composeRegex() {
-                return "^[-_\\.0-9a-zA-Z]*$"; //$NON-NLS-1$
-            }
-
-            @Override
-            protected String composeMessage() {
-                return ConstantsManager.getInstance().getConstants().hostNameValidationMsg();
-            }
-        } });
+        getName().validateEntity(new IValidation[] { new HostnameValidation() });
 
         getComment().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
 
