@@ -161,9 +161,13 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                client.UsbAutoShare = usbAutoShare;
                                                client.SetUsbFilter(usbFilter);
                                                client.Smartcard = smartcardEnabled;
+
                                                if (wanOptionsEnabled) {
                                                   client.DisableEffects = disableEffects;
                                                   client.ColorDepth = colorDepth;
+                                               } else { //reset to defaults
+                                                  client.DisableEffects = "";
+                                                  client.ColorDepth = "";
                                                }
 
                                                // only if the proxy is defined in VDC_OPTIONS
@@ -316,9 +320,13 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                    client.UsbAutoShare = usbAutoShare;
                                                    client.SetUsbFilter(usbFilter);
                                                    client.Smartcard = smartcardEnabled;
+
                                                    if (wanOptionsEnabled) {
                                                        client.DisableEffects = disableEffects;
                                                        client.ColorDepth = colorDepth;
+                                                   }else { //reset to defaults
+                                                      client.DisableEffects = "";
+                                                      client.ColorDepth = "";
                                                    }
 
                                                    // only if the proxy is defined in VDC_OPTIONS

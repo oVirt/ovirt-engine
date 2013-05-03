@@ -367,10 +367,6 @@ public abstract class AbstractSpice {
         return WanColorDepth.depth16.asInt();
     }
 
-    public List<WANDisableEffects> getWanDisableEffects() {
-        return wanDisableEffects;
-    }
-
     public boolean isWanOptionsEnabled() {
         return wanOptionsEnabled;
     }
