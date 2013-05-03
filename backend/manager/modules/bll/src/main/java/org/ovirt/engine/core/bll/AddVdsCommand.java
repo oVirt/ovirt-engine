@@ -302,35 +302,28 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             int maxVdsNameLength = Config.<Integer> GetValue(ConfigValues.MaxVdsNameLength);
             // check that vds name is not null or empty
             if (vdsName == null || vdsName.isEmpty()) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY);
-                returnValue = false;
+                returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY);
                 // check that VDS name is not too long
             } else if (vdsName.length() > maxVdsNameLength) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
-                returnValue = false;
+                returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
                 // check that VDS hostname does not contain special characters.
             } else if (!ValidationUtils.validHostname(hostName)) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_VDS_HOSTNAME);
-                returnValue = false;
+                returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_VDS_HOSTNAME);
             } else if (getVdsDAO().getByName(vdsName) != null) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
-                returnValue = false;
+                returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             } else if (getVdsDAO().getAllForHostname(hostName).size() != 0) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST);
-                returnValue = false;
+                returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST);
             } else {
                 returnValue = returnValue && validateSingleHostAttachedToLocalStorage();
 
                 if (Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers)
                         && !EngineLocalConfig.getInstance().getPKIEngineStore().exists()) {
-                    addCanDoActionMessage(VdcBllMessages.VDS_TRY_CREATE_SECURE_CERTIFICATE_NOT_FOUND);
-                    returnValue = false;
+                    returnValue = failCanDoAction(VdcBllMessages.VDS_TRY_CREATE_SECURE_CERTIFICATE_NOT_FOUND);
                 } else if (!getParameters().getAddPending()
                         && StringUtils.isEmpty(getParameters().getRootPassword())) {
                     // We block vds installations if it's not a RHEV-H and password is empty
                     // Note that this may override local host SSH policy. See BZ#688718.
-                    addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_INSTALL_EMPTY_PASSWORD);
-                    returnValue = false;
+                    returnValue = failCanDoAction(VdcBllMessages.VDS_CANNOT_INSTALL_EMPTY_PASSWORD);
                 } else if (!isPowerManagementLegal()) {
                     returnValue = false;
                 } else {
@@ -338,12 +331,12 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 }
             }
         }
-        if (isGlusterSupportEnabled()) {
+
+        if (returnValue && isGlusterSupportEnabled()) {
             if (clusterHasServers()) {
                 upServer = getClusterUtils().getUpServer(getVdsGroupId());
                 if (upServer == null) {
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_GLUSTER_HOST_TO_PEER_PROBE);
-                    returnValue = false;
+                    returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_GLUSTER_HOST_TO_PEER_PROBE);
                 }
             }
         }
