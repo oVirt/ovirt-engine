@@ -28,7 +28,7 @@ import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.LocalConfig;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.archivers.tar.CachedTar;
 import org.ovirt.engine.core.utils.crypt.OpenSSHUtils;
@@ -399,14 +399,14 @@ public class VdsDeploy implements SSHDialog.Sink {
         new Callable<Object>() { public Object call() throws Exception {
             _parser.cliEnvironmentSet(
                 VdsmEnv.ENGINE_HOST,
-                LocalConfig.getInstance().getHost()
+                EngineLocalConfig.getInstance().getHost()
             );
             return null;
         }},
         new Callable<Object>() { public Object call() throws Exception {
             _parser.cliEnvironmentSet(
                 VdsmEnv.ENGINE_PORT,
-                LocalConfig.getInstance().getExternalHttpPort()
+                EngineLocalConfig.getInstance().getExternalHttpPort()
             );
             return null;
         }},
@@ -574,7 +574,7 @@ public class VdsDeploy implements SSHDialog.Sink {
         new Callable<Object>() { public Object call() throws Exception {
             OutputStream os = null;
             File logFile = new File(
-                LocalConfig.getInstance().getLogDir(),
+                EngineLocalConfig.getInstance().getLogDir(),
                 String.format(
                     "%1$s%2$sovirt-%3$s-%4$s-%5$s.log",
                     "host-deploy",
@@ -802,7 +802,7 @@ public class VdsDeploy implements SSHDialog.Sink {
         if (s_deployPackage == null) {
             s_deployPackage = new CachedTar(
                 new File(
-                    LocalConfig.getInstance().getCacheDir(),
+                    EngineLocalConfig.getInstance().getCacheDir(),
                     Config.<String> GetValue(ConfigValues.BootstrapPackageName)
                 ),
                 new File(Config.<String> GetValue(ConfigValues.BootstrapPackageDirectory))

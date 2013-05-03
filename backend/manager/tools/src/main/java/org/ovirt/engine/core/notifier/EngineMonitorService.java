@@ -40,7 +40,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.notifier.utils.NotificationConfigurator;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 import org.ovirt.engine.core.tools.common.db.StandaloneDataSource;
-import org.ovirt.engine.core.utils.LocalConfig;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.crypt.EncryptionUtils;
 import org.ovirt.engine.core.utils.db.DbUtils;
 
@@ -260,7 +260,7 @@ public class EngineMonitorService implements Runnable {
     }
 
     private void initServerUrl() throws NotificationServiceException {
-        LocalConfig config = LocalConfig.getInstance();
+        EngineLocalConfig config = EngineLocalConfig.getInstance();
         try {
             if (isHttpsProtocol) {
                 serverUrl = config.getExternalHttpsUrl(HEALTH_SERVLET_PATH);

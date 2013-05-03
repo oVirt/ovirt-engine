@@ -5,7 +5,7 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import org.ovirt.engine.core.utils.LocalConfig;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.ResourceUtils;
 import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
@@ -172,7 +172,7 @@ public class DbFacadeLocator {
     }
 
     public static void loadDbFacadeConfig() {
-        LocalConfig config = LocalConfig.getInstance();
+        EngineLocalConfig config = EngineLocalConfig.getInstance();
         try {
             connectionTimeout = config.getInteger("ENGINE_DB_CONNECTION_TIMEOUT");
             checkInterval = config.getInteger("ENGINE_DB_CHECK_INTERVAL");

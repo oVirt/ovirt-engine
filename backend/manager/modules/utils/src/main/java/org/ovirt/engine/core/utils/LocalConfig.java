@@ -5,8 +5,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,45 +28,24 @@ public class LocalConfig {
     // The log:
     private static final Logger log = Logger.getLogger(LocalConfig.class);
 
-    // Default files for defaults and overridden values:
-    private static final String DEFAULTS_PATH = "/usr/share/ovirt-engine/conf/engine.conf.defaults";
-    private static final String VARS_PATH = "/etc/ovirt-engine/engine.conf";
-
     // Compile regular expressions:
     private static final Pattern COMMENT_EXPR = Pattern.compile("\\s*#.*$");
     private static final Pattern BLANK_EXPR = Pattern.compile("^\\s*$");
     private static final Pattern VALUE_EXPR = Pattern.compile("^\\s*(\\w+)\\s*=\\s*(.*?)\\s*$");
     private static final Pattern REF_EXPR = Pattern.compile("\\$\\{(\\w+)\\}");
 
-    // This is a singleton and this is the instance:
-    private static final LocalConfig instance = new LocalConfig();
-
-    public static LocalConfig getInstance() {
-        return instance;
-    }
-
     // The properties object storing the current values of the parameters:
     private Map<String, String> values = new HashMap<String, String>();
 
-    private LocalConfig() {
+    protected void loadConfig(String defaultsPath, String varsPath) {
         // This is the list of configuration files that will be loaded and
         // merged (the initial size is 2 because usually we will have only two
         // configuration files to merge, the defaults and the variables):
         List<File> configFiles = new ArrayList<File>(2);
 
-        // Locate the defaults file and add it to the list:
-        String defaultsPath = System.getenv("ENGINE_DEFAULTS");
-        if (defaultsPath == null) {
-            defaultsPath = DEFAULTS_PATH;
-        }
         File defaultsFile = new File(defaultsPath);
         configFiles.add(defaultsFile);
 
-        // Locate the overridden values file and add it to the list:
-        String varsPath = System.getenv("ENGINE_VARS");
-        if (varsPath == null) {
-            varsPath = VARS_PATH;
-        }
         File varsFile = new File(varsPath);
         configFiles.add(varsFile);
 
@@ -310,103 +287,5 @@ public class LocalConfig {
     public File getFile(String key) {
         String value = getProperty(key);
         return new File(value);
-    }
-
-    public boolean isProxyEnabled() {
-        return getBoolean("ENGINE_PROXY_ENABLED");
-    }
-
-    public int getProxyHttpPort() {
-        return getInteger("ENGINE_PROXY_HTTP_PORT");
-    }
-
-    public int getProxyHttpsPort() {
-        return getInteger("ENGINE_PROXY_HTTPS_PORT");
-    }
-
-    public String getHost() {
-        return getProperty("ENGINE_FQDN");
-    }
-
-    public boolean isHttpEnabled() {
-        return getBoolean("ENGINE_HTTP_ENABLED");
-    }
-
-    public int getHttpPort() {
-        return getInteger("ENGINE_HTTP_PORT");
-    }
-
-    public boolean isHttpsEnabled() {
-        return getBoolean("ENGINE_HTTPS_ENABLED");
-    }
-
-    public int getHttpsPort() {
-        return getInteger("ENGINE_HTTPS_PORT");
-    }
-
-    public File getEtcDir() {
-        return getFile("ENGINE_ETC");
-    }
-
-    public File getLogDir() {
-        return getFile("ENGINE_LOG");
-    }
-
-    public File getTmpDir() {
-        return getFile("ENGINE_TMP");
-    }
-
-    public File getUsrDir() {
-        return getFile("ENGINE_USR");
-    }
-
-    public File getVarDir() {
-        return getFile("ENGINE_VAR");
-    }
-
-    public File getCacheDir() {
-        return getFile("ENGINE_CACHE");
-    }
-
-    /**
-     * Gets the port number where the engine can be contacted using HTTP from
-     * external hosts. This will usually be the proxy HTTP port if the proxy is
-     * enabled or the engine HTTP port otherwise.
-     */
-    public int getExternalHttpPort () {
-        return isProxyEnabled()? getProxyHttpPort(): getHttpPort();
-    }
-
-    /**
-     * Gets the port number where the engine can be contacted using HTTPS from
-     * external hosts. This will usually be the proxy HTTPS port if the proxy is
-     * enabled or the engine HTTPS port otherwise.
-     */
-    public int getExternalHttpsPort () {
-        return isProxyEnabled()? getProxyHttpsPort(): getHttpsPort();
-    }
-
-    /**
-     * Gets the URL where the engine can be contacted using HTTP from external
-     * hosts. This will usually be the proxy HTTP URL if the proxy is enabled or
-     * the engine HTTP URL otherwise.
-     *
-     * @param path is the path that will be added after the address and port
-     *     number of the URL
-     */
-    public URL getExternalHttpUrl(String path) throws MalformedURLException {
-        return new URL("http", getHost(), getExternalHttpPort(), path);
-    }
-
-    /**
-     * Gets the URL where the engine can be contacted using HTTPS from external
-     * hosts. This will usually be the proxy HTTPS URL if the proxy is enabled or
-     * the engine HTTPS URL otherwise.
-     *
-     * @param path is the path that will be added after the address and port
-     *     number of the URL
-     */
-    public URL getExternalHttpsUrl(String path) throws MalformedURLException {
-        return new URL("https", getHost(), getExternalHttpsPort(), path);
     }
 }

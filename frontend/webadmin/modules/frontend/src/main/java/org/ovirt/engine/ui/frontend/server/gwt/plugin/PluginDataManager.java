@@ -14,12 +14,12 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.core.common.config.ConfigUtil;
-import org.ovirt.engine.core.utils.LocalConfig;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 
 /**
  * Reads, validates and stores UI plugin descriptor/configuration data.
  * <p>
- * Note that this class uses {@link LocalConfig} to read local (machine-specific) Engine configuration.
+ * Note that this class uses {@link EngineLocalConfig} to read local (machine-specific) Engine configuration.
  */
 public class PluginDataManager {
 
@@ -39,14 +39,14 @@ public class PluginDataManager {
      * Returns UI plugin <em>data path</em>, under which UI plugin descriptor (JSON) files are placed.
      */
     public static String resolvePluginDataPath() {
-        return ConfigUtil.resolvePath(LocalConfig.getInstance().getUsrDir().getAbsolutePath(), UI_PLUGIN_DIR);
+        return ConfigUtil.resolvePath(EngineLocalConfig.getInstance().getUsrDir().getAbsolutePath(), UI_PLUGIN_DIR);
     }
 
     /**
      * Returns UI plugin <em>config path</em>, under which UI plugin configuration (JSON) files are placed.
      */
     public static String resolvePluginConfigPath() {
-        return ConfigUtil.resolvePath(LocalConfig.getInstance().getEtcDir().getAbsolutePath(), UI_PLUGIN_DIR);
+        return ConfigUtil.resolvePath(EngineLocalConfig.getInstance().getEtcDir().getAbsolutePath(), UI_PLUGIN_DIR);
     }
 
     private final File pluginDataDir;

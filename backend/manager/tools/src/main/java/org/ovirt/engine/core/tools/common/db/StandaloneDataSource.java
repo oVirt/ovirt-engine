@@ -14,7 +14,7 @@ import java.sql.Statement;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
-import org.ovirt.engine.core.utils.LocalConfig;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.crypt.EncryptionUtils;
 
 public class StandaloneDataSource implements DataSource {
@@ -40,7 +40,7 @@ public class StandaloneDataSource implements DataSource {
 
     public StandaloneDataSource() throws SQLException {
         // Load the service configuration file:
-        LocalConfig config = LocalConfig.getInstance();
+        EngineLocalConfig config = EngineLocalConfig.getInstance();
 
         // Get the database connection details:
         driver = config.getProperty(ENGINE_DB_DRIVER);
