@@ -176,6 +176,6 @@ public class DirectorySearcherTest extends AbstractLdapTest {
 
     private static Boolean execute(GetRootDSETask task) throws InterruptedException, ExecutionException,
             TimeoutException {
-        return executerService.submit(task).get(1, TimeUnit.SECONDS);
+        return executerService.submit(task).get(1, TimeUnit.MILLISECONDS);
     }
 }
