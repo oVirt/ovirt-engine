@@ -7,16 +7,33 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.DOM;
 
 public class ConsoleButtonCell extends AbstractCell<UserPortalItemModel> {
+
+    public static interface ConsoleButtonCommand {
+
+        public void execute(UserPortalItemModel model);
+
+    }
+
+    interface CellTemplate extends SafeHtmlTemplates {
+
+        @Template("<div id=\"{0}\" title=\"{1}\" class=\"{2}\" data-class=\"consoleButton\" />")
+        SafeHtml consoleButton(String id, String title, String className);
+
+    }
 
     private final ConsoleUtils consoleUtils;
 
@@ -32,17 +49,22 @@ public class ConsoleButtonCell extends AbstractCell<UserPortalItemModel> {
     private String elementIdPrefix = DOM.createUniqueId();
     private String columnId;
 
+    private static CellTemplate template;
+
     public ConsoleButtonCell(ConsoleUtils consoleUtils,
-            String enabledCss,
-            String disabledCss,
-            String title,
-            ConsoleButtonCommand command) {
+            String enabledCss, String disabledCss,
+            String title, ConsoleButtonCommand command) {
         super("click"); //$NON-NLS-1$
         this.consoleUtils = consoleUtils;
         this.enabledCss = SafeHtmlUtils.htmlEscape(enabledCss);
         this.disabledCss = SafeHtmlUtils.htmlEscape(disabledCss);
         this.title = SafeHtmlUtils.htmlEscape(title);
         this.command = command;
+
+        // Delay cell template creation until the first time it's needed
+        if (template == null) {
+            template = GWT.create(CellTemplate.class);
+        }
     }
 
     public void setElementIdPrefix(String elementIdPrefix) {
@@ -54,23 +76,24 @@ public class ConsoleButtonCell extends AbstractCell<UserPortalItemModel> {
     }
 
     @Override
-    public void onBrowserEvent(Context context,
-            Element parent,
-            final UserPortalItemModel model,
-            NativeEvent event,
+    public void onBrowserEvent(Context context, Element parent,
+            final UserPortalItemModel model, NativeEvent event,
             ValueUpdater<UserPortalItemModel> valueUpdater) {
         super.onBrowserEvent(context, parent, model, event, valueUpdater);
 
         EventTarget eventTarget = event.getEventTarget();
-        if (!Element.is(eventTarget)) {
+
+        // Skip events other than 'click'
+        if (!"click".equals(event.getType())) { //$NON-NLS-1$
             return;
         }
 
-        if (!isConsoleEnabled(model)) {
+        // Skip events that don't target consoleButton DIV element
+        if (!DivElement.is(eventTarget) || !"consoleButton".equals(DivElement.as(eventTarget).getAttribute("data-class"))) { //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
 
-        if ("click".equals(event.getType())) { //$NON-NLS-1$
+        if (isConsoleEnabled(model)) {
             // deferred because first the row has to be selected and then the console can be shown
             Scheduler.get().scheduleDeferred(new ScheduledCommand() {
                 @Override
@@ -83,22 +106,15 @@ public class ConsoleButtonCell extends AbstractCell<UserPortalItemModel> {
 
     @Override
     public void render(Context context, UserPortalItemModel model, SafeHtmlBuilder sb) {
-        if (isConsoleEnabled(model)) {
-            sb.appendHtmlConstant("<div id=\"" //$NON-NLS-1$
-                    + ElementIdUtils.createTableCellElementId(elementIdPrefix, columnId, context)
-                    + "\" title=\"" + title + "\" class=\"" + enabledCss + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        } else {
-            sb.appendHtmlConstant("<div class=\"" + disabledCss + "\" />"); //$NON-NLS-1$ //$NON-NLS-2$
-        }
+        sb.append(template.consoleButton(
+                ElementIdUtils.createTableCellElementId(elementIdPrefix, columnId, context),
+                title,
+                isConsoleEnabled(model) ? enabledCss : disabledCss));
     }
 
     protected boolean isConsoleEnabled(UserPortalItemModel model) {
         ConsoleProtocol protocol = consoleUtils.determineConnectionProtocol(model);
         return consoleUtils.canShowConsole(protocol, model);
-    }
-
-    public static interface ConsoleButtonCommand {
-        public void execute(UserPortalItemModel model);
     }
 
 }
