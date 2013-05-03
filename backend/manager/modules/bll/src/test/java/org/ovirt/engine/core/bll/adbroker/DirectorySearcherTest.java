@@ -99,7 +99,7 @@ public class DirectorySearcherTest extends AbstractLdapTest {
         List<URI> urls = new ArrayList<URI>();
         DirectorySearcher dirSearcher = mockDirectorySearcher(urls);
         try {
-            GetRootDSETask getRootDSETask = new GetRootDSETask(dirSearcher, "mydomain", urls.get(0));
+            GetRootDSETask getRootDSETask = new GetRootDSETask(dirSearcher, "mydomain", null);
             execute(getRootDSETask);
         } catch (Exception e) {
             // should fail
