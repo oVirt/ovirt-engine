@@ -22,7 +22,6 @@ import javax.naming.directory.DirContext;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -49,11 +48,6 @@ public class DirectorySearcherTest extends AbstractLdapTest {
     private DirContext dirContext;
 
     private static final ExecutorService executerService = Executors.newSingleThreadExecutor();
-
-    @BeforeClass
-    public static void beforeClass() {
-        System.setProperty("jboss.server.log.dir", "/tmp");
-    }
 
     @Override
     @Before
