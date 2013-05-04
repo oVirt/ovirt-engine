@@ -96,7 +96,6 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     @Override
     protected void endWithFailure() {
         super.endWithFailure();
-        ExecutionHandler.setAsyncJob(getExecutionContext(), false);
     }
 
     private boolean isFirstTaskHandler() {
@@ -111,6 +110,9 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
         case EXECUTE:
+            if (!getParameters().getTaskGroupSuccess()) {
+                return AuditLogType.USER_MOVED_VM_DISK_FINISHED_FAILURE;
+            }
             if (isFirstTaskHandler() && getSucceeded()) {
                 return AuditLogType.USER_MOVED_VM_DISK;
             }

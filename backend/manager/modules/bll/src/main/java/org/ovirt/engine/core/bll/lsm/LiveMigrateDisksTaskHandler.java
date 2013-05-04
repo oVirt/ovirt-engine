@@ -10,10 +10,13 @@ import org.ovirt.engine.core.common.action.LiveMigrateVmDisksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class LiveMigrateDisksTaskHandler implements SPMAsyncTaskHandler {
 
     private final TaskHandlerCommand<? extends LiveMigrateVmDisksParameters> enclosingCommand;
+    private static final Log log = LogFactory.getLog(LiveMigrateDisksTaskHandler.class);
 
     public LiveMigrateDisksTaskHandler(TaskHandlerCommand<? extends LiveMigrateVmDisksParameters> enclosingCommand) {
         this.enclosingCommand = enclosingCommand;
@@ -32,6 +35,13 @@ public class LiveMigrateDisksTaskHandler implements SPMAsyncTaskHandler {
                             commandContext);
 
             enclosingCommand.getReturnValue().getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
+
+            if (!parameters.getTaskGroupSuccess()) {
+                ExecutionHandler.endTaskJob(commandContext.getExecutionContext(), false);
+                log.errorFormat("Failed LiveMigrateDisk (Disk {0} , VM {1})",
+                        parameters.getImageGroupID(),
+                        parameters.getVmId());
+            }
         }
         enclosingCommand.getReturnValue().setSucceeded(true);
     }
