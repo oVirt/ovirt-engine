@@ -16,9 +16,9 @@ import org.junit.Test;
 
 public class EncryptionUtilsTest {
 
-    private static String keyStoreURL;
-    private static String keyStorePass = "NoSoup4U";
-    private static String certAlias = "1";
+    protected static String keyStoreURL;
+    protected final static String keyStorePass = "NoSoup4U";
+    protected final static String certAlias = "1";
 
     @Before
     public void before() throws UnsupportedEncodingException {
