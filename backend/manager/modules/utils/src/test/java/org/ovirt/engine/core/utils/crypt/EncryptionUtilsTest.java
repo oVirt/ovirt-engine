@@ -11,7 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class EncryptionUtilsTest {
@@ -20,8 +20,8 @@ public class EncryptionUtilsTest {
     protected final static String keyStorePass = "NoSoup4U";
     protected final static String certAlias = "1";
 
-    @Before
-    public void before() throws UnsupportedEncodingException {
+    @BeforeClass
+    public static void before() throws UnsupportedEncodingException {
         keyStoreURL = URLDecoder.decode(ClassLoader.getSystemResource("key.p12").getPath(), "UTF-8");
     }
 
