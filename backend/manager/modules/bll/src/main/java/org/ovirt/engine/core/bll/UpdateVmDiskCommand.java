@@ -148,9 +148,10 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 Disk evalDisk = iter.next();
                 if (evalDisk.getId().equals(oldDisk.getId())) {
                     iter.remove();
+                    break;
                 }
-                break;
             }
+            otherVmDisks.put(vmId, disks);
         }
         return disks;
     }
