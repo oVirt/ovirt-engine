@@ -540,6 +540,8 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_ADD_DISK_FINISHED_SUCCESS, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_ADD_DISK_FINISHED_FAILURE, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_FAILED_ADD_DISK, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.USER_MOVE_IMAGE_GROUP_FAILED_TO_DELETE_SRC_IMAGE, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.USER_MOVE_IMAGE_GROUP_FAILED_TO_DELETE_DST_IMAGE, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.USER_REMOVE_DISK_FROM_VM, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_FAILED_REMOVE_DISK_FROM_VM, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_MOVED_VM, AuditLogSeverity.NORMAL);

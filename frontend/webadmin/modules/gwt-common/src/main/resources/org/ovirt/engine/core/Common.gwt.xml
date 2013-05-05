@@ -189,6 +189,7 @@
 		<include name="common/businessentities/FenceActionType.java" />
 		<include name="common/businessentities/CopyVolumeType.java" />
 		<include name="common/businessentities/ImageOperation.java" />
+		<include name="common/businessentities/ImageDbOperationScope.java" />
 		<include name="common/businessentities/VdcOption.java" />
 		<include name="common/errors/VdcFault.java" />
 		<include name="common/errors/VdcBllErrors.java" />

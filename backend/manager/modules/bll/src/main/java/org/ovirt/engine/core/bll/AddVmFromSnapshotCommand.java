@@ -233,7 +233,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
     @Override
     protected VdcActionType getChildActionType() {
-        return VdcActionType.MoveOrCopyImageGroup;
+        return VdcActionType.CopyImageGroup;
     }
 
     @Override

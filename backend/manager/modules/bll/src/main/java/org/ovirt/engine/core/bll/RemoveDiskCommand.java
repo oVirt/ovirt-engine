@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -271,7 +272,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         result.setStorageDomainId(getParameters().getStorageDomainId());
         result.setForceDelete(getParameters().getForceDelete());
         if (diskImage.getStorageIds().size() > 1) {
-            result.setRemoveFromDB(false);
+            result.setDbOperationScope(ImageDbOperationScope.MAPPING);
         }
         return result;
     }

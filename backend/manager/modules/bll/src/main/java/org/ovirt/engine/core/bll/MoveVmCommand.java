@@ -221,6 +221,6 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
 
     @Override
     protected VdcActionType getImagesActionType() {
-        return VdcActionType.MoveOrCopyImageGroup;
+        return VdcActionType.MoveImageGroup;
     }
 }

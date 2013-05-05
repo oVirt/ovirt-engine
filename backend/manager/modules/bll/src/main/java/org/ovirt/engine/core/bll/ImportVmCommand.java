@@ -595,7 +595,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             }
             p.setParentParameters(getParameters());
             VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
-                    VdcActionType.MoveOrCopyImageGroup,
+                    VdcActionType.CopyImageGroup,
                     p,
                     ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
             if (!vdcRetValue.getSucceeded()) {

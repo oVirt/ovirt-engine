@@ -281,19 +281,28 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         setSucceeded(true);
     }
 
+    private void removeImageMapping() {
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+            @Override
+            public Void runInTransaction() {
+                getImageStorageDomainMapDao().remove(
+                        new ImageStorageDomainMapId(getParameters().getImageId(),
+                                getParameters().getStorageDomainId()));
+                unLockImage();
+                return null;
+            }});
+    }
+
     private void performImageDbOperations() {
-        if (getParameters().getRemoveFromDB()) {
-                removeImageFromDB();
-        } else {
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-                @Override
-                public Void runInTransaction() {
-                    getImageStorageDomainMapDao().remove(
-                            new ImageStorageDomainMapId(getParameters().getImageId(),
-                                    getParameters().getStorageDomainId()));
-                    unLockImage();
-                    return null;
-                }});
+        switch (getParameters().getDbOperationScope()) {
+        case IMAGE:
+            removeImageFromDB();
+            break;
+        case MAPPING:
+            removeImageMapping();
+            break;
+        case NONE:
+            break;
         }
     }
 

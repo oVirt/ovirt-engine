@@ -178,6 +178,8 @@ public enum AuditLogType {
     USER_FAILED_ADD_DISK(2023),
     // Used only from SQL script, therefor should not have severity & message
     USER_RUN_UNLOCK_ENTITY_SCRIPT(2024),
+    USER_MOVE_IMAGE_GROUP_FAILED_TO_DELETE_SRC_IMAGE(2025),
+    USER_MOVE_IMAGE_GROUP_FAILED_TO_DELETE_DST_IMAGE(2026),
 
     // Quota audit logs
     USER_ADD_QUOTA(3000),

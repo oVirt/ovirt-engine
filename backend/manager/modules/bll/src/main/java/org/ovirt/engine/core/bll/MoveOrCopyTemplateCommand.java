@@ -171,7 +171,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                     p.setSourceDomainId(imageFromSourceDomainMap.get(disk.getId()).getStorageIds().get(0));
                     p.setParentParameters(getParameters());
                     VdcReturnValueBase vdcRetValue = getBackend().runInternalAction(
-                            VdcActionType.MoveOrCopyImageGroup,
+                            getImagesActionType(),
                             p,
                             ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
@@ -264,7 +264,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     }
 
     protected VdcActionType getImagesActionType() {
-        return VdcActionType.MoveOrCopyImageGroup;
+        return VdcActionType.CopyImageGroup;
     }
 
     protected StorageDomain getStorageDomain(Guid domainId) {

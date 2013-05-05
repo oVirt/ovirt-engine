@@ -97,7 +97,7 @@ public class BackwardCompatibilityTaskCreationTest {
                         return vm;
                     }
                 },
-                new MoveOrCopyImageGroupCommand(new MoveOrCopyImageGroupParameters()) {
+                new CopyImageGroupCommand(new MoveOrCopyImageGroupParameters()) {
                     @Override
                     protected void initContainerDetails(ImagesContainterParametersBase parameters) {
                         // No op for test

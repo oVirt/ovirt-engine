@@ -1,20 +1,21 @@
 package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageDbOperationScope;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RemoveImageParameters extends ImagesContainterParametersBase implements java.io.Serializable {
     private static final long serialVersionUID = -225670698019388215L;
 
     private DiskImage diskImage;
-    private boolean removeFromDB;
+    private ImageDbOperationScope dbOperationScope;
     private boolean removeFromSnapshots;
     private boolean shouldLockImage;
 
     public RemoveImageParameters(Guid imageId) {
         super(imageId, null);
         setForceDelete(false);
-        removeFromDB = true;
+        dbOperationScope = ImageDbOperationScope.IMAGE;
         shouldLockImage= true;
     }
 
@@ -29,8 +30,8 @@ public class RemoveImageParameters extends ImagesContainterParametersBase implem
         diskImage = value;
     }
 
-    public void setRemoveFromDB(boolean removeFromDB) {
-        this.removeFromDB = removeFromDB;
+    public ImageDbOperationScope getDbOperationScope() {
+        return dbOperationScope;
     }
 
     public boolean isShouldLockImage() {
@@ -41,8 +42,8 @@ public class RemoveImageParameters extends ImagesContainterParametersBase implem
         this.shouldLockImage = shouldLockImage;
     }
 
-    public boolean getRemoveFromDB() {
-        return removeFromDB;
+    public void setDbOperationScope(ImageDbOperationScope dbOperationScope) {
+        this.dbOperationScope = dbOperationScope;
     }
 
     public boolean isRemoveFromSnapshots() {

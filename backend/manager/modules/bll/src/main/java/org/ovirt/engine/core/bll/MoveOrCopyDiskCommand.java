@@ -40,7 +40,7 @@ import org.ovirt.engine.core.dao.VmDeviceDAO;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute
-public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> extends MoveOrCopyImageGroupCommand<T>
+public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> extends CopyImageGroupCommand<T>
         implements QuotaStorageDependent {
 
     private Map<String, Pair<String, String>> sharedLockMap;
@@ -253,11 +253,18 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         return getDbFacade().getVmDeviceDao();
     }
 
+    protected VdcActionType getImagesActionType() {
+        if (getParameters().getOperation() == ImageOperation.Move) {
+            return VdcActionType.MoveImageGroup;
+        }
+        return VdcActionType.CopyImageGroup;
+    }
+
     @Override
     protected void executeCommand() {
         overrideParameters();
         VdcReturnValueBase vdcRetValue = getBackend().runInternalAction(
-                VdcActionType.MoveOrCopyImageGroup,
+                getImagesActionType(),
                 getParameters(),
                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
         if (!vdcRetValue.getSucceeded()) {
@@ -267,6 +274,21 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             setSucceeded(true);
             getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
         }
+    }
+
+    private void endCommandActions() {
+        getBackend().EndAction(getImagesActionType(), getParameters());
+        setSucceeded(true);
+    }
+
+    @Override
+    protected void endSuccessfully() {
+        endCommandActions();
+    }
+
+    @Override
+    protected void endWithFailure() {
+        endCommandActions();
     }
 
     @Override

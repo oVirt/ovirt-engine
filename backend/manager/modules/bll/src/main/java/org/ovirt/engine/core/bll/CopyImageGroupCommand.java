@@ -21,8 +21,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 @InternalCommandAttribute
-public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> extends BaseImagesCommand<T> {
-    public MoveOrCopyImageGroupCommand(T parameters) {
+public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> extends BaseImagesCommand<T> {
+    public CopyImageGroupCommand(T parameters) {
         super(parameters);
     }
 
@@ -44,10 +44,6 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
         default:
             return super.getImage();
         }
-    }
-
-    protected ImageOperation getMoveOrCopyImageOperation() {
-        return getParameters().getOperation();
     }
 
     @Override
@@ -92,7 +88,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                                     .getId(),
                             getParameters().getStorageDomainId(),
                             getParameters().getContainerId(),
-                            getParameters().getOperation(),
+                            ImageOperation.Copy,
                             isWipeAfterDelete(),
                             getParameters().getForceOverride(),
                             getStoragePool()
@@ -174,15 +170,14 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
         if (!getParameters().isImportEntity()) {
             unLockImage();
         }
-        if (getMoveOrCopyImageOperation() == ImageOperation.Copy) {
-            if (getParameters().getAddImageDomainMapping()) {
-                // remove image-storage mapping
-                getImageStorageDomainMapDao().remove
-                        (new ImageStorageDomainMapId(getParameters().getImageId(),
-                                getParameters().getStorageDomainId()));
-            }
-            revertTasks();
+
+        if (getParameters().getAddImageDomainMapping()) {
+            // remove image-storage mapping
+            getImageStorageDomainMapDao().remove
+                    (new ImageStorageDomainMapId(getParameters().getImageId(),
+                            getParameters().getStorageDomainId()));
         }
+        revertTasks();
         setSucceeded(true);
     }
 
@@ -196,11 +191,10 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                     new RemoveImageParameters(destImageId);
             if (getParameters().getParentCommand() == VdcActionType.AddVmFromSnapshot) {
                 removeImageParams.setParentParameters(getParameters());
-                removeImageParams.setParentCommand(VdcActionType.MoveOrCopyImageGroup);
+                removeImageParams.setParentCommand(VdcActionType.CopyImageGroup);
             } else {
                 removeImageParams.setParentParameters(removeImageParams);
                 removeImageParams.setParentCommand(VdcActionType.RemoveImage);
-                removeImageParams.setRemoveFromDB(true);
             }
             removeImageParams.setEntityId(getDestinationImageId());
             // Setting the image as the monitored entity, so there will not be dependency

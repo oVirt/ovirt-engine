@@ -292,7 +292,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             MoveOrCopyImageGroupParameters p = tempVar;
             p.setParentParameters(getParameters());
             VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
-                            VdcActionType.MoveOrCopyImageGroup,
+                            VdcActionType.CopyImageGroup,
                             p,
                             ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
             if (!vdcRetValue.getSucceeded()) {
