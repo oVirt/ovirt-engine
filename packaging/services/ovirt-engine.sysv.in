@@ -23,6 +23,7 @@ RETVAL=0
 LOCKFILE="/var/lock/subsys/${NAME}"
 PIDFILE="${PIDFILE:-/var/run/${NAME}.pid}"
 USER="@ENGINE_USER@"
+ENGINE_USR="@ENGINE_USR@"
 
 # See how we were called.
 case "$1" in
