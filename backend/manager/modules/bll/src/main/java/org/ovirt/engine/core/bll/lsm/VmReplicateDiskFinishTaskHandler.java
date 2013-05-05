@@ -159,8 +159,12 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
 
     @Override
     protected void revertTask() {
-        // Preventing rollback on execution success
-        if (getEnclosingCommand().getReturnValue().getSucceeded()) {
+        // Preventing rollback on VmReplicateDiskFinish success
+        // (checks whether the disk moved successfully to the target storage domain)
+        Guid targetStorageDomainId = getEnclosingCommand().getParameters().getTargetStorageDomainId();
+        Guid destinationImageId = getEnclosingCommand().getParameters().getDestinationImageId();
+        DiskImage diskImage = getDiskImageDao().get(destinationImageId);
+        if (diskImage != null && targetStorageDomainId.equals(diskImage.getStorageIds().get(0))) {
             getEnclosingCommand().getParameters().setExecutionIndex(0);
         }
     }
