@@ -4,8 +4,8 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.TimeZoneQueryParams;
 
-public class GetDefualtTimeZoneQuery<P extends TimeZoneQueryParams> extends QueriesCommandBase<P> {
-    public GetDefualtTimeZoneQuery(P parameters) {
+public class GetDefaultTimeZoneQuery<P extends TimeZoneQueryParams> extends QueriesCommandBase<P> {
+    public GetDefaultTimeZoneQuery(P parameters) {
         super(parameters);
     }
 

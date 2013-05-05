@@ -804,7 +804,7 @@ public final class AsyncDataProvider {
 
         TimeZoneQueryParams params = new TimeZoneQueryParams();
         params.setTimeZoneType(timeZoneType);
-        Frontend.RunQuery(VdcQueryType.GetDefualtTimeZone, params, aQuery);
+        Frontend.RunQuery(VdcQueryType.GetDefaultTimeZone, params, aQuery);
     }
 
     public static void getHostById(AsyncQuery aQuery, Guid id) {
