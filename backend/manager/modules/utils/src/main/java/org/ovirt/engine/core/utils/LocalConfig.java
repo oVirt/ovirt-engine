@@ -152,6 +152,29 @@ public class LocalConfig {
     }
 
     /**
+     * Expand string using current variables.
+     *
+     * @return Expanded string.
+     * @param value String.
+     */
+    public String expandString(String value) {
+        for (;;) {
+            Matcher refMatch = REF_EXPR.matcher(value);
+            if (!refMatch.find()) {
+                break;
+            }
+            String refKey = refMatch.group(1);
+            String refValue = values.get(refKey);
+            if (refValue == null) {
+                break;
+            }
+            value = value.substring(0, refMatch.start()) + refValue + value.substring(refMatch.end());
+        }
+
+        return value;
+    }
+
+    /**
      * Load the contents of a line from a properties file, expanding
      * references to variables.
      *
@@ -183,19 +206,8 @@ public class LocalConfig {
             value = value.substring(1, value.length() - 1);
         }
 
-        // Expand references to other parameters:
-        for (;;) {
-            Matcher refMatch = REF_EXPR.matcher(value);
-            if (!refMatch.find()) {
-                break;
-            }
-            String refKey = refMatch.group(1);
-            String refValue = values.get(refKey);
-            if (refValue == null) {
-                break;
-            }
-            value = value.substring(0, refMatch.start()) + refValue + value.substring(refMatch.end());
-        }
+        // Expand nested variables
+        value = expandString(value);
 
         // Update the values:
         values.put(key, value);
