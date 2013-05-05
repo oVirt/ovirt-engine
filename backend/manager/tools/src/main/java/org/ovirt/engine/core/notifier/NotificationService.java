@@ -27,7 +27,6 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.notifier.methods.EventMethodFiller;
 import org.ovirt.engine.core.notifier.methods.NotificationMethodMapBuilder;
 import org.ovirt.engine.core.notifier.methods.NotificationMethodMapBuilder.NotificationMethodFactoryMapper;
-import org.ovirt.engine.core.notifier.utils.NotificationConfigurator;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 import org.ovirt.engine.core.notifier.utils.sender.EventSender;
 import org.ovirt.engine.core.notifier.utils.sender.EventSenderResult;
@@ -43,13 +42,13 @@ public class NotificationService implements Runnable {
     private static final Logger log = Logger.getLogger(NotificationService.class);
 
     private DataSource ds;
-    private Map<String, String> prop = null;
+    private NotificationProperties prop = null;
     private NotificationMethodFactoryMapper methodsMapper = null;
     private int daysToKeepHistory = 0;
     private int daysToSendOnStartup = 0;
 
-    public NotificationService(NotificationConfigurator notificationConf) throws NotificationServiceException {
-        this.prop = notificationConf.getProperties();
+    public NotificationService(NotificationProperties prop) throws NotificationServiceException {
+        this.prop = prop;
         initConnectivity();
         initConfigurationProperties();
         initEvents();
@@ -72,7 +71,7 @@ public class NotificationService implements Runnable {
 
     private int getNonNegativeIntegerProperty(final String name) throws NotificationServiceException {
          // Get the text of the property:
-         final String text = prop.get(name);
+         final String text = prop.getProperty(name);
 
          // Validate it:
          if (StringUtils.isNotEmpty(text)) {

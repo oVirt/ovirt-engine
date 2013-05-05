@@ -3,7 +3,6 @@ package org.ovirt.engine.core.notifier.utils.sender.mail;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Map;
 
 import javax.mail.MessagingException;
 
@@ -34,9 +33,9 @@ public class EventSenderMailImpl implements EventSender {
     private String hostName;
     private boolean isBodyHtml = false;
 
-    public EventSenderMailImpl(Map<String, String> mailProp) {
+    public EventSenderMailImpl(NotificationProperties mailProp) {
         mailSender = new JavaMailSender(mailProp);
-        String isBodyHtmlStr = mailProp.get(NotificationProperties.HTML_MESSAGE_FORMAT);
+        String isBodyHtmlStr = mailProp.getProperty(NotificationProperties.HTML_MESSAGE_FORMAT);
         if (StringUtils.isNotEmpty(isBodyHtmlStr)) {
             isBodyHtml = Boolean.valueOf(isBodyHtmlStr);
         }

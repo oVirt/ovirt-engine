@@ -134,6 +134,7 @@ ARTIFACTS = \
 GENERATED = \
 	packaging/bin/engine-prolog.sh \
 	packaging/conf/engine.conf.defaults \
+	packaging/conf/notifier.conf.defaults \
 	packaging/etc/engine-config/log4j.xml \
 	packaging/etc/engine-manage-domains/log4j.xml \
 	packaging/etc/notifier/log4j.xml \

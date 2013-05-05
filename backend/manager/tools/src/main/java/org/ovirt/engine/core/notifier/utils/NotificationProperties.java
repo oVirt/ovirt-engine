@@ -43,7 +43,6 @@ public class NotificationProperties extends LocalConfig {
     public static final String SSL_IGNORE_CERTIFICATE_ERRORS = "SSL_IGNORE_CERTIFICATE_ERRORS";
     public static final String SSL_IGNORE_HOST_VERIFICATION = "SSL_IGNORE_HOST_VERIFICATION";
     public static final String ENGINE_PID = "ENGINE_PID";
-    public static final String DEFAULT_ENGINE_PID = "/var/run/ovirt-engine.pid";
 
     /**
      * This parameter specifies how many days of old events are processed and
@@ -60,15 +59,22 @@ public class NotificationProperties extends LocalConfig {
     private static String VARS_PATH = "/etc/ovirt-engine/notifier/notifier.conf";
 
     // This is a singleton and this is the instance:
-    private static final NotificationProperties instance = new NotificationProperties();
+    private static NotificationProperties instance;
 
-    public static NotificationProperties getInstance() {
+    public static synchronized NotificationProperties getInstance() {
+        if (instance == null) {
+            instance = new NotificationProperties();
+        }
         return instance;
     }
 
     public static void setDefaults(String defaultsPath, String varsPath) {
         DEFAULTS_PATH = defaultsPath;
         VARS_PATH = varsPath;
+    }
+
+    public static void release() {
+        instance = null;
     }
 
     private NotificationProperties() {

@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.notifier.methods;
 
-import java.util.Map;
-
+import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 import org.ovirt.engine.core.notifier.utils.sender.mail.EventSenderMailImpl;
 
 /**
@@ -14,7 +13,7 @@ public class NotificationMethodFactoryEmailImpl implements NotificationMethodFac
 
     private EventSenderMailImpl senderMailImpl = null;
 
-    public NotificationMethodFactoryEmailImpl(Map<String,String> properties) {
+    public NotificationMethodFactoryEmailImpl(NotificationProperties properties) {
         senderMailImpl = new EventSenderMailImpl(properties);
     }
 

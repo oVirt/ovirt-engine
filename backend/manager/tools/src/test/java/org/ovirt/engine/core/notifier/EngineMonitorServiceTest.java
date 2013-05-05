@@ -4,7 +4,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import org.junit.Test;
-import org.ovirt.engine.core.notifier.utils.NotificationConfigurator;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 
 /**
@@ -18,7 +17,7 @@ public class EngineMonitorServiceTest {
             File config = new File("src/test/resources/conf/notifier.conf");
             NotificationProperties.setDefaults(config.getAbsolutePath(), null);
 
-            engineMonitorService = new EngineMonitorService(new NotificationConfigurator());
+            engineMonitorService = new EngineMonitorService(NotificationProperties.getInstance());
         } catch (NotificationServiceException e) {
             e.printStackTrace();
         }

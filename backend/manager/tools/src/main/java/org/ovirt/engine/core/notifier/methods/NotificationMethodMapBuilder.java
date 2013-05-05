@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.EventNotificationMethods;
 import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
+import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 import org.ovirt.engine.core.notifier.utils.sender.EventSender;
 
 /**
@@ -61,7 +62,7 @@ public class NotificationMethodMapBuilder {
      * @return a map of notification map and its factory
      */
     public NotificationMethodFactoryMapper createMethodsMapper(List<EventNotificationMethod> notificationMethods,
-            Map<String, String> properties) {
+            NotificationProperties properties) {
         NotificationMethodFactoryMapper methodMapper = new NotificationMethodFactoryMapper();
 
         for (EventNotificationMethod method : notificationMethods) {

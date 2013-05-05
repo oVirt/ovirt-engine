@@ -1,14 +1,17 @@
 package org.ovirt.engine.core.notifier;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import javax.mail.internet.InternetAddress;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.ovirt.engine.core.notifier.utils.NotificationConfigurator;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 
 import sun.misc.Signal;
@@ -38,38 +41,68 @@ public class Notifier {
 
         NotificationService notificationService = null;
         EngineMonitorService engineMonitorService = null;
-        NotificationConfigurator notificationConf = null;
         long engineMonitorInterval;
         long notificationInterval;
         try {
-            notificationConf = new NotificationConfigurator();
+            NotificationProperties prop = NotificationProperties.getInstance();
 
-            // This check will be not mandatory when SMS is implemented.
-            String mailServer = notificationConf.getProperties().get(NotificationProperties.MAIL_SERVER);
-            if ( mailServer == null || mailServer.isEmpty() ) {
-                throw new IllegalArgumentException("Check configuration file, MAIL_SERVER is missing");
+            for (String property : new String[] {
+                NotificationProperties.DAYS_TO_KEEP_HISTORY,
+                NotificationProperties.ENGINE_INTERVAL_IN_SECONDS,
+                NotificationProperties.ENGINE_TIMEOUT_IN_SECONDS,
+                NotificationProperties.INTERVAL_IN_SECONDS,
+                NotificationProperties.IS_HTTPS_PROTOCOL,
+                NotificationProperties.MAIL_PORT,
+                NotificationProperties.MAIL_SERVER,
+                NotificationProperties.REPEAT_NON_RESPONSIVE_NOTIFICATION,
+            }) {
+                if (StringUtils.isEmpty(prop.getProperty(property))) {
+                    throw new IllegalArgumentException(
+                        String.format(
+                            "Check configuration file, '%s' is missing",
+                            property
+                        )
+                    );
+                }
             }
 
-            notificationService = new NotificationService(notificationConf);
-            engineMonitorService = new EngineMonitorService(notificationConf);
+            InetAddress.getAllByName(prop.getProperty(NotificationProperties.MAIL_SERVER));
 
-            notificationInterval =
-                    notificationConf.getTimerInterval(NotificationProperties.INTERVAL_IN_SECONDS,
-                            DEFAULT_NOTIFICATION_INTERVAL_IN_SECONDS);
-            engineMonitorInterval =
-                    notificationConf.getTimerInterval(NotificationProperties.ENGINE_INTERVAL_IN_SECONDS,
-                            DEFAULT_ENGINE_MONITOR_INTERVAL_IN_SECONDS);
+            for (String property : new String[] {
+                NotificationProperties.MAIL_USER,
+                NotificationProperties.MAIL_FROM,
+                NotificationProperties.MAIL_REPLY_TO,
+            }) {
+                String candidate = prop.getProperty(property);
+                if (!StringUtils.isEmpty(candidate)) {
+                    try {
+                        new InternetAddress(candidate);
+                    }
+                    catch(Exception e) {
+                        throw new IllegalArgumentException(
+                            String.format(
+                                "Check configuration file, invalid format in '%s'",
+                                property
+                            ),
+                            e
+                        );
+                    }
+                }
+            }
+
+            notificationService = new NotificationService(prop);
+            engineMonitorService = new EngineMonitorService(prop);
 
             // add notification service to scheduler with its configurable interval
             handler.addServiceHandler(notifyScheduler.scheduleWithFixedDelay(notificationService,
                     1,
-                    notificationInterval,
+                    prop.getLong(NotificationProperties.INTERVAL_IN_SECONDS),
                     TimeUnit.SECONDS));
 
             // add engine monitor service to scheduler with its configurable interval
             handler.addServiceHandler(monitorScheduler.scheduleWithFixedDelay(engineMonitorService,
                     1,
-                    engineMonitorInterval,
+                    prop.getLong(NotificationProperties.ENGINE_INTERVAL_IN_SECONDS),
                     TimeUnit.SECONDS));
         } catch (Exception e) {
             log.error("Failed to run the event notification service. ", e);

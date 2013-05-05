@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.EventAuditLogSubscriber;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
@@ -18,6 +19,11 @@ import org.ovirt.engine.core.notifier.utils.sender.mail.JavaMailSender;
  * over SSL.
  */
 public class MailSenderTest {
+
+    @BeforeClass
+    public static void beforeClass() {
+        NotificationProperties.release();
+    }
 
     /**
      * The test covers sending an email using non-secured mail client (SMTP) configuration. <br>
@@ -40,7 +46,11 @@ public class MailSenderTest {
         eventData.setstorage_domain_name("a test storage pool domain");
         eventData.setseverity(3);
 
-        EventSenderMailImpl mailSender = new EventSenderMailImpl(getMailProperties());
+        NotificationProperties.setDefaults(
+            "src/test/resources/conf/notifier-mail-test-plain.conf",
+            "src/test/resources/conf/missing.conf"
+        );
+        EventSenderMailImpl mailSender = new EventSenderMailImpl(NotificationProperties.getInstance());
         eventData.setmessage("a test message to be sent via non-secured mode");
         EventSenderResult sentResult = null;
         try {
@@ -73,7 +83,11 @@ public class MailSenderTest {
         eventData.setstorage_domain_name("a test storage pool domain");
         eventData.setseverity(3);
 
-        EventSenderMailImpl mailSender = new EventSenderMailImpl(getSecuredMailProperties());
+        NotificationProperties.setDefaults(
+            "src/test/resources/conf/notifier-mail-test-secured.conf",
+            "src/test/resources/conf/missing.conf"
+        );
+        EventSenderMailImpl mailSender = new EventSenderMailImpl(NotificationProperties.getInstance());
         eventData.setmessage("a test message to be sent via secured mode");
         mailSender.send(eventData, null);
 

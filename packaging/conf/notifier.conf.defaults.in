@@ -75,3 +75,6 @@ SSL_IGNORE_HOST_VERIFICATION=false
 # Specifies whether to repeat auditing of failure messages of non-responding engine server. false means
 # repeated failure messages will NOT be sent to the subscribers.
 REPEAT_NON_RESPONSIVE_NOTIFICATION=false
+
+# Location of engine pid
+ENGINE_PID=@ENGINE_VAR@/ovirt-engine.pid

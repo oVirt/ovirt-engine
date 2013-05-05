@@ -36,7 +36,6 @@ import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.notifier.utils.NotificationConfigurator;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 import org.ovirt.engine.core.tools.common.db.StandaloneDataSource;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
@@ -57,11 +56,8 @@ public class EngineMonitorService implements Runnable {
     private static final String ENGINE_RESPONDING_MESSAGE = "Engine server is up and running.";
     private static final String HEALTH_SERVLET_PATH = "/OvirtEngineWeb/HealthStatus";
     private static final String CERTIFICATION_TYPE = "PKCS12";
-    private static final String DEFAULT_SSL_PROTOCOL = "TLS";
-    private static final long DEFAULT_SERVER_MONITOR_TIMEOUT_IN_SECONDS = 30;
-    private static final int DEFAULT_SERVER_MONITOR_RETRIES = 3;
     private DataSource ds;
-    private Map<String, String> prop = null;
+    private NotificationProperties prop = null;
     private long serverMonitorTimeout;
     private URL serverUrl;
     private boolean isServerUp = true;
@@ -84,50 +80,20 @@ public class EngineMonitorService implements Runnable {
      *            notification configuration contains service properties
      * @throws NotificationServiceException
      */
-    public EngineMonitorService(NotificationConfigurator notificationConf) throws NotificationServiceException {
-        this.prop = notificationConf.getProperties();
+    public EngineMonitorService(NotificationProperties prop) throws NotificationServiceException {
+        this.prop = prop;
         initConnectivity();
         initServerConnectivity();
         initServerMonitorInterval();
-        initServerMonitorRetries();
-        initPidFile();
+        serverMonitorRetries = prop.getInteger(NotificationProperties.ENGINE_MONITOR_RETRIES);
+        pidFile = prop.getProperty(NotificationProperties.ENGINE_PID);
         // Boolean.valueOf always returns false unless gets a true expression.
-        repeatNonResponsiveNotification =
-                Boolean.valueOf(this.prop.get(NotificationProperties.REPEAT_NON_RESPONSIVE_NOTIFICATION));
+        repeatNonResponsiveNotification = this.prop.getBoolean(NotificationProperties.REPEAT_NON_RESPONSIVE_NOTIFICATION);
         if (log.isDebugEnabled()) {
             log.debug(MessageFormat.format("Checking server status using {0}, {1}ignoring SSL errors.",
                     isHttpsProtocol ? "HTTPS" : "HTTP",
                     sslIgnoreCertErrors ? "" : "without "));
         }
-    }
-
-    private void initPidFile() {
-        pidFile = prop.get(NotificationProperties.ENGINE_PID);
-        if(pidFile == null) {
-            pidFile = NotificationProperties.DEFAULT_ENGINE_PID;
-        }
-    }
-
-    /**
-     * Reads number of server monitoring retries for each iteration of the monitor service.<br>
-     * If a property wasn't configured, uses the default from {@code SERVER_MONITOR_RETRIES}
-     * @throws NotificationServiceException
-     *             if a number is malformed
-     */
-    private void initServerMonitorRetries() throws NotificationServiceException {
-        int retries;
-        if (prop.containsKey(NotificationProperties.ENGINE_MONITOR_RETRIES)) {
-            try {
-                retries =
-                        NotificationConfigurator.extractNumericProperty(this.prop.get(NotificationProperties.ENGINE_MONITOR_RETRIES));
-            } catch (NumberFormatException e) {
-                throw new NotificationServiceException(NotificationProperties.ENGINE_MONITOR_RETRIES
-                        + " value must be a positive integer number");
-            }
-        } else {
-            retries = DEFAULT_SERVER_MONITOR_RETRIES;
-        }
-        serverMonitorRetries = retries;
     }
 
     /**
@@ -136,21 +102,10 @@ public class EngineMonitorService implements Runnable {
      * misconfigured, throws exception.
      */
     private void initServerMonitorInterval() throws NotificationServiceException {
-        long interval;
-        if (prop.containsKey(NotificationProperties.ENGINE_TIMEOUT_IN_SECONDS)) {
-            String timeout = prop.get(NotificationProperties.ENGINE_TIMEOUT_IN_SECONDS);
-            try {
-                interval = Long.valueOf(timeout);
-                if (interval < 0) {
-                    throw new NotificationServiceException(NotificationProperties.ENGINE_TIMEOUT_IN_SECONDS
-                            + " value must be a positive integer number");
-                }
-            } catch (NumberFormatException e) {
-                throw new NotificationServiceException(String.format("Invalid format of property [%s]",
-                        NotificationProperties.ENGINE_TIMEOUT_IN_SECONDS), e);
-            }
-        } else {
-            interval = DEFAULT_SERVER_MONITOR_TIMEOUT_IN_SECONDS;
+        long interval = prop.getLong(NotificationProperties.ENGINE_TIMEOUT_IN_SECONDS);
+        if (interval < 0) {
+            throw new NotificationServiceException(NotificationProperties.ENGINE_TIMEOUT_IN_SECONDS
+                    + " value must be a positive integer number");
         }
         serverMonitorTimeout = TimeUnit.SECONDS.convert(interval, TimeUnit.MILLISECONDS);
     }
@@ -162,9 +117,9 @@ public class EngineMonitorService implements Runnable {
      * @throws NotificationServiceException
      */
     private void initServerConnectivity() throws NotificationServiceException {
-        isHttpsProtocol = Boolean.valueOf(prop.get(NotificationProperties.IS_HTTPS_PROTOCOL));
-        sslIgnoreCertErrors = Boolean.valueOf(prop.get(NotificationProperties.SSL_IGNORE_CERTIFICATE_ERRORS));
-        sslIgnoreHostVerification = Boolean.valueOf(prop.get(NotificationProperties.SSL_IGNORE_HOST_VERIFICATION));
+        isHttpsProtocol = prop.getBoolean(NotificationProperties.IS_HTTPS_PROTOCOL);
+        sslIgnoreCertErrors = prop.getBoolean(NotificationProperties.SSL_IGNORE_CERTIFICATE_ERRORS);
+        sslIgnoreHostVerification = prop.getBoolean(NotificationProperties.SSL_IGNORE_HOST_VERIFICATION);
 
         // Setting SSL_IGNORE_HOST_VERIFICATION in configuration file implies that SSL certification errors should be
         // ignored as well
@@ -207,10 +162,7 @@ public class EngineMonitorService implements Runnable {
         String keystoreUrl = config.getPKIEngineStore().getAbsolutePath();
 
         try {
-            String sslProtocol = prop.get(NotificationProperties.SSL_PROTOCOL);
-            if (StringUtils.isEmpty(sslProtocol)) {
-                sslProtocol = DEFAULT_SSL_PROTOCOL;
-            }
+            String sslProtocol = prop.getProperty(NotificationProperties.SSL_PROTOCOL);
             KeyStore keyStore = EncryptionUtils.getKeyStore(keystoreUrl, keystorePass, CERTIFICATION_TYPE);
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             tmf.init(keyStore);
@@ -229,7 +181,7 @@ public class EngineMonitorService implements Runnable {
      */
     private void createDummySSLSocketFactory() throws NotificationServiceException {
         try {
-            SSLContext sslContext = SSLContext.getInstance(DEFAULT_SSL_PROTOCOL);
+            SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(null, new TrustManager[] { new X509TrustManager() {
 
                 @Override

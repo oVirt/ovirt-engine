@@ -38,15 +38,15 @@ public class JavaMailSender {
      * @param aMailProps
      *            properties required for creating a mail session
      */
-    public JavaMailSender(Map<String, String> aMailProps) {
+    public JavaMailSender(NotificationProperties aMailProps) {
         Properties mailSessionProps = setCommonProperties(aMailProps);
 
-        mailSessionProps.put("mail.smtp.host", aMailProps.get(NotificationProperties.MAIL_SERVER));
+        mailSessionProps.put("mail.smtp.host", aMailProps.getProperty(NotificationProperties.MAIL_SERVER));
         // enable SSL
-        if (Boolean.valueOf(aMailProps.get(NotificationProperties.MAIL_ENABLE_SSL))) {
+        if (aMailProps.getBoolean(NotificationProperties.MAIL_ENABLE_SSL, false)) {
             mailSessionProps.put("mail.transport.protocol", "smtps");
-            mailSessionProps.put("mail.smtp.port", aMailProps.get(NotificationProperties.MAIL_PORT_SSL));
-            mailSessionProps.put("mail.smtps.socketFactory.port", aMailProps.get(NotificationProperties.MAIL_PORT_SSL));
+            mailSessionProps.put("mail.smtp.port", aMailProps.getProperty(NotificationProperties.MAIL_PORT_SSL));
+            mailSessionProps.put("mail.smtps.socketFactory.port", aMailProps.getProperty(NotificationProperties.MAIL_PORT_SSL));
             mailSessionProps.put("mail.smtps.auth", "true");
             mailSessionProps.put("mail.smtps.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
             mailSessionProps.put("mail.smtps.socketFactory.fallback", false);
@@ -54,14 +54,13 @@ public class JavaMailSender {
             this.isSSL = true;
         } else {
             mailSessionProps.put("mail.transport.protocol", "smtp");
-            mailSessionProps.put("mail.smtp.port", aMailProps.get(NotificationProperties.MAIL_PORT));
+            mailSessionProps.put("mail.smtp.port", aMailProps.getProperty(NotificationProperties.MAIL_PORT));
         }
 
-        String password = aMailProps.get(NotificationProperties.MAIL_PASSWORD);
-        boolean isAuthenticated = StringUtils.isNotEmpty(password);
-        if (isAuthenticated) {
-            auth = new EmailAuthenticator(aMailProps.get(NotificationProperties.MAIL_USER),
-                    aMailProps.get(NotificationProperties.MAIL_PASSWORD));
+        String password = aMailProps.getProperty(NotificationProperties.MAIL_PASSWORD, true);
+        if (StringUtils.isNotEmpty(password)) {
+            auth = new EmailAuthenticator(aMailProps.getProperty(NotificationProperties.MAIL_USER, true),
+                    password);
             this.session = Session.getDefaultInstance(mailSessionProps, auth);
         } else {
             this.session = Session.getInstance(mailSessionProps);
@@ -75,21 +74,18 @@ public class JavaMailSender {
      *            mail configuration properties
      * @return a session common properties
      */
-    private Properties setCommonProperties(Map<String, String> aMailProps) {
+    private Properties setCommonProperties(NotificationProperties aMailProps) {
         Properties mailSessionProps = new Properties();
         if (log.isTraceEnabled()) {
             mailSessionProps.put("mail.debug", "true");
         }
 
-        String mailHost = aMailProps.get(NotificationProperties.MAIL_SERVER);
-        if (StringUtils.isEmpty(mailHost)) {
-            throw new IllegalArgumentException(NotificationProperties.MAIL_SERVER + " must not be null or empty");
-        }
+        String mailHost = aMailProps.getProperty(NotificationProperties.MAIL_SERVER);
 
-        String emailUser = aMailProps.get(NotificationProperties.MAIL_USER);
+        String emailUser = aMailProps.getProperty(NotificationProperties.MAIL_USER, true);
         if (StringUtils.isEmpty(emailUser)) {
-            if (Boolean.valueOf(aMailProps.get(NotificationProperties.MAIL_ENABLE_SSL)) ||
-                    StringUtils.isNotEmpty(aMailProps.get(NotificationProperties.MAIL_PASSWORD))) {
+            if (aMailProps.getBoolean(NotificationProperties.MAIL_ENABLE_SSL, false) ||
+                    StringUtils.isNotEmpty(aMailProps.getProperty(NotificationProperties.MAIL_PASSWORD, true))) {
                 throw new IllegalArgumentException(NotificationProperties.MAIL_USER
                         + " must be set when SSL is enabled or when password is set");
             } else {
@@ -98,12 +94,12 @@ public class JavaMailSender {
             }
         }
 
-        if (StringUtils.isNotEmpty(aMailProps.get(NotificationProperties.MAIL_FROM))) {
+        if (StringUtils.isNotEmpty(aMailProps.getProperty(NotificationProperties.MAIL_FROM, true))) {
             try {
-                from = new InternetAddress(aMailProps.get(NotificationProperties.MAIL_FROM));
+                from = new InternetAddress(aMailProps.getProperty(NotificationProperties.MAIL_FROM));
             } catch (AddressException e) {
                 log.error(MessageFormat.format("Failed to parse 'from' user {0} provided by property {1}",
-                        aMailProps.get(NotificationProperties.MAIL_FROM),
+                        aMailProps.getProperty(NotificationProperties.MAIL_FROM),
                         NotificationProperties.MAIL_FROM), e);
             }
         } else {
@@ -118,20 +114,18 @@ public class JavaMailSender {
             }
         }
 
-        if (StringUtils.isNotEmpty(aMailProps.get(NotificationProperties.MAIL_REPLY_TO))) {
+        if (StringUtils.isNotEmpty(aMailProps.getProperty(NotificationProperties.MAIL_REPLY_TO, true))) {
             try {
-                replyTo = new InternetAddress(aMailProps.get(NotificationProperties.MAIL_REPLY_TO));
+                replyTo = new InternetAddress(aMailProps.getProperty(NotificationProperties.MAIL_REPLY_TO));
             } catch (AddressException e) {
                 log.error(MessageFormat.format("Failed to parse 'replyTo' email {0} provided by property {1}",
-                        aMailProps.get(NotificationProperties.MAIL_REPLY_TO),
+                        aMailProps.getProperty(NotificationProperties.MAIL_REPLY_TO),
                         NotificationProperties.MAIL_REPLY_TO), e);
             }
         }
 
-        String isBodyHtmlStr = aMailProps.get(NotificationProperties.HTML_MESSAGE_FORMAT);
-        if (StringUtils.isNotEmpty(isBodyHtmlStr)) {
-            isBodyHtml = Boolean.valueOf(isBodyHtmlStr);
-        }
+        isBodyHtml = aMailProps.getBoolean(NotificationProperties.HTML_MESSAGE_FORMAT, false);
+
         return mailSessionProps;
     }
 
