@@ -14,7 +14,7 @@ usage() {
     printf "\t-s SERVERNAME - The database servername for the database  (def. ${SERVERNAME})\n"
     printf "\t-p PORT       - The database port for the database        (def. ${PORT})\n"
     printf "\t-d DATABASE   - The database name                         (def. ${DATABASE})\n"
-    printf "\t-u USERNAME   - The admin username for the database.\n"
+    printf "\t-u USERNAME   - The username for the database             (def. engine)\n"
     printf "\t-l LOGFILE    - The logfile for capturing output          (def. ${LOGFILE})\n"
     printf "\t-v            - Turn on verbosity                         (WARNING: lots of output)\n"
     printf "\t-h            - This help text.\n"

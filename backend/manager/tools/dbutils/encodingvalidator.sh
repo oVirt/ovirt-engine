@@ -20,7 +20,7 @@ usage() {
     printf "\n"
     printf "\t-s SERVERNAME - The database servername for the database  (def. ${SERVERNAME})\n"
     printf "\t-p PORT       - The database port for the database        (def. ${PORT})\n"
-    printf "\t-u USERNAME   - The admin username for the database.\n"
+    printf "\t-u USERNAME   - The username for the database             (def. engine)\n"
     printf "\t-l LOGFILE    - The logfile for capturing output          (def. ${LOGFILE})\n"
     printf "\t-f            - Fix the template1 database encoding to be UTF8.\n"
     printf "\t-q            - Quiet operation: do not ask questions, assume 'yes' when fixing.\n"

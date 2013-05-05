@@ -5,7 +5,7 @@ set_defaults() {
     SERVERNAME="localhost"
     PORT="5432"
     DATABASE="engine"
-    USERNAME=""
+    USERNAME="engine"
     VERBOSE=false
     LOGFILE="$ME.log"
 
