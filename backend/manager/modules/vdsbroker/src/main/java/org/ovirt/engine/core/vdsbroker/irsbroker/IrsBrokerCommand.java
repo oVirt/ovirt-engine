@@ -4,14 +4,17 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.net.SocketException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -999,7 +1002,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             mCurrentVdsId = null;
         }
 
-        private final Map<Guid, HashSet<Guid>> _vdssInProblem = new HashMap<Guid, HashSet<Guid>>();
         private final Map<Guid, HashSet<Guid>> _domainsInProblem = new ConcurrentHashMap<Guid, HashSet<Guid>>();
         private final Map<Guid, String> _timers = new HashMap<Guid, String>();
 
@@ -1154,24 +1156,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
 
         private void updateProblematicVdsData(final Guid vdsId, final String vdsName, Set<Guid> domainsInProblems) {
-            // for all recovered domains, update the
-            // cache of _domainsInProblem and
-            // _vdssInProblem
-            if (_vdssInProblem.containsKey(vdsId)) {
-                // DO NOT unify the next 2 for
-                // statements because of
-                // java.util.ConcurrentModificationException
-                List<Guid> domainsRecoveredFromProblem = new ArrayList<Guid>();
-                for (Guid domainId : _vdssInProblem.get(vdsId)) {
-                    if (!domainsInProblems.contains(domainId)) {
-                        domainsRecoveredFromProblem.add(domainId);
-                    }
-                }
-                for (Guid domainRecovered : domainsRecoveredFromProblem) {
-                    DomainRecoveredFromProblem(domainRecovered, vdsId, vdsName);
-                }
-            }
-
             // for all problematic domains
             // update cache of _domainsInProblem
             // and _vdssInProblem and add a new
@@ -1186,12 +1170,19 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     AddDomainInProblemData(domainId, vdsId, vdsName);
                 }
             }
+            Set<Guid> notReportedDomainsByHost = new HashSet<Guid>(_domainsInProblem.keySet());
+            notReportedDomainsByHost.removeAll(domainsInProblems);
+            for (Guid domainId : notReportedDomainsByHost) {
+                Set<Guid> vdsForDomain = _domainsInProblem.get(domainId);
+                if (vdsForDomain != null && vdsForDomain.contains(vdsId)) {
+                    domainRecoveredFromProblem(domainId, vdsId, vdsName);
+                }
+            }
         }
 
-        private void DomainRecoveredFromProblem(Guid domainId, Guid vdsId, String vdsName) {
+        private void domainRecoveredFromProblem(Guid domainId, Guid vdsId, String vdsName) {
             String domainIdTuple = getDomainIdTuple(domainId);
             log.infoFormat("Domain {0} recovered from problem. vds: {1}", domainIdTuple, vdsName);
-            ClearVds(vdsId, domainId);
             _domainsInProblem.get(domainId).remove(vdsId);
             if (_domainsInProblem.get(domainId).size() == 0) {
                 log.infoFormat("Domain {0} has recovered from problem. No active host in the DC is reporting it as" +
@@ -1202,7 +1193,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
 
         private void AddDomainInProblemData(Guid domainId, Guid vdsId, String vdsName) {
-            UpdateVdsInProblem(domainId, vdsId);
             _domainsInProblem.put(domainId, new java.util.HashSet<Guid>(java.util.Arrays.asList(vdsId)));
             log.warnFormat("domain {0} in problem. vds: {1}", getDomainIdTuple(domainId), vdsName);
             Class[] inputType = new Class[] { Guid.class };
@@ -1235,14 +1225,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         private void UpdateDomainInProblemData(Guid domainId, Guid vdsId, String vdsName) {
             log.debugFormat("domain {0} still in problem. vds: {1}", getDomainIdTuple(domainId), vdsName);
             _domainsInProblem.get(domainId).add(vdsId);
-            UpdateVdsInProblem(domainId, vdsId);
-        }
-
-        private void UpdateVdsInProblem(Guid domainId, Guid vdsId) {
-            if (!_vdssInProblem.containsKey(vdsId)) {
-                _vdssInProblem.put(vdsId, new java.util.HashSet<Guid>());
-            }
-            _vdssInProblem.get(vdsId).add(domainId);
         }
 
         private EventResult ProcessDomainRecovery(final Guid domainId) {
@@ -1278,6 +1260,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             // (and not a problem with the domain itself).
             StorageDomainStatic storageDomain = DbFacade.getInstance().getStorageDomainStaticDao().get(domainId);
             String domainIdTuple = getDomainIdTuple(domainId);
+            List<Guid> nonOpVdss = new ArrayList<Guid>();
             if (vdssInProblem.size() > 0) {
                 if (storageDomain.getStorageDomainType() != StorageDomainType.ImportExport
                         && storageDomain.getStorageDomainType() != StorageDomainType.ISO) {
@@ -1304,7 +1287,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                     .getEventListener()
                                     .vdsNonOperational(vdsId, NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE,
                                             true, true, domainId);
-                            clearVdsFromCache(vdsId, vds.getName());
+                            nonOpVdss.add(vdsId);
                         } else {
                             log.warnFormat(
                                     "vds {0} reported domain {1} as in problem, vds is in status {3}, no need to move to nonoperational",
@@ -1339,10 +1322,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 }
             }
 
-            // clear from cache of _vdssInProblem and
-            // _domainsInProblem
-            clearDomainFromCache(domainId);
-            clearTimer(domainId);
+            // clear from cache of _domainsInProblem
+            clearDomainFromCache(domainId, nonOpVdss);
             return result;
         }
 
@@ -1365,13 +1346,27 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
          *
          * @param domainId
          *            - the domain to clear cache for.
+         * @param nonOpVdss - passed vdss that non operational
          */
-        private void clearDomainFromCache(Guid domainId) {
-            Set<Guid> vdsIds = _domainsInProblem.remove(domainId);
-            if (vdsIds != null) {
-                for (Guid vdsId : vdsIds) {
-                    ClearVds(vdsId, domainId);
+        private void clearDomainFromCache(Guid domainId, List<Guid> nonOpVdss) {
+            if (domainId != null) {
+                _domainsInProblem.remove(domainId);
+            }
+            removeVdsAsProblematic(nonOpVdss);
+        }
+
+        private void removeVdsAsProblematic(List<Guid> nonOpVdss) {
+            Iterator<Map.Entry<Guid, HashSet<Guid>>> iterDomainsInProblem = _domainsInProblem.entrySet().iterator();
+            while (iterDomainsInProblem.hasNext()) {
+                Map.Entry<Guid, HashSet<Guid>> entry = iterDomainsInProblem.next();
+                entry.getValue().removeAll(nonOpVdss);
+                if (entry.getValue().isEmpty()) {
+                    iterDomainsInProblem.remove();
+                    clearTimer(entry.getKey());
+                    log.infoFormat("Domain {0} has recovered from problem. No active host in the DC is reporting it as poblematic, so clearing the domain recovery timer.",
+                            getDomainIdTuple(entry.getKey()));
                 }
+
             }
         }
 
@@ -1383,7 +1378,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             // clear lists
             _timers.clear();
             _domainsInProblem.clear();
-            _vdssInProblem.clear();
         }
 
         public void clearPoolTimers() {
@@ -1410,18 +1404,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             log.infoFormat("Clearing cache of pool: {0} for problematic entities of VDS: {1}.",
                     _storagePoolId, vdsName);
 
-            if (_vdssInProblem.containsKey(vdsId)) {
-                for (Guid domainId : _vdssInProblem.get(vdsId)) {
-                    DomainRecoveredFromProblem(domainId, vdsId, vdsName);
-                }
-            }
-        }
-
-        private void ClearVds(Guid vdsId, Guid domainId) {
-            _vdssInProblem.get(vdsId).remove(domainId);
-            if (_vdssInProblem.get(vdsId).isEmpty()) {
-                _vdssInProblem.remove(vdsId);
-            }
+            clearDomainFromCache(null, Arrays.asList(vdsId));
         }
 
         private boolean _disposed;
