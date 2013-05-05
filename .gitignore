@@ -50,4 +50,4 @@ packaging/etc/notifier/log4j.xml
 packaging/services/config.py
 packaging/services/ovirt-engine.systemd
 packaging/services/ovirt-engine.sysv
-packaging/fedora/spec/ovirt-engine.spec
+ovirt-engine.spec

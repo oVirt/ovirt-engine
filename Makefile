@@ -135,7 +135,7 @@ GENERATED = \
 	packaging/services/config.py \
 	packaging/services/ovirt-engine.systemd \
 	packaging/services/ovirt-engine.sysv \
-	packaging/fedora/spec/ovirt-engine.spec \
+	ovirt-engine.spec \
 	$(NULL)
 
 all: \
@@ -185,10 +185,10 @@ install: \
 	install_service \
 	$(NULL)
 
-packaging/fedora/spec/ovirt-engine.spec: version.mak
+ovirt-engine.spec: version.mak
 
-dist:	packaging/fedora/spec/ovirt-engine.spec
-	git ls-files | tar --files-from /proc/self/fd/0 -czf $(TARBALL) packaging/fedora/spec/ovirt-engine.spec
+dist:	ovirt-engine.spec
+	git ls-files | tar --files-from /proc/self/fd/0 -czf $(TARBALL) ovirt-engine.spec
 	@echo
 	@echo You can use $(RPMBUILD) -tb $(TARBALL) to produce rpms
 	@echo
