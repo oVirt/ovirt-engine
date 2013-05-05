@@ -614,9 +614,9 @@ public class VdsManager {
      */
     public boolean handleNetworkException(VDSNetworkException ex, VDS vds) {
         if (vds.getStatus() != VDSStatus.Down) {
+            long timeoutToFence = calcTimeoutToFence(vds.getVmCount(), vds.getSpmStatus());
             if (mUnrespondedAttempts.get() < Config.<Integer> GetValue(ConfigValues.VDSAttemptsToResetCount)
-                    || (lastUpdate
-                            + calcTimeoutToFence(vds.getVmCount(), vds.getSpmStatus())) > System.currentTimeMillis()) {
+                    || (lastUpdate + timeoutToFence) > System.currentTimeMillis()) {
                 boolean result = false;
                 if (vds.getStatus() != VDSStatus.Connecting && vds.getStatus() != VDSStatus.PreparingForMaintenance
                         && vds.getStatus() != VDSStatus.NonResponsive) {
@@ -633,8 +633,10 @@ public class VdsManager {
             }
             setStatus(VDSStatus.NonResponsive, vds);
             log.errorFormat(
-                    "Server failed to respond, vds_id = {0}, vds_name = {1}, error = {2}",
-                    vds.getId(), vds.getName(), ex.getMessage());
+                    "Server failed to respond, vds_id = {0}, vds_name = {1}, vm_count = {2}, " +
+                    "spm_status = {3}, non-responsive_timeout = {5} error = {4}",
+                    vds.getId(), vds.getName(), vds.getVmCount(), vds.getSpmStatus(), timeoutToFence,
+                    ex.getMessage());
 
             AuditLogableBase logable = new AuditLogableBase(vds.getId());
             AuditLogDirector.log(logable, AuditLogType.VDS_FAILURE);
