@@ -198,13 +198,14 @@ public class LocalConfig {
      * Get the value of a property given its name.
      *
      * @param key the name of the property
+     * @param allowMissing return null if missing
      * @return the value of the property as contained in the configuration file
      * @throws java.lang.IllegalStateException if the property doesn't have a
      *     value
      */
-    public String getProperty(String key) {
+    public String getProperty(String key, boolean allowMissing) {
         String value = values.get(key);
-        if (value == null) {
+        if (value == null && !allowMissing) {
             // Loudly alert in the log and throw an exception:
             String message = "The property \"" + key + "\" doesn't have a value.";
             log.error(message);
@@ -214,7 +215,19 @@ public class LocalConfig {
             // a serious error:
             // System.exit(1)
         }
-        return values.get(key);
+        return value;
+    }
+
+    /**
+     * Get the value of a property given its name.
+     *
+     * @param key the name of the property
+     * @return the value of the property as contained in the configuration file
+     * @throws java.lang.IllegalStateException if the property doesn't have a
+     *     value
+     */
+    public String getProperty(String key) {
+        return getProperty(key, false);
     }
 
     // Accepted values for boolean properties (please keep them sorted as we use
@@ -230,30 +243,88 @@ public class LocalConfig {
      * <code>y</code> or <code>1</code> (ignoring case).
      *
      * @param key the name of the property
+     * @param defaultValue default value to return, null do not allow.
+     * @return the boolean value of the property
+     * @throws java.lang.IllegalArgumentException if the properties doesn't have
+     *     a value or if the value is not a valid boolean
+     */
+    public boolean getBoolean(String key, Boolean defaultValue) {
+        boolean ret;
+
+        // Get the text of the property and convert it to lowercase:
+        String value = getProperty(key, defaultValue != null);
+        if (value == null) {
+            ret = defaultValue.booleanValue();
+        }
+        else {
+            value = value.trim().toLowerCase();
+
+            // Check if it is one of the true values:
+            if (Arrays.binarySearch(TRUE_VALUES, value) >= 0) {
+                ret = true;
+            }
+            // Check if it is one of the false values:
+            else if (Arrays.binarySearch(FALSE_VALUES, value) >= 0) {
+                ret = false;
+            }
+            else {
+                // No luck, will alert in the log that the text is not valid and throw
+                // an exception:
+                String message = "The value \"" + value + "\" for property \"" + key + "\" is not a valid boolean.";
+                log.error(message);
+                throw new IllegalArgumentException(message);
+            }
+        }
+
+        return ret;
+    }
+
+    /**
+     * Get the value of a boolean property given its name. It will take the text
+     * of the property and return <true> if it is <code>true</code> if the text
+     * of the property is <code>true</code>, <code>t</code>, <code>yes</code>,
+     * <code>y</code> or <code>1</code> (ignoring case).
+     *
+     * @param key the name of the property
+     * @param defaultValue default value to return, null do not allow.
      * @return the boolean value of the property
      * @throws java.lang.IllegalArgumentException if the properties doesn't have
      *     a value or if the value is not a valid boolean
      */
     public boolean getBoolean(String key) {
-        // Get the text of the property and convert it to lowercase:
-        String value = getProperty(key);
-        value = value.trim().toLowerCase();
+        return getBoolean(key, null);
+    }
 
-        // Check if it is one of the true values:
-        if (Arrays.binarySearch(TRUE_VALUES, value) >= 0) {
-            return true;
+    /**
+     * Get the value of an integer property given its name. If the text of the
+     * value can't be converted to an integer a message will be sent to the log
+     * and an exception thrown.
+     *
+     * @param key the name of the property
+     * @param defaultValue default value to return, null do not allow.
+     * @return the integer value of the property
+     * @throws java.lang.IllegalArgumentException if the property doesn't have a
+     *     value or the value is not a valid integer
+     */
+    public int getInteger(String key, Integer defaultValue) {
+        int ret;
+
+        String value = getProperty(key, defaultValue != null);
+        if (value == null) {
+            ret = defaultValue.intValue();
+        }
+        else {
+            try {
+                ret = Integer.parseInt(value);
+            }
+            catch (NumberFormatException exception) {
+                String message = "The value \"" + value + "\" for property \"" + key + "\" is not a valid integer.";
+                log.error(message, exception);
+                throw new IllegalArgumentException(message, exception);
+            }
         }
 
-        // Check if it is one of the false values:
-        if (Arrays.binarySearch(FALSE_VALUES, value) >= 0) {
-            return false;
-        }
-
-        // No luck, will alert in the log that the text is not valid and throw
-        // an exception:
-        String message = "The value \"" + value + "\" for property \"" + key + "\" is not a valid boolean.";
-        log.error(message);
-        throw new IllegalArgumentException(message);
+        return ret;
     }
 
     /**
@@ -267,15 +338,53 @@ public class LocalConfig {
      *     value or the value is not a valid integer
      */
     public int getInteger(String key) {
-        String value = getProperty(key);
-        try {
-            return Integer.parseInt(value);
+        return getInteger(key, null);
+    }
+
+    /**
+     * Get the value of an long property given its name. If the text of the
+     * value can't be converted to an long a message will be sent to the log
+     * and an exception thrown.
+     *
+     * @param key the name of the property
+     * @param defaultValue default value to return, null do not allow.
+     * @return the long value of the property
+     * @throws java.lang.IllegalArgumentException if the property doesn't have a
+     *     value or the value is not a valid long
+     */
+    public long getLong(String key, Long defaultValue) {
+        long ret;
+
+        String value = getProperty(key, defaultValue != null);
+        if (value == null) {
+            ret = defaultValue.intValue();
         }
-        catch (NumberFormatException exception) {
-            String message = "The value \"" + value + "\" for property \"" + key + "\" is not a valid integer.";
-            log.error(message, exception);
-            throw new IllegalArgumentException(message, exception);
+        else {
+            try {
+                ret = Long.parseLong(value);
+            }
+            catch (NumberFormatException exception) {
+                String message = "The value \"" + value + "\" for property \"" + key + "\" is not a valid long integer.";
+                log.error(message, exception);
+                throw new IllegalArgumentException(message, exception);
+            }
         }
+
+        return ret;
+    }
+
+    /**
+     * Get the value of an long property given its name. If the text of the
+     * value can't be converted to an long a message will be sent to the log
+     * and an exception thrown.
+     *
+     * @param key the name of the property
+     * @return the long value of the property
+     * @throws java.lang.IllegalArgumentException if the property doesn't have a
+     *     value or the value is not a valid long
+     */
+    public long getLong(String key) {
+        return getLong(key, null);
     }
 
     /**
