@@ -329,6 +329,7 @@ install_setup:
 	install -dm 750 $(DESTDIR)$(ENGINE_STATE)/backups
 
 	# Task cleaner
+	install -dm 750 $(DESTDIR)$(DATA_DIR)/scripts/dbutils
 	install -m 750 backend/manager/tools/dbutils/common.sh $(DESTDIR)$(DATA_DIR)/scripts/dbutils
 	install -m 750 backend/manager/tools/dbutils/taskcleaner.sh $(DESTDIR)$(DATA_DIR)/scripts/dbutils
 	install -m 640 backend/manager/tools/dbutils/taskcleaner_sp.sql $(DESTDIR)$(DATA_DIR)/scripts/dbutils
