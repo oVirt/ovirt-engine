@@ -68,7 +68,7 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
                     .getInstance()
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.CollectVdsNetworkData,
-                            new VdsIdAndVdsVDSCommandParametersBase(getParameters().getVdsId()));
+                            new VdsIdAndVdsVDSCommandParametersBase(getVds()));
 
             if (retVal.getSucceeded()) {
                 setSucceeded(true);

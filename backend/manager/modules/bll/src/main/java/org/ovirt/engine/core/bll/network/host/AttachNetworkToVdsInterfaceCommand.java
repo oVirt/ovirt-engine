@@ -75,7 +75,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
                     .getInstance()
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.CollectVdsNetworkData,
-                            new VdsIdAndVdsVDSCommandParametersBase(params.getVdsId()));
+                            new VdsIdAndVdsVDSCommandParametersBase(getVds()));
 
             if (retVal.getSucceeded()) {
                 Guid groupId = getVdsDAO().get(params.getVdsId()).getVdsGroupId();

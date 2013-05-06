@@ -76,7 +76,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
 
         if (getParameters().getCheckConnectivity()) {
             ThreadPoolUtil.execute(new EditNetworkThread(parameters));
-            pollVds(getParameters().getVdsId());
+            pollVds(getVds());
         } else {
             editNetworkThreadCompat(parameters);
         }
@@ -87,7 +87,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
                     .getInstance()
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.CollectVdsNetworkData,
-                            new VdsIdAndVdsVDSCommandParametersBase(getParameters().getVdsId()));
+                            new VdsIdAndVdsVDSCommandParametersBase(getVds()));
 
             if (retVal.getSucceeded()) {
                 Guid groupId = getVdsDAO().get(getParameters().getVdsId()).getVdsGroupId();
@@ -124,7 +124,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         }
     }
 
-    protected void pollVds(Guid vdsId) {
+    protected void pollVds(VDS vds) {
         int retries = 10;
         while (retries > 0 && retVal == null && !editNetworkThreadFinish) {
             retries--;
@@ -132,7 +132,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
                 Backend.getInstance()
                         .getResourceManager()
                         .RunVdsCommand(VDSCommandType.CollectVdsNetworkData,
-                                new VdsIdAndVdsVDSCommandParametersBase(vdsId));
+                                new VdsIdAndVdsVDSCommandParametersBase(vds));
             } catch (java.lang.Exception e) {
             }
         }

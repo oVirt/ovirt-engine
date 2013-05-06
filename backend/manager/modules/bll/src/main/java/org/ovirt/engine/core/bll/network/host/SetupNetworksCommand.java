@@ -115,7 +115,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
                 VdsHandler.handleVdsResult(retVal);
 
                 if (retVal.getSucceeded()) {
-                    setSucceeded(TransactionSupport.executeInNewTransaction(updateVdsNetworksInTx(bckndCmdParams)));
+                    setSucceeded(TransactionSupport.executeInNewTransaction(updateVdsNetworksInTx()));
                 }
             }
         } catch (TimeoutException e) {
@@ -165,10 +165,9 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
     /**
      * update the new VDSM networks to DB in new transaction.
      *
-     * @param bckndCmdParams
      * @return
      */
-    private TransactionMethod<Boolean> updateVdsNetworksInTx(final T bckndCmdParams) {
+    private TransactionMethod<Boolean> updateVdsNetworksInTx() {
         return new TransactionMethod<Boolean>() {
 
             @Override
@@ -176,7 +175,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
                 // save the new network topology to DB
                 Backend.getInstance().getResourceManager()
                         .RunVdsCommand(VDSCommandType.CollectVdsNetworkData,
-                                new VdsIdAndVdsVDSCommandParametersBase(bckndCmdParams.getVdsId()));
+                                new VdsIdAndVdsVDSCommandParametersBase(getVds()));
 
                 // Update cluster networks (i.e. check if need to activate each new network)
                 for (Network net : getNetworks()) {

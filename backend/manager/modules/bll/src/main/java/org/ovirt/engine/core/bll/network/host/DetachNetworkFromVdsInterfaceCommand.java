@@ -69,7 +69,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
                     .getInstance()
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.CollectVdsNetworkData,
-                            new VdsIdAndVdsVDSCommandParametersBase(getParameters().getVdsId()));
+                            new VdsIdAndVdsVDSCommandParametersBase(getVds()));
 
             if (retVal.getSucceeded()) {
                 setSucceeded(true);

@@ -58,7 +58,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
                     .getInstance()
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.CollectVdsNetworkData,
-                            new VdsIdAndVdsVDSCommandParametersBase(params.getVdsId()));
+                            new VdsIdAndVdsVDSCommandParametersBase(getVds()));
 
             if (retVal.getSucceeded()) {
                 // set network status (this can change the network status to
