@@ -141,6 +141,13 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
     }
 
     @Override
+    protected void onSelectedItemChanged()
+    {
+        super.onSelectedItemChanged();
+        updateActionAvailability();
+    }
+
+    @Override
     protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
