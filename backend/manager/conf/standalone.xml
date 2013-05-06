@@ -32,6 +32,12 @@
 
       <!-- Don't let quartz call home to check for updates: -->
       <property name="org.quartz.scheduler.skipUpdateCheck" value="true"/>
+ 
+      <!-- Configure quartz thread pool: -->
+      <property name="org.quartz.threadPool.class" value="org.quartz.simpl.SimpleThreadPool"/>
+      <property name="org.quartz.threadPool.threadCount" value="100"/>
+      <property name="org.quartz.jobStore.misfireThreshold" value="60000"/>
+      <property name="org.quartz.jobStore.class" value="org.quartz.simpl.RAMJobStore"/>
 
       <!-- Enable compression for html content and REST API: -->
       <property name="org.apache.coyote.http11.Http11Protocol.COMPRESSION" value="on"/>
