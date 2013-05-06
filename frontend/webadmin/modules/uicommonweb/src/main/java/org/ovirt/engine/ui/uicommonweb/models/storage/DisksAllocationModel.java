@@ -63,8 +63,10 @@ public class DisksAllocationModel extends EntityModel
     }
 
     public void sortDisks() {
-        Linq.sort(disks, new DiskModelByAliasComparer());
-        onPropertyChanged(new PropertyChangedEventArgs("Disks")); //$NON-NLS-1$
+        if (disks != null) {
+            Linq.sort(disks, new DiskModelByAliasComparer());
+            onPropertyChanged(new PropertyChangedEventArgs("Disks")); //$NON-NLS-1$
+        }
     }
 
     private HashMap<Guid, DiskImage> imageToDestinationDomainMap;
