@@ -15,6 +15,7 @@ public class VmStatusColumn extends UserPortalImageResourceColumn<UserPortalItem
         case ImageLocked:
         case MigratingFrom:
         case MigratingTo:
+        case PreparingForHibernate:
         case SavingState:
             return getApplicationResources().vmStatusWaiting();
         case PoweringUp:

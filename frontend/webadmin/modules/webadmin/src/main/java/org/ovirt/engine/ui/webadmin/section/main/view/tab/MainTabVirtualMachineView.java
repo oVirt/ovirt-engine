@@ -142,7 +142,10 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
             @Override
             public VMStatus getRawValue(VM object) {
-                return object.getStatus();
+                switch (object.getStatus()) {
+                case PreparingForHibernate: return VMStatus.SavingState;
+                default:                    return object.getStatus();
+                }
             }
         };
         getTable().addColumn(statusColumn, constants.statusVm(), "80px"); //$NON-NLS-1$
