@@ -3,8 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.providers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.action.ProviderParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -19,8 +17,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 
 public class ProviderListModel extends ListWithDetailsModel implements ISupportSystemTreeContext {
@@ -172,14 +168,10 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
     }
 
     private void remove() {
-        Frontend.RunAction(VdcActionType.RemoveProvider, new ProviderParameters((Provider) getSelectedItem()),
-                new IFrontendActionAsyncCallback() {
-
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        getSearchCommand().execute();
-                    }
-                });
+        if (getConfirmWindow() != null) {
+            return;
+        }
+        setConfirmWindow(new RemoveProvidersModel(this));
     }
 
     @Override
