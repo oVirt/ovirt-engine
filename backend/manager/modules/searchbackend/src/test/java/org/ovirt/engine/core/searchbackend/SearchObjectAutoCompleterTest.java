@@ -14,7 +14,7 @@ public class SearchObjectAutoCompleterTest {
 
     @Before
     public void setUp() {
-        comp = new SearchObjectAutoCompleter(true);
+        comp = new SearchObjectAutoCompleter();
     }
 
     @Test

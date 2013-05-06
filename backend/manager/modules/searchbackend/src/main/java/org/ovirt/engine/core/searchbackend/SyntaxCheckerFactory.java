@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 public class SyntaxCheckerFactory {
 
     private static String ConfigAuthenticationMethod;
-    private static final ISyntaxChecker uiSyntaxChecker = new SyntaxChecker(100, true);
+    private static final ISyntaxChecker uiSyntaxChecker = new SyntaxChecker(100);
     private static ISyntaxChecker backendSyntaxChecker = null;
     private static final ISyntaxChecker adSyntaxChecker = new ADSyntaxChecker();
 
@@ -21,8 +21,7 @@ public class SyntaxCheckerFactory {
     public static ISyntaxChecker CreateBackendSyntaxChecker(String AuthenticationMethod) {
         ConfigAuthenticationMethod = AuthenticationMethod;
         if(backendSyntaxChecker == null) {
-            backendSyntaxChecker = new SyntaxChecker(Config.<Integer> GetValue(ConfigValues.SearchResultsLimit),
-                    true);
+            backendSyntaxChecker = new SyntaxChecker(Config.<Integer> GetValue(ConfigValues.SearchResultsLimit));
         }
         return backendSyntaxChecker;
     }

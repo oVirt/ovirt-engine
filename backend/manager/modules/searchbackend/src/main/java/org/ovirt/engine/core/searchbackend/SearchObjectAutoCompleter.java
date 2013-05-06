@@ -11,12 +11,10 @@ import org.ovirt.engine.core.searchbackend.gluster.GlusterVolumeCrossRefAutoComp
 public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
     private final Map<String, String[]> mJoinDictionary = new HashMap<String, String[]>();
 
-    public SearchObjectAutoCompleter(boolean isDesktopsAllowed) {
+    public SearchObjectAutoCompleter() {
 
         mVerbs.put(SearchObjects.VM_PLU_OBJ_NAME, SearchObjects.VM_PLU_OBJ_NAME);
-        if (isDesktopsAllowed) {
-            mVerbs.put(SearchObjects.VDC_POOL_PLU_OBJ_NAME, SearchObjects.VDC_POOL_PLU_OBJ_NAME);
-        }
+        mVerbs.put(SearchObjects.VDC_POOL_PLU_OBJ_NAME, SearchObjects.VDC_POOL_PLU_OBJ_NAME);
         mVerbs.put(SearchObjects.VDS_PLU_OBJ_NAME, SearchObjects.VDS_PLU_OBJ_NAME);
         mVerbs.put(SearchObjects.TEMPLATE_PLU_OBJ_NAME, SearchObjects.TEMPLATE_PLU_OBJ_NAME);
         mVerbs.put(SearchObjects.AUDIT_PLU_OBJ_NAME, SearchObjects.AUDIT_PLU_OBJ_NAME);
@@ -31,9 +29,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
 
         buildCompletions();
         mVerbs.put(SearchObjects.VM_OBJ_NAME, SearchObjects.VM_OBJ_NAME);
-        if (isDesktopsAllowed) {
-            mVerbs.put(SearchObjects.VDC_POOL_OBJ_NAME, SearchObjects.VDC_POOL_OBJ_NAME);
-        }
+        mVerbs.put(SearchObjects.VDC_POOL_OBJ_NAME, SearchObjects.VDC_POOL_OBJ_NAME);
         mVerbs.put(SearchObjects.DISK_OBJ_NAME, SearchObjects.DISK_OBJ_NAME);
         mVerbs.put(SearchObjects.VDS_OBJ_NAME, SearchObjects.VDS_OBJ_NAME);
         mVerbs.put(SearchObjects.TEMPLATE_OBJ_NAME, SearchObjects.TEMPLATE_OBJ_NAME);

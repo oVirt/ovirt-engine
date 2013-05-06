@@ -137,13 +137,13 @@ public class SearchQueryTest {
      *            - The dao to be used
      */
     private void mockDiskSao(final DiskDao diskDAO) {
-        SearchObjectAutoCompleter search = new SearchObjectAutoCompleter(false);
+        SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         Mockito.when(diskDAO.getAllWithQuery(Matchers.matches(getDiskImageRegexString(search))))
                 .thenReturn(diskImageResultList);
     }
 
     private void mockQuotaDAO(final QuotaDAO quotaDAO) {
-        SearchObjectAutoCompleter search = new SearchObjectAutoCompleter(false);
+        SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         Mockito.when(quotaDAO.getAllWithQuery(Matchers.matches(getQuotaRegexString(search))))
                 .thenReturn(quotaResultList);
     }
@@ -164,7 +164,7 @@ public class SearchQueryTest {
      *            - The dao to be used
      */
     private void mockVdsGroupDAO(final VdsGroupDAO vdsGroupDAO) {
-        SearchObjectAutoCompleter search = new SearchObjectAutoCompleter(false);
+        SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         Mockito.when(vdsGroupDAO.getAllWithQuery(Matchers.matches(getVdsGroupRegexString(search))))
                 .thenReturn(vdsGroupResultList);
     }
@@ -179,7 +179,7 @@ public class SearchQueryTest {
      *            - The dao to be used
      */
     private void mockStoragePoolDAO(final StoragePoolDAO storagePoolDAO) {
-        SearchObjectAutoCompleter search = new SearchObjectAutoCompleter(false);
+        SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         Mockito.when(storagePoolDAO.getAllWithQuery(Matchers.matches(getStoragePoolRegexString(search))))
                 .thenReturn(storagePoolResultList);
     }
@@ -194,13 +194,13 @@ public class SearchQueryTest {
      *            - The dao to be used
      */
     private void mockGlusterVolumeDao(final GlusterVolumeDao glusterVolumeDao) {
-        SearchObjectAutoCompleter search = new SearchObjectAutoCompleter(false);
+        SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         Mockito.when(glusterVolumeDao.getAllWithQuery(Matchers.matches(getGlusterVolumeRegexString(search))))
                 .thenReturn(glusterVolumeList);
     }
 
     private void mockNetworkDao(final NetworkViewDao networkViewDao) {
-        SearchObjectAutoCompleter search = new SearchObjectAutoCompleter(false);
+        SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         Mockito.when(networkViewDao.getAllWithQuery(Matchers.matches(getNetworkRegexString(search))))
                 .thenReturn(networkResultList);
     }
@@ -226,7 +226,7 @@ public class SearchQueryTest {
      *            - The dao to be used
      */
     private void mockVdsDAO(final VdsDAO vdsDAO) {
-        SearchObjectAutoCompleter search = new SearchObjectAutoCompleter(false);
+        SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         Mockito.when(vdsDAO.getAllWithQuery(Matchers.matches(getVdsRegexString(search))))
                 .thenReturn(vdsResultList);
     }
@@ -241,7 +241,7 @@ public class SearchQueryTest {
      *            - The dao to be used
      */
     private void mockVMDAO(final VmDAO vmDAO) {
-        SearchObjectAutoCompleter search = new SearchObjectAutoCompleter(false);
+        SearchObjectAutoCompleter search = new SearchObjectAutoCompleter();
         Mockito.when(vmDAO.getAllUsingQuery(Matchers.matches(getVMRegexString(search))))
                 .thenReturn(vmResultList);
     }

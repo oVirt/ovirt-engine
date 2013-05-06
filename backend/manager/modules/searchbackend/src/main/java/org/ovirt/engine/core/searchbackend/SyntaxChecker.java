@@ -35,9 +35,9 @@ public class SyntaxChecker implements ISyntaxChecker {
     private List<Character> mDisAllowedChars;
     private static SqlInjectionChecker sqlInjectionChecker;
 
-    public SyntaxChecker(int searchReasultsLimit, boolean hasDesktop) {
+    public SyntaxChecker(int searchReasultsLimit) {
 
-        mSearchObjectAC = new SearchObjectAutoCompleter(hasDesktop);
+        mSearchObjectAC = new SearchObjectAutoCompleter();
         mColonAC = new BaseAutoCompleter(":");
         mPluralAC = new BaseAutoCompleter("S");
         mSortbyAC = new BaseAutoCompleter("SORTBY");

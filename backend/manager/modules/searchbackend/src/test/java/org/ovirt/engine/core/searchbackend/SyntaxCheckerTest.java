@@ -23,7 +23,7 @@ public class SyntaxCheckerTest {
      */
     @Test
     public void testVMCompletion() {
-        SyntaxChecker chkr = new SyntaxChecker(20, true);
+        SyntaxChecker chkr = new SyntaxChecker(20);
         SyntaxContainer res = null;
         res = chkr.getCompletion("");
         assertTrue("Vms", contains(res, "Vms"));
@@ -42,7 +42,7 @@ public class SyntaxCheckerTest {
      * asc
      */
     public void testHostCompletion() {
-        SyntaxChecker chkr = new SyntaxChecker(20, true);
+        SyntaxChecker chkr = new SyntaxChecker(20);
         SyntaxContainer res = null;
         res = chkr.getCompletion("");
         assertTrue("Hosts", contains(res, "Hosts"));
@@ -62,7 +62,7 @@ public class SyntaxCheckerTest {
     public void testGetPagPhrase() {
         mcr.mockConfigValue(ConfigValues.DBPagingType, "wrongPageType");
         mcr.mockConfigValue(ConfigValues.DBPagingSyntax, "wrongPageSyntax");
-        SyntaxChecker chkr = new SyntaxChecker(20, true);
+        SyntaxChecker chkr = new SyntaxChecker(20);
         SyntaxContainer res = new SyntaxContainer("");
         res.setMaxCount(0);
 
