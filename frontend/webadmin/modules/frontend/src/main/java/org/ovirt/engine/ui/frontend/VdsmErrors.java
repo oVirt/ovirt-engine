@@ -747,4 +747,7 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Failed to fetch statuses of services.")
     String GlusterServicesListFailed();
+
+    @DefaultStringValue("Failed to update gluster hook.")
+    String GlusterHookUpdateFailed();
 }

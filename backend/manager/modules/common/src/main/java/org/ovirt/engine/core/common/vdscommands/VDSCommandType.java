@@ -137,6 +137,7 @@ public enum VDSCommandType {
     GetGlusterHostUUID("org.ovirt.engine.core.vdsbroker.gluster"),
     GlusterServicesList("org.ovirt.engine.core.vdsbroker.gluster"),
     GetGlusterHookContent("org.ovirt.engine.core.vdsbroker.gluster"),
+    UpdateGlusterHook("org.ovirt.engine.core.vdsbroker.gluster"),
     ;
 
     String packageName;

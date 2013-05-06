@@ -241,4 +241,6 @@ public interface IVdsServer {
     GlusterServicesReturnForXmlRpc glusterServicesList(Guid serverId, String[] serviceNames);
 
     GlusterHookContentInfoReturnForXmlRpc glusterHookRead(String glusterCommand, String stage, String hookName);
+
+    StatusOnlyReturnForXmlRpc glusterHookUpdate(String glusterCommand, String stage, String hookName, String content, String checksum);
 }

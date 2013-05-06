@@ -228,4 +228,6 @@ public interface VdsServerConnector {
     public Map<String, Object> glusterServicesGet(String[] serviceNames);
 
     public Map<String, Object> glusterHookRead(String glusterCommand, String stage, String hookName);
+
+    public Map<String,Object> glusterHookUpdate(String glusterCommand, String stage, String hookName, String content, String checksum);
 }
