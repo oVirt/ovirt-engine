@@ -10,7 +10,7 @@ set_defaults
 usage() {
     printf "Usage: ${ME} -t TYPE -i ID [-h] [-s SERVERNAME [-p PORT]] [-d DATABASE] [-u USERNAME] [-l LOGFILE] [-r] [-q] [-v]\n"
     printf "\n"
-    printf "\t-t TYPE       - The object type {vm | template | disk} \n"
+    printf "\t-t TYPE       - The object type {vm | template | disk | snapshot} \n"
     printf "\t-i ID         - The object name in case of vm/template , UUID in case of a disk \n"
     printf "\t-s SERVERNAME - The database servername for the database  (def. ${SERVERNAME})\n"
     printf "\t-p PORT       - The database port for the database        (def. ${PORT})\n"

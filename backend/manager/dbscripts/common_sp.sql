@@ -479,6 +479,21 @@ begin
 END; $procedure$
 LANGUAGE plpgsql;
 
+-- Unlocks a specific snapshot
+create or replace FUNCTION fn_db_unlock_snapshot(v_id UUID)
+returns void
+AS $procedure$
+declare
+    OK varchar;
+    LOCKED varchar;
+begin
+    OK:='OK';
+    LOCKED:='LOCKED';
+    update snapshots set status = OK where status = LOCKED and snapshot_id = v_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 -- Unlocks all VM/Template disks
 create or replace FUNCTION fn_db_unlock_entity(v_object_type varchar(10), v_name varchar(255), v_recursive boolean)
 returns void
@@ -490,6 +505,8 @@ declare
     TEMPLATE_OK integer;
     TEMPLATE_LOCKED integer;
     IMAGE_LOCKED integer;
+    SNAPSHOT_OK varchar;
+    SNAPSHOT_LOCKED varchar;
     v_id UUID;
 begin
     DOWN:=0;
@@ -498,6 +515,8 @@ begin
     TEMPLATE_OK:=0;
     TEMPLATE_LOCKED:=1;
     IMAGE_LOCKED:=15;
+    SNAPSHOT_OK:='OK';
+    SNAPSHOT_LOCKED:='LOCKED';
     v_id := vm_guid from vm_static where vm_name = v_name and entity_type ilike v_object_type;
     -- set VM status to DOWN
     if (v_object_type = 'vm') then
@@ -508,10 +527,12 @@ begin
             update vm_static set template_status = TEMPLATE_OK where template_status = TEMPLATE_LOCKED and vm_guid  = v_id;
         end if;
     end if;
-    --unlock images if recursive flag is set
+    --unlock images and snapshots  if recursive flag is set
     if (v_recursive) then
         update images set imagestatus = OK where imagestatus = LOCKED and
         image_group_id in (select device_id from vm_device where vm_id = v_id and is_plugged);
+
+        update snapshots set status = SNAPSHOT_OK where status ilike SNAPSHOT_LOCKED and vm_id = v_id;
     end if;
 END; $procedure$
 LANGUAGE plpgsql;

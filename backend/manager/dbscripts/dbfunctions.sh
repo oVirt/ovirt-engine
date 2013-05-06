@@ -432,6 +432,8 @@ unlock_entity() {
       CMD="select fn_db_unlock_entity('${object_type}', '${id}', ${recursive});"
    elif [ "${object_type}" = "disk" ]; then
       CMD="select fn_db_unlock_disk('${id}');"
+   elif [ "${object_type}" = "snapshot" ]; then
+      CMD="select fn_db_unlock_snapshot('${id}');"
    else
       printf "Error : $* "
    fi
@@ -454,6 +456,7 @@ query_locked_entities() {
    LOCKED=2
    TEMPLATE_LOCKED=1
    IMAGE_LOCKED=15;
+   SNAPSHOT_LOCKED=LOCKED
    if [ "${object_type}" = "vm" ]; then
        CMD="select vm_name as vm_name from vm_static a ,vm_dynamic b
             where a.vm_guid = b.vm_guid and status = ${IMAGE_LOCKED};"
@@ -465,6 +468,9 @@ query_locked_entities() {
             entity_type ilike 'VM' and
             image_group_id in
             (select device_id from vm_device where is_plugged);"
+       psql -w -c "${CMD}" -U ${USERNAME} -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
+       CMD="select vm_name as vm_name, snapshot_id as snapshot_id  from vm_static a ,snapshots b
+            where a.vm_guid = b.vm_id and status ilike '${SNAPSHOT_LOCKED}';"
        psql -w -c "${CMD}" -U ${USERNAME} -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
    elif [ "${object_type}" = "template" ]; then
        CMD="select vm_name as template_name from vm_static
@@ -484,6 +490,10 @@ query_locked_entities() {
             where a.disk_id = b.image_group_id and
                   b.image_group_id = c.device_id and
                   imagestatus = ${LOCKED} and is_plugged;"
+   elif [ "${object_type}" = "snapshot" ]; then
+       CMD="select vm_id as entity_id, snapshot_id
+            from snapshots a
+            where status ilike '${SNAPSHOT_LOCKED}';"
        psql -w -c "${CMD}" -U ${USERNAME} -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
    fi
 }
