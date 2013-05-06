@@ -409,10 +409,11 @@ cp "%{buildroot}%{engine_data}/services/ovirt-engine-notifier.sysv" "%{buildroot
 %endif
 
 # backward compatibly (pre-3.3.0)
-# force rpm not to remove pki files
+# force rpm not to remove config files
 # as these used to be %config
 # these files are created empty in order to mark
 # them as %ghost
+touch %{buildroot}%{engine_etc}/notifier/notifier.conf
 touch %{buildroot}%{engine_pki}/cacert.template
 touch %{buildroot}%{engine_pki}/cert.template
 touch %{buildroot}%{engine_pki}/database.txt
@@ -740,6 +741,7 @@ fi
 
 # Configuration files for the notifier:
 %dir %{engine_etc}/notifier
+%ghost %config(noreplace) %{engine_etc}/notifier/notifier.conf
 %dir %{engine_etc}/notifier/notifier.conf.d
 %config %{engine_etc}/notifier/log4j.xml
 %{engine_data}/services/ovirt-engine-notifier.*
