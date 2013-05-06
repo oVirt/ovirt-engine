@@ -85,7 +85,7 @@ public class BootSequenceModel extends ListModel
             }
         }
 
-        return !str.equals("") ? BootSequence.valueOf(str.toString()) : null;  //$NON-NLS-1$
+        return !str.toString().equals("") ? BootSequence.valueOf(str.toString()) : null;  //$NON-NLS-1$
     }
 
     public BootSequenceModel()
