@@ -100,7 +100,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                             getCompensationContext().snapshotEntityStatus(getVm().getDynamicData(), getVm().getStatus());
 
                             // Set the VM to SavingState to lock the VM,to avoid situation of multi VM hibernation.
-                            getVm().setStatus(VMStatus.SavingState);
+                            getVm().setStatus(VMStatus.PreparingForHibernate);
 
                             Backend.getInstance()
                                     .getResourceManager()
@@ -290,8 +290,8 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
 
     private void endSuccessfullyImpl() {
         if (getVm() != null) {
-            if (getVm().getStatus() != VMStatus.SavingState && getVm().getStatus() != VMStatus.Up) {
-                // If the Vm is not in SavingState status/Up, we shouldn't perform Hibernate on it,
+            if (getVm().getStatus() != VMStatus.PreparingForHibernate) {
+                // If the Vm is not PreparingForHibernate, we shouldn't perform Hibernate on it,
                 // since if the Vm is in another status, something might have happend to it
                 // that might prevent it from being hibernated.
 
@@ -299,7 +299,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                 // start here another tasks.
 
                 log.warnFormat(
-                        "HibernateVmCommand::EndSuccessfully: Vm '{0}' is not in 'SavingState'/'Up' status, but in '{1}' status - not performing Hibernate.",
+                        "HibernateVmCommand::EndSuccessfully: Vm '{0}' is not in 'PreparingForHibernate' status, but in '{1}' status - not performing Hibernate.",
                         getVm().getName(),
                         getVm().getStatus());
                 getReturnValue().setEndActionTryAgain(false);

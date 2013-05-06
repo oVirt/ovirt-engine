@@ -175,6 +175,15 @@ public final class VdcActionUtils {
                         VdcActionType.AddVmInterface, VdcActionType.UpdateVmInterface,
                         VdcActionType.RemoveVmInterface, VdcActionType.CancelMigrateVm)));
         vmMatrix.put(
+                VMStatus.PreparingForHibernate,
+                new HashSet<VdcActionType>(Arrays.asList(VdcActionType.RunVm,
+                        VdcActionType.RunVmOnce, VdcActionType.StopVm, VdcActionType.ShutdownVm,
+                        VdcActionType.HibernateVm, VdcActionType.MigrateVm, VdcActionType.RemoveVm,
+                        VdcActionType.AddVmTemplate, VdcActionType.ExportVm, VdcActionType.MoveVm,
+                        VdcActionType.ImportVm, VdcActionType.ChangeDisk,
+                        VdcActionType.AddVmInterface, VdcActionType.UpdateVmInterface,
+                        VdcActionType.RemoveVmInterface, VdcActionType.CancelMigrateVm)));
+        vmMatrix.put(
                 VMStatus.RestoringState,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.RunVm,
                         VdcActionType.RunVmOnce, VdcActionType.StopVm, VdcActionType.ShutdownVm,

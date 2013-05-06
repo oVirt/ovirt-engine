@@ -1252,8 +1252,8 @@ public class VdsUpdateRunTimeInfo {
                 VM vmToUpdate = _vmDict.get(runningVm.getId());
 
                 if (vmToUpdate == null
-                        || (vmToUpdate.getStatus() != runningVm.getStatus() && !(vmToUpdate.getStatus() == VMStatus.SavingState && runningVm
-                                .getStatus() == VMStatus.Up))) {
+                        || (vmToUpdate.getStatus() != runningVm.getStatus() &&
+                            !(vmToUpdate.getStatus() == VMStatus.PreparingForHibernate && runningVm.getStatus() == VMStatus.Up))) {
                     GetVmStatsVDSCommand<GetVmStatsVDSCommandParameters> command =
                             new GetVmStatsVDSCommand<GetVmStatsVDSCommandParameters>(new GetVmStatsVDSCommandParameters(
                                     _vds, runningVm.getId()));
@@ -1732,8 +1732,8 @@ public class VdsUpdateRunTimeInfo {
                 props.remove("appList");
                 vmNewDynamicData.setAppList(vmToUpdate.argvalue.getAppList());
             } else if (props.contains("status")
-                    && vmToUpdate.argvalue.getDynamicData().getStatus() == VMStatus.SavingState) {
-                vmNewDynamicData.setStatus(VMStatus.SavingState);
+                    && vmToUpdate.argvalue.getDynamicData().getStatus() == VMStatus.PreparingForHibernate) {
+                vmNewDynamicData.setStatus(VMStatus.PreparingForHibernate);
                 props.remove("status");
             }
             // if anything else changed

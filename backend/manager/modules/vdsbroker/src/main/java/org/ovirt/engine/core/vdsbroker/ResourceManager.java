@@ -69,25 +69,18 @@ public class ResourceManager {
             }
         }
 
-        // Cleanup all vms dynamic data. This is defencive code on power crash
+        // Cleanup all vms dynamic data. This is defensive code on power crash
         List<VM> vms = DbFacade.getInstance().getVmDao().getAll();
         for (VM vm : vms) {
             if (!vm.isNotRunning()) {
-                // check if vm should be suspended
-                if (vm.getStatus() == VMStatus.SavingState) {
-                    InternalSetVmStatus(vm, VMStatus.Suspended);
-                    DbFacade.getInstance().getVmDynamicDao().update(vm.getDynamicData());
-                    DbFacade.getInstance().getVmStatisticsDao().update(vm.getStatisticsData());
-                } else {
-                    if (vm.getRunOnVds() != null) {
-                        MultiValueMapUtils.addToMap(vm.getRunOnVds().getValue(),
-                                vm.getId(),
-                                _vdsAndVmsList,
-                                new MultiValueMapUtils.HashSetCreator<Guid>());
-                    }
-                    if (vm.getRunOnVds() != null && nonResponsiveVdss.contains(vm.getRunOnVds())) {
-                        SetVmUnknown(vm);
-                    }
+                if (vm.getRunOnVds() != null) {
+                    MultiValueMapUtils.addToMap(vm.getRunOnVds().getValue(),
+                            vm.getId(),
+                            _vdsAndVmsList,
+                            new MultiValueMapUtils.HashSetCreator<Guid>());
+                }
+                if (vm.getRunOnVds() != null && nonResponsiveVdss.contains(vm.getRunOnVds())) {
+                    SetVmUnknown(vm);
                 }
             }
         }

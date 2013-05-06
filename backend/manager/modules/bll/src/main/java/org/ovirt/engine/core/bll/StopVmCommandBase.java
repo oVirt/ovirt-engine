@@ -53,7 +53,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         } else if (!getVm().isRunning() && getVm().getStatus() != VMStatus.Paused
                 && getVm().getStatus() != VMStatus.NotResponding && getVm().getStatus() != VMStatus.Suspended) {
-            if (getVm().getStatus() == VMStatus.SavingState || getVm().getStatus() == VMStatus.RestoringState) {
+            if (getVm().getStatus().isHibernating() || getVm().getStatus() == VMStatus.RestoringState) {
                 retValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_SAVING_RESTORING);
             } else {

@@ -42,7 +42,7 @@ public class VmValidator {
     }
 
     public ValidationResult vmNotSavingRestoring() {
-        if (vm.getStatus() == VMStatus.SavingState || vm.getStatus() == VMStatus.RestoringState) {
+        if (vm.getStatus().isHibernating() || vm.getStatus() == VMStatus.RestoringState) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_SAVING_RESTORING);
         }
 

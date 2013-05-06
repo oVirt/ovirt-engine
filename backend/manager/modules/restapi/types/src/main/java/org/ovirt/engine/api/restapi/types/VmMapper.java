@@ -622,24 +622,25 @@ public class VmMapper {
     @Mapping(from = VMStatus.class, to = VmStatus.class)
     public static VmStatus map(VMStatus entityStatus, VmStatus template) {
         switch (entityStatus) {
-        case Unassigned:        return VmStatus.UNASSIGNED;
-        case Down:              return VmStatus.DOWN;
-        case Up:                return VmStatus.UP;
-        case PoweringUp:        return VmStatus.POWERING_UP;
-        case PoweredDown:       return VmStatus.POWERED_DOWN;
-        case Paused:            return VmStatus.PAUSED;
-        case MigratingFrom:     return VmStatus.MIGRATING;
-        case MigratingTo:       return VmStatus.MIGRATING;
-        case Unknown:           return VmStatus.UNKNOWN;
-        case NotResponding:     return VmStatus.NOT_RESPONDING;
-        case WaitForLaunch:     return VmStatus.WAIT_FOR_LAUNCH;
-        case RebootInProgress:  return VmStatus.REBOOT_IN_PROGRESS;
-        case SavingState:       return VmStatus.SAVING_STATE;
-        case RestoringState:    return VmStatus.RESTORING_STATE;
-        case Suspended:         return VmStatus.SUSPENDED;
-        case ImageLocked:       return VmStatus.IMAGE_LOCKED;
-        case PoweringDown:      return VmStatus.POWERING_DOWN;
-        default:                return null;
+        case Unassigned:            return VmStatus.UNASSIGNED;
+        case Down:                  return VmStatus.DOWN;
+        case Up:                    return VmStatus.UP;
+        case PoweringUp:            return VmStatus.POWERING_UP;
+        case PoweredDown:           return VmStatus.POWERED_DOWN;
+        case Paused:                return VmStatus.PAUSED;
+        case MigratingFrom:         return VmStatus.MIGRATING;
+        case MigratingTo:           return VmStatus.MIGRATING;
+        case Unknown:               return VmStatus.UNKNOWN;
+        case NotResponding:         return VmStatus.NOT_RESPONDING;
+        case WaitForLaunch:         return VmStatus.WAIT_FOR_LAUNCH;
+        case RebootInProgress:      return VmStatus.REBOOT_IN_PROGRESS;
+        case PreparingForHibernate:
+        case SavingState:           return VmStatus.SAVING_STATE;
+        case RestoringState:        return VmStatus.RESTORING_STATE;
+        case Suspended:             return VmStatus.SUSPENDED;
+        case ImageLocked:           return VmStatus.IMAGE_LOCKED;
+        case PoweringDown:          return VmStatus.POWERING_DOWN;
+        default:                    return null;
         }
     }
 
