@@ -632,11 +632,11 @@ public class VdsManager {
                 return true;
             }
             setStatus(VDSStatus.NonResponsive, vds);
-            log.errorFormat(
+            log.infoFormat(
                     "Server failed to respond, vds_id = {0}, vds_name = {1}, vm_count = {2}, " +
-                    "spm_status = {3}, non-responsive_timeout = {5} error = {4}",
-                    vds.getId(), vds.getName(), vds.getVmCount(), vds.getSpmStatus(), timeoutToFence,
-                    ex.getMessage());
+                    "spm_status = {3}, non-responsive_timeout (seconds) = {4}, error = {5}",
+                    vds.getId(), vds.getName(), vds.getVmCount(), vds.getSpmStatus(),
+                    TimeUnit.MILLISECONDS.toSeconds(timeoutToFence), ex.getMessage());
 
             AuditLogableBase logable = new AuditLogableBase(vds.getId());
             AuditLogDirector.log(logable, AuditLogType.VDS_FAILURE);
