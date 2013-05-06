@@ -20,12 +20,12 @@ import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -59,11 +59,11 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
  */
 @NonTransactiveCommandAttribute
 public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePoolParametersBase> {
-    private boolean _fenceSucceeded = true;
-    private boolean _vdsProxyFound;
-    private boolean  _connectPoolSucceeded;
-    private boolean _glusterPeerListSucceeded, _glusterPeerProbeSucceeded;
-    private FenceStatusReturnValue _fenceStatusReturnValue;
+    private boolean fenceSucceeded = true;
+    private boolean vdsProxyFound;
+    private boolean connectPoolSucceeded;
+    private boolean glusterPeerListSucceeded, glusterPeerProbeSucceeded;
+    private FenceStatusReturnValue fenceStatusReturnValue;
 
     public InitVdsOnUpCommand(HostStoragePoolParametersBase parameters) {
         super(parameters);
@@ -101,9 +101,9 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         // actions.
         if (getVds().getpm_enabled() && executor.findProxyHost()) {
             VDSReturnValue returnValue = executor.Fence();
-            _fenceSucceeded = returnValue.getSucceeded();
-            _fenceStatusReturnValue = (FenceStatusReturnValue) returnValue.getReturnValue();
-            _vdsProxyFound = true;
+            fenceSucceeded = returnValue.getSucceeded();
+            fenceStatusReturnValue = (FenceStatusReturnValue) returnValue.getReturnValue();
+            vdsProxyFound = true;
         }
     }
 
@@ -133,12 +133,12 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         if (getStoragePool() == null || StoragePoolStatus.Uninitialized == getStoragePool().getstatus()
                 || StoragePoolStatus.Maintenance == getStoragePool().getstatus()) {
             returnValue = true;
-            _connectPoolSucceeded = true;
+            connectPoolSucceeded = true;
         } else {
             HostStoragePoolParametersBase params = new HostStoragePoolParametersBase(getStoragePool(), getVds());
             Backend.getInstance().runInternalAction(VdcActionType.ConnectHostToStoragePoolServers, params);
             returnValue = connectHostToPool();
-            _connectPoolSucceeded = returnValue;
+            connectPoolSucceeded = returnValue;
         }
         return returnValue;
     }
@@ -229,32 +229,32 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
         if(!getVdsGroup().supportsVirtService()) {
             if (getVdsGroup().supportsGlusterService()) {
-                if (!_glusterPeerListSucceeded) {
+                if (!glusterPeerListSucceeded) {
                     type = AuditLogType.GLUSTER_SERVERS_LIST_FAILED;
-                } else if (!_glusterPeerProbeSucceeded) {
+                } else if (!glusterPeerProbeSucceeded) {
                     type = AuditLogType.GLUSTER_SERVER_ADD_FAILED;
                 }
             }
             return type;
         }
 
-        if (!_connectPoolSucceeded) {
+        if (!connectPoolSucceeded) {
             type = AuditLogType.CONNECT_STORAGE_POOL_FAILED;
-        } else if (getVds().getpm_enabled() && _fenceSucceeded) {
+        } else if (getVds().getpm_enabled() && fenceSucceeded) {
             type = AuditLogType.VDS_FENCE_STATUS;
-        } else if (getVds().getpm_enabled() && !_fenceSucceeded) {
+        } else if (getVds().getpm_enabled() && !fenceSucceeded) {
             type = AuditLogType.VDS_FENCE_STATUS_FAILED;
         }
 
         // PM alerts
         AuditLogableBase logable = new AuditLogableBase(getVds().getId());
         if (getVds().getpm_enabled()) {
-            if (!_vdsProxyFound) {
+            if (!vdsProxyFound) {
                 logable.addCustomValue("Reason",
                         AuditLogDirector.getMessage(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST));
                 AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
-            } else if (!_fenceStatusReturnValue.getIsSucceeded()) {
-                logable.addCustomValue("Reason", _fenceStatusReturnValue.getMessage());
+            } else if (!fenceStatusReturnValue.getIsSucceeded()) {
+                logable.addCustomValue("Reason", fenceStatusReturnValue.getMessage());
                 AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
             }
         } else {
@@ -264,8 +264,8 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     }
 
     private boolean initGlusterPeerProcess() {
-        _glusterPeerListSucceeded = true;
-        _glusterPeerProbeSucceeded = true;
+        glusterPeerListSucceeded = true;
+        glusterPeerProbeSucceeded = true;
         List<VDS> vdsList = getVdsDAO().getAllForVdsGroupWithStatus(getVdsGroupId(), VDSStatus.Up);
         // If the cluster already having Gluster servers, get an up server
         if (vdsList != null && vdsList.size() > 0) {
@@ -330,7 +330,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             getReturnValue().getFault().setError(returnValue.getVdsError().getCode());
             getReturnValue().getFault().setMessage(returnValue.getVdsError().getMessage());
             AuditLogDirector.log(new AuditLogableBase(upServerId), AuditLogType.GLUSTER_SERVERS_LIST_FAILED);
-            _glusterPeerListSucceeded = false;
+            glusterPeerListSucceeded = false;
         } else {
             glusterServers = (List<GlusterServerInfo>) returnValue.getReturnValue();
         }
@@ -345,14 +345,14 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                 getReturnValue().getFault().setError(returnValue.getVdsError().getCode());
                 getReturnValue().getFault().setMessage(returnValue.getVdsError().getMessage());
                 AuditLogDirector.log(new AuditLogableBase(getVdsId()), AuditLogType.GLUSTER_SERVER_ADD_FAILED);
-                _glusterPeerProbeSucceeded = false;
+                glusterPeerProbeSucceeded = false;
             }
             return returnValue.getSucceeded();
         } catch (Exception e) {
             log.errorFormat("Could not peer probe the gluster server {0}. Error: {1}",
                     getVds().getHostName(),
                     e.getMessage());
-            _glusterPeerProbeSucceeded = false;
+            glusterPeerProbeSucceeded = false;
             return false;
         }
     }
