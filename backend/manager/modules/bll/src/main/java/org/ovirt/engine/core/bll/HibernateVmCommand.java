@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -116,7 +117,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
             // it for us:
 
             Guid hiberVol1 = Guid.NewGuid();
-            VDSReturnValue ret1 =
+            final VDSReturnValue ret1 =
                     Backend
                             .getInstance()
                             .getResourceManager()
@@ -136,11 +137,20 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
             if (!ret1.getSucceeded()) {
                 return;
             }
-            Guid guid1 =
-                    createTask(ret1.getCreationInfo(),
-                            VdcActionType.HibernateVm,
-                            VdcObjectType.Storage,
-                            getStorageDomainId().getValue());
+
+            Guid guid1 = TransactionSupport.executeInNewTransaction(
+                    new TransactionMethod<Guid>() {
+                        @Override
+                        public Guid runInTransaction() {
+                            getCompensationContext().resetCompensation();
+                            return createTaskInCurrentTransaction(
+                                    ret1.getCreationInfo(),
+                                    VdcActionType.HibernateVm,
+                                    VdcObjectType.Storage,
+                                    getStorageDomainId().getValue());
+                        }
+                    });
+
             getReturnValue().getTaskIdList().add(guid1);
 
             // second vol should be 10kb
@@ -185,9 +195,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                             new UpdateVmDynamicDataVDSCommandParameters(getVdsId(),
                                     getVm().getDynamicData()));
 
-            getParameters().setTaskIds(new java.util.ArrayList<Guid>());
-            getParameters().getTaskIds().add(guid1);
-            getParameters().getTaskIds().add(guid2);
+            getParameters().setTaskIds(new ArrayList<Guid>(getReturnValue().getTaskIdList()));
 
             setSucceeded(true);
         }
@@ -283,15 +291,12 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
     private void endSuccessfullyImpl() {
         if (getVm() != null) {
             if (getVm().getStatus() != VMStatus.SavingState && getVm().getStatus() != VMStatus.Up) {
-                // If the Vm is not in SavingState/Up status, we shouldn't
-                // perform Hibernate on it,
-                // since if the Vm is in another status, something might have
-                // happend to it
+                // If the Vm is not in SavingState status/Up, we shouldn't perform Hibernate on it,
+                // since if the Vm is in another status, something might have happend to it
                 // that might prevent it from being hibernated.
 
                 // NOTE: We don't remove the 2 volumes because we don't want to
-                // start here
-                // another tasks.
+                // start here another tasks.
 
                 log.warnFormat(
                         "HibernateVmCommand::EndSuccessfully: Vm '{0}' is not in 'SavingState'/'Up' status, but in '{1}' status - not performing Hibernate.",

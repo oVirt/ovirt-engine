@@ -1275,6 +1275,24 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     /**
+     * Same as {@link #createTask(AsyncTaskCreationInfo, VdcActionType, VdcObjectType, Guid...)}
+     * but without suspending the current transaction.
+     *
+     * Note: it is better to use {@link #createTask(AsyncTaskCreationInfo, VdcActionType, VdcObjectType, Guid...)}
+     * since it suspend the current transaction, thus the changes are being updated in the
+     * DB right away. call this method only you have a good reason for it and
+     * the current transaction is short.
+     *
+     * @see {@link #createTask(AsyncTaskCreationInfo, VdcActionType, VdcObjectType, Guid...)}
+     */
+    protected Guid createTaskInCurrentTransaction(AsyncTaskCreationInfo asyncTaskCreationInfo,
+            VdcActionType parentCommand,
+            VdcObjectType entityType,
+            Guid... entityIds) {
+        return createTaskImpl(asyncTaskCreationInfo, parentCommand, null, entityType, entityIds);
+    }
+
+    /**
      * Use this method in order to create task in the AsyncTaskManager in a safe way. If you use this method within a
      * certain command, make sure that the command implemented the ConcreteCreateTask method.
      *
@@ -1312,33 +1330,37 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     protected Guid createTask(AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand,
             String description, VdcObjectType entityType, Guid... entityIds) {
-        Guid retValue = Guid.Empty;
 
         Transaction transaction = TransactionSupport.suspend();
 
         try {
-            Step taskStep =
-                    ExecutionHandler.addTaskStep(getExecutionContext(),
-                            StepEnum.getStepNameByTaskType(asyncTaskCreationInfo.getTaskType()),
-                            description);
-            if (taskStep != null) {
-                asyncTaskCreationInfo.setStepId(taskStep.getId());
-            }
-            SPMAsyncTask task = concreteCreateTask(asyncTaskCreationInfo, parentCommand);
-            retValue = task.getTaskID();
-            task.setEntityType(entityType);
-            task.setAssociatedEntities(entityIds);
-            AsyncTaskUtils.addOrUpdateTaskInDB(task);
-            getAsyncTaskManager().lockAndAddTaskToManager(task);
-            retValue = task.getTaskID();
-            ExecutionHandler.updateStepExternalId(taskStep, retValue, ExternalSystemType.VDSM);
+            return createTaskImpl(asyncTaskCreationInfo, parentCommand, description, entityType, entityIds);
         } catch (RuntimeException ex) {
             log.errorFormat("Error during CreateTask for command: {0}. Exception {1}", getClass().getName(), ex);
         } finally {
             TransactionSupport.resume(transaction);
         }
 
-        return retValue;
+        return Guid.Empty;
+    }
+
+    private Guid createTaskImpl(AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand,
+            String description, VdcObjectType entityType, Guid... entityIds) {
+        Step taskStep =
+                ExecutionHandler.addTaskStep(getExecutionContext(),
+                        StepEnum.getStepNameByTaskType(asyncTaskCreationInfo.getTaskType()),
+                        description);
+        if (taskStep != null) {
+            asyncTaskCreationInfo.setStepId(taskStep.getId());
+        }
+        SPMAsyncTask task = concreteCreateTask(asyncTaskCreationInfo, parentCommand);
+        task.setEntityType(entityType);
+        task.setAssociatedEntities(entityIds);
+        AsyncTaskUtils.addOrUpdateTaskInDB(task);
+        getAsyncTaskManager().lockAndAddTaskToManager(task);
+        Guid taskId = task.getTaskID();
+        ExecutionHandler.updateStepExternalId(taskStep, taskId, ExternalSystemType.VDSM);
+        return taskId;
     }
 
     /**
