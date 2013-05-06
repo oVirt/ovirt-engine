@@ -15,4 +15,9 @@ public abstract class AbstractVmPopupView extends AbstractModelBoundWidgetPopupV
         super(eventBus, resources, popupWidget, "670px", "530px"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
+    public AbstractVmPopupView(EventBus eventBus, CommonApplicationResources resources,
+            AbstractVmPopupWidget popupWidget, String width, String height) {
+        super(eventBus, resources, popupWidget, width, height);
+    }
+
 }

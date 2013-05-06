@@ -21,7 +21,7 @@ public class PoolEditPopupView extends AbstractVmPopupView implements PoolEditPo
 
     @Inject
     public PoolEditPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, CommonApplicationMessages messages, CommonApplicationTemplates templates) {
-        super(eventBus, resources, new PoolEditPopupWidget(constants, resources, messages, templates));
+        super(eventBus, resources, new PoolEditPopupWidget(constants, resources, messages, templates), "710px", "535px"); //$NON-NLS-1$ //$NON-NLS-2$
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 

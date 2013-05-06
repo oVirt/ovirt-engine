@@ -203,7 +203,11 @@
 		.migrationSelect {
 			margin-right: 174px;
 		}
-        
+
+		.generalTabExtendedRightWidgetWidth {
+			width: 250px !important;
+        }
+
 	</ui:style>
 
 	<t:DialogTabPanel width="100%" height="100%">
@@ -242,15 +246,15 @@
 									<g:Label ui:field="editPrestartedVmsLabel" addStyleNames="{style.prestartedLabel}" />
 									<d:InfoIcon ui:field="editPoolPrestartedVmsIcon" addStyleNames="{style.prestartedVmsIcon}" />
 								</g:FlowPanel>
-								<g:FlowPanel addStyleNames="{style.editPrestartedVms}">
+								<g:FlowPanel ui:field="editPrestartedVmsPanel" addStyleNames="{style.editPrestartedVms}">
 									<e:EntityModelTextBoxOnlyEditor ui:field="editPrestartedVmsEditor" addStyleNames="{style.editPrestartedVmsEditor}" contentWidgetStyleName="{style.textBox}" />
 									<g:ValueLabel ui:field="outOfxInPool" />
 								</g:FlowPanel>
                             </g:FlowPanel>
-                            
+
                             <g:FlowPanel ui:field="editPoolIncraseNumOfVmsPanel" addStyleNames="{style.poolEditVms}">
 								<g:Label text="{constants.increaseNumberOfVMsInPoolBy}" addStyleNames="{style.increasePrestartedLabel}" />
-								<g:FlowPanel addStyleNames="{style.editIncreaseVms}">
+								<g:FlowPanel ui:field="editIncreaseVmsPanel" addStyleNames="{style.editIncreaseVms}">
 									<e:EntityModelTextBoxOnlyEditor ui:field="incraseNumOfVmsEditor" addStyleNames="{style.editPrestartedVmsEditor}" contentWidgetStyleName="{style.textBox}" />
 									<g:Label text="{constants.vms}" addStyleNames="{style.increaseVmsInPoolVms}" />
 								</g:FlowPanel>

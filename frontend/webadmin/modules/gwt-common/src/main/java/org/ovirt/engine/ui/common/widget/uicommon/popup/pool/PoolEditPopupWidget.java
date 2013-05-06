@@ -42,7 +42,7 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
         object.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if (object.getProgress() == null) { //$NON-NLS-1$
+                if (object.getProgress() == null) {
                     disableAllTabs();
                     enableEditPoolFields();
                 }
@@ -78,6 +78,32 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
 
         editPrestartedVmsEditor.setEnabled(true);
         incraseNumOfVmsEditor.setEnabled(true);
+    }
+
+    @Override
+    protected void applyStyles() {
+        super.applyStyles();
+
+        // In 'ja' locale the text of prestarted vms is too long for 230px.
+        // Changed all the right column widgets width to 250px.
+        dataCenterEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+        clusterEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+        quotaEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+        descriptionEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+        templateEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+        memSizeEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+        totalvCPUsEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+        corePerSocketEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+        numOfSocketsEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+        oSTypeEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+        isStatelessEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+        isRunAndPauseEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+        isDeleteProtectedEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+        editIncreaseVmsPanel.addStyleName(style.generalTabExtendedRightWidgetWidth());
+        editPrestartedVmsPanel.addStyleName(style.generalTabExtendedRightWidgetWidth());
+        nameEditor.addStyleName(style.generalTabExtendedRightWidgetWidth());
+        nameEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+
     }
 
     private void disableAllTabs() {

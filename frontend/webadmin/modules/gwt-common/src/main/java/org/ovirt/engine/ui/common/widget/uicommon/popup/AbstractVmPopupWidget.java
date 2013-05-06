@@ -9,12 +9,12 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
@@ -92,6 +92,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         String assignedVmsLabel();
 
         String labelDisabled();
+
+        String generalTabExtendedRightWidgetWidth();
     }
 
     @UiField
@@ -217,9 +219,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     public FlowPanel editPoolEditVmsPanel;
 
     @UiField
+    public FlowPanel editIncreaseVmsPanel;
+
+    @UiField
     @Ignore
     public FlowPanel editPoolIncraseNumOfVmsPanel;
 
+    @UiField
+    public FlowPanel editPrestartedVmsPanel;
     @UiField
     @Ignore
     public Label editPrestartedVmsLabel;
@@ -771,7 +778,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         kernel_parametersEditor.setLabel(constants.kernelParamsVmPopup());
     }
 
-    private void applyStyles() {
+    protected void applyStyles() {
         hostCpuEditor.addContentWidgetStyleName(style.longCheckboxContent());
         allowConsoleReconnectEditor.addContentWidgetStyleName(style.longCheckboxContent());
         provisioningEditor.addContentWidgetStyleName(style.provisioningEditorContent());
