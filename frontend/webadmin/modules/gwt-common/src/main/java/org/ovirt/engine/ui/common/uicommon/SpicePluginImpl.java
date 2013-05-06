@@ -167,7 +167,7 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                   client.ColorDepth = colorDepth;
                                                } else { //reset to defaults
                                                   client.DisableEffects = "";
-                                                  client.ColorDepth = "";
+                                                  client.ColorDepth = ""; // "" is default for spice-xpi
                                                }
 
                                                // only if the proxy is defined in VDC_OPTIONS
@@ -329,7 +329,7 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                        client.ColorDepth = colorDepth;
                                                    }else { //reset to defaults
                                                       client.DisableEffects = "";
-                                                      client.ColorDepth = "";
+                                                      client.ColorDepth = 0; // 0 is default for spice-activex
                                                    }
 
                                                    // only if the proxy is defined in VDC_OPTIONS
