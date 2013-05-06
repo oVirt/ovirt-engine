@@ -113,7 +113,7 @@ public class MigrateModel extends Model
 
     public void setIsSameVdsMessageVisible(boolean value)
     {
-        isSameVdsMessageVisible = value & gethasSameVdsMessage() & !getIsAutoSelect();
+        isSameVdsMessageVisible = value && gethasSameVdsMessage() && !getIsAutoSelect();
         onPropertyChanged(new PropertyChangedEventArgs("IsSameVdsMessageVisible")); //$NON-NLS-1$
     }
 

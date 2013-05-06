@@ -144,7 +144,7 @@ public class VmDiskListModel extends VmDiskListModelBase
     {
         VM vm = getEntity();
         boolean isVmStatusApplicableForHotPlug =
-                vm != null && (vm.getStatus() == VMStatus.Up || vm.getStatus() == VMStatus.Down |
+                vm != null && (vm.getStatus() == VMStatus.Up || vm.getStatus() == VMStatus.Down ||
                         vm.getStatus() == VMStatus.Paused || vm.getStatus() == VMStatus.Suspended);
 
         return privateIsDiskHotPlugSupported && isVmStatusApplicableForHotPlug;
