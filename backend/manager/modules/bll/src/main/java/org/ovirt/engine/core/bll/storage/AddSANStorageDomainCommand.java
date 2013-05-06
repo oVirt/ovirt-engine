@@ -41,10 +41,10 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
         // status to be locked
         getStorageDomain().setStorage("");
         addStorageDomainInDb();
-        getStorageDomain().setStorage(storage);
-        if (StringUtils.isEmpty(getStorageDomain().getStorage())) {
-            getStorageDomain().setStorage(createVG());
+        if(StringUtils.isEmpty(storage)) {
+              storage = createVG();
         }
+        getStorageDomain().setStorage(storage);
         if (StringUtils.isNotEmpty(getStorageDomain().getStorage()) && (addStorageDomainInIrs())) {
             DbFacade.getInstance().getStorageDomainStaticDao().update(getStorageDomain().getStorageStaticData());
             updateStorageDomainDynamicFromIrs();
