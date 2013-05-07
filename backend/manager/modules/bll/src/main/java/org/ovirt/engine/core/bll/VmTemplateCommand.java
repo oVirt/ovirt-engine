@@ -11,7 +11,6 @@ import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -19,9 +18,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -52,12 +48,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
     }
 
     public static boolean isVmTemlateWithSameNameExist(String name) {
-        SearchParameters p = new SearchParameters("template : name=" + name, SearchType.VmTemplate);
-        p.setMaxCount(Integer.MAX_VALUE);
-        List<IVdcQueryable> list = (List<IVdcQueryable>) Backend.getInstance().runInternalQuery(VdcQueryType.Search, p)
-                .getReturnValue();
-
-        return list.size() > 0;
+        return DbFacade.getInstance().getVmTemplateDao().getByName(name, null, false) != null;
     }
 
     public static boolean isVmTemplateImagesReady(VmTemplate vmTemplate,
