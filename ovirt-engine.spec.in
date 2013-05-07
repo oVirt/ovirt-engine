@@ -501,9 +501,9 @@ fi
 %dir %{engine_etc}/engine.conf.d
 
 # Services common
-%{engine_data}/services/__init__.py
-%{engine_data}/services/config.py
-%{engine_data}/services/service.py
+%{engine_data}/services/__init__.py*
+%{engine_data}/services/config.py*
+%{engine_data}/services/service.py*
 
 # Jar files used by all the components:
 %dir %{engine_java}
@@ -538,6 +538,7 @@ fi
 
 # Files needed by the service:
 %{engine_data}/services/ovirt-engine.*
+%{engine_data}/services/ovirt-engine-logging.properties.in
 %if %{install_systemd}
 %{_unitdir}/ovirt-engine.service
 %endif
@@ -764,7 +765,6 @@ fi
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_run}/notifier
 
 # Files needed by the service:
-%{engine_data}/services
 %if %{install_systemd}
 %{_unitdir}/ovirt-engine-notifier.service
 %endif
