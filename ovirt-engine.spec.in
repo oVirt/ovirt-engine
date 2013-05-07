@@ -720,7 +720,6 @@ fi
 
 # Scripts:
 %{engine_data}/bin/engine-config.sh
-%{engine_data}/bin/engine-encrypt-passwd.sh
 %{engine_data}/bin/engine-manage-domains.sh
 %{engine_data}/bin/engine-prolog.sh
 

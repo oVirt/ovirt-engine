@@ -4,6 +4,7 @@
 import sys
 import os
 import signal
+import glob
 import shutil
 import logging
 import traceback
@@ -1174,6 +1175,54 @@ def updateHttpdConf():
         )
 
 
+def updateDatabaseConf():
+    """
+    assume the password in .pgpass was correct
+    just replace all ENGINE_DB_PASSWORD to that password
+    """
+    for config in (
+        [basedefs.FILE_ENGINE_CONF] +
+        glob.glob(os.path.join(basedefs.DIR_ENGINE_CONF, "*.conf"))
+    ):
+        if os.path.exists(config):
+            handler = utils.TextConfigFileHandler(config)
+            handler.open()
+            if handler.getParam("ENGINE_DB_PASSWORD") is not None:
+                handler.editParam(
+                    "ENGINE_DB_PASSWORD",
+                    '"%s"' % utils.getDbPassword(SERVER_ADMIN)
+                )
+                if handler.getParam("ENGINE_DB_SECURED") is None:
+                    handler.editParam(
+                        "ENGINE_DB_SECURED",
+                        "%s" % 'ssl=true' in handler.getParam("ENGINE_DB_URL")
+                    )
+                if handler.getParam("ENGINE_DB_SECURED_VALIDATION") is None:
+                    handler.editParam(
+                        "ENGINE_DB_SECURED_VALIDATION",
+                        False,
+                    )
+                if handler.getParam("ENGINE_DB_HOST") is None:
+                    handler.editParam(
+                        "ENGINE_DB_HOST",
+                        SERVER_NAME,
+                    )
+                if handler.getParam("ENGINE_DB_PORT") is None:
+                    handler.editParam(
+                        "ENGINE_DB_PORT",
+                        SERVER_PORT,
+                    )
+                if handler.getParam("ENGINE_DB_DATABASE") is None:
+                    handler.editParam(
+                        "ENGINE_DB_DATABASE",
+                        basedefs.DB_NAME,
+                    )
+
+                handler.close()
+                utils.chownToEngine(config)
+                os.chmod(config, 0o640)
+
+
 def main(options):
     # BEGIN: PROCESS-INITIALIZATION
     miniyumsink = utils.MiniYumSink()
@@ -1216,8 +1265,8 @@ def main(options):
     stopEngineService = [stopEngine]
     startEngineService = [startEngine]
     preupgradeFunc = [preupgradeUUIDCheck]
-    upgradeFunc = [rhyum.update, generateEngineConf, setupVarPrivileges,
-        updateHttpdConf,
+    upgradeFunc = [rhyum.update, updateDatabaseConf, generateEngineConf,
+        setupVarPrivileges, updateHttpdConf,
     ]
     postFunc = [modifyUUIDs, ca.commit, runPost, deleteEngineSysconfig]
     engineService = basedefs.ENGINE_SERVICE_NAME

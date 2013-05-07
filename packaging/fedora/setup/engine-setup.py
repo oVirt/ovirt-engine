@@ -131,7 +131,7 @@ def initSequences():
                         'condition'       : [_isDbAlreadyInstalled],
                         'condition_match' : [True],
                         'steps'           : [ { 'title'     : output_messages.INFO_SET_DB_SECURITY,
-                                                'functions' : [_encryptDBPass, _editSysconfigDatabase] },
+                                                'functions' : [_editSysconfigDatabase] },
                                               {  'title'     : output_messages.INFO_UPGRADE_DB,
                                                 'functions' : [stopRhevmDbRelatedServices, _upgradeDB, _setApplicationMode, startRhevmDbRelatedServices]} ]
                        },
@@ -139,7 +139,7 @@ def initSequences():
                         'condition'       : [_isDbAlreadyInstalled],
                         'condition_match' : [False],
                         'steps'           : [ { 'title'     : output_messages.INFO_SET_DB_SECURITY,
-                                                'functions' : [_encryptDBPass, _editSysconfigDatabase]},
+                                                'functions' : [_editSysconfigDatabase]},
                                               { 'title'     : output_messages.INFO_CREATE_DB,
                                                 'functions' : [_createDB,  _updateVDCOptions, _setApplicationMode]},
                                               { 'title'     : output_messages.INFO_UPD_DC_TYPE,
@@ -1465,15 +1465,6 @@ def _updatePgPassLine(host, port, db, user, password):
 
     return pgData
 
-def _encryptDBPass():
-    """
-    Encryptes the postgres db password
-    and store it in conf
-    """
-    #run encrypt tool on user given password
-    controller.CONF["ENCRYPTED_DB_PASS"] = utils.encryptEngineDBPass(password=controller.CONF["DB_PASS"],
-                                               maskList=masked_value_set)
-
 def _verifyUserPermissions():
     username = pwd.getpwuid(os.getuid())[0]
     if os.geteuid() != 0:
@@ -2136,11 +2127,13 @@ def _editSysconfigDatabase():
     Push the encrypted password into the local configuration file.
     """
     try:
-        dbUrl = "jdbc:postgresql://" + getDbHostName() + ":" + getDbPort() + "/" + basedefs.DB_NAME
-        if "DB_SECURE_CONNECTION" in controller.CONF.keys() and controller.CONF["DB_SECURE_CONNECTION"] == "yes":
-            dbUrl = dbUrl + "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"
+        dbUrl = "jdbc:postgresql://${ENGINE_DB_HOST}:${ENGINE_DB_PORT}/${ENGINE_DB_DATABASE}"
+        if controller.CONF.get("DB_SECURE_CONNECTION", None) == "yes":
+            dbUrl += "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"
 
-        utils.editEngineSysconfigDatabase(dbUrl=dbUrl, password=controller.CONF["ENCRYPTED_DB_PASS"])
+        utils.editEngineSysconfigDatabase(dbUrl=dbUrl, host=getDbHostName(), port=getDbPort(),
+            database=basedefs.DB_NAME, ssl=controller.CONF.get("DB_SECURE_CONNECTION", None) == "yes",
+            user=utils.getDbUser(), password=controller.CONF["DB_PASS"])
     except:
         logging.error("ERROR Editing engine local configuration file.")
         logging.error(traceback.format_exc())

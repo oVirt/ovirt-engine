@@ -1265,39 +1265,18 @@ def editEngineSysconfigPKI(
     chownToEngine(basedefs.FILE_ENGINE_CONF_PKI)
     os.chmod(basedefs.FILE_ENGINE_CONF_PKI, 0o640)
 
-def encryptEngineDBPass(password, maskList):
-    """
-    Encryptes the jboss postgres db password
-    and store it in conf
-    """
-    #run encrypt tool on user give password
-    if (os.path.exists(basedefs.EXEC_ENCRYPT_PASS)):
-        cmd = [
-            basedefs.EXEC_ENCRYPT_PASS, password,
-        ]
-
-        # The encrypt tool needs the jboss home env set
-        # Since we cant use the bash way, we need to set it as environ
-        os.environ["JBOSS_HOME"] = basedefs.DIR_ENGINE
-        output, rc = execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_EXP_ENCRYPT_PASS, maskList=maskList)
-
-        #parse the encrypted password from the tool
-        return parseStrRegex(output, "Encoded password:\s*(.+)", output_messages.ERR_EXP_PARSING_ENCRYPT_PASS)
-    else:
-        raise Exception(output_messages.ERR_ENCRYPT_TOOL_NOT_FOUND)
-
-def editEngineSysconfigDatabase(dbUrl, password):
-    """
-    Push the encrypted password into the local configuration file.
-    """
-    logging.debug("Encrypting database password.")
+def editEngineSysconfigDatabase(dbUrl, host, ssl, database, port, user, password):
     handler = TextConfigFileHandler(basedefs.FILE_ENGINE_CONF_DATABASE, readExisting=False)
     handler.open()
-    handler.editParam("ENGINE_DB_USER", getDbUser())
+    handler.editParam("ENGINE_DB_HOST", host)
+    handler.editParam("ENGINE_DB_PORT", port)
+    handler.editParam("ENGINE_DB_DATABASE", database)
+    handler.editParam("ENGINE_DB_USER", user)
     handler.editParam("ENGINE_DB_PASSWORD", password)
     handler.editParam("ENGINE_DB_DRIVER", "org.postgresql.Driver")
+    handler.editParam("ENGINE_DB_SECURED", ssl)
+    handler.editParam("ENGINE_DB_SECURED_VALIDATION", False)
     handler.editParam("ENGINE_DB_URL", dbUrl)
-
     handler.close()
 
     chownToEngine(basedefs.FILE_ENGINE_CONF_DATABASE)

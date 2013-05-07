@@ -48,12 +48,6 @@ public class StandaloneDataSource implements DataSource {
         user = config.getProperty(ENGINE_DB_USER);
         password = config.getProperty(ENGINE_DB_PASSWORD);
 
-        // The password is encrypted inside the file, so we need to decrypt it here:
-        password = EncryptionUtils.decode(password, "", "");
-        if (password == null) {
-            throw new SQLException("Failed to decrypt password from parameter \"" + ENGINE_DB_PASSWORD + "\".");
-        }
-
         // Load the driver:
         try {
             Class.forName(driver);
