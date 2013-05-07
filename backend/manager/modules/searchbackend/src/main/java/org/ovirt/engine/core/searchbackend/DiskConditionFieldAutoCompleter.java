@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.searchbackend;
 
 import java.util.Date;
+import java.util.UUID;
 
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
@@ -24,6 +25,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         mVerbs.put("NUMBER_OF_VMS", "NUMBER_OF_VMS");
         mVerbs.put("VM_NAMES", "VM_NAMES");
         mVerbs.put("QUOTA", "QUOTA");
+        mVerbs.put("ID", "ID");
 
         // Building the autoCompletion dict.
         buildCompletions();
@@ -42,9 +44,9 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         getTypeDictionary().put("NUMBER_OF_VMS", Integer.class);
         getTypeDictionary().put("VM_NAMES", String.class);
         getTypeDictionary().put("QUOTA", String.class);
+        getTypeDictionary().put("ID", UUID.class);
 
-
-        // building the ColumnName dict.
+        // building the ColumnName dict. - the name of the column in db
         columnNameDict.put("ALIAS", "disk_alias");
         columnNameDict.put("DESCRIPTION", "disk_description");
         columnNameDict.put("PROVISIONED_SIZE", "size");
@@ -58,6 +60,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         columnNameDict.put("NUMBER_OF_VMS", "number_of_vms");
         columnNameDict.put("VM_NAMES", "vm_names");
         columnNameDict.put("QUOTA", "quota_name");
+        columnNameDict.put("ID", "disk_id");
 
         // Building the validation dict.
         buildBasicValidationTable();
