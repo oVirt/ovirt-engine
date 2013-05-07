@@ -53,7 +53,8 @@ public class RedirectServlet extends HttpServlet {
                     ? v.getReturnValue().toString() : null;
             } else {
                 log.error("Redirect Servlet: Got NULL from backend.RunQuery!");
-            } } catch (Throwable t) {
+            }
+        } catch (Throwable t) {
             log.error("Redirect Servlet: Caught exception while trying to run query: ", t);
         }
 
