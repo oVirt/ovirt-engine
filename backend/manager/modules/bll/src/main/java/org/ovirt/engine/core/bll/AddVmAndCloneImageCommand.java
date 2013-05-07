@@ -72,7 +72,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
 
     private void removeVmImages() {
         // Remove vm images, in case they were not already removed by child commands
-        ArrayList<VdcActionParametersBase> imageParams = getParameters().getImagesParameters();
+        List<VdcActionParametersBase> imageParams = getParameters().getImagesParameters();
         if (imageParams != null) {
             for (VdcActionParametersBase param : imageParams) {
                 DiskImage diskImage = getDiskImageToRemoveByParam((MoveOrCopyImageGroupParameters) param);

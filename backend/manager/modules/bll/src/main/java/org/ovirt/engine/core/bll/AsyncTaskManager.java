@@ -159,17 +159,15 @@ public final class AsyncTaskManager {
     }
 
     public synchronized boolean hasTasksForEntityIdAndAction(Guid id, VdcActionType type) {
-        boolean retVal = false;
         if (_tasks != null) {
             for (SPMAsyncTask task : _tasks.values()) {
                 if (isCurrentTaskLookedFor(id, task)
                         && type.equals(task.getParameters().getDbAsyncTask().getaction_type())) {
-                    retVal = true;
-                    break;
+                    return true;
                 }
             }
         }
-        return retVal;
+        return false;
     }
 
     private boolean isCurrentTaskLookedFor(Guid id, SPMAsyncTask task) {

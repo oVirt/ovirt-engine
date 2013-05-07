@@ -214,9 +214,9 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
         case EXECUTE:
-            return getHibernateVmParams().getAutomaticSuspend() ? getSucceeded() ? AuditLogType.AUTO_SUSPEND_VM
-                    : AuditLogType.AUTO_FAILED_SUSPEND_VM : getSucceeded() ? AuditLogType.USER_SUSPEND_VM
-                    : AuditLogType.USER_FAILED_SUSPEND_VM;
+            return getHibernateVmParams().getAutomaticSuspend() ?
+                    getSucceeded() ? AuditLogType.AUTO_SUSPEND_VM : AuditLogType.AUTO_FAILED_SUSPEND_VM
+                    : getSucceeded() ? AuditLogType.USER_SUSPEND_VM : AuditLogType.USER_FAILED_SUSPEND_VM;
 
         case END_SUCCESS:
         case END_FAILURE:

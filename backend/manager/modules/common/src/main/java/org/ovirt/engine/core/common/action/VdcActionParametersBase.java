@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -41,11 +41,11 @@ public class VdcActionParametersBase implements java.io.Serializable {
 
     private Object entityId;
 
-    private ArrayList<VdcActionParametersBase> imagesParameters;
+    private List<VdcActionParametersBase> imagesParameters;
 
     private boolean taskGroupSuccess = true;
 
-    private ArrayList<Guid> taskIds;
+    private List<Guid> taskIds;
 
     private int executionIndex = 0;
 
@@ -156,11 +156,11 @@ public class VdcActionParametersBase implements java.io.Serializable {
         multipleAction = value;
     }
 
-    public ArrayList<VdcActionParametersBase> getImagesParameters() {
+    public List<VdcActionParametersBase> getImagesParameters() {
         return imagesParameters;
     }
 
-    public void setImagesParameters(ArrayList<VdcActionParametersBase> value) {
+    public void setImagesParameters(List<VdcActionParametersBase> value) {
         imagesParameters = value;
     }
 
@@ -191,11 +191,11 @@ public class VdcActionParametersBase implements java.io.Serializable {
         entityId = value;
     }
 
-    public ArrayList<Guid> getTaskIds() {
+    public List<Guid> getTaskIds() {
         return taskIds;
     }
 
-    public void setTaskIds(ArrayList<Guid> value) {
+    public void setTaskIds(List<Guid> value) {
         taskIds = value;
     }
 
