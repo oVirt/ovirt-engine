@@ -70,7 +70,7 @@ public class ElementIdCellTable<T> extends ColumnResizeCellTable<T> implements H
      * <p>
      * This method overrides the default column ID that will be part of the resulting DOM element ID.
      */
-    protected void configureElementId(Column<T, ?> column, String columnId) {
+    void configureElementId(Column<T, ?> column, String columnId) {
         if (column instanceof ColumnWithElementId) {
             ((ColumnWithElementId) column).configureElementId(elementId, columnId);
         }
@@ -79,11 +79,6 @@ public class ElementIdCellTable<T> extends ColumnResizeCellTable<T> implements H
     @Override
     public void setElementId(String elementId) {
         this.elementId = elementId;
-
-        // Update existing columns
-        for (int i = 0; i < getColumnCount(); i++) {
-            configureElementId(getColumn(i));
-        }
     }
 
     public String getElementId() {
