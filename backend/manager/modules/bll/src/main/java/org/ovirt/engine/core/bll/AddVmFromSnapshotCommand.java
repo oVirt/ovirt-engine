@@ -264,7 +264,8 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
         // If snapshot does not exist or is broken, there is not point in checking any of the VM related checks
         if (!validate(snapshotsValidator.snapshotExists(getSnapshot()))
-                || !validate(snapshotsValidator.snapshotNotBroken(getSnapshot()))) {
+                || !validate(snapshotsValidator.snapshotNotBroken(getSnapshot()))
+                || !validate(snapshotsValidator.vmNotDuringSnapshot(getSnapshot().getVmId()))) {
             return false;
         }
 
@@ -293,9 +294,6 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
             return false;
         }
 
-        if (!canLockSnapshot()) {
-            return false;
-        }
         return true;
     }
 
@@ -308,10 +306,6 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
             result = (VM) queryReturnValue.getReturnValue();
         }
         return result;
-    }
-
-    protected boolean canLockSnapshot() {
-        return validate(new SnapshotsValidator().vmNotDuringSnapshot(getSnapshot().getVmId()));
     }
 
     @Override
