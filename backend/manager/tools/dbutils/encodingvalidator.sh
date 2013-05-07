@@ -40,7 +40,7 @@ DEBUG () {
 FIXIT=false
 QUIET=false
 
-while getopts hs:u:p:l:qdfv option; do
+while getopts hs:u:p:l:d:qfv option; do
     case $option in
         s) SERVERNAME=$OPTARG;;
         p) PORT=$OPTARG;;

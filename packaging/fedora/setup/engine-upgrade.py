@@ -1081,7 +1081,7 @@ def checkDb():
     cmd = [
         basedefs.EXEC_DBVALIDATOR,
         "--user={admin}".format(
-            admin=SERVER_ADMIN
+            admin=utils.getDbAdminUser(),
         ),
         "--host={host}".format(
             host=SERVER_NAME
@@ -1114,7 +1114,7 @@ def fixDb():
     cmd = [
         basedefs.EXEC_DBVALIDATOR,
         "--user={admin}".format(
-            admin=SERVER_ADMIN
+            admin=utils.getDbAdminUser(),
         ),
         "--host={host}".format(
             host=SERVER_NAME
