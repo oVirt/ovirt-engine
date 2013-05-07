@@ -16,7 +16,7 @@ public class RdpConnector {
                                                   // SSO.
     private Boolean redirectDrives = false;
     private Boolean redirectPrinters = false;
-    private Boolean redirectClipboard = false;
+    private Boolean redirectClipboard = true;
     private Boolean redirectSmartCards = false;
 
     private Event disconnectedEvent;
