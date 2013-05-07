@@ -34,6 +34,8 @@ public class SubTabProviderGeneralView extends AbstractSubTabFormView<Provider, 
     private final ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
 
     TextBoxLabel name = new TextBoxLabel();
+    TextBoxLabel description = new TextBoxLabel();
+    TextBoxLabel url = new TextBoxLabel();
 
     @UiField(provided = true)
     GeneralFormPanel formPanel;
@@ -51,9 +53,11 @@ public class SubTabProviderGeneralView extends AbstractSubTabFormView<Provider, 
         driver.initialize(this);
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 1, 1);
+        formBuilder = new FormBuilder(formPanel, 1, 3);
 
         formBuilder.addFormItem(new FormItem(constants.nameProvider(), name, 0, 0));
+        formBuilder.addFormItem(new FormItem(constants.descriptionProvider(), description, 1, 0));
+        formBuilder.addFormItem(new FormItem(constants.urlProvider(), url, 2, 0));
     }
 
     @Override

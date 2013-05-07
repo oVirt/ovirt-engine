@@ -6,9 +6,16 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class ProviderGeneralModel extends EntityModel
-{
+@SuppressWarnings("deprecation")
+public class ProviderGeneralModel extends EntityModel {
+
+    private static final String PROPERTY_NAME = "Name"; //$NON-NLS-1$
+    private static final String PROPERTY_DESCRIPTION = "Description"; //$NON-NLS-1$
+    private static final String PROPERTY_URL = "Url"; //$NON-NLS-1$
+
     private String name;
+    private String description;
+    private String url;
 
     public ProviderGeneralModel() {
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
@@ -19,8 +26,7 @@ public class ProviderGeneralModel extends EntityModel
     protected void onEntityChanged() {
         super.onEntityChanged();
 
-        if (super.getEntity() != null)
-        {
+        if (getEntity() != null) {
             updateProperties();
         }
     }
@@ -36,7 +42,8 @@ public class ProviderGeneralModel extends EntityModel
         Provider provider = (Provider) getEntity();
 
         setName(provider.getName());
-
+        setDescription(provider.getDescription());
+        setUrl(provider.getUrl());
     }
 
     public String getName() {
@@ -44,10 +51,32 @@ public class ProviderGeneralModel extends EntityModel
     }
 
     public void setName(String value) {
-        if (!StringHelper.stringsEqual(name, value))
-        {
+        if (!StringHelper.stringsEqual(name, value)) {
             name = value;
-            onPropertyChanged(new PropertyChangedEventArgs("Name")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs(PROPERTY_NAME));
         }
     }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String value) {
+        if (!StringHelper.stringsEqual(description, value)) {
+            description = value;
+            onPropertyChanged(new PropertyChangedEventArgs(PROPERTY_DESCRIPTION));
+        }
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String value) {
+        if (!StringHelper.stringsEqual(url, value)) {
+            url = value;
+            onPropertyChanged(new PropertyChangedEventArgs(PROPERTY_URL));
+        }
+    }
+
 }
