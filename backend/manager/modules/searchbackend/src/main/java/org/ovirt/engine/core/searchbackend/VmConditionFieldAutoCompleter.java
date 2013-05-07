@@ -101,7 +101,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
         if ("UPTIME".equals(fieldName) || "CREATIONDATE".equals(fieldName)) {
-            return BiggerOrSmallerRelationAutoCompleter.INTSANCE;
+            return BiggerOrSmallerRelationAutoCompleter.INSTANCE;
         } else if ("CPU_USAGE".equals(fieldName) || "MEM_USAGE".equals(fieldName)
                 || "MEMORY".equals(fieldName) || "NETWORK_USAGE".equals(fieldName)) {
             return NumericConditionRelationAutoCompleter.INSTANCE;
