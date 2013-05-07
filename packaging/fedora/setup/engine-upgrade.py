@@ -550,12 +550,19 @@ class CA():
             handler.editParam("SSLCertificateChainFile", basedefs.FILE_APACHE_CA_CRT_SRC)
         handler.close()
 
-        utils.updateVDCOption("keystoreUrl", basedefs.FILE_ENGINE_KEYSTORE, (), "text")
-        utils.updateVDCOption("TruststoreUrl", basedefs.FILE_TRUSTSTORE, (), "text")
-        utils.updateVDCOption("CertAlias", "1", (), "text")
-
     def commit(self):
         shutil.move(self.TMPAPACHECONF, basedefs.FILE_HTTPD_SSL_CONFIG)
+
+        utils.editEngineSysconfigPKI(
+            pkidir=basedefs.DIR_OVIRT_PKI,
+            caCerticate=basedefs.FILE_CA_CRT_SRC,
+            enigneStore=basedefs.FILE_ENGINE_KEYSTORE,
+            engineStorePassword=basedefs.CONST_KEY_PASS,
+            engineStoreAlias="1",
+            engineCerticate=basedefs.FILE_ENGINE_CERT,
+            trustStore=basedefs.FILE_TRUSTSTORE,
+            trustStorePassword=basedefs.CONST_KEY_PASS,
+        )
 
         if os.path.exists(self.JKSKEYSTORE):
             logging.debug("PKI: removing JKS keystore")
@@ -1210,7 +1217,7 @@ def main(options):
     startEngineService = [startEngine]
     preupgradeFunc = [preupgradeUUIDCheck]
     upgradeFunc = [rhyum.update, generateEngineConf, setupVarPrivileges,
-        updateHttpdConf, utils.editEngineSysconfigPKI,
+        updateHttpdConf,
     ]
     postFunc = [modifyUUIDs, ca.commit, runPost, deleteEngineSysconfig]
     engineService = basedefs.ENGINE_SERVICE_NAME
