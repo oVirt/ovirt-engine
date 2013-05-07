@@ -3,6 +3,8 @@
 # Imports
 import sys
 import os
+import glob
+import datetime
 import logging
 import traceback
 import tempfile
@@ -69,6 +71,7 @@ MSG_PROCEED_QUESTION = "Would you like to proceed"
 
 MSG_INFO_CLEANING_PROXY="Cleaning apache proxy configuration"
 MSG_INFO_CLEANING_NFS="Cleaning NFS Exports"
+MSG_INFO_CLEANING_CONFIG="Cleaning configuration"
 MSG_CLEAN_NFS_EXPORTS_QUESTION="Would you like to remove %s configuration from \
 {files}" % basedefs.APP_NAME
 MSG_CLEAN_NFS_EXPORTED_DIRS_QUESTION="Would you like to remove the following \
@@ -206,6 +209,12 @@ def cleanNFSExports():
     for p in removed:
         logging.debug("Removing directory %s" % p)
         shutil.rmtree(p)
+
+
+def cleanConfiguration():
+    suffix = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    for f in glob.glob(os.path.join(basedefs.DIR_ENGINE_CONF, "*.conf")):
+        os.rename(f, "%s.%s" % (f, suffix))
 
 
 def initLogging():
@@ -507,6 +516,9 @@ def main(options):
 
     # Clean NFS exports
     runFunc(cleanNFSExports, MSG_INFO_CLEANING_NFS)
+
+    # Clean configuration
+    runFunc(cleanConfiguration, MSG_INFO_CLEANING_CONFIG)
 
     if len(err_messages) == 0:
         print MSG_INFO_CLEANUP_OK

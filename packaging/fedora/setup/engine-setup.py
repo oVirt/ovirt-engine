@@ -2053,7 +2053,7 @@ def _editToolsConfFile():
     add the user & host:secrue_port values to logcollector.conf and isouploader.conf
     """
     for entry in basedefs.TOOLS_CONFIG:
-        conf = os.path.join(entry['dir'], "50-engine-setup.conf")
+        conf = os.path.join(entry['dir'], "10-engine-setup.conf")
         if not os.path.exists(os.path.dirname(conf)):
             os.mkdir(os.path.dirname(conf))
         with open(conf, "w") as f:
