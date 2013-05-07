@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
@@ -49,7 +50,7 @@ public class RedirectServlet extends HttpServlet {
 
             v = backend.runInternalQuery(VdcQueryType.GetConfigurationValue, params);
             if (v != null) {
-                retVal = (v.getSucceeded() && v.getReturnValue() != null && !((String)v.getReturnValue()).trim().equals(""))
+                retVal = (v.getSucceeded() && StringUtils.isNotEmpty((String) v.getReturnValue()))
                     ? v.getReturnValue().toString() : null;
             } else {
                 log.error("Redirect Servlet: Got NULL from backend.RunQuery!");
