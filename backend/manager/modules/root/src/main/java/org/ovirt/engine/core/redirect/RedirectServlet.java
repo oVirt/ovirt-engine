@@ -38,8 +38,6 @@ public class RedirectServlet extends HttpServlet {
     // ***************************************************************************** //
 
     private String getConfigValue(ConfigurationValues conf) {
-        String retVal = null;
-
         try {
             BackendInternal backend = (BackendInternal) EjbUtils.findBean(BeanType.BACKEND, BeanProxyType.LOCAL);
 
@@ -48,7 +46,7 @@ public class RedirectServlet extends HttpServlet {
 
             VdcQueryReturnValue v = backend.runInternalQuery(VdcQueryType.GetConfigurationValue, params);
             if (v != null) {
-                retVal = (v.getSucceeded() && StringUtils.isNotEmpty((String) v.getReturnValue()))
+                return (v.getSucceeded() && StringUtils.isNotEmpty((String) v.getReturnValue()))
                     ? v.getReturnValue().toString() : null;
             } else {
                 log.error("Redirect Servlet: Got NULL from backend.RunQuery!");
@@ -57,7 +55,7 @@ public class RedirectServlet extends HttpServlet {
             log.error("Redirect Servlet: Caught exception while trying to run query: ", t);
         }
 
-        return retVal;
+        return null;
     }
 
     protected void addAlert(PrintWriter out, String message) {
@@ -100,7 +98,6 @@ public class RedirectServlet extends HttpServlet {
         } finally {
             out.close();
         }
-        log.debug("Health Status servlet: close");
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
