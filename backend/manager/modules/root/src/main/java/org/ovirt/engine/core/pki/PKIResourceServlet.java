@@ -67,7 +67,8 @@ public class PKIResourceServlet extends HttpServlet {
                 );
             }
 
-            this.resourceLocation = EngineLocalConfig.getInstance().expandString(this.resourceLocation);
+            // we use %{x} convention to avoid conflict with jboss properties
+            this.resourceLocation = EngineLocalConfig.getInstance().expandString(this.resourceLocation.replaceAll("%\\{", "\\${"));
         }
         catch(Exception e) {
             log.error("Cannot initialize", e);

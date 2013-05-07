@@ -85,7 +85,8 @@ public class FileServlet extends HttpServlet {
         }
 
         // Create the base file object:
-        base = new File(EngineLocalConfig.getInstance().expandString(name));
+        // we use %{x} convention to avoid conflict with jboss properties
+        base = new File(EngineLocalConfig.getInstance().expandString(name.replaceAll("%\\{", "\\${")));
     }
 
     @Override
