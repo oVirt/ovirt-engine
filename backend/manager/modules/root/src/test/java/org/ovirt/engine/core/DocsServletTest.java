@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -36,6 +37,7 @@ import org.ovirt.engine.core.utils.ServletUtils;
  * Unit tests for the {@code DocsServlet} class.
  */
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class DocsServletTest {
     DocsServlet testServlet;
 
