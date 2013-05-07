@@ -490,6 +490,7 @@ query_locked_entities() {
             where a.disk_id = b.image_group_id and
                   b.image_group_id = c.device_id and
                   imagestatus = ${LOCKED} and is_plugged;"
+       psql -w -c "${CMD}" -U ${USERNAME} -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
    elif [ "${object_type}" = "snapshot" ]; then
        CMD="select vm_id as entity_id, snapshot_id
             from snapshots a
