@@ -94,7 +94,7 @@ public class RedirectServlet extends HttpServlet {
             }
         } catch (IllegalArgumentException e) {
             response.setStatus(400);
-            addAlert(out, "Page: " + request.getParameter("Page") + " is not a leagal.");
+            addAlert(out, "Page: " + request.getParameter("Page") + " is not legal.");
         } catch (Exception e1) {
             response.setStatus(500);
             log.error("Redirect Servlet: Error", e1);
