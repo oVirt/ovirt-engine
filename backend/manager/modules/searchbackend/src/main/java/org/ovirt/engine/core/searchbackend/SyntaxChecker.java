@@ -33,7 +33,7 @@ public class SyntaxChecker implements ISyntaxChecker {
     private Regex mFirstDQRegexp;
     private Regex mNonSpaceRegexp;
     private List<Character> mDisAllowedChars;
-    private static SqlInjectionChecker sqlInjectionChecker;
+    private SqlInjectionChecker sqlInjectionChecker;
 
     public SyntaxChecker(int searchReasultsLimit) {
 
