@@ -39,16 +39,14 @@ public class RedirectServlet extends HttpServlet {
 
     private String getConfigValue(ConfigurationValues conf) {
         String retVal = null;
-        BackendInternal backend = null;
-        GetConfigurationValueParameters params = null;
-        VdcQueryReturnValue v = null;
 
         try {
-            backend = (BackendInternal) EjbUtils.findBean(BeanType.BACKEND, BeanProxyType.LOCAL);
+            BackendInternal backend = (BackendInternal) EjbUtils.findBean(BeanType.BACKEND, BeanProxyType.LOCAL);
 
-            params = new GetConfigurationValueParameters(conf, ConfigCommon.defaultConfigurationVersion);
+            GetConfigurationValueParameters params =
+                    new GetConfigurationValueParameters(conf, ConfigCommon.defaultConfigurationVersion);
 
-            v = backend.runInternalQuery(VdcQueryType.GetConfigurationValue, params);
+            VdcQueryReturnValue v = backend.runInternalQuery(VdcQueryType.GetConfigurationValue, params);
             if (v != null) {
                 retVal = (v.getSucceeded() && StringUtils.isNotEmpty((String) v.getReturnValue()))
                     ? v.getReturnValue().toString() : null;
