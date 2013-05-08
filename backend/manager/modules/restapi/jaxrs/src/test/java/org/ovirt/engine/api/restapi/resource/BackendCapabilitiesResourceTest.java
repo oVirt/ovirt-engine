@@ -360,7 +360,11 @@ public class BackendCapabilitiesResourceTest extends AbstractBackendResourceTest
     }
 
     private boolean greaterOrEqual(Version a, Version b) {
-        return a.getMajor() != b.getMajor() ? a.getMajor() >= b.getMajor() : a.getMinor() >= b.getMinor();
+        int aMajor = a.getMajor() == null ? 0 : a.getMajor().intValue();
+        int aMinor = a.getMinor() == null ? 0 : a.getMinor().intValue();
+        int bMajor = b.getMajor() == null ? 0 : b.getMajor().intValue();
+        int bMinor = b.getMinor() == null ? 0 : b.getMinor().intValue();
+        return aMajor != bMajor ? aMajor >= bMajor : aMinor >= bMinor;
     }
 
     @Override
