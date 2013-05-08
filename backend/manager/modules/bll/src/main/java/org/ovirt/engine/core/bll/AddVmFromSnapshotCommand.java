@@ -260,7 +260,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
     @Override
     protected boolean canDoAction() {
-        SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
+        SnapshotsValidator snapshotsValidator = createSnapshotsValidator();
 
         // If snapshot does not exist or is broken, there is not point in checking any of the VM related checks
         if (!validate(snapshotsValidator.snapshotExists(getSnapshot()))
@@ -295,6 +295,10 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         }
 
         return true;
+    }
+
+    protected SnapshotsValidator createSnapshotsValidator() {
+        return new SnapshotsValidator();
     }
 
     protected VM getVmFromConfiguration() {
