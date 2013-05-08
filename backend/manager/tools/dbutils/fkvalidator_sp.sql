@@ -36,12 +36,12 @@ BEGIN
         v_record.fk_status := 0;
         IF (v_fix_it) THEN
             v_sql := 'delete from ' || v_record.fk_table_name ||
-                      ' where ' || v_record.fk_col || ' not in (select ' ||
+                      ' where ' || v_record.fk_col || 'IS NOT NULL and '  || v_record.fk_col || ' not in (select ' ||
                       v_record.table_col || ' from ' || v_record.table_name || ');';
             v_msg := 'Fixing ' ||  v_record.fk_table_name || v_record.fk_col;
         ELSE
             v_sql := 'select ' || v_record.fk_col || ' from ' || v_record.fk_table_name ||
-                      ' where ' || v_record.fk_col || ' not in (select ' ||
+                      ' where ' || v_record.fk_col || 'IS NOT NULL and ' || v_record.fk_col || ' not in (select ' ||
                       v_record.table_col || ' from ' || v_record.table_name || ');';
             v_msg := 'Constraint violation found in  ' ||  v_record.fk_table_name || v_record.fk_col;
         END IF;
