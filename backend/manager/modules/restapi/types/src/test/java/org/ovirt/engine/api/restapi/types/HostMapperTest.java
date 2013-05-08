@@ -62,9 +62,9 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         vds.setCpuSpeedMh(5.5);
         Host host = HostMapper.map(vds, (Host) null);
         assertNotNull(host.getCpu());
-        assertEquals(Integer.valueOf(host.getCpu().getTopology().getCores()), Integer.valueOf(2));
-        assertEquals(Integer.valueOf(host.getCpu().getTopology().getSockets()), Integer.valueOf(3));
-        assertEquals(Integer.valueOf(host.getCpu().getTopology().getThreads()), Integer.valueOf(2));
+        assertEquals(host.getCpu().getTopology().getCores(), Integer.valueOf(2));
+        assertEquals(host.getCpu().getTopology().getSockets(), Integer.valueOf(3));
+        assertEquals(host.getCpu().getTopology().getThreads(), Integer.valueOf(2));
         assertEquals(host.getCpu().getName(), "some cpu model");
         assertEquals(host.getCpu().getSpeed(), new BigDecimal(5.5));
     }
@@ -89,7 +89,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         vds.setPhysicalMemMb(4000);
         Host host = HostMapper.map(vds, (Host) null);
         assertNotNull(host.getMemory());
-        assertEquals(Long.valueOf(host.getMemory()), Long.valueOf(4194304000L));
+        assertEquals(host.getMemory(), Long.valueOf(4194304000L));
     }
 
     @Test
