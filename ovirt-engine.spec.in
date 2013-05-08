@@ -492,8 +492,7 @@ fi
 %{engine_data}/scripts/ovirtlogrot.sh
 %{_sysconfdir}/cron.daily/ovirt-cron
 
-# Misc configuration files:
-%{engine_data}/conf
+%dir %{engine_data}/conf
 
 # Engine configuration files:
 %dir %{engine_etc}
@@ -593,6 +592,9 @@ fi
 
 # Sysprep files:
 %config(noreplace) %{engine_etc}/sysprep
+
+# Configuration files
+%{engine_data}/conf/engine.conf.defaults
 
 # PKI directories are owned by the engine user because it needs to
 # create files inside:
