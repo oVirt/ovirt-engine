@@ -7,6 +7,7 @@ import signal
 import shutil
 import logging
 import traceback
+import tempfile
 import types
 import time
 import pwd
@@ -90,7 +91,8 @@ MSG_ERROR_ENGINE_PID = "Error: ovirt-engine service is dead, but pid file exists
 MSG_ERROR_PGPASS = "Error: DB password file was not found on this system. Verify \
 that this system was previously installed and that there's a password file at %s or %s" % \
 (basedefs.DB_PASS_FILE, basedefs.ORIG_PASS_FILE)
-MSG_ERROR_FAILED_CONVERT_ENGINE_KEY = "Error: Can't convert engine key to PKCS#12 fomat"
+MSG_ERROR_FAILED_CONVERT_ENGINE_KEY = "Error: Can't convert engine key to PKCS#12 format"
+MSG_ERROR_FAILED_SYNTHESIS_ENGINE_KEY = "Error: Can't synthesis engine key to PKCS#12 format"
 MSG_ERROR_SSH_KEY_SYMLINK = "Error: SSH key should not be symlink"
 MSG_ERROR_UUID_VALIDATION_FAILED = (
     "Pre-upgade host UUID validation failed\n"
@@ -470,24 +472,50 @@ class CA():
     def prepare(self):
         if os.path.exists(self.JKSKEYSTORE):
             logging.debug("PKI: convert JKS to PKCS#12")
-            cmd = [
-                basedefs.EXEC_KEYTOOL,
-                "-importkeystore",
-                "-noprompt",
-                "-srckeystore", self.JKSKEYSTORE,
-                "-srcstoretype", "JKS",
-                "-srcstorepass", basedefs.CONST_KEY_PASS,
-                "-srcalias", "engine",
-                "-srckeypass", basedefs.CONST_KEY_PASS,
-                "-destkeystore", basedefs.FILE_ENGINE_KEYSTORE,
-                "-deststoretype", "PKCS12",
-                "-deststorepass", basedefs.CONST_KEY_PASS,
-                "-destalias", "1",
-                "-destkeypass", basedefs.CONST_KEY_PASS
-            ]
-            output, rc = utils. execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_FAILED_CONVERT_ENGINE_KEY)
-            utils.chownToEngine(basedefs.FILE_ENGINE_KEYSTORE)
-            os.chmod(basedefs.FILE_ENGINE_KEYSTORE, 0640)
+
+            tmpPKCS12 = None
+            try:
+                fd, tmpPKCS12 = tempfile.mkstemp()
+                os.close(fd)
+                os.unlink(tmpPKCS12)    # java does not like empty files as keystore
+
+                mask = [basedefs.CONST_KEY_PASS]
+
+                cmd = [
+                    basedefs.EXEC_KEYTOOL,
+                    "-importkeystore",
+                    "-noprompt",
+                    "-srckeystore", self.JKSKEYSTORE,
+                    "-srcstoretype", "JKS",
+                    "-srcstorepass", basedefs.CONST_KEY_PASS,
+                    "-srcalias", "engine",
+                    "-srckeypass", basedefs.CONST_KEY_PASS,
+                    "-destkeystore", tmpPKCS12,
+                    "-deststoretype", "PKCS12",
+                    "-deststorepass", basedefs.CONST_KEY_PASS,
+                    "-destalias", "1",
+                    "-destkeypass", basedefs.CONST_KEY_PASS
+                ]
+                output, rc = utils.execCmd(cmdList=cmd, maskList=mask, failOnError=True, msg=MSG_ERROR_FAILED_CONVERT_ENGINE_KEY)
+
+                # synthesis PKCS#12 see rhbz#961069
+                cmd = [
+                    (
+                        "{openssl} pkcs12 -in {input} -passin pass:{password} -nodes | "
+                        "{openssl} pkcs12 -export -out {output} -passout pass:{password}"
+                    ).format(
+                        openssl=basedefs.EXEC_OPENSSL,
+                        input=tmpPKCS12,
+                        output=basedefs.FILE_ENGINE_KEYSTORE,
+                        password=basedefs.CONST_KEY_PASS,
+                    )
+                ]
+                utils.execCmd(cmdList=cmd, maskList=mask, useShell=True, failOnError=True, msg=MSG_ERROR_FAILED_SYNTHESIS_ENGINE_KEY)
+                utils.chownToEngine(basedefs.FILE_ENGINE_KEYSTORE)
+                os.chmod(basedefs.FILE_ENGINE_KEYSTORE, 0640)
+            finally:
+                if tmpPKCS12 is not None and os.path.exists(tmpPKCS12):
+                    os.unlink(tmpPKCS12)
 
         for src, dst in (
             (basedefs.FILE_ENGINE_KEYSTORE, basedefs.FILE_APACHE_KEYSTORE),
