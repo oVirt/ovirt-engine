@@ -466,15 +466,6 @@ class CA():
     JKSKEYSTORE = "/etc/pki/ovirt-engine/.keystore"
     TMPAPACHECONF = basedefs.FILE_HTTPD_SSL_CONFIG + ".tmp"
 
-    def mayUpdateDB(self):
-        """Returns True if we may update database.
-
-        It can be false positive but will trigger database transaction,
-        so database will be rolled back upon failure
-
-        """
-        return os.path.exists(self.JKSKEYSTORE)
-
     def prepare(self):
         if os.path.exists(self.JKSKEYSTORE):
             logging.debug("PKI: convert JKS to PKCS#12")
@@ -1344,7 +1335,6 @@ def main(options):
                 if package in name_packages:
                     updateRelatedToDB = True
                     logging.debug("related to database package %s" % package)
-            updateRelatedToDB = updateRelatedToDB or ca.mayUpdateDB()
             updateRelatedToDB = updateRelatedToDB or hostids
 
             # No rollback in this case
