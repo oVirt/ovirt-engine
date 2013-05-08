@@ -1,7 +1,12 @@
 package org.ovirt.engine.core.compat.backendcompat;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import javax.xml.namespace.NamespaceContext;
-import java.util.*;
 
 public class XmlNamespaceManager implements NamespaceContext {
 
