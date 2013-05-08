@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.queries;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.Guid;
 
 public class GetAllDisksByVmIdParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = 1277592901283660498L;

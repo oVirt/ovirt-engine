@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.common.queries;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.compat.Guid;
 
 public class GetDeviceListQueryParameters extends VdsIdParametersBase {
     private static final long serialVersionUID = -3909252459169512472L;

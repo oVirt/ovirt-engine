@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.queries;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NGuid;
 
 public class GetAvailableClusterVersionsByStoragePoolParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = 6803980112895387178L;

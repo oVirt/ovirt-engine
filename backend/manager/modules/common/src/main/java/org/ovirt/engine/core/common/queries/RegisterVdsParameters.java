@@ -2,8 +2,8 @@ package org.ovirt.engine.core.common.queries;
 
 import java.io.Serializable;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.VDSType;
+import org.ovirt.engine.core.compat.Guid;
 
 public class RegisterVdsParameters extends VdcQueryParametersBase implements Serializable {
     private static final long serialVersionUID = 4661626618754048420L;

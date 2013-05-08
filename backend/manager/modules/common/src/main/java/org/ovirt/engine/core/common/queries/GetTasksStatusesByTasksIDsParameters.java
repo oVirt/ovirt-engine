@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.common.queries;
 
-import org.ovirt.engine.core.compat.*;
 import java.util.ArrayList;
+
+import org.ovirt.engine.core.compat.Guid;
 
 public class GetTasksStatusesByTasksIDsParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = -7279145473727752108L;

@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.queries;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.Guid;
 
 public class StorageDomainAndPoolQueryParameters extends StorageDomainQueryParametersBase {
     private static final long serialVersionUID = -1397159559995940530L;

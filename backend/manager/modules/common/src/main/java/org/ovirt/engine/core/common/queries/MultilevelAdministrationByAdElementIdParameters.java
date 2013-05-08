@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.queries;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.Guid;
 
 public class MultilevelAdministrationByAdElementIdParameters extends MultilevelAdministrationsQueriesParameters {
     private static final long serialVersionUID = 7614186603701768993L;

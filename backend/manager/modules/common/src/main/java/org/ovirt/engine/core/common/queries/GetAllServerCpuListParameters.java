@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.queries;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.Version;
 
 public class GetAllServerCpuListParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = -6048741913142095068L;
