@@ -195,7 +195,9 @@ public class BackendStorageDomainsResource
             break;
         }
 
-        addLinks(((StorageDomain) resp.getEntity()), getLinksToExclude(storageDomain));
+        if (resp != null) {
+            addLinks(((StorageDomain) resp.getEntity()), getLinksToExclude(storageDomain));
+        }
         return resp;
     }
 

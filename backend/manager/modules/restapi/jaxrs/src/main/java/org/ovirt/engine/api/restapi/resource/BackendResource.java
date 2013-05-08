@@ -199,9 +199,9 @@ public class BackendResource extends BaseBackendResource {
                                           VdcActionParametersBase params) throws BackendFailureException {
         setCorrelationId(params);
         VdcReturnValueBase result = backend.RunAction(task, sessionize(params));
-        if (!result.getCanDoAction()) {
+        if (result != null && !result.getCanDoAction()) {
             throw new BackendFailureException(localize(result.getCanDoActionMessages()));
-        } else if (!result.getSucceeded()) {
+        } else if (result != null && !result.getSucceeded()) {
             throw new BackendFailureException(localize(result.getExecuteFailedMessages()));
         }
         assert (result != null);

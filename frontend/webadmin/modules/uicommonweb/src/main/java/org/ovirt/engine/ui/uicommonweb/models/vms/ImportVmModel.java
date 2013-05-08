@@ -174,7 +174,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                 StoragePool dataCenter = pools.get(0);
                 setStoragePool(dataCenter);
                 // show quota
-                if (dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
+                if (dataCenter != null && dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
                     hasQuota = true;
                 }
                 if (hasQuota) {

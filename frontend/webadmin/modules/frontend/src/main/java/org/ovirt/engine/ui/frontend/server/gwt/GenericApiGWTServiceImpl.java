@@ -71,7 +71,8 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
     public ArrayList<VdcQueryReturnValue> RunMultipleQueries(
             ArrayList<VdcQueryType> queryTypeList,
             ArrayList<VdcQueryParametersBase> queryParamsList) {
-        log.debug("Server: RunMultipleQuery invoked! [amount of queries: " + queryTypeList.size() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+        int size = queryTypeList == null ? 0 : queryTypeList.size();
+        log.debug("Server: RunMultipleQuery invoked! [amount of queries: " + size + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         ArrayList<VdcQueryReturnValue> ret = new ArrayList<VdcQueryReturnValue>();
 
         if (queryTypeList == null || queryParamsList == null) {
