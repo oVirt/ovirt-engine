@@ -481,7 +481,6 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_FAILED_UPDATE_VM, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_REMOVE_VM_FINISHED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_REMOVE_VM_FINISHED_WITH_ILLEGAL_DISKS, AuditLogSeverity.WARNING);
-        severities.put(AuditLogType.USER_FAILED_REMOVE_VM, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_CHANGE_DISK_VM, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_EJECT_VM_DISK, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_EJECT_VM_FLOPPY, AuditLogSeverity.NORMAL);

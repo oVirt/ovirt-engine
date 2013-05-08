@@ -299,9 +299,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
 
     @Override
     protected VDSReturnValue performImageVdsmOperation() {
-        boolean isShouldBeLocked = getParameters().getParentCommand() != VdcActionType.RemoveVmFromImportExport
-                && getParameters().getParentCommand() != VdcActionType.RemoveVmTemplateFromImportExport;
-        if (isShouldBeLocked) {
+        if (getParameters().isShouldLockImage()) {
             // the image status should be set to ILLEGAL, so that in case compensation runs the image status will
             // be revert to be ILLEGAL, as we can't tell whether the task started on vdsm side or not.
             getDiskImage().setImageStatus(ImageStatus.ILLEGAL);

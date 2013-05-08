@@ -43,9 +43,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> implements QuotaStorageDependent{
 
-    private boolean hasImages;
-    private final List<String> disksLeftInVm = new ArrayList<String>();
-
     /**
      * Constructor for command creation when compensation is applied on startup
      *
@@ -73,23 +70,32 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     }
 
     private boolean removeVm() {
-        VM vm = getVm();
-        hasImages = vm.getDiskList().size() > 0;
-
-        if (getParameters().isRemoveDisks() && hasImages) {
-            if (!removeVmImages(null)) {
-                return false;
-            }
-            processUnremovedDisks(false);
-        }
+        final List<DiskImage> diskImages = ImagesHandler.filterImageDisks(getVm().getDiskList(),
+                true,
+                false);
 
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
                 removeVmFromDb();
+                if (getParameters().isRemoveDisks()) {
+                    for (DiskImage image : diskImages) {
+                        getCompensationContext().snapshotEntityStatus(image.getImage(), ImageStatus.ILLEGAL);
+                        ImagesHandler.updateImageStatus(image.getImage().getId(), ImageStatus.LOCKED);
+                    }
+                    getCompensationContext().stateChanged();
+                }
                 return null;
             }
         });
+
+        if (getParameters().isRemoveDisks() && !diskImages.isEmpty()) {
+            Collection<DiskImage> unremovedDisks = (Collection<DiskImage>)removeVmImages(diskImages).getActionReturnValue();
+            if (!unremovedDisks.isEmpty()) {
+                processUnremovedDisks(unremovedDisks);
+                return false;
+            }
+        }
 
         return true;
     }
@@ -211,7 +217,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         return true;
     }
 
-    protected boolean removeVmImages(List<DiskImage> images) {
+    protected VdcReturnValueBase removeVmImages(List<DiskImage> images) {
         RemoveAllVmImagesParameters tempVar = new RemoveAllVmImagesParameters(getVmId(), images);
         tempVar.setParentCommand(getActionType());
         tempVar.setEntityId(getParameters().getEntityId());
@@ -225,21 +231,12 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
         }
 
-        return vdcRetValue.getSucceeded();
+        return vdcRetValue;
     }
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        switch (getActionState()) {
-        case EXECUTE:
-            return getSucceeded() ? (disksLeftInVm.isEmpty() ? AuditLogType.USER_REMOVE_VM_FINISHED : AuditLogType.USER_REMOVE_VM_FINISHED_WITH_ILLEGAL_DISKS)
-                    : AuditLogType.USER_FAILED_REMOVE_VM;
-        case END_FAILURE:
-        case END_SUCCESS:
-        default:
-            return disksLeftInVm.isEmpty() ? AuditLogType.UNASSIGNED
-                    : AuditLogType.USER_REMOVE_VM_FINISHED_WITH_ILLEGAL_DISKS;
-        }
+        return getSucceeded() ? AuditLogType.USER_REMOVE_VM_FINISHED : AuditLogType.USER_REMOVE_VM_FINISHED_WITH_ILLEGAL_DISKS;
     }
 
     @Override
@@ -270,50 +267,18 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     @Override
     protected void endVmCommand() {
-        try {
-            if (acquireLock()) {
-                // Ensures the lock on the VM guid can be acquired. This prevents a race
-                // between executeVmCommand (for example, of a first multiple VMs removal that includes VM A,
-                // and a second multiple VMs removal that include the same VM).
-                setVm(DbFacade.getInstance().getVmDao().get(getVmId()));
-                if (getVm() != null) {
-                    processUnremovedDisks(true);
+        // no audit log print here as the vm was already removed during the execute phase.
+        setCommandShouldBeLogged(false);
 
-                    // Remove VM from DB.
-                    removeVmFromDb();
-                }
-            }
-            setSucceeded(true);
-        } finally {
-            freeLock();
-        }
+        setSucceeded(true);
     }
 
-    /**
-     * Update disks for VM after disks were removed.
-     */
-    private void processUnremovedDisks(boolean shouldUpdateDiskStatus) {
-        VmHandler.updateDisksFromDb(getVm());
-
-        // Get all disk images for VM (VM should not have any image disk associated with it).
-        List<DiskImage> diskImages = ImagesHandler.filterImageDisks(getVm().getDiskMap().values(),
-                true,
-                false);
-
-        // If the VM still has disk images related to it, change their status to Illegal.
-        if (!diskImages.isEmpty()) {
-            for (DiskImage diskImage : diskImages) {
-                if (shouldUpdateDiskStatus && diskImage.getImageStatus() != ImageStatus.ILLEGAL) {
-                    log.errorFormat("Disk {0} which is part of VM {1} was not at ILLEGAL state.",
-                            diskImage.getDiskAlias(),
-                            getVm().getName());
-                    ImagesHandler.updateImageStatus(diskImage.getImage().getId(), ImageStatus.ILLEGAL);
-                }
-
-                disksLeftInVm.add(diskImage.getDiskAlias());
-            }
-            addCustomValue("DisksNames", StringUtils.join(disksLeftInVm, ","));
+    private void processUnremovedDisks(Collection<DiskImage> diskImages) {
+        List<String> disksLeftInVm = new ArrayList<String>();
+        for (DiskImage diskImage : diskImages) {
+            disksLeftInVm.add(diskImage.getDiskAlias());
         }
+        addCustomValue("DisksNames", StringUtils.join(disksLeftInVm, ","));
     }
 
     @Override

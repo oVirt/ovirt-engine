@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -45,7 +47,7 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
             }
         }
 
-        boolean noImagesRemovedYet = true;
+        Collection<DiskImage> failedRemoving = new LinkedList<>();
         for (final DiskImage image : images) {
             if (mImagesToBeRemoved.contains(image.getImageId())) {
                 VdcReturnValueBase vdcReturnValue =
@@ -56,12 +58,7 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
                 if (vdcReturnValue.getSucceeded()) {
                     getReturnValue().getInternalTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
                 } else {
-                    if (noImagesRemovedYet) {
-                        setSucceeded(false);
-                        getReturnValue().setFault(vdcReturnValue.getFault());
-                        return;
-                    }
-
+                    failedRemoving.add(image);
                     log.errorFormat("Can't remove image id: {0} for VM id: {1} due to: {2}. Image will be set at illegal state with no snapshot id.",
                             image.getImageId(),
                             getParameters().getVmId(),
@@ -78,10 +75,10 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
                                 }
                             });
                 }
-                noImagesRemovedYet = false;
             }
         }
 
+        setActionReturnValue(failedRemoving);
         setSucceeded(true);
     }
 
@@ -92,6 +89,7 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
         result.setDiskImage(image);
         result.setEntityId(getParameters().getEntityId());
         result.setForceDelete(getParameters().getForceDelete());
+        result.setShouldLockImage(false);
         return result;
     }
 
