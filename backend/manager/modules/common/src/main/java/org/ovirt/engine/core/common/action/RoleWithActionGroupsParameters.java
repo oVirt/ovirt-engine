@@ -2,7 +2,8 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.Role;
 
 public class RoleWithActionGroupsParameters extends RolesOperationsParameters {
     private static final long serialVersionUID = -4839748040989851074L;

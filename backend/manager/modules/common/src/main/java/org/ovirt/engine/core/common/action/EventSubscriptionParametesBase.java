@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.businessentities.*;
-
 import javax.validation.Valid;
+
+import org.ovirt.engine.core.common.businessentities.event_subscriber;
 
 public class EventSubscriptionParametesBase extends VdcActionParametersBase {
     private static final long serialVersionUID = -6988075041053848616L;

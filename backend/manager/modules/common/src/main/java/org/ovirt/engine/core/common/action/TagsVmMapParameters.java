@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.TagsVmMap;
 
 public class TagsVmMapParameters extends TagsActionParametersBase {
     private static final long serialVersionUID = 6685955961538163300L;

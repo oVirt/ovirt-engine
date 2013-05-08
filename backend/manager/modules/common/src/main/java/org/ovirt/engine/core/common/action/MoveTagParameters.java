@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.Guid;
 
 public class MoveTagParameters extends TagsActionParametersBase {
     private static final long serialVersionUID = -6320801761505304462L;

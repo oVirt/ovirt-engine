@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.LinkedList;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.Guid;
 
 public class MaintenanceNumberOfVdssParameters extends VdcActionParametersBase {
     private static final long serialVersionUID = 8806810521151850069L;

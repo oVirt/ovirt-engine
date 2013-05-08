@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 
 public class DisplayNetworkToVdsGroupParameters extends VdsGroupOperationParameters {

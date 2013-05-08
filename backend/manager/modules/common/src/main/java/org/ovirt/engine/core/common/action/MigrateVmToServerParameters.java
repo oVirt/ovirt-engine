@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.Guid;
 
 public class MigrateVmToServerParameters extends MigrateVmParameters {
     private static final long serialVersionUID = 2378358850714143232L;

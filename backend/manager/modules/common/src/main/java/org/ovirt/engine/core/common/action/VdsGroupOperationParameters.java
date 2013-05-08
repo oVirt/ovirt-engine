@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.businessentities.*;
-
 import javax.validation.Valid;
+
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 
 public class VdsGroupOperationParameters extends VdsGroupParametersBase {
     private static final long serialVersionUID = -2184123302248929010L;

@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.DiskImageBase;
+import org.ovirt.engine.core.compat.Guid;
 
 public class CreateCloneOfTemplateParameters extends CreateSnapshotFromTemplateParameters implements
         java.io.Serializable {

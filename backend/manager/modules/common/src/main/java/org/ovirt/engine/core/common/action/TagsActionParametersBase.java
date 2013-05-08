@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.Guid;
 
 public class TagsActionParametersBase extends VdcActionParametersBase {
     private static final long serialVersionUID = -799396982675260518L;

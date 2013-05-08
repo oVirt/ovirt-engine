@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.Guid;
 
 public class SetVmTicketParameters extends VmOperationParameterBase {
     private static final long serialVersionUID = 7066467049851637162L;

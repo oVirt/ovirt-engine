@@ -2,8 +2,8 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.List;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.compat.Guid;
 
 public class StoragePoolWithStoragesParameter extends StoragePoolManagementParameter {
     private static final long serialVersionUID = 399202796107792151L;

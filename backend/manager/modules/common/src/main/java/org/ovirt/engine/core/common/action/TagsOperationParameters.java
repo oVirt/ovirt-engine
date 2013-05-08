@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.businessentities.*;
 import javax.validation.Valid;
+
+import org.ovirt.engine.core.common.businessentities.tags;
 
 public class TagsOperationParameters extends TagsActionParametersBase {
     private static final long serialVersionUID = 4931970264921707074L;

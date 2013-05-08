@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.Guid;
 
 public class ReconstructMasterParameters extends StorageDomainPoolParametersBase {
     private static final long serialVersionUID = -640521915810322901L;

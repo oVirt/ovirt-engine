@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.compat.Guid;
 
 public class RemoveVmFromImportExportParamenters extends RemoveVmParameters implements java.io.Serializable {
     private static final long serialVersionUID = 1841755064122049392L;

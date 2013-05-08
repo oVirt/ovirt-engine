@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-
 import java.util.ArrayList;
+
+import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.compat.Guid;
 
 public class ExtendSANStorageDomainParameters extends StorageDomainParametersBase {
     private static final long serialVersionUID = 1051216804598069936L;

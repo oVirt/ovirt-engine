@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
-
 import java.util.ArrayList;
+
+import org.ovirt.engine.core.compat.Guid;
 
 public class AttachVdsToTagParameters extends TagsActionParametersBase {
     private static final long serialVersionUID = -6599471346607548452L;

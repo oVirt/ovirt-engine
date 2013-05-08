@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.Guid;
 
 public class FenceVdsManualyParameters extends StoragePoolParametersBase {
     private static final long serialVersionUID = -5313772300704786422L;

@@ -1,10 +1,9 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.*;
-import org.ovirt.engine.core.common.businessentities.*;
-
-import org.ovirt.engine.core.common.errors.*;
+import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.compat.Guid;
 
 public class SetStoragePoolStatusParameters extends StoragePoolParametersBase {
     private static final long serialVersionUID = 264321499194008199L;

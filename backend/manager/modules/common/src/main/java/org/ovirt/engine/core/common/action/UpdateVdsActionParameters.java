@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 
 public class UpdateVdsActionParameters extends VdsOperationActionParameters {
     private static final long serialVersionUID = -7467029979089285065L;

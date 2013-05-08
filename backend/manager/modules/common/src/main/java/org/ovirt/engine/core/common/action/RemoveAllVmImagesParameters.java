@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.compat.Guid;
 
 public class RemoveAllVmImagesParameters extends VmOperationParameterBase implements java.io.Serializable {
     private static final long serialVersionUID = 7211692656127711421L;

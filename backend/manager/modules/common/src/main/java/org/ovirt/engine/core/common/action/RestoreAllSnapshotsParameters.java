@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
-
 import java.util.List;
+
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.compat.Guid;
 
 public class RestoreAllSnapshotsParameters extends TryBackToAllSnapshotsOfVmParameters implements java.io.Serializable {
     private static final long serialVersionUID = -8756081739745132849L;

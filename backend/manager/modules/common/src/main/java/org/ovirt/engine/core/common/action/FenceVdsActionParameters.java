@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.compat.Guid;
 
 public class FenceVdsActionParameters extends VdsActionParameters {
     private static final long serialVersionUID = 6174371941176548263L;

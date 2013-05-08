@@ -4,8 +4,9 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.compat.Guid;
 
 public class ImportVmTemplateParameters extends MoveOrCopyParameters implements java.io.Serializable {
     private static final long serialVersionUID = -6796905699865416157L;
