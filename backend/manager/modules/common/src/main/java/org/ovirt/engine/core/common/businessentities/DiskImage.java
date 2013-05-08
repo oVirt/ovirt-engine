@@ -2,7 +2,6 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -10,10 +9,10 @@ import org.ovirt.engine.core.compat.NGuid;
 
 public class DiskImage extends DiskImageBase implements IImage {
 
-    private static final long serialVersionUID = 1533416252250153306L;
+    private static final long serialVersionUID = 3185087852755356847L;
 
     private Date lastModifiedDate;
-    private List<String> storagesNames;
+    private ArrayList<String> storagesNames;
     private long actualSizeFromDiskImageDynamic;
     private int readRateFromDiskImageDynamic;
     private int writeRateFromDiskImageDynamic;
@@ -268,7 +267,7 @@ public class DiskImage extends DiskImageBase implements IImage {
         this.storagePath = storagePath;
     }
 
-    public List<String> getStoragesNames() {
+    public ArrayList<String> getStoragesNames() {
         return storagesNames;
     }
 
