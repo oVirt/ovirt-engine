@@ -187,6 +187,10 @@ def getOptions():
                       action="store_true", dest="ignore_tasks", default=False,
                       help=SUPPRESS_HELP)
 
+    parser.add_option("-d", "--force-db-fix",
+                      action="store_true", dest="force_db_fix", default=False,
+                      help=SUPPRESS_HELP)
+
     parser.add_option("-n", "--no-space-check", help="Disable space check", action="store_true", default=False)
 
 
@@ -1359,9 +1363,12 @@ def main(options):
                             # If violations found, show them
                             # and ask for cleanup
                             if issues_found:
-                                if utils.askYesNo(
-                                    MSG_CLEAR_DB_INCONSISTENCIES % violations
-                                ) is True:
+                                if (
+                                    options.force_db_fix
+                                    or utils.askYesNo(
+                                        MSG_CLEAR_DB_INCONSISTENCIES % violations
+                                    )
+                                ):
                                     fixDb()
                                 else:
                                     raise Exception(
