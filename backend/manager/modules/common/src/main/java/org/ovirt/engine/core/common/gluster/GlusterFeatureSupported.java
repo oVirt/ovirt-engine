@@ -31,11 +31,20 @@ public class GlusterFeatureSupported {
     /**
      *
      * @param version
-     *          Compatibility version to check for.
+     *            Compatibility version to check for.
      * @return <code>true</code> if gluster hooks management feature is enabled, <code>false</code> if it's not.
      */
     public static boolean glusterHooks(Version version) {
         return supportedInConfig(ConfigValues.GlusterHooksEnabled, version);
     }
 
+    /**
+     *
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if gluster services management feature is enabled, <code>false</code> if it's not.
+     */
+    public static boolean glusterServices(Version version) {
+        return supportedInConfig(ConfigValues.GlusterServicesEnabled, version);
+    }
 }

@@ -33,6 +33,10 @@ public class GlusterAuditLogUtil {
         logAuditMessage(null, null, server, logType, Collections.<String, String> emptyMap());
     }
 
+    public void logClusterMessage(final Guid clusterId, final AuditLogType logType) {
+        logAuditMessage(clusterId, null, null, logType, Collections.<String, String> emptyMap());
+    }
+
     public void logAuditMessage(final Guid clusterId,
             final GlusterVolumeEntity volume,
             final VDS server,

@@ -22,6 +22,10 @@ public class GlusterConstants {
     public static final String OPTION_VALUE = "value";
     public static final String OPTION_OLD_VALUE = "oldvalue";
     public static final String OPTION_NEW_VALUE = "newvalue";
+    public static final String OLD_STATUS = "oldstatus";
+    public static final String NEW_STATUS = "newstatus";
+    public static final String SERVICE_TYPE = "servicetype";
+    public static final String SERVICE_NAME = "servicename";
 
     public static final String HOOK_NAME = "glusterhookname";
     public static final String FAILURE_MESSAGE = "failuremessage";

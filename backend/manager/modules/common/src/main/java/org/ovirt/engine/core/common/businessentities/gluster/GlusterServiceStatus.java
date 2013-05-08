@@ -10,5 +10,6 @@ public enum GlusterServiceStatus {
     ERROR,
     NOT_INSTALLED,
     MIXED, // cluster-wide status, few up, few down
+    UNKNOWN, // Couldn't fetch status
     ;
 }

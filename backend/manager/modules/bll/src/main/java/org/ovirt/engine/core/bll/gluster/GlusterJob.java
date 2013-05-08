@@ -23,8 +23,11 @@ import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.VdsStatisticsDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
+import org.ovirt.engine.core.dao.gluster.GlusterClusterServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.dao.gluster.GlusterOptionDao;
+import org.ovirt.engine.core.dao.gluster.GlusterServerServiceDao;
+import org.ovirt.engine.core.dao.gluster.GlusterServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -102,6 +105,19 @@ public abstract class GlusterJob {
     protected GlusterHooksDao getHooksDao() {
         return DbFacade.getInstance().getGlusterHooksDao();
     }
+
+    protected GlusterServiceDao getGlusterServiceDao() {
+        return DbFacade.getInstance().getGlusterServiceDao();
+    }
+
+    protected GlusterServerServiceDao getGlusterServerServiceDao() {
+        return DbFacade.getInstance().getGlusterServerServiceDao();
+    }
+
+    protected GlusterClusterServiceDao getGlusterClusterServiceDao() {
+        return DbFacade.getInstance().getGlusterClusterServiceDao();
+    }
+
     /**
      * Acquires a lock on the cluster with given id and locking group {@link LockingGroup#GLUSTER}
      *
