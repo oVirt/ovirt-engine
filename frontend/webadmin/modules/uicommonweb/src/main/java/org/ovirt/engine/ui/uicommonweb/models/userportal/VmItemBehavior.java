@@ -24,6 +24,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -93,7 +94,9 @@ public class VmItemBehavior extends ItemBehavior
 
         // TODO: Patch!
         String imageName = model.getTitle();
-        if (StringHelper.stringsEqual(imageName, "No CDs")) //$NON-NLS-1$
+        if (StringHelper.stringsEqual(imageName, ConstantsManager.getInstance()
+                .getConstants()
+                .noCds()))
         {
             return;
         }

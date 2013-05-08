@@ -1830,7 +1830,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         AttachCdModel attachCdModel = (AttachCdModel) getWindow();
         ArrayList<String> images1 =
-                new ArrayList<String>(Arrays.asList(new String[] { "No CDs" })); //$NON-NLS-1$
+                new ArrayList<String>(Arrays.asList(new String[] { ConstantsManager.getInstance()
+                        .getConstants()
+                        .noCds() }));
         attachCdModel.getIsoImage().setItems(images1);
         attachCdModel.getIsoImage().setSelectedItem(Linq.firstOrDefault(images1));
 
@@ -2209,7 +2211,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         getIsoImages().add(ejectModel);
 
         ChangeCDModel tempVar4 = new ChangeCDModel();
-        tempVar4.setTitle(ConstantsManager.getInstance().getConstants().noCDsTitle());
+        tempVar4.setTitle(ConstantsManager.getInstance().getConstants().noCds());
         getIsoImages().add(tempVar4);
     }
 
@@ -2219,7 +2221,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         // TODO: Patch!
         String isoName = model.getTitle();
-        if (StringHelper.stringsEqual(isoName, "No CDs")) //$NON-NLS-1$
+        if (StringHelper.stringsEqual(isoName, ConstantsManager.getInstance()
+                .getConstants()
+                .noCds()))
         {
             return;
         }

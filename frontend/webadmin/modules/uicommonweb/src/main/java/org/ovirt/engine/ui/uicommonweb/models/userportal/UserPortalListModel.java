@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -30,7 +31,6 @@ import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -877,7 +877,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         model.setHashName("change_cd"); //$NON-NLS-1$
 
         ArrayList<String> defaultImages =
-                new ArrayList<String>(Arrays.asList(new String[] { "No CDs" })); //$NON-NLS-1$
+                new ArrayList<String>(Arrays.asList(new String[] { ConstantsManager.getInstance()
+                        .getConstants()
+                        .noCds() }));
         model.getIsoImage().setItems(defaultImages);
         model.getIsoImage().setSelectedItem(Linq.firstOrDefault(defaultImages));
 

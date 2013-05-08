@@ -580,9 +580,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Change CD")
     String changeCDTitle();
 
-    @DefaultStringValue("No CDs")
-    String noCDsTitle();
-
     @DefaultStringValue("Console Disconnected")
     String consoleDisconnectedTitle();
 
@@ -1664,7 +1661,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String nullOperationBondUnmanaged();
 
     @DefaultStringValue("Invalid operation with unsync network: unsync network can only be detached")
-    String nullOperationOutOfSyncNetwork();    
+    String nullOperationOutOfSyncNetwork();
 
     @DefaultStringValue("Cannot perform bond operation with an out-of-sync network.")
     String nullOperationBondOutOfSync();
@@ -1832,4 +1829,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Secondary")
     String secondaryPmVariant();
+
+    @DefaultStringValue("Eject")
+    String eject();
 }
