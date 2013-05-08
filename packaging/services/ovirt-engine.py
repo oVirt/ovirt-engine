@@ -34,12 +34,14 @@ class Daemon(service.Daemon):
     def __init__(self):
         super(Daemon, self).__init__()
 
-    def _processTemplate(self, template, dir):
+    def _processTemplate(self, template, dir, mode=None):
         out = os.path.join(
             dir,
             re.sub('\.in$', '', os.path.basename(template)),
         )
         with open(out, 'w') as f:
+            if mode is not None:
+                os.chmod(out, mode)
             f.write(str(Template(file=template, searchList=[self._config])))
         return out
 
@@ -269,13 +271,34 @@ class Daemon(service.Daemon):
 
         self._setupEngineApps()
 
+        jbossTempDir = os.path.join(
+            self._config.getString('ENGINE_TMP'),
+            'tmp',
+        )
+
+        jbossConfigDir = os.path.join(
+            self._config.getString('ENGINE_TMP'),
+            'config',
+        )
+
+        jbossModulesTmpDir = self._linkModules(
+            os.path.join(
+                self._config.getString('JBOSS_HOME'),
+                'modules',
+            ),
+        )
+
+        os.mkdir(jbossTempDir)
+        os.mkdir(jbossConfigDir)
+        os.chmod(jbossConfigDir, 0o700)
+
         jbossBootLoggingFile = self._processTemplate(
             template=os.path.join(
                 self._config.getString('ENGINE_USR'),
                 'services',
                 'ovirt-engine-logging.properties.in'
             ),
-            dir=self._config.getString('ENGINE_TMP'),
+            dir=jbossConfigDir,
         )
 
         jbossConfigFile = self._processTemplate(
@@ -284,14 +307,8 @@ class Daemon(service.Daemon):
                 'services',
                 'ovirt-engine.xml.in',
             ),
-            dir=self._config.getString('ENGINE_TMP'),
-        )
-
-        jbossModulesTmpDir = self._linkModules(
-            os.path.join(
-                self._config.getString('JBOSS_HOME'),
-                'modules',
-            ),
+            dir=jbossConfigDir,
+            mode=0o600,
         )
 
         self._executable = java
@@ -360,21 +377,15 @@ class Daemon(service.Daemon):
             '-Djboss.server.base.dir=%s' % self._config.getString(
                 'ENGINE_USR'
             ),
-            '-Djboss.server.config.dir=%s' % self._config.getString(
-                'ENGINE_TMP'
-            ),
             '-Djboss.server.data.dir=%s' % self._config.getString(
                 'ENGINE_VAR'
             ),
             '-Djboss.server.log.dir=%s' % self._config.getString(
                 'ENGINE_LOG'
             ),
-            '-Djboss.server.temp.dir=%s' % self._config.getString(
-                'ENGINE_TMP'
-            ),
-            '-Djboss.controller.temp.dir=%s' % self._config.getString(
-                'ENGINE_TMP'
-            ),
+            '-Djboss.server.config.dir=%s' % jbossConfigDir,
+            '-Djboss.server.temp.dir=%s' % jbossTempDir,
+            '-Djboss.controller.temp.dir=%s' % jbossTempDir,
             '-jar', jbossModulesJar,
 
             # Module path should include first the engine modules
