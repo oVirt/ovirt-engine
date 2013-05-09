@@ -556,27 +556,24 @@
             </execution>
           </executions>
         </plugin>
-
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>animal-sniffer-maven-plugin</artifactId>
+          <version>1.9</version>
+          <configuration>
+            <signature>
+              <groupId>org.codehaus.mojo.signature</groupId>
+              <artifactId>${animal.sniffer.signature}</artifactId>
+              <version>1.0</version>
+            </signature>
+            <ignores>
+              <ignore>sun.security.krb5.Config</ignore>
+              <ignore>sun.misc.Signal</ignore>
+            </ignores>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <version>1.9</version>
-        <configuration>
-          <signature>
-            <groupId>org.codehaus.mojo.signature</groupId>
-            <artifactId>${animal.sniffer.signature}</artifactId>
-            <version>1.0</version>
-          </signature>
-          <ignores>
-            <ignore>sun.security.krb5.Config</ignore>
-            <ignore>sun.misc.Signal</ignore>
-          </ignores>
-        </configuration>
-      </plugin>
-    </plugins>
     <resources>
       <resource>
         <directory>src/main/java</directory>
