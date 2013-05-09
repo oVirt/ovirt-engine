@@ -432,12 +432,12 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().retrievingCDsTitle());
         getIsoImages().add(tempVar);
 
-        UpdateActionAvailability();
+        updateActionAvailability();
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
         if (getCustomPropertiesKeysList() == null) {
-            AsyncDataProvider.GetCustomPropertiesList(new AsyncQuery(this,
+            AsyncDataProvider.getCustomPropertiesList(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -450,7 +450,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
 
         // Call 'IsCommandCompatible' for precaching
-        AsyncDataProvider.IsCommandCompatible(new AsyncQuery(this,
+        AsyncDataProvider.isCommandCompatible(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -459,9 +459,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     }
 
     private void setConsoleHelpers() {
-        this.consoleUtils = (ConsoleUtils) TypeResolver.getInstance().Resolve(ConsoleUtils.class);
-        this.consoleManager = (ConsoleManager) TypeResolver.getInstance().Resolve(ConsoleManager.class);
-        this.errorPopupManager = (ErrorPopupManager) TypeResolver.getInstance().Resolve(ErrorPopupManager.class);
+        this.consoleUtils = (ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class);
+        this.consoleManager = (ConsoleManager) TypeResolver.getInstance().resolve(ConsoleManager.class);
+        this.errorPopupManager = (ErrorPopupManager) TypeResolver.getInstance().resolve(ErrorPopupManager.class);
     }
 
     private void assignTags()
@@ -507,7 +507,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         for (Guid id : vmIds)
         {
-            AsyncDataProvider.GetAttachedTagsToVm(new AsyncQuery(new Object[] { this, model },
+            AsyncDataProvider.getAttachedTagsToVm(new AsyncQuery(new Object[] { this, model },
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -580,7 +580,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         {
             ArrayList<TagModel> tags = (ArrayList<TagModel>) model.getItems();
             TagModel rootTag = tags.get(0);
-            TagModel.RecursiveEditAttachDetachLists(rootTag, attachedTags, tagsToAttach, tagsToDetach);
+            TagModel.recursiveEditAttachDetachLists(rootTag, attachedTags, tagsToAttach, tagsToDetach);
         }
 
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
@@ -612,7 +612,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             setGuideContext(vm.getId());
         }
 
-        AsyncDataProvider.GetVmById(new AsyncQuery(this,
+        AsyncDataProvider.getVmById(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -649,7 +649,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     }
 
     @Override
-    public boolean IsSearchStringMatch(String searchString)
+    public boolean isSearchStringMatch(String searchString)
     {
         return searchString.trim().toLowerCase().startsWith("vm"); //$NON-NLS-1$
     }
@@ -731,7 +731,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         setWindow(model);
 
-        model.Initialize(getSystemTreeSelectedItem());
+        model.initialize(getSystemTreeSelectedItem());
 
         // Ensures that the default provisioning is "Clone" for a new server and "Thin" for a new desktop.
         boolean selectValue = model.getVmType() == VmType.Server;
@@ -799,7 +799,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.setHashName("edit_" + (vm.getVmType() == VmType.Server ? "server" : "desktop")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
 
-        model.Initialize(this.getSystemTreeSelectedItem());
+        model.initialize(this.getSystemTreeSelectedItem());
 
         UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -948,7 +948,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         model.setVm(vm);
         model.setValidateByVmSnapshots(true);
-        model.Initialize();
+        model.initialize();
 
         UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
         cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
@@ -1032,7 +1032,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         ExportVmModel model = (ExportVmModel) getWindow();
         Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();
 
-        AsyncDataProvider.GetDataCentersByStorageDomain(new AsyncQuery(this,
+        AsyncDataProvider.getDataCentersByStorageDomain(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -1053,7 +1053,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         if (storagePool != null)
         {
-            AsyncDataProvider.GetAllTemplatesFromExportDomain(new AsyncQuery(this,
+            AsyncDataProvider.getAllTemplatesFromExportDomain(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -1119,7 +1119,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
 
-        model.StopProgress();
+        model.stopProgress();
 
         for (Object a : getSelectedItems())
         {
@@ -1167,14 +1167,14 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     return;
                 }
 
-                model.StartProgress(null);
+                model.startProgress(null);
 
                 Frontend.RunMultipleAction(VdcActionType.ExportVm, parameters,
                         new IFrontendMultipleActionAsyncCallback() {
                             @Override
                             public void executed(FrontendMultipleActionAsyncResult result) {
                                 ExportVmModel localModel = (ExportVmModel) result.getState();
-                                localModel.StopProgress();
+                                localModel.stopProgress();
                                 cancel();
                             }
                         }, model);
@@ -1193,14 +1193,14 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 parameter.setTemplateMustExists(false);
             }
 
-            model.StartProgress(null);
+            model.startProgress(null);
 
             Frontend.RunMultipleAction(VdcActionType.ExportVm, parameters,
                     new IFrontendMultipleActionAsyncCallback() {
                         @Override
                         public void executed(FrontendMultipleActionAsyncResult result) {
                             ExportVmModel localModel = (ExportVmModel) result.getState();
-                            localModel.StopProgress();
+                            localModel.stopProgress();
                             cancel();
                         }
                     }, model);
@@ -1210,12 +1210,12 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     public void onExport()
     {
         ExportVmModel model = (ExportVmModel) getWindow();
-        if (!model.Validate())
+        if (!model.validate())
         {
             return;
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         getTemplatesNotPresentOnExportDomain();
     }
@@ -1242,7 +1242,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             list.add(parameters);
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.ExportVm, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -1250,7 +1250,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ExportVmModel localModel = (ExportVmModel) result.getState();
-                        localModel.StopProgress();
+                        localModel.stopProgress();
                         cancel();
 
                     }
@@ -1260,7 +1260,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     @Override
     protected void sendWarningForNonExportableDisks(VM entity) {
         // load VM disks and check if there is one which doesn't allow snapshot
-        AsyncDataProvider.GetVmDiskList(new AsyncQuery(getWindow(),
+        AsyncDataProvider.getVmDiskList(new AsyncQuery(getWindow(),
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -1305,7 +1305,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.setIsNew(true);
         model.setVmType(vm.getVmType());
 
-        model.Initialize(getSystemTreeSelectedItem());
+        model.initialize(getSystemTreeSelectedItem());
 
         UICommand tempVar = new UICommand("OnNewTemplate", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -1334,7 +1334,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             return;
         }
 
-        if (!model.Validate())
+        if (!model.validate())
         {
             model.setIsValid(false);
         }
@@ -1343,7 +1343,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             String name = (String) model.getName().getEntity();
 
             // Check name unicitate.
-            AsyncDataProvider.IsTemplateNameUnique(new AsyncQuery(this,
+            AsyncDataProvider.isTemplateNameUnique(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -1430,7 +1430,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         addVmTemplateParameters.setDiskInfoDestinationMap(
                 model.getDisksAllocationModel().getImageToDestinationDomainMap());
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunAction(VdcActionType.AddVmTemplate, addVmTemplateParameters,
                 new IFrontendActionAsyncCallback() {
@@ -1438,7 +1438,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     public void executed(FrontendActionAsyncResult result) {
 
                         VmListModel vmListModel = (VmListModel) result.getState();
-                        vmListModel.getWindow().StopProgress();
+                        vmListModel.getWindow().stopProgress();
                         VdcReturnValueBase returnValueBase = result.getReturnValue();
                         if (returnValueBase != null && returnValueBase.getSucceeded())
                         {
@@ -1470,7 +1470,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.setIsAutoSelect(true);
         model.setVmList(Linq.<VM> cast(getSelectedItems()));
 
-        AsyncDataProvider.GetUpHostListByCluster(new AsyncQuery(this,
+        AsyncDataProvider.getUpHostListByCluster(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -1574,7 +1574,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             return;
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         if (model.getIsAutoSelect())
         {
@@ -1591,7 +1591,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                         public void executed(FrontendMultipleActionAsyncResult result) {
 
                             MigrateModel localModel = (MigrateModel) result.getState();
-                            localModel.StopProgress();
+                            localModel.stopProgress();
                             cancel();
 
                         }
@@ -1619,7 +1619,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                         public void executed(FrontendMultipleActionAsyncResult result) {
 
                             MigrateModel localModel = (MigrateModel) result.getState();
-                            localModel.StopProgress();
+                            localModel.stopProgress();
                             cancel();
 
                         }
@@ -1671,7 +1671,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             list.add(new ShutdownVmParameters(a.getId(), true));
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.ShutdownVm, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -1679,7 +1679,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.StopProgress();
+                        localModel.stopProgress();
                         cancel();
 
                     }
@@ -1730,7 +1730,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             list.add(new StopVmParameters(a.getId(), StopVmTypeEnum.NORMAL));
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.StopVm, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -1738,7 +1738,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.StopProgress();
+                        localModel.stopProgress();
                         cancel();
 
                     }
@@ -1770,7 +1770,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         {
             VM a = (VM) item;
             // use sysprep iff the vm is not initialized and vm has Win OS
-            boolean reinitialize = !a.isInitialized() && AsyncDataProvider.IsWindowsOsType(a.getVmOs());
+            boolean reinitialize = !a.isInitialized() && AsyncDataProvider.isWindowsOsType(a.getVmOs());
             RunVmParams tempVar = new RunVmParams(a.getId());
             tempVar.setReinitialize(reinitialize);
             list.add(tempVar);
@@ -1800,7 +1800,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             list.add(new RemoveVmParameters(entry.getKey(), false, (Boolean) entry.getValue().getEntity()));
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.RemoveVm, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -1808,7 +1808,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.StopProgress();
+                        localModel.stopProgress();
                         cancel();
 
                     }
@@ -1854,7 +1854,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 }
             }
         };
-        AsyncDataProvider.GetIrsImageList(getIrsImageListCallback, vm.getStoragePoolId());
+        AsyncDataProvider.getIrsImageList(getIrsImageListCallback, vm.getStoragePoolId());
 
         UICommand tempVar = new UICommand("OnChangeCD", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -1885,7 +1885,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 (StringHelper.stringsEqual(model.getIsoImage().getSelectedItem().toString(), ConsoleModel.EjectLabel)) ? "" //$NON-NLS-1$
                         : model.getIsoImage().getSelectedItem().toString();
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunAction(VdcActionType.ChangeDisk, new ChangeDiskCommandParameters(vm.getId(), isoName),
                 new IFrontendActionAsyncCallback() {
@@ -1893,7 +1893,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     public void executed(FrontendActionAsyncResult result) {
 
                         AttachCdModel attachCdModel = (AttachCdModel) result.getState();
-                        attachCdModel.StopProgress();
+                        attachCdModel.stopProgress();
                         cancel();
 
                     }
@@ -1913,12 +1913,12 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         setcurrentVm(model.getIsNew() ? new VM() : (VM) Cloner.clone(selectedItem));
 
-        if (!model.Validate())
+        if (!model.validate())
         {
             return;
         }
 
-        AsyncDataProvider.IsVmNameUnique(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.isVmNameUnique(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object target, Object returnValue) {
@@ -2020,7 +2020,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     return;
                 }
 
-                model.StartProgress(null);
+                model.startProgress(null);
 
                 Frontend.RunAction(VdcActionType.AddVmFromScratch, new AddVmFromScratchParameters(getcurrentVm(),
                         new ArrayList<DiskImage>(),
@@ -2030,14 +2030,14 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                             public void executed(FrontendActionAsyncResult result) {
 
                                 VmListModel vmListModel = (VmListModel) result.getState();
-                                vmListModel.getWindow().StopProgress();
+                                vmListModel.getWindow().stopProgress();
                                 VdcReturnValueBase returnValueBase = result.getReturnValue();
                                 if (returnValueBase != null && returnValueBase.getSucceeded())
                                 {
                                     vmListModel.cancel();
                                     vmListModel.setGuideContext(returnValueBase.getActionReturnValue());
-                                    vmListModel.UpdateActionAvailability();
-                                    vmListModel.getGuideCommand().Execute();
+                                    vmListModel.updateActionAvailability();
+                                    vmListModel.getGuideCommand().execute();
                                 }
 
                             }
@@ -2052,7 +2052,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                 if ((Boolean) model.getProvisioning().getEntity())
                 {
-                    model.StartProgress(null);
+                    model.startProgress(null);
 
                     AsyncQuery _asyncQuery = new AsyncQuery();
                     _asyncQuery.setModel(this);
@@ -2076,14 +2076,14 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                         @Override
                                         public void executed(FrontendMultipleActionAsyncResult result) {
                                             VmListModel vmListModel1 = (VmListModel) result.getState();
-                                            vmListModel1.getWindow().StopProgress();
+                                            vmListModel1.getWindow().stopProgress();
                                             vmListModel1.cancel();
                                         }
                                     },
                                     vmListModel);
                         }
                     };
-                    AsyncDataProvider.GetTemplateDiskList(_asyncQuery, template.getId());
+                    AsyncDataProvider.getTemplateDiskList(_asyncQuery, template.getId());
                 }
                 else
                 {
@@ -2092,7 +2092,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                         return;
                     }
 
-                    model.StartProgress(null);
+                    model.startProgress(null);
 
                     VmManagementParametersBase params = new VmManagementParametersBase(getcurrentVm());
                     params.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
@@ -2105,7 +2105,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                 @Override
                                 public void executed(FrontendMultipleActionAsyncResult result) {
                                     VmListModel vmListModel1 = (VmListModel) result.getState();
-                                    vmListModel1.getWindow().StopProgress();
+                                    vmListModel1.getWindow().stopProgress();
                                     vmListModel1.cancel();
                                 }
                             },
@@ -2128,7 +2128,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 ChangeVMClusterParameters parameters =
                         new ChangeVMClusterParameters(newClusterID, getcurrentVm().getId());
 
-                model.StartProgress(null);
+                model.startProgress(null);
 
                 Frontend.RunAction(VdcActionType.ChangeVMCluster, parameters,
                         new IFrontendActionAsyncCallback() {
@@ -2146,7 +2146,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                                 public void executed(FrontendActionAsyncResult result1) {
 
                                                     VmListModel vmListModel1 = (VmListModel) result1.getState();
-                                                    vmListModel1.getWindow().StopProgress();
+                                                    vmListModel1.getWindow().stopProgress();
                                                     VdcReturnValueBase retVal = result1.getReturnValue();
                                                     if (retVal != null && retVal.getSucceeded())
                                                     {
@@ -2159,7 +2159,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                 }
                                 else
                                 {
-                                    vmListModel.getWindow().StopProgress();
+                                    vmListModel.getWindow().stopProgress();
                                 }
 
                             }
@@ -2172,7 +2172,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     return;
                 }
 
-                model.StartProgress(null);
+                model.startProgress(null);
 
                 Frontend.RunAction(VdcActionType.UpdateVm, new VmManagementParametersBase(getcurrentVm()),
                         new IFrontendActionAsyncCallback() {
@@ -2180,7 +2180,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                             public void executed(FrontendActionAsyncResult result) {
 
                                 VmListModel vmListModel = (VmListModel) result.getState();
-                                vmListModel.getWindow().StopProgress();
+                                vmListModel.getWindow().stopProgress();
                                 VdcReturnValueBase returnValueBase = result.getReturnValue();
                                 if (returnValueBase != null && returnValueBase.getSucceeded())
                                 {
@@ -2256,7 +2256,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         setGuideContext(null);
         setWindow(null);
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     private void cancelConfirmation()
@@ -2270,7 +2270,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         super.onSelectedItemChanged();
 
         updateConsoleModels();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -2279,7 +2279,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         super.selectedItemsChanged();
 
         updateConsoleModels();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -2289,7 +2289,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
-            UpdateActionAvailability();
+            updateActionAvailability();
 
         }
         else if (e.PropertyName.equals("display_type")) //$NON-NLS-1$
@@ -2298,7 +2298,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         List items =
                 getSelectedItems() != null && getSelectedItem() != null ? getSelectedItems()
@@ -2440,7 +2440,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
         else if (command == getExportCommand())
         {
-            Export(ConstantsManager.getInstance().getConstants().exportVirtualMachineTitle());
+            export(ConstantsManager.getInstance().getConstants().exportVirtualMachineTitle());
         }
         else if (command == getCreateSnapshotCommand())
         {

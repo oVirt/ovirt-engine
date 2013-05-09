@@ -168,7 +168,7 @@ public class NfsStorageModel extends Model implements IStorageModel {
 
     }
 
-    private void Override_EntityChanged(EventArgs e) {
+    private void override_EntityChanged(EventArgs e) {
         // Advanced options are editable only if override checkbox is enabled
         // and the dialog is not editing existing nfs storage.
         boolean isChangeable = (Boolean) getOverride().getEntity();
@@ -185,12 +185,12 @@ public class NfsStorageModel extends Model implements IStorageModel {
             getPathChangedEvent().raise(this, EventArgs.Empty);
         }
         else if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition) && sender == getOverride()) {
-            Override_EntityChanged(args);
+            override_EntityChanged(args);
         }
     }
 
     @Override
-    public boolean Validate() {
+    public boolean validate() {
         getPath().validateEntity(new IValidation[] {
             new NotEmptyValidation(),
             new LinuxMountPointValidation(),

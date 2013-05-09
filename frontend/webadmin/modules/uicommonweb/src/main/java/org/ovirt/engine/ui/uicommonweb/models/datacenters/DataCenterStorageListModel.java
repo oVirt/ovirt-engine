@@ -175,14 +175,14 @@ public class DataCenterStorageListModel extends SearchableListModel
         setActivateCommand(new UICommand("Activate", this)); //$NON-NLS-1$
         setMaintenanceCommand(new UICommand("Maintenance", this)); //$NON-NLS-1$
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void onEntityChanged()
     {
         super.onEntityChanged();
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
     @Override
@@ -225,7 +225,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         setItems(getAsyncResult().getData());
     }
 
-    public void Maintenance()
+    public void maintenance()
     {
         // Frontend.RunMultipleActions(VdcActionType.DeactivateStorageDomain,
         // SelectedItems.Cast<storage_domains>()
@@ -241,7 +241,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         Frontend.RunMultipleAction(VdcActionType.DeactivateStorageDomain, pb);
     }
 
-    public void Activate()
+    public void activate()
     {
         // Frontend.RunMultipleActions(VdcActionType.ActivateStorageDomain,
         // SelectedItems.Cast<storage_domains>()
@@ -257,28 +257,28 @@ public class DataCenterStorageListModel extends SearchableListModel
         Frontend.RunMultipleAction(VdcActionType.ActivateStorageDomain, pb);
     }
 
-    public void AttachBackup()
+    public void attachBackup()
     {
-        AttachInternal(StorageDomainType.ImportExport, ConstantsManager.getInstance()
+        attachInternal(StorageDomainType.ImportExport, ConstantsManager.getInstance()
                 .getConstants()
                 .attachExportDomainTitle(), "attach_export_domain"); //$NON-NLS-1$
     }
 
-    public void AttachISO()
+    public void attachISO()
     {
-        AttachInternal(StorageDomainType.ISO,
+        attachInternal(StorageDomainType.ISO,
                 ConstantsManager.getInstance().getConstants().attachISOLibraryTitle(),
                 "attach_iso_library"); //$NON-NLS-1$
     }
 
-    public void AttachStorage()
+    public void attachStorage()
     {
-        AttachInternal(StorageDomainType.Data,
+        attachInternal(StorageDomainType.Data,
                 ConstantsManager.getInstance().getConstants().attachStorageTitle(),
                 "attach_storage"); //$NON-NLS-1$
     }
 
-    private void AttachInternal(StorageDomainType storageType, String title, String hashName)
+    private void attachInternal(StorageDomainType storageType, String title, String hashName)
     {
         if (getWindow() != null)
         {
@@ -316,11 +316,11 @@ public class DataCenterStorageListModel extends SearchableListModel
                             models.add(tempVar);
                         }
                     }
-                    dcStorageModel.PostAttachInternal(models);
+                    dcStorageModel.postAttachInternal(models);
 
                 }
             };
-            AsyncDataProvider.GetISOStorageDomainList(_asyncQuery);
+            AsyncDataProvider.getISOStorageDomainList(_asyncQuery);
         }
         else
         {
@@ -397,15 +397,15 @@ public class DataCenterStorageListModel extends SearchableListModel
                             }
                         }
                     }
-                    dcStorageModel.PostAttachInternal(models);
+                    dcStorageModel.postAttachInternal(models);
                 }
             };
-            AsyncDataProvider.GetStorageDomainList(_asyncQuery);
+            AsyncDataProvider.getStorageDomainList(_asyncQuery);
         }
 
     }
 
-    private void PostAttachInternal(ArrayList<EntityModel> models)
+    private void postAttachInternal(ArrayList<EntityModel> models)
     {
         ListModel listModel = (ListModel) getWindow();
         listModel.setItems(models);
@@ -435,13 +435,13 @@ public class DataCenterStorageListModel extends SearchableListModel
         }
     }
 
-    public void OnAttach()
+    public void onAttach()
     {
         ListModel model = (ListModel) getWindow();
 
         if (getEntity() == null)
         {
-            Cancel();
+            cancel();
             return;
         }
 
@@ -475,10 +475,10 @@ public class DataCenterStorageListModel extends SearchableListModel
             Frontend.RunMultipleAction(VdcActionType.AttachStorageDomainToPool, pb);
         }
 
-        Cancel();
+        cancel();
     }
 
-    public void Detach()
+    public void detach()
     {
         if (getWindow() != null)
         {
@@ -498,12 +498,12 @@ public class DataCenterStorageListModel extends SearchableListModel
         }
         model.setItems(list);
 
-        if (ContainsLocalStorage(model))
+        if (containsLocalStorage(model))
         {
             model.getLatch().setIsAvailable(true);
             model.getLatch().setIsChangable(true);
 
-            model.setNote(ConstantsManager.getInstance().getMessages().detachNote(GetLocalStoragesFormattedString()));
+            model.setNote(ConstantsManager.getInstance().getMessages().detachNote(getLocalStoragesFormattedString()));
         }
 
         UICommand tempVar = new UICommand("OnDetach", this); //$NON-NLS-1$
@@ -516,7 +516,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         model.getCommands().add(tempVar2);
     }
 
-    private String GetLocalStoragesFormattedString()
+    private String getLocalStoragesFormattedString()
     {
         StringBuilder localStorages = new StringBuilder();
         for (StorageDomain a : Linq.<StorageDomain> cast(getSelectedItems()))
@@ -529,7 +529,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         return localStorages.substring(0, localStorages.length() - 2);
     }
 
-    private boolean ContainsLocalStorage(ConfirmationModel model)
+    private boolean containsLocalStorage(ConfirmationModel model)
     {
         for (StorageDomain a : Linq.<StorageDomain> cast(getSelectedItems()))
         {
@@ -541,7 +541,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         return false;
     }
 
-    public void OnDetach()
+    public void onDetach()
     {
         ConfirmationModel confirmModel = (ConfirmationModel) getWindow();
 
@@ -550,7 +550,7 @@ public class DataCenterStorageListModel extends SearchableListModel
             return;
         }
 
-        if (!confirmModel.Validate())
+        if (!confirmModel.validate())
         {
             return;
         }
@@ -574,7 +574,7 @@ public class DataCenterStorageListModel extends SearchableListModel
             }
         }
 
-        confirmModel.StartProgress(null);
+        confirmModel.startProgress(null);
 
         if (getpb_remove().size() > 0)
         {
@@ -592,18 +592,18 @@ public class DataCenterStorageListModel extends SearchableListModel
                         ((RemoveStorageDomainParameters) item).setDoFormat(true);
                     }
 
-                    dataCenterStorageListModel.PostDetach(dataCenterStorageListModel.getWindow());
+                    dataCenterStorageListModel.postDetach(dataCenterStorageListModel.getWindow());
                 }
             };
-            AsyncDataProvider.GetLocalStorageHost(_asyncQuery, localStorgaeDC);
+            AsyncDataProvider.getLocalStorageHost(_asyncQuery, localStorgaeDC);
         }
         else
         {
-            PostDetach(confirmModel);
+            postDetach(confirmModel);
         }
     }
 
-    public void PostDetach(Model model)
+    public void postDetach(Model model)
     {
         Frontend.RunMultipleAction(VdcActionType.RemoveStorageDomain, getpb_remove(),
                 new IFrontendMultipleActionAsyncCallback() {
@@ -620,8 +620,8 @@ public class DataCenterStorageListModel extends SearchableListModel
                                     public void executed(FrontendMultipleActionAsyncResult result2) {
 
                                         ConfirmationModel localModel2 = (ConfirmationModel) result2.getState();
-                                        localModel2.StopProgress();
-                                        Cancel();
+                                        localModel2.stopProgress();
+                                        cancel();
 
                                     }
                                 }, localModel1);
@@ -630,7 +630,7 @@ public class DataCenterStorageListModel extends SearchableListModel
                 }, new Object[] { model, getpb_detach() });
     }
 
-    public void Cancel()
+    public void cancel()
     {
         setWindow(null);
     }
@@ -639,28 +639,28 @@ public class DataCenterStorageListModel extends SearchableListModel
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void selectedItemsChanged()
     {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void itemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs e)
     {
         super.itemsCollectionChanged(sender, e);
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void itemsChanged()
     {
         super.itemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -670,7 +670,7 @@ public class DataCenterStorageListModel extends SearchableListModel
 
         if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
-            UpdateActionAvailability();
+            updateActionAvailability();
         }
     }
 
@@ -681,7 +681,7 @@ public class DataCenterStorageListModel extends SearchableListModel
 
         if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
-            UpdateActionAvailability();
+            updateActionAvailability();
         }
     }
 
@@ -691,7 +691,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         return true;
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         ArrayList<StorageDomain> items =
                 getItems() != null ? Linq.<StorageDomain> cast(getItems())
@@ -760,39 +760,39 @@ public class DataCenterStorageListModel extends SearchableListModel
 
         if (command == getAttachStorageCommand())
         {
-            AttachStorage();
+            attachStorage();
         }
         else if (command == getAttachISOCommand())
         {
-            AttachISO();
+            attachISO();
         }
         else if (command == getAttachBackupCommand())
         {
-            AttachBackup();
+            attachBackup();
         }
         else if (command == getDetachCommand())
         {
-            Detach();
+            detach();
         }
         else if (command == getActivateCommand())
         {
-            Activate();
+            activate();
         }
         else if (command == getMaintenanceCommand())
         {
-            Maintenance();
+            maintenance();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnAttach")) //$NON-NLS-1$
         {
-            OnAttach();
+            onAttach();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnDetach")) //$NON-NLS-1$
         {
-            OnDetach();
+            onDetach();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
     }
 

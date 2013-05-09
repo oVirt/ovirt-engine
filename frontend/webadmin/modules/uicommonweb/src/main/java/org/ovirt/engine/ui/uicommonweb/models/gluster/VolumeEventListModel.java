@@ -25,7 +25,7 @@ public class VolumeEventListModel extends SubTabEventListModel
 
         if (getEntity() != null)
         {
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
         }
         else
         {
@@ -50,7 +50,7 @@ public class VolumeEventListModel extends SubTabEventListModel
 
         if (e.PropertyName.equals("gluster_volume_name")) //$NON-NLS-1$
         {
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
         }
     }
 }

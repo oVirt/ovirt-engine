@@ -184,7 +184,7 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
 
             @Override
             public void onClick(ClickEvent event) {
-                addBricksButton.getCommand().Execute();
+                addBricksButton.getCommand().execute();
             }
         });
     }

@@ -152,7 +152,7 @@ public class TagListModel extends SearchableListModel
         if (attachedTagsToEntities != value)
         {
             attachedTagsToEntities = value;
-            AttachedTagsToEntitiesChanged();
+            attachedTagsToEntitiesChanged();
             onPropertyChanged(new PropertyChangedEventArgs("AttachedTagsToEntities")); //$NON-NLS-1$
         }
     }
@@ -173,9 +173,9 @@ public class TagListModel extends SearchableListModel
 
         setIsTimerDisabled(true);
 
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
 
-        UpdateActionAvailability();
+        updateActionAvailability();
 
         // Initialize SelectedItems property with empty collection.
         setSelectedItems(new ArrayList<TagModel>());
@@ -188,14 +188,14 @@ public class TagListModel extends SearchableListModel
     {
         super.syncSearch();
 
-        AsyncDataProvider.GetRootTag(new AsyncQuery(this,
+        AsyncDataProvider.getRootTag(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
 
                         TagListModel tagListModel = (TagListModel) target;
                         TagModel rootTag =
-                                tagListModel.TagToModel((org.ovirt.engine.core.common.businessentities.tags) returnValue);
+                                tagListModel.tagToModel((org.ovirt.engine.core.common.businessentities.tags) returnValue);
                         rootTag.getName().setEntity(ConstantsManager.getInstance().getConstants().rootTag());
                         rootTag.setType(TagModelType.Root);
                         rootTag.setIsChangable(false);
@@ -212,11 +212,11 @@ public class TagListModel extends SearchableListModel
 
         if (getSelectionNodeList() != null && getSelectionNodeList().isEmpty() && getAttachedTagsToEntities() != null)
         {
-            AttachedTagsToEntitiesChanged();
+            attachedTagsToEntitiesChanged();
         }
     }
 
-    protected void AttachedTagsToEntitiesChanged()
+    protected void attachedTagsToEntitiesChanged()
     {
         ArrayList<TagModel> tags = (ArrayList<TagModel>) getItems();
 
@@ -226,17 +226,17 @@ public class TagListModel extends SearchableListModel
 
             if (getAttachedTagsToEntities() != null)
             {
-                RecursiveSetSelection(root, getAttachedTagsToEntities());
+                recursiveSetSelection(root, getAttachedTagsToEntities());
             }
 
             if (getSelectionNodeList().isEmpty())
             {
-                setSelectionNodeList(new ArrayList<SelectionTreeNodeModel>(Arrays.asList(new SelectionTreeNodeModel[] { CreateTree(root) })));
+                setSelectionNodeList(new ArrayList<SelectionTreeNodeModel>(Arrays.asList(new SelectionTreeNodeModel[] { createTree(root) })));
             }
         }
     }
 
-    public void RecursiveSetSelection(TagModel tagModel, Map<Guid, Boolean> attachedEntities)
+    public void recursiveSetSelection(TagModel tagModel, Map<Guid, Boolean> attachedEntities)
     {
         if (attachedEntities.containsKey(tagModel.getId()) && attachedEntities.get(tagModel.getId()))
         {
@@ -250,12 +250,12 @@ public class TagListModel extends SearchableListModel
         {
             for (TagModel subModel : tagModel.getChildren())
             {
-                RecursiveSetSelection(subModel, attachedEntities);
+                recursiveSetSelection(subModel, attachedEntities);
             }
         }
     }
 
-    public SelectionTreeNodeModel CreateTree(TagModel tag)
+    public SelectionTreeNodeModel createTree(TagModel tag)
     {
         SelectionTreeNodeModel node = new SelectionTreeNodeModel();
         node.setDescription(tag.getName().getEntity().toString());
@@ -273,7 +273,7 @@ public class TagListModel extends SearchableListModel
 
         for (TagModel childTag : tag.getChildren())
         {
-            SelectionTreeNodeModel childNode = CreateTree(childTag);
+            SelectionTreeNodeModel childNode = createTree(childTag);
             childNode.setParent(node);
             node.getChildren().add(childNode);
         }
@@ -281,12 +281,12 @@ public class TagListModel extends SearchableListModel
         return node;
     }
 
-    public TagModel CloneTagModel(TagModel tag)
+    public TagModel cloneTagModel(TagModel tag)
     {
         ArrayList<TagModel> children = new ArrayList<TagModel>();
         for (TagModel child : tag.getChildren())
         {
-            children.add(CloneTagModel(child));
+            children.add(cloneTagModel(child));
         }
 
         TagModel model = new TagModel();
@@ -302,7 +302,7 @@ public class TagListModel extends SearchableListModel
         return model;
     }
 
-    public TagModel TagToModel(org.ovirt.engine.core.common.businessentities.tags tag)
+    public TagModel tagToModel(org.ovirt.engine.core.common.businessentities.tags tag)
     {
         EntityModel tempVar = new EntityModel();
         tempVar.setEntity(tag.gettag_name());
@@ -314,7 +314,7 @@ public class TagListModel extends SearchableListModel
         ArrayList<TagModel> children = new ArrayList<TagModel>();
         for (org.ovirt.engine.core.common.businessentities.tags a : tag.getChildren())
         {
-            children.add(TagToModel(a));
+            children.add(tagToModel(a));
         }
 
         TagModel model = new TagModel();
@@ -339,7 +339,7 @@ public class TagListModel extends SearchableListModel
 
         if (ev.matchesDefinition(TagModel.SelectionChangedEventDefinition))
         {
-            OnTagSelectionChanged(sender, args);
+            onTagSelectionChanged(sender, args);
         }
     }
 
@@ -353,11 +353,11 @@ public class TagListModel extends SearchableListModel
             TagModel tagModel = (TagModel) selectionTreeNodeModel.getEntity();
 
             tagModel.setSelection(selectionTreeNodeModel.getIsSelectedNullable());
-            OnTagSelectionChanged(tagModel, e);
+            onTagSelectionChanged(tagModel, e);
         }
     }
 
-    private void OnTagSelectionChanged(Object sender, EventArgs e)
+    private void onTagSelectionChanged(Object sender, EventArgs e)
     {
         TagModel model = (TagModel) sender;
 
@@ -389,7 +389,7 @@ public class TagListModel extends SearchableListModel
         syncSearch();
     }
 
-    private void Reset()
+    private void reset()
     {
         setSelectedItems(new ArrayList<TagModel>());
 
@@ -397,7 +397,7 @@ public class TagListModel extends SearchableListModel
         {
             for (Object item : getItems())
             {
-                ResetInternal((TagModel) item);
+                resetInternal((TagModel) item);
             }
         }
 
@@ -407,12 +407,12 @@ public class TagListModel extends SearchableListModel
         getResetRequestedEvent().raise(this, EventArgs.Empty);
     }
 
-    private void ResetInternal(TagModel root)
+    private void resetInternal(TagModel root)
     {
         root.setSelection(false);
         for (TagModel item : root.getChildren())
         {
-            ResetInternal(item);
+            resetInternal(item);
         }
     }
 
@@ -445,7 +445,7 @@ public class TagListModel extends SearchableListModel
         model.getCommands().add(tempVar2);
     }
 
-    public void OnRemove()
+    public void onRemove()
     {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
@@ -454,7 +454,7 @@ public class TagListModel extends SearchableListModel
             return;
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunAction(VdcActionType.RemoveTag, new TagsActionParametersBase(getSelectedItem().getId()),
                 new IFrontendActionAsyncCallback() {
@@ -466,16 +466,16 @@ public class TagListModel extends SearchableListModel
                         boolean success = returnVal != null && returnVal.getSucceeded();
                         if (success)
                         {
-                            tagListModel.getSearchCommand().Execute();
+                            tagListModel.getSearchCommand().execute();
                         }
-                        tagListModel.Cancel();
-                        tagListModel.StopProgress();
+                        tagListModel.cancel();
+                        tagListModel.stopProgress();
 
                     }
                 }, this);
     }
 
-    public void Edit()
+    public void edit()
     {
         if (getWindow() != null)
         {
@@ -501,7 +501,7 @@ public class TagListModel extends SearchableListModel
         model.getCommands().add(tempVar2);
     }
 
-    public void New()
+    public void newEntity()
     {
         if (getWindow() != null)
         {
@@ -524,7 +524,7 @@ public class TagListModel extends SearchableListModel
         model.getCommands().add(tempVar2);
     }
 
-    public void OnSave()
+    public void onSave()
     {
         TagModel model = (TagModel) getWindow();
 
@@ -533,7 +533,7 @@ public class TagListModel extends SearchableListModel
             return;
         }
 
-        if (!model.Validate())
+        if (!model.validate())
         {
             return;
         }
@@ -546,7 +546,7 @@ public class TagListModel extends SearchableListModel
         tempVar.setdescription((String) model.getDescription().getEntity());
         org.ovirt.engine.core.common.businessentities.tags tag = tempVar;
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunAction(model.getIsNew() ? VdcActionType.AddTag : VdcActionType.UpdateTag,
                 new TagsOperationParameters(tag),
@@ -555,27 +555,27 @@ public class TagListModel extends SearchableListModel
                     public void executed(FrontendActionAsyncResult result) {
 
                         TagListModel localModel = (TagListModel) result.getState();
-                        localModel.PostOnSave(result.getReturnValue());
+                        localModel.postOnSave(result.getReturnValue());
 
                     }
                 },
                 this);
     }
 
-    public void PostOnSave(VdcReturnValueBase returnValue)
+    public void postOnSave(VdcReturnValueBase returnValue)
     {
         TagModel model = (TagModel) getWindow();
 
-        model.StopProgress();
+        model.stopProgress();
 
         if (returnValue != null && returnValue.getSucceeded())
         {
-            Cancel();
-            getSearchCommand().Execute();
+            cancel();
+            getSearchCommand().execute();
         }
     }
 
-    public void Cancel()
+    public void cancel()
     {
         setWindow(null);
     }
@@ -584,10 +584,10 @@ public class TagListModel extends SearchableListModel
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         getNewCommand().setIsExecutionAllowed(getSelectedItem() != null);
         getEditCommand().setIsExecutionAllowed(getSelectedItem() != null
@@ -603,15 +603,15 @@ public class TagListModel extends SearchableListModel
 
         if (command == getResetCommand())
         {
-            Reset();
+            reset();
         }
         else if (command == getNewCommand())
         {
-            New();
+            newEntity();
         }
         else if (command == getEditCommand())
         {
-            Edit();
+            edit();
         }
         else if (command == getRemoveCommand())
         {
@@ -619,15 +619,15 @@ public class TagListModel extends SearchableListModel
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
-            OnSave();
+            onSave();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
-            OnRemove();
+            onRemove();
         }
     }
 

@@ -63,7 +63,7 @@ public class SystemPermissionListModel extends SearchableListModel
 
         setSearchPageSize(1000);
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -96,7 +96,7 @@ public class SystemPermissionListModel extends SearchableListModel
         Frontend.RunQuery(VdcQueryType.GetSystemPermissions, params, _asyncQuery);
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0);
     }
@@ -105,14 +105,14 @@ public class SystemPermissionListModel extends SearchableListModel
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void selectedItemsChanged()
     {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     private void add()
@@ -140,7 +140,7 @@ public class SystemPermissionListModel extends SearchableListModel
         model.getCommands().add(tempVar2);
     }
 
-    private void OnAttach()
+    private void onAttach()
     {
         AdElementListModel model = (AdElementListModel) getWindow();
 
@@ -151,7 +151,7 @@ public class SystemPermissionListModel extends SearchableListModel
 
         if (model.getSelectedItems() == null)
         {
-            Cancel();
+            cancel();
             return;
         }
 
@@ -191,7 +191,7 @@ public class SystemPermissionListModel extends SearchableListModel
             }
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.AddSystemPermission, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -199,18 +199,18 @@ public class SystemPermissionListModel extends SearchableListModel
                     public void executed(FrontendMultipleActionAsyncResult result) {
 
                         AdElementListModel localModel = (AdElementListModel) result.getState();
-                        localModel.StopProgress();
-                        Cancel();
+                        localModel.stopProgress();
+                        cancel();
 
                     }
                 }, model);
     }
 
-    private void OnSave()
+    private void onSave()
     {
     }
 
-    public void Cancel()
+    public void cancel()
     {
         setWindow(null);
     }
@@ -246,7 +246,7 @@ public class SystemPermissionListModel extends SearchableListModel
         model.getCommands().add(tempVar2);
     }
 
-    private void OnRemove()
+    private void onRemove()
     {
         if (getSelectedItems() != null && getSelectedItems().size() > 0)
         {
@@ -265,7 +265,7 @@ public class SystemPermissionListModel extends SearchableListModel
                 list.add(tempVar);
             }
 
-            model.StartProgress(null);
+            model.startProgress(null);
 
             Frontend.RunMultipleAction(VdcActionType.RemovePermission, list,
                     new IFrontendMultipleActionAsyncCallback() {
@@ -273,8 +273,8 @@ public class SystemPermissionListModel extends SearchableListModel
                         public void executed(FrontendMultipleActionAsyncResult result) {
 
                             ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                            localModel.StopProgress();
-                            Cancel();
+                            localModel.stopProgress();
+                            cancel();
 
                         }
                     }, model);
@@ -292,12 +292,12 @@ public class SystemPermissionListModel extends SearchableListModel
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
-            OnSave();
+            onSave();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnAttach")) //$NON-NLS-1$
         {
-            OnAttach();
-            getForceRefreshCommand().Execute();
+            onAttach();
+            getForceRefreshCommand().execute();
         }
         else if (command == getRemoveCommand())
         {
@@ -305,11 +305,11 @@ public class SystemPermissionListModel extends SearchableListModel
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
-            OnRemove();
+            onRemove();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
     }
 

@@ -50,14 +50,14 @@ public class ConsoleManagerImpl implements ConsoleManager {
     }
 
     private String showVncConsole(HasConsoleModel model) {
-        model.getDefaultConsoleModel().getConnectCommand().Execute();
+        model.getDefaultConsoleModel().getConnectCommand().execute();
 
         return null;
     }
 
     private String showRpdConsole(HasConsoleModel model) {
         if (consoleUtils.canOpenRDPConsole(model)) {
-            model.getAdditionalConsoleModel().getConnectCommand().Execute();
+            model.getAdditionalConsoleModel().getConnectCommand().execute();
         } else if (!consoleUtils.isRDPAvailable()) {
             return createErrorMessage(model, "RDP"); //$NON-NLS-1$
         }
@@ -67,7 +67,7 @@ public class ConsoleManagerImpl implements ConsoleManager {
 
     private String showSpiceConsole(HasConsoleModel model) {
         if (consoleUtils.canOpenSpiceConsole(model)) {
-            model.getDefaultConsoleModel().getConnectCommand().Execute();
+            model.getDefaultConsoleModel().getConnectCommand().execute();
         }
 
         return null;

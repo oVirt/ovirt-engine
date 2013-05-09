@@ -60,7 +60,7 @@ public class NetworkTemplateListModel extends SearchableListModel
     {
         super.onEntityChanged();
 
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
     @Override

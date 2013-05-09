@@ -10,7 +10,7 @@ public class Convertible {
         this.subject = subject;
     }
 
-    public int Integer() {
+    public int integer() {
         return Integer.parseInt(subject.getEntity().toString());
     }
 

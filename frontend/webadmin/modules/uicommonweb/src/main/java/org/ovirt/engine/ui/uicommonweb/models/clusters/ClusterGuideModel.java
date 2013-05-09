@@ -61,7 +61,7 @@ public class ClusterGuideModel extends GuideModel
     protected void onEntityChanged()
     {
         super.onEntityChanged();
-        UpdateOptions();
+        updateOptions();
     }
 
     private ArrayList<VDS> hosts;
@@ -70,8 +70,8 @@ public class ClusterGuideModel extends GuideModel
     private VDS localStorageHost;
     private StoragePool dataCenter;
 
-    private void UpdateOptionsNonLocalFSData() {
-        AsyncDataProvider.GetHostListByCluster(new AsyncQuery(this,
+    private void updateOptionsNonLocalFSData() {
+        AsyncDataProvider.getHostListByCluster(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -79,11 +79,11 @@ public class ClusterGuideModel extends GuideModel
                         ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
                         ;
                         clusterGuideModel.hosts = hosts;
-                        clusterGuideModel.UpdateOptionsNonLocalFS();
+                        clusterGuideModel.updateOptionsNonLocalFS();
                     }
                 }), getEntity().getname());
 
-        AsyncDataProvider.GetHostList(new AsyncQuery(this,
+        AsyncDataProvider.getHostList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -91,7 +91,7 @@ public class ClusterGuideModel extends GuideModel
                         ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
                         ;
                         clusterGuideModel.allHosts = hosts;
-                        clusterGuideModel.UpdateOptionsNonLocalFS();
+                        clusterGuideModel.updateOptionsNonLocalFS();
                     }
                 }));
         if (getEntity().supportsGlusterService()) {
@@ -101,14 +101,14 @@ public class ClusterGuideModel extends GuideModel
                         public void onSuccess(Object target, Object returnValue) {
                             ClusterGuideModel clusterGuideModel = (ClusterGuideModel) target;
                             isAnyHostUpInCluster = (Boolean) returnValue;
-                            clusterGuideModel.UpdateOptionsNonLocalFS();
+                            clusterGuideModel.updateOptionsNonLocalFS();
                         }
                     }), getEntity().getname());
         }
     }
 
-    private void UpdateOptionsLocalFSData() {
-        AsyncDataProvider.GetLocalStorageHost(new AsyncQuery(this,
+    private void updateOptionsLocalFSData() {
+        AsyncDataProvider.getLocalStorageHost(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -116,17 +116,17 @@ public class ClusterGuideModel extends GuideModel
                         VDS localStorageHost = (VDS) returnValue;
                         ;
                         clusterGuideModel.localStorageHost = localStorageHost;
-                        clusterGuideModel.UpdateOptionsLocalFS();
+                        clusterGuideModel.updateOptionsLocalFS();
                     }
                 }), dataCenter.getname());
     }
 
-    private void UpdateOptionsNonLocalFS() {
+    private void updateOptionsNonLocalFS() {
         if (hosts == null || allHosts == null || !isUpHostCheckCompleted()) {
             return;
         }
         if (getEntity() == null) {
-            StopProgress();
+            stopProgress();
             setWindow(null);
             return;
         }
@@ -185,10 +185,10 @@ public class ClusterGuideModel extends GuideModel
             }
         }
 
-        StopProgress();
+        stopProgress();
     }
 
-    private void UpdateOptionsLocalFS() {
+    private void updateOptionsLocalFS() {
 
         UICommand addHostAction = new UICommand("AddHost", this); //$NON-NLS-1$
         addHostAction.setTitle(ClusterAddAnotherHostAction);
@@ -211,19 +211,19 @@ public class ClusterGuideModel extends GuideModel
         getCompulsoryActions().add(addHostAction);
         getOptionalActions().add(selectHost);
 
-        StopProgress();
+        stopProgress();
     }
 
-    private void UpdateOptions()
+    private void updateOptions()
     {
         getCompulsoryActions().clear();
         getOptionalActions().clear();
 
         if (getEntity() != null && getEntity().getStoragePoolId() != null)
         {
-            StartProgress(null);
+            startProgress(null);
 
-            AsyncDataProvider.GetDataCenterById(new AsyncQuery(this,
+            AsyncDataProvider.getDataCenterById(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -233,11 +233,11 @@ public class ClusterGuideModel extends GuideModel
                             if (model.dataCenter == null
                                     || model.dataCenter.getstorage_pool_type() != StorageType.LOCALFS)
                             {
-                                model.UpdateOptionsNonLocalFSData();
+                                model.updateOptionsNonLocalFSData();
                             }
                             else
                             {
-                                model.UpdateOptionsLocalFSData();
+                                model.updateOptionsLocalFSData();
                             }
                         }
                     }), getEntity().getStoragePoolId().getValue());
@@ -258,7 +258,7 @@ public class ClusterGuideModel extends GuideModel
         return isAnyHostUpInCluster;
     }
 
-    private void ResetData() {
+    private void resetData() {
         hosts = null;
         allHosts = null;
         localStorageHost = null;
@@ -266,7 +266,7 @@ public class ClusterGuideModel extends GuideModel
         isAnyHostUpInCluster = null;
     }
 
-    public void SelectHost()
+    public void selectHost()
     {
         final ArrayList<VDSGroup> clusters = new ArrayList<VDSGroup>();
         clusters.add(getEntity());
@@ -276,7 +276,7 @@ public class ClusterGuideModel extends GuideModel
         model.setHashName("select_host"); //$NON-NLS-1$
 
         // In case of local storage, only one host is allowed in the cluster so we should disable multi selection
-        AsyncDataProvider.GetDataCenterById(new AsyncQuery(this,
+        AsyncDataProvider.getDataCenterById(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -304,7 +304,7 @@ public class ClusterGuideModel extends GuideModel
                 }), getEntity().getStoragePoolId().getValue());
     }
 
-    public void OnSelectHost()
+    public void onSelectHost()
     {
         MoveHost model = (MoveHost) getWindow();
 
@@ -313,7 +313,7 @@ public class ClusterGuideModel extends GuideModel
             return;
         }
 
-        if (!model.Validate())
+        if (!model.validate())
         {
             return;
         }
@@ -340,7 +340,7 @@ public class ClusterGuideModel extends GuideModel
 
             }
         }
-        model.StartProgress(null);
+        model.startProgress(null);
         Frontend.RunMultipleAction(VdcActionType.ChangeVDSCluster, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
@@ -364,16 +364,16 @@ public class ClusterGuideModel extends GuideModel
                             }
                             i++;
                         }
-                        clusterGuideModel.getWindow().StopProgress();
-                        clusterGuideModel.Cancel();
-                        clusterGuideModel.PostAction();
+                        clusterGuideModel.getWindow().stopProgress();
+                        clusterGuideModel.cancel();
+                        clusterGuideModel.postAction();
 
                     }
                 },
                 this);
     }
 
-    public void AddHost()
+    public void addHost()
     {
         HostModel model = new HostModel();
         setWindow(model);
@@ -386,7 +386,7 @@ public class ClusterGuideModel extends GuideModel
         model.getCluster().setSelectedItem(getEntity());
         model.getCluster().setIsChangable(false);
 
-        AsyncDataProvider.GetDataCenterList(new AsyncQuery(this,
+        AsyncDataProvider.getDataCenterList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -417,11 +417,11 @@ public class ClusterGuideModel extends GuideModel
                 }));
     }
 
-    public void OnConfirmPMHost()
+    public void onConfirmPMHost()
     {
         HostModel model = (HostModel) getWindow();
 
-        if (!model.Validate())
+        if (!model.validate())
         {
             return;
         }
@@ -446,13 +446,13 @@ public class ClusterGuideModel extends GuideModel
         }
         else
         {
-            OnAddHost();
+            onAddHost();
         }
     }
 
-    public void OnAddHost()
+    public void onAddHost()
     {
-        CancelConfirm();
+        cancelConfirm();
 
         HostModel model = (HostModel) getWindow();
 
@@ -461,7 +461,7 @@ public class ClusterGuideModel extends GuideModel
             return;
         }
 
-        if (!model.Validate())
+        if (!model.validate())
         {
             return;
         }
@@ -499,7 +499,7 @@ public class ClusterGuideModel extends GuideModel
         vdsActionParams.setRootPassword((String) model.getRootPassword().getEntity());
         vdsActionParams.setRebootAfterInstallation(((VDSGroup) model.getCluster().getSelectedItem()).supportsVirtService());
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunAction(VdcActionType.AddVds, vdsActionParams,
                 new IFrontendActionAsyncCallback() {
@@ -507,43 +507,43 @@ public class ClusterGuideModel extends GuideModel
                     public void executed(FrontendActionAsyncResult result) {
 
                         ClusterGuideModel localModel = (ClusterGuideModel) result.getState();
-                        localModel.PostOnAddHost(result.getReturnValue());
+                        localModel.postOnAddHost(result.getReturnValue());
 
                     }
                 }, this);
     }
 
-    public void PostOnAddHost(VdcReturnValueBase returnValue)
+    public void postOnAddHost(VdcReturnValueBase returnValue)
     {
         HostModel model = (HostModel) getWindow();
 
-        model.StopProgress();
+        model.stopProgress();
 
         if (returnValue != null && returnValue.getSucceeded())
         {
-            Cancel();
-            PostAction();
+            cancel();
+            postAction();
         }
     }
 
-    private void PostAction()
+    private void postAction()
     {
-        ResetData();
-        UpdateOptions();
+        resetData();
+        updateOptions();
     }
 
-    public void Cancel()
+    public void cancel()
     {
-        ResetData();
+        resetData();
         setWindow(null);
     }
 
-    public void CancelConfirm()
+    public void cancelConfirm()
     {
         setConfirmWindow(null);
     }
 
-    public void CancelConfirmWithFocus()
+    public void cancelConfirmWithFocus()
     {
         setConfirmWindow(null);
 
@@ -558,35 +558,35 @@ public class ClusterGuideModel extends GuideModel
 
         if (StringHelper.stringsEqual(command.getName(), "AddHost")) //$NON-NLS-1$
         {
-            AddHost();
+            addHost();
         }
         if (StringHelper.stringsEqual(command.getName(), "OnConfirmPMHost")) //$NON-NLS-1$
         {
-            OnConfirmPMHost();
+            onConfirmPMHost();
         }
         if (StringHelper.stringsEqual(command.getName(), "OnAddHost")) //$NON-NLS-1$
         {
-            OnAddHost();
+            onAddHost();
         }
         if (StringHelper.stringsEqual(command.getName(), "SelectHost")) //$NON-NLS-1$
         {
-            SelectHost();
+            selectHost();
         }
         if (StringHelper.stringsEqual(command.getName(), "OnSelectHost")) //$NON-NLS-1$
         {
-            OnSelectHost();
+            onSelectHost();
         }
         if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
         if (StringHelper.stringsEqual(command.getName(), "CancelConfirm")) //$NON-NLS-1$
         {
-            CancelConfirm();
+            cancelConfirm();
         }
         if (StringHelper.stringsEqual(command.getName(), "CancelConfirmWithFocus")) //$NON-NLS-1$
         {
-            CancelConfirmWithFocus();
+            cancelConfirmWithFocus();
         }
     }
 }

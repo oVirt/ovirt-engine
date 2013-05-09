@@ -229,7 +229,7 @@ public class CommonModel extends ListModel
         if (!StringHelper.stringsEqual(searchStringPrefix, value))
         {
             searchStringPrefix = value;
-            SearchStringPrefixChanged();
+            searchStringPrefixChanged();
             onPropertyChanged(new PropertyChangedEventArgs("SearchStringPrefix")); //$NON-NLS-1$
         }
     }
@@ -267,7 +267,7 @@ public class CommonModel extends ListModel
         if (!checkIfNewValue || !StringHelper.stringsEqual(searchString, value))
         {
             searchString = value;
-            SearchStringChanged();
+            searchStringChanged();
             onPropertyChanged(new PropertyChangedEventArgs("SearchString")); //$NON-NLS-1$
         }
     }
@@ -385,23 +385,23 @@ public class CommonModel extends ListModel
 
         setSystemTree(new SystemTreeModel());
         getSystemTree().getSelectedItemChangedEvent().addListener(this);
-        getSystemTree().getSearchCommand().Execute();
+        getSystemTree().getSearchCommand().execute();
 
         setEventList(new EventListModel());
-        getEventList().getSearchCommand().Execute();
+        getEventList().getSearchCommand().execute();
 
         setAlertList(new AlertListModel());
-        getAlertList().getSearchCommand().Execute();
+        getAlertList().getSearchCommand().execute();
 
         setTaskList(new TaskListModel());
-        getTaskList().getSearchCommand().Execute();
+        getTaskList().getSearchCommand().execute();
 
-        InitItems();
+        initItems();
 
         setLoggedInUser(Frontend.getLoggedInUser());
     }
 
-    private void UpdateHasSelectedTags()
+    private void updateHasSelectedTags()
     {
         ArrayList<TagModel> selectedTags =
                 getTagList().getSelectedItems() != null ? Linq.<TagModel> cast(getTagList().getSelectedItems())
@@ -410,15 +410,15 @@ public class CommonModel extends ListModel
         setHasSelectedTags(getSelectedItem() != null && selectedTags.size() > 0);
     }
 
-    private void TagListModel_SelectedItemsChanged(Object sender, EventArgs e)
+    private void tagListModel_SelectedItemsChanged(Object sender, EventArgs e)
     {
         // Reset system tree to the root item.
         getSystemTree().getSelectedItemChangedEvent().removeListener(this);
-        getSystemTree().getResetCommand().Execute();
+        getSystemTree().getResetCommand().execute();
         getSystemTree().getSelectedItemChangedEvent().addListener(this);
 
         boolean hadSelectedTags = getHasSelectedTags();
-        UpdateHasSelectedTags();
+        updateHasSelectedTags();
 
         dataCenterList.setIsAvailable(!getHasSelectedTags());
         clusterList.setIsAvailable(!getHasSelectedTags());
@@ -449,28 +449,28 @@ public class CommonModel extends ListModel
             String search = ""; //$NON-NLS-1$
             RefObject<String> tempRef_prefix = new RefObject<String>(prefix);
             RefObject<String> tempRef_search = new RefObject<String>(search);
-            SplitSearchString(getSelectedItem().getDefaultSearchString(), tempRef_prefix, tempRef_search);
+            splitSearchString(getSelectedItem().getDefaultSearchString(), tempRef_prefix, tempRef_search);
             prefix = tempRef_prefix.argvalue;
             search = tempRef_search.argvalue;
 
             setSearchStringPrefix(prefix);
             setSearchString(search);
 
-            getSearchCommand().Execute();
-            SearchStringChanged();
+            getSearchCommand().execute();
+            searchStringChanged();
         }
     }
 
-    private void BookmarkListModel_Navigated(Object sender, BookmarkEventArgs e)
+    private void bookmarkListModel_Navigated(Object sender, BookmarkEventArgs e)
     {
         // Reset tags tree to the root item.
         getTagList().getSelectedItemsChangedEvent().removeListener(this);
-        getTagList().getResetCommand().Execute();
+        getTagList().getResetCommand().execute();
         getTagList().getSelectedItemsChangedEvent().addListener(this);
 
         // Reset system tree to the root item.
         getSystemTree().getSelectedItemChangedEvent().removeListener(this);
-        getSystemTree().getResetCommand().Execute();
+        getSystemTree().getResetCommand().execute();
         getSystemTree().getSelectedItemChangedEvent().addListener(this);
 
         for (SearchableListModel item : getItems())
@@ -480,7 +480,7 @@ public class CommonModel extends ListModel
 
         setSearchStringPrefix(""); //$NON-NLS-1$
         setSearchString(e.getBookmark().getbookmark_value());
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
     public String getEffectiveSearchString()
@@ -488,12 +488,12 @@ public class CommonModel extends ListModel
         return getSearchStringPrefix() + getSearchString();
     }
 
-    private void SystemTree_ItemChanged(Object sender, EventArgs args)
+    private void systemTree_ItemChanged(Object sender, EventArgs args)
     {
         // Reset tags tree to the root item.
         getTagList().getSelectedItemsChangedEvent().removeListener(this);
-        getTagList().getResetCommand().Execute();
-        UpdateHasSelectedTags();
+        getTagList().getResetCommand().execute();
+        updateHasSelectedTags();
         getTagList().getSelectedItemsChangedEvent().addListener(this);
 
         SystemTreeItemModel model = (SystemTreeItemModel) getSystemTree().getSelectedItem();
@@ -608,14 +608,14 @@ public class CommonModel extends ListModel
             String search = ""; //$NON-NLS-1$
             RefObject<String> tempRef_prefix = new RefObject<String>(prefix);
             RefObject<String> tempRef_search = new RefObject<String>(search);
-            SplitSearchString(getSelectedItem().getDefaultSearchString(), tempRef_prefix, tempRef_search);
+            splitSearchString(getSelectedItem().getDefaultSearchString(), tempRef_prefix, tempRef_search);
             prefix = tempRef_prefix.argvalue;
             search = tempRef_search.argvalue;
 
             setSearchStringPrefix(prefix);
             setSearchString(search);
 
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
 
             if (getSelectedItem() instanceof ISupportSystemTreeContext)
             {
@@ -676,37 +676,37 @@ public class CommonModel extends ListModel
         }
     }
 
-    private void SearchStringChanged()
+    private void searchStringChanged()
     {
         getBookmarkList().setSearchString(getEffectiveSearchString());
     }
 
-    private void SearchStringPrefixChanged()
+    private void searchStringPrefixChanged()
     {
         setHasSearchStringPrefix(!StringHelper.isNullOrEmpty(getSearchStringPrefix()));
         getAutoCompleteModel().setPrefix(getSearchStringPrefix());
     }
 
-    private void ClearSearchString()
+    private void clearSearchString()
     {
         setSearchString(getHasSearchStringPrefix() ? "" : getSelectedItem().getDefaultSearchString(), false); //$NON-NLS-1$
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
-    public void SignOut()
+    public void signOut()
     {
         // Stop search on all list models.
         for (SearchableListModel listModel : getItems())
         {
-            listModel.EnsureAsyncSearchStopped();
+            listModel.ensureAsyncSearchStopped();
         }
 
-        getEventList().EnsureAsyncSearchStopped();
-        getAlertList().EnsureAsyncSearchStopped();
-        getTaskList().EnsureAsyncSearchStopped();
-        getBookmarkList().EnsureAsyncSearchStopped();
-        getRoleListModel().EnsureAsyncSearchStopped();
-        getSystemPermissionListModel().EnsureAsyncSearchStopped();
+        getEventList().ensureAsyncSearchStopped();
+        getAlertList().ensureAsyncSearchStopped();
+        getTaskList().ensureAsyncSearchStopped();
+        getBookmarkList().ensureAsyncSearchStopped();
+        getRoleListModel().ensureAsyncSearchStopped();
+        getSystemPermissionListModel().ensureAsyncSearchStopped();
 
         if (Frontend.getIsUserLoggedIn())
         {
@@ -725,7 +725,7 @@ public class CommonModel extends ListModel
         }
     }
 
-    public void Configure()
+    public void configure()
     {
         if (getWindow() != null)
         {
@@ -745,7 +745,7 @@ public class CommonModel extends ListModel
         model.getCommands().add(tempVar);
     }
 
-    public void Cancel()
+    public void cancel()
     {
         setWindow(null);
     }
@@ -766,7 +766,7 @@ public class CommonModel extends ListModel
     private SearchableListModel diskList;
     private SearchableListModel networkList;
 
-    private void InitItems()
+    private void initItems()
     {
         ObservableCollection<SearchableListModel> list = new ObservableCollection<SearchableListModel>();
 
@@ -828,15 +828,15 @@ public class CommonModel extends ListModel
 
         if (ev.matchesDefinition(SelectedItemsChangedEventDefinition) && sender == getTagList())
         {
-            TagListModel_SelectedItemsChanged(sender, args);
+            tagListModel_SelectedItemsChanged(sender, args);
         }
         else if (ev.matchesDefinition(BookmarkListModel.NavigatedEventDefinition) && sender == getBookmarkList())
         {
-            BookmarkListModel_Navigated(sender, (BookmarkEventArgs) args);
+            bookmarkListModel_Navigated(sender, (BookmarkEventArgs) args);
         }
         else if (ev.matchesDefinition(selectedItemChangedEventDefinition) && sender == getSystemTree())
         {
-            SystemTree_ItemChanged(sender, args);
+            systemTree_ItemChanged(sender, args);
         }
     }
 
@@ -865,7 +865,7 @@ public class CommonModel extends ListModel
                 listWithDetails.setActiveDetailModel(null);
             }
 
-            oldModel.EnsureAsyncSearchStopped();
+            oldModel.ensureAsyncSearchStopped();
         }
     }
 
@@ -881,7 +881,7 @@ public class CommonModel extends ListModel
             String search = ""; //$NON-NLS-1$
             RefObject<String> tempRef_prefix = new RefObject<String>(prefix);
             RefObject<String> tempRef_search = new RefObject<String>(search);
-            SplitSearchString(getSelectedItem().getDefaultSearchString(), tempRef_prefix, tempRef_search);
+            splitSearchString(getSelectedItem().getDefaultSearchString(), tempRef_prefix, tempRef_search);
             prefix = tempRef_prefix.argvalue;
             search = tempRef_search.argvalue;
 
@@ -889,7 +889,7 @@ public class CommonModel extends ListModel
             setSearchString(search);
 
             getSelectedItem().setSearchString(getEffectiveSearchString());
-            getSelectedItem().getSearchCommand().Execute();
+            getSelectedItem().getSearchCommand().execute();
 
             if (getSelectedItem() instanceof ISupportSystemTreeContext)
             {
@@ -898,10 +898,10 @@ public class CommonModel extends ListModel
             }
         }
 
-        UpdateHasSelectedTags();
+        updateHasSelectedTags();
     }
 
-    public void Search()
+    public void search()
     {
         executingSearch = true;
 
@@ -915,7 +915,7 @@ public class CommonModel extends ListModel
         SearchableListModel model = null;
         for (SearchableListModel a : getItems())
         {
-            if (a.IsSearchStringMatch(getEffectiveSearchString()))
+            if (a.isSearchStringMatch(getEffectiveSearchString()))
             {
                 model = a;
                 break;
@@ -931,7 +931,7 @@ public class CommonModel extends ListModel
             setSelectedItem(model);
 
             // Propagate search command to a concrete list model.
-            getSelectedItem().getSearchCommand().Execute();
+            getSelectedItem().getSearchCommand().execute();
         }
 
         executingSearch = false;
@@ -944,30 +944,30 @@ public class CommonModel extends ListModel
 
         if (command == getSearchCommand())
         {
-            Search();
+            search();
         }
         else if (command == getSignOutCommand())
         {
-            SignOut();
+            signOut();
         }
         else if (command == getConfigureCommand())
         {
-            Configure();
+            configure();
         }
         else if (command == getClearSearchStringCommand())
         {
-            ClearSearchString();
+            clearSearchString();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
     }
 
     /**
      * Splits a search string into two component, the prefix and a search string itself.
      */
-    private void SplitSearchString(String source, RefObject<String> prefix, RefObject<String> search)
+    private void splitSearchString(String source, RefObject<String> prefix, RefObject<String> search)
     {
         ArrayList<TagModel> tags = (ArrayList<TagModel>) getTagList().getSelectedItems();
         SystemTreeItemModel model = (SystemTreeItemModel) getSystemTree().getSelectedItem();
@@ -1004,54 +1004,54 @@ public class CommonModel extends ListModel
             switch (model.getType())
             {
             case DataCenter: {
-                if (dataCenterList.IsSearchStringMatch(source))
+                if (dataCenterList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "DataCenter: name = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (clusterList.IsSearchStringMatch(source))
+                else if (clusterList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Cluster: datacenter.name = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (hostList.IsSearchStringMatch(source))
+                else if (hostList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Host: datacenter = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (storageList.IsSearchStringMatch(source))
+                else if (storageList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Storage: datacenter = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (vmList.IsSearchStringMatch(source))
+                else if (vmList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Vms: datacenter = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (templateList.IsSearchStringMatch(source))
+                else if (templateList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Template: datacenter = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (eventList.IsSearchStringMatch(source))
+                else if (eventList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Events: event_datacenter = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (diskList.IsSearchStringMatch(source))
+                else if (diskList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Disk: datacenter.name = " + model.getTitle() + " and disk_type = image"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
-                else if (quotaList.IsSearchStringMatch(source))
+                else if (quotaList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Quota: storagepoolname = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (networkList.IsSearchStringMatch(source))
+                else if (networkList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Network: datacenter = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (poolList.IsSearchStringMatch(source))
+                else if (poolList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Pools: datacenter = " + model.getTitle(); //$NON-NLS-1$
                 }
             }
                 break;
             case Clusters: {
-                if (clusterList.IsSearchStringMatch(source))
+                if (clusterList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Cluster: datacenter.name = " + model.getParent().getTitle(); //$NON-NLS-1$
                 }
@@ -1060,73 +1060,73 @@ public class CommonModel extends ListModel
 
             case Cluster:
             case Cluster_Gluster: {
-                if (clusterList.IsSearchStringMatch(source))
+                if (clusterList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Cluster: name = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (hostList.IsSearchStringMatch(source))
+                else if (hostList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Host: cluster = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (volumeList.IsSearchStringMatch(source))
+                else if (volumeList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Volume: cluster = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (storageList.IsSearchStringMatch(source))
+                else if (storageList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Storage: cluster.name = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (vmList.IsSearchStringMatch(source))
+                else if (vmList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Vms: cluster = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (templateList.IsSearchStringMatch(source))
+                else if (templateList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Template: cluster = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (eventList.IsSearchStringMatch(source))
+                else if (eventList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Events: cluster = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (networkList.IsSearchStringMatch(source))
+                else if (networkList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Network: Cluster_network.cluster_name = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (poolList.IsSearchStringMatch(source))
+                else if (poolList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Pools: cluster = " + model.getTitle(); //$NON-NLS-1$
                 }
             }
                 break;
             case Hosts: {
-                if (hostList.IsSearchStringMatch(source))
+                if (hostList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Host: cluster = " + model.getParent().getTitle(); //$NON-NLS-1$
                 }
             }
                 break;
             case Host: {
-                if (hostList.IsSearchStringMatch(source))
+                if (hostList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Host: name = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (storageList.IsSearchStringMatch(source))
+                else if (storageList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Storage: host.name = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (vmList.IsSearchStringMatch(source))
+                else if (vmList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Vms: Hosts.name = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (templateList.IsSearchStringMatch(source))
+                else if (templateList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Template: Hosts.name = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (eventList.IsSearchStringMatch(source))
+                else if (eventList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Events: host.name = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (networkList.IsSearchStringMatch(source))
+                else if (networkList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Network: Host_network.host_name = " + model.getTitle(); //$NON-NLS-1$
                 }
@@ -1134,7 +1134,7 @@ public class CommonModel extends ListModel
                 break;
 
             case Volumes: {
-                if (volumeList.IsSearchStringMatch(source))
+                if (volumeList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Volume: cluster = " + model.getParent().getTitle(); //$NON-NLS-1$
                 }
@@ -1142,109 +1142,109 @@ public class CommonModel extends ListModel
                 break;
 
             case Volume: {
-                if (volumeList.IsSearchStringMatch(source))
+                if (volumeList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Volume: name = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (clusterList.IsSearchStringMatch(source))
+                else if (clusterList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Cluster: volume.name = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (dataCenterList.IsSearchStringMatch(source))
+                else if (dataCenterList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "DataCenter: volume.name = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (templateList.IsSearchStringMatch(source))
+                else if (templateList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Template: Volumes.name = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (eventList.IsSearchStringMatch(source))
+                else if (eventList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Events: volume.name = " + model.getTitle(); //$NON-NLS-1$
                 }
             }
                 break;
             case Storages: {
-                if (storageList.IsSearchStringMatch(source))
+                if (storageList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Storage: datacenter = " + model.getParent().getTitle(); //$NON-NLS-1$
                 }
             }
                 break;
             case Storage: {
-                if (dataCenterList.IsSearchStringMatch(source))
+                if (dataCenterList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "DataCenter: storage.name = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (clusterList.IsSearchStringMatch(source))
+                else if (clusterList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Cluster: storage.name = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (hostList.IsSearchStringMatch(source))
+                else if (hostList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Host: storage.name = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (storageList.IsSearchStringMatch(source))
+                else if (storageList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Storage: name = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (vmList.IsSearchStringMatch(source))
+                else if (vmList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Vms: storage.name = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (templateList.IsSearchStringMatch(source))
+                else if (templateList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Templates: storage.name = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (eventList.IsSearchStringMatch(source))
+                else if (eventList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Events: event_storage = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (diskList.IsSearchStringMatch(source))
+                else if (diskList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Disk: storages.name = " + model.getTitle(); //$NON-NLS-1$
                 }
             }
                 break;
             case Templates: {
-                if (templateList.IsSearchStringMatch(source))
+                if (templateList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Template: datacenter = " + model.getParent().getTitle(); //$NON-NLS-1$
                 }
             }
                 break;
             case VMs: {
-                if (vmList.IsSearchStringMatch(source))
+                if (vmList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Vms: cluster = " + model.getParent().getTitle(); //$NON-NLS-1$
                 }
             }
                 break;
             case Networks: {
-                if (networkList.IsSearchStringMatch(source))
+                if (networkList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Network: datacenter = " + model.getParent().getTitle(); //$NON-NLS-1$
                 }
             }
                 break;
             case Network: {
-                if (networkList.IsSearchStringMatch(source))
+                if (networkList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Network: name = " + model.getTitle() + " datacenter = " + model.getParent().getTitle(); //$NON-NLS-1$ //$NON-NLS-2$
                 }
-                else if (clusterList.IsSearchStringMatch(source))
+                else if (clusterList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Cluster: Cluster_network.network_name = " + model.getTitle() + " Datacenter.name = " +  model.getParent().getTitle(); //$NON-NLS-1$ //$NON-NLS-2$
                 }
-                else if (hostList.IsSearchStringMatch(source))
+                else if (hostList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Host : Nic.network_name = " + model.getTitle() + " datacenter = " + model.getParent().getTitle(); //$NON-NLS-1$ //$NON-NLS-2$
                 }
-                else if (vmList.IsSearchStringMatch(source))
+                else if (vmList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Vm : Vnic.network_name = " + model.getTitle() + " datacenter = " + model.getParent().getTitle(); //$NON-NLS-1$ //$NON-NLS-2$
                 }
-                else if (templateList.IsSearchStringMatch(source))
+                else if (templateList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Template : Vnic.network_name = " + model.getTitle() + " datacenter = " + model.getParent().getTitle(); //$NON-NLS-1$ //$NON-NLS-2$
                 }

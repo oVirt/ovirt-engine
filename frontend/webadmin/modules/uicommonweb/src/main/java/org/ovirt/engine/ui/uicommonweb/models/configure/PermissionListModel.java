@@ -74,7 +74,7 @@ public class PermissionListModel extends SearchableListModel
         setAddCommand(new UICommand("New", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -82,8 +82,8 @@ public class PermissionListModel extends SearchableListModel
     {
         super.onEntityChanged();
 
-        getSearchCommand().Execute();
-        UpdateActionAvailability();
+        getSearchCommand().execute();
+        updateActionAvailability();
     }
 
     @Override
@@ -180,7 +180,7 @@ public class PermissionListModel extends SearchableListModel
         model.getCommands().add(tempVar2);
     }
 
-    private void OnRemove()
+    private void onRemove()
     {
         if (getSelectedItems() != null && getSelectedItems().size() > 0)
         {
@@ -199,7 +199,7 @@ public class PermissionListModel extends SearchableListModel
                 list.add(tempVar);
             }
 
-            model.StartProgress(null);
+            model.startProgress(null);
 
             Frontend.RunMultipleAction(VdcActionType.RemovePermission, list,
                     new IFrontendMultipleActionAsyncCallback() {
@@ -207,8 +207,8 @@ public class PermissionListModel extends SearchableListModel
                         public void executed(FrontendMultipleActionAsyncResult result) {
 
                             ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                            localModel.StopProgress();
-                            Cancel();
+                            localModel.stopProgress();
+                            cancel();
 
                         }
                     }, model);
@@ -216,7 +216,7 @@ public class PermissionListModel extends SearchableListModel
 
     }
 
-    private void OnAdd()
+    private void onAdd()
     {
         AdElementListModel model = (AdElementListModel) getWindow();
 
@@ -227,7 +227,7 @@ public class PermissionListModel extends SearchableListModel
 
         if (!model.getIsEveryoneSelected() && model.getSelectedItems() == null)
         {
-            Cancel();
+            cancel();
             return;
         }
 
@@ -279,7 +279,7 @@ public class PermissionListModel extends SearchableListModel
             }
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.AddPermission, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -287,14 +287,14 @@ public class PermissionListModel extends SearchableListModel
                     public void executed(FrontendMultipleActionAsyncResult result) {
 
                         AdElementListModel localModel = (AdElementListModel) result.getState();
-                        localModel.StopProgress();
-                        Cancel();
+                        localModel.stopProgress();
+                        cancel();
 
                     }
                 }, model);
     }
 
-    private void Cancel()
+    private void cancel()
     {
         setWindow(null);
     }
@@ -303,14 +303,14 @@ public class PermissionListModel extends SearchableListModel
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void selectedItemsChanged()
     {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -320,11 +320,11 @@ public class PermissionListModel extends SearchableListModel
 
         if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
-            UpdateActionAvailability();
+            updateActionAvailability();
         }
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         getRemoveCommand().setIsExecutionAllowed((getSelectedItems() != null && getSelectedItems().size() > 0));
         if (getRemoveCommand().getIsExecutionAllowed() == false)
@@ -344,7 +344,7 @@ public class PermissionListModel extends SearchableListModel
 
     protected Guid getEntityGuid()
     {
-        return AsyncDataProvider.GetEntityGuid(getEntity());
+        return AsyncDataProvider.getEntityGuid(getEntity());
     }
 
     protected VdcObjectType getObjectType()
@@ -408,15 +408,15 @@ public class PermissionListModel extends SearchableListModel
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
-            OnRemove();
+            onRemove();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnAdd")) //$NON-NLS-1$
         {
-            OnAdd();
+            onAdd();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
     }
 

@@ -117,14 +117,14 @@ public class VmBackupModel extends ManageBackupModel {
         model.getCommands().add(tempVar2);
     }
 
-    private void OnRemove() {
+    private void onRemove() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
         if (model.getProgress() != null) {
             return;
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.Model = this;
@@ -153,8 +153,8 @@ public class VmBackupModel extends ManageBackupModel {
 
                                     ConfirmationModel localModel = (ConfirmationModel) result
                                             .getState();
-                                    localModel.StopProgress();
-                                    Cancel();
+                                    localModel.stopProgress();
+                                    cancel();
                                     onEntityChanged();
 
                                 }
@@ -162,13 +162,13 @@ public class VmBackupModel extends ManageBackupModel {
                 }
             }
         };
-        AsyncDataProvider.GetDataCentersByStorageDomain(_asyncQuery,
+        AsyncDataProvider.getDataCentersByStorageDomain(_asyncQuery,
                 getEntity().getId());
     }
 
     @Override
-    protected void Restore() {
-        super.Restore();
+    protected void restore() {
+        super.restore();
 
         if (getWindow() != null) {
             return;
@@ -176,7 +176,7 @@ public class VmBackupModel extends ManageBackupModel {
 
         ImportVmModel model = getImportModel();
         setWindow(model);
-        model.StartProgress(null);
+        model.startProgress(null);
         UICommand restoreCommand;
         restoreCommand = new UICommand("OnRestore", this); //$NON-NLS-1$
         restoreCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -205,14 +205,14 @@ public class VmBackupModel extends ManageBackupModel {
         return model;
     }
 
-    public void OnRestore() {
+    public void onRestore() {
         importModel = (ImportVmModel) getWindow();
 
         if (importModel.getProgress() != null) {
             return;
         }
 
-        if (!importModel.Validate()) {
+        if (!importModel.validate()) {
             return;
         }
         cloneObjectMap = new HashMap<Guid, Object>();
@@ -356,7 +356,7 @@ public class VmBackupModel extends ManageBackupModel {
 
     protected int getMaxClonedNameLength(Object object) {
         VM vm = ((ImportVmData) object).getVm();
-        return AsyncDataProvider.IsWindowsOsType(vm.getOs()) ? UnitVmModel.WINDOWS_VM_NAME_MAX_LIMIT
+        return AsyncDataProvider.isWindowsOsType(vm.getOs()) ? UnitVmModel.WINDOWS_VM_NAME_MAX_LIMIT
                 : UnitVmModel.NON_WINDOWS_VM_NAME_MAX_LIMIT;
     }
 
@@ -401,7 +401,7 @@ public class VmBackupModel extends ManageBackupModel {
                 DiskImage disk = (DiskImage) entry.getValue();
                 map.put(disk.getId(), importModel.getDiskImportData(disk.getId()).getSelectedStorageDomain().getId());
                 disk.setvolumeFormat(
-                        AsyncDataProvider.GetDiskVolumeFormat(
+                        AsyncDataProvider.getDiskVolumeFormat(
                                 importModel.getDiskImportData(disk.getId()).getSelectedVolumeType(),
                                 importModel.getDiskImportData(
                                         disk.getId()).getSelectedStorageDomain().getStorageType()));
@@ -429,7 +429,7 @@ public class VmBackupModel extends ManageBackupModel {
 
         }
 
-        importModel.StartProgress(null);
+        importModel.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.ImportVm, prms,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -439,8 +439,8 @@ public class VmBackupModel extends ManageBackupModel {
 
                         VmBackupModel vmBackupModel = (VmBackupModel) result
                                 .getState();
-                        vmBackupModel.getWindow().StopProgress();
-                        vmBackupModel.Cancel();
+                        vmBackupModel.getWindow().stopProgress();
+                        vmBackupModel.cancel();
                         ArrayList<VdcReturnValueBase> retVals =
                                 (ArrayList<VdcReturnValueBase>) result
                                         .getReturnValue();
@@ -491,7 +491,7 @@ public class VmBackupModel extends ManageBackupModel {
         super.entityPropertyChanged(sender, e);
 
         if (e.PropertyName.equals("storage_domain_shared_status")) { //$NON-NLS-1$
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
         }
     }
 
@@ -532,7 +532,7 @@ public class VmBackupModel extends ManageBackupModel {
                     }
                 }
             };
-            AsyncDataProvider.GetDataCentersByStorageDomain(_asyncQuery,
+            AsyncDataProvider.getDataCentersByStorageDomain(_asyncQuery,
                     getEntity().getId());
         }
     }
@@ -548,9 +548,9 @@ public class VmBackupModel extends ManageBackupModel {
         super.executeCommand(command);
 
         if (command.getName().equals("OnRemove")) { //$NON-NLS-1$
-            OnRemove();
+            onRemove();
         } else if (command.getName().equals("OnRestore")) { //$NON-NLS-1$
-            OnRestore();
+            onRestore();
         } else if (command.getName().equals("onClone")) { //$NON-NLS-1$
             onClone();
         } else if (command.getName().equals("closeClone")) { //$NON-NLS-1$
@@ -559,8 +559,8 @@ public class VmBackupModel extends ManageBackupModel {
     }
 
     @Override
-    protected final void Cancel() {
-        super.Cancel();
+    protected final void cancel() {
+        super.cancel();
         clearCachedAssignedVmNames();
     }
 

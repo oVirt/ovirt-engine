@@ -174,7 +174,7 @@ public class ConsoleModelsCache {
     }
 
     public ConsoleModel determineAdditionalConsoleModelForVm(VM vm) {
-        if (AsyncDataProvider.IsWindowsOsType(vm.getVmOs())) {
+        if (AsyncDataProvider.isWindowsOsType(vm.getVmOs())) {
             return cachedConsoleModels.get(vm.getId()).get(RDP_INDEX);
         }
 

@@ -67,7 +67,7 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
         registerHandler(getView().getSearchButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                getView().getSearchButton().getCommand().Execute();
+                getView().getSearchButton().getCommand().execute();
             }
         }));
 
@@ -85,7 +85,7 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
             public void onKeyPress(KeyPressEvent event) {
                 if (KeyCodes.KEY_ENTER == event.getNativeEvent().getKeyCode()) {
                     model.setSearchString(getView().getSearchString().getValue());
-                    getView().getSearchButton().getCommand().Execute();
+                    getView().getSearchButton().getCommand().execute();
                 }
             }
         }));
@@ -163,7 +163,7 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
         public void onKeyPress(NativeEvent event) {
             if (hasFocus && KeyCodes.KEY_ENTER == event.getKeyCode()) {
                 model.setSearchString(getView().getSearchString().getValue());
-                getView().getSearchButton().getCommand().Execute();
+                getView().getSearchButton().getCommand().execute();
             } else {
                 decorated.onKeyPress(event);
             }

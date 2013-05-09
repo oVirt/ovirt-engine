@@ -49,7 +49,7 @@ public class StorageDiskListModel extends SearchableListModel
     protected void onEntityChanged() {
         super.onEntityChanged();
 
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
     @Override
@@ -85,7 +85,7 @@ public class StorageDiskListModel extends SearchableListModel
         }
     }
 
-    public void Cancel() {
+    public void cancel() {
         setWindow(null);
     }
 
@@ -130,7 +130,7 @@ public class StorageDiskListModel extends SearchableListModel
         return true;
     }
 
-    private void Remove() {
+    private void remove() {
         if (getWindow() != null) {
             return;
         }
@@ -164,7 +164,7 @@ public class StorageDiskListModel extends SearchableListModel
         model.getCommands().add(cancelCommand);
     }
 
-    private void OnRemove() {
+    private void onRemove() {
         RemoveDiskModel model = (RemoveDiskModel) getWindow();
         ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
 
@@ -174,15 +174,15 @@ public class StorageDiskListModel extends SearchableListModel
             paramerterList.add(parameters);
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.RemoveDisk, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
                         StorageDiskListModel localModel = (StorageDiskListModel) result.getState();
-                        localModel.StopProgress();
-                        Cancel();
+                        localModel.stopProgress();
+                        cancel();
                     }
                 },
                 this);
@@ -193,13 +193,13 @@ public class StorageDiskListModel extends SearchableListModel
         super.executeCommand(command);
 
         if (command == getRemoveCommand()) {
-            Remove();
+            remove();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) { //$NON-NLS-1$
-            OnRemove();
+            onRemove();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) { //$NON-NLS-1$
-            Cancel();
+            cancel();
         }
     }
 

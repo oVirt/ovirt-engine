@@ -55,7 +55,7 @@ public class ExportVmModel extends Model
         getForceOverride().setEntity(false);
     }
 
-    public boolean Validate()
+    public boolean validate()
     {
         getStorage().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 

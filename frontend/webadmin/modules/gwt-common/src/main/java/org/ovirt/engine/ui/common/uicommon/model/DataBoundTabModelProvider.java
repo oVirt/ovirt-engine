@@ -91,17 +91,17 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
 
     @Override
     public void goForward() {
-        getModel().getSearchNextPageCommand().Execute();
+        getModel().getSearchNextPageCommand().execute();
     }
 
     @Override
     public void goBack() {
-        getModel().getSearchPreviousPageCommand().Execute();
+        getModel().getSearchPreviousPageCommand().execute();
     }
 
     @Override
     public void refresh() {
-        getModel().getForceRefreshCommand().Execute();
+        getModel().getForceRefreshCommand().execute();
     }
 
     @Override

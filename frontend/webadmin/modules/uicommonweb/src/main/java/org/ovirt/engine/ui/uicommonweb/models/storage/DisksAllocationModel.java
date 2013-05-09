@@ -169,13 +169,13 @@ public class DisksAllocationModel extends EntityModel
 
         if (e.PropertyName.equals("Disks")) //$NON-NLS-1$
         {
-            UpdateStorageDomainsAvailability();
-            UpdateQuotaAvailability();
+            updateStorageDomainsAvailability();
+            updateQuotaAvailability();
             registerToEvents();
         }
     }
 
-    private void UpdateStorageDomainsAvailability()
+    private void updateStorageDomainsAvailability()
     {
         if (disks == null) {
             return;
@@ -209,7 +209,7 @@ public class DisksAllocationModel extends EntityModel
             if (diskModel.getVolumeType().getIsAvailable()) {
                 VolumeType volumeType = (VolumeType) diskModel.getVolumeType().getSelectedItem();
                 diskImage.setVolumeType(volumeType);
-                diskImage.setvolumeFormat(AsyncDataProvider.GetDiskVolumeFormat(
+                diskImage.setvolumeFormat(AsyncDataProvider.getDiskVolumeFormat(
                         volumeType, storageDomain.getStorageType()));
             }
 
@@ -217,7 +217,7 @@ public class DisksAllocationModel extends EntityModel
         }
     }
 
-    private void UpdateQuotaAvailability() {
+    private void updateQuotaAvailability() {
         if (disks != null) {
             for (DiskModel diskModel : disks) {
                 diskModel.getQuota().setIsAvailable(quotaEnforcementType != QuotaEnforcementTypeEnum.DISABLED);

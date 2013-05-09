@@ -251,7 +251,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         if (isAvailable != value)
         {
             isAvailable = value;
-            OnIsAvailableChanged();
+            onIsAvailableChanged();
             onPropertyChanged(new PropertyChangedEventArgs("IsAvailable")); //$NON-NLS-1$
         }
     }
@@ -430,22 +430,22 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
     }
 
     protected ILogger lookupLogger() {
-        return (ILogger) TypeResolver.getInstance().Resolve(ILogger.class);
+        return (ILogger) TypeResolver.getInstance().resolve(ILogger.class);
     }
 
     protected Configurator lookupConfigurator() {
-        return (Configurator) TypeResolver.getInstance().Resolve(Configurator.class);
+        return (Configurator) TypeResolver.getInstance().resolve(Configurator.class);
     }
 
     /**
      * Override this method to initialize model, for example populate some properties with data here rather than in
      * constructor. But instantiation still should be done in constructor.
      */
-    public void Initialize()
+    public void initialize()
     {
     }
 
-    protected void OnIsAvailableChanged()
+    protected void onIsAvailableChanged()
     {
     }
 
@@ -481,7 +481,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
      *
      * @param operation
      */
-    public void StartProgress(String operation)
+    public void startProgress(String operation)
     {
         ProgressModel tempVar = new ProgressModel();
         tempVar.setCurrentOperation(operation);
@@ -491,7 +491,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
     /**
      * Assigns null to the Progress property, indicating end of some operation on the model.
      */
-    public void StopProgress()
+    public void stopProgress()
     {
         setProgress(null);
     }

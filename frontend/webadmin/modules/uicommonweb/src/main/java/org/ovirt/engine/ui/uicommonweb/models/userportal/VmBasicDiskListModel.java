@@ -27,7 +27,7 @@ public class VmBasicDiskListModel extends SearchableListModel
 
         if (getEntity() != null)
         {
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
         }
     }
 

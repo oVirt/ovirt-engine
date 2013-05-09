@@ -133,7 +133,7 @@ public class ConfigureLocalStorageModel extends Model {
         getDataCenter().getVersion().getSelectedItemChangedEvent().addListener(this);
 
         setCluster(new ClusterModel());
-        getCluster().Init(false);
+        getCluster().init(false);
 
         setFormattedStorageName(new EntityModel());
 
@@ -166,24 +166,24 @@ public class ConfigureLocalStorageModel extends Model {
         super.eventRaised(ev, sender, args);
 
         if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getDataCenter().getVersion()) {
-            DataCenterVersion_SelectedItemChanged();
+            dataCenterVersion_SelectedItemChanged();
         } else if (ev.matchesDefinition(Frontend.QueryStartedEventDefinition)
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), frontendHash)) {
-            Frontend_QueryStarted();
+            frontend_QueryStarted();
         } else if (ev.matchesDefinition(Frontend.QueryCompleteEventDefinition)
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), frontendHash)) {
-            Frontend_QueryComplete();
+            frontend_QueryComplete();
         }
     }
 
-    private void DataCenterVersion_SelectedItemChanged() {
+    private void dataCenterVersion_SelectedItemChanged() {
         Version version = (Version) getDataCenter().getVersion().getSelectedItem();
 
         // Keep in sync version for data center and cluster.
         getCluster().getVersion().setSelectedItem(version);
     }
 
-    public boolean Validate() {
+    public boolean validate() {
 
         RegexValidation validation = new RegexValidation();
         validation.setExpression("^[A-Za-z0-9_-]+$"); //$NON-NLS-1$
@@ -200,14 +200,14 @@ public class ConfigureLocalStorageModel extends Model {
                     .nameMustBeUniqueInvalidReason());
         }
 
-        boolean isStorageValid = getStorage().Validate() && getFormattedStorageName().getIsValid();
+        boolean isStorageValid = getStorage().validate() && getFormattedStorageName().getIsValid();
         boolean isDataCenterValid = true;
         if (getCandidateDataCenter() == null) {
-            isDataCenterValid = getDataCenter().Validate();
+            isDataCenterValid = getDataCenter().validate();
         }
         boolean isClusterValid = true;
         if (getCandidateCluster() == null) {
-            isClusterValid = getCluster().Validate(false, true);
+            isClusterValid = getCluster().validate(false, true);
         }
 
         setIsGeneralTabValid(isStorageValid && isDataCenterValid && isClusterValid);
@@ -215,7 +215,7 @@ public class ConfigureLocalStorageModel extends Model {
         return isStorageValid && isDataCenterValid && isClusterValid;
     }
 
-    private void SetDefaultNames8() {
+    private void setDefaultNames8() {
 
         VDS host = context.host;
         ArrayList<StoragePool> dataCenters = context.dataCenterList;
@@ -231,7 +231,7 @@ public class ConfigureLocalStorageModel extends Model {
         if (host.getStoragePoolId() != null) {
 
             StoragePool tempCandidate = context.hostDataCenter;
-            if (IsLocalDataCenterEmpty(tempCandidate)) {
+            if (isLocalDataCenterEmpty(tempCandidate)) {
 
                 candidate = tempCandidate;
                 useCurrentSettings = true;
@@ -251,7 +251,7 @@ public class ConfigureLocalStorageModel extends Model {
             for (StoragePool dataCenter : dataCenters) {
 
                 // Need to check if the new DC is without host.
-                if (IsLocalDataCenterEmpty(dataCenter)
+                if (isLocalDataCenterEmpty(dataCenter)
                         && context.localStorageHostByDataCenterMap.get(dataCenter) == null) {
                     candidate = dataCenter;
                     break;
@@ -309,7 +309,7 @@ public class ConfigureLocalStorageModel extends Model {
                         names.add(cluster.getname());
                     }
 
-                    getCluster().getName().setEntity(AvailableName(names));
+                    getCluster().getName().setEntity(availableName(names));
                 } else {
 
                     // Use the DC cluster.
@@ -342,7 +342,7 @@ public class ConfigureLocalStorageModel extends Model {
                 names.add(dataCenter.getname());
             }
 
-            getDataCenter().getName().setEntity(AvailableName(names));
+            getDataCenter().getName().setEntity(availableName(names));
 
             // Choose a Data Center version corresponding to the host.
             if (!StringHelper.isNullOrEmpty(host.getSupportedClusterLevels())) {
@@ -377,7 +377,7 @@ public class ConfigureLocalStorageModel extends Model {
                     names.add(cluster.getname());
                 }
             }
-            getCluster().getName().setEntity(AvailableName(names));
+            getCluster().getName().setEntity(availableName(names));
         }
 
         // Choose default CPU name to match host.
@@ -397,25 +397,25 @@ public class ConfigureLocalStorageModel extends Model {
         for (StorageDomain storageDomain : storages) {
             names.add(storageDomain.getStorageName());
         }
-        getFormattedStorageName().setEntity(AvailableName(names));
+        getFormattedStorageName().setEntity(availableName(names));
     }
 
-    private void SetDefaultNames7() {
+    private void setDefaultNames7() {
 
         // Get all clusters.
-        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
+        AsyncDataProvider.getStorageDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
 
                         context.storageList = (ArrayList<StorageDomain>) returnValue;
-                        SetDefaultNames8();
+                        setDefaultNames8();
                     }
                 },
                 frontendHash));
     }
 
-    public void SetDefaultNames6() {
+    public void setDefaultNames6() {
 
         // Fill map of local storage host by data center.
 
@@ -428,16 +428,16 @@ public class ConfigureLocalStorageModel extends Model {
                     @Override
                     public void run(StoragePool item, Object value) {
 
-                        SetDefaultNames7();
+                        setDefaultNames7();
                     }
                 });
 
-        iterator.Iterate(
+        iterator.iterate(
                 new AsyncIteratorFunc<StoragePool>() {
                     @Override
                     public void run(StoragePool item, AsyncIteratorCallback callback) {
 
-                        AsyncDataProvider.GetClusterList(callback.getAsyncQuery(), item.getId());
+                        AsyncDataProvider.getClusterList(callback.getAsyncQuery(), item.getId());
                     }
                 },
                 new AsyncIteratorPredicate<StoragePool>() {
@@ -452,7 +452,7 @@ public class ConfigureLocalStorageModel extends Model {
                 );
     }
 
-    public void SetDefaultNames5() {
+    public void setDefaultNames5() {
 
         // Fill map of local storage host by data center.
 
@@ -465,16 +465,16 @@ public class ConfigureLocalStorageModel extends Model {
                     @Override
                     public void run(StoragePool item, Object value) {
 
-                        SetDefaultNames6();
+                        setDefaultNames6();
                     }
                 });
 
-        iterator.Iterate(
+        iterator.iterate(
                 new AsyncIteratorFunc<StoragePool>() {
                     @Override
                     public void run(StoragePool item, AsyncIteratorCallback callback) {
 
-                        AsyncDataProvider.GetLocalStorageHost(callback.getAsyncQuery(), item.getname());
+                        AsyncDataProvider.getLocalStorageHost(callback.getAsyncQuery(), item.getname());
                     }
                 },
                 new AsyncIteratorPredicate<StoragePool>() {
@@ -489,88 +489,88 @@ public class ConfigureLocalStorageModel extends Model {
                 );
     }
 
-    public void SetDefaultNames4() {
+    public void setDefaultNames4() {
 
         // Get data centers containing 'local' in name.
-        AsyncDataProvider.GetDataCenterListByName(new AsyncQuery(null,
+        AsyncDataProvider.getDataCenterListByName(new AsyncQuery(null,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
 
                         context.dataCenterList = (ArrayList<StoragePool>) returnValue;
-                        SetDefaultNames5();
+                        setDefaultNames5();
                     }
                 },
                 frontendHash),
                 getCommonName() + "*"); //$NON-NLS-1$
     }
 
-    public void SetDefaultNames3() {
+    public void setDefaultNames3() {
 
         // Get all clusters.
-        AsyncDataProvider.GetClusterList(new AsyncQuery(this,
+        AsyncDataProvider.getClusterList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
 
                         context.clusterList = (ArrayList<VDSGroup>) returnValue;
-                        SetDefaultNames4();
+                        setDefaultNames4();
                     }
                 },
                 frontendHash));
     }
 
-    public void SetDefaultNames2() {
+    public void setDefaultNames2() {
 
         VDS host = context.host;
 
         // Get cluster of the host.
         if (host.getVdsGroupId() != null) {
-            AsyncDataProvider.GetClusterById(new AsyncQuery(this,
+            AsyncDataProvider.getClusterById(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
 
                             context.hostCluster = (VDSGroup) returnValue;
-                            SetDefaultNames3();
+                            setDefaultNames3();
                         }
                     },
                     frontendHash),
                     host.getVdsGroupId());
         } else {
-            SetDefaultNames3();
+            setDefaultNames3();
         }
     }
 
-    public void SetDefaultNames1() {
+    public void setDefaultNames1() {
 
         VDS host = context.host;
 
         // Get data center of the host.
         if (host.getStoragePoolId() != null) {
-            AsyncDataProvider.GetDataCenterById(new AsyncQuery(this,
+            AsyncDataProvider.getDataCenterById(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
 
                             context.hostDataCenter = (StoragePool) returnValue;
-                            SetDefaultNames2();
+                            setDefaultNames2();
                         }
                     },
                     frontendHash),
                     host.getStoragePoolId());
         } else {
-            SetDefaultNames2();
+            setDefaultNames2();
         }
     }
 
-    public void SetDefaultNames(VDS host) {
+    public void setDefaultNames(VDS host) {
 
         context.host = host;
 
         setCommonName(host.getName().replace('.', '-') + "-Local"); //$NON-NLS-1$
 
-        SetDefaultNames1();
+        setDefaultNames1();
 
         // String message = null;
         //
@@ -755,7 +755,7 @@ public class ConfigureLocalStorageModel extends Model {
         // return message;
     }
 
-    private boolean IsLocalDataCenterEmpty(StoragePool dataCenter) {
+    private boolean isLocalDataCenterEmpty(StoragePool dataCenter) {
 
         if (dataCenter != null && dataCenter.getstorage_pool_type() == StorageType.LOCALFS
                 && dataCenter.getstatus() == StoragePoolStatus.Uninitialized) {
@@ -764,7 +764,7 @@ public class ConfigureLocalStorageModel extends Model {
         return false;
     }
 
-    private String AvailableName(ArrayList<String> list) {
+    private String availableName(ArrayList<String> list) {
 
         String commonName = getCommonName();
         ArrayList<Integer> notAvailableNumberList = new ArrayList<Integer>();
@@ -798,17 +798,17 @@ public class ConfigureLocalStorageModel extends Model {
 
     private int queryCounter;
 
-    private void Frontend_QueryStarted() {
+    private void frontend_QueryStarted() {
         queryCounter++;
         if (getProgress() == null) {
-            StartProgress(null);
+            startProgress(null);
         }
     }
 
-    private void Frontend_QueryComplete() {
+    private void frontend_QueryComplete() {
         queryCounter--;
         if (queryCounter == 0) {
-            StopProgress();
+            stopProgress();
         }
     }
 

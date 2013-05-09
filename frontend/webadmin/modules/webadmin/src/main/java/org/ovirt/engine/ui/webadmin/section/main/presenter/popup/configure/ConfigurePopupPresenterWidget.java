@@ -44,9 +44,9 @@ public class ConfigurePopupPresenterWidget extends AbstractPopupPresenterWidget<
     @Override
     protected void onHide() {
         super.onHide();
-        roleModelProvider.getModel().EnsureAsyncSearchStopped();
-        permissionModelProvider.getModel().EnsureAsyncSearchStopped();
-        systemPermissionModelProvider.getModel().EnsureAsyncSearchStopped();
+        roleModelProvider.getModel().ensureAsyncSearchStopped();
+        permissionModelProvider.getModel().ensureAsyncSearchStopped();
+        systemPermissionModelProvider.getModel().ensureAsyncSearchStopped();
     }
 
 }

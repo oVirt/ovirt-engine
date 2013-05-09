@@ -70,7 +70,7 @@ public abstract class VmInterfaceModel extends Model
     {
         // get management network name
         ENGINE_NETWORK_NAME =
-                (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
+                (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
 
         this.vm = vm;
         this.vmNicList = vmNicList;
@@ -78,11 +78,11 @@ public abstract class VmInterfaceModel extends Model
         this.clusterCompatibilityVersion = clusterCompatibilityVersion;
 
         hotPlugSupported =
-                (Boolean) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.HotPlugEnabled,
+                (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.HotPlugEnabled,
                         clusterCompatibilityVersion.toString());
 
         hotUpdateSupported =
-                (Boolean) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.NetworkLinkingSupported,
+                (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.NetworkLinkingSupported,
                         clusterCompatibilityVersion.toString());
 
         setName(new EntityModel());
@@ -271,7 +271,7 @@ public abstract class VmInterfaceModel extends Model
 
         if (sender == getMAC())
         {
-            MAC_PropertyChanged((PropertyChangedEventArgs) args);
+            mAC_PropertyChanged((PropertyChangedEventArgs) args);
         }
 
         else if (sender == getPlugged())
@@ -344,7 +344,7 @@ public abstract class VmInterfaceModel extends Model
         }
     }
 
-    private void MAC_PropertyChanged(PropertyChangedEventArgs e)
+    private void mAC_PropertyChanged(PropertyChangedEventArgs e)
     {
         if (e.PropertyName.equals("IsChangeAllowed") && !getMAC().getIsChangable()) //$NON-NLS-1$
         {
@@ -352,7 +352,7 @@ public abstract class VmInterfaceModel extends Model
         }
     }
 
-    public boolean Validate()
+    public boolean validate()
     {
         getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new I18NNameValidation() });
 
@@ -378,7 +378,7 @@ public abstract class VmInterfaceModel extends Model
             return;
         }
 
-        if (!Validate())
+        if (!validate())
         {
             return;
         }
@@ -401,7 +401,7 @@ public abstract class VmInterfaceModel extends Model
 
         nic.setPlugged((Boolean) getPlugged().getEntity());
 
-        StartProgress(null);
+        startProgress(null);
 
         Frontend.RunAction(getVdcActionType(),
                 createVdcActionParameters(nic),
@@ -409,7 +409,7 @@ public abstract class VmInterfaceModel extends Model
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
                         VdcReturnValueBase returnValue = result.getReturnValue();
-                        StopProgress();
+                        stopProgress();
 
                         if (returnValue != null && returnValue.getSucceeded())
                         {
@@ -477,7 +477,7 @@ public abstract class VmInterfaceModel extends Model
                 okCommand.setIsExecutionAllowed(true);
             }
         };
-        AsyncDataProvider.GetClusterNetworkList(_asyncQuery, getVm().getVdsGroupId());
+        AsyncDataProvider.getClusterNetworkList(_asyncQuery, getVm().getVdsGroupId());
     }
 
     protected void initCommands() {

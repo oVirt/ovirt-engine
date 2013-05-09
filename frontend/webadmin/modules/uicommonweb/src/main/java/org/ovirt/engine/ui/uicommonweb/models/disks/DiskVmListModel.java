@@ -33,7 +33,7 @@ public class DiskVmListModel extends SearchableListModel
 
         if (getEntity() != null)
         {
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
         }
     }
 
@@ -80,17 +80,17 @@ public class DiskVmListModel extends SearchableListModel
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void selectedItemsChanged()
     {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         DiskImage disk = (DiskImage) getEntity();
     }

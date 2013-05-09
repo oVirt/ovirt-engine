@@ -38,7 +38,7 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver {
 
     @SuppressWarnings("rawtypes")
     @Override
-    public Object Resolve(Class type) {
+    public Object resolve(Class type) {
         if (type == Configurator.class) {
             return configurator;
         } else if (type == ILogger.class) {

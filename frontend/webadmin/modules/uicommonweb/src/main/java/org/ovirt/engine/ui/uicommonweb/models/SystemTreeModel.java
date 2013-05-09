@@ -327,16 +327,16 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                                         });
                                     }
                                 };
-                                AsyncDataProvider.GetVolumeList(volumeQuery, null);
+                                AsyncDataProvider.getVolumeList(volumeQuery, null);
                             }
                         };
-                        AsyncDataProvider.GetHostList(hostQuery);
+                        AsyncDataProvider.getHostList(hostQuery);
                     }
                 };
-                AsyncDataProvider.GetClusterList(clusterQuery);
+                AsyncDataProvider.getClusterList(clusterQuery);
             }
         };
-        AsyncDataProvider.GetDataCenterList(dcQuery);
+        AsyncDataProvider.getDataCenterList(dcQuery);
     }
 
     @Override
@@ -346,39 +346,39 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
 
         if (command == getResetCommand())
         {
-            Reset();
+            reset();
         }
         else if (command == getExpandAllCommand())
         {
-            ExpandAll();
+            expandAll();
         }
         else if (command == getCollapseAllCommand())
         {
-            CollapseAll();
+            collapseAll();
         }
     }
 
-    private void CollapseAll()
+    private void collapseAll()
     {
-        SetIsExpandedRecursively(false, getItems().get(0));
+        setIsExpandedRecursively(false, getItems().get(0));
     }
 
-    private void ExpandAll()
+    private void expandAll()
     {
-        SetIsExpandedRecursively(true, getItems().get(0));
+        setIsExpandedRecursively(true, getItems().get(0));
     }
 
-    private void SetIsExpandedRecursively(boolean value, SystemTreeItemModel root)
+    private void setIsExpandedRecursively(boolean value, SystemTreeItemModel root)
     {
         root.setIsExpanded(value);
 
         for (SystemTreeItemModel model : root.getChildren())
         {
-            SetIsExpandedRecursively(value, model);
+            setIsExpandedRecursively(value, model);
         }
     }
 
-    private void Reset()
+    private void reset()
     {
         getResetRequestedEvent().raise(this, EventArgs.Empty);
     }

@@ -241,12 +241,12 @@ public abstract class Configurator {
         return usbFilter;
     }
 
-    public void Configure(SearchableListModel searchableListModel) {
+    public void configure(SearchableListModel searchableListModel) {
         searchableListModel.setIsAsync(getIsAsync());
     }
 
     public void updateDocumentationBaseURL() {
-        AsyncDataProvider.GetDocumentationBaseURL(new AsyncQuery(this,
+        AsyncDataProvider.getDocumentationBaseURL(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -298,7 +298,7 @@ public abstract class Configurator {
         }
     }
 
-    public void Configure(ISpice spice) {
+    public void configure(ISpice spice) {
         spice.setDesiredVersion(getSpiceVersion());
         spice.setCurrentVersion(getSpiceVersion());
         spice.setAdminConsole(getSpiceAdminConsole());
@@ -315,7 +315,7 @@ public abstract class Configurator {
 
     private void updateIsUsbEnabled() {
         // Get 'EnableUSBAsDefault' value from database
-        AsyncDataProvider.IsUSBEnabledByDefault(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.isUSBEnabledByDefault(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 // Update IsUsbEnabled value
@@ -325,7 +325,7 @@ public abstract class Configurator {
     }
 
     private void updateSpiceUsbAutoShare(final ISpice spice) {
-        AsyncDataProvider.GetSpiceUsbAutoShare(new AsyncQuery(this,
+        AsyncDataProvider.getSpiceUsbAutoShare(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -382,13 +382,13 @@ public abstract class Configurator {
     protected abstract void onUpdateDocumentationBaseURL();
 
     public boolean isSpiceProxyDefined() {
-        String spiceProxy = (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault);
+        String spiceProxy = (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault);
         return spiceProxy != null && !"".equals(spiceProxy); //$NON-NLS-1$
 
     }
 
     public ClientConsoleMode getClientConsoleMode() {
-        return ClientConsoleMode.valueOf((String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ClientConsoleModeDefault));
+        return ClientConsoleMode.valueOf((String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ClientConsoleModeDefault));
     }
 
 }

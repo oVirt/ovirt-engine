@@ -38,7 +38,7 @@ import org.ovirt.engine.ui.uicompat.ObservableCollection;
 public class NetworkListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
 {
     private static String ENGINE_NETWORK =
-            (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
+            (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
 
     private UICommand newCommand;
     private UICommand editCommand;
@@ -59,7 +59,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
-        UpdateActionAvailability();
+        updateActionAvailability();
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
@@ -103,7 +103,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
     }
 
     private void initDcList(final NetworkModel networkModel) {
-        SystemTreeItemModel treeSelectedDc = SystemTreeItemModel.FindAncestor(SystemTreeItemType.DataCenter, getSystemTreeSelectedItem());
+        SystemTreeItemModel treeSelectedDc = SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, getSystemTreeSelectedItem());
         if (treeSelectedDc != null) {
             StoragePool dc = (StoragePool) treeSelectedDc.getEntity();
             networkModel.getDataCenters().setItems(Arrays.asList(dc));
@@ -113,7 +113,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         }
 
         // Get all data centers
-        AsyncDataProvider.GetDataCenterList(new AsyncQuery(NetworkListModel.this, new INewAsyncCallback() {
+        AsyncDataProvider.getDataCenterList(new AsyncQuery(NetworkListModel.this, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
@@ -159,7 +159,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
     }
 
     @Override
-    public boolean IsSearchStringMatch(String searchString) {
+    public boolean isSearchStringMatch(String searchString) {
         return searchString.trim().toLowerCase().startsWith("network"); //$NON-NLS-1$
     }
 
@@ -181,16 +181,16 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
     @Override
     protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void selectedItemsChanged() {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
-    private void UpdateActionAvailability() {
+    private void updateActionAvailability() {
         List tempVar = getSelectedItems();
         ArrayList selectedItems =
                 (ArrayList) ((tempVar != null) ? tempVar : new ArrayList());
@@ -239,12 +239,12 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         if (systemTreeSelectedItem != value)
         {
             systemTreeSelectedItem = value;
-            OnSystemTreeSelectedItemChanged();
+            onSystemTreeSelectedItemChanged();
         }
     }
 
-    private void OnSystemTreeSelectedItemChanged() {
-        UpdateActionAvailability();
+    private void onSystemTreeSelectedItemChanged() {
+        updateActionAvailability();
     }
 
     @Override

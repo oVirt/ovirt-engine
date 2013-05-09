@@ -71,7 +71,7 @@ public class UserGeneralModel extends EntityModel
 
         if (getEntity() != null)
         {
-            UpdateProperties();
+            updateProperties();
         }
     }
 
@@ -80,10 +80,10 @@ public class UserGeneralModel extends EntityModel
     {
         super.entityPropertyChanged(sender, e);
 
-        UpdateProperties();
+        updateProperties();
     }
 
-    private void UpdateProperties()
+    private void updateProperties()
     {
         DbUser user = (DbUser) getEntity();
 

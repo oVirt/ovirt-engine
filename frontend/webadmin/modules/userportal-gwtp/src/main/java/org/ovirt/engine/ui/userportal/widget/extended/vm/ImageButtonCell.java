@@ -115,7 +115,7 @@ public abstract class ImageButtonCell<T> extends AbstractCell<T> {
     protected void onClick(T value) {
         UICommand command = resolveCommand(value);
         if (command != null) {
-            command.Execute();
+            command.execute();
         }
     }
 

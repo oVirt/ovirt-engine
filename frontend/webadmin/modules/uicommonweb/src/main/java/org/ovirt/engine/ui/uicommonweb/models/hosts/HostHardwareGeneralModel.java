@@ -1,4 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
+
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -137,7 +138,7 @@ public class HostHardwareGeneralModel extends EntityModel
         super.entityPropertyChanged(sender, e);
     }
 
-    private void UpdateProperties()
+    private void updateProperties()
     {
         VDS vds = getEntity();
         setHardwareManufacturer(vds.getHardwareManufacturer());
@@ -155,7 +156,7 @@ public class HostHardwareGeneralModel extends EntityModel
 
         if (getEntity() != null)
         {
-            UpdateProperties();
+            updateProperties();
         }
     }
 }

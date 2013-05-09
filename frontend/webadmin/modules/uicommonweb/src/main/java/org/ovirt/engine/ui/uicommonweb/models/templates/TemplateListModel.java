@@ -122,7 +122,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setExportCommand(new UICommand("Export", this)); //$NON-NLS-1$
 
-        UpdateActionAvailability();
+        updateActionAvailability();
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
@@ -199,7 +199,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         return ((Map<VmTemplate, ?>) returnValue).keySet();
     }
 
-    private void OnExport()
+    private void onExport()
     {
         ExportVmModel model = (ExportVmModel) getWindow();
 
@@ -208,7 +208,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
             return;
         }
 
-        if (!model.Validate())
+        if (!model.validate())
         {
             return;
         }
@@ -228,7 +228,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
             list.add(tempVar);
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.ExportVmTemplate, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -236,8 +236,8 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
                     public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ExportVmModel localModel = (ExportVmModel) result.getState();
-                        localModel.StopProgress();
-                        Cancel();
+                        localModel.stopProgress();
+                        cancel();
 
                     }
                 }, model);
@@ -266,7 +266,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
     }
 
     @Override
-    public boolean IsSearchStringMatch(String searchString)
+    public boolean isSearchStringMatch(String searchString)
     {
         return searchString.trim().toLowerCase().startsWith("template"); //$NON-NLS-1$
     }
@@ -288,7 +288,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         setItems(getAsyncResult().getData());
     }
 
-    private void Edit()
+    private void edit()
     {
         VmTemplate template = (VmTemplate) getSelectedItem();
 
@@ -302,7 +302,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         model.setHashName("edit_template"); //$NON-NLS-1$
         model.setVmType(template.getVmType());
 
-        model.Initialize(this.getSystemTreeSelectedItem());
+        model.initialize(this.getSystemTreeSelectedItem());
 
         UICommand command;
 
@@ -356,7 +356,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         model.getCommands().add(tempVar2);
     }
 
-    private void OnRemove()
+    private void onRemove()
     {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
@@ -372,7 +372,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
             list.add(new VmTemplateParametersBase(a.getId()));
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.RemoveVmTemplate, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -380,38 +380,38 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
                     public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.StopProgress();
-                        Cancel();
+                        localModel.stopProgress();
+                        cancel();
 
                     }
                 }, model);
     }
 
-    private void OnSave()
+    private void onSave()
     {
         UnitVmModel model = (UnitVmModel) getWindow();
 
-        if (!model.Validate())
+        if (!model.validate())
         {
             return;
         }
 
         String name = (String) model.getName().getEntity();
 
-        AsyncDataProvider.IsTemplateNameUnique(new AsyncQuery(this,
+        AsyncDataProvider.isTemplateNameUnique(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
 
                         TemplateListModel templateListModel = (TemplateListModel) target;
                         boolean isNameUnique = (Boolean) returnValue;
-                        templateListModel.PostNameUniqueCheck(isNameUnique);
+                        templateListModel.postNameUniqueCheck(isNameUnique);
 
                     }
                 }), name);
     }
 
-    public void PostNameUniqueCheck(boolean isNameUnique)
+    public void postNameUniqueCheck(boolean isNameUnique)
     {
         UnitVmModel model = (UnitVmModel) getWindow();
 
@@ -491,7 +491,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         template.setMigrationSupport((MigrationSupport) model.getMigrationMode().getSelectedItem());
 
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunAction(VdcActionType.UpdateVmTemplate, new UpdateVmTemplateParameters(template),
                 new IFrontendActionAsyncCallback() {
@@ -499,25 +499,25 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
                     public void executed(FrontendActionAsyncResult result) {
 
                         TemplateListModel localModel = (TemplateListModel) result.getState();
-                        localModel.PostUpdateVmTemplate(result.getReturnValue());
+                        localModel.postUpdateVmTemplate(result.getReturnValue());
 
                     }
                 }, this);
     }
 
-    public void PostUpdateVmTemplate(VdcReturnValueBase returnValue)
+    public void postUpdateVmTemplate(VdcReturnValueBase returnValue)
     {
         UnitVmModel model = (UnitVmModel) getWindow();
 
-        model.StopProgress();
+        model.stopProgress();
 
         if (returnValue != null && returnValue.getSucceeded())
         {
-            Cancel();
+            cancel();
         }
     }
 
-    private void Cancel()
+    private void cancel()
     {
         Frontend.Unsubscribe();
 
@@ -528,14 +528,14 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void selectedItemsChanged()
     {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -545,11 +545,11 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
 
         if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
-            UpdateActionAvailability();
+            updateActionAvailability();
         }
     }
 
-    private boolean SelectedItemsContainBlankTemplate()
+    private boolean selectedItemsContainBlankTemplate()
     {
         if (getSelectedItems() != null)
         {
@@ -566,7 +566,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         return false;
     }
 
-    protected void UpdateActionAvailability()
+    protected void updateActionAvailability()
     {
         VmTemplate item = (VmTemplate) getSelectedItem();
         ArrayList items =
@@ -641,7 +641,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
 
         if (command == getEditCommand())
         {
-            Edit();
+            edit();
         }
         else if (command == getRemoveCommand())
         {
@@ -649,23 +649,23 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         }
         else if (command == getExportCommand())
         {
-            Export(ConstantsManager.getInstance().getConstants().exportTemplateTitle());
+            export(ConstantsManager.getInstance().getConstants().exportTemplateTitle());
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnExport")) //$NON-NLS-1$
         {
-            OnExport();
+            onExport();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
-            OnSave();
+            onSave();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
-            OnRemove();
+            onRemove();
         }
     }
 

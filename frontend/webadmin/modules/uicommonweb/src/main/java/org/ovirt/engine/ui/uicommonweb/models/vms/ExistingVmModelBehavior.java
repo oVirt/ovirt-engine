@@ -36,10 +36,10 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
     }
 
     @Override
-    public void Initialize(SystemTreeItemModel systemTreeSelectedItem)
+    public void initialize(SystemTreeItemModel systemTreeSelectedItem)
     {
-        super.Initialize(systemTreeSelectedItem);
-        AsyncDataProvider.GetDataCenterById(new AsyncQuery(getModel(),
+        super.initialize(systemTreeSelectedItem);
+        AsyncDataProvider.getDataCenterById(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -50,7 +50,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                             StoragePool dataCenter = (StoragePool) returnValue;
                             ArrayList<StoragePool> list =
                                     new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dataCenter }));
-                            model.SetDataCenter(model, list);
+                            model.setDataCenter(model, list);
                             model.getDataCenter().setIsChangable(false);
                         }
                         else
@@ -66,8 +66,8 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                             model.getCluster()
                                     .setItems(new ArrayList<VDSGroup>(Arrays.asList(new VDSGroup[] { cluster })));
                             model.getCluster().setSelectedItem(cluster);
-                            behavior.InitTemplate();
-                            behavior.InitCdImage();
+                            behavior.initTemplate();
+                            behavior.initCdImage();
                         }
 
                     }
@@ -77,13 +77,13 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
     }
 
     @Override
-    public void DataCenter_SelectedItemChanged()
+    public void dataCenter_SelectedItemChanged()
     {
         StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
 
         getModel().setIsHostAvailable(dataCenter.getstorage_pool_type() != StorageType.LOCALFS);
 
-        AsyncDataProvider.GetClusterByServiceList(new AsyncQuery(new Object[] { this, getModel() },
+        AsyncDataProvider.getClusterByServiceList(new AsyncQuery(new Object[] { this, getModel() },
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -93,9 +93,9 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                         UnitVmModel model = (UnitVmModel) array[1];
                         VM vm = ((ExistingVmModelBehavior) array[0]).vm;
                         ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
-                        model.SetClusters(model, clusters, vm.getVdsGroupId().getValue());
-                        behavior.InitTemplate();
-                        behavior.InitCdImage();
+                        model.setClusters(model, clusters, vm.getVdsGroupId().getValue());
+                        behavior.initTemplate();
+                        behavior.initCdImage();
 
                     }
                 }, getModel().getHash()), dataCenter.getId(), true, false);
@@ -107,7 +107,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
     }
 
     @Override
-    public void Template_SelectedItemChanged()
+    public void template_SelectedItemChanged()
     {
         // This method will be called even if a VM created from Blank template.
 
@@ -162,7 +162,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         updateTimeZone(vm.getTimeZone());
 
         // Update domain list
-        UpdateDomain();
+        updateDomain();
 
         updateHostPinning(vm.getMigrationSupport());
         getModel().getHostCpu().setEntity(vm.isUseHostCpuFlags());
@@ -185,39 +185,39 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
             }
         }
 
-        InitPriority(vm.getPriority());
+        initPriority(vm.getPriority());
     }
 
     @Override
-    public void Cluster_SelectedItemChanged()
+    public void cluster_SelectedItemChanged()
     {
-        UpdateDefaultHost();
+        updateDefaultHost();
         updateCustomPropertySheet();
-        UpdateNumOfSockets();
+        updateNumOfSockets();
         updateQuotaByCluster(vm.getQuotaId(), vm.getQuotaName());
         updateCpuPinningVisibility();
     }
 
     @Override
-    protected void ChangeDefualtHost()
+    protected void changeDefualtHost()
     {
-        super.ChangeDefualtHost();
+        super.changeDefualtHost();
         doChangeDefautlHost(vm.getDedicatedVmForVds());
     }
 
     @Override
-    public void DefaultHost_SelectedItemChanged()
+    public void defaultHost_SelectedItemChanged()
     {
-        UpdateCdImage();
+        updateCdImage();
     }
 
     @Override
-    public void Provisioning_SelectedItemChanged()
+    public void provisioning_SelectedItemChanged()
     {
     }
 
     @Override
-    public void UpdateMinAllocatedMemory()
+    public void updateMinAllocatedMemory()
     {
         VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
 
@@ -238,12 +238,12 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         }
     }
 
-    public void InitTemplate()
+    public void initTemplate()
     {
         setupTemplate(vm, getModel().getTemplate());
     }
 
-    public void InitCdImage()
+    public void initCdImage()
     {
         getModel().getCdImage().setSelectedItem(vm.getIsoPath());
 
@@ -251,6 +251,6 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         getModel().getCdImage().setIsChangable(hasCd);
         getModel().getCdAttached().setEntity(hasCd);
 
-        UpdateCdImage();
+        updateCdImage();
     }
 }

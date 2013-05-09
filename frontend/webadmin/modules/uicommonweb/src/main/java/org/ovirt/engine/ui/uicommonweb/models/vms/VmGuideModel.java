@@ -45,13 +45,13 @@ public class VmGuideModel extends GuideModel
     protected void onEntityChanged()
     {
         super.onEntityChanged();
-        UpdateOptions();
+        updateOptions();
     }
 
-    private void UpdateOptionsData() {
+    private void updateOptionsData() {
         nics = null;
         disks = null;
-        AsyncDataProvider.GetVmNicList(new AsyncQuery(this,
+        AsyncDataProvider.getVmNicList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -59,22 +59,22 @@ public class VmGuideModel extends GuideModel
                         ArrayList<VmNetworkInterface> nics =
                                 (ArrayList<VmNetworkInterface>) returnValue;
                         vmGuideModel.nics = nics;
-                        vmGuideModel.UpdateOptionsPostData();
+                        vmGuideModel.updateOptionsPostData();
                     }
                 }), getEntity().getId());
-        AsyncDataProvider.GetVmDiskList(new AsyncQuery(this,
+        AsyncDataProvider.getVmDiskList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
                         VmGuideModel vmGuideModel = (VmGuideModel) target;
                         ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
                         vmGuideModel.disks = disks;
-                        vmGuideModel.UpdateOptionsPostData();
+                        vmGuideModel.updateOptionsPostData();
                     }
                 }), getEntity().getId());
     }
 
-    private void UpdateOptionsPostData() {
+    private void updateOptionsPostData() {
         if (nics == null || disks == null) {
             return;
         }
@@ -107,31 +107,31 @@ public class VmGuideModel extends GuideModel
             getOptionalActions().add(addDiskAction);
         }
 
-        StopProgress();
+        stopProgress();
     }
 
-    private void UpdateOptions()
+    private void updateOptions()
     {
         getCompulsoryActions().clear();
         getOptionalActions().clear();
 
         if (getEntity() != null)
         {
-            StartProgress(null);
+            startProgress(null);
 
-            UpdateOptionsData();
+            updateOptionsData();
         }
     }
 
-    public void ResetData() {
+    public void resetData() {
         nics = null;
         disks = null;
         cluster = null;
     }
 
-    private void AddNetworkUpdateData() {
+    private void addNetworkUpdateData() {
         nics = null;
-        AsyncDataProvider.GetVmNicList(new AsyncQuery(this,
+        AsyncDataProvider.getVmNicList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -139,12 +139,12 @@ public class VmGuideModel extends GuideModel
                         ArrayList<VmNetworkInterface> nics =
                                 (ArrayList<VmNetworkInterface>) returnValue;
                         vmGuideModel.nics = nics;
-                        vmGuideModel.AddNetworkPostData();
+                        vmGuideModel.addNetworkPostData();
                     }
                 }), getEntity().getId());
     }
 
-    private void AddNetworkPostData() {
+    private void addNetworkPostData() {
         if (nics == null) {
             return;
         }
@@ -156,20 +156,20 @@ public class VmGuideModel extends GuideModel
                         this);
         setWindow(model);
 
-        StopProgress();
+        stopProgress();
     }
 
-    public void AddNetwork()
+    public void addNetwork()
     {
         if (getEntity() != null)
         {
-            StartProgress(null);
+            startProgress(null);
 
-            AddNetworkUpdateData();
+            addNetworkUpdateData();
         }
     }
 
-    public void AddDisk()
+    public void addDisk()
     {
         if (getEntity() == null) {
             return;
@@ -186,18 +186,18 @@ public class VmGuideModel extends GuideModel
         cancelCommand.setIsCancel(true);
         model.setCancelCommand(cancelCommand);
 
-        model.Initialize();
+        model.initialize();
     }
 
-    public void PostAction()
+    public void postAction()
     {
-        ResetData();
-        UpdateOptions();
+        resetData();
+        updateOptions();
     }
 
-    public void Cancel()
+    public void cancel()
     {
-        ResetData();
+        resetData();
         setWindow(null);
         Frontend.Unsubscribe();
     }
@@ -209,15 +209,15 @@ public class VmGuideModel extends GuideModel
 
         if (StringHelper.stringsEqual(command.getName(), "AddNetwork")) //$NON-NLS-1$
         {
-            AddNetwork();
+            addNetwork();
         }
         if (StringHelper.stringsEqual(command.getName(), "AddDisk")) //$NON-NLS-1$
         {
-            AddDisk();
+            addDisk();
         }
         if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
     }
 }

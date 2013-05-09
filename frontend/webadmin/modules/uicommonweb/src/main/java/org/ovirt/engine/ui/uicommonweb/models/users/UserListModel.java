@@ -107,13 +107,13 @@ public class UserListModel extends ListWithDetailsModel
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setAssignTagsCommand(new UICommand("AssignTags", this)); //$NON-NLS-1$
 
-        UpdateActionAvailability();
+        updateActionAvailability();
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
     }
 
-    public void AssignTags()
+    public void assignTags()
     {
         if (getWindow() != null)
         {
@@ -125,7 +125,7 @@ public class UserListModel extends ListWithDetailsModel
         model.setTitle(ConstantsManager.getInstance().getConstants().assignTagsTitle());
         model.setHashName("assign_tags_users"); //$NON-NLS-1$
 
-        GetAttachedTagsToSelectedUsers(model);
+        getAttachedTagsToSelectedUsers(model);
 
         UICommand tempVar = new UICommand("OnAssignTags", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -141,7 +141,7 @@ public class UserListModel extends ListWithDetailsModel
     public ArrayList<tags> allAttachedTags;
     public int selectedItemsCounter;
 
-    private void GetAttachedTagsToSelectedUsers(TagListModel model)
+    private void getAttachedTagsToSelectedUsers(TagListModel model)
     {
         ArrayList<Guid> userIds = new ArrayList<Guid>();
         ArrayList<Guid> grpIds = new ArrayList<Guid>();
@@ -165,7 +165,7 @@ public class UserListModel extends ListWithDetailsModel
 
         for (Guid userId : userIds)
         {
-            AsyncDataProvider.GetAttachedTagsToUser(new AsyncQuery(new Object[] { this, model },
+            AsyncDataProvider.getAttachedTagsToUser(new AsyncQuery(new Object[] { this, model },
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -177,7 +177,7 @@ public class UserListModel extends ListWithDetailsModel
                             userListModel.selectedItemsCounter++;
                             if (userListModel.selectedItemsCounter == userListModel.getSelectedItems().size())
                             {
-                                PostGetAttachedTags(userListModel, tagListModel);
+                                postGetAttachedTags(userListModel, tagListModel);
                             }
 
                         }
@@ -186,7 +186,7 @@ public class UserListModel extends ListWithDetailsModel
         }
         for (Guid grpId : grpIds)
         {
-            AsyncDataProvider.GetAttachedTagsToUserGroup(new AsyncQuery(new Object[] { this, model },
+            AsyncDataProvider.getAttachedTagsToUserGroup(new AsyncQuery(new Object[] { this, model },
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -198,7 +198,7 @@ public class UserListModel extends ListWithDetailsModel
                             userListModel.selectedItemsCounter++;
                             if (userListModel.selectedItemsCounter == userListModel.getSelectedItems().size())
                             {
-                                PostGetAttachedTags(userListModel, tagListModel);
+                                postGetAttachedTags(userListModel, tagListModel);
                             }
 
                         }
@@ -207,7 +207,7 @@ public class UserListModel extends ListWithDetailsModel
         }
     }
 
-    private void PostGetAttachedTags(UserListModel userListModel, TagListModel tagListModel)
+    private void postGetAttachedTags(UserListModel userListModel, TagListModel tagListModel)
     {
         if (userListModel.getLastExecutedCommand() == getAssignTagsCommand())
         {
@@ -231,18 +231,18 @@ public class UserListModel extends ListWithDetailsModel
         }
         else if (StringHelper.stringsEqual(userListModel.getLastExecutedCommand().getName(), "OnAssignTags")) //$NON-NLS-1$
         {
-            userListModel.PostOnAssignTags(tagListModel.getAttachedTagsToEntities());
+            userListModel.postOnAssignTags(tagListModel.getAttachedTagsToEntities());
         }
     }
 
-    private void OnAssignTags()
+    private void onAssignTags()
     {
         TagListModel model = (TagListModel) getWindow();
 
-        GetAttachedTagsToSelectedUsers(model);
+        getAttachedTagsToSelectedUsers(model);
     }
 
-    public void PostOnAssignTags(Map<Guid, Boolean> attachedTags)
+    public void postOnAssignTags(Map<Guid, Boolean> attachedTags)
     {
         TagListModel model = (TagListModel) getWindow();
         ArrayList<Guid> userIds = new ArrayList<Guid>();
@@ -269,7 +269,7 @@ public class UserListModel extends ListWithDetailsModel
         {
             ArrayList<TagModel> tags = (ArrayList<TagModel>) model.getItems();
             TagModel rootTag = tags.get(0);
-            TagModel.RecursiveEditAttachDetachLists(rootTag, attachedTags, tagsToAttach, tagsToDetach);
+            TagModel.recursiveEditAttachDetachLists(rootTag, attachedTags, tagsToAttach, tagsToDetach);
         }
 
         ArrayList<VdcActionParametersBase> usersToAttach = new ArrayList<VdcActionParametersBase>();
@@ -316,7 +316,7 @@ public class UserListModel extends ListWithDetailsModel
             Frontend.RunMultipleAction(VdcActionType.DetachUserGroupFromTag, grpsToDetach);
         }
 
-        Cancel();
+        cancel();
     }
 
     public void add()
@@ -374,7 +374,7 @@ public class UserListModel extends ListWithDetailsModel
     }
 
     @Override
-    public boolean IsSearchStringMatch(String searchString)
+    public boolean isSearchStringMatch(String searchString)
     {
         return searchString.trim().toLowerCase().startsWith("user"); //$NON-NLS-1$
     }
@@ -428,12 +428,12 @@ public class UserListModel extends ListWithDetailsModel
         setItems(getAsyncResult().getData());
     }
 
-    public void Cancel()
+    public void cancel()
     {
         setWindow(null);
     }
 
-    public void OnAdd()
+    public void onAdd()
     {
         AdElementListModel model = (AdElementListModel) getWindow();
 
@@ -444,7 +444,7 @@ public class UserListModel extends ListWithDetailsModel
 
         if (model.getSelectedItems() == null)
         {
-            Cancel();
+            cancel();
             return;
         }
 
@@ -475,7 +475,7 @@ public class UserListModel extends ListWithDetailsModel
             }
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.AddUser, parameters,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -483,14 +483,14 @@ public class UserListModel extends ListWithDetailsModel
                     public void executed(FrontendMultipleActionAsyncResult result) {
 
                         AdElementListModel localModel = (AdElementListModel) result.getState();
-                        localModel.StopProgress();
-                        Cancel();
+                        localModel.stopProgress();
+                        cancel();
 
                     }
                 }, model);
     }
 
-    public void OnRemove()
+    public void onRemove()
     {
         ArrayList<DbUser> items = Linq.<DbUser> cast(getSelectedItems());
 
@@ -519,7 +519,7 @@ public class UserListModel extends ListWithDetailsModel
             Frontend.RunMultipleAction(VdcActionType.RemoveAdGroup, groupPrms);
         }
 
-        Cancel();
+        cancel();
     }
 
     // private void AssignTags()
@@ -603,17 +603,17 @@ public class UserListModel extends ListWithDetailsModel
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void selectedItemsChanged()
     {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         ArrayList items =
                 (((ArrayList) getSelectedItems()) != null) ? (ArrayList) getSelectedItems()
@@ -640,25 +640,25 @@ public class UserListModel extends ListWithDetailsModel
         }
         if (command == getAssignTagsCommand())
         {
-            AssignTags();
+            assignTags();
         }
 
         if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
         if (StringHelper.stringsEqual(command.getName(), "OnAssignTags")) //$NON-NLS-1$
         {
-            OnAssignTags();
+            onAssignTags();
         }
         if (StringHelper.stringsEqual(command.getName(), "OnAdd")) //$NON-NLS-1$
         {
-            OnAdd();
+            onAdd();
         }
 
         if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
-            OnRemove();
+            onRemove();
         }
     }
 

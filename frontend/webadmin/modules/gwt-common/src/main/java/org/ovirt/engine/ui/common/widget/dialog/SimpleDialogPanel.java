@@ -134,7 +134,7 @@ public class SimpleDialogPanel extends AbstractDialogPanel implements FocusableC
         helpIconButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                helpCommand.Execute();
+                helpCommand.execute();
             }
         });
     }

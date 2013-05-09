@@ -244,7 +244,7 @@ public abstract class AbstractDiskModel extends DiskModel
 
         setStorageType(new ListModel());
         getStorageType().setIsAvailable(false);
-        getStorageType().setItems(AsyncDataProvider.GetStorageTypeList());
+        getStorageType().setItems(AsyncDataProvider.getStorageTypeList());
         getStorageType().getSelectedItemChangedEvent().addListener(this);
 
         setHost(new ListModel());
@@ -269,8 +269,8 @@ public abstract class AbstractDiskModel extends DiskModel
     protected abstract LunDisk getLunDisk();
 
     @Override
-    public void Initialize() {
-        super.Initialize();
+    public void initialize() {
+        super.initialize();
         setHash(getHashName() + new Date());
 
         // Add progress listeners
@@ -297,7 +297,7 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     private void updateStorageDomains(final StoragePool datacenter) {
-        AsyncDataProvider.GetPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 DiskModel diskModel = (DiskModel) target;
@@ -334,7 +334,7 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     private void updateHosts(StoragePool datacenter) {
-        AsyncDataProvider.GetHostListByDataCenter(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getHostListByDataCenter(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 AbstractDiskModel diskModel = (AbstractDiskModel) target;
@@ -358,7 +358,7 @@ public abstract class AbstractDiskModel extends DiskModel
         setMessage(""); //$NON-NLS-1$
 
         if (isInVm) {
-            AsyncDataProvider.GetDataCenterById((new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getDataCenterById((new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
                     AbstractDiskModel diskModel = (AbstractDiskModel) target;
@@ -379,7 +379,7 @@ public abstract class AbstractDiskModel extends DiskModel
             }, getHash())), getVm().getStoragePoolId());
         }
         else {
-            AsyncDataProvider.GetDataCenterList(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getDataCenterList(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
                     AbstractDiskModel diskModel = (AbstractDiskModel) target;
@@ -403,7 +403,7 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     private void updateBootableDiskAvailable() {
-        AsyncDataProvider.GetVmDiskList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getVmDiskList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 AbstractDiskModel diskModel = (AbstractDiskModel) target;
@@ -427,7 +427,7 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     private void updateShareableDiskEnabled(StoragePool datacenter) {
-        boolean isShareableDiskEnabled = (Boolean) AsyncDataProvider.GetConfigValuePreConverted(
+        boolean isShareableDiskEnabled = (Boolean) AsyncDataProvider.getConfigValuePreConverted(
                 ConfigurationValues.ShareableDiskEnabled, datacenter.getcompatibility_version().getValue());
 
         getIsShareable().setChangeProhibitionReason(CONSTANTS.shareableDiskNotSupported());
@@ -440,7 +440,7 @@ public abstract class AbstractDiskModel extends DiskModel
             return;
         }
 
-        boolean isDirectLUNDiskkEnabled = (Boolean) AsyncDataProvider.GetConfigValuePreConverted(
+        boolean isDirectLUNDiskkEnabled = (Boolean) AsyncDataProvider.getConfigValuePreConverted(
                 ConfigurationValues.DirectLUNDiskEnabled, datacenter.getcompatibility_version().getValue());
 
         getIsDirectLunDiskAvaialable().setEntity(isDirectLUNDiskkEnabled);
@@ -459,12 +459,12 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     private void updateVolumeFormat(VolumeType volumeType, StorageType storageType) {
-        setVolumeFormat(AsyncDataProvider.GetDiskVolumeFormat(volumeType, storageType));
+        setVolumeFormat(AsyncDataProvider.getDiskVolumeFormat(volumeType, storageType));
     }
 
     private void updateVolumeType(StorageType storageType) {
         getVolumeType().setSelectedItem(storageType.isBlockDomain() ? VolumeType.Preallocated : VolumeType.Sparse);
-        VolumeType_SelectedItemChanged();
+        volumeType_SelectedItemChanged();
     }
 
     private void updateQuota(StoragePool datacenter) {
@@ -519,7 +519,7 @@ public abstract class AbstractDiskModel extends DiskModel
         return isStatusUp;
     }
 
-    private void IsInternal_EntityChanged() {
+    private void isInternal_EntityChanged() {
         boolean isInVm = getVm() != null;
         boolean isInternal = (Boolean) getIsInternal().getEntity();
 
@@ -542,7 +542,7 @@ public abstract class AbstractDiskModel extends DiskModel
         updateDatacenters();
     }
 
-    private void VolumeType_SelectedItemChanged() {
+    private void volumeType_SelectedItemChanged() {
         if (getVolumeType().getSelectedItem() == null || getDataCenter().getSelectedItem() == null) {
             return;
         }
@@ -554,18 +554,18 @@ public abstract class AbstractDiskModel extends DiskModel
         updateShareable(volumeType, storageType);
     }
 
-    private void WipeAfterDelete_EntityChanged(EventArgs e) {
+    private void wipeAfterDelete_EntityChanged(EventArgs e) {
         if (!getIsWipeAfterDelete().getIsChangable() && (Boolean) getIsWipeAfterDelete().getEntity())
         {
             getIsWipeAfterDelete().setEntity(false);
         }
     }
 
-    private void AttachDisk_EntityChanged(EventArgs e) {
+    private void attachDisk_EntityChanged(EventArgs e) {
         if ((Boolean) getIsAttachDisk().getEntity())
         {
             // Get internal attachable disks
-            AsyncDataProvider.GetAllAttachableDisks(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getAllAttachableDisks(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
                     AbstractDiskModel model = (AbstractDiskModel) target;
@@ -579,7 +579,7 @@ public abstract class AbstractDiskModel extends DiskModel
             }, getHash()), getVm().getStoragePoolId(), getVm().getId());
 
             // Get external attachable disks
-            AsyncDataProvider.GetAllAttachableDisks(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getAllAttachableDisks(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
                     AbstractDiskModel model = (AbstractDiskModel) target;
@@ -594,7 +594,7 @@ public abstract class AbstractDiskModel extends DiskModel
         }
     }
 
-    private void Datacenter_SelectedItemChanged() {
+    private void datacenter_SelectedItemChanged() {
         StoragePool datacenter = (StoragePool) getDataCenter().getSelectedItem();
         boolean isInternal = getIsInternal().getEntity() != null ? (Boolean) getIsInternal().getEntity() : false;
 
@@ -655,7 +655,7 @@ public abstract class AbstractDiskModel extends DiskModel
 
     private void onForceSave() {
         ConfirmationModel confirmationModel = (ConfirmationModel) getConfirmWindow();
-        if (confirmationModel != null && !confirmationModel.Validate()) {
+        if (confirmationModel != null && !confirmationModel.validate()) {
             return;
         }
         cancelConfirm();
@@ -669,7 +669,7 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     protected void cancel() {
-        getCancelCommand().Execute();
+        getCancelCommand().execute();
     }
 
     protected Guid getVmId() {
@@ -721,47 +721,47 @@ public abstract class AbstractDiskModel extends DiskModel
 
         if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition) && sender == getIsWipeAfterDelete())
         {
-            WipeAfterDelete_EntityChanged(args);
+            wipeAfterDelete_EntityChanged(args);
         }
         else if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition) && sender == getIsAttachDisk())
         {
-            AttachDisk_EntityChanged(args);
+            attachDisk_EntityChanged(args);
         }
         else if (ev.matchesDefinition(ListModel.EntityChangedEventDefinition) && sender == getIsInternal())
         {
-            IsInternal_EntityChanged();
+            isInternal_EntityChanged();
         }
         else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getVolumeType())
         {
-            VolumeType_SelectedItemChanged();
+            volumeType_SelectedItemChanged();
         }
         else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getDataCenter())
         {
-            Datacenter_SelectedItemChanged();
+            datacenter_SelectedItemChanged();
         }
         else if (ev.matchesDefinition(Frontend.QueryStartedEventDefinition)
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
-            Frontend_QueryStarted();
+            frontend_QueryStarted();
         }
         else if (ev.matchesDefinition(Frontend.QueryCompleteEventDefinition)
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
-            Frontend_QueryComplete();
+            frontend_QueryComplete();
         }
     }
 
-    public void Frontend_QueryStarted() {
+    public void frontend_QueryStarted() {
         queryCounter++;
         if (getProgress() == null) {
-            StartProgress(null);
+            startProgress(null);
         }
     }
 
-    public void Frontend_QueryComplete() {
+    public void frontend_QueryComplete() {
         queryCounter--;
         if (queryCounter == 0) {
-            StopProgress();
+            stopProgress();
         }
     }
 }

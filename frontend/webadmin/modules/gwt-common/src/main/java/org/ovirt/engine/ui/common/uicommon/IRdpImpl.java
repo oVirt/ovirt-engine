@@ -48,7 +48,7 @@ public class IRdpImpl implements IRdp {
     }
 
     @Override
-    public void Connect() {
+    public void connect() {
         RdpConnector connector = new RdpConnector(getAddress(), getDisconnectedEvent());
         connector.setRedirectDrives(getUseLocalDrives());
         connector.connect();

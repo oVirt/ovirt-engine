@@ -75,7 +75,7 @@ public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagLis
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 Iterator<TagModel> iterator = getModel().getItems().iterator();
                 if (iterator.hasNext()) {
-                    TagModel root = getModel().CloneTagModel(iterator.next());
+                    TagModel root = getModel().cloneTagModel(iterator.next());
                     updateDataProvider(Arrays.asList(root));
                 }
             }

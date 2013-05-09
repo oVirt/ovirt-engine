@@ -49,7 +49,7 @@ public class ChangeCDModel extends Model
         setDoCommand(new UICommand("Do", this)); //$NON-NLS-1$
     }
 
-    private void Do()
+    private void doAction()
     {
         getExecutedEvent().raise(this, EventArgs.Empty);
         // Executed(this, EventArgs.Empty);
@@ -62,7 +62,7 @@ public class ChangeCDModel extends Model
 
         if (command == getDoCommand())
         {
-            Do();
+            doAction();
         }
     }
 }

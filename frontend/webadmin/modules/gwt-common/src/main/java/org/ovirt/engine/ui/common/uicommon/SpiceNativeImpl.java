@@ -16,7 +16,7 @@ public class SpiceNativeImpl extends AbstractSpice implements ISpiceNative {
     }
 
     @Override
-    public void Connect() {
+    public void connect() {
         StringBuilder configBuilder = new StringBuilder("[virt-viewer]"); //$NON-NLS-1$
 
         int fullscreen = 0;
@@ -78,7 +78,7 @@ public class SpiceNativeImpl extends AbstractSpice implements ISpiceNative {
     }
 
     @Override
-    public void Install() {
+    public void install() {
     }
 
 }

@@ -37,32 +37,32 @@ public class VmItemBehavior extends ItemBehavior
     }
 
     @Override
-    public void OnEntityChanged()
+    public void onEntityChanged()
     {
-        UpdateProperties();
-        UpdateActionAvailability();
+        updateProperties();
+        updateActionAvailability();
     }
 
     @Override
-    public void EntityPropertyChanged(PropertyChangedEventArgs e)
+    public void entityPropertyChanged(PropertyChangedEventArgs e)
     {
-        UpdateProperties();
+        updateProperties();
         if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
-            UpdateActionAvailability();
+            updateActionAvailability();
         }
     }
 
     @Override
-    public void ExecuteCommand(UICommand command)
+    public void executeCommand(UICommand command)
     {
         if (command == getItem().getRunCommand())
         {
-            Run();
+            run();
         }
         else if (command == getItem().getPauseCommand())
         {
-            Pause();
+            pause();
         }
         else if (command == getItem().getStopCommand())
         {
@@ -70,11 +70,11 @@ public class VmItemBehavior extends ItemBehavior
         }
         else if (command == getItem().getShutdownCommand())
         {
-            Shutdown();
+            shutdown();
         }
         else if (command == getItem().getReturnVmCommand())
         {
-            ReturnVm();
+            returnVm();
         }
     }
 
@@ -83,11 +83,11 @@ public class VmItemBehavior extends ItemBehavior
     {
         if (ev.matchesDefinition(ChangeCDModel.ExecutedEventDefinition))
         {
-            ChangeCD(sender, args);
+            changeCD(sender, args);
         }
     }
 
-    private void ChangeCD(Object sender, EventArgs args)
+    private void changeCD(Object sender, EventArgs args)
     {
         VM entity = (VM) getItem().getEntity();
         ChangeCDModel model = (ChangeCDModel) sender;
@@ -106,7 +106,7 @@ public class VmItemBehavior extends ItemBehavior
                         ConsoleModel.EjectLabel) ? "" : imageName)); //$NON-NLS-1$
     }
 
-    private void ReturnVm()
+    private void returnVm()
     {
         VM entity = (VM) getItem().getEntity();
 
@@ -114,7 +114,7 @@ public class VmItemBehavior extends ItemBehavior
                 null, null);
     }
 
-    private void Shutdown()
+    private void shutdown()
     {
         VM entity = (VM) getItem().getEntity();
         Frontend.RunAction(VdcActionType.ShutdownVm, new ShutdownVmParameters(entity.getId(), true));
@@ -126,23 +126,23 @@ public class VmItemBehavior extends ItemBehavior
         Frontend.RunAction(VdcActionType.StopVm, new StopVmParameters(entity.getId(), StopVmTypeEnum.NORMAL));
     }
 
-    private void Pause()
+    private void pause()
     {
         VM entity = (VM) getItem().getEntity();
         Frontend.RunAction(VdcActionType.HibernateVm, new HibernateVmParameters(entity.getId()));
     }
 
-    private void Run()
+    private void run()
     {
         VM entity = (VM) getItem().getEntity();
         // use sysprep iff the vm is not initialized and vm has Win OS
-        boolean reinitialize = !entity.isInitialized() && AsyncDataProvider.IsWindowsOsType(entity.getVmOs());
+        boolean reinitialize = !entity.isInitialized() && AsyncDataProvider.isWindowsOsType(entity.getVmOs());
         RunVmParams tempVar = new RunVmParams(entity.getId());
         tempVar.setReinitialize(reinitialize);
         Frontend.RunAction(VdcActionType.RunVm, tempVar);
     }
 
-    private void UpdateProperties()
+    private void updateProperties()
     {
         VM entity = (VM) getItem().getEntity();
 
@@ -162,7 +162,7 @@ public class VmItemBehavior extends ItemBehavior
         getItem().getDefaultConsoleModel().setEntity(entity);
 
         // Support RDP console for windows VMs.
-        if (AsyncDataProvider.IsWindowsOsType(entity.getVmOs()))
+        if (AsyncDataProvider.isWindowsOsType(entity.getVmOs()))
         {
             if (getItem().getAdditionalConsoleModel() == null)
             {
@@ -176,7 +176,7 @@ public class VmItemBehavior extends ItemBehavior
         }
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         VM entity = (VM) getItem().getEntity();
 
@@ -201,7 +201,7 @@ public class VmItemBehavior extends ItemBehavior
         // Check whether a VM is from the manual pool.
         if (entity.getVmPoolId() != null)
         {
-            AsyncDataProvider.GetPoolById(new AsyncQuery(this,
+            AsyncDataProvider.getPoolById(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -209,18 +209,18 @@ public class VmItemBehavior extends ItemBehavior
                             VmItemBehavior behavior = (VmItemBehavior) target;
                             VmPool pool = (VmPool) returnValue;
                             boolean isManualPool = pool.getVmPoolType() == VmPoolType.Manual;
-                            behavior.UpdateCommandsAccordingToPoolType(isManualPool);
+                            behavior.updateCommandsAccordingToPoolType(isManualPool);
 
                         }
                     }), entity.getVmPoolId().getValue());
         }
         else
         {
-            UpdateCommandsAccordingToPoolType(true);
+            updateCommandsAccordingToPoolType(true);
         }
     }
 
-    public void UpdateCommandsAccordingToPoolType(boolean isManualPool)
+    public void updateCommandsAccordingToPoolType(boolean isManualPool)
     {
         getItem().getReturnVmCommand().setIsAvailable(!isManualPool);
         getItem().getRunCommand().setIsAvailable(isManualPool);

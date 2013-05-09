@@ -36,8 +36,8 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
 
     @Override
     protected void init() {
-        String newNicName = AsyncDataProvider.GetNewNicName(getVmNicList());
-        getNicType().setItems(AsyncDataProvider.GetNicTypeList(getVm().getOs(), false));
+        String newNicName = AsyncDataProvider.getNewNicName(getVmNicList());
+        getNicType().setItems(AsyncDataProvider.getNicTypeList(getVm().getOs(), false));
         initSelectedType();
         getName().setEntity(newNicName);
         initMAC();
@@ -87,7 +87,7 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
 
     @Override
     protected void initSelectedType() {
-        getNicType().setSelectedItem(AsyncDataProvider.GetDefaultNicType(getVm().getOs()));
+        getNicType().setSelectedItem(AsyncDataProvider.getDefaultNicType(getVm().getOs()));
     }
 
     @Override

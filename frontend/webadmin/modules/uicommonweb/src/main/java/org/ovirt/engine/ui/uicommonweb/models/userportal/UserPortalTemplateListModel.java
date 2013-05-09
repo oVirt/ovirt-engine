@@ -23,7 +23,7 @@ public class UserPortalTemplateListModel extends TemplateListModel
     @Override
     protected void syncSearch()
     {
-        AsyncDataProvider.GetAllVmTemplates(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getAllVmTemplates(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 ((UserPortalTemplateListModel) model).setItems((Iterable) returnValue);
@@ -32,7 +32,7 @@ public class UserPortalTemplateListModel extends TemplateListModel
     }
 
     @Override
-    protected void UpdateActionAvailability()
+    protected void updateActionAvailability()
     {
         VmTemplate item = (VmTemplate) getSelectedItem();
         if (item != null)

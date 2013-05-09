@@ -45,7 +45,7 @@ public class SelectionTreeNodeModel extends EntityModel
             onPropertyChanged(new PropertyChangedEventArgs("IsSelectedNullable")); //$NON-NLS-1$
             if (!getIsSelectedNotificationPrevent())
             {
-                IsSelectedChanged();
+                isSelectedChanged();
             }
         }
     }
@@ -132,11 +132,11 @@ public class SelectionTreeNodeModel extends EntityModel
         setChildren(new ArrayList<SelectionTreeNodeModel>());
     }
 
-    public void IsSelectedChanged()
+    public void isSelectedChanged()
     {
         if (getParent() != null)
         {
-            UpdateParentSelection();
+            updateParentSelection();
         }
         // Children.Each(a => a.IsSelectedNotificationPrevent = true);
         // Children.Each(a => a.IsSelected = IsSelected);
@@ -155,7 +155,7 @@ public class SelectionTreeNodeModel extends EntityModel
         }
     }
 
-    public void UpdateParentSelection()
+    public void updateParentSelection()
     {
         // int selCount = Parent.Children.Count(a => a.IsSelected == true);
         if (getParent() == null || getParent().getChildren() == null)
@@ -195,6 +195,6 @@ public class SelectionTreeNodeModel extends EntityModel
         }
         getParent().setIsSelectedNotificationPrevent(false);
 
-        getParent().UpdateParentSelection();
+        getParent().updateParentSelection();
     }
 }

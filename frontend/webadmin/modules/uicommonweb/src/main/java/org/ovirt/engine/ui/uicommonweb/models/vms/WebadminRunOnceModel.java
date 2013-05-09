@@ -38,7 +38,7 @@ public class WebadminRunOnceModel extends RunOnceModel {
      */
     private void loadHosts() {
         // append just active hosts
-        AsyncDataProvider.GetHostListByCluster(new AsyncQuery(this,
+        AsyncDataProvider.getHostListByCluster(new AsyncQuery(this,
                 new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {

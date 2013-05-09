@@ -137,7 +137,7 @@ public class UICommand extends Model implements ICommand
         return autoRefresh;
     }
 
-    public boolean CanExecute(Object parameter)
+    public boolean canExecute(Object parameter)
     {
         return true;
     }
@@ -147,7 +147,7 @@ public class UICommand extends Model implements ICommand
      *
      * @param parameters
      */
-    public void Execute(Object... parameters)
+    public void execute(Object... parameters)
     {
         if (!getIsAvailable() || !getIsExecutionAllowed())
         {
@@ -167,9 +167,9 @@ public class UICommand extends Model implements ICommand
     /**
      * Execute command with no parameters
      */
-    public void Execute()
+    public void execute()
     {
-        Execute(new Object[0]);
+        execute(new Object[0]);
     }
 
     @Override

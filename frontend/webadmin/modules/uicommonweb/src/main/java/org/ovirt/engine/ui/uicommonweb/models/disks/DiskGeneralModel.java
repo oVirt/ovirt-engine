@@ -151,7 +151,7 @@ public class DiskGeneralModel extends EntityModel
 
         if (super.getEntity() != null)
         {
-            UpdateProperties();
+            updateProperties();
         }
     }
 
@@ -160,10 +160,10 @@ public class DiskGeneralModel extends EntityModel
     {
         super.entityPropertyChanged(sender, e);
 
-        UpdateProperties();
+        updateProperties();
     }
 
-    private void UpdateProperties()
+    private void updateProperties()
     {
         Disk disk = (Disk) getEntity();
 

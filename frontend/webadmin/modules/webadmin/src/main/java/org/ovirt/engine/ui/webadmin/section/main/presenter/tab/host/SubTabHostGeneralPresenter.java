@@ -200,7 +200,7 @@ public class SubTabHostGeneralPresenter extends AbstractSubTabPresenter<VDS, Hos
                 new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent event) {
-                        command.Execute();
+                        command.execute();
                     }
                 }
                 );

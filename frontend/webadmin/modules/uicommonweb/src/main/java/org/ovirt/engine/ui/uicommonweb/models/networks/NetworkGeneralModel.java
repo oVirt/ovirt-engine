@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class NetworkGeneralModel extends EntityModel
 {
     private final String ENGINE_NETWORK_NAME =
-            (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
+            (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
 
     private String name;
     private String role;
@@ -32,7 +32,7 @@ public class NetworkGeneralModel extends EntityModel
 
         if (super.getEntity() != null)
         {
-            UpdateProperties();
+            updateProperties();
         }
     }
 
@@ -40,10 +40,10 @@ public class NetworkGeneralModel extends EntityModel
     protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
 
-        UpdateProperties();
+        updateProperties();
     }
 
-    private void UpdateProperties() {
+    private void updateProperties() {
         Network extendedNetwork = (Network) getEntity();
 
         setName(extendedNetwork.getName());

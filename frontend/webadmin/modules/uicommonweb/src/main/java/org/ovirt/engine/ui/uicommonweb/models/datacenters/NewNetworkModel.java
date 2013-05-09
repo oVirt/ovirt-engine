@@ -50,7 +50,7 @@ public class NewNetworkModel extends NetworkModel {
     public void syncWithBackend() {
         super.syncWithBackend();
         // Get dc- cluster list
-        AsyncDataProvider.GetClusterList(new AsyncQuery(NewNetworkModel.this,
+        AsyncDataProvider.getClusterList(new AsyncQuery(NewNetworkModel.this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object ReturnValue)

@@ -13,7 +13,7 @@ public class RemoveDiskModel extends ConfirmationModel
     }
 
     @Override
-    public boolean Validate()
+    public boolean validate()
     {
         return true;
     }

@@ -27,23 +27,23 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
     }
 
     @Override
-    public void Initialize(SystemTreeItemModel systemTreeSelectedItem)
+    public void initialize(SystemTreeItemModel systemTreeSelectedItem)
     {
-        super.Initialize(systemTreeSelectedItem);
+        super.initialize(systemTreeSelectedItem);
         getModel().getTemplate().setIsChangable(false);
         getModel().getProvisioning().setIsChangable(false);
         getModel().getStorageDomain().setIsChangable(false);
 
         if (template.getStoragePoolId() != null && !template.getStoragePoolId().getValue().equals(NGuid.Empty))
         {
-            AsyncDataProvider.GetDataCenterById(new AsyncQuery(getModel(),
+            AsyncDataProvider.getDataCenterById(new AsyncQuery(getModel(),
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
 
                             UnitVmModel model = (UnitVmModel) target;
                             StoragePool dataCenter = (StoragePool) returnValue;
-                            model.SetDataCenter(model,
+                            model.setDataCenter(model,
                                     new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dataCenter })));
                             model.getDataCenter().setIsChangable(false);
 
@@ -57,13 +57,13 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
     }
 
     @Override
-    public void DataCenter_SelectedItemChanged()
+    public void dataCenter_SelectedItemChanged()
     {
         StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
 
         getModel().setIsHostAvailable(dataCenter.getstorage_pool_type() != StorageType.LOCALFS);
 
-        AsyncDataProvider.GetClusterByServiceList(new AsyncQuery(new Object[] { this, getModel() },
+        AsyncDataProvider.getClusterByServiceList(new AsyncQuery(new Object[] { this, getModel() },
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -81,9 +81,9 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
                             }
                         }
 
-                        model.SetClusters(model, filteredClusters, vmTemplate.getVdsGroupId().getValue());
-                        behavior.InitTemplate();
-                        behavior.InitCdImage();
+                        model.setClusters(model, filteredClusters, vmTemplate.getVdsGroupId().getValue());
+                        behavior.initTemplate();
+                        behavior.initCdImage();
 
                     }
                 }, getModel().getHash()), dataCenter.getId(), true, false);
@@ -95,43 +95,43 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
     }
 
     @Override
-    public void Template_SelectedItemChanged()
+    public void template_SelectedItemChanged()
     {
         // Leave this method empty. Not relevant for template.
     }
 
     @Override
-    public void Cluster_SelectedItemChanged()
+    public void cluster_SelectedItemChanged()
     {
-        UpdateDefaultHost();
-        UpdateNumOfSockets();
+        updateDefaultHost();
+        updateNumOfSockets();
         updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
     }
 
     @Override
-    public void DefaultHost_SelectedItemChanged()
+    public void defaultHost_SelectedItemChanged()
     {
-        UpdateCdImage();
+        updateCdImage();
     }
 
     @Override
-    public void Provisioning_SelectedItemChanged()
-    {
-    }
-
-    @Override
-    public void UpdateMinAllocatedMemory()
+    public void provisioning_SelectedItemChanged()
     {
     }
 
     @Override
-    protected void ChangeDefualtHost() {
-        super.ChangeDefualtHost();
+    public void updateMinAllocatedMemory()
+    {
+    }
+
+    @Override
+    protected void changeDefualtHost() {
+        super.changeDefualtHost();
 
         doChangeDefautlHost(template.getDedicatedVmForVds());
     }
 
-    private void InitTemplate()
+    private void initTemplate()
     {
         // Update model state according to VM properties.
         getModel().getName().setEntity(this.template.getName());
@@ -164,11 +164,11 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         }
         else
         {
-            UpdateDefaultTimeZone();
+            updateDefaultTimeZone();
         }
 
         // Update domain list
-        UpdateDomain();
+        updateDomain();
 
         // Storage domain and provisioning are not available for an existing VM.
         getModel().getStorageDomain().setIsChangable(false);
@@ -187,10 +187,10 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
             }
         }
 
-        InitPriority(this.template.getPriority());
+        initPriority(this.template.getPriority());
     }
 
-    private void InitCdImage()
+    private void initCdImage()
     {
         getModel().getCdImage().setSelectedItem(template.getIsoPath());
 
@@ -198,6 +198,6 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         getModel().getCdImage().setIsChangable(hasCd);
         getModel().getCdAttached().setEntity(hasCd);
 
-        UpdateCdImage();
+        updateCdImage();
     }
 }

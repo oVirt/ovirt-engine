@@ -47,7 +47,7 @@ public class AddClusterRM extends IEnlistmentNotification {
 
         if (!StringHelper.isNullOrEmpty(clusterName)) {
 
-            AsyncDataProvider.GetClusterListByName(new AsyncQuery(this,
+            AsyncDataProvider.getClusterListByName(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object model, Object returnValue) {

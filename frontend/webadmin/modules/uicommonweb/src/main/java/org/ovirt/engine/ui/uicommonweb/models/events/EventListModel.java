@@ -110,7 +110,7 @@ public class EventListModel extends ListWithDetailsModel
 
             @Override
             public void execute() {
-                getRefreshCommand().Execute();
+                getRefreshCommand().execute();
             }
         };
 
@@ -118,7 +118,7 @@ public class EventListModel extends ListWithDetailsModel
     }
 
     @Override
-    public boolean IsSearchStringMatch(String searchString)
+    public boolean isSearchStringMatch(String searchString)
     {
         return searchString.trim().toLowerCase().startsWith("event"); //$NON-NLS-1$
     }
@@ -146,7 +146,7 @@ public class EventListModel extends ListWithDetailsModel
     }
 
     protected void forceRefreshWithoutTimers() {
-        getRefreshCommand().Execute();
+        getRefreshCommand().execute();
     }
 
     @Override
@@ -172,7 +172,7 @@ public class EventListModel extends ListWithDetailsModel
                         auditLog.setCorrelationId(auditLog.getCorrelationId().split("_")[2]); //$NON-NLS-1$
                     }
                 }
-                eventListModel.UpdateItems(list);
+                eventListModel.updateItems(list);
             }
         });
 
@@ -214,7 +214,7 @@ public class EventListModel extends ListWithDetailsModel
 
         if (command == getRefreshCommand()) {
             refreshModel();
-            UpdatePagingAvailability();
+            updatePagingAvailability();
         } else if (command == getDetailsCommand()) {
             details();
         } else if (StringHelper.stringsEqual(command.getName(), "Cancel")) { //$NON-NLS-1$
@@ -228,14 +228,14 @@ public class EventListModel extends ListWithDetailsModel
     }
 
     @Override
-    public void EnsureAsyncSearchStopped()
+    public void ensureAsyncSearchStopped()
     {
-        super.EnsureAsyncSearchStopped();
+        super.ensureAsyncSearchStopped();
 
         timer.stop();
     }
 
-    private void UpdateItems(ArrayList<AuditLog> source)
+    private void updateItems(ArrayList<AuditLog> source)
     {
         if (getItems() == null)
         {

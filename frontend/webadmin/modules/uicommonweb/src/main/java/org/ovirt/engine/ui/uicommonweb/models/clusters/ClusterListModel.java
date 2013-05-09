@@ -200,13 +200,13 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         setGuideCommand(new UICommand("Guide", this)); //$NON-NLS-1$
         setAddMultipleHostsCommand(new UICommand("AddHosts", this)); //$NON-NLS-1$
 
-        UpdateActionAvailability();
+        updateActionAvailability();
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
     }
 
-    public void Guide()
+    public void guide()
     {
         ClusterGuideModel model = new ClusterGuideModel();
         setWindow(model);
@@ -218,7 +218,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             setGuideContext(cluster.getId());
         }
 
-        AsyncDataProvider.GetClusterById(new AsyncQuery(this,
+        AsyncDataProvider.getClusterById(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -269,7 +269,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     }
 
     @Override
-    public boolean IsSearchStringMatch(String searchString)
+    public boolean isSearchStringMatch(String searchString)
     {
         return searchString.trim().toLowerCase().startsWith("cluster"); //$NON-NLS-1$
     }
@@ -291,7 +291,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         setItems(getAsyncResult().getData());
     }
 
-    public void New()
+    public void newEntity()
     {
         if (getWindow() != null)
         {
@@ -299,7 +299,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         }
 
         ClusterModel clusterModel = new ClusterModel();
-        clusterModel.Init(false);
+        clusterModel.init(false);
         setWindow(clusterModel);
         clusterModel.setTitle(ConstantsManager.getInstance().getConstants().newClusterTitle());
         clusterModel.setHashName("new_cluster"); //$NON-NLS-1$
@@ -343,10 +343,10 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                 cModel.getCommands().add(tempVar2);
             }
         };
-        AsyncDataProvider.GetDataCenterList(_asyncQuery);
+        AsyncDataProvider.getDataCenterList(_asyncQuery);
     }
 
-    public void Edit()
+    public void edit()
     {
         final VDSGroup cluster = (VDSGroup) getSelectedItem();
 
@@ -357,7 +357,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
         final ClusterModel clusterModel = new ClusterModel();
         clusterModel.setEntity(cluster);
-        clusterModel.Init(true);
+        clusterModel.init(true);
         clusterModel.getClusterPolicyModel().setEditClusterPolicyFirst(clusterPolicyFirst);
         setWindow(clusterModel);
         clusterModel.setTitle(ConstantsManager.getInstance().getConstants().editClusterTitle());
@@ -373,10 +373,10 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         clusterModel.getClusterPolicyModel().setOverCommitLowLevel(cluster.getlow_utilization());
         clusterModel.getClusterPolicyModel().setOverCommitHighLevel(cluster.gethigh_utilization());
 
-        clusterModel.getClusterPolicyModel().SaveDefaultValues();
+        clusterModel.getClusterPolicyModel().saveDefaultValues();
 
 
-        AsyncDataProvider.GetAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 final boolean isVirtGlusterAllowed = (Boolean) returnValue;
@@ -397,7 +397,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                         }
                     }
                 };
-                AsyncDataProvider.GetVolumeList(asyncQuery, cluster.getname());
+                AsyncDataProvider.getVolumeList(asyncQuery, cluster.getname());
 
                 AsyncQuery asyncQuery1 = new AsyncQuery();
                 asyncQuery1.setModel(clusterModel);
@@ -416,7 +416,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                         }
                     }
                 };
-                AsyncDataProvider.GetVmListByClusterName(asyncQuery1, cluster.getname());
+                AsyncDataProvider.getVmListByClusterName(asyncQuery1, cluster.getname());
             }
         }));
 
@@ -465,7 +465,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         model.getCommands().add(tempVar2);
     }
 
-    public void OnRemove()
+    public void onRemove()
     {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
@@ -480,7 +480,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             prms.add(new VdsGroupParametersBase(((VDSGroup) a).getId()));
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.RemoveVdsGroup, prms,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -488,14 +488,14 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                     public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.StopProgress();
-                        Cancel();
+                        localModel.stopProgress();
+                        cancel();
 
                     }
                 }, model);
     }
 
-    public void OnSave()
+    public void onSave()
     {
         ClusterModel model = (ClusterModel) getWindow();
 
@@ -503,21 +503,21 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                 (model.getIsNew() && (Boolean) model.getEnableOvirtService().getEntity())
                         || (model.getIsEdit() && ((VDSGroup) getSelectedItem()).getcpu_name() != null);
 
-        if (!model.Validate(validateCpu))
+        if (!model.validate(validateCpu))
         {
             return;
         }
         else if (model.getIsNew())
         {
-            OnPreSaveInternal(model);
+            onPreSaveInternal(model);
         }
         else
         {
-            OnSaveConfirmCV(model);
+            onSaveConfirmCV(model);
         }
     }
 
-    private void OnSaveConfirmCV(ClusterModel model)
+    private void onSaveConfirmCV(ClusterModel model)
     {
         if (!((Version) model.getVersion().getSelectedItem()).equals(((VDSGroup) getSelectedItem()).getcompatibility_version())) {
             ConfirmationModel confirmModel = new ConfirmationModel();
@@ -539,16 +539,16 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             tempVar2.setIsCancel(true);
             getConfirmWindow().getCommands().add(tempVar2);
         } else {
-            OnSaveConfirmCpuThreads();
+            onSaveConfirmCpuThreads();
         }
     }
 
-    private void OnSaveConfirmCpuThreads()
+    private void onSaveConfirmCpuThreads()
     {
         ClusterModel model = (ClusterModel) getWindow();
 
         // cancel confirm window if there is one
-        CancelConfirmation();
+        cancelConfirmation();
 
         // CPU thread support is being turned off either explicitly or via version change
         if (!((Boolean) model.getVersionSupportsCpuThreads().getEntity() && (Boolean) model.getCountThreadsAsCores().getEntity())
@@ -572,11 +572,11 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             tempVar2.setIsCancel(true);
             getConfirmWindow().getCommands().add(tempVar2);
         } else {
-            OnSaveInternal();
+            onSaveInternal();
         }
     }
 
-    public void OnPreSaveInternal(ClusterModel model)
+    public void onPreSaveInternal(ClusterModel model)
     {
         if ((Boolean) model.getIsImportGlusterConfiguration().getEntity())
         {
@@ -584,11 +584,11 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         }
         else
         {
-            OnSaveInternal();
+            onSaveInternal();
         }
     }
 
-    public void OnSaveInternal()
+    public void onSaveInternal()
     {
         ClusterModel model = (ClusterModel) getWindow();
 
@@ -598,12 +598,12 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         }
 
         // cancel confirm window if there is
-        CancelConfirmation();
+        cancelConfirmation();
 
-        OnSaveInternalWithModel(model);
+        onSaveInternalWithModel(model);
     }
 
-    private void OnSaveInternalWithModel(final ClusterModel model) {
+    private void onSaveInternalWithModel(final ClusterModel model) {
         VDSGroup cluster = model.getIsNew() ? new VDSGroup() : (VDSGroup) Cloner.clone(getSelectedItem());
 
         Version version = (Version) model.getVersion().getSelectedItem();
@@ -632,7 +632,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         }        cluster.setlow_utilization(model.getClusterPolicyModel().getOverCommitLowLevel());
         cluster.sethigh_utilization(model.getClusterPolicyModel().getOverCommitHighLevel());
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunAction(model.getIsNew() ? VdcActionType.AddVdsGroup : VdcActionType.UpdateVdsGroup,
                 new VdsGroupOperationParameters(cluster),
@@ -645,7 +645,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                             localModel.postOnSaveInternalWithImport(result.getReturnValue());
                         }
                         else {
-                            localModel.PostOnSaveInternal(result.getReturnValue());
+                            localModel.postOnSaveInternal(result.getReturnValue());
                         }
                     }
                 },
@@ -654,7 +654,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
     private void fetchAndImportClusterHosts(final ClusterModel clusterModel)
     {
-        getWindow().StartProgress(null);
+        getWindow().startProgress(null);
         AsyncQuery aQuery = new AsyncQuery();
         aQuery.setModel(this);
         aQuery.setHandleFailure(true);
@@ -662,7 +662,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             @Override
             public void onSuccess(Object model, Object result)
             {
-                getWindow().StopProgress();
+                getWindow().stopProgress();
 
                 VdcQueryReturnValue returnValue = (VdcQueryReturnValue) result;
                 if (returnValue == null) {
@@ -698,7 +698,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                 importClusterHosts(clusterModel, list);
             }
         };
-        AsyncDataProvider.GetGlusterHosts(aQuery,
+        AsyncDataProvider.getGlusterHosts(aQuery,
                 (String) clusterModel.getGlusterHostAddress().getEntity(),
                 (String) clusterModel.getGlusterHostPassword().getEntity(),
                 (String) clusterModel.getGlusterHostFingerprint().getEntity());
@@ -726,7 +726,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     private void importClusterHosts(ClusterModel clusterModel, ArrayList<EntityModel> hostList)
     {
         setWindow(null);
-        getAddMultipleHostsCommand().Execute();
+        getAddMultipleHostsCommand().execute();
 
         final MultipleHostsModel hostsModel = new MultipleHostsModel();
         setWindow(hostsModel);
@@ -762,25 +762,25 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         }
         else
         {
-            OnSaveInternalWithModel(hostsModel.getClusterModel());
+            onSaveInternalWithModel(hostsModel.getClusterModel());
         }
     }
 
-    public void PostOnSaveInternal(VdcReturnValueBase returnValue)
+    public void postOnSaveInternal(VdcReturnValueBase returnValue)
     {
         ClusterModel model = (ClusterModel) getWindow();
 
-        model.StopProgress();
+        model.stopProgress();
 
         if (returnValue != null && returnValue.getSucceeded())
         {
-            Cancel();
+            cancel();
 
             if (model.getIsNew())
             {
                 setGuideContext(returnValue.getActionReturnValue());
-                UpdateActionAvailability();
-                getGuideCommand().Execute();
+                updateActionAvailability();
+                getGuideCommand().execute();
             }
         }
     }
@@ -796,7 +796,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     }
 
     private void addHosts(final MultipleHostsModel hostsModel) {
-        hostsModel.StartProgress(null);
+        hostsModel.startProgress(null);
         ArrayList<VdcActionParametersBase> parametersList = new ArrayList<VdcActionParametersBase>();
         for (Object object : hostsModel.getHosts().getItems()) {
             HostDetailModel hostDetailModel = (HostDetailModel) ((EntityModel) object).getEntity();
@@ -828,7 +828,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
             @Override
             public void executed(FrontendMultipleActionAsyncResult result) {
-                        hostsModel.StopProgress();
+                        hostsModel.stopProgress();
                         boolean isAllCanDoPassed = true;
                         for (VdcReturnValueBase returnValueBase : result.getReturnValue())
                         {
@@ -840,23 +840,23 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                         }
                         if (isAllCanDoPassed)
                         {
-                            Cancel();
+                            cancel();
                         }
             }
         }, null);
     }
 
-    public void Cancel()
+    public void cancel()
     {
-        CancelConfirmation();
+        cancelConfirmation();
 
         setGuideContext(null);
         setWindow(null);
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
-    public void CancelConfirmation()
+    public void cancelConfirmation()
     {
         setConfirmWindow(null);
     }
@@ -865,14 +865,14 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void selectedItemsChanged()
     {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -890,7 +890,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         }
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         getEditCommand().setIsExecutionAllowed(getSelectedItem() != null && getSelectedItems() != null
                 && getSelectedItems().size() == 1);
@@ -926,11 +926,11 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
         if (command == getNewCommand())
         {
-            New();
+            newEntity();
         }
         else if (command == getEditCommand())
         {
-            Edit();
+            edit();
         }
         else if (command == getRemoveCommand())
         {
@@ -938,31 +938,31 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         }
         else if (command == getGuideCommand())
         {
-            Guide();
+            guide();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
-            OnSave();
+            onSave();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
-            OnRemove();
+            onRemove();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnSaveConfirmCpuThreads")) //$NON-NLS-1$
         {
-            OnSaveConfirmCpuThreads();
+            onSaveConfirmCpuThreads();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnSaveInternal")) //$NON-NLS-1$
         {
-            OnSaveInternal();
+            onSaveInternal();
         }
         else if (StringHelper.stringsEqual(command.getName(), "CancelConfirmation")) //$NON-NLS-1$
         {
-            CancelConfirmation();
+            cancelConfirmation();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnSaveHosts")) //$NON-NLS-1$
         {
@@ -984,13 +984,13 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         if (systemTreeSelectedItem != value)
         {
             systemTreeSelectedItem = value;
-            OnSystemTreeSelectedItemChanged();
+            onSystemTreeSelectedItemChanged();
         }
     }
 
-    private void OnSystemTreeSelectedItemChanged()
+    private void onSystemTreeSelectedItemChanged()
     {
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override

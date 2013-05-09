@@ -11,13 +11,13 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 @SuppressWarnings("unused")
 public class RoleTreeView
 {
-    public static ArrayList<SelectionTreeNodeModel> GetRoleTreeView(boolean isReadOnly, boolean isAdmin)
+    public static ArrayList<SelectionTreeNodeModel> getRoleTreeView(boolean isReadOnly, boolean isAdmin)
     {
         RoleNode tree = initTreeView();
         ArrayList<ActionGroup> userActionGroups = null;
         if (isAdmin == false)
         {
-            userActionGroups = GetUserActionGroups();
+            userActionGroups = getUserActionGroups();
         }
 
         ArrayList<SelectionTreeNodeModel> roleTreeView = new ArrayList<SelectionTreeNodeModel>();
@@ -76,7 +76,7 @@ public class RoleTreeView
         return roleTreeView;
     }
 
-    private static ArrayList<ActionGroup> GetUserActionGroups() {
+    private static ArrayList<ActionGroup> getUserActionGroups() {
         ArrayList<ActionGroup> array = new ArrayList<ActionGroup>();
         array.add(ActionGroup.CREATE_VM);
         array.add(ActionGroup.DELETE_VM);

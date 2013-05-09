@@ -151,7 +151,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
 
                         userPortalBasicListModel.setvms(vms);
                         userPortalBasicListModel.setpools(pools);
-                        userPortalBasicListModel.OnVmAndPoolLoad();
+                        userPortalBasicListModel.onVmAndPoolLoad();
                     }
                 }));
     }
@@ -215,10 +215,10 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
     {
         super.onSelectedItemChanged();
 
-        UpdateSelectedEntityDetails();
+        updateSelectedEntityDetails();
     }
 
-    private void UpdateSelectedEntityDetails()
+    private void updateSelectedEntityDetails()
     {
         if (getSelectedItem() == null)
         {
@@ -229,7 +229,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
         if (entity instanceof VM)
         {
             VM vm = (VM) entity;
-            UpdateDetails(vm);
+            updateDetails(vm);
         }
         else if (entity instanceof VmPool)
         {
@@ -244,7 +244,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
                     {
                         VM vm = (VM) ((VdcQueryReturnValue) result).getReturnValue();
                         if (vm != null) {
-                            userPortalBasicListModel.UpdateDetails(vm);
+                            userPortalBasicListModel.updateDetails(vm);
                         }
                     }
                 }
@@ -257,16 +257,16 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
         }
     }
 
-    public void UpdateDetails(VM vm)
+    public void updateDetails(VM vm)
     {
-        getSelectedItemDefinedMemory().setEntity(SizeParser(vm.getVmMemSizeMb()));
+        getSelectedItemDefinedMemory().setEntity(sizeParser(vm.getVmMemSizeMb()));
         getSelectedItemNumOfCpuCores().setEntity(vm.getNumOfCpus() + " " + "(" + vm.getNumOfSockets() //$NON-NLS-1$ //$NON-NLS-2$
                 + " Socket(s), " + vm.getCpuPerSocket() + " Core(s) per Socket)"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     // Temporarily converter
     // TODO: Use converters infrastructure in UICommon
-    public String SizeParser(int sizeInMb)
+    public String sizeParser(int sizeInMb)
     {
         return ((sizeInMb >= 1024 && sizeInMb % 1024 == 0) ? (sizeInMb / 1024 + "GB") : (sizeInMb + "MB")); //$NON-NLS-1$ //$NON-NLS-2$
     }
@@ -278,7 +278,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
     }
 
     @Override
-    public void OnVmAndPoolLoad()
+    public void onVmAndPoolLoad()
     {
         if (getvms() != null && getpools() != null)
         {
@@ -324,7 +324,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
 
             // In userportal 'Basic View': Set 'CanConnectAutomatically' to true if there's one and only one VM in
             // status 'UP' and the other VMs aren't up.
-            setCanConnectAutomatically(GetStatusUpVms(items).size() == 1 && GetUpVms(items).size() == 1);
+            setCanConnectAutomatically(getStatusUpVms(items).size() == 1 && getUpVms(items).size() == 1);
 
             setItems(items);
 

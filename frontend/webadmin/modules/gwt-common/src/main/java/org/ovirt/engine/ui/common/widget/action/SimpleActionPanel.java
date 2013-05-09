@@ -35,7 +35,7 @@ public class SimpleActionPanel<T> extends AbstractActionPanel<T> {
 
     @UiHandler("refreshButton")
     void handleRefreshButtonClick(ClickEvent event) {
-        getDataProvider().getModel().getForceRefreshCommand().Execute();
+        getDataProvider().getModel().getForceRefreshCommand().execute();
     }
 
     @Override

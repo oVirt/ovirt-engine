@@ -67,7 +67,7 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
     @Override
     public void onLogout() {
         // Logout operation happens within the CommonModel SignOut event handler
-        CommonModelManager.instance().SignOut();
+        CommonModelManager.instance().signOut();
         AsyncDataProvider.clearCache();
     }
 

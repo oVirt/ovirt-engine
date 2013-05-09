@@ -68,7 +68,7 @@ public class EditQuotaStorageModel extends EntityModel {
         });
     }
 
-    public boolean Validate() {
+    public boolean validate() {
         IntegerValidation intValidation = new IntegerValidation();
         intValidation.setMinimum(1);
         intValidation.setMaximum(65535);

@@ -189,7 +189,7 @@ public class StorageGeneralModel extends EntityModel
                         }
                     }
                 };
-                AsyncDataProvider.GetStorageConnectionById(_asyncQuery, storageDomain.getStorage(), true);
+                AsyncDataProvider.getStorageConnectionById(_asyncQuery, storageDomain.getStorage(), true);
             }
             else
             {

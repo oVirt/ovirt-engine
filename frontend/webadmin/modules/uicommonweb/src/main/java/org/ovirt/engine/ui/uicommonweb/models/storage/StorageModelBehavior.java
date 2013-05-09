@@ -39,12 +39,12 @@ public abstract class StorageModelBehavior extends Model
         privateHash = value;
     }
 
-    public List<StoragePool> FilterDataCenter(List<StoragePool> source)
+    public List<StoragePool> filterDataCenter(List<StoragePool> source)
     {
         return Linq.toList(Linq.where(source, new Linq.DataCenterNotStatusPredicate(StoragePoolStatus.NotOperational)));
     }
 
-    public void UpdateItemsAvailability()
+    public void updateItemsAvailability()
     {
         if (!Frontend.getQueryStartedEvent().getListeners().contains(this))
             Frontend.getQueryStartedEvent().addListener(this);
@@ -52,7 +52,7 @@ public abstract class StorageModelBehavior extends Model
             Frontend.getQueryCompleteEvent().addListener(this);
     }
 
-    public void FilterUnSelectableModels()
+    public void filterUnSelectableModels()
     {
         // Filter UnSelectable models from AvailableStorageItems list
         ArrayList<Object> filterredItems = new ArrayList<Object>();
@@ -68,7 +68,7 @@ public abstract class StorageModelBehavior extends Model
         getModel().getAvailableStorageItems().setItems(filterredItems);
     }
 
-    public void OnStorageModelUpdated(IStorageModel model)
+    public void onStorageModelUpdated(IStorageModel model)
     {
         // Update models list (the list is used for checking update completion)
         getModel().UpdatedStorageModels.add(model);
@@ -81,10 +81,10 @@ public abstract class StorageModelBehavior extends Model
             getModel().getHost().setItems(new ArrayList<HostModel>());
             getModel().getHost().setSelectedItem(null);
 
-            FilterUnSelectableModels();
+            filterUnSelectableModels();
 
             if (getModel().getSelectedItem() != null) {
-                getModel().UpdateFormat();
+                getModel().updateFormat();
             }
         }
     }
@@ -97,12 +97,12 @@ public abstract class StorageModelBehavior extends Model
         if (ev.matchesDefinition(Frontend.QueryStartedEventDefinition)
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
-            getModel().Frontend_QueryStarted();
+            getModel().frontend_QueryStarted();
         }
         else if (ev.matchesDefinition(Frontend.QueryCompleteEventDefinition)
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
-            getModel().Frontend_QueryComplete();
+            getModel().frontend_QueryComplete();
         }
     }
 }

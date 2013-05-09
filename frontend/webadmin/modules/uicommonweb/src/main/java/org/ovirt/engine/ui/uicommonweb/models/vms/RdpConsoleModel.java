@@ -29,15 +29,15 @@ public class RdpConsoleModel extends ConsoleModel
     {
         setTitle(ConstantsManager.getInstance().getConstants().RDPTitle());
 
-        setrdp((IRdp) TypeResolver.getInstance().Resolve(IRdp.class));
+        setrdp((IRdp) TypeResolver.getInstance().resolve(IRdp.class));
     }
 
     @Override
-    protected void Connect()
+    protected void connect()
     {
         if (getEntity() != null)
         {
-            getLogger().Debug("Connecting to RDP console..."); //$NON-NLS-1$
+            getLogger().debug("Connecting to RDP console..."); //$NON-NLS-1$
 
             getrdp().setAddress(getEntity().getVmHost().split("[ ]", -1)[0]); //$NON-NLS-1$
             getrdp().setGuestID(getEntity().getId().toString());
@@ -51,23 +51,23 @@ public class RdpConsoleModel extends ConsoleModel
             // Try to connect.
             try
             {
-                getrdp().Connect();
-                UpdateActionAvailability();
+                getrdp().connect();
+                updateActionAvailability();
             } catch (RuntimeException ex)
             {
-                getLogger().Error("Exception on RDP connect", ex); //$NON-NLS-1$
+                getLogger().error("Exception on RDP connect", ex); //$NON-NLS-1$
             }
         }
     }
 
     @Override
-    protected void UpdateActionAvailability()
+    protected void updateActionAvailability()
     {
-        super.UpdateActionAvailability();
+        super.updateActionAvailability();
 
         getConnectCommand().setIsExecutionAllowed(getEntity() != null
                 && (getEntity().getStatus() == VMStatus.Up || getEntity().getStatus() == VMStatus.PoweringDown)
-                && AsyncDataProvider.IsWindowsOsType(getEntity().getVmOs()));
+                && AsyncDataProvider.isWindowsOsType(getEntity().getVmOs()));
     }
 
     @Override
@@ -77,11 +77,11 @@ public class RdpConsoleModel extends ConsoleModel
 
         if (getrdp().getDisconnectedEvent() != null && ev.equals(getrdp().getDisconnectedEvent()))
         {
-            Rdp_Disconnected(sender, (ErrorCodeEventArgs) args);
+            rdp_Disconnected(sender, (ErrorCodeEventArgs) args);
         }
     }
 
-    private void Rdp_Disconnected(Object sender, ErrorCodeEventArgs e)
+    private void rdp_Disconnected(Object sender, ErrorCodeEventArgs e)
     {
         getrdp().getDisconnectedEvent().removeListener(this);
 

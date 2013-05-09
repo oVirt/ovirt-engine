@@ -571,7 +571,7 @@ public class VmGeneralModel extends EntityModel
 
         if (getEntity() != null)
         {
-            UpdateProperties();
+            updateProperties();
         }
     }
 
@@ -580,10 +580,10 @@ public class VmGeneralModel extends EntityModel
     {
         super.entityPropertyChanged(sender, e);
 
-        UpdateProperties();
+        updateProperties();
     }
 
-    private void UpdateProperties()
+    private void updateProperties()
     {
         VM vm = (VM) getEntity();
 
@@ -623,10 +623,10 @@ public class VmGeneralModel extends EntityModel
                 vm.getNumOfSockets(),
                 vm.getCpuPerSocket()));
 
-        setHasDomain(AsyncDataProvider.IsWindowsOsType(vm.getVmOs()));
+        setHasDomain(AsyncDataProvider.isWindowsOsType(vm.getVmOs()));
         setDomain(vm.getVmDomain());
 
-        setHasTimeZone(AsyncDataProvider.IsWindowsOsType(vm.getVmOs()));
+        setHasTimeZone(AsyncDataProvider.isWindowsOsType(vm.getVmOs()));
         setTimeZone(vm.getTimeZone());
 
         setHasCustomProperties(!StringHelper.stringsEqual(vm.getCustomProperties(), "")); //$NON-NLS-1$
@@ -682,7 +682,7 @@ public class VmGeneralModel extends EntityModel
         }
     }
 
-    public void UpdateStorageDomain()
+    public void updateStorageDomain()
     {
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);

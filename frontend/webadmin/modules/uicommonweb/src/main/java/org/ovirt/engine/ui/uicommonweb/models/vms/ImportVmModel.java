@@ -162,7 +162,7 @@ public class ImportVmModel extends ListWithDetailsModel {
 
     public void init(Guid storageDomainId) {
         // get Storage pool
-        AsyncDataProvider.GetDataCentersByStorageDomain(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getDataCentersByStorageDomain(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
@@ -183,14 +183,14 @@ public class ImportVmModel extends ListWithDetailsModel {
                 }
                 // get cluster
                 if (dataCenter != null) {
-                    AsyncDataProvider.GetClusterByServiceList(new AsyncQuery(ImportVmModel.this, new INewAsyncCallback() {
+                    AsyncDataProvider.getClusterByServiceList(new AsyncQuery(ImportVmModel.this, new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object model, Object returnValue) {
                             ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
                             getCluster().setItems(clusters);
                             getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
                             // get storage domains
-                            AsyncDataProvider.GetStorageDomainList(new AsyncQuery(ImportVmModel.this,
+                            AsyncDataProvider.getStorageDomainList(new AsyncQuery(ImportVmModel.this,
                                     new INewAsyncCallback() {
 
                                         @Override
@@ -424,7 +424,7 @@ public class ImportVmModel extends ListWithDetailsModel {
         onDataLoad();
 
         checkDestFormatCompatibility();
-        StopProgress();
+        stopProgress();
         getStorage().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
@@ -503,7 +503,7 @@ public class ImportVmModel extends ListWithDetailsModel {
         setDetailModels(list);
     }
 
-    public boolean Validate() {
+    public boolean validate() {
         if (QuotaEnforcementTypeEnum.HARD_ENFORCEMENT.equals(storagePool.getQuotaEnforcementType())) {
             getClusterQuota().validateSelectedItem(
                     new IValidation[] { new NotEmptyValidation() });
@@ -601,6 +601,6 @@ public class ImportVmModel extends ListWithDetailsModel {
         setMessage(message);
         getCommands().clear();
         getCommands().add(getCloseCommand());
-        StopProgress();
+        stopProgress();
     }
 }

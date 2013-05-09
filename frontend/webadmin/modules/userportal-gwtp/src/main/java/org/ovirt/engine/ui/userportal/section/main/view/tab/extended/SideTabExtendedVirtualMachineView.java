@@ -127,7 +127,7 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
                 new ShowMask<UserPortalItemModel>() {
                     @Override
                     public boolean showMask(UserPortalItemModel value) {
-                        return !value.IsVmUp();
+                        return !value.isVmUp();
                     }
                 });
 
@@ -212,7 +212,7 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
                 new ConsoleButtonCommand() {
                     @Override
                     public void execute(UserPortalItemModel model) {
-                        getModel().getEditConsoleCommand().Execute();
+                        getModel().getEditConsoleCommand().execute();
                     }
                 });
         consoleEditCell.setElementIdPrefix(elementIdPrefix);
@@ -275,7 +275,7 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
                     return null;
                 }
 
-                return row.IsVmUp() ?
+                return row.isVmUp() ?
                         applicationResources.sideTabExtendedVmStyle().vmUpRow() :
                             applicationResources.sideTabExtendedVmStyle().vmDownRow();
             }

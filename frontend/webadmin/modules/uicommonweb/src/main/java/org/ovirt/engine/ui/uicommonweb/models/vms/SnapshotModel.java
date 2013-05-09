@@ -164,11 +164,11 @@ public class SnapshotModel extends EntityModel
     }
 
     @Override
-    public void Initialize()
+    public void initialize()
     {
-        super.Initialize();
+        super.initialize();
 
-        StartProgress(null);
+        startProgress(null);
         initMessages();
     }
 
@@ -182,7 +182,7 @@ public class SnapshotModel extends EntityModel
     }
 
     private void initVmSnapshots() {
-        AsyncDataProvider.GetVmSnapshotList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getVmSnapshotList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 SnapshotModel snapshotModel = (SnapshotModel) target;
@@ -190,7 +190,7 @@ public class SnapshotModel extends EntityModel
 
                 if (snapshotModel.showWarningForByVmSnapshotsValidation(snapshots)) {
                     snapshotModel.getCommands().add(getCloseCommand());
-                    snapshotModel.StopProgress();
+                    snapshotModel.stopProgress();
                 }
                 else {
                     snapshotModel.initVmDisks();
@@ -200,7 +200,7 @@ public class SnapshotModel extends EntityModel
     }
 
     private void initVmDisks() {
-        AsyncDataProvider.GetVmDiskList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getVmDiskList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 SnapshotModel snapshotModel = (SnapshotModel) target;
@@ -209,16 +209,16 @@ public class SnapshotModel extends EntityModel
                 VmModelHelper.sendWarningForNonExportableDisks(snapshotModel, disks, VmModelHelper.WarningType.VM_SNAPSHOT);
                 snapshotModel.getCommands().add(getOnSaveCommand());
                 snapshotModel.getCommands().add(getCancelCommand());
-                snapshotModel.StopProgress();
+                snapshotModel.stopProgress();
             }
         }), vm.getId());
     }
 
-    public void UpdateVmConfiguration()
+    public void updateVmConfiguration()
     {
         Snapshot snapshot = ((Snapshot) getEntity());
 
-        AsyncDataProvider.GetVmConfigurationBySnapshot(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getVmConfigurationBySnapshot(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 SnapshotModel snapshotModel = (SnapshotModel) target;
@@ -238,7 +238,7 @@ public class SnapshotModel extends EntityModel
         }), snapshot.getId());
     }
 
-    public boolean Validate()
+    public boolean validate()
     {
         getDescription().validateEntity(new IValidation[] { new NotEmptyValidation(),
                 new SpecialAsciiI18NOrNoneValidation(),
@@ -302,10 +302,10 @@ public class SnapshotModel extends EntityModel
     }
 
     public void onSave() {
-        if (getProgress() != null || !Validate()) {
+        if (getProgress() != null || !validate()) {
             return;
         }
-        StartProgress(null);
+        startProgress(null);
 
         VM vm = getVm();
         ArrayList<VdcActionParametersBase> params = new ArrayList<VdcActionParametersBase>();
@@ -319,8 +319,8 @@ public class SnapshotModel extends EntityModel
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
                         SnapshotModel localModel = (SnapshotModel) result.getState();
-                        localModel.StopProgress();
-                        getCancelCommand().Execute();
+                        localModel.stopProgress();
+                        getCancelCommand().execute();
                     }
                 }, this);
     }

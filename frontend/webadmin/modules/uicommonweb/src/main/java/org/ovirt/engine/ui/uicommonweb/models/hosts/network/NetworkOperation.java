@@ -35,7 +35,7 @@ public enum NetworkOperation {
         protected NetworkOperationCommandTarget getTarget() {
             return new NetworkOperationCommandTarget() {
                 @Override
-                protected void ExecuteNetworkCommand(NetworkItemModel<?> op1,
+                protected void executeNetworkCommand(NetworkItemModel<?> op1,
                         NetworkItemModel<?> op2,
                         List<VdsNetworkInterface> allNics, Object... params) {
                     assert op1 instanceof BondNetworkInterfaceModel;
@@ -50,7 +50,7 @@ public enum NetworkOperation {
                         networksToDetach.add(bondNetwork);
                     }
                     for (LogicalNetworkModel networkToDetach : networksToDetach) {
-                        DETACH_NETWORK.getCommand(networkToDetach, null, allNics).Execute();
+                        DETACH_NETWORK.getCommand(networkToDetach, null, allNics).execute();
                     }
 
                     String bondName = bond.getName();
@@ -82,7 +82,7 @@ public enum NetworkOperation {
         protected NetworkOperationCommandTarget getTarget() {
             return new NetworkOperationCommandTarget() {
                 @Override
-                protected void ExecuteNetworkCommand(NetworkItemModel<?> op1,
+                protected void executeNetworkCommand(NetworkItemModel<?> op1,
                         NetworkItemModel<?> op2,
                         List<VdsNetworkInterface> allNics, Object... params) {
                     assert op1 instanceof LogicalNetworkModel;
@@ -106,7 +106,7 @@ public enum NetworkOperation {
         protected NetworkOperationCommandTarget getTarget() {
             return new NetworkOperationCommandTarget() {
                 @Override
-                protected void ExecuteNetworkCommand(NetworkItemModel<?> op1,
+                protected void executeNetworkCommand(NetworkItemModel<?> op1,
                         NetworkItemModel<?> op2,
                         List<VdsNetworkInterface> allNics, Object... params) {
                     assert op1 instanceof LogicalNetworkModel;
@@ -116,7 +116,7 @@ public enum NetworkOperation {
                     // is network already attached?
                     if (networkToAttach.isAttached()) {
                         // detach first
-                        DETACH_NETWORK.getCommand(op1, null, allNics).Execute();
+                        DETACH_NETWORK.getCommand(op1, null, allNics).execute();
                     }
                     VdsNetworkInterface vlanBridge = networkToAttach.attach(targetNic, true);
                     if (vlanBridge != null) {
@@ -148,7 +148,7 @@ public enum NetworkOperation {
         protected NetworkOperationCommandTarget getTarget() {
             return new NetworkOperationCommandTarget() {
                 @Override
-                protected void ExecuteNetworkCommand(NetworkItemModel<?> op1,
+                protected void executeNetworkCommand(NetworkItemModel<?> op1,
                         NetworkItemModel<?> op2,
                         List<VdsNetworkInterface> allNics, Object... params) {
                     assert op1 instanceof NetworkInterfaceModel && !(op1 instanceof BondNetworkInterfaceModel);
@@ -186,7 +186,7 @@ public enum NetworkOperation {
         protected NetworkOperationCommandTarget getTarget() {
             return new NetworkOperationCommandTarget() {
                 @Override
-                protected void ExecuteNetworkCommand(NetworkItemModel<?> op1,
+                protected void executeNetworkCommand(NetworkItemModel<?> op1,
                         NetworkItemModel<?> op2,
                         List<VdsNetworkInterface> allNics, Object... params) {
                     assert op1 instanceof BondNetworkInterfaceModel;
@@ -197,8 +197,8 @@ public enum NetworkOperation {
                     nics.addAll(((BondNetworkInterfaceModel) op2).getBonded());
 
                     // break both bonds
-                    BREAK_BOND.getCommand(op1, null, allNics).Execute();
-                    BREAK_BOND.getCommand(op2, null, allNics).Execute();
+                    BREAK_BOND.getCommand(op1, null, allNics).execute();
+                    BREAK_BOND.getCommand(op2, null, allNics).execute();
 
                     // param
                     VdsNetworkInterface bond = (VdsNetworkInterface) params[0];
@@ -226,7 +226,7 @@ public enum NetworkOperation {
         protected NetworkOperationCommandTarget getTarget() {
             return new NetworkOperationCommandTarget() {
                 @Override
-                protected void ExecuteNetworkCommand(NetworkItemModel<?> op1,
+                protected void executeNetworkCommand(NetworkItemModel<?> op1,
                         NetworkItemModel<?> op2,
                         List<VdsNetworkInterface> allNics, Object... params) {
                     assert op1 instanceof NetworkInterfaceModel;
@@ -263,10 +263,10 @@ public enum NetworkOperation {
         protected NetworkOperationCommandTarget getTarget() {
             return new NetworkOperationCommandTarget() {
                 @Override
-                protected void ExecuteNetworkCommand(NetworkItemModel<?> op1,
+                protected void executeNetworkCommand(NetworkItemModel<?> op1,
                         NetworkItemModel<?> op2,
                         List<VdsNetworkInterface> allNics, Object... params) {
-                    NetworkOperation.ADD_TO_BOND.getCommand(op2, op1, allNics).Execute();
+                    NetworkOperation.ADD_TO_BOND.getCommand(op2, op1, allNics).execute();
                 }
             };
         }
@@ -288,7 +288,7 @@ public enum NetworkOperation {
         protected NetworkOperationCommandTarget getTarget() {
             return new NetworkOperationCommandTarget() {
                 @Override
-                protected void ExecuteNetworkCommand(NetworkItemModel<?> op1,
+                protected void executeNetworkCommand(NetworkItemModel<?> op1,
                         NetworkItemModel<?> op2,
                         List<VdsNetworkInterface> allNics, Object... params) {
                     assert op1 instanceof NetworkInterfaceModel;
@@ -298,7 +298,7 @@ public enum NetworkOperation {
                     // is there are only two nics, break the bond
                     BondNetworkInterfaceModel bond = nic.getBond();
                     if (bond.getBonded().size() == 2) {
-                        BREAK_BOND.getCommand(bond, null, allNics).Execute();
+                        BREAK_BOND.getCommand(bond, null, allNics).execute();
                     }
                 }
             };
@@ -321,10 +321,10 @@ public enum NetworkOperation {
         protected NetworkOperationCommandTarget getTarget() {
             return new NetworkOperationCommandTarget() {
                 @Override
-                protected void ExecuteNetworkCommand(NetworkItemModel<?> op1,
+                protected void executeNetworkCommand(NetworkItemModel<?> op1,
                         NetworkItemModel<?> op2,
                         List<VdsNetworkInterface> allNics, Object... params) {
-                    DETACH_NETWORK.getCommand(op1, op2, allNics).Execute();
+                    DETACH_NETWORK.getCommand(op1, op2, allNics).execute();
                 }
             };
         }
@@ -491,14 +491,14 @@ public enum NetworkOperation {
         List<LogicalNetworkModel> attachedNetworks = nic.getItems();
         if (attachedNetworks.size() > 0) {
             for (LogicalNetworkModel networkModel : new ArrayList<LogicalNetworkModel>(attachedNetworks)) {
-                DETACH_NETWORK.getCommand(networkModel, null, allNics).Execute();
+                DETACH_NETWORK.getCommand(networkModel, null, allNics).execute();
             }
         }
     }
 
     public static void attachNetworks(NetworkInterfaceModel nic, List<LogicalNetworkModel> networks, List<VdsNetworkInterface> allNics) {
         for (LogicalNetworkModel networkModel : networks) {
-            ATTACH_NETWORK.getCommand(networkModel, nic, allNics).Execute();
+            ATTACH_NETWORK.getCommand(networkModel, nic, allNics).execute();
         }
     }
 
@@ -585,7 +585,7 @@ public enum NetworkOperation {
         return new NetworkOperationCommandTarget() {
 
             @Override
-            protected void ExecuteNetworkCommand(NetworkItemModel<?> op1,
+            protected void executeNetworkCommand(NetworkItemModel<?> op1,
                     NetworkItemModel<?> op2,
                     List<VdsNetworkInterface> allNics,
                     Object... params) {

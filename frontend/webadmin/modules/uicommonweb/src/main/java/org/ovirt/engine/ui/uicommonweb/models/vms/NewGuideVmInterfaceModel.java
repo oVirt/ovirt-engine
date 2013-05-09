@@ -31,7 +31,7 @@ public class NewGuideVmInterfaceModel extends NewVmInterfaceModel {
     @Override
     public void postOnSave() {
         super.postOnSave();
-        getSourceModel().PostAction();
+        getSourceModel().postAction();
     }
 
     @Override
@@ -42,7 +42,7 @@ public class NewGuideVmInterfaceModel extends NewVmInterfaceModel {
     @Override
     protected void cancel() {
         super.cancel();
-        getSourceModel().ResetData();
+        getSourceModel().resetData();
     }
 
 }

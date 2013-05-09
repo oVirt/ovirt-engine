@@ -166,7 +166,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         setChangeQuotaCommand(new UICommand("changeQuota", this)); //$NON-NLS-1$
         setCopyCommand(new UICommand("Copy", this)); //$NON-NLS-1$
 
-        UpdateActionAvailability();
+        updateActionAvailability();
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
@@ -230,7 +230,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         }
     }
 
-    public void Cancel()
+    public void cancel()
     {
         setWindow(null);
         Frontend.Unsubscribe();
@@ -240,17 +240,17 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void selectedItemsChanged()
     {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
-    private void New()
+    private void newEntity()
     {
         NewDiskModel model = new NewDiskModel(getSystemTreeSelectedItem());
         model.setTitle(ConstantsManager.getInstance().getConstants().addVirtualDiskTitle());
@@ -262,15 +262,15 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         cancelCommand.setIsCancel(true);
         model.setCancelCommand(cancelCommand);
 
-        model.Initialize();
+        model.initialize();
     }
 
-    private void Edit()
+    private void edit()
     {
 
     }
 
-    private void Move()
+    private void move()
     {
         ArrayList<DiskImage> disks = (ArrayList<DiskImage>) getSelectedItems();
 
@@ -286,7 +286,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         model.setIsSourceStorageDomainNameAvailable(true);
         model.setEntity(this);
         model.init(disks);
-        model.StartProgress(null);
+        model.startProgress(null);
     }
 
     private void changeQuota()
@@ -302,7 +302,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().assignQuotaForDisk());
         model.setHashName("change_quota_disks"); //$NON-NLS-1$
-        model.StartProgress(null);
+        model.startProgress(null);
         model.init(disks);
 
         UICommand command = new UICommand("onChangeQuota", this); //$NON-NLS-1$
@@ -331,21 +331,21 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
             paramerterList.add(parameters);
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.ChangeQuotaForDisk, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
                         DiskListModel localModel = (DiskListModel) result.getState();
-                        localModel.StopProgress();
-                        Cancel();
+                        localModel.stopProgress();
+                        cancel();
                     }
                 },
                 this);
     }
 
-    private void Copy()
+    private void copy()
     {
         ArrayList<DiskImage> disks = (ArrayList<DiskImage>) getSelectedItems();
 
@@ -360,10 +360,10 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         model.setHashName("copy_disks"); //$NON-NLS-1$
         model.setEntity(this);
         model.init(disks);
-        model.StartProgress(null);
+        model.startProgress(null);
     }
 
-    private void Remove()
+    private void remove()
     {
         if (getWindow() != null)
         {
@@ -405,7 +405,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         model.getCommands().add(tempVar2);
     }
 
-    private void OnRemove()
+    private void onRemove()
     {
         VM vm = (VM) getEntity();
         RemoveDiskModel model = (RemoveDiskModel) getWindow();
@@ -418,21 +418,21 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
             paramerterList.add(parameters);
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.RemoveDisk, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
                         DiskListModel localModel = (DiskListModel) result.getState();
-                        localModel.StopProgress();
-                        Cancel();
+                        localModel.stopProgress();
+                        cancel();
                     }
                 },
                 this);
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         VM vm = (VM) getEntity();
         Disk disk = (Disk) getSelectedItem();
@@ -525,7 +525,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         return true;
     }
 
-    private void CancelConfirm()
+    private void cancelConfirm()
     {
         AbstractDiskModel model = (AbstractDiskModel) getWindow();
         SanStorageModel sanStorageModel = model.getSanStorageModel();
@@ -540,35 +540,35 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
 
         if (command == getNewCommand())
         {
-            New();
+            newEntity();
         }
         else if (command == getEditCommand())
         {
-            Edit();
+            edit();
         }
         else if (command == getRemoveCommand())
         {
-            Remove();
+            remove();
         }
         else if (command == getMoveCommand())
         {
-            Move();
+            move();
         }
         else if (command == getCopyCommand())
         {
-            Copy();
+            copy();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
         else if (StringHelper.stringsEqual(command.getName(), "CancelConfirm")) //$NON-NLS-1$
         {
-            CancelConfirm();
+            cancelConfirm();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
-            OnRemove();
+            onRemove();
         } else if (command == getChangeQuotaCommand()) {
             changeQuota();
         } else if (command.getName().equals("onChangeQuota")) { //$NON-NLS-1$
@@ -577,7 +577,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
     }
 
     @Override
-    public boolean IsSearchStringMatch(String searchString)
+    public boolean isSearchStringMatch(String searchString)
     {
         return searchString.trim().toLowerCase().startsWith("disk"); //$NON-NLS-1$
     }

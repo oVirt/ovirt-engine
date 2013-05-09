@@ -122,7 +122,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
             list.add(new GlusterHookParameters(getEntity().getId(), hook.getId()));
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.DisableGlusterHook, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -130,7 +130,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
                     public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.StopProgress();
+                        localModel.stopProgress();
                         cancelConfirmation();
                     }
                 }, model);
@@ -182,7 +182,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
     @Override
     protected void onEntityChanged() {
         super.onEntityChanged();
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
     @Override

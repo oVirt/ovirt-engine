@@ -29,7 +29,7 @@ public class QuotaEventListModel extends SubTabEventListModel
 
         if (getEntity() != null)
         {
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
         }
         else
         {
@@ -54,7 +54,7 @@ public class QuotaEventListModel extends SubTabEventListModel
 
         if (e.PropertyName.equals("name")) //$NON-NLS-1$
         {
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
         }
     }
 }

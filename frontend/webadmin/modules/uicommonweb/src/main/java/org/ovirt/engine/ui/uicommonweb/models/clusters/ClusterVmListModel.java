@@ -26,7 +26,7 @@ public class ClusterVmListModel extends VmListModel
     protected void onEntityChanged()
     {
         super.onEntityChanged();
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
     @Override
@@ -54,7 +54,7 @@ public class ClusterVmListModel extends VmListModel
 
         if (e.PropertyName.equals("name")) //$NON-NLS-1$
         {
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
         }
     }
 }

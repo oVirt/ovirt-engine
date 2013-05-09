@@ -551,7 +551,7 @@ public class HostModel extends Model
 
     public void setSpmPriorityValue(Integer value) {
         if (spmInitialized) {
-            UpdateSpmPriority(value);
+            updateSpmPriority(value);
         } else {
             postponedSpmPriority = value;
         }
@@ -582,34 +582,34 @@ public class HostModel extends Model
         setTestCommand(new UICommand("Test", new ICommandTarget() { //$NON-NLS-1$
             @Override
             public void executeCommand(UICommand command) {
-                Test();
+                test();
             }
 
             @Override
             public void executeCommand(UICommand uiCommand, Object... parameters) {
-                Test();
+                test();
             }
         }));
         setProxyUpCommand(new UICommand("Up", new ICommandTarget() {    //$NON-NLS-1$
             @Override
             public void executeCommand(UICommand command) {
-                ProxyUp();
+                proxyUp();
             }
 
             @Override
             public void executeCommand(UICommand uiCommand, Object... parameters) {
-                ProxyUp();
+                proxyUp();
             }
         }));
         setProxyDownCommand(new UICommand("Down", new ICommandTarget() {    //$NON-NLS-1$
             @Override
             public void executeCommand(UICommand command) {
-                ProxyDown();
+                proxyDown();
             }
 
             @Override
             public void executeCommand(UICommand uiCommand, Object... parameters) {
-                ProxyDown();
+                proxyDown();
             }
         }));
 
@@ -629,7 +629,7 @@ public class HostModel extends Model
         IEventListener pmListener = new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                UpdatePmModels();
+                updatePmModels();
             }
         };
 
@@ -678,7 +678,7 @@ public class HostModel extends Model
         getPmProxyPreferencesList().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-               UpdatePmModels();
+               updatePmModels();
             }
         });
 
@@ -698,10 +698,10 @@ public class HostModel extends Model
 
         setSpmPriority(new ListModel());
 
-        InitSpmPriorities();
+        initSpmPriorities();
     }
 
-    private void ProxyUp() {
+    private void proxyUp() {
         if (getPmProxyPreferencesList().getItems() == null) {
             return;
         }
@@ -720,7 +720,7 @@ public class HostModel extends Model
         }
     }
 
-    private void ProxyDown() {
+    private void proxyDown() {
         if (getPmProxyPreferencesList().getItems() == null) {
             return;
         }
@@ -743,23 +743,23 @@ public class HostModel extends Model
     int maxSpmPriority;
     int defaultSpmPriority;
 
-    private void InitSpmPriorities() {
+    private void initSpmPriorities() {
 
-        AsyncDataProvider.GetMaxSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getMaxSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
 
                 HostModel model = (HostModel) target;
 
                 model.maxSpmPriority = (Integer) returnValue;
-                InitSpmPriorities1();
+                initSpmPriorities1();
             }
         }));
     }
 
-    private void InitSpmPriorities1() {
+    private void initSpmPriorities1() {
 
-        AsyncDataProvider.GetDefaultSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getDefaultSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
 
@@ -768,7 +768,7 @@ public class HostModel extends Model
                 model.defaultSpmPriority = (Integer) returnValue;
 
                 if (postponedSpmPriority != null) {
-                    UpdateSpmPriority(postponedSpmPriority);
+                    updateSpmPriority(postponedSpmPriority);
                 }
 
                 spmInitialized = true;
@@ -776,7 +776,7 @@ public class HostModel extends Model
         }));
     }
 
-    private void UpdateSpmPriority(Integer value) {
+    private void updateSpmPriority(Integer value) {
 
         List<EntityModel> items = new ArrayList<EntityModel>();
 
@@ -833,11 +833,11 @@ public class HostModel extends Model
 
         if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getDataCenter())
         {
-            DataCenter_SelectedItemChanged();
+            dataCenter_SelectedItemChanged();
         }
         else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getCluster())
         {
-            Cluster_SelectedItemChanged();
+            cluster_SelectedItemChanged();
         } else if (sender == getConsoleAddressEnabled()) {
             consoleAddressChanged();
         }
@@ -848,7 +848,7 @@ public class HostModel extends Model
         getConsoleAddress().setIsChangable(enabled);
     }
 
-    private void DataCenter_SelectedItemChanged()
+    private void dataCenter_SelectedItemChanged()
     {
         StoragePool dataCenter = (StoragePool) getDataCenter().getSelectedItem();
         if (dataCenter != null)
@@ -893,16 +893,16 @@ public class HostModel extends Model
                 }
             };
 
-            AsyncDataProvider.GetClusterList(_asyncQuery, dataCenter.getId());
+            AsyncDataProvider.getClusterList(_asyncQuery, dataCenter.getId());
         }
     }
 
-    private void Cluster_SelectedItemChanged()
+    private void cluster_SelectedItemChanged()
     {
         VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
         if (cluster != null)
         {
-            AsyncDataProvider.GetPmTypeList(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getPmTypeList(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object model, Object returnValue) {
 
@@ -992,7 +992,7 @@ public class HostModel extends Model
         return dict;
     }
 
-    private void UpdatePmModels()
+    private void updatePmModels()
     {
         boolean isPm = (Boolean) getIsPm().getEntity();
 
@@ -1019,7 +1019,7 @@ public class HostModel extends Model
 
         String pmType = (String) getPmType().getSelectedItem();
         if (!StringHelper.isNullOrEmpty(pmType)) {
-            AsyncDataProvider.GetPmOptions(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getPmOptions(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object model, Object returnValue) {
 
@@ -1055,7 +1055,7 @@ public class HostModel extends Model
 
         String pmSecondaryType = (String) getPmSecondaryType().getSelectedItem();
         if (!StringHelper.isNullOrEmpty(pmSecondaryType)) {
-            AsyncDataProvider.GetPmOptions(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getPmOptions(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object model, Object returnValue) {
 
@@ -1088,12 +1088,12 @@ public class HostModel extends Model
     }
 
         // Validate user input.
-    public void Test()
+    public void test()
         {
         Boolean isPmEnabled = (Boolean) getIsPm().getEntity();
         boolean isPrimary = isPmPrimarySelected();
             getCluster().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
-            ValidatePmModels(isPrimary);
+            validatePmModels(isPrimary);
 
         if (isPrimary && (!getManagementIp().getIsValid()
             || !getPmUserName().getIsValid()
@@ -1166,7 +1166,7 @@ public class HostModel extends Model
                 , true));
     }
 
-    private void ValidatePmModels(boolean primary)
+    private void validatePmModels(boolean primary)
     {
         EntityModel ip = primary ? getManagementIp() : getPmSecondaryIp();
         EntityModel userName = primary ? getPmUserName() : getPmSecondaryUserName();
@@ -1183,7 +1183,7 @@ public class HostModel extends Model
         options.validateEntity(new IValidation[] {new KeyValuePairValidation(true)});
     }
 
-    public boolean Validate()
+    public boolean validate()
     {
         getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new LengthValidation(255),
                 new BaseI18NValidation() {
@@ -1218,7 +1218,7 @@ public class HostModel extends Model
         if ((Boolean) getIsPm().getEntity())
         {
             // If PM enabled primary fencing options must be specified, ensure that.
-            ValidatePmModels(true);
+            validatePmModels(true);
 
             // Secondary fencing options aren't mandatory, only ensure there was set
             // if one of the related fields was filled.
@@ -1236,7 +1236,7 @@ public class HostModel extends Model
                 getPmSecondarySlot().setIsValid(true);
                 getPmSecondaryOptions().setIsValid(true);
 
-                ValidatePmModels(false);
+                validatePmModels(false);
             }
         }
 

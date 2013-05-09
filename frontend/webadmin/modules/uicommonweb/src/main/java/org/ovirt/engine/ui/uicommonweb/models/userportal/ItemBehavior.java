@@ -25,11 +25,11 @@ public abstract class ItemBehavior
         setItem(item);
     }
 
-    public abstract void OnEntityChanged();
+    public abstract void onEntityChanged();
 
-    public abstract void EntityPropertyChanged(PropertyChangedEventArgs e);
+    public abstract void entityPropertyChanged(PropertyChangedEventArgs e);
 
-    public abstract void ExecuteCommand(UICommand command);
+    public abstract void executeCommand(UICommand command);
 
     public abstract void eventRaised(Event ev, Object sender, EventArgs args);
 }

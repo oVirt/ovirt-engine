@@ -78,14 +78,14 @@ public class KeyValueLineWidget extends Composite implements HasEditorDriver<Key
         plusButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                object.getAddLine().Execute();
+                object.getAddLine().execute();
             }
         });
 
         minusButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                object.getRemoveLine().Execute();
+                object.getRemoveLine().execute();
             }
         });
 

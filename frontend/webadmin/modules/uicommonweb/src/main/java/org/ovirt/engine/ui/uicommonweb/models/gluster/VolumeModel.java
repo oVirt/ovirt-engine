@@ -152,7 +152,7 @@ public class VolumeModel extends Model {
                         && !validateBrickCount()
                         && getAddBricksCommand().getIsExecutionAllowed())
                 {
-                    getAddBricksCommand().Execute();
+                    getAddBricksCommand().execute();
                 }
             }
         });
@@ -335,7 +335,7 @@ public class VolumeModel extends Model {
                 volumeBrickModel.getServers().setItems(hostList);
             }
         };
-        AsyncDataProvider.GetHostListByCluster(_asyncQuery, ((VDSGroup) getCluster().getSelectedItem()).getname());
+        AsyncDataProvider.getHostListByCluster(_asyncQuery, ((VDSGroup) getCluster().getSelectedItem()).getname());
 
         // TODO: fetch the mount points to display
         if (getBricks().getItems() != null)
@@ -565,7 +565,7 @@ public class VolumeModel extends Model {
             };
 
             // load clusters of Gluster type
-            AsyncDataProvider.GetClusterByServiceList(_asyncQuery, dataCenter.getId(), false, true);
+            AsyncDataProvider.getClusterByServiceList(_asyncQuery, dataCenter.getId(), false, true);
         }
     }
 

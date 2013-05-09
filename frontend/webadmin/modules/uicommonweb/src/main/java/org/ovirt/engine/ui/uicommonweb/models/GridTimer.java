@@ -105,7 +105,7 @@ public abstract class GridTimer extends Timer implements HasValueChangeHandlers<
     }
 
     public static final int DEFAULT_NORMAL_RATE = ((Configurator) TypeResolver.getInstance()
-            .Resolve(Configurator.class)).getPollingTimerInterval();
+            .resolve(Configurator.class)).getPollingTimerInterval();
 
     private static final Logger logger = Logger.getLogger(GridTimer.class.getName());
 

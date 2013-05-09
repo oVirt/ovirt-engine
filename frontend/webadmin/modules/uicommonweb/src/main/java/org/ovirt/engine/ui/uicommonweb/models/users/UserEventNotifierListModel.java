@@ -66,7 +66,7 @@ public class UserEventNotifierListModel extends SearchableListModel
     protected void onEntityChanged()
     {
         super.onEntityChanged();
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
     @Override
@@ -102,7 +102,7 @@ public class UserEventNotifierListModel extends SearchableListModel
         setItems(getAsyncResult().getData());
     }
 
-    public void ManageEvents()
+    public void manageEvents()
     {
         EventNotificationModel model = new EventNotificationModel();
         setWindow(model);
@@ -113,7 +113,7 @@ public class UserEventNotifierListModel extends SearchableListModel
         ArrayList<EventNotificationEntity> eventTypes =
                 ApplicationModeHelper.getModeSpecificEventNotificationTypeList();
         Map<EventNotificationEntity, HashSet<AuditLogType>> availableEvents =
-                AsyncDataProvider.GetAvailableNotificationEvents();
+                AsyncDataProvider.getAvailableNotificationEvents();
 
         Translator eventNotificationEntityTranslator = EnumTranslator.Create(EventNotificationEntity.class);
         Translator auditLogTypeTranslator = EnumTranslator.Create(AuditLogType.class);
@@ -161,7 +161,7 @@ public class UserEventNotifierListModel extends SearchableListModel
             }
             if (list.get(list.size() - 1).getChildren().size() > 0)
             {
-                list.get(list.size() - 1).getChildren().get(0).UpdateParentSelection();
+                list.get(list.size() - 1).getChildren().get(0).updateParentSelection();
             }
         }
 
@@ -187,11 +187,11 @@ public class UserEventNotifierListModel extends SearchableListModel
         model.getCommands().add(tempVar2);
     }
 
-    public void OnSave()
+    public void onSave()
     {
         EventNotificationModel model = (EventNotificationModel) getWindow();
 
-        if (!model.Validate())
+        if (!model.validate())
         {
             return;
         }
@@ -304,10 +304,10 @@ public class UserEventNotifierListModel extends SearchableListModel
         {
             Frontend.RunMultipleAction(VdcActionType.AddEventSubscription, toAddList);
         }
-        Cancel();
+        cancel();
     }
 
-    public void Cancel()
+    public void cancel()
     {
         setWindow(null);
     }
@@ -316,10 +316,10 @@ public class UserEventNotifierListModel extends SearchableListModel
     protected void itemsChanged()
     {
         super.itemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         if (getEntity() == null || getEntity().getIsGroup() == true)
         {
@@ -338,15 +338,15 @@ public class UserEventNotifierListModel extends SearchableListModel
 
         if (command == getManageEventsCommand())
         {
-            ManageEvents();
+            manageEvents();
         }
         if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
-            OnSave();
+            onSave();
         }
         if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
     }
 

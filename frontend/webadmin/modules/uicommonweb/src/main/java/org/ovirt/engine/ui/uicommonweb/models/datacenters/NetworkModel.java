@@ -23,7 +23,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 public abstract class NetworkModel extends Model
 {
     protected static String ENGINE_NETWORK =
-            (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
+            (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
 
     private EntityModel privateName;
     private EntityModel privateDescription;
@@ -224,7 +224,7 @@ public abstract class NetworkModel extends Model
         return sourceListModel;
     }
 
-    public boolean Validate()
+    public boolean validate()
     {
         RegexValidation tempVar = new RegexValidation();
         tempVar.setExpression("^[A-Za-z0-9_]{1,15}$"); //$NON-NLS-1$
@@ -271,13 +271,13 @@ public abstract class NetworkModel extends Model
 
         // Get IsSupportBridgesReportByVDSM
         boolean isSupportBridgesReportByVDSM =
-                (Boolean) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.SupportBridgesReportByVDSM,
+                (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SupportBridgesReportByVDSM,
                         dc.getcompatibility_version().toString());
         setSupportBridgesReportByVDSM(isSupportBridgesReportByVDSM);
 
         // Get IsMTUOverrideSupported
         boolean isMTUOverrideSupported =
-                (Boolean) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.MTUOverrideSupported,
+                (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MTUOverrideSupported,
                         dc.getcompatibility_version().toString());
 
         setMTUOverrideSupported(isMTUOverrideSupported);
@@ -326,7 +326,7 @@ public abstract class NetworkModel extends Model
         {
             cancel();
         }
-        StopProgress();
+        stopProgress();
     }
 
     private void cancel() {
@@ -336,7 +336,7 @@ public abstract class NetworkModel extends Model
 
     public void onSave()
     {
-        if (!Validate())
+        if (!validate())
         {
             return;
         }

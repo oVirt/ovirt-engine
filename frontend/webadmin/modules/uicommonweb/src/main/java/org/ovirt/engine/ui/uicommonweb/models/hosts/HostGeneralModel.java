@@ -274,7 +274,7 @@ public class HostGeneralModel extends EntityModel
     }
 
     private void retrieveMaxSpmPriority() {
-        AsyncDataProvider.GetMaxSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getMaxSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 spmMaxPriorityValue = (Integer) returnValue;
@@ -284,7 +284,7 @@ public class HostGeneralModel extends EntityModel
     }
 
     private void retrieveDefaultSpmPriority() {
-        AsyncDataProvider.GetDefaultSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getDefaultSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 spmDefaultPriorityValue = (Integer) returnValue;
@@ -795,7 +795,7 @@ public class HostGeneralModel extends EntityModel
         setGoToEventsCommand(new UICommand("GoToEvents", this)); //$NON-NLS-1$
     }
 
-    public void SaveNICsConfig()
+    public void saveNICsConfig()
     {
         Frontend.RunMultipleAction(VdcActionType.CommitNetworkChanges,
                 new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] {new VdsActionParameters(getEntity().getId())})),
@@ -808,7 +808,7 @@ public class HostGeneralModel extends EntityModel
                 null);
     }
 
-    public void Install() {
+    public void install() {
 
         if (getWindow() != null) {
             return;
@@ -825,9 +825,9 @@ public class HostGeneralModel extends EntityModel
         model.getHostVersion().setEntity(getEntity().getHostOs());
         model.getHostVersion().setIsAvailable(false);
 
-        getWindow().StartProgress(null);
+        getWindow().startProgress(null);
         if (getEntity().getVdsType() == VDSType.oVirtNode) {
-            AsyncDataProvider.GetoVirtISOsList(new AsyncQuery(model,
+            AsyncDataProvider.getoVirtISOsList(new AsyncQuery(model,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -847,8 +847,8 @@ public class HostGeneralModel extends EntityModel
                                         .thereAreNoISOversionsVompatibleWithHostCurrentVerMsg());
                             }
 
-                            AddInstallCommands(model, isos.isEmpty());
-                            getWindow().StopProgress();
+                            addInstallCommands(model, isos.isEmpty());
+                            getWindow().stopProgress();
                         }
                     }),
                     getEntity().getId());
@@ -864,12 +864,12 @@ public class HostGeneralModel extends EntityModel
                 model.getOverrideIpTables().setEntity(true);
             }
 
-            AddInstallCommands(model, false);
-            getWindow().StopProgress();
+            addInstallCommands(model, false);
+            getWindow().stopProgress();
         }
     }
 
-    private void AddInstallCommands(InstallModel model, boolean isOnlyClose) {
+    private void addInstallCommands(InstallModel model, boolean isOnlyClose) {
 
         if (!isOnlyClose) {
 
@@ -886,18 +886,18 @@ public class HostGeneralModel extends EntityModel
         model.getCommands().add(command);
     }
 
-    public void EditHost()
+    public void editHost()
     {
         // Let's the parent model know about request.
         getRequestEditEvent().raise(this, EventArgs.Empty);
     }
 
-    public void OnInstall()
+    public void onInstall()
     {
         InstallModel model = (InstallModel) getWindow();
         final boolean isOVirt = getEntity().getVdsType() == VDSType.oVirtNode;
 
-        if (!model.Validate(isOVirt))
+        if (!model.validate(isOVirt))
         {
             return;
         }
@@ -911,7 +911,7 @@ public class HostGeneralModel extends EntityModel
         param.setoVirtIsoFile(isOVirt ? ((RpmVersion) model.getOVirtISO().getSelectedItem()).getRpmName() : null);
         param.setOverrideFirewall((Boolean) model.getOverrideIpTables().getEntity());
 
-        AsyncDataProvider.GetClusterById(new AsyncQuery(param, new INewAsyncCallback() {
+        AsyncDataProvider.getClusterById(new AsyncQuery(param, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
@@ -927,7 +927,7 @@ public class HostGeneralModel extends EntityModel
                             public void executed(FrontendActionAsyncResult result) {
                                 VdcReturnValueBase returnValue = result.getReturnValue();
                                 if (returnValue != null && returnValue.getSucceeded()) {
-                                    Cancel();
+                                    cancel();
                                 }
                             }
                         }
@@ -938,7 +938,7 @@ public class HostGeneralModel extends EntityModel
 
     }
 
-    public void Cancel()
+    public void cancel()
     {
         setWindow(null);
     }
@@ -950,10 +950,10 @@ public class HostGeneralModel extends EntityModel
 
         if (getEntity() != null)
         {
-            UpdateAlerts();
-            UpdateMemory();
-            UpdateSwapUsed();
-            UpdateProperties();
+            updateAlerts();
+            updateMemory();
+            updateSwapUsed();
+            updateProperties();
         }
     }
 
@@ -966,21 +966,21 @@ public class HostGeneralModel extends EntityModel
                 || e.PropertyName.equals("spm_status") || e.PropertyName.equals("vm_active")) //$NON-NLS-1$ //$NON-NLS-2$
         {
             updateUpgradeAlert = true;
-            UpdateAlerts();
+            updateAlerts();
         }
 
         if (e.PropertyName.equals("usage_mem_percent") || e.PropertyName.equals("physical_mem_mb")) //$NON-NLS-1$ //$NON-NLS-2$
         {
-            UpdateMemory();
+            updateMemory();
         }
 
         if (e.PropertyName.equals("swap_total") || e.PropertyName.equals("swap_free")) //$NON-NLS-1$ //$NON-NLS-2$
         {
-            UpdateSwapUsed();
+            updateSwapUsed();
         }
     }
 
-    private void UpdateProperties()
+    private void updateProperties()
     {
         VDS vds = getEntity();
 
@@ -1022,7 +1022,7 @@ public class HostGeneralModel extends EntityModel
         setAutomaticLargePage(vds.getTransparentHugePagesState());
     }
 
-    private void UpdateAlerts()
+    private void updateAlerts()
     {
         setHasAnyAlert(false);
 
@@ -1074,7 +1074,7 @@ public class HostGeneralModel extends EntityModel
         // available oVirt ISOs that are returned by the backend's GetoVirtISOs query.
         else if (getEntity().getVdsType() == VDSType.oVirtNode && updateUpgradeAlert)
         {
-            AsyncDataProvider.GetoVirtISOsList(new AsyncQuery(this,
+            AsyncDataProvider.getoVirtISOsList(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -1115,12 +1115,12 @@ public class HostGeneralModel extends EntityModel
                 || getHasReinstallAlertInstallFailed() || getHasReinstallAlertMaintenance());
     }
 
-    private void GoToEvents()
+    private void goToEvents()
     {
         this.getRequestGOToEventsTabEvent().raise(this, null);
     }
 
-    private void UpdateMemory()
+    private void updateMemory()
     {
         setFreeMemory(null);
         setUsedMemory(null);
@@ -1131,7 +1131,7 @@ public class HostGeneralModel extends EntityModel
         }
     }
 
-    private void UpdateSwapUsed()
+    private void updateSwapUsed()
     {
         setUsedSwap(null);
         if (getEntity().getSwapTotal() != null && getEntity().getSwapFree() != null)
@@ -1147,27 +1147,27 @@ public class HostGeneralModel extends EntityModel
 
         if (command == getSaveNICsConfigCommand())
         {
-            SaveNICsConfig();
+            saveNICsConfig();
         }
         else if (command == getInstallCommand())
         {
-            Install();
+            install();
         }
         else if (command == getEditHostCommand())
         {
-            EditHost();
+            editHost();
         }
         else if (command == getGoToEventsCommand())
         {
-            GoToEvents();
+            goToEvents();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnInstall")) //$NON-NLS-1$
         {
-            OnInstall();
+            onInstall();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
     }
 }

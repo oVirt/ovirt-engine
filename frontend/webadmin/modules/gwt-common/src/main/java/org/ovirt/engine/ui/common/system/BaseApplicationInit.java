@@ -119,7 +119,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
 
     protected void initUiCommon() {
         // Set up UiCommon type resolver
-        TypeResolver.Initialize(typeResolver);
+        TypeResolver.initialize(typeResolver);
     }
 
     protected void initFrontend() {
@@ -157,7 +157,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
             @Override
             public void execute() {
                 lockInteractionManager.showLoadingIndicator();
-                getLoginModel().AutoLogin(vdcUser);
+                getLoginModel().autoLogin(vdcUser);
             }
         });
 

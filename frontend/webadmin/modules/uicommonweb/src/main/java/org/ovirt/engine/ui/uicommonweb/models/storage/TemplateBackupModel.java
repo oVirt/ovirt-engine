@@ -88,9 +88,9 @@ public class TemplateBackupModel extends VmBackupModel
         model.getCommands().add(tempVar2);
     }
 
-    private void OnRemove()
+    private void onRemove()
     {
-        AsyncDataProvider.GetDataCentersByStorageDomain(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getDataCentersByStorageDomain(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
@@ -113,7 +113,7 @@ public class TemplateBackupModel extends VmBackupModel
             }
         }),
                 getEntity().getId());
-        Cancel();
+        cancel();
     }
 
     @Override
@@ -173,7 +173,7 @@ public class TemplateBackupModel extends VmBackupModel
             return;
         }
 
-        if (!model.Validate())
+        if (!model.validate())
         {
             return;
         }
@@ -216,7 +216,7 @@ public class TemplateBackupModel extends VmBackupModel
             prms.add(importVmTemplateParameters);
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.ImportVmTemplate, prms,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -224,8 +224,8 @@ public class TemplateBackupModel extends VmBackupModel
                     public void executed(FrontendMultipleActionAsyncResult result) {
 
                         TemplateBackupModel templateBackupModel = (TemplateBackupModel) result.getState();
-                        templateBackupModel.getWindow().StopProgress();
-                        templateBackupModel.Cancel();
+                        templateBackupModel.getWindow().stopProgress();
+                        templateBackupModel.cancel();
                         ArrayList<VdcReturnValueBase> retVals =
                                 (ArrayList<VdcReturnValueBase>) result.getReturnValue();
                         if (retVals != null && templateBackupModel.getSelectedItems().size() == retVals.size())
@@ -273,7 +273,7 @@ public class TemplateBackupModel extends VmBackupModel
 
         if (e.PropertyName.equals("storage_domain_shared_status")) //$NON-NLS-1$
         {
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
         }
     }
 
@@ -332,13 +332,13 @@ public class TemplateBackupModel extends VmBackupModel
                     }
                 }
             };
-            AsyncDataProvider.GetDataCentersByStorageDomain(_asyncQuery, getEntity().getId());
+            AsyncDataProvider.getDataCentersByStorageDomain(_asyncQuery, getEntity().getId());
         }
     }
 
     @Override
-    protected void Restore() {
-        super.Restore();
+    protected void restore() {
+        super.restore();
         ((TemplateImportDiskListModel) ((ImportTemplateModel) getWindow()).getImportDiskListModel()).setExtendedItems(extendedItems);
     }
 
@@ -354,11 +354,11 @@ public class TemplateBackupModel extends VmBackupModel
     {
         if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
-            OnRemove();
+            onRemove();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRestore")) //$NON-NLS-1$
         {
-            OnRestore();
+            onRestore();
         } else {
             super.executeCommand(command);
         }

@@ -40,8 +40,8 @@ public class NewDiskModel extends AbstractDiskModel
     }
 
     @Override
-    public void Initialize() {
-        super.Initialize();
+    public void initialize() {
+        super.initialize();
 
         if (getVm() != null) {
             updateSuggestedDiskAlias();
@@ -49,7 +49,7 @@ public class NewDiskModel extends AbstractDiskModel
     }
 
     private void updateSuggestedDiskAlias() {
-        AsyncDataProvider.GetNextAvailableDiskAliasNameByVMId(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getNextAvailableDiskAliasNameByVMId(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 String suggestedDiskAlias = (String) returnValue;
@@ -59,7 +59,7 @@ public class NewDiskModel extends AbstractDiskModel
         }, getHash()), getVm().getId());
     }
 
-    private void OnAttachDisks()
+    private void onAttachDisks()
     {
         ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
         ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
@@ -69,7 +69,7 @@ public class NewDiskModel extends AbstractDiskModel
             @Override
             public void executed(FrontendActionAsyncResult result) {
                 NewDiskModel diskModel = (NewDiskModel) result.getState();
-                diskModel.StopProgress();
+                diskModel.stopProgress();
                 diskModel.cancel();
             }
         };
@@ -88,7 +88,7 @@ public class NewDiskModel extends AbstractDiskModel
             callbacks.add(i == disksToAttach.size() - 1 ? onFinishCallback : null);
         }
 
-        StartProgress(null);
+        startProgress(null);
 
         Frontend.RunMultipleActions(actionTypes, paramerterList, callbacks, null, this);
     }
@@ -127,13 +127,13 @@ public class NewDiskModel extends AbstractDiskModel
         }
         else {
             getIsWipeAfterDelete().setIsChangable(true);
-            getIsWipeAfterDelete().setEntity(AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.SANWipeAfterDelete));
+            getIsWipeAfterDelete().setEntity(AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SANWipeAfterDelete));
         }
     }
 
     @Override
     public void updateInterface(StoragePool datacenter) {
-        getDiskInterface().setItems(AsyncDataProvider.GetDiskInterfaceList());
+        getDiskInterface().setItems(AsyncDataProvider.getDiskInterfaceList());
         getDiskInterface().setSelectedItem(DiskInterface.VirtIO);
     }
 
@@ -154,7 +154,7 @@ public class NewDiskModel extends AbstractDiskModel
         }
 
         if ((Boolean) getIsAttachDisk().getEntity()) {
-            OnAttachDisks();
+            onAttachDisks();
             return;
         }
 
@@ -174,7 +174,7 @@ public class NewDiskModel extends AbstractDiskModel
             lunDisk.setLun(luns);
         }
 
-        StartProgress(null);
+        startProgress(null);
 
         AddDiskParameters parameters = new AddDiskParameters(getVmId(), getDisk());
         if ((Boolean) getIsInternal().getEntity()) {
@@ -186,7 +186,7 @@ public class NewDiskModel extends AbstractDiskModel
             @Override
             public void executed(FrontendActionAsyncResult result) {
                 NewDiskModel diskModel = (NewDiskModel) result.getState();
-                diskModel.StopProgress();
+                diskModel.stopProgress();
                 diskModel.cancel();
             }
         }, this);
@@ -207,7 +207,7 @@ public class NewDiskModel extends AbstractDiskModel
         }
 
         if (!(Boolean) getIsInternal().getEntity() && getSanStorageModel() != null) {
-            getSanStorageModel().Validate();
+            getSanStorageModel().validate();
             if (!getSanStorageModel().getIsValid()) {
                 return false;
             }
@@ -224,7 +224,7 @@ public class NewDiskModel extends AbstractDiskModel
         IntegerValidation sizeValidation = new IntegerValidation();
         sizeValidation.setMinimum(1);
         if (storageType.isBlockDomain()) {
-            sizeValidation.setMaximum((Integer) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.MaxBlockDiskSize));
+            sizeValidation.setMaximum((Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MaxBlockDiskSize));
         }
         getSize().validateEntity(new IValidation[] { new NotEmptyValidation(), sizeValidation });
         getStorageDomain().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });

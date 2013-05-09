@@ -140,7 +140,7 @@ public class HostInterfaceModel extends EntityModel
         if (bootProtocol != value)
         {
             bootProtocol = value;
-            BootProtocolChanged();
+            bootProtocolChanged();
             onPropertyChanged(new PropertyChangedEventArgs("BootProtocol")); //$NON-NLS-1$
         }
     }
@@ -173,7 +173,7 @@ public class HostInterfaceModel extends EntityModel
         if (bootProtocolsAvailable != value)
         {
             bootProtocolsAvailable = value;
-            UpdateCanSpecify();
+            updateCanSpecify();
             onPropertyChanged(new PropertyChangedEventArgs("BootProtocolsAvailable")); //$NON-NLS-1$
         }
     }
@@ -259,7 +259,7 @@ public class HostInterfaceModel extends EntityModel
 
         // call the Network_ValueChanged method to set all
         // properties according to default value of Network:
-        Network_SelectedItemChanged(null);
+        network_SelectedItemChanged(null);
     }
 
     private void revertChanges() {
@@ -277,13 +277,13 @@ public class HostInterfaceModel extends EntityModel
 
         if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getNetwork())
         {
-            Network_SelectedItemChanged(null);
+            network_SelectedItemChanged(null);
         }
     }
 
-    private void Network_SelectedItemChanged(EventArgs e)
+    private void network_SelectedItemChanged(EventArgs e)
     {
-        UpdateCanSpecify();
+        updateCanSpecify();
 
         Network network = (Network) getNetwork().getSelectedItem();
         setBootProtocolsAvailable((network != null && StringHelper.stringsEqual(network.getName(), "None")) ? false //$NON-NLS-1$
@@ -307,15 +307,15 @@ public class HostInterfaceModel extends EntityModel
 
     }
 
-    private void BootProtocolChanged()
+    private void bootProtocolChanged()
     {
-        UpdateCanSpecify();
+        updateCanSpecify();
 
         getAddress().setIsValid(true);
         getSubnet().setIsValid(true);
     }
 
-    private void UpdateCanSpecify()
+    private void updateCanSpecify()
     {
         Network network = (Network) getNetwork().getSelectedItem();
         boolean isChangable = bootProtocolsAvailable && getIsStaticAddress();
@@ -323,7 +323,7 @@ public class HostInterfaceModel extends EntityModel
         getSubnet().setIsChangable(isChangable);
     }
 
-    public boolean Validate()
+    public boolean validate()
     {
         getNetwork().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 

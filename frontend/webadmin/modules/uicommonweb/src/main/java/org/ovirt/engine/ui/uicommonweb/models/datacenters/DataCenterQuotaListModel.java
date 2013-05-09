@@ -39,7 +39,7 @@ public class DataCenterQuotaListModel extends QuotaListModel
     protected void onEntityChanged()
     {
         super.onEntityChanged();
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
     @Override
@@ -73,7 +73,7 @@ public class DataCenterQuotaListModel extends QuotaListModel
 
         if (e.PropertyName.equals("name")) //$NON-NLS-1$
         {
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
         }
     }
 

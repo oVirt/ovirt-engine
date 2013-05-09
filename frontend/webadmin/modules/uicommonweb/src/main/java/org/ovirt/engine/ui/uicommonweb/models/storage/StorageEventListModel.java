@@ -26,7 +26,7 @@ public class StorageEventListModel extends SubTabEventListModel
 
         if (getEntity() != null)
         {
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
         }
         else
         {
@@ -51,7 +51,7 @@ public class StorageEventListModel extends SubTabEventListModel
 
         if (e.PropertyName.equals("storage_name")) //$NON-NLS-1$
         {
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
         }
     }
 }

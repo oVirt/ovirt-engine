@@ -76,7 +76,7 @@ public class ClusterPolicyModel extends EntityModel {
         if (selectionAlgorithm != value)
         {
             selectionAlgorithm = value;
-            SelectionAlgorithmChanged();
+            selectionAlgorithmChanged();
             onPropertyChanged(new PropertyChangedEventArgs("SelectionAlgorithm")); //$NON-NLS-1$
         }
     }
@@ -113,7 +113,7 @@ public class ClusterPolicyModel extends EntityModel {
         }
     }
 
-    public void SaveDefaultValues()
+    public void saveDefaultValues()
     {
         if (getSelectionAlgorithm() == VdsSelectionAlgorithm.EvenlyDistribute)
         {
@@ -145,26 +145,26 @@ public class ClusterPolicyModel extends EntityModel {
 
         if (ClusterPolicyModel.highLimitEvenlyDistributed == null) {
             ClusterPolicyModel.highLimitEvenlyDistributed =
-                    (Integer) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.HighUtilizationForEvenlyDistribute);
+                    (Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.HighUtilizationForEvenlyDistribute);
         }
 
         if (ClusterPolicyModel.lowLimitPowerSaving == null) {
             ClusterPolicyModel.lowLimitPowerSaving =
-                    (Integer) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.LowUtilizationForPowerSave);
+                    (Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.LowUtilizationForPowerSave);
         }
 
         if (ClusterPolicyModel.highLimitPowerSaving == null) {
             ClusterPolicyModel.highLimitPowerSaving =
-                    (Integer) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.HighUtilizationForPowerSave);
+                    (Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.HighUtilizationForPowerSave);
         }
 
         setOverCommitTime(new EntityModel());
 
         // Set all properties according to default selected algorithm:
-        SelectionAlgorithmChanged();
+        selectionAlgorithmChanged();
     }
 
-    public boolean Validate()
+    public boolean validate()
     {
         IntegerValidation tempVar = new IntegerValidation();
         tempVar.setMinimum(1);
@@ -174,7 +174,7 @@ public class ClusterPolicyModel extends EntityModel {
         return getOverCommitTime().getIsValid();
     }
 
-    private void SelectionAlgorithmChanged()
+    private void selectionAlgorithmChanged()
     {
         setHasOverCommitLowLevel(getSelectionAlgorithm() != VdsSelectionAlgorithm.EvenlyDistribute);
 

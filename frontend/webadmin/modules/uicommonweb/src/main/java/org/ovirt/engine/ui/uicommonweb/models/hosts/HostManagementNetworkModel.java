@@ -121,7 +121,7 @@ public class HostManagementNetworkModel extends EntityModel
         if (bootProtocol != value)
         {
             bootProtocol = value;
-            BootProtocolChanged();
+            bootProtocolChanged();
             onPropertyChanged(new PropertyChangedEventArgs("BootProtocol")); //$NON-NLS-1$
         }
     }
@@ -154,7 +154,7 @@ public class HostManagementNetworkModel extends EntityModel
         if (bootProtocolsAvailable != value)
         {
             bootProtocolsAvailable = value;
-            UpdateCanSpecify();
+            updateCanSpecify();
             onPropertyChanged(new PropertyChangedEventArgs("BootProtocolsAvailable")); //$NON-NLS-1$
         }
     }
@@ -248,7 +248,7 @@ public class HostManagementNetworkModel extends EntityModel
         EntityModel tempVar = new EntityModel();
         tempVar.setEntity(false);
         setCommitChanges(tempVar);
-        UpdateFieldsByEntity();
+        updateFieldsByEntity();
     }
 
     private void revertChanges() {
@@ -260,9 +260,9 @@ public class HostManagementNetworkModel extends EntityModel
         }
     }
 
-    private void UpdateFieldsByEntity()
+    private void updateFieldsByEntity()
     {
-        UpdateCanSpecify();
+        updateCanSpecify();
 
         // ** TODO: When BootProtocol will be added to 'network', and when
         // ** BootProtocol, Address, Subnet, and Gateway will be added to
@@ -275,16 +275,16 @@ public class HostManagementNetworkModel extends EntityModel
         // Gateway.Value = network == null ? null : network.gateway;
     }
 
-    private void BootProtocolChanged()
+    private void bootProtocolChanged()
     {
-        UpdateCanSpecify();
+        updateCanSpecify();
 
         getAddress().setIsValid(true);
         getSubnet().setIsValid(true);
         getGateway().setIsValid(true);
     }
 
-    private void UpdateCanSpecify()
+    private void updateCanSpecify()
     {
         boolean isChangable = bootProtocolsAvailable && getIsStaticAddress();
         getAddress().setIsChangable(isChangable);
@@ -292,7 +292,7 @@ public class HostManagementNetworkModel extends EntityModel
         getGateway().setIsChangable(isChangable);
     }
 
-    public boolean Validate()
+    public boolean validate()
     {
         getInterface().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 

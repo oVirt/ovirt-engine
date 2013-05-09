@@ -178,7 +178,7 @@ public class RoleListModel extends ListWithDetailsModel
 
         setSearchPageSize(1000);
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -255,22 +255,22 @@ public class RoleListModel extends ListWithDetailsModel
         setIsQueryFirstTime(false);
     }
 
-    private void SearchAllRoles()
+    private void searchAllRoles()
     {
         setItemsFilter(null);
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
-    private void SearchUserRoles()
+    private void searchUserRoles()
     {
         setItemsFilter(RoleType.USER);
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
-    private void SearchAdminRoles()
+    private void searchAdminRoles()
     {
         setItemsFilter(RoleType.ADMIN);
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
     public void remove()
@@ -303,7 +303,7 @@ public class RoleListModel extends ListWithDetailsModel
         model.getCommands().add(tempVar2);
     }
 
-    public void OnRemove()
+    public void onRemove()
     {
         for (Object item : getSelectedItems())
         {
@@ -311,31 +311,31 @@ public class RoleListModel extends ListWithDetailsModel
             Frontend.RunAction(VdcActionType.RemoveRole, new RolesParameterBase(role.getId()));
         }
 
-        Cancel();
+        cancel();
 
         // Execute search to keep list updated.
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
-    public void Edit()
+    public void edit()
     {
         commandType = CommandType.Edit;
         Role role = (Role) getSelectedItem();
-        InitRoleDialog(role);
+        initRoleDialog(role);
     }
 
-    public void New()
+    public void newEntity()
     {
         commandType = CommandType.New;
         Role role = new Role();
-        InitRoleDialog(role);
+        initRoleDialog(role);
     }
 
-    public void CloneRole()
+    public void cloneRole()
     {
         commandType = CommandType.Clone;
         Role role = (Role) getSelectedItem();
-        InitRoleDialog(role);
+        initRoleDialog(role);
     }
 
     @Override
@@ -376,7 +376,7 @@ public class RoleListModel extends ListWithDetailsModel
         Role role = (Role) getSelectedItem();
         RoleModel model = (RoleModel) getWindow();
         ArrayList<SelectionTreeNodeModel> selectionTree =
-                RoleTreeView.GetRoleTreeView((model.getIsNew() ? false : role.getis_readonly()),
+                RoleTreeView.getRoleTreeView((model.getIsNew() ? false : role.getis_readonly()),
                         (Boolean) model.getIsAdminRole().getEntity());
         for (SelectionTreeNodeModel sm : selectionTree)
         {
@@ -393,12 +393,12 @@ public class RoleListModel extends ListWithDetailsModel
                     if (attachedActions.contains(ActionGroup.valueOf(smGrandChild.getTitle())))
                     {
                         smGrandChild.setIsSelectedNullable(true);
-                        smGrandChild.UpdateParentSelection();
+                        smGrandChild.updateParentSelection();
                     }
 
                     if (smChild.getChildren().get(0).equals(smGrandChild))
                     {
-                        smGrandChild.UpdateParentSelection();
+                        smGrandChild.updateParentSelection();
                     }
                 }
             }
@@ -406,7 +406,7 @@ public class RoleListModel extends ListWithDetailsModel
         model.setPermissionGroupModels(selectionTree);
     }
 
-    private void InitRoleDialog(Role role)
+    private void initRoleDialog(Role role)
     {
         if (getWindow() != null)
         {
@@ -475,7 +475,7 @@ public class RoleListModel extends ListWithDetailsModel
         model.getCommands().add(tempVar3);
     }
 
-    public void OnReset()
+    public void onReset()
     {
         RoleModel model = (RoleModel) getWindow();
 
@@ -494,7 +494,7 @@ public class RoleListModel extends ListWithDetailsModel
         }
     }
 
-    public void OnSave()
+    public void onSave()
     {
         RoleModel model = (RoleModel) getWindow();
 
@@ -506,7 +506,7 @@ public class RoleListModel extends ListWithDetailsModel
         role = commandType != CommandType.Edit ? new Role() : (Role) getSelectedItem();
         role.setType(((Boolean) model.getIsAdminRole().getEntity() ? RoleType.ADMIN : RoleType.USER));
 
-        if (!model.Validate())
+        if (!model.validate())
         {
             return;
         }
@@ -552,7 +552,7 @@ public class RoleListModel extends ListWithDetailsModel
 
         VdcReturnValueBase returnValue;
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         if (commandType != CommandType.Edit)
         {
@@ -566,7 +566,7 @@ public class RoleListModel extends ListWithDetailsModel
                         public void executed(FrontendActionAsyncResult result) {
 
                             RoleListModel localModel = (RoleListModel) result.getState();
-                            localModel.PostOnSaveNew(result.getReturnValue());
+                            localModel.postOnSaveNew(result.getReturnValue());
 
                         }
                     }, this);
@@ -600,12 +600,12 @@ public class RoleListModel extends ListWithDetailsModel
                                     tempVar3.setRoleId(roleListModel.role.getId());
                                     Frontend.RunAction(VdcActionType.AttachActionGroupsToRole, tempVar3);
                                 }
-                                roleListModel.getWindow().StopProgress();
-                                roleListModel.Cancel();
+                                roleListModel.getWindow().stopProgress();
+                                roleListModel.cancel();
                             }
                             else
                             {
-                                roleListModel.getWindow().StopProgress();
+                                roleListModel.getWindow().stopProgress();
                             }
 
                         }
@@ -613,20 +613,20 @@ public class RoleListModel extends ListWithDetailsModel
         }
     }
 
-    public void PostOnSaveNew(VdcReturnValueBase returnValue)
+    public void postOnSaveNew(VdcReturnValueBase returnValue)
     {
         RoleModel model = (RoleModel) getWindow();
 
-        model.StopProgress();
+        model.stopProgress();
 
         if (returnValue != null && returnValue.getSucceeded())
         {
-            Cancel();
-            getSearchCommand().Execute();
+            cancel();
+            getSearchCommand().execute();
         }
     }
 
-    public void Cancel()
+    public void cancel()
     {
         setWindow(null);
     }
@@ -635,27 +635,27 @@ public class RoleListModel extends ListWithDetailsModel
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void selectedItemsChanged()
     {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         boolean temp = getSelectedItems() != null && getSelectedItems().size() == 1;
 
         getCloneCommand().setIsExecutionAllowed(temp);
         getEditCommand().setIsExecutionAllowed(temp);
         getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
-                && !IsAnyRoleReadOnly(getSelectedItems()));
+                && !isAnyRoleReadOnly(getSelectedItems()));
     }
 
-    private boolean IsAnyRoleReadOnly(List roles)
+    private boolean isAnyRoleReadOnly(List roles)
     {
         for (Object item : roles)
         {
@@ -675,11 +675,11 @@ public class RoleListModel extends ListWithDetailsModel
 
         if (command == getNewCommand())
         {
-            New();
+            newEntity();
         }
         else if (command == getEditCommand())
         {
-            Edit();
+            edit();
         }
         else if (command == getRemoveCommand())
         {
@@ -687,35 +687,35 @@ public class RoleListModel extends ListWithDetailsModel
         }
         else if (command == getSearchAllRolesCommand())
         {
-            SearchAllRoles();
+            searchAllRoles();
         }
         else if (command == getSearchAdminRolesCommand())
         {
-            SearchAdminRoles();
+            searchAdminRoles();
         }
         else if (command == getSearchUserRolesCommand())
         {
-            SearchUserRoles();
+            searchUserRoles();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
-            OnSave();
+            onSave();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
-            OnRemove();
+            onRemove();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnReset")) //$NON-NLS-1$
         {
-            OnReset();
+            onReset();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Clone")) //$NON-NLS-1$
         {
-            CloneRole();
+            cloneRole();
         }
     }
 

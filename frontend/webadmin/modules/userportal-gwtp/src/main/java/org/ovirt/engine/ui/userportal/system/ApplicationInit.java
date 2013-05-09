@@ -86,7 +86,7 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
     @Override
     protected void onLogin(UserPortalLoginModel loginModel) {
         // Instead of performing login now, request update for "IsENGINEUser" property
-        loginModel.UpdateIsENGINEUser(loginModel.getLoggedUser());
+        loginModel.updateIsENGINEUser(loginModel.getLoggedUser());
     }
 
     @Override

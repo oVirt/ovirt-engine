@@ -19,5 +19,5 @@ public interface IStorageModel
 
     UICommand getUpdateCommand();
 
-    boolean Validate();
+    boolean validate();
 }

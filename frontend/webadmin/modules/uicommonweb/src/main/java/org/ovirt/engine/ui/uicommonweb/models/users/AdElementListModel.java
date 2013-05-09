@@ -172,7 +172,7 @@ public class AdElementListModel extends SearchableListModel
         setIsTimerDisabled(true);
 
 
-        AsyncDataProvider.GetDomainList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getDomainList(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object model, Object result) {
@@ -181,7 +181,7 @@ public class AdElementListModel extends SearchableListModel
         }), false);
 
 
-        AsyncDataProvider.GetRoleList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getRoleList(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object model, Object result) {
@@ -281,7 +281,7 @@ public class AdElementListModel extends SearchableListModel
                         getusers().add(tempVar2);
                     }
                 }
-                OnUserAndAdGroupsLoaded(adElementListModel);
+                onUserAndAdGroupsLoaded(adElementListModel);
             }
         };
 
@@ -333,7 +333,7 @@ public class AdElementListModel extends SearchableListModel
                     }
                 }
 
-                OnUserAndAdGroupsLoaded(adElementListModel);
+                onUserAndAdGroupsLoaded(adElementListModel);
             }
         };
 
@@ -349,7 +349,7 @@ public class AdElementListModel extends SearchableListModel
         Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("ADUSER@" + getDomain().getSelectedItem() + ": " + searchString, SearchType.AdUser), query); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    private void OnUserAndAdGroupsLoaded(AdElementListModel adElementListModel)
+    private void onUserAndAdGroupsLoaded(AdElementListModel adElementListModel)
     {
         if (adElementListModel.getusers() != null && adElementListModel.getgroups() != null)
         {

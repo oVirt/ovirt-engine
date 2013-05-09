@@ -193,7 +193,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         if (isAllLunsSelected != value)
         {
             isAllLunsSelected = value;
-            IsAllLunsSelectedChanged();
+            isAllLunsSelectedChanged();
             onPropertyChanged(new PropertyChangedEventArgs("IsAllLunsSelected")); //$NON-NLS-1$
         }
     }
@@ -287,7 +287,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         setUseUserAuth(tempVar3);
         getUseUserAuth().getEntityChangedEvent().addListener(this);
 
-        UpdateUserAuthFields();
+        updateUserAuthFields();
     }
 
     @Override
@@ -297,41 +297,41 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
         if (ev.matchesDefinition(SanTargetModel.LoggedInEventDefinition))
         {
-            SanTargetModel_LoggedIn(sender, args);
+            sanTargetModel_LoggedIn(sender, args);
         }
         else if (ev.matchesDefinition(EntityChangedEventDefinition))
         {
-            UseUserAuth_EntityChanged(sender, args);
+            useUserAuth_EntityChanged(sender, args);
         }
         else if (ev.matchesDefinition(Frontend.QueryStartedEventDefinition)
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
-            Frontend_QueryStarted();
+            frontend_QueryStarted();
         }
         else if (ev.matchesDefinition(Frontend.QueryCompleteEventDefinition)
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
-            Frontend_QueryComplete();
+            frontend_QueryComplete();
         }
     }
 
     private int queryCounter;
 
-    private void Frontend_QueryStarted()
+    private void frontend_QueryStarted()
     {
         queryCounter++;
         if (getProgress() == null)
         {
-            StartProgress(null);
+            startProgress(null);
         }
     }
 
-    private void Frontend_QueryComplete()
+    private void frontend_QueryComplete()
     {
         queryCounter--;
         if (queryCounter == 0)
         {
-            StopProgress();
+            stopProgress();
         }
     }
 
@@ -348,7 +348,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         }
 
         if (sanStorageModel.targetsToConnect.isEmpty()) {
-            sanStorageModel.UpdateInternal();
+            sanStorageModel.updateInternal();
         }
     }
 
@@ -388,12 +388,12 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             callbacks.add(loginCallback);
         }
 
-        getContainer().StartProgress(null);
+        getContainer().startProgress(null);
 
         Frontend.RunMultipleActions(actionTypes, paramerters, callbacks, null, this);
     }
 
-    private void SanTargetModel_LoggedIn(Object sender, EventArgs args)
+    private void sanTargetModel_LoggedIn(Object sender, EventArgs args)
     {
         SanTargetModel model = (SanTargetModel) sender;
         targetsToConnect = new ArrayList<SanTargetModel>();
@@ -401,7 +401,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         connectTargets();
     }
 
-    private void LoginAll()
+    private void loginAll()
     {
         // Cast to list of SanTargetModel because we get call
         // to this method only from target/LUNs mode.
@@ -419,9 +419,9 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         connectTargets();
     }
 
-    private void DiscoverTargets()
+    private void discoverTargets()
     {
-        if (!ValidateDiscoverTargetFields())
+        if (!validateDiscoverTargetFields())
         {
             return;
         }
@@ -445,7 +445,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             public void onSuccess(Object target, Object returnValue) {
                 SanStorageModelBase model = (SanStorageModelBase) target;
                 Object result = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                model.PostDiscoverTargetsInternal(result != null ? (ArrayList<StorageServerConnections>) result
+                model.postDiscoverTargetsInternal(result != null ? (ArrayList<StorageServerConnections>) result
                         : new ArrayList<StorageServerConnections>());
             }
         }, true);
@@ -453,7 +453,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         Frontend.RunQuery(VdcQueryType.DiscoverSendTargets, parameters, asyncQuery);
     }
 
-    private void PostDiscoverTargetsInternal(ArrayList<StorageServerConnections> items)
+    private void postDiscoverTargetsInternal(ArrayList<StorageServerConnections> items)
     {
         ArrayList<SanTargetModel> newItems = new ArrayList<SanTargetModel>();
 
@@ -475,14 +475,14 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             setMessage(ConstantsManager.getInstance().getConstants().noNewDevicesWereFoundMsg());
         }
 
-        PostDiscoverTargets(newItems);
+        postDiscoverTargets(newItems);
     }
 
-    protected void PostDiscoverTargets(ArrayList<SanTargetModel> newItems)
+    protected void postDiscoverTargets(ArrayList<SanTargetModel> newItems)
     {
     }
 
-    private boolean ValidateDiscoverTargetFields()
+    private boolean validateDiscoverTargetFields()
     {
         getContainer().getHost().validateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
 
@@ -504,17 +504,17 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     }
 
     @Override
-    public boolean Validate()
+    public boolean validate()
     {
         return true;
     }
 
-    private void UseUserAuth_EntityChanged(Object sender, EventArgs args)
+    private void useUserAuth_EntityChanged(Object sender, EventArgs args)
     {
-        UpdateUserAuthFields();
+        updateUserAuthFields();
     }
 
-    private void UpdateUserAuthFields()
+    private void updateUserAuthFields()
     {
         getUserName().setIsValid(true);
         getUserName().setIsChangable((Boolean) getUseUserAuth().getEntity());
@@ -530,29 +530,29 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
         if (command == getUpdateCommand())
         {
-            Update();
+            update();
         }
         else if (command == getLoginAllCommand())
         {
-            LoginAll();
+            loginAll();
         }
         else if (command == getDiscoverTargetsCommand())
         {
-            DiscoverTargets();
+            discoverTargets();
         }
     }
 
-    protected void Update()
+    protected void update()
     {
-        UpdateInternal();
+        updateInternal();
         setIsValid(true);
     }
 
-    protected void UpdateInternal()
+    protected void updateInternal()
     {
     }
 
-    protected void UpdateLoginAllAvailability()
+    protected void updateLoginAllAvailability()
     {
         List<SanTargetModel> items = (List<SanTargetModel>) getItems();
 
@@ -571,7 +571,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         getLoginAllCommand().setIsExecutionAllowed(allow);
     }
 
-    protected void IsAllLunsSelectedChanged()
+    protected void isAllLunsSelectedChanged()
     {
     }
 }

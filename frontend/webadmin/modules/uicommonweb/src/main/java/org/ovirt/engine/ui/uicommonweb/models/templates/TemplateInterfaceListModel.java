@@ -80,7 +80,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -88,8 +88,8 @@ public class TemplateInterfaceListModel extends SearchableListModel
     {
         super.onEntityChanged();
 
-        getSearchCommand().Execute();
-        UpdateActionAvailability();
+        getSearchCommand().execute();
+        updateActionAvailability();
     }
 
     @Override
@@ -123,7 +123,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
         setItems(getAsyncResult().getData());
     }
 
-    private void New()
+    private void newEntity()
     {
         if (getWindow() != null)
         {
@@ -140,7 +140,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
     }
 
 
-    private void Edit()
+    private void edit()
     {
         if (getWindow() != null)
         {
@@ -165,7 +165,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
         setWindow(model);
     }
 
-    private void Cancel()
+    private void cancel()
     {
         setWindow(null);
     }
@@ -174,17 +174,17 @@ public class TemplateInterfaceListModel extends SearchableListModel
     protected void selectedItemsChanged()
     {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         getNewCommand().setIsExecutionAllowed(cluster != null);
         getEditCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1
@@ -199,11 +199,11 @@ public class TemplateInterfaceListModel extends SearchableListModel
 
         if (command == getNewCommand())
         {
-            New();
+            newEntity();
         }
         else if (command == getEditCommand())
         {
-            Edit();
+            edit();
         }
         else if (command == getRemoveCommand())
         {
@@ -211,7 +211,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
     }
 
@@ -221,15 +221,15 @@ public class TemplateInterfaceListModel extends SearchableListModel
         super.setEntity(value);
 
         if (getEntity() != null) {
-            AsyncDataProvider.GetClusterById(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getClusterById(new AsyncQuery(this, new INewAsyncCallback() {
 
                 @Override
                 public void onSuccess(Object listModel, Object returnValue) {
                     cluster = (VDSGroup) returnValue;
                     isLinkStateChangeable =
-                            (Boolean) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.NetworkLinkingSupported,
+                            (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.NetworkLinkingSupported,
                                     cluster.getcompatibility_version().getValue());
-                    UpdateActionAvailability();
+                    updateActionAvailability();
                 }
             }),
                     ((VmTemplate) getEntity()).getVdsGroupId());

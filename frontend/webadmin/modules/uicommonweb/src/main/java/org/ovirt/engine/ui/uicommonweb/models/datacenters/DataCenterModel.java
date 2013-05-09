@@ -152,7 +152,7 @@ public class DataCenterModel extends Model
 
         setStorageTypeList(new ListModel());
         getStorageTypeList().getSelectedItemChangedEvent().addListener(this);
-        getStorageTypeList().setItems(AsyncDataProvider.GetStoragePoolTypeList());
+        getStorageTypeList().setItems(AsyncDataProvider.getStoragePoolTypeList());
 
         setQuotaEnforceTypeListModel(new ListModel());
         ArrayList<QuotaEnforcementTypeEnum> list = AsyncDataProvider.getQuotaEnforcmentTypes();
@@ -170,7 +170,7 @@ public class DataCenterModel extends Model
                 dataCenterModel.setMaxNameLength((Integer) result);
             }
         };
-        AsyncDataProvider.GetDataCenterMaxNameLength(_asyncQuery);
+        AsyncDataProvider.getDataCenterMaxNameLength(_asyncQuery);
 
     }
 
@@ -181,11 +181,11 @@ public class DataCenterModel extends Model
 
         if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getStorageTypeList())
         {
-            StorageType_SelectedItemChanged();
+            storageType_SelectedItemChanged();
         }
     }
 
-    private void StorageType_SelectedItemChanged()
+    private void storageType_SelectedItemChanged()
     {
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -202,7 +202,7 @@ public class DataCenterModel extends Model
 
                 for (Version item : versions)
                 {
-                    if (AsyncDataProvider.IsVersionMatchStorageType(item, type))
+                    if (AsyncDataProvider.isVersionMatchStorageType(item, type))
                     {
                         list.add(item);
                     }
@@ -249,7 +249,7 @@ public class DataCenterModel extends Model
                     dataCenterModel.getVersion().setSelectedItem(Linq.selectHighestVersion(list));
                     if (getEntity() != null)
                     {
-                        InitVersion();
+                        initVersion();
                     }
                 }
                 else
@@ -259,12 +259,12 @@ public class DataCenterModel extends Model
 
             }
         };
-        AsyncDataProvider.GetDataCenterVersions(_asyncQuery, getDataCenterId());
+        AsyncDataProvider.getDataCenterVersions(_asyncQuery, getDataCenterId());
     }
 
     private boolean isVersionInit = false;
 
-    private void InitVersion()
+    private void initVersion()
     {
         if (!isVersionInit)
         {
@@ -281,7 +281,7 @@ public class DataCenterModel extends Model
         }
     }
 
-    public boolean Validate()
+    public boolean validate()
     {
         getName().validateEntity(new IValidation[] {
                 new NotEmptyValidation(),

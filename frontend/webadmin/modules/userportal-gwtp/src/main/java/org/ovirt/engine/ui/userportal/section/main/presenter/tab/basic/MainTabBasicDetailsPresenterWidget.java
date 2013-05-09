@@ -145,7 +145,7 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
                 if (!isEditConsoleEnabled(modelProvider.getModel().getSelectedItem())) {
                     return;
                 }
-                modelProvider.getModel().getEditConsoleCommand().Execute();
+                modelProvider.getModel().getEditConsoleCommand().execute();
             }
         }));
     }

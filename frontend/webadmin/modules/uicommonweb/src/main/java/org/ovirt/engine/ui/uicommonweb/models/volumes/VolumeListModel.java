@@ -235,7 +235,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                 innerVolumeModel.getCommands().add(command);
             }
         };
-        AsyncDataProvider.GetDataCenterByClusterServiceList(_asyncQuery, false, true);
+        AsyncDataProvider.getDataCenterByClusterServiceList(_asyncQuery, false, true);
 
     }
 
@@ -298,7 +298,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             list.add(new GlusterVolumeActionParameters(volume.getId(), false));
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.DeleteGlusterVolume, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -306,7 +306,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                     public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.StopProgress();
+                        localModel.stopProgress();
                         cancel();
                     }
                 }, model);
@@ -470,17 +470,17 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                             }
                         };
 
-                        AsyncDataProvider.GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionOwnerGroupVirtValue,
+                        AsyncDataProvider.getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionOwnerGroupVirtValue,
                                 AsyncDataProvider.getDefaultConfigurationVersion()),
                                 aQueryInner1);
                     }
                 };
-                AsyncDataProvider.GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionOwnerUserVirtValue,
+                AsyncDataProvider.getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionOwnerUserVirtValue,
                         AsyncDataProvider.getDefaultConfigurationVersion()),
                         aQueryInner);
             }
         };
-        AsyncDataProvider.GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionGroupVirtValue,
+        AsyncDataProvider.getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionGroupVirtValue,
                 AsyncDataProvider.getDefaultConfigurationVersion()),
                 aQuery);
     }
@@ -542,7 +542,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             list.add(new GlusterVolumeActionParameters(volume.getId(), false));
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.StopGlusterVolume, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -550,7 +550,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.StopProgress();
+                        localModel.stopProgress();
                         cancel();
                     }
 
@@ -625,7 +625,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
         volume.setAccessControlList((String) volumeModel.getAllowAccess().getEntity());
 
-        volumeModel.StartProgress(null);
+        volumeModel.startProgress(null);
 
         CreateGlusterVolumeParameters parameter = new CreateGlusterVolumeParameters(volume);
 
@@ -643,7 +643,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     {
         VolumeModel model = (VolumeModel) getWindow();
 
-        model.StopProgress();
+        model.stopProgress();
 
         if (returnValue != null && returnValue.getSucceeded())
         {
@@ -674,17 +674,17 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         if (systemTreeSelectedItem != value)
         {
             systemTreeSelectedItem = value;
-            OnSystemTreeSelectedItemChanged();
+            onSystemTreeSelectedItemChanged();
         }
     }
 
-    private void OnSystemTreeSelectedItemChanged()
+    private void onSystemTreeSelectedItemChanged()
     {
         updateActionAvailability();
     }
 
     @Override
-    public boolean IsSearchStringMatch(String searchString) {
+    public boolean isSearchStringMatch(String searchString) {
         return searchString.trim().toLowerCase().startsWith("volume"); //$NON-NLS-1$
     }
 }

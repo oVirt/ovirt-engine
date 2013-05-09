@@ -45,7 +45,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
         if (isGrouppedByTarget != value)
         {
             isGrouppedByTarget = value;
-            IsGrouppedByTargetChanged();
+            isGrouppedByTargetChanged();
             onPropertyChanged(new PropertyChangedEventArgs("IsGrouppedByTarget")); //$NON-NLS-1$
         }
     }
@@ -95,15 +95,15 @@ public abstract class SanStorageModel extends SanStorageModelBase
         includedLUNs = new ArrayList<LunModel>();
         lastDiscoveredTargets = new ArrayList<SanTargetModel>();
 
-        InitializeItems(null, null);
+        initializeItems(null, null);
     }
 
     @Override
-    protected void PostDiscoverTargets(ArrayList<SanTargetModel> newItems)
+    protected void postDiscoverTargets(ArrayList<SanTargetModel> newItems)
     {
-        super.PostDiscoverTargets(newItems);
+        super.postDiscoverTargets(newItems);
 
-        InitializeItems(null, newItems);
+        initializeItems(null, newItems);
 
         // Remember all discovered targets.
         lastDiscoveredTargets.clear();
@@ -111,17 +111,17 @@ public abstract class SanStorageModel extends SanStorageModelBase
     }
 
     @Override
-    protected void Update()
+    protected void update()
     {
         lastDiscoveredTargets.clear();
 
-        super.Update();
+        super.update();
     }
 
     @Override
-    protected void UpdateInternal()
+    protected void updateInternal()
     {
-        super.UpdateInternal();
+        super.updateInternal();
 
         if (!(getContainer().isNewStorage() || getContainer().isStorageActive())) {
             return;
@@ -130,12 +130,12 @@ public abstract class SanStorageModel extends SanStorageModelBase
         VDS host = (VDS) getContainer().getHost().getSelectedItem();
         if (host == null)
         {
-            ProposeDiscover();
+            proposeDiscover();
             return;
         }
 
-        ClearItems();
-        InitializeItems(null, null);
+        clearItems();
+        initializeItems(null, null);
 
         AsyncQuery asyncQuery = new AsyncQuery(this, new INewAsyncCallback() {
             @Override
@@ -143,7 +143,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
                 SanStorageModel model = (SanStorageModel) target;
                 VdcQueryReturnValue response = (VdcQueryReturnValue) returnValue;
                 if (response.getSucceeded()) {
-                    model.ApplyData((ArrayList<LUNs>) response.getReturnValue(), false);
+                    model.applyData((ArrayList<LUNs>) response.getReturnValue(), false);
                     model.setGetLUNsFailure(""); //$NON-NLS-1$
                 }
                 else {
@@ -158,7 +158,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
                 asyncQuery);
     }
 
-    private void ClearItems()
+    private void clearItems()
     {
         if (getItems() == null)
         {
@@ -217,7 +217,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
     /**
      * Creates model items from the provided list of business entities.
      */
-    public void ApplyData(List<LUNs> source, boolean isIncluded)
+    public void applyData(List<LUNs> source, boolean isIncluded)
     {
         ArrayList<LunModel> newItems = new ArrayList<LunModel>();
 
@@ -263,7 +263,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
                 newItems.add(lunModel);
 
                 // Update isGrayedOut and grayedOutReason properties
-                UpdateGrayedOut(lunModel);
+                updateGrayedOut(lunModel);
 
                 // Remember included LUNs to prevent their removal while updating items.
                 if (isIncluded)
@@ -273,11 +273,11 @@ public abstract class SanStorageModel extends SanStorageModelBase
             }
         }
 
-        InitializeItems(newItems, null);
-        ProposeDiscover();
+        initializeItems(newItems, null);
+        proposeDiscover();
     }
 
-    private void UpdateGrayedOut(LunModel lunModel) {
+    private void updateGrayedOut(LunModel lunModel) {
         Constants constants = ConstantsManager.getInstance().getConstants();
         Messages messages = ConstantsManager.getInstance().getMessages();
 
@@ -303,16 +303,16 @@ public abstract class SanStorageModel extends SanStorageModelBase
         }
     }
 
-    private void IsGrouppedByTargetChanged()
+    private void isGrouppedByTargetChanged()
     {
-        InitializeItems(null, null);
+        initializeItems(null, null);
     }
 
     /**
      * Organizes items according to the current groupping flag. When new items provided takes them in account and add to
      * the Items collection.
      */
-    private void InitializeItems(List<LunModel> newLuns, List<SanTargetModel> newTargets)
+    private void initializeItems(List<LunModel> newLuns, List<SanTargetModel> newTargets)
     {
         if (getIsGrouppedByTarget())
         {
@@ -326,7 +326,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
                 // Convert to list of another type as neccessary.
                 if (!isTargetModelList)
                 {
-                    setItems(ToTargetModelList((List<LunModel>) getItems()));
+                    setItems(toTargetModelList((List<LunModel>) getItems()));
                 }
             }
 
@@ -348,12 +348,12 @@ public abstract class SanStorageModel extends SanStorageModelBase
             // Merge luns into targets.
             if (newLuns != null)
             {
-                MergeLunsToTargets(newLuns, items);
+                mergeLunsToTargets(newLuns, items);
             }
 
             setItems(items);
 
-            UpdateLoginAllAvailability();
+            updateLoginAllAvailability();
         }
         else
         {
@@ -367,7 +367,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
                 // Convert to list of another type as neccessary.
                 if (isTargetModelList)
                 {
-                    setItems(ToLunModelList((List<SanTargetModel>) getItems()));
+                    setItems(toLunModelList((List<SanTargetModel>) getItems()));
                 }
             }
 
@@ -408,7 +408,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
         }
     }
 
-    private void MergeLunsToTargets(List<LunModel> newLuns, List<SanTargetModel> targets)
+    private void mergeLunsToTargets(List<LunModel> newLuns, List<SanTargetModel> targets)
     {
         for (LunModel lun : newLuns)
         {
@@ -483,7 +483,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
         }
     };
 
-    private List<SanTargetModel> ToTargetModelList(List<LunModel> source)
+    private List<SanTargetModel> toTargetModelList(List<LunModel> source)
     {
         ObservableCollection<SanTargetModel> list = new ObservableCollection<SanTargetModel>();
 
@@ -519,7 +519,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
         return list;
     }
 
-    private List<LunModel> ToLunModelList(List<SanTargetModel> source)
+    private List<LunModel> toLunModelList(List<SanTargetModel> source)
     {
         ObservableCollection<LunModel> list = new ObservableCollection<LunModel>();
 
@@ -546,7 +546,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
         return list;
     }
 
-    private void ProposeDiscover()
+    private void proposeDiscover()
     {
         boolean proposeDiscover =
                 !getProposeDiscoverTargets() && (getItems() == null || Linq.count(getItems()) == 0);
@@ -555,7 +555,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
     }
 
     @Override
-    protected void IsAllLunsSelectedChanged()
+    protected void isAllLunsSelectedChanged()
     {
         if (!getIsGrouppedByTarget())
         {
@@ -643,7 +643,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
     }
 
     @Override
-    public boolean Validate()
+    public boolean validate()
     {
         boolean isValid = getAddedLuns().size() > 0 || includedLUNs.size() > 0;
 
@@ -654,6 +654,6 @@ public abstract class SanStorageModel extends SanStorageModelBase
 
         setIsValid(isValid);
 
-        return super.Validate() && getIsValid();
+        return super.validate() && getIsValid();
     }
 }

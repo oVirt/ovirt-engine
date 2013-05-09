@@ -282,10 +282,10 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         setNewTemplateCommand(new UICommand("NewTemplate", this)); //$NON-NLS-1$
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
 
-        UpdateActionAvailability();
+        updateActionAvailability();
 
         if (getCustomPropertiesKeysList() == null) {
-            AsyncDataProvider.GetCustomPropertiesList(new AsyncQuery(this,
+            AsyncDataProvider.getCustomPropertiesList(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -352,7 +352,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
                         userPortalListModel.setvms(vms);
                         userPortalListModel.setpools(pools);
-                        userPortalListModel.OnVmAndPoolLoad();
+                        userPortalListModel.onVmAndPoolLoad();
                     }
                 }));
     }
@@ -469,15 +469,15 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         if (command == getNewDesktopCommand())
         {
-            NewDesktop();
+            newDesktop();
         }
         if (command == getNewServerCommand())
         {
-            NewServer();
+            newServer();
         }
         else if (command == getEditCommand())
         {
-            Edit();
+            edit();
         }
         else if (command == getRemoveCommand())
         {
@@ -485,23 +485,23 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         }
         else if (command == getSaveCommand())
         {
-            OnSave();
+            onSave();
         }
         else if (command == getRunOnceCommand())
         {
-            RunOnce();
+            runOnce();
         }
         else if (command == getChangeCdCommand())
         {
-            ChangeCD();
+            changeCD();
         }
         else if (command == getNewTemplateCommand())
         {
-            NewTemplate();
+            newTemplate();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
-            OnRemove();
+            onRemove();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRunOnce")) //$NON-NLS-1$
         {
@@ -509,22 +509,22 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnChangeCD")) //$NON-NLS-1$
         {
-            OnChangeCD();
+            onChangeCD();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnNewTemplate")) //$NON-NLS-1$
         {
-            OnNewTemplate();
+            onNewTemplate();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
-            OnSave();
+            onSave();
         }
         else if (command.getName().equals("closeVncInfo")) { //$NON-NLS-1$
             setWindow(null);
         }
     }
 
-    private void NewTemplate()
+    private void newTemplate()
     {
         UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
         if (selectedItem == null)
@@ -539,7 +539,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         windowModel.setHashName("new_template"); //$NON-NLS-1$
         windowModel.setIsNew(true);
         windowModel.setVmType(vm.getVmType());
-        windowModel.Initialize(null);
+        windowModel.initialize(null);
         windowModel.getIsTemplatePublic().setEntity(false);
 
         UICommand tempVar = new UICommand("OnNewTemplate", this); //$NON-NLS-1$
@@ -552,7 +552,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         windowModel.getCommands().add(tempVar2);
     }
 
-    private void OnNewTemplate()
+    private void onNewTemplate()
     {
         UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
         if (selectedItem == null)
@@ -563,17 +563,17 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         UnitVmModel model = (UnitVmModel) getWindow();
 
-        if (!model.Validate())
+        if (!model.validate())
         {
             model.setIsValid(false);
         }
         else
         {
-            model.StartProgress(null);
+            model.startProgress(null);
             String name = (String) model.getName().getEntity();
 
             // Check name unicitate.
-            AsyncDataProvider.IsTemplateNameUnique(new AsyncQuery(this,
+            AsyncDataProvider.isTemplateNameUnique(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -597,7 +597,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                             }
                             else
                             {
-                                userPortalListModel.PostNameUniqueCheck(userPortalListModel);
+                                userPortalListModel.postNameUniqueCheck(userPortalListModel);
                             }
 
                         }
@@ -606,7 +606,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         }
     }
 
-    public void PostNameUniqueCheck(UserPortalListModel userPortalListModel)
+    public void postNameUniqueCheck(UserPortalListModel userPortalListModel)
     {
         UnitVmModel model = (UnitVmModel) userPortalListModel.getWindow();
         UserPortalItemModel selectedItem = (UserPortalItemModel) userPortalListModel.getSelectedItem();
@@ -677,10 +677,10 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
-    private void RunOnce()
+    private void runOnce()
     {
         UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
         if (selectedItem == null || selectedItem.getEntity() == null) {
@@ -697,7 +697,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         model.init();
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
 
@@ -728,17 +728,17 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                         VdcActionType.AddVmTemplate));
     }
 
-    private void NewDesktop()
+    private void newDesktop()
     {
-        NewInternal(VmType.Desktop);
+        newInternal(VmType.Desktop);
     }
 
-    private void NewServer()
+    private void newServer()
     {
-        NewInternal(VmType.Server);
+        newInternal(VmType.Server);
     }
 
-    private void NewInternal(VmType vmType)
+    private void newInternal(VmType vmType)
     {
         UnitVmModel model = new UnitVmModel(new UserPortalNewVmModelBehavior());
         setWindow(model);
@@ -751,7 +751,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         model.setVmType(vmType);
         model.setCustomPropertiesKeysList(CustomPropertiesKeysList);
 
-        model.Initialize(null);
+        model.initialize(null);
 
         // Ensures that the default provisioning is "Clone" for a new server and "Thin" for a new desktop.
         boolean selectValue = model.getVmType() == VmType.Server;
@@ -767,7 +767,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         model.getCommands().add(tempVar2);
     }
 
-    private void Edit()
+    private void edit()
     {
         UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
         if (selectedItem == null)
@@ -796,7 +796,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         setWindow(model);
 
-        model.Initialize(null);
+        model.initialize(null);
 
         UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -840,12 +840,12 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         getConfirmWindow().getCommands().add(tempVar2);
     }
 
-    private void OnRemove()
+    private void onRemove()
     {
         UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
         VM vm = (VM) selectedItem.getEntity();
 
-        getConfirmWindow().StartProgress(null);
+        getConfirmWindow().startProgress(null);
 
         Frontend.RunAction(VdcActionType.RemoveVm, new RemoveVmParameters(vm.getId(), false),
                 new IFrontendActionAsyncCallback() {
@@ -853,7 +853,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                     public void executed(FrontendActionAsyncResult result) {
                         ConfirmationModel model =
                                 (ConfirmationModel) ((UserPortalListModel) result.getState()).getConfirmWindow();
-                        model.StopProgress();
+                        model.stopProgress();
                         cancel();
                     }
                 },
@@ -861,7 +861,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
     }
 
-    private void ChangeCD()
+    private void changeCD()
     {
         UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
         if (selectedItem == null || selectedItem.getEntity() == null)
@@ -902,7 +902,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             }
         };
 
-        AsyncDataProvider.GetIrsImageList(getImagesQuery, vm.getStoragePoolId());
+        AsyncDataProvider.getIrsImageList(getImagesQuery, vm.getStoragePoolId());
 
         UICommand tempVar = new UICommand("OnChangeCD", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -914,7 +914,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         model.getCommands().add(tempVar2);
     }
 
-    private void OnChangeCD()
+    private void onChangeCD()
     {
         UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
         if (selectedItem == null || selectedItem.getEntity() == null)
@@ -925,7 +925,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         VM vm = (VM) selectedItem.getEntity();
         AttachCdModel model = (AttachCdModel) getWindow();
-        model.StartProgress(null);
+        model.startProgress(null);
         String isoName =
                 (StringHelper.stringsEqual(model.getIsoImage().getSelectedItem().toString(), ConsoleModel.EjectLabel)) ? "" //$NON-NLS-1$
                         : model.getIsoImage().getSelectedItem().toString();
@@ -940,7 +940,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 }, this);
     }
 
-    private void OnSave()
+    private void onSave()
     {
 
         final UnitVmModel model = (UnitVmModel) getWindow();
@@ -953,14 +953,14 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         settempVm(model.getIsNew() ? new VM() : (VM) Cloner.clone(selectedItem.getEntity()));
 
-        if (!model.Validate())
+        if (!model.validate())
         {
             return;
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
         // Check name uniqueness.
-        AsyncDataProvider.IsVmNameUnique(new AsyncQuery(this,
+        AsyncDataProvider.isVmNameUnique(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -984,7 +984,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                         }
                         else
                         {
-                            userPortalListModel.PostVmNameUniqueCheck(userPortalListModel);
+                            userPortalListModel.postVmNameUniqueCheck(userPortalListModel);
                         }
 
                     }
@@ -996,12 +996,12 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         if (target instanceof UserPortalListModel) {
             Model window = ((UserPortalListModel) target).getWindow();
             if (window != null) {
-                window.StopProgress();
+                window.stopProgress();
             }
         }
     }
 
-    public void PostVmNameUniqueCheck(UserPortalListModel userPortalListModel)
+    public void postVmNameUniqueCheck(UserPortalListModel userPortalListModel)
     {
 
         UnitVmModel model = (UnitVmModel) getWindow();
@@ -1126,7 +1126,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                                     this);
                         }
                     };
-                    AsyncDataProvider.GetTemplateDiskList(_asyncQuery, template.getId());
+                    AsyncDataProvider.getTemplateDiskList(_asyncQuery, template.getId());
                 }
                 else
                 {
@@ -1185,7 +1185,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         }
     }
 
-    private void VmModel_DataCenter_ItemsChanged()
+    private void vmModel_DataCenter_ItemsChanged()
     {
         UnitVmModel model = (UnitVmModel) getWindow();
         StoragePool dataCenter = null;
@@ -1230,7 +1230,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
                 }
             };
-            AsyncDataProvider.GetDataCenterById(_asyncQuery, vm.getStoragePoolId());
+            AsyncDataProvider.getDataCenterById(_asyncQuery, vm.getStoragePoolId());
         }
         else
         {
@@ -1238,7 +1238,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         }
     }
 
-    private void VmModel_Cluster_ItemsChanged()
+    private void vmModel_Cluster_ItemsChanged()
     {
 
         UnitVmModel model = (UnitVmModel) getWindow();
@@ -1263,7 +1263,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         }
     }
 
-    private void VmModel_DefaultHost_ItemsChanged()
+    private void vmModel_DefaultHost_ItemsChanged()
     {
         UnitVmModel model = (UnitVmModel) getWindow();
         if (!model.getIsNew())
@@ -1294,7 +1294,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         }
     }
 
-    private void VmModel_DisplayProtocol_ItemsChanged()
+    private void vmModel_DisplayProtocol_ItemsChanged()
     {
         UnitVmModel model = (UnitVmModel) getWindow();
         if (!model.getIsNew())
@@ -1319,13 +1319,13 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
     private Integer cachedMaxPriority;
 
-    private void VmModel_Priority_ItemsChanged()
+    private void vmModel_Priority_ItemsChanged()
     {
         UnitVmModel model = (UnitVmModel) getWindow();
         if (!model.getIsNew())
         {
             if (cachedMaxPriority == null) {
-                AsyncDataProvider.GetMaxVmPriority(new AsyncQuery(model,
+                AsyncDataProvider.getMaxVmPriority(new AsyncQuery(model,
                         new INewAsyncCallback() {
                             @Override
                             public void onSuccess(Object target, Object returnValue) {
@@ -1342,7 +1342,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     private void updatePriority(UnitVmModel model) {
         UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
         VM vm = (VM) selectedItem.getEntity();
-        int roundPriority = AsyncDataProvider.GetRoundedPriority(vm.getPriority(), cachedMaxPriority);
+        int roundPriority = AsyncDataProvider.getRoundedPriority(vm.getPriority(), cachedMaxPriority);
         EntityModel priority = null;
 
         for (Object item : model.getPriority().getItems())
@@ -1358,7 +1358,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         ((UnitVmModel) model.getWindow()).getPriority().setSelectedItem(priority);
     }
 
-    private void VmModel_TimeZone_ItemsChanged()
+    private void vmModel_TimeZone_ItemsChanged()
     {
         UnitVmModel model = (UnitVmModel) getWindow();
         if (!model.getIsNew())
@@ -1382,32 +1382,32 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         UnitVmModel model = (UnitVmModel) getWindow();
         if (ev.matchesDefinition(ItemsChangedEventDefinition) && sender == model.getDataCenter())
         {
-            VmModel_DataCenter_ItemsChanged();
+            vmModel_DataCenter_ItemsChanged();
         }
         else if (ev.matchesDefinition(ItemsChangedEventDefinition) && sender == model.getCluster())
         {
-            VmModel_Cluster_ItemsChanged();
+            vmModel_Cluster_ItemsChanged();
         }
         else if (ev.matchesDefinition(ItemsChangedEventDefinition) && sender == model.getDefaultHost())
         {
-            VmModel_DefaultHost_ItemsChanged();
+            vmModel_DefaultHost_ItemsChanged();
         }
         else if (ev.matchesDefinition(ItemsChangedEventDefinition) && sender == model.getDisplayProtocol())
         {
-            VmModel_DisplayProtocol_ItemsChanged();
+            vmModel_DisplayProtocol_ItemsChanged();
         }
         else if (ev.matchesDefinition(ItemsChangedEventDefinition) && sender == model.getPriority())
         {
-            VmModel_Priority_ItemsChanged();
+            vmModel_Priority_ItemsChanged();
         }
         else if (ev.matchesDefinition(ItemsChangedEventDefinition) && sender == model.getTimeZone())
         {
-            VmModel_TimeZone_ItemsChanged();
+            vmModel_TimeZone_ItemsChanged();
         }
     }
 
     @Override
-    public void OnVmAndPoolLoad()
+    public void onVmAndPoolLoad()
     {
         if (getvms() != null && getpools() != null)
         {
@@ -1452,7 +1452,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             }
 
             // In userportal 'Extended View': Set 'CanConnectAutomatically' to true if there's one and only one up VM.
-            setCanConnectAutomatically(GetUpVms(items).size() == 1);
+            setCanConnectAutomatically(getUpVms(items).size() == 1);
 
             setItems(items);
 

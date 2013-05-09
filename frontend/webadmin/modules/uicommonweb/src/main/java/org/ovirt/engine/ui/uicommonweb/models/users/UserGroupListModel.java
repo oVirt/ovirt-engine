@@ -37,7 +37,7 @@ public class UserGroupListModel extends SearchableListModel
             ArrayList<UserGroup> items = new ArrayList<UserGroup>();
             for (String groupFullName : getEntity().getgroups().split("[,]", -1)) //$NON-NLS-1$
             {
-                items.add(CreateUserGroup(groupFullName));
+                items.add(createUserGroup(groupFullName));
             }
 
             setItems(items);
@@ -48,7 +48,7 @@ public class UserGroupListModel extends SearchableListModel
         }
     }
 
-    private static UserGroup CreateUserGroup(String groupFullName)
+    private static UserGroup createUserGroup(String groupFullName)
     {
         // Parse 'groupFullName' (representation: Domain/OrganizationalUnit/Group)
         int firstIndexOfSlash = groupFullName.indexOf('/');

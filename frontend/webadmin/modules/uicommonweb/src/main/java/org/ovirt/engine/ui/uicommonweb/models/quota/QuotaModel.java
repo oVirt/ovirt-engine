@@ -270,7 +270,7 @@ public class QuotaModel extends EntityModel {
 
     public void editQuotaCluster(QuotaVdsGroup object) {
         this.quotaCluster = object;
-        getEditQuotaClusterCommand().Execute();
+        getEditQuotaClusterCommand().execute();
 
         EditQuotaClusterModel model = new EditQuotaClusterModel();
         model.setTitle(ConstantsManager.getInstance().getConstants().defineClusterQuotaOnDataCenterTitle());
@@ -302,7 +302,7 @@ public class QuotaModel extends EntityModel {
 
     public void editQuotaStorage(QuotaStorage object) {
         this.quotaStorage = object;
-        getEditQuotaStorageCommand().Execute();
+        getEditQuotaStorageCommand().execute();
         EditQuotaStorageModel model = new EditQuotaStorageModel();
         model.setTitle(ConstantsManager.getInstance().getConstants().defineStorageQuotaOnDataCenterTitle());
         model.setEntity(object);
@@ -327,7 +327,7 @@ public class QuotaModel extends EntityModel {
 
     private void onEditClusterQuota() {
         EditQuotaClusterModel model = (EditQuotaClusterModel) getWindow();
-        if (!model.Validate()) {
+        if (!model.validate()) {
             return;
         }
         if ((Boolean) model.getUnlimitedMem().getEntity()) {
@@ -347,7 +347,7 @@ public class QuotaModel extends EntityModel {
 
     private void onEditStorageQuota() {
         EditQuotaStorageModel model = (EditQuotaStorageModel) getWindow();
-        if (!model.Validate()) {
+        if (!model.validate()) {
             return;
         }
         if ((Boolean) model.getUnlimitedStorage().getEntity()) {
@@ -371,7 +371,7 @@ public class QuotaModel extends EntityModel {
         }
     }
 
-    public boolean Validate() {
+    public boolean validate() {
         LengthValidation lenValidation = new LengthValidation();
         lenValidation.setMaxLength(60);
         getName().setIsValid(true);
@@ -393,7 +393,7 @@ public class QuotaModel extends EntityModel {
                 getThresholdCluster().getIsValid() &
                 getThresholdStorage().getIsValid();
 
-        return getName().getIsValid() & graceThreshold & ValidateNotEmpty();
+        return getName().getIsValid() & graceThreshold & validateNotEmpty();
     }
 
     static final IValidation quotaEmptyValidation = new IValidation() {
@@ -410,7 +410,7 @@ public class QuotaModel extends EntityModel {
         }
     };
 
-    private boolean ValidateNotEmpty() {
+    private boolean validateNotEmpty() {
         getSpecificClusterQuota().setIsValid(true);
         getSpecificStorageQuota().setIsValid(true);
         if ((Boolean) getGlobalClusterQuota().getEntity() || (Boolean) getGlobalStorageQuota().getEntity()) {

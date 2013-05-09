@@ -130,7 +130,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             @Override
             public void onClick(ClickEvent event) {
                 treeScrollPosition = treeContainer.getVerticalScrollPosition();
-                loginButton.getCommand().Execute();
+                loginButton.getCommand().execute();
             }
         });
         loginButton.getElement().getStyle().setFloat(Float.RIGHT);

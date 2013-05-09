@@ -58,7 +58,7 @@ public class InstallModel extends Model {
         getOverrideIpTables().setEntity(false);
     }
 
-    public boolean Validate(boolean isOVirt) {
+    public boolean validate(boolean isOVirt) {
         getOVirtISO().setIsValid(true);
         getRootPassword().setIsValid(true);
 

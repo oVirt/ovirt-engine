@@ -36,7 +36,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
     }
 
     private final String ENGINE_NETWORK_NAME =
-            (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
+            (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
 
     private final ApplicationConstants constants;
     private final ApplicationTemplates templates;

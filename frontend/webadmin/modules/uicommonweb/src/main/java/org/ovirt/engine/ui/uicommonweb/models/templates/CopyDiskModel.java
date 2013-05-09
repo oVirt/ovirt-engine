@@ -31,7 +31,7 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
     public void init(ArrayList<DiskImage> disksImages) {
         setDiskImages(disksImages);
 
-        AsyncDataProvider.GetDiskList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getDiskList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 CopyDiskModel copyDiskModel = (CopyDiskModel) target;
@@ -50,7 +50,7 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
             return;
         }
 
-        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 CopyDiskModel copyDiskModel = (CopyDiskModel) target;
@@ -92,8 +92,8 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
     }
 
     @Override
-    protected void OnExecute() {
-        super.OnExecute();
+    protected void onExecute() {
+        super.onExecute();
 
         ArrayList<VdcActionParametersBase> parameters = getParameters();
         if (parameters.isEmpty()) {

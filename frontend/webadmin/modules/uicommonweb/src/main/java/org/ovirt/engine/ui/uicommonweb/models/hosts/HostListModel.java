@@ -307,13 +307,13 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         setConfigureLocalStorageCommand(new UICommand("ConfigureLocalStorage", this)); //$NON-NLS-1$
 
         getConfigureLocalStorageCommand().setAvailableInModes(ApplicationMode.VirtOnly);
-        UpdateActionAvailability();
+        updateActionAvailability();
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
     }
 
-    public void AssignTags()
+    public void assignTags()
     {
         if (getWindow() != null)
         {
@@ -325,7 +325,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         model.setTitle(ConstantsManager.getInstance().getConstants().assignTagsTitle());
         model.setHashName("assign_tags_hosts"); //$NON-NLS-1$
 
-        GetAttachedTagsToSelectedHosts(model);
+        getAttachedTagsToSelectedHosts(model);
 
         UICommand tempVar = new UICommand("OnAssignTags", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -341,7 +341,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     public ArrayList<org.ovirt.engine.core.common.businessentities.tags> allAttachedTags;
     public int selectedItemsCounter;
 
-    private void GetAttachedTagsToSelectedHosts(TagListModel model)
+    private void getAttachedTagsToSelectedHosts(TagListModel model)
     {
         ArrayList<Guid> hostIds = new ArrayList<Guid>();
 
@@ -357,7 +357,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         for (Guid hostId : hostIds)
         {
-            AsyncDataProvider.GetAttachedTagsToHost(new AsyncQuery(new Object[] { this, model },
+            AsyncDataProvider.getAttachedTagsToHost(new AsyncQuery(new Object[] { this, model },
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -369,7 +369,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                             hostListModel.selectedItemsCounter++;
                             if (hostListModel.selectedItemsCounter == hostListModel.getSelectedItems().size())
                             {
-                                PostGetAttachedTags(hostListModel, tagListModel);
+                                postGetAttachedTags(hostListModel, tagListModel);
                             }
 
                         }
@@ -378,7 +378,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         }
     }
 
-    private void PostGetAttachedTags(HostListModel hostListModel, TagListModel tagListModel)
+    private void postGetAttachedTags(HostListModel hostListModel, TagListModel tagListModel)
     {
         if (hostListModel.getLastExecutedCommand() == getAssignTagsCommand())
         {
@@ -401,18 +401,18 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         }
         else if (StringHelper.stringsEqual(hostListModel.getLastExecutedCommand().getName(), "OnAssignTags")) //$NON-NLS-1$
         {
-            hostListModel.PostOnAssignTags(tagListModel.getAttachedTagsToEntities());
+            hostListModel.postOnAssignTags(tagListModel.getAttachedTagsToEntities());
         }
     }
 
-    public void OnAssignTags()
+    public void onAssignTags()
     {
         TagListModel model = (TagListModel) getWindow();
 
-        GetAttachedTagsToSelectedHosts(model);
+        getAttachedTagsToSelectedHosts(model);
     }
 
-    public void PostOnAssignTags(Map<Guid, Boolean> attachedTags)
+    public void postOnAssignTags(Map<Guid, Boolean> attachedTags)
     {
         TagListModel model = (TagListModel) getWindow();
         ArrayList<Guid> hostIds = new ArrayList<Guid>();
@@ -431,7 +431,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         {
             ArrayList<TagModel> tags = (ArrayList<TagModel>) model.getItems();
             TagModel rootTag = tags.get(0);
-            TagModel.RecursiveEditAttachDetachLists(rootTag, attachedTags, tagsToAttach, tagsToDetach);
+            TagModel.recursiveEditAttachDetachLists(rootTag, attachedTags, tagsToAttach, tagsToDetach);
         }
 
         ArrayList<VdcActionParametersBase> prmsToAttach = new ArrayList<VdcActionParametersBase>();
@@ -448,10 +448,10 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         }
         Frontend.RunMultipleAction(VdcActionType.DetachVdsFromTag, prmsToDetach);
 
-        Cancel();
+        cancel();
     }
 
-    public void ManualFence()
+    public void manualFence()
     {
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
@@ -474,7 +474,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         model.getCommands().add(tempVar2);
     }
 
-    public void OnManualFence()
+    public void onManualFence()
     {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
@@ -483,7 +483,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             return;
         }
 
-        if (!model.Validate())
+        if (!model.validate())
         {
             return;
         }
@@ -498,7 +498,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             list.add(parameters);
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.FenceVdsManualy, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -506,8 +506,8 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                     public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.StopProgress();
-                        Cancel();
+                        localModel.stopProgress();
+                        cancel();
 
                     }
                 }, model);
@@ -516,7 +516,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     boolean updateOverrideIpTables = true;
     boolean clusterChanging = false;
 
-    public void New()
+    public void newEntity()
     {
         if (getWindow() != null)
         {
@@ -533,7 +533,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         hostModel.getConsoleAddressEnabled().setEntity(false);
         hostModel.getConsoleAddress().setIsChangable(false);
 
-        AsyncDataProvider.GetDefaultPmProxyPreferences(new AsyncQuery(null, new INewAsyncCallback() {
+        AsyncDataProvider.getDefaultPmProxyPreferences(new AsyncQuery(null, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
 
@@ -649,15 +649,15 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 innerHostModel.getCommands().add(command);
             }
         };
-        AsyncDataProvider.GetDataCenterList(_asyncQuery);
+        AsyncDataProvider.getDataCenterList(_asyncQuery);
     }
 
-    private void GoToEventsTab()
+    private void goToEventsTab()
     {
         setActiveDetailModel(getHostEventListModel());
     }
 
-    public void Edit(final boolean isEditWithPMemphasis)
+    public void edit(final boolean isEditWithPMemphasis)
     {
         if (getWindow() != null)
         {
@@ -676,14 +676,14 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
                 final HostModel hostModel = new HostModel();
                 hostListModel.setWindow(hostModel);
-                PrepareModelForApproveEdit(host, hostModel, dataCenters, isEditWithPMemphasis);
+                prepareModelForApproveEdit(host, hostModel, dataCenters, isEditWithPMemphasis);
                 hostModel.setTitle(ConstantsManager.getInstance().getConstants().editHostTitle());
                 hostModel.setHashName("edit_host"); //$NON-NLS-1$
 
                 if (host.getPmProxyPreferences() != null) {
                     hostModel.setPmProxyPreferences(host.getPmProxyPreferences());
                 } else {
-                    AsyncDataProvider.GetDefaultPmProxyPreferences(new AsyncQuery(null, new INewAsyncCallback() {
+                    AsyncDataProvider.getDefaultPmProxyPreferences(new AsyncQuery(null, new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object model, Object returnValue) {
 
@@ -705,19 +705,19 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 hostModel.getCommands().add(command);
             }
         };
-        AsyncDataProvider.GetDataCenterList(_asyncQuery);
+        AsyncDataProvider.getDataCenterList(_asyncQuery);
     }
 
-    public void OnSaveFalse()
+    public void onSaveFalse()
     {
-        OnSave(false);
+        onSave(false);
     }
 
-    public void OnSave(boolean approveInitiated)
+    public void onSave(boolean approveInitiated)
     {
         HostModel model = (HostModel) getWindow();
 
-        if (!model.Validate())
+        if (!model.validate())
         {
             return;
         }
@@ -749,22 +749,22 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             {
                 if(approveInitiated)
                 {
-                    OnSaveInternalFromApprove();
+                    onSaveInternalFromApprove();
                 }
                 else
                 {
-                    OnSaveInternalNotFromApprove();
+                    onSaveInternalNotFromApprove();
                 }
             }
         }
         else
         {
-            OnSaveInternal(approveInitiated);
+            onSaveInternal(approveInitiated);
         }
 
     }
 
-    public void CancelConfirmFocusPM()
+    public void cancelConfirmFocusPM()
     {
         HostModel hostModel = (HostModel) getWindow();
         hostModel.setIsPowerManagementTabSelected(true);
@@ -772,17 +772,17 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         setConfirmWindow(null);
     }
 
-    public void OnSaveInternalNotFromApprove()
+    public void onSaveInternalNotFromApprove()
     {
-        OnSaveInternal(false);
+        onSaveInternal(false);
     }
 
-    public void OnSaveInternalFromApprove()
+    public void onSaveInternalFromApprove()
     {
-        OnSaveInternal(true);
+        onSaveInternal(true);
     }
 
-    public void OnSaveInternal(boolean approveInitiated)
+    public void onSaveInternal(boolean approveInitiated)
     {
         HostModel model = (HostModel) getWindow();
 
@@ -826,8 +826,8 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         host.setPmSecondaryConcurrent((Boolean) model.getPmSecondaryConcurrent().getEntity());
 
 
-        CancelConfirm();
-        model.StartProgress(null);
+        cancelConfirm();
+        model.startProgress(null);
 
         final boolean isVirt = ((VDSGroup) model.getCluster().getSelectedItem()).supportsVirtService();
 
@@ -848,7 +848,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                             Object[] array = (Object[]) result.getState();
                             HostListModel localModel = (HostListModel) array[0];
                             boolean localApproveInitiated = (Boolean) array[1];
-                            localModel.PostOnSaveInternal(result.getReturnValue(), localApproveInitiated);
+                            localModel.postOnSaveInternal(result.getReturnValue(), localApproveInitiated);
 
                         }
                     }, new Object[] { this, approveInitiated });
@@ -877,11 +877,11 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                                 VdcReturnValueBase localReturnValue = result.getReturnValue();
                                 if (localReturnValue != null && localReturnValue.getSucceeded())
                                 {
-                                    localModel.PostOnSaveInternalChangeCluster(localParameters, localApproveInitiated);
+                                    localModel.postOnSaveInternalChangeCluster(localParameters, localApproveInitiated);
                                 }
                                 else
                                 {
-                                    localModel.getWindow().StopProgress();
+                                    localModel.getWindow().stopProgress();
                                 }
 
                             }
@@ -890,12 +890,12 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             }
             else
             {
-                PostOnSaveInternalChangeCluster(parameters, approveInitiated);
+                postOnSaveInternalChangeCluster(parameters, approveInitiated);
             }
         }
     }
 
-    public void PostOnSaveInternalChangeCluster(UpdateVdsActionParameters parameters, boolean approveInitiated)
+    public void postOnSaveInternalChangeCluster(UpdateVdsActionParameters parameters, boolean approveInitiated)
     {
         Frontend.RunAction(VdcActionType.UpdateVds, parameters,
                 new IFrontendActionAsyncCallback() {
@@ -905,29 +905,29 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                         Object[] array = (Object[]) result.getState();
                         HostListModel localModel = (HostListModel) array[0];
                         boolean localApproveInitiated = (Boolean) array[1];
-                        localModel.PostOnSaveInternal(result.getReturnValue(), localApproveInitiated);
+                        localModel.postOnSaveInternal(result.getReturnValue(), localApproveInitiated);
 
                     }
                 }, new Object[] { this, approveInitiated });
     }
 
-    public void PostOnSaveInternal(VdcReturnValueBase returnValue, boolean approveInitiated)
+    public void postOnSaveInternal(VdcReturnValueBase returnValue, boolean approveInitiated)
     {
         HostModel model = (HostModel) getWindow();
 
-        model.StopProgress();
+        model.stopProgress();
 
         if (returnValue != null && returnValue.getSucceeded())
         {
             if (approveInitiated)
             {
-                OnApproveInternal();
+                onApproveInternal();
             }
-            Cancel();
+            cancel();
         }
     }
 
-    private void OnApproveInternal()
+    private void onApproveInternal()
     {
         VDS vds = (VDS) getSelectedItem();
 
@@ -968,15 +968,15 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         // - All the selected hosts belongs to same cluster
         // - the cluster should be a gluster only cluster
         if (clusters.size() == 1) {
-            model.StartProgress(null);
-            AsyncDataProvider.GetClusterById(new AsyncQuery(this, new INewAsyncCallback() {
+            model.startProgress(null);
+            AsyncDataProvider.getClusterById(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
                     VDSGroup cluster = (VDSGroup) returnValue;
                     if (cluster != null && cluster.supportsGlusterService() && !cluster.supportsVirtService()) {
                         model.getForce().setIsAvailable(true);
                     }
-                    model.StopProgress();
+                    model.stopProgress();
                 }
             }), clusters.iterator().next());
         }
@@ -991,7 +991,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         model.getCommands().add(tempVar2);
     }
 
-    public void OnRemove()
+    public void onRemove()
     {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
@@ -1008,7 +1008,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             list.add(new RemoveVdsParameters(vds.getId(), force));
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.RemoveVds, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -1016,14 +1016,14 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                     public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.StopProgress();
-                        Cancel();
+                        localModel.stopProgress();
+                        cancel();
 
                     }
                 }, model);
     }
 
-    public void Activate()
+    public void activate()
     {
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
@@ -1041,7 +1041,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 }, null);
     }
 
-    public void Maintenance()
+    public void maintenance()
     {
         if (getConfirmWindow() != null)
         {
@@ -1074,7 +1074,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         model.getCommands().add(tempVar2);
     }
 
-    public void OnMaintenance()
+    public void onMaintenance()
     {
         ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
 
@@ -1093,7 +1093,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         }
         list.add(new MaintenanceNumberOfVdssParameters(vdss, false));
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.MaintenanceNumberOfVdss, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -1101,14 +1101,14 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                     public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.StopProgress();
-                        CancelConfirm();
+                        localModel.stopProgress();
+                        cancelConfirm();
 
                     }
                 }, model);
     }
 
-    public void Approve()
+    public void approve()
     {
         VDS host = (VDS) getSelectedItem();
         HostModel hostModel = new HostModel();
@@ -1123,7 +1123,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 HostModel innerHostModel = (HostModel) hostListModel.getWindow();
                 ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) result;
                 VDS host = (VDS) hostListModel.getSelectedItem();
-                hostListModel.PrepareModelForApproveEdit(host, innerHostModel, dataCenters, false);
+                hostListModel.prepareModelForApproveEdit(host, innerHostModel, dataCenters, false);
                 innerHostModel.setTitle(ConstantsManager.getInstance().getConstants().editAndApproveHostTitle());
                 innerHostModel.setHashName("edit_and_approve_host"); //$NON-NLS-1$
 
@@ -1137,10 +1137,10 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 innerHostModel.getCommands().add(tempVar2);
             }
         };
-        AsyncDataProvider.GetDataCenterList(_asyncQuery);
+        AsyncDataProvider.getDataCenterList(_asyncQuery);
     }
 
-    private void PrepareModelForApproveEdit(VDS vds,
+    private void prepareModelForApproveEdit(VDS vds,
             HostModel model,
             ArrayList<StoragePool> dataCenters,
             boolean isEditWithPMemphasis)
@@ -1255,12 +1255,12 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         }
     }
 
-    public void OnApprove()
+    public void onApprove()
     {
-        OnSave(true);
+        onSave(true);
     }
 
-    public void Restart()
+    public void restart()
     {
         final Constants constants = ConstantsManager.getInstance().getConstants();
         final Messages messages = ConstantsManager.getInstance().getMessages();
@@ -1292,7 +1292,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         model.getCommands().add(tempVar2);
     }
 
-    public void OnRestart()
+    public void onRestart()
     {
         ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
 
@@ -1308,7 +1308,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             list.add(new FenceVdsActionParameters(vds.getId(), FenceActionType.Restart));
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.RestartVds, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -1316,8 +1316,8 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                     public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.StopProgress();
-                        CancelConfirm();
+                        localModel.stopProgress();
+                        cancelConfirm();
 
                     }
                 }, model);
@@ -1367,7 +1367,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         model.getCommands().add(tempVar2);
     }
 
-    public void OnStop()
+    public void onStop()
     {
         ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
 
@@ -1383,7 +1383,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             list.add(new FenceVdsActionParameters(vds.getId(), FenceActionType.Stop));
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.StopVds, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -1391,14 +1391,14 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                     public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.StopProgress();
-                        CancelConfirm();
+                        localModel.stopProgress();
+                        cancelConfirm();
 
                     }
                 }, model);
     }
 
-    private void ConfigureLocalStorage() {
+    private void configureLocalStorage() {
 
         VDS host = (VDS) getSelectedItem();
 
@@ -1419,7 +1419,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     }
 
     private void configureLocalStorage2(ConfigureLocalStorageModel model) {
-        String prefix = (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.RhevhLocalFSPath);
+        String prefix = (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.RhevhLocalFSPath);
         if (!StringHelper.isNullOrEmpty(prefix)) {
             EntityModel pathModel = model.getStorage().getPath();
             pathModel.setEntity(prefix);
@@ -1452,7 +1452,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         if (hostSupportLocalStorage) {
 
-            model.SetDefaultNames(host);
+            model.setDefaultNames(host);
 
             command = new UICommand("OnConfigureLocalStorage", this); //$NON-NLS-1$
             command.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -1477,7 +1477,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         }
     }
 
-    private void OnConfigureLocalStorage() {
+    private void onConfigureLocalStorage() {
 
         ConfigureLocalStorageModel model = (ConfigureLocalStorageModel) getWindow();
 
@@ -1485,11 +1485,11 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             return;
         }
 
-        if (!model.Validate()) {
+        if (!model.validate()) {
             return;
         }
 
-        model.StartProgress(ConstantsManager.getInstance().getConstants().configuringLocalStorageHost());
+        model.startProgress(ConstantsManager.getInstance().getConstants().configuringLocalStorageHost());
 
         ReversibleFlow flow = new ReversibleFlow();
         flow.getCompleteEvent().addListener(
@@ -1499,8 +1499,8 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
                         ConfigureLocalStorageModel model = (ConfigureLocalStorageModel) ev.getContext();
 
-                        model.StopProgress();
-                        Cancel();
+                        model.stopProgress();
+                        cancel();
                     }
                 },
                 model);
@@ -1541,16 +1541,16 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         if (ev.matchesDefinition(HostGeneralModel.RequestEditEventDefinition))
         {
-            getEditWithPMemphasisCommand().Execute();
+            getEditWithPMemphasisCommand().execute();
         }
         if (ev.matchesDefinition(HostGeneralModel.RequestGOToEventsTabEventDefinition))
         {
-            GoToEventsTab();
+            goToEventsTab();
         }
     }
 
     @Override
-    public boolean IsSearchStringMatch(String searchString)
+    public boolean isSearchStringMatch(String searchString)
     {
         return searchString.trim().toLowerCase().startsWith("host"); //$NON-NLS-1$
     }
@@ -1572,13 +1572,13 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         setItems(getAsyncResult().getData());
     }
 
-    public void Cancel()
+    public void cancel()
     {
-        CancelConfirm();
+        cancelConfirm();
         setWindow(null);
     }
 
-    public void CancelConfirm()
+    public void cancelConfirm()
     {
         setConfirmWindow(null);
     }
@@ -1587,14 +1587,14 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void selectedItemsChanged()
     {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -1618,11 +1618,11 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         if (e.PropertyName.equals("status") || e.PropertyName.equals("pm_enabled")) //$NON-NLS-1$ //$NON-NLS-2$
         {
-            UpdateActionAvailability();
+            updateActionAvailability();
         }
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         ArrayList<VDS> items =
                 getSelectedItems() != null ? Linq.<VDS> cast(getSelectedItems()) : new ArrayList<VDS>();
@@ -1675,12 +1675,12 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         getNewCommand().setIsAvailable(isAvailable);
         getRemoveCommand().setIsAvailable(isAvailable);
 
-        UpdateConfigureLocalStorageCommandAvailability();
+        updateConfigureLocalStorageCommandAvailability();
     }
 
     private Boolean hasAdminSystemPermission = null;
 
-    public void UpdateConfigureLocalStorageCommandAvailability() {
+    public void updateConfigureLocalStorageCommandAvailability() {
 
         if (hasAdminSystemPermission == null) {
 
@@ -1688,7 +1688,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
             if (vdcUser == null) {
                 hasAdminSystemPermission = false;
-                UpdateConfigureLocalStorageCommandAvailability1();
+                updateConfigureLocalStorageCommandAvailability1();
                 return;
             }
 
@@ -1701,7 +1701,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                             VdcQueryReturnValue response = (VdcQueryReturnValue) returnValue;
                             if (response == null || !response.getSucceeded()) {
                                 hasAdminSystemPermission = false;
-                                UpdateConfigureLocalStorageCommandAvailability1();
+                                updateConfigureLocalStorageCommandAvailability1();
                             } else {
                                 ArrayList<permissions> permissions =
                                         (ArrayList<permissions>) response.getReturnValue();
@@ -1714,17 +1714,17 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                                     }
                                 }
 
-                                UpdateConfigureLocalStorageCommandAvailability1();
+                                updateConfigureLocalStorageCommandAvailability1();
                             }
 
                         }
                     }, true));
         } else {
-            UpdateConfigureLocalStorageCommandAvailability1();
+            updateConfigureLocalStorageCommandAvailability1();
         }
     }
 
-    private void UpdateConfigureLocalStorageCommandAvailability1() {
+    private void updateConfigureLocalStorageCommandAvailability1() {
 
         ArrayList<VDS> items = getSelectedItems() != null ? Linq.<VDS> cast(getSelectedItems()) : new ArrayList<VDS>();
 
@@ -1747,15 +1747,15 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         if (command == getNewCommand())
         {
-            New();
+            newEntity();
         }
         else if (command == getEditCommand())
         {
-            Edit(false);
+            edit(false);
         }
         else if (command == getEditWithPMemphasisCommand())
         {
-            Edit(true);
+            edit(true);
         }
         else if (command == getRemoveCommand())
         {
@@ -1763,19 +1763,19 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         }
         else if (command == getActivateCommand())
         {
-            Activate();
+            activate();
         }
         else if (command == getMaintenanceCommand())
         {
-            Maintenance();
+            maintenance();
         }
         else if (command == getApproveCommand())
         {
-            Approve();
+            approve();
         }
         else if (command == getRestartCommand())
         {
-            Restart();
+            restart();
         }
         else if (command == getStartCommand())
         {
@@ -1787,71 +1787,71 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         }
         else if (command == getManualFenceCommand())
         {
-            ManualFence();
+            manualFence();
         }
         else if (command == getAssignTagsCommand())
         {
-            AssignTags();
+            assignTags();
         }
         else if (command == getConfigureLocalStorageCommand())
         {
-            ConfigureLocalStorage();
+            configureLocalStorage();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnAssignTags")) //$NON-NLS-1$
         {
-            OnAssignTags();
+            onAssignTags();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnManualFence")) //$NON-NLS-1$
         {
-            OnManualFence();
+            onManualFence();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnSaveFalse")) //$NON-NLS-1$
         {
-            OnSaveFalse();
+            onSaveFalse();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnSaveInternalFromApprove")) //$NON-NLS-1$
         {
-            OnSaveInternalFromApprove();
+            onSaveInternalFromApprove();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnSaveInternalNotFromApprove")) //$NON-NLS-1$
         {
-            OnSaveInternalNotFromApprove();
+            onSaveInternalNotFromApprove();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
         else if (StringHelper.stringsEqual(command.getName(), "CancelConfirm")) //$NON-NLS-1$
         {
-            CancelConfirm();
+            cancelConfirm();
         }
         else if (StringHelper.stringsEqual(command.getName(), "CancelConfirmFocusPM")) //$NON-NLS-1$
         {
-            CancelConfirmFocusPM();
+            cancelConfirmFocusPM();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
-            OnRemove();
+            onRemove();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnMaintenance")) //$NON-NLS-1$
         {
-            OnMaintenance();
+            onMaintenance();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnApprove")) //$NON-NLS-1$
         {
-            OnApprove();
+            onApprove();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRestart")) //$NON-NLS-1$
         {
-            OnRestart();
+            onRestart();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnStop")) //$NON-NLS-1$
         {
-            OnStop();
+            onStop();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnConfigureLocalStorage")) //$NON-NLS-1$
         {
-            OnConfigureLocalStorage();
+            onConfigureLocalStorage();
         }
     }
 
@@ -1904,13 +1904,13 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         if (systemTreeSelectedItem != value)
         {
             systemTreeSelectedItem = value;
-            OnSystemTreeSelectedItemChanged();
+            onSystemTreeSelectedItemChanged();
         }
     }
 
-    private void OnSystemTreeSelectedItemChanged()
+    private void onSystemTreeSelectedItemChanged()
     {
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override

@@ -108,14 +108,14 @@ public class SearchPanelPresenterWidget extends PresenterWidget<SearchPanelPrese
         registerHandler(getView().getBookmarkButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                commonModel.getBookmarkList().getNewCommand().Execute();
+                commonModel.getBookmarkList().getNewCommand().execute();
             }
         }));
 
         registerHandler(getView().getClearButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                commonModel.getClearSearchStringCommand().Execute();
+                commonModel.getClearSearchStringCommand().execute();
             }
         }));
 
@@ -149,7 +149,7 @@ public class SearchPanelPresenterWidget extends PresenterWidget<SearchPanelPrese
 
     void updateModelSearchString() {
         commonModel.setSearchString(getView().getSearchString());
-        commonModel.Search();
+        commonModel.search();
     }
 
     void updateViewSearchString() {

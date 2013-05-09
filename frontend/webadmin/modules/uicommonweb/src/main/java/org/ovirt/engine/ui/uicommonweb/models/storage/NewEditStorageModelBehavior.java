@@ -13,9 +13,9 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 public class NewEditStorageModelBehavior extends StorageModelBehavior
 {
     @Override
-    public void UpdateItemsAvailability()
+    public void updateItemsAvailability()
     {
-        super.UpdateItemsAvailability();
+        super.updateItemsAvailability();
 
         // Allow Data storage type corresponding to the selected data-center type + ISO and Export that are NFS only:
         for (IStorageModel item : Linq.<IStorageModel> cast(getModel().getItems()))
@@ -29,7 +29,7 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
 
             if (item.getRole() == StorageDomainType.ISO)
             {
-                AsyncDataProvider.GetIsoDomainByDataCenterId(new AsyncQuery(new Object[] { this, item },
+                AsyncDataProvider.getIsoDomainByDataCenterId(new AsyncQuery(new Object[] { this, item },
                         new INewAsyncCallback() {
                             @Override
                             public void onSuccess(Object target, Object returnValue) {
@@ -44,7 +44,7 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
             }
             else if (item.getRole() == StorageDomainType.ImportExport)
             {
-                AsyncDataProvider.GetExportDomainByDataCenterId(new AsyncQuery(new Object[] { this, item },
+                AsyncDataProvider.getExportDomainByDataCenterId(new AsyncQuery(new Object[] { this, item },
                         new INewAsyncCallback() {
                             @Override
                             public void onSuccess(Object target, Object returnValue) {
@@ -83,6 +83,6 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
         model.setIsSelectable(isExistingStorage || (isNoneDataCenter && isData) ||
                 (!isNoneDataCenter && (canAttachData || canAttachExportOrIso)));
 
-        OnStorageModelUpdated(item);
+        onStorageModelUpdated(item);
     }
 }

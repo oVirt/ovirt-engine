@@ -79,13 +79,13 @@ public class SystemTreeItemModel extends EntityModel
         setChildren(new ObservableCollection<SystemTreeItemModel>());
     }
 
-    public static SystemTreeItemModel FindAncestor(SystemTreeItemType type, SystemTreeItemModel root)
+    public static SystemTreeItemModel findAncestor(SystemTreeItemType type, SystemTreeItemModel root)
     {
         if (root.getType() != type)
         {
             if (root.getParent() != null)
             {
-                return FindAncestor(type, root.getParent());
+                return findAncestor(type, root.getParent());
             }
 
             return null;

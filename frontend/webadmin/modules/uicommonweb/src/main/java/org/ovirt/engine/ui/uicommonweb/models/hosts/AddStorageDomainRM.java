@@ -91,7 +91,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
 
             context.waitTries++;
 
-            AsyncDataProvider.GetHostById(new AsyncQuery(this,
+            AsyncDataProvider.getHostById(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object model, Object returnValue) {

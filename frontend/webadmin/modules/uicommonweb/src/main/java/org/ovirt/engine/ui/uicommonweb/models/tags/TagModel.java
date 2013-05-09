@@ -32,7 +32,7 @@ public class TagModel extends Model
         privateSelectionChangedEvent = value;
     }
 
-    public static void RecursiveEditAttachDetachLists(TagModel tagModel,
+    public static void recursiveEditAttachDetachLists(TagModel tagModel,
             Map<Guid, Boolean> attachedEntities,
             ArrayList<Guid> tagsToAttach,
             ArrayList<Guid> tagsToDetach)
@@ -51,7 +51,7 @@ public class TagModel extends Model
         {
             for (TagModel subModel : tagModel.getChildren())
             {
-                RecursiveEditAttachDetachLists(subModel, attachedEntities, tagsToAttach, tagsToDetach);
+                recursiveEditAttachDetachLists(subModel, attachedEntities, tagsToAttach, tagsToDetach);
             }
         }
     }
@@ -178,7 +178,7 @@ public class TagModel extends Model
         setDescription(new EntityModel());
     }
 
-    public boolean Validate()
+    public boolean validate()
     {
         LengthValidation tempVar = new LengthValidation();
         tempVar.setMaxLength(40);

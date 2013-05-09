@@ -123,7 +123,7 @@ public class HostBondInterfaceModel extends Model
         if (bootProtocol != value)
         {
             bootProtocol = value;
-            BootProtocolChanged();
+            bootProtocolChanged();
             onPropertyChanged(new PropertyChangedEventArgs("BootProtocol")); //$NON-NLS-1$
         }
     }
@@ -189,7 +189,7 @@ public class HostBondInterfaceModel extends Model
         RefObject<Map.Entry<String, EntityModel>> tempRef_defaultItem =
                 new RefObject<Map.Entry<String, EntityModel>>(defaultItem);
         ArrayList<Map.Entry<String, EntityModel>> list =
-                AsyncDataProvider.GetBondingOptionList(tempRef_defaultItem);
+                AsyncDataProvider.getBondingOptionList(tempRef_defaultItem);
         defaultItem = tempRef_defaultItem.argvalue;
         getBondingOptions().setItems(list);
         getBondingOptions().setSelectedItem(defaultItem);
@@ -203,12 +203,12 @@ public class HostBondInterfaceModel extends Model
 
         // call the Network_ValueChanged method to set all
         // properties according to default value of Network:
-        Network_SelectedItemChanged(null);
+        network_SelectedItemChanged(null);
     }
 
-    private void Network_SelectedItemChanged(EventArgs e)
+    private void network_SelectedItemChanged(EventArgs e)
     {
-        UpdateCanSpecify();
+        updateCanSpecify();
 
         // ** TODO: When BootProtocol will be added to 'network', and when
         // ** BootProtocol, Address, Subnet, and Gateway will be added to
@@ -221,16 +221,16 @@ public class HostBondInterfaceModel extends Model
         // Gateway.Value = network == null ? null : network.gateway;
     }
 
-    private void BootProtocolChanged()
+    private void bootProtocolChanged()
     {
-        UpdateCanSpecify();
+        updateCanSpecify();
 
         getAddress().setIsValid(true);
         getSubnet().setIsValid(true);
         getGateway().setIsValid(true);
     }
 
-    private void UpdateCanSpecify()
+    private void updateCanSpecify()
     {
         Network network = (Network) getNetwork().getSelectedItem();
         boolean isChangeble = getIsStaticAddress() && network != null && !network.getId().equals(NGuid.Empty);
@@ -239,7 +239,7 @@ public class HostBondInterfaceModel extends Model
         getGateway().setIsChangable(isChangeble);
     }
 
-    public boolean Validate()
+    public boolean validate()
     {
         getNetwork().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getBond().validateSelectedItem(new IValidation[] { new NotEmptyValidation(),

@@ -268,7 +268,7 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
                 public void onClick(ClickEvent event) {
                     getView().flush();
                     beforeCommandExecuted(button.getCommand());
-                    button.getCommand().Execute();
+                    button.getCommand().execute();
                 }
             }));
         }

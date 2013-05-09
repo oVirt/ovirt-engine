@@ -1209,9 +1209,9 @@ public class UnitVmModel extends Model {
 
     }
 
-    public void Initialize(SystemTreeItemModel SystemTreeSelectedItem)
+    public void initialize(SystemTreeItemModel SystemTreeSelectedItem)
     {
-        super.Initialize();
+        super.initialize();
 
         setHash(getHashName() + new Date());
 
@@ -1229,17 +1229,17 @@ public class UnitVmModel extends Model {
 
         getCdImage().setIsChangable(false);
 
-        InitOSType();
-        InitDisplayProtocol();
-        InitFirstBootDevice();
-        InitNumOfMonitors();
-        InitAllowConsoleReconnect();
-        InitMinimalVmMemSize();
-        InitMaximalVmMemSize32OS();
+        initOSType();
+        initDisplayProtocol();
+        initFirstBootDevice();
+        initNumOfMonitors();
+        initAllowConsoleReconnect();
+        initMinimalVmMemSize();
+        initMaximalVmMemSize32OS();
         initMigrationMode();
         initVncKeyboardLayout();
 
-        behavior.Initialize(SystemTreeSelectedItem);
+        behavior.initialize(SystemTreeSelectedItem);
     }
 
     @Override
@@ -1250,57 +1250,57 @@ public class UnitVmModel extends Model {
         if (ev.matchesDefinition(Frontend.QueryStartedEventDefinition)
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
-            Frontend_QueryStarted();
+            frontend_QueryStarted();
         }
         else if (ev.matchesDefinition(Frontend.QueryCompleteEventDefinition)
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
-            Frontend_QueryComplete();
+            frontend_QueryComplete();
         }
         else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition))
         {
             if (sender == getDataCenter())
             {
-                DataCenter_SelectedItemChanged(sender, args);
+                dataCenter_SelectedItemChanged(sender, args);
             }
             else if (sender == getTemplate())
             {
-                Template_SelectedItemChanged(sender, args);
+                template_SelectedItemChanged(sender, args);
             }
             else if (sender == getCluster())
             {
-                Cluster_SelectedItemChanged(sender, args);
-                InitUsbPolicy();
+                cluster_SelectedItemChanged(sender, args);
+                initUsbPolicy();
             }
             else if (sender == getTimeZone())
             {
-                TimeZone_SelectedItemChanged(sender, args);
+                timeZone_SelectedItemChanged(sender, args);
             }
             else if (sender == getDefaultHost())
             {
-                DefaultHost_SelectedItemChanged(sender, args);
+                defaultHost_SelectedItemChanged(sender, args);
             }
             else if (sender == getOSType())
             {
-                OSType_SelectedItemChanged(sender, args);
-                InitUsbPolicy();
+                oSType_SelectedItemChanged(sender, args);
+                initUsbPolicy();
             }
             else if (sender == getFirstBootDevice())
             {
-                FirstBootDevice_SelectedItemChanged(sender, args);
+                firstBootDevice_SelectedItemChanged(sender, args);
             }
             else if (sender == getDisplayProtocol())
             {
-                DisplayProtocol_SelectedItemChanged(sender, args);
-                InitUsbPolicy();
+                displayProtocol_SelectedItemChanged(sender, args);
+                initUsbPolicy();
             }
             else if (sender == getNumOfSockets())
             {
-                NumOfSockets_EntityChanged(sender, args);
+                numOfSockets_EntityChanged(sender, args);
             }
             else if (sender == getCoresPerSocket())
             {
-                CoresPerSocket_EntityChanged(sender, args);
+                coresPerSocket_EntityChanged(sender, args);
             }
             else if (sender == getMigrationMode())
             {
@@ -1312,11 +1312,11 @@ public class UnitVmModel extends Model {
         {
             if (sender == getMemSize())
             {
-                MemSize_EntityChanged(sender, args);
+                memSize_EntityChanged(sender, args);
             }
             else if (sender == getTotalCPUCores())
             {
-                TotalCPUCores_EntityChanged(sender, args);
+                totalCPUCores_EntityChanged(sender, args);
             }
             else if (sender == getIsAutoAssign())
             {
@@ -1325,7 +1325,7 @@ public class UnitVmModel extends Model {
             }
             else if (sender == getProvisioning())
             {
-                Provisioning_SelectedItemChanged(sender, args);
+                provisioning_SelectedItemChanged(sender, args);
             }
             else if (sender == getProvisioningThin_IsSelected())
             {
@@ -1344,29 +1344,29 @@ public class UnitVmModel extends Model {
 
     private int queryCounter;
 
-    private void Frontend_QueryStarted()
+    private void frontend_QueryStarted()
     {
         queryCounter++;
         if (getProgress() == null)
         {
-            StartProgress(null);
+            startProgress(null);
         }
     }
 
-    private void Frontend_QueryComplete()
+    private void frontend_QueryComplete()
     {
         queryCounter--;
         if (queryCounter == 0)
         {
-            StopProgress();
+            stopProgress();
         }
     }
 
-    protected void InitNumOfMonitors()
+    protected void initNumOfMonitors()
     {
         if (getVmType() == VmType.Desktop)
         {
-            AsyncDataProvider.GetNumOfMonitorList(new AsyncQuery(this,
+            AsyncDataProvider.getNumOfMonitorList(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -1394,12 +1394,12 @@ public class UnitVmModel extends Model {
         }
     }
 
-    protected void InitAllowConsoleReconnect()
+    protected void initAllowConsoleReconnect()
     {
         getAllowConsoleReconnect().setEntity(getVmType() == VmType.Server);
     }
 
-    private void InitOSType()
+    private void initOSType()
     {
         List<VmOsType> osList = Arrays.asList(VmOsType.values());
         Collections.sort(osList, new Comparator<VmOsType>() {
@@ -1423,7 +1423,7 @@ public class UnitVmModel extends Model {
         getOSType().setSelectedItem(VmOsType.Unassigned);
     }
 
-    private void InitUsbPolicy() {
+    private void initUsbPolicy() {
         VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
         VmOsType osType = (VmOsType) getOSType().getSelectedItem();
         DisplayType displayType = (DisplayType) (getDisplayProtocol().getSelectedItem() != null ?
@@ -1470,9 +1470,9 @@ public class UnitVmModel extends Model {
         getUsbPolicy().setSelectedItem(UsbPolicy.DISABLED);
     }
 
-    private void InitMinimalVmMemSize()
+    private void initMinimalVmMemSize()
     {
-        AsyncDataProvider.GetMinimalVmMemSize(new AsyncQuery(this,
+        AsyncDataProvider.getMinimalVmMemSize(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -1484,9 +1484,9 @@ public class UnitVmModel extends Model {
                 }, getHash()));
     }
 
-    private void InitMaximalVmMemSize32OS()
+    private void initMaximalVmMemSize32OS()
     {
-        AsyncDataProvider.GetMaximalVmMemSize32OS(new AsyncQuery(this,
+        AsyncDataProvider.getMaximalVmMemSize32OS(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -1498,13 +1498,13 @@ public class UnitVmModel extends Model {
                 }, getHash()));
     }
 
-    private void UpdateMaximalVmMemSize()
+    private void updateMaximalVmMemSize()
     {
         VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
 
         if (cluster != null)
         {
-            AsyncDataProvider.GetMaximalVmMemSize64OS(new AsyncQuery(this,
+            AsyncDataProvider.getMaximalVmMemSize64OS(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -1517,7 +1517,7 @@ public class UnitVmModel extends Model {
         }
     }
 
-    private void InitDisplayProtocol()
+    private void initDisplayProtocol()
     {
         ArrayList<EntityModel> displayProtocolOptions = new ArrayList<EntityModel>();
 
@@ -1536,7 +1536,7 @@ public class UnitVmModel extends Model {
         getDisplayProtocol().getSelectedItemChangedEvent().addListener(this);
     }
 
-    private void InitFirstBootDevice()
+    private void initFirstBootDevice()
     {
         EntityModel tempVar = new EntityModel();
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().hardDiskTitle());
@@ -1563,7 +1563,7 @@ public class UnitVmModel extends Model {
 
     private void initVncKeyboardLayout() {
 
-        final List<String> layouts = (List<String>)AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.VncKeyboardLayoutValidValues);
+        final List<String> layouts = (List<String>)AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayoutValidValues);
         final ArrayList<String> vncKeyboardLayoutItems = new ArrayList<String>();
         vncKeyboardLayoutItems.add(null);   // null value means the global VncKeyboardLayout from vdc_options will be used
         vncKeyboardLayoutItems.addAll(layouts);
@@ -1572,9 +1572,9 @@ public class UnitVmModel extends Model {
         getVncKeyboardLayout().setIsAvailable(isVncSelected());
     }
 
-    private void DataCenter_SelectedItemChanged(Object sender, EventArgs args)
+    private void dataCenter_SelectedItemChanged(Object sender, EventArgs args)
     {
-        behavior.DataCenter_SelectedItemChanged();
+        behavior.dataCenter_SelectedItemChanged();
 
         StoragePool dataCenter = (StoragePool) getDataCenter().getSelectedItem();
         if (dataCenter != null) {
@@ -1582,33 +1582,33 @@ public class UnitVmModel extends Model {
         }
     }
 
-    private void Template_SelectedItemChanged(Object sender, EventArgs args)
+    private void template_SelectedItemChanged(Object sender, EventArgs args)
     {
-        behavior.Template_SelectedItemChanged();
+        behavior.template_SelectedItemChanged();
     }
 
-    private void Cluster_SelectedItemChanged(Object sender, EventArgs args)
+    private void cluster_SelectedItemChanged(Object sender, EventArgs args)
     {
-        behavior.Cluster_SelectedItemChanged();
+        behavior.cluster_SelectedItemChanged();
 
-        UpdateMaximalVmMemSize();
+        updateMaximalVmMemSize();
     }
 
-    private void TimeZone_SelectedItemChanged(Object sender, EventArgs args)
+    private void timeZone_SelectedItemChanged(Object sender, EventArgs args)
     {
     }
 
-    private void DefaultHost_SelectedItemChanged(Object sender, EventArgs args)
+    private void defaultHost_SelectedItemChanged(Object sender, EventArgs args)
     {
-        behavior.DefaultHost_SelectedItemChanged();
+        behavior.defaultHost_SelectedItemChanged();
     }
 
-    private void OSType_SelectedItemChanged(Object sender, EventArgs args)
+    private void oSType_SelectedItemChanged(Object sender, EventArgs args)
     {
         VmOsType osType = (VmOsType) getOSType().getSelectedItem();
 
-        setIsWindowsOS(AsyncDataProvider.IsWindowsOsType(osType));
-        setIsLinuxOS(AsyncDataProvider.IsLinuxOsType(osType));
+        setIsWindowsOS(AsyncDataProvider.isWindowsOsType(osType));
+        setIsLinuxOS(AsyncDataProvider.isLinuxOsType(osType));
 
         getInitrd_path().setIsChangable(getIsLinuxOS());
         getInitrd_path().setIsAvailable(getIsLinuxOS());
@@ -1628,7 +1628,7 @@ public class UnitVmModel extends Model {
 
     }
 
-    private void FirstBootDevice_SelectedItemChanged(Object sender, EventArgs args)
+    private void firstBootDevice_SelectedItemChanged(Object sender, EventArgs args)
     {
         EntityModel entityModel = (EntityModel) getFirstBootDevice().getSelectedItem();
         BootSequence firstDevice = (BootSequence) entityModel.getEntity();
@@ -1653,12 +1653,12 @@ public class UnitVmModel extends Model {
         getSecondBootDevice().setSelectedItem(noneOption);
     }
 
-    private void Provisioning_SelectedItemChanged(Object sender, EventArgs args)
+    private void provisioning_SelectedItemChanged(Object sender, EventArgs args)
     {
-        behavior.Provisioning_SelectedItemChanged();
+        behavior.provisioning_SelectedItemChanged();
     }
 
-    private void DisplayProtocol_SelectedItemChanged(Object sender, EventArgs args)
+    private void displayProtocol_SelectedItemChanged(Object sender, EventArgs args)
     {
         EntityModel entityModel = (EntityModel) getDisplayProtocol().getSelectedItem();
         if (entityModel == null)
@@ -1678,20 +1678,20 @@ public class UnitVmModel extends Model {
 
         getVncKeyboardLayout().setIsAvailable(type == DisplayType.vnc);
 
-        UpdateNumOfMonitors();
+        updateNumOfMonitors();
     }
 
-    private void MemSize_EntityChanged(Object sender, EventArgs args)
+    private void memSize_EntityChanged(Object sender, EventArgs args)
     {
-        behavior.UpdateMinAllocatedMemory();
+        behavior.updateMinAllocatedMemory();
     }
 
-    private void NumOfSockets_EntityChanged(Object sender, EventArgs args)
+    private void numOfSockets_EntityChanged(Object sender, EventArgs args)
     {
         behavior.numOfSocketChanged();
     }
 
-    private void TotalCPUCores_EntityChanged(Object sender, EventArgs args) {
+    private void totalCPUCores_EntityChanged(Object sender, EventArgs args) {
         // do not listen on changes while the totalCpuCoresChanged is adjusting them
         getNumOfSockets().getSelectedItemChangedEvent().removeListener(this);
         getTotalCPUCores().getEntityChangedEvent().removeListener(this);
@@ -1705,7 +1705,7 @@ public class UnitVmModel extends Model {
         getCoresPerSocket().getSelectedItemChangedEvent().addListener(this);
     }
 
-    private void CoresPerSocket_EntityChanged(Object sender, EventArgs args) {
+    private void coresPerSocket_EntityChanged(Object sender, EventArgs args) {
         behavior.coresPerSocketChanged();
     }
 
@@ -1721,7 +1721,7 @@ public class UnitVmModel extends Model {
         return isVnc;
     }
 
-    private void UpdateNumOfMonitors()
+    private void updateNumOfMonitors()
     {
         if (isVncSelected())
         {
@@ -1792,7 +1792,7 @@ public class UnitVmModel extends Model {
         }
     }
 
-    public void SetDataCenter(UnitVmModel model, ArrayList<StoragePool> list)
+    public void setDataCenter(UnitVmModel model, ArrayList<StoragePool> list)
     {
         if (model.getBehavior().getSystemTreeSelectedItem() != null
                 && model.getBehavior().getSystemTreeSelectedItem().getType() != SystemTreeItemType.System)
@@ -1873,7 +1873,7 @@ public class UnitVmModel extends Model {
         }
     }
 
-    public void SetClusters(UnitVmModel model, ArrayList<VDSGroup> clusters, NGuid clusterGuid)
+    public void setClusters(UnitVmModel model, ArrayList<VDSGroup> clusters, NGuid clusterGuid)
     {
         VmModelBehaviorBase behavior = model.getBehavior();
         if (behavior.getSystemTreeSelectedItem() != null
@@ -1934,7 +1934,7 @@ public class UnitVmModel extends Model {
         }
     }
 
-    public boolean Validate() {
+    public boolean validate() {
         getDataCenter().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getCluster().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getMemSize().validateEntity(new IValidation[] { new ByteSizeValidation() });
@@ -1958,7 +1958,7 @@ public class UnitVmModel extends Model {
                             new NotEmptyValidation(),
                             new LengthValidation(
                                 (getBehavior() instanceof TemplateVmModelBehavior || getBehavior() instanceof NewTemplateVmModelBehavior)
-                                    ? VM_TEMPLATE_NAME_MAX_LIMIT : AsyncDataProvider.IsWindowsOsType(osType) ? WINDOWS_VM_NAME_MAX_LIMIT : NON_WINDOWS_VM_NAME_MAX_LIMIT),
+                                    ? VM_TEMPLATE_NAME_MAX_LIMIT : AsyncDataProvider.isWindowsOsType(osType) ? WINDOWS_VM_NAME_MAX_LIMIT : NON_WINDOWS_VM_NAME_MAX_LIMIT),
                             isPoolTabValid ? new PoolNameValidation() : new I18NNameValidation()
                     });
 
@@ -1969,13 +1969,13 @@ public class UnitVmModel extends Model {
                     });
 
             boolean is64OsType =
-                    (osType == VmOsType.Other || osType == VmOsType.OtherLinux || AsyncDataProvider.Is64bitOsType(osType));
+                    (osType == VmOsType.Other || osType == VmOsType.OtherLinux || AsyncDataProvider.is64bitOsType(osType));
             int maxMemSize = is64OsType ? get_MaxMemSize64() : get_MaxMemSize32();
 
-            ValidateMemorySize(getMemSize(), maxMemSize, _minMemSize);
+            validateMemorySize(getMemSize(), maxMemSize, _minMemSize);
             if (!(this.getBehavior() instanceof TemplateVmModelBehavior)) {
                 // Minimum 'Physical Memory Guaranteed' is 1MB
-                ValidateMemorySize(getMinAllocatedMemory(), (Integer) getMemSize().getEntity(), 1);
+                validateMemorySize(getMinAllocatedMemory(), (Integer) getMemSize().getEntity(), 1);
             }
         }
 
@@ -2045,7 +2045,7 @@ public class UnitVmModel extends Model {
                 && getKernel_path().getIsValid()
                 && getInitrd_path().getIsValid()
                 && getKernel_parameters().getIsValid()
-                && behavior.Validate()
+                && behavior.validate()
                 && customPropertySheetValid && getQuota().getIsValid();
 
     }
@@ -2066,7 +2066,7 @@ public class UnitVmModel extends Model {
 
     }
 
-    private void ValidateMemorySize(EntityModel model, int maxMemSize, int minMemSize)
+    private void validateMemorySize(EntityModel model, int maxMemSize, int minMemSize)
     {
         boolean isValid = false;
 

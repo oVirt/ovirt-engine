@@ -25,62 +25,62 @@ public final class Cloner
     {
         if (instance instanceof VM)
         {
-            return CloneVM((VM) instance);
+            return cloneVM((VM) instance);
         }
         if (instance instanceof VDS)
         {
-            return CloneVDS((VDS) instance);
+            return cloneVDS((VDS) instance);
         }
         if (instance instanceof VDSGroup)
         {
-            return CloneVDSGroup((VDSGroup) instance);
+            return cloneVDSGroup((VDSGroup) instance);
         }
         if (instance instanceof StoragePool)
         {
-            return CloneStorage_pool((StoragePool) instance);
+            return cloneStorage_pool((StoragePool) instance);
         }
         if (instance instanceof Network)
         {
-            return CloneNetwork((Network) instance);
+            return cloneNetwork((Network) instance);
         }
         if (instance instanceof NetworkCluster)
         {
-            return CloneNetworkCluster((NetworkCluster) instance);
+            return cloneNetworkCluster((NetworkCluster) instance);
         }
         if (instance instanceof VmPool)
         {
-            return CloneVmPool((VmPool) instance);
+            return cloneVmPool((VmPool) instance);
         }
         if (instance instanceof StorageDomainStatic)
         {
-            return CloneStorageDomainStatic((StorageDomainStatic) instance);
+            return cloneStorageDomainStatic((StorageDomainStatic) instance);
         }
         if (instance instanceof VmTemplate)
         {
-            return CloneVmTemplate((VmTemplate) instance);
+            return cloneVmTemplate((VmTemplate) instance);
         }
         if (instance instanceof VmNetworkInterface)
         {
-            return CloneVmNetworkInterface((VmNetworkInterface) instance);
+            return cloneVmNetworkInterface((VmNetworkInterface) instance);
         }
         if (instance instanceof VdsNetworkInterface)
         {
-            return CloneVdsNetworkInterface((VdsNetworkInterface) instance);
+            return cloneVdsNetworkInterface((VdsNetworkInterface) instance);
         }
         if (instance instanceof VmStatic)
         {
-            return CloneVmStatic((VmStatic) instance);
+            return cloneVmStatic((VmStatic) instance);
         }
         if (instance instanceof Version)
         {
-            return CloneVersion((Version) instance);
+            return cloneVersion((Version) instance);
         }
 
         // Throw exception to determine development needs.
         throw new NotImplementedException();
     }
 
-    private static Object CloneVM(VM instance)
+    private static Object cloneVM(VM instance)
     {
         if (instance == null)
         {
@@ -195,12 +195,12 @@ public final class Cloner
         return vm;
     }
 
-    private static Object CloneVersion(Version instance)
+    private static Object cloneVersion(Version instance)
     {
         return new Version(instance.toString());
     }
 
-    private static Object CloneVDS(VDS instance)
+    private static Object cloneVDS(VDS instance)
     {
         VDS obj = new VDS();
 
@@ -235,7 +235,7 @@ public final class Cloner
         return obj;
     }
 
-    private static StoragePool CloneStorage_pool(StoragePool instance)
+    private static StoragePool cloneStorage_pool(StoragePool instance)
     {
         StoragePool obj = new StoragePool();
 
@@ -254,7 +254,7 @@ public final class Cloner
         return obj;
     }
 
-    private static VDSGroup CloneVDSGroup(VDSGroup instance)
+    private static VDSGroup cloneVDSGroup(VDSGroup instance)
     {
         VDSGroup obj = new VDSGroup();
         obj.setId(instance.getId());
@@ -277,7 +277,7 @@ public final class Cloner
         return obj;
     }
 
-    private static Network CloneNetwork(Network instance)
+    private static Network cloneNetwork(Network instance)
     {
         Network obj = new Network();
 
@@ -294,12 +294,12 @@ public final class Cloner
         obj.setMtu(instance.getMtu());
         obj.setVmNetwork(instance.isVmNetwork());
         if (instance.getCluster() !=null){
-            obj.setCluster(CloneNetworkCluster(instance.getCluster()));
+            obj.setCluster(cloneNetworkCluster(instance.getCluster()));
         }
         return obj;
     }
 
-    private static NetworkCluster CloneNetworkCluster(NetworkCluster instance)
+    private static NetworkCluster cloneNetworkCluster(NetworkCluster instance)
     {
         NetworkCluster obj = new NetworkCluster();
 
@@ -310,7 +310,7 @@ public final class Cloner
         return obj;
     }
 
-    private static VmPool CloneVmPool(VmPool instance)
+    private static VmPool cloneVmPool(VmPool instance)
     {
         VmPool obj = new VmPool();
 
@@ -334,7 +334,7 @@ public final class Cloner
         return obj;
     }
 
-    private static StorageDomainStatic CloneStorageDomainStatic(StorageDomainStatic instance)
+    private static StorageDomainStatic cloneStorageDomainStatic(StorageDomainStatic instance)
     {
         StorageDomainStatic obj = new StorageDomainStatic();
         obj.setConnection(instance.getConnection());
@@ -348,7 +348,7 @@ public final class Cloner
         return obj;
     }
 
-    private static VmTemplate CloneVmTemplate(VmTemplate instance)
+    private static VmTemplate cloneVmTemplate(VmTemplate instance)
     {
         VmTemplate obj = new VmTemplate();
         obj.setStoragePoolId(instance.getStoragePoolId());
@@ -390,7 +390,7 @@ public final class Cloner
         return obj;
     }
 
-    private static VmStatic CloneVmStatic(VmStatic instance)
+    private static VmStatic cloneVmStatic(VmStatic instance)
     {
         VmStatic obj = new VmStatic();
 
@@ -427,7 +427,7 @@ public final class Cloner
         return obj;
     }
 
-    private static void CloneNetworkStatisticss(NetworkStatistics instance, NetworkStatistics obj)
+    private static void cloneNetworkStatisticss(NetworkStatistics instance, NetworkStatistics obj)
     {
         obj.setId(instance.getId());
         obj.setReceiveDropRate(instance.getReceiveDropRate());
@@ -437,17 +437,17 @@ public final class Cloner
         obj.setStatus(instance.getStatus());
     }
 
-    private static VdsNetworkStatistics CloneVdsNetworkStatistics(VdsNetworkStatistics instance)
+    private static VdsNetworkStatistics cloneVdsNetworkStatistics(VdsNetworkStatistics instance)
     {
         VdsNetworkStatistics obj = new VdsNetworkStatistics();
 
-        CloneNetworkStatisticss(instance, obj);
+        cloneNetworkStatisticss(instance, obj);
         obj.setVdsId(instance.getVdsId());
 
         return obj;
     }
 
-    private static Object CloneVdsNetworkInterface(VdsNetworkInterface vdsNetworkInterface)
+    private static Object cloneVdsNetworkInterface(VdsNetworkInterface vdsNetworkInterface)
     {
         VdsNetworkInterface obj = new VdsNetworkInterface();
 
@@ -463,22 +463,22 @@ public final class Cloner
         obj.setName(vdsNetworkInterface.getName());
         obj.setNetworkName(vdsNetworkInterface.getNetworkName());
         obj.setSpeed(vdsNetworkInterface.getSpeed());
-        obj.setStatistics(CloneVdsNetworkStatistics(vdsNetworkInterface.getStatistics()));
+        obj.setStatistics(cloneVdsNetworkStatistics(vdsNetworkInterface.getStatistics()));
 
         return obj;
     }
 
-    private static VmNetworkStatistics CloneVmNetworkStatistics(VmNetworkStatistics instance)
+    private static VmNetworkStatistics cloneVmNetworkStatistics(VmNetworkStatistics instance)
     {
         VmNetworkStatistics obj = new VmNetworkStatistics();
 
-        CloneNetworkStatisticss(instance, obj);
+        cloneNetworkStatisticss(instance, obj);
         obj.setVmId(instance.getVmId());
 
         return obj;
     }
 
-    private static Object CloneVmNetworkInterface(VmNetworkInterface vmNetworkInterface)
+    private static Object cloneVmNetworkInterface(VmNetworkInterface vmNetworkInterface)
     {
         VmNetworkInterface obj = new VmNetworkInterface();
         obj.setId(vmNetworkInterface.getId());
@@ -491,7 +491,7 @@ public final class Cloner
         obj.setVmId(vmNetworkInterface.getVmId());
         obj.setVmName(vmNetworkInterface.getVmName());
         obj.setVmTemplateId(vmNetworkInterface.getVmTemplateId());
-        obj.setStatistics(CloneVmNetworkStatistics(vmNetworkInterface.getStatistics()));
+        obj.setStatistics(cloneVmNetworkStatistics(vmNetworkInterface.getStatistics()));
 
         return obj;
     }

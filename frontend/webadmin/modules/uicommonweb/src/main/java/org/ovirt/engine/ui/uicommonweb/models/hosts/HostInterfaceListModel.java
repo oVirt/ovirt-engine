@@ -192,7 +192,7 @@ public class HostInterfaceListModel extends SearchableListModel
             if (currentItemId.equals(newItemId))
             {
                 setEntity(value, false);
-                UpdateActionAvailability();
+                updateActionAvailability();
                 return;
             }
         }
@@ -200,7 +200,7 @@ public class HostInterfaceListModel extends SearchableListModel
         super.setEntity(value);
     }
 
-    private ArrayList<VdsNetworkInterface> GetSelectedItems(boolean withVlans)
+    private ArrayList<VdsNetworkInterface> getSelectedItems(boolean withVlans)
     {
         ArrayList<VdsNetworkInterface> list = new ArrayList<VdsNetworkInterface>();
         if (getItems() != null)
@@ -246,12 +246,12 @@ public class HostInterfaceListModel extends SearchableListModel
     @Override
     public ArrayList<VdsNetworkInterface> getSelectedItems()
     {
-        return GetSelectedItems(false);
+        return getSelectedItems(false);
     }
 
     public ArrayList<VdsNetworkInterface> getSelectedItemsWithVlans()
     {
-        return GetSelectedItems(true);
+        return getSelectedItems(true);
     }
 
     private ArrayList<VdsNetworkInterface> getInterfaceItems()
@@ -334,7 +334,7 @@ public class HostInterfaceListModel extends SearchableListModel
     {
         // get management network name
         ENGINE_NETWORK_NAME =
-                (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
+                (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
 
         setIsTimerDisabled(true);
         setTitle(ConstantsManager.getInstance().getConstants().networkInterfacesTitle());
@@ -347,7 +347,7 @@ public class HostInterfaceListModel extends SearchableListModel
         setSaveNetworkConfigCommand(new UICommand("SaveNetworkConfig", this)); //$NON-NLS-1$
         setSetupNetworksCommand(new UICommand("SetupNetworks", this)); //$NON-NLS-1$
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -364,8 +364,8 @@ public class HostInterfaceListModel extends SearchableListModel
     {
         super.onEntityChanged();
 
-        getSearchCommand().Execute();
-        UpdateActionAvailability();
+        getSearchCommand().execute();
+        updateActionAvailability();
     }
 
     // protected override void OnSelectedItemChanged()
@@ -387,7 +387,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
         if (e.PropertyName.equals("status") || e.PropertyName.equals("net_config_dirty")) //$NON-NLS-1$ //$NON-NLS-2$
         {
-            UpdateActionAvailability();
+            updateActionAvailability();
         }
     }
 
@@ -411,7 +411,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 {
                     items.add((VdsNetworkInterface) networkInterfacesIterator.next());
                 }
-                interfaceModel.UpdateItems(items);
+                interfaceModel.updateItems(items);
             }
         };
 
@@ -447,7 +447,7 @@ public class HostInterfaceListModel extends SearchableListModel
         syncSearch();
     }
 
-    private void UpdateItems(Iterable<VdsNetworkInterface> source)
+    private void updateItems(Iterable<VdsNetworkInterface> source)
     {
         ArrayList<HostInterfaceLineModel> items = new ArrayList<HostInterfaceLineModel>();
         setOriginalItems((ArrayList<VdsNetworkInterface>) source);
@@ -487,7 +487,7 @@ public class HostInterfaceListModel extends SearchableListModel
         }
 
         setItems(items);
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     private List<HostVLan> gatherVlans(VdsNetworkInterface nic, Map<String, List<Vlan>> nicToVlans) {
@@ -591,7 +591,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
         if (ev.matchesDefinition(ProvidePropertyChangedEvent.Definition))
         {
-            Model_PropertyChanged(sender, (PropertyChangedEventArgs) args);
+            model_PropertyChanged(sender, (PropertyChangedEventArgs) args);
         }
         else if (sender instanceof Model && StringHelper.stringsEqual(((Model) sender).getTitle(), "InterfaceList")) //$NON-NLS-1$
         {
@@ -609,7 +609,7 @@ public class HostInterfaceListModel extends SearchableListModel
         }
     }
 
-    private void Model_PropertyChanged(Object sender, PropertyChangedEventArgs args)
+    private void model_PropertyChanged(Object sender, PropertyChangedEventArgs args)
     {
         if (!args.PropertyName.equals("IsSelected")) //$NON-NLS-1$
         {
@@ -758,10 +758,10 @@ public class HostInterfaceListModel extends SearchableListModel
             }
         }
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
-    private ArrayList<String> GetSelectedNicsNetworks(RefObject<Boolean> isVlanSelected,
+    private ArrayList<String> getSelectedNicsNetworks(RefObject<Boolean> isVlanSelected,
             RefObject<Boolean> isManagementSelected)
     {
         ArrayList<VdsNetworkInterface> selectedItems = getSelectedItemsWithVlans();
@@ -786,7 +786,7 @@ public class HostInterfaceListModel extends SearchableListModel
         return list;
     }
 
-    public void Edit()
+    public void edit()
     {
 
         if (getWindow() != null)
@@ -933,7 +933,7 @@ public class HostInterfaceListModel extends SearchableListModel
                     RefObject<Map.Entry<String, EntityModel>> tempRef_defaultItem =
                             new RefObject<Map.Entry<String, EntityModel>>(defaultItem);
                     ArrayList<Map.Entry<String, EntityModel>> list =
-                            AsyncDataProvider.GetBondingOptionList(tempRef_defaultItem);
+                            AsyncDataProvider.getBondingOptionList(tempRef_defaultItem);
                     defaultItem = tempRef_defaultItem.argvalue;
                     Map.Entry<String, EntityModel> selectBondingOpt =
                             new KeyValuePairCompat<String, EntityModel>();
@@ -950,7 +950,7 @@ public class HostInterfaceListModel extends SearchableListModel
                     }
                     if (containsSelectBondingOpt == false)
                     {
-                        if (StringHelper.stringsEqual(item.getBondOptions(), AsyncDataProvider.GetDefaultBondingOption()))
+                        if (StringHelper.stringsEqual(item.getBondOptions(), AsyncDataProvider.getDefaultBondingOption()))
                         {
                             selectBondingOpt = defaultItem;
                         }
@@ -1001,10 +1001,10 @@ public class HostInterfaceListModel extends SearchableListModel
 
             }
         };
-        AsyncDataProvider.GetClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
+        AsyncDataProvider.getClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
     }
 
-    public void EditManagementNetwork()
+    public void editManagementNetwork()
     {
         if (getWindow() != null)
         {
@@ -1042,7 +1042,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
                 final StringBuilder tmpDefaultInterfaceName = new StringBuilder();
 
-                AsyncDataProvider.GetInterfaceOptionsForEditNetwork(new AsyncQuery(this, new INewAsyncCallback() {
+                AsyncDataProvider.getInterfaceOptionsForEditNetwork(new AsyncQuery(this, new INewAsyncCallback() {
 
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
@@ -1076,7 +1076,7 @@ public class HostInterfaceListModel extends SearchableListModel
                             RefObject<Map.Entry<String, EntityModel>> tempRef_defaultItem =
                                     new RefObject<Map.Entry<String, EntityModel>>(defaultItem);
                             ArrayList<Map.Entry<String, EntityModel>> list =
-                                    AsyncDataProvider.GetBondingOptionList(tempRef_defaultItem);
+                                    AsyncDataProvider.getBondingOptionList(tempRef_defaultItem);
                             defaultItem = tempRef_defaultItem.argvalue;
                             Map.Entry<String, EntityModel> selectBondingOpt =
                                     new KeyValuePairCompat<String, EntityModel>();
@@ -1094,7 +1094,7 @@ public class HostInterfaceListModel extends SearchableListModel
                             if (containsSelectBondingOpt == false)
                             {
                                 if (StringHelper.stringsEqual(item.getBondOptions(),
-                                        AsyncDataProvider.GetDefaultBondingOption()))
+                                        AsyncDataProvider.getDefaultBondingOption()))
                                 {
                                     selectBondingOpt = defaultItem;
                                 }
@@ -1128,34 +1128,34 @@ public class HostInterfaceListModel extends SearchableListModel
 
             }
         };
-        AsyncDataProvider.GetClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
+        AsyncDataProvider.getClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
     }
 
-    public void OnEditManagementNetworkConfirmation(boolean isBond)
+    public void onEditManagementNetworkConfirmation(boolean isBond)
     {
         if (!isBond)
         {
             HostManagementNetworkModel model = (HostManagementNetworkModel) getWindow();
-            if (!model.Validate())
+            if (!model.validate())
             {
                 return;
             }
             if ((Boolean) model.getCheckConnectivity().getEntity() == true)
             {
-                OnEditManagementNetwork();
+                onEditManagementNetwork();
                 return;
             }
         }
         else
         {
             HostBondInterfaceModel model = (HostBondInterfaceModel) getWindow();
-            if (!model.Validate())
+            if (!model.validate())
             {
                 return;
             }
             if ((Boolean) model.getCheckConnectivity().getEntity() == true)
             {
-                OnBond();
+                onBond();
                 return;
             }
         }
@@ -1187,7 +1187,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
     }
 
-    public void OnEditManagementNetwork()
+    public void onEditManagementNetwork()
     {
         HostManagementNetworkModel model = (HostManagementNetworkModel) getWindow();
         if (getConfirmWindow() != null)
@@ -1204,7 +1204,7 @@ public class HostInterfaceListModel extends SearchableListModel
             return;
         }
 
-        if (!model.Validate())
+        if (!model.validate())
         {
             return;
         }
@@ -1257,7 +1257,7 @@ public class HostInterfaceListModel extends SearchableListModel
             parameters.setGateway((String) model.getGateway().getEntity());
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
         setcurrentModel(model);
 
         Frontend.RunAction(actionType, parameters,
@@ -1278,20 +1278,20 @@ public class HostInterfaceListModel extends SearchableListModel
                             }
                             else
                             {
-                                hostInterfaceListModel.getcurrentModel().StopProgress();
-                                hostInterfaceListModel.Cancel();
+                                hostInterfaceListModel.getcurrentModel().stopProgress();
+                                hostInterfaceListModel.cancel();
                                 hostInterfaceListModel.search();
                             }
                         }
                         else
                         {
-                            hostInterfaceListModel.getcurrentModel().StopProgress();
+                            hostInterfaceListModel.getcurrentModel().stopProgress();
                         }
 
                     }
                 },
                 this);
-        CancelConfirm();
+        cancelConfirm();
     }
 
     public void bond()
@@ -1355,7 +1355,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 RefObject<Boolean> tempRef_isVlanSelected = new RefObject<Boolean>(isVlanSelected);
                 RefObject<Boolean> tempRef_isManagement = new RefObject<Boolean>(isManagement);
                 ArrayList<String> selectedNicsNetworks =
-                        hostInterfaceListModel.GetSelectedNicsNetworks(tempRef_isVlanSelected, tempRef_isManagement);
+                        hostInterfaceListModel.getSelectedNicsNetworks(tempRef_isVlanSelected, tempRef_isManagement);
                 isVlanSelected = tempRef_isVlanSelected.argvalue;
                 isManagement = tempRef_isManagement.argvalue;
 
@@ -1413,7 +1413,7 @@ public class HostInterfaceListModel extends SearchableListModel
                             .setItems(new ArrayList<String>(Arrays.asList(new String[] { bond.getName() })));
                     innerBondModel.getBond().setSelectedItem(bond.getName());
                     innerBondModel.getBond().setIsChangable(false);
-                    hostInterfaceListModel.PostBond(hostInterfaceListModel,
+                    hostInterfaceListModel.postBond(hostInterfaceListModel,
                             innerBondModel,
                             networksToAdd,
                             isAnyManagement);
@@ -1448,7 +1448,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                     break;
                                 }
                             }
-                            innerHostInterfaceListModel.PostBond(innerHostInterfaceListModel,
+                            innerHostInterfaceListModel.postBond(innerHostInterfaceListModel,
                                     bModel,
                                     bModel.getNetwork().getItems() != null ? (ArrayList<Network>) bModel.getNetwork()
                                             .getItems()
@@ -1463,10 +1463,10 @@ public class HostInterfaceListModel extends SearchableListModel
                 }
             }
         };
-        AsyncDataProvider.GetClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
+        AsyncDataProvider.getClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
     }
 
-    public void PostBond(HostInterfaceListModel hostInterfaceListModel,
+    public void postBond(HostInterfaceListModel hostInterfaceListModel,
             HostBondInterfaceModel innerBondModel,
             ArrayList<Network> networksToAdd,
             boolean isAnyManagement)
@@ -1539,7 +1539,7 @@ public class HostInterfaceListModel extends SearchableListModel
         }
     }
 
-    public void OnBond()
+    public void onBond()
     {
         HostBondInterfaceModel model = (HostBondInterfaceModel) getWindow();
 
@@ -1550,7 +1550,7 @@ public class HostInterfaceListModel extends SearchableListModel
             {
                 model.getCheckConnectivity().setEntity(true);
             }
-            CancelConfirm();
+            cancelConfirm();
         }
 
         if (model.getProgress() != null)
@@ -1558,7 +1558,7 @@ public class HostInterfaceListModel extends SearchableListModel
             return;
         }
 
-        if (!model.Validate())
+        if (!model.validate())
         {
             return;
         }
@@ -1624,7 +1624,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 }
             }
 
-            model.StartProgress(null);
+            model.startProgress(null);
             setcurrentModel(model);
 
             Frontend.RunAction(VdcActionType.UpdateNetworkToVdsInterface, parameters,
@@ -1645,14 +1645,14 @@ public class HostInterfaceListModel extends SearchableListModel
                                 }
                                 else
                                 {
-                                    hostInterfaceListModel.getcurrentModel().StopProgress();
-                                    hostInterfaceListModel.Cancel();
+                                    hostInterfaceListModel.getcurrentModel().stopProgress();
+                                    hostInterfaceListModel.cancel();
                                     hostInterfaceListModel.search();
                                 }
                             }
                             else
                             {
-                                hostInterfaceListModel.getcurrentModel().StopProgress();
+                                hostInterfaceListModel.getcurrentModel().stopProgress();
                             }
 
                         }
@@ -1708,7 +1708,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 parameters.setGateway((String) model.getGateway().getEntity());
             }
 
-            model.StartProgress(null);
+            model.startProgress(null);
             setcurrentModel(model);
 
             Frontend.RunAction(VdcActionType.AddBond, parameters,
@@ -1729,14 +1729,14 @@ public class HostInterfaceListModel extends SearchableListModel
                                 }
                                 else
                                 {
-                                    hostInterfaceListModel.getcurrentModel().StopProgress();
-                                    hostInterfaceListModel.Cancel();
+                                    hostInterfaceListModel.getcurrentModel().stopProgress();
+                                    hostInterfaceListModel.cancel();
                                     hostInterfaceListModel.search();
                                 }
                             }
                             else
                             {
-                                hostInterfaceListModel.getcurrentModel().StopProgress();
+                                hostInterfaceListModel.getcurrentModel().stopProgress();
                             }
 
                         }
@@ -1745,7 +1745,7 @@ public class HostInterfaceListModel extends SearchableListModel
         }
     }
 
-    public void Detach()
+    public void detach()
     {
         if (getWindow() != null)
         {
@@ -1770,7 +1770,7 @@ public class HostInterfaceListModel extends SearchableListModel
         model.getCommands().add(tempVar2);
     }
 
-    public void OnDetach()
+    public void onDetach()
     {
         HostInterfaceModel model = (HostInterfaceModel) getWindow();
 
@@ -1795,7 +1795,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 Network tempVar = Linq.findNetworkByName(networks, nic.getNetworkName());
                 Network net = (tempVar != null) ? tempVar : defaultNetwork;
 
-                hostInterfaceListModel.StartProgress(null);
+                hostInterfaceListModel.startProgress(null);
 
                 Frontend.RunAction(VdcActionType.DetachNetworkFromVdsInterface,
                         new AttachNetworkToVdsParameters(getEntity().getId(), net, nic),
@@ -1818,15 +1818,15 @@ public class HostInterfaceListModel extends SearchableListModel
                                     }
                                     else
                                     {
-                                        hostInterfaceListModel.getcurrentModel().StopProgress();
-                                        hostInterfaceListModel.Cancel();
+                                        hostInterfaceListModel.getcurrentModel().stopProgress();
+                                        hostInterfaceListModel.cancel();
                                         hostInterfaceListModel.search();
                                     }
                                 }
                                 else
                                 {
-                                    hostInterfaceListModel.getcurrentModel().StopProgress();
-                                    hostInterfaceListModel.Cancel();
+                                    hostInterfaceListModel.getcurrentModel().stopProgress();
+                                    hostInterfaceListModel.cancel();
                                 }
 
                             }
@@ -1835,14 +1835,14 @@ public class HostInterfaceListModel extends SearchableListModel
 
             }
         };
-        AsyncDataProvider.GetClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
+        AsyncDataProvider.getClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
     }
 
-    public void OnSave()
+    public void onSave()
     {
         HostInterfaceModel model = (HostInterfaceModel) getWindow();
 
-        if (!model.Validate())
+        if (!model.validate())
         {
             return;
         }
@@ -1854,7 +1854,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
         if (nic == null)
         {
-            Cancel();
+            cancel();
             return;
         }
 
@@ -1907,7 +1907,7 @@ public class HostInterfaceListModel extends SearchableListModel
                         Network tempVar3 = Linq.findNetworkByName(networks, nic.getNetworkName());
                         Network net = (tempVar3 != null) ? tempVar3 : defaultNetwork;
 
-                        hostInterfaceModel.StartProgress(null);
+                        hostInterfaceModel.startProgress(null);
                         setcurrentModel(hostInterfaceModel);
 
                         Frontend.RunAction(VdcActionType.DetachNetworkFromVdsInterface,
@@ -1930,14 +1930,14 @@ public class HostInterfaceListModel extends SearchableListModel
                                             }
                                             else
                                             {
-                                                hostInterfaceListModel.getcurrentModel().StopProgress();
-                                                hostInterfaceListModel.Cancel();
+                                                hostInterfaceListModel.getcurrentModel().stopProgress();
+                                                hostInterfaceListModel.cancel();
                                                 hostInterfaceListModel.search();
                                             }
                                         }
                                         else
                                         {
-                                            hostInterfaceListModel.getcurrentModel().StopProgress();
+                                            hostInterfaceListModel.getcurrentModel().stopProgress();
                                         }
 
                                     }
@@ -1945,7 +1945,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                 hostInterfaceListModel);
                     }
                 };
-                AsyncDataProvider.GetClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
+                AsyncDataProvider.getClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
             }
         }
         else
@@ -2040,7 +2040,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 parameters.setSubnet((String) model.getSubnet().getEntity());
             }
 
-            model.StartProgress(null);
+            model.startProgress(null);
             setcurrentModel(model);
 
             Frontend.RunAction(actionType, parameters,
@@ -2061,14 +2061,14 @@ public class HostInterfaceListModel extends SearchableListModel
                                 }
                                 else
                                 {
-                                    hostInterfaceListModel.getcurrentModel().StopProgress();
-                                    hostInterfaceListModel.Cancel();
+                                    hostInterfaceListModel.getcurrentModel().stopProgress();
+                                    hostInterfaceListModel.cancel();
                                     hostInterfaceListModel.search();
                                 }
                             }
                             else
                             {
-                                hostInterfaceListModel.getcurrentModel().StopProgress();
+                                hostInterfaceListModel.getcurrentModel().stopProgress();
                             }
 
                         }
@@ -2077,7 +2077,7 @@ public class HostInterfaceListModel extends SearchableListModel
         }
     }
 
-    public void SaveNetworkConfig() {
+    public void saveNetworkConfig() {
         if (getWindow() != null)
         {
             return;
@@ -2099,7 +2099,7 @@ public class HostInterfaceListModel extends SearchableListModel
         model.getCommands().add(tempVar2);
     }
 
-    public void OnSaveNetworkConfig() {
+    public void onSaveNetworkConfig() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
         if (model.getProgress() != null)
@@ -2107,12 +2107,12 @@ public class HostInterfaceListModel extends SearchableListModel
             return;
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
         setcurrentModel(model);
         new SaveNetworkConfigAction(this, model, getEntity()).execute();
     }
 
-    public void OnConfirmManagementDetach()
+    public void onConfirmManagementDetach()
     {
         HostInterfaceModel model = (HostInterfaceModel) getWindow();
 
@@ -2138,7 +2138,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 Network tempVar = Linq.findNetworkByName(networks, nic.getNetworkName());
                 Network net = (tempVar != null) ? tempVar : defaultNetwork;
 
-                hostInterfaceListModel.StartProgress(null);
+                hostInterfaceListModel.startProgress(null);
                 setcurrentModel(hostInterfaceListModel);
 
                 Frontend.RunAction(VdcActionType.DetachNetworkFromVdsInterface,
@@ -2161,14 +2161,14 @@ public class HostInterfaceListModel extends SearchableListModel
                                     }
                                     else
                                     {
-                                        hostInterfaceListModel.getcurrentModel().StopProgress();
-                                        hostInterfaceListModel.Cancel();
+                                        hostInterfaceListModel.getcurrentModel().stopProgress();
+                                        hostInterfaceListModel.cancel();
                                         hostInterfaceListModel.search();
                                     }
                                 }
                                 else
                                 {
-                                    hostInterfaceListModel.getcurrentModel().StopProgress();
+                                    hostInterfaceListModel.getcurrentModel().stopProgress();
                                 }
 
                             }
@@ -2176,21 +2176,21 @@ public class HostInterfaceListModel extends SearchableListModel
                         hostInterfaceListModel);
             }
         };
-        AsyncDataProvider.GetClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
+        AsyncDataProvider.getClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
     }
 
-    public void Cancel()
+    public void cancel()
     {
         setConfirmWindow(null);
         setWindow(null);
     }
 
-    public void CancelConfirm()
+    public void cancelConfirm()
     {
         setConfirmWindow(null);
     }
 
-    public void SetupNetworks() {
+    public void setupNetworks() {
 
         if (getWindow() != null) {
             return;
@@ -2203,7 +2203,7 @@ public class HostInterfaceListModel extends SearchableListModel
         setupNetworksWindowModel.setEntity(getEntity());
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         VDS host = getEntity();
         VdsNetworkInterface selectedItem = (VdsNetworkInterface) getSelectedItem();
@@ -2217,7 +2217,7 @@ public class HostInterfaceListModel extends SearchableListModel
         getBondCommand().setIsExecutionAllowed(host != null
                 && host.getStatus() != VDSStatus.NonResponsive
                 && selectedItems.size() >= 2
-                && !IsAnyBond(selectedItems)
+                && !isAnyBond(selectedItems)
                 && Linq.findAllInterfaceNetworkNameNotEmpty(Linq.vdsNetworkInterfaceListToBase(selectedItems)).size() <= 1
                 && Linq.findAllInterfaceBondNameIsEmpty(selectedItems).size() == selectedItems.size()
                 && Linq.findAllInterfaceVlanIdIsEmpty(selectedItems).size() == selectedItems.size());
@@ -2280,7 +2280,7 @@ public class HostInterfaceListModel extends SearchableListModel
         }
     }
 
-    private boolean IsAnyBond(Iterable<VdsNetworkInterface> items)
+    private boolean isAnyBond(Iterable<VdsNetworkInterface> items)
     {
         for (VdsNetworkInterface item : items)
         {
@@ -2305,15 +2305,15 @@ public class HostInterfaceListModel extends SearchableListModel
 
         if (command == getEditCommand())
         {
-            Edit();
+            edit();
         }
         else if (command == getEditManagementNetworkCommand())
         {
-            EditManagementNetwork();
+            editManagementNetwork();
         }
         else if (command == getSetupNetworksCommand())
         {
-            SetupNetworks();
+            setupNetworks();
         }
         else if (command == getBondCommand())
         {
@@ -2321,61 +2321,61 @@ public class HostInterfaceListModel extends SearchableListModel
         }
         else if (command == getDetachCommand())
         {
-            Detach();
+            detach();
         }
         else if (command == getSaveNetworkConfigCommand())
         {
-            SaveNetworkConfig();
+            saveNetworkConfig();
         }
 
         else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
-            OnSave();
+            onSave();
         }
 
         else if (StringHelper.stringsEqual(command.getName(), "OnEditManagementNetwork")) //$NON-NLS-1$
         {
-            OnEditManagementNetwork();
+            onEditManagementNetwork();
         }
 
         else if (StringHelper.stringsEqual(command.getName(), "OnEditManagementNetworkConfirmation")) //$NON-NLS-1$
         {
-            OnEditManagementNetworkConfirmation(false);
+            onEditManagementNetworkConfirmation(false);
         }
 
         else if (StringHelper.stringsEqual(command.getName(), "OnEditManagementNetworkConfirmation_Bond")) //$NON-NLS-1$
         {
-            OnEditManagementNetworkConfirmation(true);
+            onEditManagementNetworkConfirmation(true);
         }
 
         else if (StringHelper.stringsEqual(command.getName(), "OnBond")) //$NON-NLS-1$
         {
-            OnBond();
+            onBond();
         }
 
         else if (StringHelper.stringsEqual(command.getName(), "OnDetach")) //$NON-NLS-1$
         {
-            OnDetach();
+            onDetach();
         }
 
         else if (StringHelper.stringsEqual(command.getName(), "OnConfirmManagementDetach")) //$NON-NLS-1$
         {
-            OnConfirmManagementDetach();
+            onConfirmManagementDetach();
         }
 
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
 
         else if (StringHelper.stringsEqual(command.getName(), "CancelConfirm")) //$NON-NLS-1$
         {
-            CancelConfirm();
+            cancelConfirm();
         }
 
         else if (StringHelper.stringsEqual(command.getName(), "OnSaveNetworkConfig")) //$NON-NLS-1$
         {
-            OnSaveNetworkConfig();
+            onSaveNetworkConfig();
         }
 
     }

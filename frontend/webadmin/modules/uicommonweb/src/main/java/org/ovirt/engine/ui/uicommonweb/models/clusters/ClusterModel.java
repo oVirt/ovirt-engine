@@ -558,7 +558,7 @@ public class ClusterModel extends EntityModel
             return (Integer) getOptimizationCustom().getEntity();
         }
 
-        return AsyncDataProvider.GetClusterDefaultMemoryOverCommit();
+        return AsyncDataProvider.getClusterDefaultMemoryOverCommit();
     }
 
     public void setMemoryOverCommit(int value)
@@ -583,14 +583,14 @@ public class ClusterModel extends EntityModel
         super();
     }
 
-    public void Init(final boolean isEdit)
+    public void init(final boolean isEdit)
     {
         setIsEdit(isEdit);
         setName(new EntityModel());
         setDescription(new EntityModel());
         setClusterPolicyModel(new ClusterPolicyModel());
         setAllowClusterWithVirtGlusterEnabled(true);
-        AsyncDataProvider.GetAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 setAllowClusterWithVirtGlusterEnabled((Boolean) returnValue);
@@ -686,9 +686,9 @@ public class ClusterModel extends EntityModel
 
         // Optimization methods:
         // default value =100;
-        setDefaultMemoryOvercommit(AsyncDataProvider.GetClusterDefaultMemoryOverCommit());
+        setDefaultMemoryOvercommit(AsyncDataProvider.getClusterDefaultMemoryOverCommit());
 
-        setCountThreadsAsCores(new EntityModel(AsyncDataProvider.GetClusterDefaultCountThreadsAsCores()));
+        setCountThreadsAsCores(new EntityModel(AsyncDataProvider.getClusterDefaultCountThreadsAsCores()));
 
         setVersionSupportsCpuThreads(new EntityModel(true));
 
@@ -742,10 +742,10 @@ public class ClusterModel extends EntityModel
 
                     }
                 };
-                AsyncDataProvider.GetClusterServerMemoryOverCommit(_asyncQuery1);
+                AsyncDataProvider.getClusterServerMemoryOverCommit(_asyncQuery1);
             }
         };
-        AsyncDataProvider.GetClusterDesktopMemoryOverCommit(_asyncQuery);
+        AsyncDataProvider.getClusterDesktopMemoryOverCommit(_asyncQuery);
 
         setDataCenter(new ListModel());
         getDataCenter().getSelectedItemChangedEvent().addListener(this);
@@ -832,7 +832,7 @@ public class ClusterModel extends EntityModel
                 }
             }
         };
-        AsyncDataProvider.GetHostFingerprint(aQuery, hostAddress);
+        AsyncDataProvider.getHostFingerprint(aQuery, hostAddress);
         getGlusterHostFingerprint().setEntity(ConstantsManager.getInstance().getConstants().loadingFingerprint());
     }
 
@@ -869,7 +869,7 @@ public class ClusterModel extends EntityModel
                 clusterModel.setMigrateOnErrorOption(clusterModel.getEntity().getMigrateOnError());
             }
         };
-        AsyncDataProvider.GetDataCenterList(_asyncQuery);
+        AsyncDataProvider.getDataCenterList(_asyncQuery);
 
     }
 
@@ -882,11 +882,11 @@ public class ClusterModel extends EntityModel
         {
             if (sender == getDataCenter())
             {
-                StoragePool_SelectedItemChanged(args);
+                storagePool_SelectedItemChanged(args);
             }
             else if (sender == getVersion())
             {
-                Version_SelectedItemChanged(args);
+                version_SelectedItemChanged(args);
             }
         }
         else if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition))
@@ -937,7 +937,7 @@ public class ClusterModel extends EntityModel
         }
     }
 
-    private void Version_SelectedItemChanged(EventArgs e)
+    private void version_SelectedItemChanged(EventArgs e)
     {
         Version version;
         if (getVersion().getSelectedItem() != null)
@@ -965,18 +965,18 @@ public class ClusterModel extends EntityModel
 
                 if (clusterModel.getCPU().getSelectedItem() == null || !isCPUinitialized)
                 {
-                    InitCPU();
+                    initCPU();
                 }
             }
         };
-        AsyncDataProvider.GetCPUList(_asyncQuery, version);
+        AsyncDataProvider.getCPUList(_asyncQuery, version);
 
         // CPU Thread support is only available for clusters of version 3.2 or greater
         getVersionSupportsCpuThreads().setEntity(version.compareTo(Version.v3_2) >= 0);
 
     }
 
-    private void InitCPU()
+    private void initCPU()
     {
         if (!isCPUinitialized && getIsEdit())
         {
@@ -993,7 +993,7 @@ public class ClusterModel extends EntityModel
         }
     }
 
-    private void StoragePool_SelectedItemChanged(EventArgs e)
+    private void storagePool_SelectedItemChanged(EventArgs e)
     {
         // possible versions for new cluster (when editing cluster, this event won't occur)
         // are actually the possible versions for the data-center that the cluster is going
@@ -1039,15 +1039,15 @@ public class ClusterModel extends EntityModel
                 }
             }
         };
-        AsyncDataProvider.GetDataCenterVersions(_asyncQuery, selectedDataCenter.getId());
+        AsyncDataProvider.getDataCenterVersions(_asyncQuery, selectedDataCenter.getId());
     }
 
-    public boolean Validate(boolean validateCpu)
+    public boolean validate(boolean validateCpu)
     {
-        return Validate(true, validateCpu);
+        return validate(true, validateCpu);
     }
 
-    public boolean Validate(boolean validateStoragePool, boolean validateCpu)
+    public boolean validate(boolean validateStoragePool, boolean validateCpu)
     {
         getName().validateEntity(new IValidation[] {
                 new NotEmptyValidation(),
@@ -1112,7 +1112,7 @@ public class ClusterModel extends EntityModel
                         && getGlusterHostPassword().getIsValid()
                         && isFingerprintVerified()) : true));
 
-        return getClusterPolicyModel().Validate() && getName().getIsValid() && getDataCenter().getIsValid() && getCPU().getIsValid()
+        return getClusterPolicyModel().validate() && getName().getIsValid() && getDataCenter().getIsValid() && getCPU().getIsValid()
                 && getVersion().getIsValid() && validService && getGlusterHostAddress().getIsValid()
                 && getGlusterHostPassword().getIsValid()
                 && ((Boolean) getIsImportGlusterConfiguration().getEntity() ? (getGlusterHostAddress().getIsValid()

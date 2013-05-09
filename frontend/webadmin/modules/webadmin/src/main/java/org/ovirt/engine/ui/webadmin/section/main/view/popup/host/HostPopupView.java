@@ -437,7 +437,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         upButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                object.getProxyUpCommand().Execute();
+                object.getProxyUpCommand().execute();
             }
         });
 
@@ -445,7 +445,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         downButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                object.getProxyDownCommand().Execute();
+                object.getProxyDownCommand().execute();
             }
         });
 

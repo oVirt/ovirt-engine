@@ -173,7 +173,7 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
 
             @Override
             public void onClick(ClickEvent event) {
-                addBrickButton.getCommand().Execute();
+                addBrickButton.getCommand().execute();
                 clearSelections();
             }
         });
@@ -183,7 +183,7 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
 
             @Override
             public void onClick(ClickEvent event) {
-                removeBricksButton.getCommand().Execute();
+                removeBricksButton.getCommand().execute();
                 clearSelections();
             }
         });
@@ -193,7 +193,7 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
 
             @Override
             public void onClick(ClickEvent event) {
-                removeAllBricksButton.getCommand().Execute();
+                removeAllBricksButton.getCommand().execute();
                 clearSelections();
             }
         });
@@ -202,7 +202,7 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
 
             @Override
             public void onClick(ClickEvent event) {
-                moveBricksUpButton.getCommand().Execute();
+                moveBricksUpButton.getCommand().execute();
             }
         });
 
@@ -210,7 +210,7 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
 
             @Override
             public void onClick(ClickEvent event) {
-                moveBricksDownButton.getCommand().Execute();
+                moveBricksDownButton.getCommand().execute();
             }
         });
     }

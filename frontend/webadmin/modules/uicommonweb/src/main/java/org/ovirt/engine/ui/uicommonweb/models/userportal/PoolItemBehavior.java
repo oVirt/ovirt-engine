@@ -37,23 +37,23 @@ public class PoolItemBehavior extends ItemBehavior
     }
 
     @Override
-    public void OnEntityChanged()
+    public void onEntityChanged()
     {
-        UpdateProperties();
-        UpdateActionAvailability();
+        updateProperties();
+        updateActionAvailability();
     }
 
     @Override
-    public void EntityPropertyChanged(PropertyChangedEventArgs e)
+    public void entityPropertyChanged(PropertyChangedEventArgs e)
     {
     }
 
     @Override
-    public void ExecuteCommand(UICommand command)
+    public void executeCommand(UICommand command)
     {
         if (command == getItem().getTakeVmCommand())
         {
-            TakeVm();
+            takeVm();
         }
     }
 
@@ -63,7 +63,7 @@ public class PoolItemBehavior extends ItemBehavior
         // Do nothing. There are no events to handle for pools.
     }
 
-    private void TakeVm()
+    private void takeVm()
     {
         VmPool entity = (VmPool) getItem().getEntity();
 
@@ -84,7 +84,7 @@ public class PoolItemBehavior extends ItemBehavior
                 }, this);
     }
 
-    private void UpdateProperties()
+    private void updateProperties()
     {
         VmPool entity = (VmPool) getItem().getEntity();
 
@@ -123,7 +123,7 @@ public class PoolItemBehavior extends ItemBehavior
                         }));
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         getItem().getTakeVmCommand().setIsAvailable(true);
 

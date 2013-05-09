@@ -123,7 +123,7 @@ public class QuotaUserListModel extends SearchableListModel {
         if (getEntity() == null) {
             return;
         }
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
         updateActionAvailability();
     }
 
@@ -210,11 +210,11 @@ public class QuotaUserListModel extends SearchableListModel {
         model.getCommands().add(tempVar2);
     }
 
-    private void Cancel() {
+    private void cancel() {
         setWindow(null);
     }
 
-    public void OnAdd()
+    public void onAdd()
     {
         AdElementListModel model = (AdElementListModel) getWindow();
 
@@ -225,7 +225,7 @@ public class QuotaUserListModel extends SearchableListModel {
 
         if (model.getSelectedItems() == null && !model.getIsEveryoneSelected())
         {
-            Cancel();
+            cancel();
             return;
         }
         ArrayList<DbUser> items = new ArrayList<DbUser>();
@@ -246,7 +246,7 @@ public class QuotaUserListModel extends SearchableListModel {
             }
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         PermissionsOperationsParametes permissionParams;
@@ -278,15 +278,15 @@ public class QuotaUserListModel extends SearchableListModel {
                     public void executed(FrontendMultipleActionAsyncResult result) {
 
                         QuotaUserListModel localModel = (QuotaUserListModel) result.getState();
-                        localModel.StopProgress();
-                        Cancel();
+                        localModel.stopProgress();
+                        cancel();
 
                     }
                 }, model);
-        Cancel();
+        cancel();
     }
 
-    private void OnRemove()
+    private void onRemove()
     {
         if (getSelectedItems() != null && getSelectedItems().size() > 0)
         {
@@ -305,7 +305,7 @@ public class QuotaUserListModel extends SearchableListModel {
                 list.add(tempVar);
             }
 
-            model.StartProgress(null);
+            model.startProgress(null);
 
             Frontend.RunMultipleAction(VdcActionType.RemovePermission, list,
                     new IFrontendMultipleActionAsyncCallback() {
@@ -313,14 +313,14 @@ public class QuotaUserListModel extends SearchableListModel {
                         public void executed(FrontendMultipleActionAsyncResult result) {
 
                             ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                            localModel.StopProgress();
-                            Cancel();
+                            localModel.stopProgress();
+                            cancel();
 
                         }
                     }, model);
         }
 
-        Cancel();
+        cancel();
     }
 
     @Override
@@ -339,15 +339,15 @@ public class QuotaUserListModel extends SearchableListModel {
 
         if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
         if (StringHelper.stringsEqual(command.getName(), "OnAdd")) //$NON-NLS-1$
         {
-            OnAdd();
+            onAdd();
         }
         if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
-            OnRemove();
+            onRemove();
         }
     }
 

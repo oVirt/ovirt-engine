@@ -53,7 +53,7 @@ public class DeferredModelCommandInvoker {
     }
 
     protected void executeCommand(UICommand command) {
-        command.Execute();
+        command.execute();
     }
 
     protected void commandFailed(UICommand command) {

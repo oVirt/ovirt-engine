@@ -246,10 +246,10 @@ public class VolumeBrickListModel extends SearchableListModel {
                         volumeBrickModel.getServers().setItems(hostList);
                     }
                 };
-                AsyncDataProvider.GetHostListByCluster(_asyncQueryInner, cluster.getname());
+                AsyncDataProvider.getHostListByCluster(_asyncQueryInner, cluster.getname());
             }
         };
-        AsyncDataProvider.GetClusterById(_asyncQuery, volumeEntity.getClusterId());
+        AsyncDataProvider.getClusterById(_asyncQuery, volumeEntity.getClusterId());
 
         // TODO: fetch the mount points to display
         volumeBrickModel.getBricks().setItems(new ArrayList<EntityModel>());
@@ -356,7 +356,7 @@ public class VolumeBrickListModel extends SearchableListModel {
             brickList.add(brickEntity);
         }
 
-        volumeBrickModel.StartProgress(null);
+        volumeBrickModel.startProgress(null);
 
         GlusterVolumeBricksActionParameters parameter = new GlusterVolumeBricksActionParameters(volumeEntity.getId(),
                 brickList, volumeBrickModel.getReplicaCountValue(), volumeBrickModel.getStripeCountValue());
@@ -380,7 +380,7 @@ public class VolumeBrickListModel extends SearchableListModel {
     {
         VolumeBrickModel model = (VolumeBrickModel) getWindow();
 
-        model.StopProgress();
+        model.stopProgress();
 
         if (returnValue != null && returnValue.getSucceeded())
         {
@@ -650,7 +650,7 @@ public class VolumeBrickListModel extends SearchableListModel {
             }
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunAction(VdcActionType.GlusterVolumeRemoveBricks, parameter, new IFrontendActionAsyncCallback() {
 
@@ -658,7 +658,7 @@ public class VolumeBrickListModel extends SearchableListModel {
             public void executed(FrontendActionAsyncResult result) {
 
                 ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                localModel.StopProgress();
+                localModel.stopProgress();
                 setWindow(null);
             }
         }, model);
@@ -703,10 +703,10 @@ public class VolumeBrickListModel extends SearchableListModel {
                         brickModel.getServers().setItems(hostList);
                     }
                 };
-                AsyncDataProvider.GetHostListByCluster(_asyncQueryInner, cluster.getname());
+                AsyncDataProvider.getHostListByCluster(_asyncQueryInner, cluster.getname());
             }
         };
-        AsyncDataProvider.GetClusterById(_asyncQuery, volumeEntity.getClusterId());
+        AsyncDataProvider.getClusterById(_asyncQuery, volumeEntity.getClusterId());
 
         UICommand command = new UICommand("OnReplace", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -752,7 +752,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         newBrick.setServerName(server.getHostName());
         newBrick.setBrickDirectory((String) replaceBrickModel.getBrickDirectory().getEntity());
 
-        replaceBrickModel.StartProgress(null);
+        replaceBrickModel.startProgress(null);
 
         GlusterVolumeReplaceBrickActionParameters parameter =
                 new GlusterVolumeReplaceBrickActionParameters(volumeEntity.getId(),
@@ -767,7 +767,7 @@ public class VolumeBrickListModel extends SearchableListModel {
             public void executed(FrontendActionAsyncResult result) {
 
                 ReplaceBrickModel localModel = (ReplaceBrickModel) result.getState();
-                localModel.StopProgress();
+                localModel.stopProgress();
                 setWindow(null);
             }
         }, replaceBrickModel);
@@ -776,7 +776,7 @@ public class VolumeBrickListModel extends SearchableListModel {
 
     private void showBrickAdvancedDetails() {
         final GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
-        AsyncDataProvider.GetClusterById(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getClusterById(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 VDSGroup vdsGroup = (VDSGroup) returnValue;
@@ -811,13 +811,13 @@ public class VolumeBrickListModel extends SearchableListModel {
         setWindow(brickModel);
         brickModel.setTitle(ConstantsManager.getInstance().getConstants().advancedDetailsBrickTitle());
         brickModel.setHashName("brick_advanced"); //$NON-NLS-1$
-        brickModel.StartProgress(null);
+        brickModel.startProgress(null);
 
-        AsyncDataProvider.GetGlusterVolumeBrickDetails(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getGlusterVolumeBrickDetails(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object result)
             {
-                brickModel.StopProgress();
+                brickModel.stopProgress();
 
                 VdcQueryReturnValue returnValue = (VdcQueryReturnValue) result;
                 if (returnValue == null || !returnValue.getSucceeded()) {

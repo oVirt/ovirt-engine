@@ -56,7 +56,7 @@ public class RolePermissionListModel extends SearchableListModel
 
         setSearchPageSize(1000);
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -103,7 +103,7 @@ public class RolePermissionListModel extends SearchableListModel
         setItems(getAsyncResult().getData());
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         getRemoveCommand().setIsExecutionAllowed(getSelectedItem() != null
                 || (getSelectedItems() != null && getSelectedItems().size() > 0));
@@ -114,17 +114,17 @@ public class RolePermissionListModel extends SearchableListModel
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void selectedItemsChanged()
     {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
-    public void Cancel()
+    public void cancel()
     {
         setWindow(null);
     }
@@ -159,7 +159,7 @@ public class RolePermissionListModel extends SearchableListModel
         model.getCommands().add(tempVar2);
     }
 
-    private void OnRemove()
+    private void onRemove()
     {
         if (getSelectedItems() != null && getSelectedItems().size() > 0)
         {
@@ -178,7 +178,7 @@ public class RolePermissionListModel extends SearchableListModel
                 list.add(tempVar);
             }
 
-            model.StartProgress(null);
+            model.startProgress(null);
 
             Frontend.RunMultipleAction(VdcActionType.RemovePermission, list,
                     new IFrontendMultipleActionAsyncCallback() {
@@ -186,8 +186,8 @@ public class RolePermissionListModel extends SearchableListModel
                         public void executed(FrontendMultipleActionAsyncResult result) {
 
                             ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                            localModel.StopProgress();
-                            Cancel();
+                            localModel.stopProgress();
+                            cancel();
 
                         }
                     }, model);
@@ -205,11 +205,11 @@ public class RolePermissionListModel extends SearchableListModel
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
-            OnRemove();
+            onRemove();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
     }
 

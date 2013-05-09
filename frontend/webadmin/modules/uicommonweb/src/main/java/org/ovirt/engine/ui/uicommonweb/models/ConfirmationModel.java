@@ -59,7 +59,7 @@ public class ConfirmationModel extends ListModel
         getForce().setIsAvailable(false);
     }
 
-    public boolean Validate()
+    public boolean validate()
     {
         getLatch().setIsValid(true);
         if (getLatch().getIsAvailable() && !(Boolean) getLatch().getEntity())

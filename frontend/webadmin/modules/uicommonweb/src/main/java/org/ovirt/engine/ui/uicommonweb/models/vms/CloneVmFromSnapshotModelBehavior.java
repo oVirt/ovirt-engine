@@ -19,14 +19,14 @@ public class CloneVmFromSnapshotModelBehavior extends ExistingVmModelBehavior
     }
 
     @Override
-    public void Initialize(SystemTreeItemModel systemTreeSelectedItem)
+    public void initialize(SystemTreeItemModel systemTreeSelectedItem)
     {
-        super.Initialize(systemTreeSelectedItem);
+        super.initialize(systemTreeSelectedItem);
     }
 
-    public void InitTemplate()
+    public void initTemplate()
     {
-        AsyncDataProvider.GetTemplateById(new AsyncQuery(getModel(),
+        AsyncDataProvider.getTemplateById(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -44,9 +44,9 @@ public class CloneVmFromSnapshotModelBehavior extends ExistingVmModelBehavior
     }
 
     @Override
-    public void Template_SelectedItemChanged()
+    public void template_SelectedItemChanged()
     {
-        super.Template_SelectedItemChanged();
+        super.template_SelectedItemChanged();
 
         getModel().getName().setEntity(""); //$NON-NLS-1$
         getModel().getDescription().setEntity(""); //$NON-NLS-1$
@@ -54,18 +54,18 @@ public class CloneVmFromSnapshotModelBehavior extends ExistingVmModelBehavior
         getModel().getProvisioning().setIsAvailable(true);
         getModel().getProvisioning().setIsChangable(false);
 
-        InitDisks();
-        InitStorageDomains();
+        initDisks();
+        initStorageDomains();
     }
 
     @Override
-    public void UpdateIsDisksAvailable()
+    public void updateIsDisksAvailable()
     {
         getModel().setIsDisksAvailable(getModel().getDisks() != null);
     }
 
     @Override
-    public void Provisioning_SelectedItemChanged()
+    public void provisioning_SelectedItemChanged()
     {
         boolean provisioning = (Boolean) getModel().getProvisioning().getEntity();
         getModel().getProvisioningThin_IsSelected().setEntity(!provisioning);
@@ -73,7 +73,7 @@ public class CloneVmFromSnapshotModelBehavior extends ExistingVmModelBehavior
     }
 
     @Override
-    public void InitDisks() {
+    public void initDisks() {
         ArrayList<DiskModel> disks = new ArrayList<DiskModel>();
         for (DiskImage diskImage : vm.getDiskList()) {
             disks.add(Linq.diskToModel(diskImage));
@@ -81,12 +81,12 @@ public class CloneVmFromSnapshotModelBehavior extends ExistingVmModelBehavior
         getModel().setDisks(disks);
         getModel().getDisksAllocationModel().setIsVolumeFormatAvailable(true);
         getModel().getDisksAllocationModel().setIsVolumeFormatChangable(true);
-        UpdateIsDisksAvailable();
+        updateIsDisksAvailable();
     }
 
     @Override
-    public void InitStorageDomains()
+    public void initStorageDomains()
     {
-        PostInitStorageDomains();
+        postInitStorageDomains();
     }
 }

@@ -78,16 +78,16 @@ public class SearchSuggestModel extends SearchableListModel implements ITaskTarg
 
         syntaxChecker =
                 SyntaxCheckerFactory.CreateUISyntaxChecker((String)
-                        AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.AuthenticationMethod));
+                        AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.AuthenticationMethod));
 
         setIsTimerDisabled(true);
     }
 
     @Override
-    protected void SearchStringChanged()
+    protected void searchStringChanged()
     {
-        super.SearchStringChanged();
-        getSearchCommand().Execute();
+        super.searchStringChanged();
+        getSearchCommand().execute();
     }
 
     @Override
@@ -105,7 +105,7 @@ public class SearchSuggestModel extends SearchableListModel implements ITaskTarg
         asyncSearch();
     }
 
-    public void UpdateOptionsAsync(String search)
+    public void updateOptionsAsync(String search)
     {
         getItems().clear();
 
@@ -238,7 +238,7 @@ public class SearchSuggestModel extends SearchableListModel implements ITaskTarg
     @Override
     public void run(TaskContext context)
     {
-        UpdateOptionsAsync(getPrefix() + getSearchString());
+        updateOptionsAsync(getPrefix() + getSearchString());
     }
 
     @Override

@@ -40,11 +40,11 @@ public abstract class AbstractModelActivationPresenter<T, M extends SearchableLi
 
         if (event.getListModel() == currentModel) {
             // Activate model
-            currentModel.getSearchCommand().Execute();
+            currentModel.getSearchCommand().execute();
         } else {
             // Stop model
             currentModel.setItems(null);
-            currentModel.EnsureAsyncSearchStopped();
+            currentModel.ensureAsyncSearchStopped();
         }
     }
 

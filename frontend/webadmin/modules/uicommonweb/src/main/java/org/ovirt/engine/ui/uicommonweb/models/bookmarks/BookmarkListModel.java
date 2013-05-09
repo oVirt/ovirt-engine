@@ -124,12 +124,12 @@ public class BookmarkListModel extends SearchableListModel
 
         setIsTimerDisabled(true);
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     public void executeBookmarksSearch() {
         setIsBookmarkInitiated(true);
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
         setIsBookmarkInitiated(false);
     }
 
@@ -199,7 +199,7 @@ public class BookmarkListModel extends SearchableListModel
         model.getCommands().add(tempVar2);
     }
 
-    public void OnRemove()
+    public void onRemove()
     {
 
         Bookmark selectedBookmark = (Bookmark) getSelectedItem();
@@ -208,16 +208,16 @@ public class BookmarkListModel extends SearchableListModel
         IFrontendActionAsyncCallback async = new IFrontendActionAsyncCallback() {
             @Override
             public void executed(FrontendActionAsyncResult result) {
-                PostOnSave(result.getReturnValue());
+                postOnSave(result.getReturnValue());
             }
         };
 
-        getWindow().StartProgress(null);
+        getWindow().startProgress(null);
 
         Frontend.RunAction(VdcActionType.RemoveBookmark, parameters, async);
     }
 
-    public void Edit()
+    public void edit()
     {
         org.ovirt.engine.core.common.businessentities.Bookmark bookmark =
                 (org.ovirt.engine.core.common.businessentities.Bookmark) getSelectedItem();
@@ -245,7 +245,7 @@ public class BookmarkListModel extends SearchableListModel
         model.getCommands().add(tempVar2);
     }
 
-    public void New()
+    public void newEntity()
     {
         if (getWindow() != null)
         {
@@ -269,7 +269,7 @@ public class BookmarkListModel extends SearchableListModel
         model.getCommands().add(tempVar2);
     }
 
-    public void OnSave()
+    public void onSave()
     {
         BookmarkModel model = (BookmarkModel) getWindow();
 
@@ -278,7 +278,7 @@ public class BookmarkListModel extends SearchableListModel
             return;
         }
 
-        if (!model.Validate())
+        if (!model.validate())
         {
             return;
         }
@@ -291,7 +291,7 @@ public class BookmarkListModel extends SearchableListModel
         tempVar.setbookmark_value((String) model.getSearchString().getEntity());
         org.ovirt.engine.core.common.businessentities.Bookmark bookmark = tempVar;
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunAction(model.getIsNew() ? VdcActionType.AddBookmark : VdcActionType.UpdateBookmark,
                 new BookmarksOperationParameters(bookmark),
@@ -300,26 +300,26 @@ public class BookmarkListModel extends SearchableListModel
                     public void executed(FrontendActionAsyncResult result) {
 
                         BookmarkListModel localModel = (BookmarkListModel) result.getState();
-                        localModel.PostOnSave(result.getReturnValue());
+                        localModel.postOnSave(result.getReturnValue());
 
                     }
                 },
                 this);
     }
 
-    public void PostOnSave(VdcReturnValueBase returnValue)
+    public void postOnSave(VdcReturnValueBase returnValue)
     {
-        getWindow().StopProgress();
+        getWindow().stopProgress();
 
         if (returnValue != null && returnValue.getSucceeded())
         {
-            Cancel();
+            cancel();
             // Cancel() triggers a force refresh
             // getSearchCommand().Execute();
         }
     }
 
-    public void Cancel()
+    public void cancel()
     {
         setWindow(null);
     }
@@ -328,7 +328,7 @@ public class BookmarkListModel extends SearchableListModel
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
 
         if (getSelectedItem() != null && !getIsBookmarkInitiated())
         {
@@ -344,10 +344,10 @@ public class BookmarkListModel extends SearchableListModel
     protected void selectedItemsChanged()
     {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         getEditCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1);
         getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0);
@@ -360,11 +360,11 @@ public class BookmarkListModel extends SearchableListModel
 
         if (command == getNewCommand())
         {
-            New();
+            newEntity();
         }
         else if (command == getEditCommand())
         {
-            Edit();
+            edit();
         }
         else if (command == getRemoveCommand())
         {
@@ -373,16 +373,16 @@ public class BookmarkListModel extends SearchableListModel
 
         else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
-            OnRemove();
+            onRemove();
         }
 
         else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
-            OnSave();
+            onSave();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
     }
 

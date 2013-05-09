@@ -50,7 +50,7 @@ public class NetworkClusterListModel extends SearchableListModel
         setManageCommand(new UICommand("Manage", this)); //$NON-NLS-1$
     }
 
-    public void Manage()
+    public void manage()
     {
         if (getWindow() != null)
         {
@@ -107,7 +107,7 @@ public class NetworkClusterListModel extends SearchableListModel
         return listModel;
     }
 
-    public void OnManage() {
+    public void onManage() {
         final ClusterNetworkManageModel windowModel = (ClusterNetworkManageModel) getWindow();
 
         List<ClusterNetworkModel> manageList = windowModel.getItems();
@@ -167,14 +167,14 @@ public class NetworkClusterListModel extends SearchableListModel
             }
 
             private void doFinish() {
-                windowModel.StopProgress();
+                windowModel.stopProgress();
                 cancel();
-                ForceRefresh();
+                forceRefresh();
             }
         };
 
         callback.executed(new FrontendMultipleActionAsyncResult(null, null, null));
-        windowModel.StartProgress(null);
+        windowModel.startProgress(null);
     }
 
     private PairQueryable<VDSGroup, NetworkCluster> getItem(String clusterName) {
@@ -204,7 +204,7 @@ public class NetworkClusterListModel extends SearchableListModel
     @Override
     protected void onEntityChanged() {
         super.onEntityChanged();
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
     @Override
@@ -257,7 +257,7 @@ public class NetworkClusterListModel extends SearchableListModel
 
         if (e.PropertyName.equals("name")) //$NON-NLS-1$
         {
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
         }
     }
 
@@ -267,11 +267,11 @@ public class NetworkClusterListModel extends SearchableListModel
 
         if (command == getManageCommand())
         {
-            Manage();
+            manage();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnManage")) //$NON-NLS-1$
         {
-            OnManage();
+            onManage();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {

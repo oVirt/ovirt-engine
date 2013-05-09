@@ -36,7 +36,7 @@ public class SearchSuggestOracle extends MultiWordSuggestOracle {
 
         // Invoke model update options by search string method
         searchSuggestModel.setSearchObjectFilter(getSearchObjectFilter());
-        searchSuggestModel.UpdateOptionsAsync(searchStringPrefix + search);
+        searchSuggestModel.updateOptionsAsync(searchStringPrefix + search);
 
         // Get options list
         List options = searchSuggestModel.getItems();

@@ -15,7 +15,7 @@ public class VmEventListModel extends SubTabEventListModel
         // Deal with pool as Entity without failing.
         if (getEntity() != null && !(getEntity() instanceof VmPool))
         {
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
         }
         else
         {
@@ -46,7 +46,7 @@ public class VmEventListModel extends SubTabEventListModel
 
         if (e.PropertyName.equals("vm_name")) //$NON-NLS-1$
         {
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
         }
     }
 }

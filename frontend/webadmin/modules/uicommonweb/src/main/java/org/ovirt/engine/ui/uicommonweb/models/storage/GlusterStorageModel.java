@@ -90,7 +90,7 @@ public class GlusterStorageModel extends Model implements IStorageModel {
     }
 
     @Override
-    public boolean Validate() {
+    public boolean validate() {
 
         getPath().validateEntity(
             new IValidation[] {

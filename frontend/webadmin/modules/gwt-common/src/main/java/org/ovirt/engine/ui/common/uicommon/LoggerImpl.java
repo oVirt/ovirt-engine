@@ -10,22 +10,22 @@ public class LoggerImpl implements ILogger {
     private static final Logger logger = Logger.getLogger(LoggerImpl.class.getName());
 
     @Override
-    public void Debug(String message) {
+    public void debug(String message) {
         logger.log(Level.FINE, message);
     }
 
     @Override
-    public void Error(String message, RuntimeException ex) {
+    public void error(String message, RuntimeException ex) {
         logger.log(Level.SEVERE, message, ex);
     }
 
     @Override
-    public void Info(String message) {
+    public void info(String message) {
         logger.log(Level.INFO, message);
     }
 
     @Override
-    public void Warn(String message) {
+    public void warn(String message) {
         logger.log(Level.WARNING, message);
     }
 

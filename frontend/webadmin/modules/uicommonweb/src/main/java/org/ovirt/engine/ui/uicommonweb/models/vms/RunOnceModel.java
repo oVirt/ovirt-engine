@@ -531,9 +531,9 @@ public abstract class RunOnceModel extends Model
         getKernel_path().setEntity(vm.getKernelUrl());
         getInitrd_path().setEntity(vm.getInitrdUrl());
 
-        setIsLinuxOS(AsyncDataProvider.IsLinuxOsType(vm.getVmOs()));
+        setIsLinuxOS(AsyncDataProvider.isLinuxOsType(vm.getVmOs()));
         getIsLinuxOptionsAvailable().setEntity(getIsLinuxOS());
-        setIsWindowsOS(AsyncDataProvider.IsWindowsOsType(vm.getVmOs()));
+        setIsWindowsOS(AsyncDataProvider.isWindowsOsType(vm.getVmOs()));
         getIsVmFirstRun().setEntity(!vm.isInitialized());
         getSysPrepDomainName().setSelectedItem(vm.getVmDomain());
 
@@ -610,14 +610,14 @@ public abstract class RunOnceModel extends Model
     }
 
     protected void updateFloppyImages() {
-        AsyncDataProvider.GetFloppyImageList(new AsyncQuery(this,
+        AsyncDataProvider.getFloppyImageList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                  @Override
                  public void onSuccess(Object model, Object returnValue) {
                      VM selectedVM = (VM) vm;
                      List<String> images = (List<String>) returnValue;
 
-                     if (AsyncDataProvider.IsWindowsOsType(selectedVM.getVmOs()))
+                     if (AsyncDataProvider.isWindowsOsType(selectedVM.getVmOs()))
                      {
                          // Add a pseudo floppy disk image used for Windows' sysprep.
                          if (!selectedVM.isInitialized())
@@ -710,7 +710,7 @@ public abstract class RunOnceModel extends Model
     }
 
     private void updateIsoList() {
-        AsyncDataProvider.GetIrsImageList(new AsyncQuery(this,
+        AsyncDataProvider.getIrsImageList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                  @Override
                  public void onSuccess(Object model, Object returnValue) {
@@ -730,7 +730,7 @@ public abstract class RunOnceModel extends Model
 
     private void updateDomainList() {
         // Update Domain list
-        AsyncDataProvider.GetDomainList(new AsyncQuery(this,
+        AsyncDataProvider.getDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
@@ -757,30 +757,30 @@ public abstract class RunOnceModel extends Model
         {
             if (sender == getFloppyImage())
             {
-                FloppyImage_SelectedItemChanged();
+                floppyImage_SelectedItemChanged();
             }
             else if (sender == getSysPrepDomainName())
             {
-                SysPrepDomainName_SelectedItemChanged();
+                sysPrepDomainName_SelectedItemChanged();
             }
         }
         else if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition))
         {
             if (sender == getAttachFloppy())
             {
-                AttachFloppy_EntityChanged();
+                attachFloppy_EntityChanged();
             }
             else if (sender == getAttachIso())
             {
-                AttachIso_EntityChanged();
+                attachIso_EntityChanged();
             }
             else if (sender == getIsVmFirstRun())
             {
-                IsVmFirstRun_EntityChanged();
+                isVmFirstRun_EntityChanged();
             }
             else if (sender == getUseAlternateCredentials())
             {
-                UseAlternateCredentials_EntityChanged();
+                useAlternateCredentials_EntityChanged();
             }
             else if (sender == getDisplayConsole_Vnc_IsSelected() && (Boolean) ((EntityModel) sender).getEntity())
             {
@@ -792,24 +792,24 @@ public abstract class RunOnceModel extends Model
             }
             else if (sender == getIsAutoAssign())
             {
-                IsAutoAssign_EntityChanged(sender, args);
+                isAutoAssign_EntityChanged(sender, args);
             }
         }
     }
 
-    private void AttachIso_EntityChanged()
+    private void attachIso_EntityChanged()
     {
         getIsoImage().setIsChangable((Boolean) getAttachIso().getEntity());
         getBootSequence().getCdromOption().setIsChangable((Boolean) getAttachIso().getEntity());
     }
 
-    private void AttachFloppy_EntityChanged()
+    private void attachFloppy_EntityChanged()
     {
         getFloppyImage().setIsChangable((Boolean) getAttachFloppy().getEntity());
-        UpdateIsSysprepEnabled();
+        updateIsSysprepEnabled();
     }
 
-    private void UseAlternateCredentials_EntityChanged()
+    private void useAlternateCredentials_EntityChanged()
     {
         boolean useAlternateCredentials = (Boolean) getUseAlternateCredentials().getEntity();
 
@@ -820,22 +820,22 @@ public abstract class RunOnceModel extends Model
         getSysPrepPassword().setEntity(useAlternateCredentials ? "" : null); //$NON-NLS-1$
     }
 
-    private void IsVmFirstRun_EntityChanged()
+    private void isVmFirstRun_EntityChanged()
     {
-        UpdateIsSysprepEnabled();
+        updateIsSysprepEnabled();
     }
 
-    private void FloppyImage_SelectedItemChanged()
+    private void floppyImage_SelectedItemChanged()
     {
-        UpdateIsSysprepEnabled();
+        updateIsSysprepEnabled();
     }
 
-    private void SysPrepDomainName_SelectedItemChanged()
+    private void sysPrepDomainName_SelectedItemChanged()
     {
         getSysPrepSelectedDomainName().setEntity(getSysPrepDomainName().getSelectedItem());
     }
 
-    private void IsAutoAssign_EntityChanged(Object sender, EventArgs args) {
+    private void isAutoAssign_EntityChanged(Object sender, EventArgs args) {
         if ((Boolean) getIsAutoAssign().getEntity() == false) {
             getDefaultHost().setIsChangable(true);
         }
@@ -844,7 +844,7 @@ public abstract class RunOnceModel extends Model
     // Sysprep section is displayed only when VM's OS-type is 'Windows'
     // and [Reinitialize-sysprep == true || IsVmFirstRun == true (IsVmFirstRun == !VM.is_initialized) and no attached
     // floppy]
-    private void UpdateIsSysprepEnabled()
+    private void updateIsSysprepEnabled()
     {
         boolean isFloppyAttached = (Boolean) getAttachFloppy().getEntity();
         boolean isVmFirstRun = (Boolean) getIsVmFirstRun().getEntity();
@@ -852,7 +852,7 @@ public abstract class RunOnceModel extends Model
         getIsSysprepEnabled().setEntity(getIsWindowsOS() && getReinitialize());
     }
 
-    public boolean Validate() {
+    public boolean validate() {
         getIsoImage().setIsValid(true);
         if ((Boolean) getAttachIso().getEntity()) {
             getIsoImage().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
@@ -911,7 +911,7 @@ public abstract class RunOnceModel extends Model
     {
         if (command == runOnceCommand)
         {
-            if (Validate()) {
+            if (validate()) {
                 onRunOnce();
             }
         }

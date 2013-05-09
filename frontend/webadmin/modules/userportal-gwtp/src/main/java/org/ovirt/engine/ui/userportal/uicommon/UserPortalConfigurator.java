@@ -70,8 +70,8 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
     }
 
     @Override
-    public void Configure(ISpice spice) {
-        super.Configure(spice);
+    public void configure(ISpice spice) {
+        super.configure(spice);
 
         updateWanColorDepthOptions(spice);
         updateWANDisableEffects(spice);
@@ -80,7 +80,7 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
     }
 
     private void updateWANDisableEffects(final ISpice spice) {
-        AsyncDataProvider.GetWANDisableEffects(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getWANDisableEffects(new AsyncQuery(this, new INewAsyncCallback() {
             @SuppressWarnings("unchecked")
             @Override
             public void onSuccess(Object target, Object returnValue) {
@@ -90,7 +90,7 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
     }
 
     private void updateWanColorDepthOptions(final ISpice spice) {
-        AsyncDataProvider.GetWANColorDepth(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getWANColorDepth(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 spice.setWANColorDepth((WanColorDepth) returnValue);

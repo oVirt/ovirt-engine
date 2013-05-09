@@ -67,7 +67,7 @@ public class ChangeQuotaModel extends ListModel {
                     list.add(itemModel);
                 }
                 ChangeQuotaModel.this.setItems(list);
-                ChangeQuotaModel.this.StopProgress();
+                ChangeQuotaModel.this.stopProgress();
             }
         });
     }

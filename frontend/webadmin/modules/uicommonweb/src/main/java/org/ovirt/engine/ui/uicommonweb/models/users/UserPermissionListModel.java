@@ -57,14 +57,14 @@ public class UserPermissionListModel extends SearchableListModel
 
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void onEntityChanged()
     {
         super.onEntityChanged();
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
     @Override
@@ -153,7 +153,7 @@ public class UserPermissionListModel extends SearchableListModel
         model.getCommands().add(tempVar2);
     }
 
-    private void OnRemove()
+    private void onRemove()
     {
         if (getSelectedItems() != null && getSelectedItems().size() > 0)
         {
@@ -172,7 +172,7 @@ public class UserPermissionListModel extends SearchableListModel
                 list.add(tempVar);
             }
 
-            model.StartProgress(null);
+            model.startProgress(null);
 
             Frontend.RunMultipleAction(VdcActionType.RemovePermission, list,
                     new IFrontendMultipleActionAsyncCallback() {
@@ -180,19 +180,19 @@ public class UserPermissionListModel extends SearchableListModel
                         public void executed(FrontendMultipleActionAsyncResult result) {
 
                             ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                            localModel.StopProgress();
-                            Cancel();
+                            localModel.stopProgress();
+                            cancel();
 
                         }
                     }, model);
         }
         else
         {
-            Cancel();
+            cancel();
         }
     }
 
-    public void Cancel()
+    public void cancel()
     {
         setWindow(null);
     }
@@ -201,17 +201,17 @@ public class UserPermissionListModel extends SearchableListModel
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void selectedItemsChanged()
     {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         boolean isInherited = false;
 
@@ -235,11 +235,11 @@ public class UserPermissionListModel extends SearchableListModel
         }
         if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
-            OnRemove();
+            onRemove();
         }
         if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
     }
 

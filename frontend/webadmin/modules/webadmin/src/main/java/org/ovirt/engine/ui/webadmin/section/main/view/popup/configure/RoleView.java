@@ -104,7 +104,7 @@ public class RoleView extends Composite {
             public void onValueChange(ValueChangeEvent<Boolean> event) {
                 if (event.getValue()) {
                     roleModelProvider.getModel().setItemsFilter(null);
-                    roleModelProvider.getModel().ForceRefresh();
+                    roleModelProvider.getModel().forceRefresh();
                 }
             }
         });
@@ -115,7 +115,7 @@ public class RoleView extends Composite {
             public void onValueChange(ValueChangeEvent<Boolean> event) {
                 if (event.getValue()) {
                     roleModelProvider.getModel().setItemsFilter(RoleType.ADMIN);
-                    roleModelProvider.getModel().ForceRefresh();
+                    roleModelProvider.getModel().forceRefresh();
                 }
             }
         });
@@ -126,7 +126,7 @@ public class RoleView extends Composite {
             public void onValueChange(ValueChangeEvent<Boolean> event) {
                 if (event.getValue()) {
                     roleModelProvider.getModel().setItemsFilter(RoleType.USER);
-                    roleModelProvider.getModel().ForceRefresh();
+                    roleModelProvider.getModel().forceRefresh();
                 }
             }
         });

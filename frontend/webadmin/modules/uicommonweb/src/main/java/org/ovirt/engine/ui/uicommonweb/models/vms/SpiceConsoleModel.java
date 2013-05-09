@@ -85,7 +85,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
 
         setSpiceImplementation(
-                ClientConsoleMode.valueOf((String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ClientConsoleModeDefault)));
+                ClientConsoleMode.valueOf((String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ClientConsoleModeDefault)));
     }
 
     public ISpice getspice() {
@@ -106,19 +106,19 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
         switch (consoleMode) {
             case Native:
-                setspice((ISpice) TypeResolver.getInstance().Resolve(ISpiceNative.class));
+                setspice((ISpice) TypeResolver.getInstance().resolve(ISpiceNative.class));
                 break;
             case Plugin:
-                setspice((ISpice) TypeResolver.getInstance().Resolve(ISpicePlugin.class));
+                setspice((ISpice) TypeResolver.getInstance().resolve(ISpicePlugin.class));
                 break;
             default:
-                ISpicePlugin pluginSpice = (ISpicePlugin) TypeResolver.getInstance().Resolve(ISpicePlugin.class);
+                ISpicePlugin pluginSpice = (ISpicePlugin) TypeResolver.getInstance().resolve(ISpicePlugin.class);
                 setspice(pluginSpice.detectBrowserPlugin() ? pluginSpice
-                        : (ISpice) TypeResolver.getInstance().Resolve(ISpiceNative.class));
+                        : (ISpice) TypeResolver.getInstance().resolve(ISpiceNative.class));
             break;
         }
 
-        getConfigurator().Configure(getspice());
+        getConfigurator().configure(getspice());
 
         if (!getspice().getConnectedEvent().getListeners().contains(this)) {
             getspice().getConnectedEvent().addListener(this);
@@ -126,12 +126,12 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
     }
 
     @Override
-    protected void Connect() {
+    protected void connect() {
         if (getEntity() != null) {
-            getLogger().Debug("Connecting to Spice console..."); //$NON-NLS-1$
+            getLogger().debug("Connecting to Spice console..."); //$NON-NLS-1$
             if (!getspice().getIsInstalled()) {
-                getLogger().Info("Spice client is not installed."); //$NON-NLS-1$
-                getspice().Install();
+                getLogger().info("Spice client is not installed."); //$NON-NLS-1$
+                getspice().install();
                 return;
             }
 
@@ -139,8 +139,8 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             if (getConfigurator().getIsAdmin()
                     && getspice().getCurrentVersion().compareTo(getspice().getDesiredVersion()) < 0)
             {
-                getLogger().Info("Spice client version is not as desired (" + getspice().getDesiredVersion() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
-                getspice().Install();
+                getLogger().info("Spice client version is not as desired (" + getspice().getDesiredVersion() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+                getspice().install();
                 return;
             }
 
@@ -156,7 +156,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             }
 
             // make sure to not send the ctrl+alt+delete and TaskMgrExecution if not supported
-            ConsoleUtils consoleUtils = (ConsoleUtils) TypeResolver.getInstance().Resolve(ConsoleUtils.class);
+            ConsoleUtils consoleUtils = (ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class);
             if (!consoleUtils.isCtrlAltDelEnabled()) {
                 getspice().setSendCtrlAltDelete(false);
                 getspice().setNoTaskMgrExecution(false);
@@ -178,23 +178,23 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         super.eventRaised(ev, sender, args);
 
         if (ev.equals(getspice().getDisconnectedEvent())) {
-            Spice_Disconnected(sender, (ErrorCodeEventArgs) args);
+            spice_Disconnected(sender, (ErrorCodeEventArgs) args);
         }
         else if (ev.equals(getspice().getConnectedEvent())) {
-            Spice_Connected(sender);
+            spice_Connected(sender);
         }
         else if (ev.equals(getspice().getMenuItemSelectedEvent())) {
-            Spice_MenuItemSelected(sender, (SpiceMenuItemEventArgs) args);
+            spice_MenuItemSelected(sender, (SpiceMenuItemEventArgs) args);
         }
     }
 
-    private void Spice_MenuItemSelected(Object sender, SpiceMenuItemEventArgs e) {
+    private void spice_MenuItemSelected(Object sender, SpiceMenuItemEventArgs e) {
         if (getEntity() != null) {
             // SpiceMenuCommandItem item = menu.Descendants()
             // .OfType<SpiceMenuCommandItem>()
             // .FirstOrDefault(a => a.Id == e.MenuItemId);
             SpiceMenuCommandItem item = null;
-            for (SpiceMenuItem a : menu.Descendants()) {
+            for (SpiceMenuItem a : menu.descendants()) {
                 if (a.getClass() == SpiceMenuCommandItem.class && a.getId() == e.getMenuItemId()) {
                     item = (SpiceMenuCommandItem) a;
                     break;
@@ -204,7 +204,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 if (StringHelper.stringsEqual(item.getCommandName(), CommandPlay)) {
                     // use sysprep iff the vm is not initialized and vm has Win OS
                     boolean reinitialize =
-                            !getEntity().isInitialized() && AsyncDataProvider.IsWindowsOsType(getEntity().getVmOs());
+                            !getEntity().isInitialized() && AsyncDataProvider.isWindowsOsType(getEntity().getVmOs());
                     RunVmParams tempVar = new RunVmParams(getEntity().getId());
                     tempVar.setRunAsStateless(getEntity().isStateless());
                     tempVar.setReinitialize(reinitialize);
@@ -229,24 +229,24 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         }
     }
 
-    private void Spice_Disconnected(Object sender, ErrorCodeEventArgs e) {
+    private void spice_Disconnected(Object sender, ErrorCodeEventArgs e) {
         getspice().getDisconnectedEvent().removeListener(this);
         getspice().getMenuItemSelectedEvent().removeListener(this);
 
         setIsConnected(false);
-        UpdateActionAvailability();
+        updateActionAvailability();
 
         if (e.getErrorCode() > 100) {
             getErrorEvent().raise(this, e);
         }
     }
 
-    private void Spice_Connected(Object sender) {
+    private void spice_Connected(Object sender) {
         setIsConnected(true);
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
-    private void Cancel() {
+    private void cancel() {
         setWindow(null);
     }
 
@@ -255,22 +255,22 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         super.executeCommand(command);
 
         if (StringHelper.stringsEqual(command.getName(), "Cancel")) { //$NON-NLS-1$
-            Cancel();
+            cancel();
         }
     }
 
 
 
     @Override
-    protected void UpdateActionAvailability() {
-        super.UpdateActionAvailability();
+    protected void updateActionAvailability() {
+        super.updateActionAvailability();
 
         getConnectCommand().setIsExecutionAllowed(!getIsConnected() && getEntity() != null
                 && getEntity().getDisplayType() == DisplayType.qxl
-                && IsVmConnectReady());
+                && isVmConnectReady());
     }
 
-    private void ExecuteQuery(final VM vm) {
+    private void executeQuery(final VM vm) {
         AsyncQuery _asyncQuery0 = new AsyncQuery();
         _asyncQuery0.setModel(this);
 
@@ -320,7 +320,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             }
         };
 
-        AsyncDataProvider.GetIsoDomainByDataCenterId(_asyncQuery0, vm.getStoragePoolId());
+        AsyncDataProvider.getIsoDomainByDataCenterId(_asyncQuery0, vm.getStoragePoolId());
     }
 
     private String ticket;
@@ -396,13 +396,13 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         String ctrlAltEnd = "ctrl+alt+end"; //$NON-NLS-1$
 
         String toggleFullScreenKeysTranslated =
-                AsyncDataProvider.GetComplexValueFromSpiceRedKeysResource((toggleFullScreenKeys != null) ? toggleFullScreenKeys
+                AsyncDataProvider.getComplexValueFromSpiceRedKeysResource((toggleFullScreenKeys != null) ? toggleFullScreenKeys
                         : "shift+f11"); //$NON-NLS-1$
         String releaseCursorKeysTranslated =
-                AsyncDataProvider.GetComplexValueFromSpiceRedKeysResource((releaseCursorKeys != null) ? releaseCursorKeys
+                AsyncDataProvider.getComplexValueFromSpiceRedKeysResource((releaseCursorKeys != null) ? releaseCursorKeys
                         : "shift+f12"); //$NON-NLS-1$
-        String ctrlAltDelTranslated = AsyncDataProvider.GetComplexValueFromSpiceRedKeysResource(ctrlAltDel);
-        String ctrlAltEndTranslated = AsyncDataProvider.GetComplexValueFromSpiceRedKeysResource(ctrlAltEnd);
+        String ctrlAltDelTranslated = AsyncDataProvider.getComplexValueFromSpiceRedKeysResource(ctrlAltDel);
+        String ctrlAltEndTranslated = AsyncDataProvider.getComplexValueFromSpiceRedKeysResource(ctrlAltEnd);
 
         getspice().setTitle(getEntity().getName()
                 + ":%d" //$NON-NLS-1$
@@ -411,7 +411,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                                 .getMessages()
                                 .pressKeyToReleaseCursor(releaseCursorKeysTranslated))));
 
-        String spiceProxy = (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault);
+        String spiceProxy = (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault);
         boolean spiceProxyGloballyConfigured = spiceProxy != null && !"".equals(spiceProxy);
         boolean spiceProxyEnabledForThisVm = getspice().isSpiceProxyEnabled();
         spiceProxy = spiceProxyGloballyConfigured && spiceProxyEnabledForThisVm  ? spiceProxy : null; //$NON-NLS-1$
@@ -498,7 +498,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         }
         else {
             // Try to connect.
-            SpiceConnect();
+            spiceConnect();
         }
     }
 
@@ -516,7 +516,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 String address =
                         (String) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 spiceConsoleModel.getspice().setHost(address);
-                spiceConsoleModel.SpiceConnect();
+                spiceConsoleModel.spiceConnect();
             }
         };
 
@@ -533,13 +533,13 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                     public void executed(FrontendActionAsyncResult result) {
 
                         SpiceConsoleModel spiceConsoleModel = (SpiceConsoleModel) result.getState();
-                        spiceConsoleModel.PostSendVmTicket(result.getReturnValue());
+                        spiceConsoleModel.postSendVmTicket(result.getReturnValue());
 
                     }
                 }, this);
     }
 
-    public void PostSendVmTicket(VdcReturnValueBase returnValue) {
+    public void postSendVmTicket(VdcReturnValueBase returnValue) {
         if (returnValue == null || !returnValue.getSucceeded()) {
             return;
         }
@@ -550,7 +550,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         // we attempt to perform SSO (otherwise an error will be thrown)
         if (!getConfigurator().getIsAdmin() && getEntity().getHasAgent()
                 && getEntity().getStatus() == VMStatus.Up) {
-            getLogger().Info("SpiceConsoleManager::Connect: Attempting to perform SSO on Desktop " //$NON-NLS-1$
+            getLogger().info("SpiceConsoleManager::Connect: Attempting to perform SSO on Desktop " //$NON-NLS-1$
                     + getEntity().getName());
 
             Frontend.RunAction(VdcActionType.VmLogon, new VmOperationParameterBase(getEntity().getId()),
@@ -562,7 +562,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                             final VdcReturnValueBase logonCommandReturnValue = result.getReturnValue();
                             boolean isLogonSucceeded = logonCommandReturnValue != null && logonCommandReturnValue.getSucceeded();
                             if (isLogonSucceeded) {
-                                spiceConsoleModel.ExecuteQuery(getEntity());
+                                spiceConsoleModel.executeQuery(getEntity());
                             }
                             else {
                                 if (logonCommandReturnValue != null && logonCommandReturnValue.getFault().getError() == VdcBllErrors.nonresp) {
@@ -574,7 +574,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                                                                     logonCommandReturnValue != null ?
                                                                             logonCommandReturnValue.getDescription()
                                                                             : ""); //$NON-NLS-1$
-                                                            spiceConsoleModel.ExecuteQuery(getEntity());
+                                                            spiceConsoleModel.executeQuery(getEntity());
                                                             parentModel.setWindow(null);
                                                         }
                                                     });
@@ -598,7 +598,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                     },
                     this);
         } else {
-            ExecuteQuery(getEntity());
+            executeQuery(getEntity());
         }
     }
 
@@ -625,21 +625,21 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
     }
 
     private void logSsoOnDesktopFailedAgentNonResp(ILogger logger, String vmName) {
-        logger.Info("SpiceConsoleManager::Connect: Failed to perform SSO on Destkop " //$NON-NLS-1$
+        logger.info("SpiceConsoleManager::Connect: Failed to perform SSO on Destkop " //$NON-NLS-1$
                 + vmName + " because agent is non-responsive, continuing without SSO."); //$NON-NLS-1$
     }
 
     private void logSsoOnDesktopFailed(ILogger logger, String vmName) {
-        logger.Info("SpiceConsoleManager::Connect: Failed to perform SSO on Destkop " //$NON-NLS-1$
+        logger.info("SpiceConsoleManager::Connect: Failed to perform SSO on Destkop " //$NON-NLS-1$
                 + vmName + ", cancel open spice console request."); //$NON-NLS-1$
     }
 
-    public void SpiceConnect()
+    public void spiceConnect()
     {
         try {
-            getspice().Connect();
+            getspice().connect();
         } catch (RuntimeException ex) {
-            getLogger().Error("Exception on Spice connect", ex); //$NON-NLS-1$
+            getLogger().error("Exception on Spice connect", ex); //$NON-NLS-1$
         }
     }
 

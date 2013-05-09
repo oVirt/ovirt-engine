@@ -50,7 +50,7 @@ public class HostVmListModel extends VmListModel
         // on destination host (Migrating To)
         if (getEntity() != null)
         {
-            AsyncDataProvider.GetVmsRunningOnOrMigratingToVds(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getVmsRunningOnOrMigratingToVds(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
                     @SuppressWarnings("unchecked")

@@ -43,7 +43,7 @@ public class HostHooksListModel extends SearchableListModel
     {
         super.onEntityChanged();
 
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
     @Override
@@ -53,7 +53,7 @@ public class HostHooksListModel extends SearchableListModel
 
         if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
         }
     }
 

@@ -75,7 +75,7 @@ public abstract class AbstractHeaderPresenterWidget<V extends AbstractHeaderPres
         registerHandler(guideLink.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                Configurator configurator = (Configurator) TypeResolver.getInstance().Resolve(Configurator.class);
+                Configurator configurator = (Configurator) TypeResolver.getInstance().resolve(Configurator.class);
                 if (configurator.isDocumentationAvailable()) {
                     String url = configurator.getDocumentationLibURL() + documentationGuidePath;
                     WebUtils.openUrlInNewWindow(windowName, url, WebUtils.OPTION_SCROLLBARS);
@@ -88,7 +88,7 @@ public abstract class AbstractHeaderPresenterWidget<V extends AbstractHeaderPres
         registerHandler(guideLink.addMouseOverHandler(new MouseOverHandler() {
             @Override
             public void onMouseOver(MouseOverEvent event) {
-                Configurator configurator = (Configurator) TypeResolver.getInstance().Resolve(Configurator.class);
+                Configurator configurator = (Configurator) TypeResolver.getInstance().resolve(Configurator.class);
                 getView().setGuideLinkEnabled(configurator.isDocumentationAvailable());
             }
         }));

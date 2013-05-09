@@ -148,22 +148,22 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     protected void onEntityChanged()
     {
         super.onEntityChanged();
-        UpdateOptions();
+        updateOptions();
     }
 
-    private void UpdateOptionsNonLocalFSData() {
-        AsyncDataProvider.GetClusterList(new AsyncQuery(this,
+    private void updateOptionsNonLocalFSData() {
+        AsyncDataProvider.getClusterList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
                         ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
                         dataCenterGuideModel.clusters = clusters;
-                        dataCenterGuideModel.UpdateOptionsNonLocalFS();
+                        dataCenterGuideModel.updateOptionsNonLocalFS();
                     }
                 }), getEntity().getId());
 
-        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
+        AsyncDataProvider.getStorageDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -171,11 +171,11 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         ArrayList<StorageDomain> storageDomains =
                                 (ArrayList<StorageDomain>) returnValue;
                         dataCenterGuideModel.allStorageDomains = storageDomains;
-                        dataCenterGuideModel.UpdateOptionsNonLocalFS();
+                        dataCenterGuideModel.updateOptionsNonLocalFS();
                     }
                 }));
 
-        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
+        AsyncDataProvider.getStorageDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -183,11 +183,11 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         ArrayList<StorageDomain> storageDomains =
                                 (ArrayList<StorageDomain>) returnValue;
                         dataCenterGuideModel.attachedStorageDomains = storageDomains;
-                        dataCenterGuideModel.UpdateOptionsNonLocalFS();
+                        dataCenterGuideModel.updateOptionsNonLocalFS();
                     }
                 }), getEntity().getId());
 
-        AsyncDataProvider.GetISOStorageDomainList(new AsyncQuery(this,
+        AsyncDataProvider.getISOStorageDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -195,31 +195,31 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         ArrayList<StorageDomain> storageDomains =
                                 (ArrayList<StorageDomain>) returnValue;
                         dataCenterGuideModel.isoStorageDomains = storageDomains;
-                        dataCenterGuideModel.UpdateOptionsNonLocalFS();
+                        dataCenterGuideModel.updateOptionsNonLocalFS();
                     }
                 }));
 
-        AsyncDataProvider.GetHostList(new AsyncQuery(this,
+        AsyncDataProvider.getHostList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
                         ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
                         dataCenterGuideModel.allHosts = hosts;
-                        dataCenterGuideModel.UpdateOptionsNonLocalFS();
+                        dataCenterGuideModel.updateOptionsNonLocalFS();
                     }
                 }));
     }
 
-    private void UpdateOptionsLocalFSData() {
-        AsyncDataProvider.GetClusterList(new AsyncQuery(this,
+    private void updateOptionsLocalFSData() {
+        AsyncDataProvider.getClusterList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
                         ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
                         dataCenterGuideModel.clusters = clusters;
-                        dataCenterGuideModel.UpdateOptionsLocalFS();
+                        dataCenterGuideModel.updateOptionsLocalFS();
                     }
                 }), getEntity().getId());
 
@@ -235,7 +235,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                             hosts = new ArrayList<VDS>();
                         }
                         dataCenterGuideModel.allHosts = hosts;
-                        AsyncDataProvider.GetLocalStorageHost(new AsyncQuery(dataCenterGuideModel,
+                        AsyncDataProvider.getLocalStorageHost(new AsyncQuery(dataCenterGuideModel,
                                 new INewAsyncCallback() {
                                     @Override
                                     public void onSuccess(Object target, Object returnValue) {
@@ -246,14 +246,14 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                                         } else {
                                             noLocalStorageHost = true;
                                         }
-                                        dataCenterGuideModel.UpdateOptionsLocalFS();
+                                        dataCenterGuideModel.updateOptionsLocalFS();
                                     }
                                 }), dataCenterGuideModel.getEntity().getname());
                     }
                 }));
     }
 
-    private void UpdateOptionsNonLocalFS() {
+    private void updateOptionsNonLocalFS() {
         if (clusters == null || allStorageDomains == null || attachedStorageDomains == null
                 || isoStorageDomains == null || allHosts == null) {
             return;
@@ -444,7 +444,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             getOptionalActions().add(attachIsoStorageAction);
         }
 
-        StopProgress();
+        stopProgress();
     }
 
     private boolean doesHostSupportAnyCluster(List<VDSGroup> clusterList, VDS host){
@@ -456,7 +456,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         return false;
     }
 
-    private void UpdateOptionsLocalFS() {
+    private void updateOptionsLocalFS() {
         if (clusters == null || allHosts == null || (localStorageHost == null && !noLocalStorageHost)) {
             return;
         }
@@ -528,30 +528,30 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             getCompulsoryActions().add(addHostAction);
         }
 
-        StopProgress();
+        stopProgress();
     }
 
-    private void UpdateOptions()
+    private void updateOptions()
     {
         getCompulsoryActions().clear();
         getOptionalActions().clear();
 
         if (getEntity() != null)
         {
-            StartProgress(null);
+            startProgress(null);
 
             if (getEntity().getstorage_pool_type() != StorageType.LOCALFS)
             {
-                UpdateOptionsNonLocalFSData();
+                updateOptionsNonLocalFSData();
             }
             else
             {
-                UpdateOptionsLocalFSData();
+                updateOptionsLocalFSData();
             }
         }
     }
 
-    private void ResetData() {
+    private void resetData() {
         storageDomain = null;
         storageModel = null;
         storageId = null;
@@ -570,7 +570,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         noLocalStorageHost = false;
     }
 
-    private void AddLocalStorage()
+    private void addLocalStorage()
     {
         StorageModel model = new StorageModel(new NewEditStorageModelBehavior());
         setWindow(model);
@@ -584,7 +584,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         model.setItems(list);
         model.setSelectedItem(list.get(0));
 
-        AsyncDataProvider.GetLocalStorageHost(new AsyncQuery(new Object[] { this, model },
+        AsyncDataProvider.getLocalStorageHost(new AsyncQuery(new Object[] { this, model },
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -612,17 +612,17 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                 getEntity().getname());
     }
 
-    public void AddIsoStorage()
+    public void addIsoStorage()
     {
-        AddStorageInternal(ConstantsManager.getInstance().getConstants().newISOLibraryTitle(), StorageDomainType.ISO);
+        addStorageInternal(ConstantsManager.getInstance().getConstants().newISOLibraryTitle(), StorageDomainType.ISO);
     }
 
-    public void AddDataStorage()
+    public void addDataStorage()
     {
-        AddStorageInternal(ConstantsManager.getInstance().getConstants().newStorageTitle(), StorageDomainType.Data);
+        addStorageInternal(ConstantsManager.getInstance().getConstants().newStorageTitle(), StorageDomainType.Data);
     }
 
-    private void AddStorageInternal(String title, StorageDomainType type)
+    private void addStorageInternal(String title, StorageDomainType type)
     {
         StorageModel model = new StorageModel(new NewEditStorageModelBehavior());
         setWindow(model);
@@ -661,7 +661,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         model.setItems(items);
 
-        model.Initialize();
+        model.initialize();
 
         UICommand tempVar6 = new UICommand("OnAddStorage", this); //$NON-NLS-1$
         tempVar6.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -673,12 +673,12 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         model.getCommands().add(tempVar7);
     }
 
-    public void OnAddStorage()
+    public void onAddStorage()
     {
         StorageModel model = (StorageModel) getWindow();
         String storageName = (String) model.getName().getEntity();
 
-        AsyncDataProvider.IsStorageDomainNameUnique(new AsyncQuery(this,
+        AsyncDataProvider.isStorageDomainNameUnique(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -696,7 +696,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                                     .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
                             storageModel.getName().setIsValid(false);
                         }
-                        AsyncDataProvider.GetStorageDomainMaxNameLength(new AsyncQuery(dataCenterGuideModel,
+                        AsyncDataProvider.getStorageDomainMaxNameLength(new AsyncQuery(dataCenterGuideModel,
                                 new INewAsyncCallback() {
                                     @Override
                                     public void onSuccess(Object target1, Object returnValue1) {
@@ -710,7 +710,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                                                 .nameCanContainOnlyMsg(nameMaxLength));
                                         storageModel1.getName().validateEntity(new IValidation[] {
                                                 new NotEmptyValidation(), tempVar2 });
-                                        dataCenterGuideModel1.PostOnAddStorage();
+                                        dataCenterGuideModel1.postOnAddStorage();
 
                                     }
                                 }));
@@ -720,11 +720,11 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                 storageName);
     }
 
-    public void PostOnAddStorage()
+    public void postOnAddStorage()
     {
         StorageModel model = (StorageModel) getWindow();
 
-        if (!model.Validate())
+        if (!model.validate())
         {
             return;
         }
@@ -732,31 +732,31 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         // Save changes.
         if (model.getSelectedItem() instanceof NfsStorageModel)
         {
-            SaveNfsStorage();
+            saveNfsStorage();
         }
         else if (model.getSelectedItem() instanceof LocalStorageModel)
         {
-            SaveLocalStorage();
+            saveLocalStorage();
         }
         else
         {
-            SaveSanStorage();
+            saveSanStorage();
         }
     }
 
-    private void SaveLocalStorage()
+    private void saveLocalStorage()
     {
         if (getWindow().getProgress() != null)
         {
             return;
         }
 
-        getWindow().StartProgress(null);
+        getWindow().startProgress(null);
 
         Task.Create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveLocal" }))).Run(); //$NON-NLS-1$
     }
 
-    private void SaveLocalStorage(TaskContext context)
+    private void saveLocalStorage(TaskContext context)
     {
         this.context = context;
         StorageModel model = (StorageModel) getWindow();
@@ -771,7 +771,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         storageDomain.setStorageDomainType(isNew ? storageModel.getRole() : storageDomain.getStorageDomainType());
         storageDomain.setStorageName((String) model.getName().getEntity());
 
-        AsyncDataProvider.GetStorageDomainsByConnection(new AsyncQuery(this,
+        AsyncDataProvider.getStorageDomainsByConnection(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -782,7 +782,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         if (storages != null && storages.size() > 0)
                         {
                             String storageName = storages.get(0).getStorageName();
-                            OnFinish(dataCenterGuideModel.context,
+                            onFinish(dataCenterGuideModel.context,
                                     false,
                                     dataCenterGuideModel.storageModel,
                                     ConstantsManager.getInstance()
@@ -791,7 +791,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         }
                         else
                         {
-                            dataCenterGuideModel.SaveNewLocalStorage();
+                            dataCenterGuideModel.saveNewLocalStorage();
                         }
 
                     }
@@ -800,7 +800,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                 path);
     }
 
-    public void SaveNewLocalStorage()
+    public void saveNewLocalStorage()
     {
         StorageModel model = (StorageModel) getWindow();
         LocalStorageModel localModel = (LocalStorageModel) model.getSelectedItem();
@@ -843,7 +843,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                 DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
                 dataCenterGuideModel.removeConnection = false;
 
-                dataCenterGuideModel.OnFinish(dataCenterGuideModel.context, true, dataCenterGuideModel.storageModel);
+                dataCenterGuideModel.onFinish(dataCenterGuideModel.context, true, dataCenterGuideModel.storageModel);
 
             }
         };
@@ -855,11 +855,11 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
                 if (dataCenterGuideModel.removeConnection)
                 {
-                    dataCenterGuideModel.CleanConnection(dataCenterGuideModel.connection, dataCenterGuideModel.hostId);
+                    dataCenterGuideModel.cleanConnection(dataCenterGuideModel.connection, dataCenterGuideModel.hostId);
                     dataCenterGuideModel.removeConnection = false;
                 }
 
-                dataCenterGuideModel.OnFinish(dataCenterGuideModel.context, false, dataCenterGuideModel.storageModel);
+                dataCenterGuideModel.onFinish(dataCenterGuideModel.context, false, dataCenterGuideModel.storageModel);
 
             }
         };
@@ -871,7 +871,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                 this);
     }
 
-    private void CleanConnection(StorageServerConnections connection, Guid hostId)
+    private void cleanConnection(StorageServerConnections connection, Guid hostId)
     {
         Frontend.RunAction(VdcActionType.DisconnectStorageServerConnection,
                 new StorageServerConnectionParametersBase(connection, hostId),
@@ -879,31 +879,31 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                 this);
     }
 
-    public void OnFinish(TaskContext context, boolean isSucceeded, IStorageModel model)
+    public void onFinish(TaskContext context, boolean isSucceeded, IStorageModel model)
     {
-        OnFinish(context, isSucceeded, model, null);
+        onFinish(context, isSucceeded, model, null);
     }
 
-    public void OnFinish(TaskContext context, boolean isSucceeded, IStorageModel model, String message)
+    public void onFinish(TaskContext context, boolean isSucceeded, IStorageModel model, String message)
     {
         context.InvokeUIThread(this,
                 new ArrayList<Object>(Arrays.asList(new Object[] { "Finish", isSucceeded, model, //$NON-NLS-1$
                         message })));
     }
 
-    private void SaveNfsStorage()
+    private void saveNfsStorage()
     {
         if (getWindow().getProgress() != null)
         {
             return;
         }
 
-        getWindow().StartProgress(null);
+        getWindow().startProgress(null);
 
         Task.Create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveNfs" }))).Run(); //$NON-NLS-1$
     }
 
-    private void SaveNfsStorage(TaskContext context)
+    private void saveNfsStorage(TaskContext context)
     {
         this.context = context;
         StorageModel model = (StorageModel) getWindow();
@@ -918,7 +918,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         storageDomain.setStorageName((String) model.getName().getEntity());
         storageDomain.setStorageFormat((StorageFormatType) model.getFormat().getSelectedItem());
 
-        AsyncDataProvider.GetStorageDomainsByConnection(new AsyncQuery(this,
+        AsyncDataProvider.getStorageDomainsByConnection(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -929,7 +929,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         if (storages != null && storages.size() > 0)
                         {
                             String storageName = storages.get(0).getStorageName();
-                            OnFinish(dataCenterGuideModel.context,
+                            onFinish(dataCenterGuideModel.context,
                                     false,
                                     dataCenterGuideModel.storageModel,
                                     ConstantsManager.getInstance()
@@ -938,7 +938,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         }
                         else
                         {
-                            dataCenterGuideModel.SaveNewNfsStorage();
+                            dataCenterGuideModel.saveNewNfsStorage();
                         }
 
                     }
@@ -947,7 +947,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                 path);
     }
 
-    public void SaveNewNfsStorage()
+    public void saveNewNfsStorage()
     {
         StorageModel model = (StorageModel) getWindow();
         NfsStorageModel nfsModel = (NfsStorageModel) model.getSelectedItem();
@@ -1004,11 +1004,11 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                 StoragePool dataCenter = (StoragePool) storageModel.getDataCenter().getSelectedItem();
                 if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId))
                 {
-                    dataCenterGuideModel.AttachStorageToDataCenter((Guid) dataCenterGuideModel.storageId,
+                    dataCenterGuideModel.attachStorageToDataCenter((Guid) dataCenterGuideModel.storageId,
                             dataCenter.getId());
                 }
 
-                dataCenterGuideModel.OnFinish(dataCenterGuideModel.context, true, dataCenterGuideModel.storageModel);
+                dataCenterGuideModel.onFinish(dataCenterGuideModel.context, true, dataCenterGuideModel.storageModel);
 
             }
         };
@@ -1017,8 +1017,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             public void executed(FrontendActionAsyncResult result) {
 
                 DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
-                dataCenterGuideModel.CleanConnection(dataCenterGuideModel.connection, dataCenterGuideModel.hostId);
-                dataCenterGuideModel.OnFinish(dataCenterGuideModel.context, false, dataCenterGuideModel.storageModel);
+                dataCenterGuideModel.cleanConnection(dataCenterGuideModel.connection, dataCenterGuideModel.hostId);
+                dataCenterGuideModel.onFinish(dataCenterGuideModel.context, false, dataCenterGuideModel.storageModel);
 
             }
         };
@@ -1030,19 +1030,19 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                 this);
     }
 
-    private void SaveSanStorage()
+    private void saveSanStorage()
     {
         if (getWindow().getProgress() != null)
         {
             return;
         }
 
-        getWindow().StartProgress(null);
+        getWindow().startProgress(null);
 
         Task.Create(this, new ArrayList<Object>(Arrays.asList(new Object[] { "SaveSan" }))).Run(); //$NON-NLS-1$
     }
 
-    private void SaveSanStorage(TaskContext context)
+    private void saveSanStorage(TaskContext context)
     {
         this.context = context;
         StorageModel model = (StorageModel) getWindow();
@@ -1055,7 +1055,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         storageDomain.setStorageFormat((StorageFormatType) sanModel.getContainer().getFormat().getSelectedItem());
         storageDomain.setStorageName((String) model.getName().getEntity());
 
-        AsyncDataProvider.GetStorageDomainsByConnection(new AsyncQuery(this,
+        AsyncDataProvider.getStorageDomainsByConnection(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -1066,7 +1066,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         if (storages != null && storages.size() > 0)
                         {
                             String storageName = storages.get(0).getStorageName();
-                            OnFinish(dataCenterGuideModel.context,
+                            onFinish(dataCenterGuideModel.context,
                                     false,
                                     dataCenterGuideModel.storageModel,
                                     ConstantsManager.getInstance()
@@ -1075,17 +1075,17 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         }
                         else
                         {
-                            dataCenterGuideModel.SaveNewSanStorage();
+                            dataCenterGuideModel.saveNewSanStorage();
                         }
 
-                        dataCenterGuideModel.getWindow().StopProgress();
+                        dataCenterGuideModel.getWindow().stopProgress();
                     }
                 }),
                 null,
                 path);
     }
 
-    public void SaveNewSanStorage()
+    public void saveNewSanStorage()
     {
         StorageModel model = (StorageModel) getWindow();
         SanStorageModel sanStorageModel = (SanStorageModel) model.getSelectedItem();
@@ -1094,24 +1094,24 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         ArrayList<String> usedLunsMessages = sanStorageModel.getUsedLunsMessages();
 
         if (usedLunsMessages.isEmpty()) {
-            OnSaveSanStorage();
+            onSaveSanStorage();
         }
         else {
-            ForceCreationWarning(usedLunsMessages);
+            forceCreationWarning(usedLunsMessages);
         }
     }
 
-    private void OnSaveSanStorage()
+    private void onSaveSanStorage()
     {
         ConfirmationModel confirmationModel = (ConfirmationModel) getConfirmWindow();
 
-        if (confirmationModel != null && !confirmationModel.Validate())
+        if (confirmationModel != null && !confirmationModel.validate())
         {
             return;
         }
 
-        CancelConfirm();
-        getWindow().StartProgress(null);
+        cancelConfirm();
+        getWindow().startProgress(null);
 
         StorageModel model = (StorageModel) getWindow();
         SanStorageModel sanModel = (SanStorageModel) model.getSelectedItem();
@@ -1140,9 +1140,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         {
                             VdcReturnValueBase returnValue = result.getReturnValue();
                             NGuid storageId = (NGuid) returnValue.getActionReturnValue();
-                            dataCenterGuideModel.AttachStorageToDataCenter((Guid) storageId, dataCenter.getId());
+                            dataCenterGuideModel.attachStorageToDataCenter((Guid) storageId, dataCenter.getId());
                         }
-                        dataCenterGuideModel.OnFinish(dataCenterGuideModel.context,
+                        dataCenterGuideModel.onFinish(dataCenterGuideModel.context,
                                 true,
                                 dataCenterGuideModel.storageModel);
 
@@ -1150,7 +1150,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                 }, this);
     }
 
-    private void ForceCreationWarning(ArrayList<String> usedLunsMessages) {
+    private void forceCreationWarning(ArrayList<String> usedLunsMessages) {
         StorageModel storageModel = (StorageModel) getWindow();
         SanStorageModel sanStorageModel = (SanStorageModel) storageModel.getSelectedItem();
         sanStorageModel.setForce(true);
@@ -1175,7 +1175,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         model.getCommands().add(command);
     }
 
-    private void AttachStorageInternal(List<StorageDomain> storages, String title)
+    private void attachStorageInternal(List<StorageDomain> storages, String title)
     {
         ListModel model = new ListModel();
         model.setTitle(title);
@@ -1201,7 +1201,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         model.getCommands().add(tempVar3);
     }
 
-    private void AttachStorageToDataCenter(Guid storageId, Guid dataCenterId)
+    private void attachStorageToDataCenter(Guid storageId, Guid dataCenterId)
     {
         Frontend.RunAction(VdcActionType.AttachStorageDomainToPool, new StorageDomainPoolParametersBase(storageId,
                 dataCenterId),
@@ -1209,7 +1209,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                 this);
     }
 
-    public void OnAttachStorage()
+    public void onAttachStorage()
     {
         ListModel model = (ListModel) getWindow();
 
@@ -1226,17 +1226,17 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         {
             for (StorageDomain sd : items)
             {
-                AttachStorageToDataCenter(sd.getId(), getEntity().getId());
+                attachStorageToDataCenter(sd.getId(), getEntity().getId());
             }
         }
 
-        Cancel();
-        PostAction();
+        cancel();
+        postAction();
     }
 
-    public void AttachIsoStorage()
+    public void attachIsoStorage()
     {
-        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
+        AsyncDataProvider.getStorageDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -1244,7 +1244,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         ArrayList<StorageDomain> attachedStorage =
                                 new ArrayList<StorageDomain>();
 
-                        AsyncDataProvider.GetISOStorageDomainList(new AsyncQuery(new Object[] { dataCenterGuideModel,
+                        AsyncDataProvider.getISOStorageDomainList(new AsyncQuery(new Object[] { dataCenterGuideModel,
                                 attachedStorage },
                                 new INewAsyncCallback() {
                                     @Override
@@ -1274,7 +1274,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                                                 sdl.add(a);
                                             }
                                         }
-                                        dataCenterGuideModel.AttachStorageInternal(sdl, ConstantsManager.getInstance()
+                                        dataCenterGuideModel.attachStorageInternal(sdl, ConstantsManager.getInstance()
                                                 .getConstants()
                                                 .attachISOLibraryTitle());
                                     }
@@ -1284,9 +1284,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                 getEntity().getId());
     }
 
-    public void AttachDataStorage()
+    public void attachDataStorage()
     {
-        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
+        AsyncDataProvider.getStorageDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -1330,17 +1330,17 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                                 unattachedStorage.add(item);
                             }
                         }
-                        dataCenterGuideModel.AttachStorageInternal(unattachedStorage, ConstantsManager.getInstance()
+                        dataCenterGuideModel.attachStorageInternal(unattachedStorage, ConstantsManager.getInstance()
                                 .getConstants()
                                 .attachStorageTitle());
                     }
                 }));
     }
 
-    public void AddCluster()
+    public void addCluster()
     {
         ClusterModel model = new ClusterModel();
-        model.Init(false);
+        model.init(false);
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newClusterTitle());
         model.setHashName("new_cluster"); //$NON-NLS-1$
@@ -1362,7 +1362,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         model.getCommands().add(tempVar2);
     }
 
-    public void OnAddCluster()
+    public void onAddCluster()
     {
         ClusterModel model = (ClusterModel) getWindow();
         VDSGroup cluster = new VDSGroup();
@@ -1372,7 +1372,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             return;
         }
 
-        if (!model.Validate((Boolean) model.getEnableOvirtService().getEntity())) // CPU is mandatory only if the
+        if (!model.validate((Boolean) model.getEnableOvirtService().getEntity())) // CPU is mandatory only if the
                                                                                   // cluster is virt enabled
         {
             return;
@@ -1394,7 +1394,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         cluster.setVirtService((Boolean) model.getEnableOvirtService().getEntity());
         cluster.setGlusterService((Boolean) model.getEnableGlusterService().getEntity());
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunAction(VdcActionType.AddVdsGroup, new VdsGroupOperationParameters(cluster),
                 new IFrontendActionAsyncCallback() {
@@ -1402,26 +1402,26 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     public void executed(FrontendActionAsyncResult result) {
 
                         DataCenterGuideModel localModel = (DataCenterGuideModel) result.getState();
-                        localModel.PostOnAddCluster(result.getReturnValue());
+                        localModel.postOnAddCluster(result.getReturnValue());
 
                     }
                 }, this);
     }
 
-    public void PostOnAddCluster(VdcReturnValueBase returnValue)
+    public void postOnAddCluster(VdcReturnValueBase returnValue)
     {
         ClusterModel model = (ClusterModel) getWindow();
 
-        model.StopProgress();
+        model.stopProgress();
 
         if (returnValue != null && returnValue.getSucceeded())
         {
-            Cancel();
-            PostAction();
+            cancel();
+            postAction();
         }
     }
 
-    public void SelectHost()
+    public void selectHost()
     {
         MoveHost model = new MoveHost();
         model.setTitle(ConstantsManager.getInstance().getConstants().selectHostTitle());
@@ -1437,7 +1437,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         setWindow(model);
 
-        AsyncDataProvider.GetClusterList(new AsyncQuery(new Object[] { this, model },
+        AsyncDataProvider.getClusterList(new AsyncQuery(new Object[] { this, model },
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -1461,7 +1461,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                 }), getEntity().getId());
     }
 
-    public void OnSelectHost()
+    public void onSelectHost()
     {
         MoveHost model = (MoveHost) getWindow();
 
@@ -1470,7 +1470,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             return;
         }
 
-        if (!model.Validate())
+        if (!model.validate())
         {
             return;
         }
@@ -1497,7 +1497,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             }
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.ChangeVDSCluster, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -1526,15 +1526,15 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                             }
                             i++;
                         }
-                        dataCenterGuideModel.getWindow().StopProgress();
-                        dataCenterGuideModel.Cancel();
-                        dataCenterGuideModel.PostAction();
+                        dataCenterGuideModel.getWindow().stopProgress();
+                        dataCenterGuideModel.cancel();
+                        dataCenterGuideModel.postAction();
                     }
                 },
                 this);
     }
 
-    public void AddHost()
+    public void addHost()
     {
         HostModel model = new HostModel();
         setWindow(model);
@@ -1559,11 +1559,11 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         model.getCommands().add(tempVar2);
     }
 
-    public void OnConfirmPMHost()
+    public void onConfirmPMHost()
     {
         HostModel model = (HostModel) getWindow();
 
-        if (!model.Validate())
+        if (!model.validate())
         {
             return;
         }
@@ -1587,13 +1587,13 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         }
         else
         {
-            OnAddHost();
+            onAddHost();
         }
     }
 
-    public void OnAddHost()
+    public void onAddHost()
     {
-        CancelConfirm();
+        cancelConfirm();
 
         HostModel model = (HostModel) getWindow();
 
@@ -1634,7 +1634,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         addVdsParams.setvds(host);
         addVdsParams.setRootPassword((String) model.getRootPassword().getEntity());
         addVdsParams.setRebootAfterInstallation(((VDSGroup) model.getCluster().getSelectedItem()).supportsVirtService());
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunAction(VdcActionType.AddVds, addVdsParams,
                 new IFrontendActionAsyncCallback() {
@@ -1642,43 +1642,43 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     public void executed(FrontendActionAsyncResult result) {
 
                         DataCenterGuideModel localModel = (DataCenterGuideModel) result.getState();
-                        localModel.PostOnAddHost(result.getReturnValue());
+                        localModel.postOnAddHost(result.getReturnValue());
 
                     }
                 }, this);
     }
 
-    public void PostOnAddHost(VdcReturnValueBase returnValue)
+    public void postOnAddHost(VdcReturnValueBase returnValue)
     {
         HostModel model = (HostModel) getWindow();
 
-        model.StopProgress();
+        model.stopProgress();
 
         if (returnValue != null && returnValue.getSucceeded())
         {
-            Cancel();
-            PostAction();
+            cancel();
+            postAction();
         }
     }
 
-    private void PostAction()
+    private void postAction()
     {
-        ResetData();
-        UpdateOptions();
+        resetData();
+        updateOptions();
     }
 
-    public void Cancel()
+    public void cancel()
     {
-        ResetData();
+        resetData();
         setWindow(null);
     }
 
-    public void CancelConfirm()
+    public void cancelConfirm()
     {
         setConfirmWindow(null);
     }
 
-    public void CancelConfirmWithFocus()
+    public void cancelConfirmWithFocus()
     {
         setConfirmWindow(null);
 
@@ -1693,83 +1693,83 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         if (StringHelper.stringsEqual(command.getName(), "AddCluster")) //$NON-NLS-1$
         {
-            AddCluster();
+            addCluster();
         }
 
         if (StringHelper.stringsEqual(command.getName(), "AddHost")) //$NON-NLS-1$
         {
-            AddHost();
+            addHost();
         }
 
         if (StringHelper.stringsEqual(command.getName(), "SelectHost")) //$NON-NLS-1$
         {
-            SelectHost();
+            selectHost();
         }
         if (StringHelper.stringsEqual(command.getName(), "AddDataStorage")) //$NON-NLS-1$
         {
-            AddDataStorage();
+            addDataStorage();
         }
         if (StringHelper.stringsEqual(command.getName(), "AttachDataStorage")) //$NON-NLS-1$
         {
-            AttachDataStorage();
+            attachDataStorage();
         }
         if (StringHelper.stringsEqual(command.getName(), "AddIsoStorage")) //$NON-NLS-1$
         {
-            AddIsoStorage();
+            addIsoStorage();
         }
         if (StringHelper.stringsEqual(command.getName(), "AttachIsoStorage")) //$NON-NLS-1$
         {
-            AttachIsoStorage();
+            attachIsoStorage();
         }
         if (StringHelper.stringsEqual(command.getName(), "OnAddCluster")) //$NON-NLS-1$
         {
-            OnAddCluster();
+            onAddCluster();
         }
         if (StringHelper.stringsEqual(command.getName(), "OnSelectHost")) //$NON-NLS-1$
         {
-            OnSelectHost();
+            onSelectHost();
         }
         if (StringHelper.stringsEqual(command.getName(), "OnAddHost")) //$NON-NLS-1$
         {
-            OnAddHost();
+            onAddHost();
         }
         if (StringHelper.stringsEqual(command.getName(), "OnAddStorage")) //$NON-NLS-1$
         {
-            OnAddStorage();
+            onAddStorage();
         }
 
         if (StringHelper.stringsEqual(command.getName(), "OnSaveSanStorage")) //$NON-NLS-1$
         {
-            OnSaveSanStorage();
+            onSaveSanStorage();
         }
 
         if (StringHelper.stringsEqual(command.getName(), "OnAttachStorage")) //$NON-NLS-1$
         {
-            OnAttachStorage();
+            onAttachStorage();
         }
 
         if (StringHelper.stringsEqual(command.getName(), "AddLocalStorage")) //$NON-NLS-1$
         {
-            AddLocalStorage();
+            addLocalStorage();
         }
 
         if (StringHelper.stringsEqual(command.getName(), "OnConfirmPMHost")) //$NON-NLS-1$
         {
-            OnConfirmPMHost();
+            onConfirmPMHost();
         }
 
         if (StringHelper.stringsEqual(command.getName(), "CancelConfirm")) //$NON-NLS-1$
         {
-            CancelConfirm();
+            cancelConfirm();
         }
         if (StringHelper.stringsEqual(command.getName(), "CancelConfirmWithFocus")) //$NON-NLS-1$
         {
-            CancelConfirmWithFocus();
+            cancelConfirmWithFocus();
         }
 
         if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
     }
 
@@ -1781,27 +1781,27 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         if (StringHelper.stringsEqual(key, "SaveNfs")) //$NON-NLS-1$
         {
-            SaveNfsStorage(context);
+            saveNfsStorage(context);
 
         }
         else if (StringHelper.stringsEqual(key, "SaveLocal")) //$NON-NLS-1$
         {
-            SaveLocalStorage(context);
+            saveLocalStorage(context);
 
         }
         else if (StringHelper.stringsEqual(key, "SaveSan")) //$NON-NLS-1$
         {
-            SaveSanStorage(context);
+            saveSanStorage(context);
 
         }
         else if (StringHelper.stringsEqual(key, "Finish")) //$NON-NLS-1$
         {
-            getWindow().StopProgress();
+            getWindow().stopProgress();
 
             if ((Boolean) data.get(1))
             {
-                Cancel();
-                PostAction();
+                cancel();
+                postAction();
             }
             else
             {

@@ -43,7 +43,7 @@ public class VmInterfaceListModel extends SearchableListModel
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
         initSelectionGeustAgentData(getSelectedItem());
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     private List<VmGuestAgentInterface> guestAgentData;
@@ -105,10 +105,10 @@ public class VmInterfaceListModel extends SearchableListModel
 
         if (getEntity() != null)
         {
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
         }
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -146,7 +146,7 @@ public class VmInterfaceListModel extends SearchableListModel
         setItems(getAsyncResult().getData());
     }
 
-    private void New()
+    private void newEntity()
     {
         VM vm = getEntity();
 
@@ -161,7 +161,7 @@ public class VmInterfaceListModel extends SearchableListModel
         setWindow(model);
     }
 
-    private void Edit()
+    private void edit()
     {
         if (getWindow() != null)
         {
@@ -191,7 +191,7 @@ public class VmInterfaceListModel extends SearchableListModel
     protected void selectedItemsChanged()
     {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -201,11 +201,11 @@ public class VmInterfaceListModel extends SearchableListModel
 
         if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
-            UpdateActionAvailability();
+            updateActionAvailability();
         }
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         VM vm = getEntity();
 
@@ -253,11 +253,11 @@ public class VmInterfaceListModel extends SearchableListModel
 
         if (command == getNewCommand())
         {
-            New();
+            newEntity();
         }
         else if (command == getEditCommand())
         {
-            Edit();
+            edit();
         }
         else if (command == getRemoveCommand())
         {
@@ -297,7 +297,7 @@ public class VmInterfaceListModel extends SearchableListModel
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     protected void updateConfigValues()
@@ -311,7 +311,7 @@ public class VmInterfaceListModel extends SearchableListModel
                 ? vm.getVdsGroupCompatibilityVersion() : new Version();
 
         isHotPlugSupported =
-                (Boolean) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.HotPlugEnabled,
+                (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.HotPlugEnabled,
                         clusterCompatibilityVersion.toString());
     }
 

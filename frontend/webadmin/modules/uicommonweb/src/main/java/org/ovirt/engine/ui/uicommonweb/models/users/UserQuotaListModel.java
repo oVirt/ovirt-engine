@@ -27,7 +27,7 @@ public class UserQuotaListModel extends SearchableListModel
     protected void onEntityChanged()
     {
         super.onEntityChanged();
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
     @Override

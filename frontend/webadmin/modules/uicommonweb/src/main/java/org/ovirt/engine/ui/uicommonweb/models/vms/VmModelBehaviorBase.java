@@ -67,28 +67,28 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         privateSystemTreeSelectedItem = value;
     }
 
-    public void Initialize(SystemTreeItemModel systemTreeSelectedItem)
+    public void initialize(SystemTreeItemModel systemTreeSelectedItem)
     {
         this.setSystemTreeSelectedItem(systemTreeSelectedItem);
     }
 
-    public abstract void DataCenter_SelectedItemChanged();
+    public abstract void dataCenter_SelectedItemChanged();
 
-    public abstract void Template_SelectedItemChanged();
+    public abstract void template_SelectedItemChanged();
 
-    public abstract void Cluster_SelectedItemChanged();
+    public abstract void cluster_SelectedItemChanged();
 
-    public abstract void DefaultHost_SelectedItemChanged();
+    public abstract void defaultHost_SelectedItemChanged();
 
-    public abstract void Provisioning_SelectedItemChanged();
+    public abstract void provisioning_SelectedItemChanged();
 
-    public abstract void UpdateMinAllocatedMemory();
+    public abstract void updateMinAllocatedMemory();
 
-    protected void PostInitTemplate() {
+    protected void postInitTemplate() {
 
     }
 
-    public boolean Validate()
+    public boolean validate()
     {
         return true;
     }
@@ -104,7 +104,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateUserCdImage(Guid storagePoolId) {
-        AsyncDataProvider.GetIrsImageList(new AsyncQuery(getModel(), new INewAsyncCallback() {
+        AsyncDataProvider.getIrsImageList(new AsyncQuery(getModel(), new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 UnitVmModel model = (UnitVmModel) target;
@@ -123,7 +123,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 : Linq.firstOrDefault(images));
     }
 
-    protected void UpdateCdImage()
+    protected void updateCdImage()
     {
         StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
         if (dataCenter == null)
@@ -131,7 +131,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        AsyncDataProvider.GetIrsImageList(new AsyncQuery(getModel(),
+        AsyncDataProvider.getIrsImageList(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -170,7 +170,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
         if (cachedTimeZones.get(timezoneType) == null)
         {
-            AsyncDataProvider.GetTimeZoneList(new AsyncQuery(this,
+            AsyncDataProvider.getTimeZoneList(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -179,17 +179,17 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                             // empty entry for default timezone
                             timezones.put(null, ""); //$NON-NLS-1$
                             cachedTimeZones.put(timezoneType, timezones.entrySet());
-                            behavior.PostUpdateTimeZone(selectedTimeZone);
+                            behavior.postUpdateTimeZone(selectedTimeZone);
                         }
                     }, getModel().getHash()));
         }
         else
         {
-            PostUpdateTimeZone(selectedTimeZone);
+            postUpdateTimeZone(selectedTimeZone);
         }
     }
 
-    private void PostUpdateTimeZone(String selectedTimeZone)
+    private void postUpdateTimeZone(String selectedTimeZone)
     {
         if (getModel().getIsWindowsOS() != lastIsWinOS) {
             lastIsWinOS = getModel().getIsWindowsOS();
@@ -235,36 +235,36 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     private String cachedDefaultTimeZoneKey;
 
-    protected void UpdateDefaultTimeZone()
+    protected void updateDefaultTimeZone()
     {
         if (cachedDefaultTimeZoneKey == null)
         {
-            AsyncDataProvider.GetDefaultTimeZone(new AsyncQuery(this,
+            AsyncDataProvider.getDefaultTimeZone(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
 
                             VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
                             cachedDefaultTimeZoneKey = (String) returnValue;
-                            behavior.PostUpdateDefaultTimeZone();
+                            behavior.postUpdateDefaultTimeZone();
 
                         }
                     }, getModel().getHash()));
         }
         else
         {
-            PostUpdateDefaultTimeZone();
+            postUpdateDefaultTimeZone();
         }
     }
 
-    public void PostUpdateDefaultTimeZone()
+    public void postUpdateDefaultTimeZone()
     {
         updateTimeZone(cachedDefaultTimeZoneKey);
     }
 
-    protected void UpdateDomain()
+    protected void updateDomain()
     {
-        AsyncDataProvider.GetDomainList(new AsyncQuery(this,
+        AsyncDataProvider.getDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -288,9 +288,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     private Integer cachedMaxPriority;
 
-    protected void InitPriority(int priority)
+    protected void initPriority(int priority)
     {
-        AsyncDataProvider.GetMaxVmPriority(new AsyncQuery(new Object[] { getModel(), priority },
+        AsyncDataProvider.getMaxVmPriority(new AsyncQuery(new Object[] { getModel(), priority },
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -300,39 +300,39 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         int vmPriority = (Integer) array[1];
                         cachedMaxPriority = (Integer) returnValue;
 
-                        int value = AsyncDataProvider.GetRoundedPriority(vmPriority, cachedMaxPriority);
+                        int value = AsyncDataProvider.getRoundedPriority(vmPriority, cachedMaxPriority);
                         EntityModel tempVar = new EntityModel();
                         tempVar.setEntity(value);
                         model.getPriority().setSelectedItem(tempVar);
-                        UpdatePriority();
+                        updatePriority();
 
                     }
                 }, getModel().getHash()));
     }
 
-    protected void UpdatePriority()
+    protected void updatePriority()
     {
         if (cachedMaxPriority == null)
         {
-            AsyncDataProvider.GetMaxVmPriority(new AsyncQuery(this,
+            AsyncDataProvider.getMaxVmPriority(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
 
                             VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
                             cachedMaxPriority = (Integer) returnValue;
-                            behavior.PostUpdatePriority();
+                            behavior.postUpdatePriority();
 
                         }
                     }, getModel().getHash()));
         }
         else
         {
-            PostUpdatePriority();
+            postUpdatePriority();
         }
     }
 
-    private void PostUpdatePriority()
+    private void postUpdatePriority()
     {
         ArrayList<EntityModel> items = new ArrayList<EntityModel>();
         EntityModel tempVar = new EntityModel();
@@ -372,7 +372,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
     }
 
-    protected void ChangeDefualtHost()
+    protected void changeDefualtHost()
     {
 
     }
@@ -394,7 +394,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
     }
 
-    protected void UpdateDefaultHost()
+    protected void updateDefaultHost()
     {
         VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
 
@@ -446,7 +446,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                             model.getDefaultHost().setSelectedItem(oldDefaultHost != null ? Linq.firstOrDefault(hosts,
                                     new Linq.HostPredicate(oldDefaultHost.getId())) : Linq.firstOrDefault(hosts));
                         }
-                        ChangeDefualtHost();
+                        changeDefualtHost();
 
                     }
                 },
@@ -459,7 +459,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
      * By default admin query is fired, UserPortal overrides it to fire user query
      */
     protected void getHostListByCluster(VDSGroup cluster, AsyncQuery query) {
-        AsyncDataProvider.GetHostListByCluster(query, cluster.getname());
+        AsyncDataProvider.getHostListByCluster(query, cluster.getname());
     }
 
     protected void updateCustomPropertySheet() {
@@ -475,41 +475,41 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public int maxCpusPerSocket = 0;
     public int maxNumOfSockets = 0;
 
-    public void UpdataMaxVmsInPool() {
-        AsyncDataProvider.GetMaxVmsInPool(new AsyncQuery(this,
+    public void updataMaxVmsInPool() {
+        AsyncDataProvider.getMaxVmsInPool(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
                         VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
                         behavior.setMaxVmsInPool((Integer) returnValue);
-                        behavior.UpdateMaxNumOfVmCpus();
+                        behavior.updateMaxNumOfVmCpus();
                     }
                 }));
     }
 
-    public void UpdateMaxNumOfVmCpus()
+    public void updateMaxNumOfVmCpus()
     {
         VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
         String version = cluster.getcompatibility_version().toString();
 
-        AsyncDataProvider.GetMaxNumOfVmCpus(new AsyncQuery(this,
+        AsyncDataProvider.getMaxNumOfVmCpus(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
 
                         VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
                         behavior.maxCpus = (Integer) returnValue;
-                        behavior.PostUpdateNumOfSockets2();
+                        behavior.postUpdateNumOfSockets2();
                     }
                 }, getModel().getHash()), version);
     }
 
-    public void PostUpdateNumOfSockets2()
+    public void postUpdateNumOfSockets2()
     {
         VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
         String version = cluster.getcompatibility_version().toString();
 
-        AsyncDataProvider.GetMaxNumOfCPUsPerSocket(new AsyncQuery(this,
+        AsyncDataProvider.getMaxNumOfCPUsPerSocket(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -521,11 +521,11 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 }, getModel().getHash()), version);
     }
 
-    public void InitDisks()
+    public void initDisks()
     {
         VmTemplate template = (VmTemplate) getModel().getTemplate().getSelectedItem();
 
-        AsyncDataProvider.GetTemplateDiskList(new AsyncQuery(getModel(),
+        AsyncDataProvider.getTemplateDiskList(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -547,7 +547,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                 diskModel.setSize(tempVar);
                                 ListModel tempVar2 = new ListModel();
                                 tempVar2.setItems((diskImage.getVolumeType() == VolumeType.Preallocated ? new ArrayList<VolumeType>(Arrays.asList(new VolumeType[]{VolumeType.Preallocated}))
-                                        : AsyncDataProvider.GetVolumeTypeList()));
+                                        : AsyncDataProvider.getVolumeTypeList()));
                                 tempVar2.setSelectedItem(diskImage.getVolumeType());
                                 diskModel.setVolumeType(tempVar2);
                                 diskModel.getVolumeType().setIsAvailable(false);
@@ -558,19 +558,19 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         }
 
                         model.setDisks(list);
-                        UpdateIsDisksAvailable();
-                        InitStorageDomains();
+                        updateIsDisksAvailable();
+                        initStorageDomains();
                     }
                 },
                 getModel().getHash()),
                 template.getId());
     }
 
-    public void UpdateIsDisksAvailable() {
+    public void updateIsDisksAvailable() {
 
     }
 
-    public void InitStorageDomains()
+    public void initStorageDomains()
     {
         if (getModel().getDisks() == null) {
             return;
@@ -580,7 +580,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
         if (template != null && !template.getId().equals(NGuid.Empty))
         {
-            PostInitStorageDomains();
+            postInitStorageDomains();
         }
         else
         {
@@ -590,18 +590,18 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
     }
 
-    protected void PostInitStorageDomains() {
+    protected void postInitStorageDomains() {
         if (getModel().getDisks() == null) {
             return;
         }
 
         StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
-        AsyncDataProvider.GetPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
                 ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
-                ArrayList<StorageDomain> activeStorageDomains = FilterStorageDomains(storageDomains);
+                ArrayList<StorageDomain> activeStorageDomains = filterStorageDomains(storageDomains);
 
                 boolean provisioning = (Boolean) behavior.getModel().getProvisioning().getEntity();
                 ArrayList<DiskModel> disks = (ArrayList<DiskModel>) behavior.getModel().getDisks();
@@ -629,7 +629,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }, getModel().getHash()), dataCenter.getId(), ActionGroup.CREATE_VM);
     }
 
-    public ArrayList<StorageDomain> FilterStorageDomains(ArrayList<StorageDomain> storageDomains)
+    public ArrayList<StorageDomain> filterStorageDomains(ArrayList<StorageDomain> storageDomains)
     {
         // filter only the Active storage domains (Active regarding the relevant storage pool).
         ArrayList<StorageDomain> list = new ArrayList<StorageDomain>();
@@ -694,7 +694,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void setupTemplate(VM vm, ListModel model) {
-        AsyncDataProvider.GetTemplateById(new AsyncQuery(getModel(),
+        AsyncDataProvider.getTemplateById(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -705,7 +705,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                 .setItems(new ArrayList<VmTemplate>(Arrays.asList(new VmTemplate[] { template })));
                         model.getTemplate().setSelectedItem(template);
                         model.getTemplate().setIsChangable(false);
-                        PostInitTemplate();
+                        postInitTemplate();
                     }
                 },
                 getModel().getHash()),
@@ -718,10 +718,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             String compatibilityVersion = cluster.getcompatibility_version().toString();
             boolean hasCpuPinning = Boolean.FALSE.equals(getModel().getIsAutoAssign().getEntity());
 
-            if (Boolean.FALSE.equals(AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.CpuPinningEnabled,
+            if (Boolean.FALSE.equals(AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.CpuPinningEnabled,
                     compatibilityVersion))) {
                 hasCpuPinning = false;
-            } else if (Boolean.FALSE.equals(AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.CpuPinMigrationEnabled,
+            } else if (Boolean.FALSE.equals(AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.CpuPinMigrationEnabled,
                     AsyncDataProvider.getDefaultConfigurationVersion()))
                     && isVmMigratable()) {
                 hasCpuPinning = false;
@@ -877,7 +877,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         list.setSelectedItem(1);
     }
 
-    protected void UpdateNumOfSockets()
+    protected void updateNumOfSockets()
     {
         VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
         if (cluster == null)
@@ -887,7 +887,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
         String version = cluster.getcompatibility_version().toString();
 
-        AsyncDataProvider.GetMaxNumOfVmSockets(new AsyncQuery(new Object[] { this, getModel() },
+        AsyncDataProvider.getMaxNumOfVmSockets(new AsyncQuery(new Object[] { this, getModel() },
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -895,7 +895,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         Object[] array = (Object[]) target;
                         VmModelBehaviorBase behavior = (VmModelBehaviorBase) array[0];
                         behavior.maxNumOfSockets = ((Integer) returnValue);
-                        behavior.UpdataMaxVmsInPool();
+                        behavior.updataMaxVmsInPool();
 
                     }
                 }, getModel().getHash()), version);

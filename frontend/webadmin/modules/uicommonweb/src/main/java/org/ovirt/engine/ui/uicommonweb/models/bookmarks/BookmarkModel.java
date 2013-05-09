@@ -52,7 +52,7 @@ public class BookmarkModel extends Model
         setSearchString(new EntityModel());
     }
 
-    public boolean Validate()
+    public boolean validate()
     {
         LengthValidation tempVar = new LengthValidation();
         tempVar.setMaxLength(40);

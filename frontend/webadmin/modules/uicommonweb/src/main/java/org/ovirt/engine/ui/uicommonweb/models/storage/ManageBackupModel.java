@@ -73,17 +73,17 @@ public abstract class ManageBackupModel extends SearchableListModel
     {
     }
 
-    protected void Restore()
+    protected void restore()
     {
     }
 
-    protected void Cancel()
+    protected void cancel()
     {
-        CancelConfirm();
+        cancelConfirm();
         setWindow(null);
     }
 
-    protected void CancelConfirm()
+    protected void cancelConfirm()
     {
         setConfirmWindow(null);
     }
@@ -95,7 +95,7 @@ public abstract class ManageBackupModel extends SearchableListModel
 
         if (e.PropertyName.equals("storage_domain_shared_status")) //$NON-NLS-1$
         {
-            CheckStorageStatus();
+            checkStorageStatus();
         }
     }
 
@@ -104,13 +104,13 @@ public abstract class ManageBackupModel extends SearchableListModel
     {
         super.onEntityChanged();
 
-        CheckStorageStatus();
-        UpdateActionAvailability();
+        checkStorageStatus();
+        updateActionAvailability();
 
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
-    private void CheckStorageStatus()
+    private void checkStorageStatus()
     {
         if (getEntity() != null)
         {
@@ -134,21 +134,21 @@ public abstract class ManageBackupModel extends SearchableListModel
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void selectedItemsChanged()
     {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
-    protected void UpdateItems()
+    protected void updateItems()
     {
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         getRestoreCommand().setIsExecutionAllowed(getEntity() != null && getSelectedItems() != null
                 && getSelectedItems().size() > 0
@@ -166,7 +166,7 @@ public abstract class ManageBackupModel extends SearchableListModel
 
         if (command == getRestoreCommand())
         {
-            Restore();
+            restore();
         }
         else if (command == getRemoveCommand())
         {
@@ -174,11 +174,11 @@ public abstract class ManageBackupModel extends SearchableListModel
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
         else if (StringHelper.stringsEqual(command.getName(), "CancelConfirm")) //$NON-NLS-1$
         {
-            CancelConfirm();
+            cancelConfirm();
         }
     }
 }

@@ -189,7 +189,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         setChangeQuotaCommand(new UICommand("changeQuota", this)); //$NON-NLS-1$
         getChangeQuotaCommand().setIsAvailable(false);
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -210,12 +210,12 @@ public class VmDiskListModel extends VmDiskListModelBase
 
         if (getEntity() != null)
         {
-            getSearchCommand().Execute();
-            UpdateIsDiskHotPlugAvailable();
-            UpdateLiveStorageMigrationEnabled();
+            getSearchCommand().execute();
+            updateIsDiskHotPlugAvailable();
+            updateLiveStorageMigrationEnabled();
         }
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -251,10 +251,10 @@ public class VmDiskListModel extends VmDiskListModelBase
         Linq.sort(disks, new DiskByAliasComparer());
         super.setItems(disks);
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
-    private void New()
+    private void newEntity()
     {
         final VM vm = getEntity();
 
@@ -274,7 +274,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         cancelCommand.setIsCancel(true);
         model.setCancelCommand(cancelCommand);
 
-        model.Initialize();
+        model.initialize();
     }
 
     private void changeQuota() {
@@ -289,7 +289,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().assignQuotaForDisk());
         model.setHashName("change_quota_disks"); //$NON-NLS-1$
-        model.StartProgress(null);
+        model.startProgress(null);
         model.init(disks);
 
         UICommand command = new UICommand("onChangeQuota", this); //$NON-NLS-1$
@@ -318,19 +318,19 @@ public class VmDiskListModel extends VmDiskListModelBase
             paramerterList.add(parameters);
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.ChangeQuotaForDisk, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
-                        Cancel();
+                        cancel();
                     }
                 },
                 this);
     }
 
-    private void Edit()
+    private void edit()
     {
         final Disk disk = (Disk) getSelectedItem();
 
@@ -351,7 +351,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         cancelCommand.setIsCancel(true);
         model.setCancelCommand(cancelCommand);
 
-        model.Initialize();
+        model.initialize();
     }
 
     private void remove()
@@ -398,7 +398,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         model.getCommands().add(tempVar2);
     }
 
-    private void OnRemove() {
+    private void onRemove() {
         VM vm = getEntity();
         RemoveDiskModel model = (RemoveDiskModel) getWindow();
         boolean removeDisk = (Boolean) model.getLatch().getEntity();
@@ -414,21 +414,21 @@ public class VmDiskListModel extends VmDiskListModelBase
             paramerterList.add(parameters);
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(actionType, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
                         VmDiskListModel localModel = (VmDiskListModel) result.getState();
-                        localModel.StopProgress();
-                        Cancel();
+                        localModel.stopProgress();
+                        cancel();
                     }
                 },
                 this);
     }
 
-    private void Plug(boolean plug) {
+    private void plug(boolean plug) {
         VM vm = getEntity();
 
         ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
@@ -453,7 +453,7 @@ public class VmDiskListModel extends VmDiskListModelBase
                 this);
     }
 
-    private void Move()
+    private void move()
     {
         ArrayList<DiskImage> disks = (ArrayList<DiskImage>) getSelectedItems();
 
@@ -481,10 +481,10 @@ public class VmDiskListModel extends VmDiskListModelBase
         model.setIsSourceStorageDomainNameAvailable(true);
         model.setEntity(this);
         model.init(disks);
-        model.StartProgress(null);
+        model.startProgress(null);
     }
 
-    private void Cancel()
+    private void cancel()
     {
         setWindow(null);
         Frontend.Unsubscribe();
@@ -494,14 +494,14 @@ public class VmDiskListModel extends VmDiskListModelBase
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void selectedItemsChanged()
     {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -511,11 +511,11 @@ public class VmDiskListModel extends VmDiskListModelBase
 
         if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
-            UpdateActionAvailability();
+            updateActionAvailability();
         }
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         VM vm = getEntity();
         Disk disk = (Disk) getSelectedItem();
@@ -642,11 +642,11 @@ public class VmDiskListModel extends VmDiskListModelBase
 
         if (command == getNewCommand())
         {
-            New();
+            newEntity();
         }
         else if (command == getEditCommand())
         {
-            Edit();
+            edit();
         }
         else if (command == getRemoveCommand())
         {
@@ -654,23 +654,23 @@ public class VmDiskListModel extends VmDiskListModelBase
         }
         else if (command == getMoveCommand())
         {
-            Move();
+            move();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
-            OnRemove();
+            onRemove();
         }
         else if (command == getPlugCommand())
         {
-            Plug(true);
+            plug(true);
         }
         else if (command == getUnPlugCommand())
         {
-            Plug(false);
+            plug(false);
         } else if (command == getChangeQuotaCommand()) {
             changeQuota();
         } else if (command.getName().equals("onChangeQuota")) { //$NON-NLS-1$
@@ -678,23 +678,23 @@ public class VmDiskListModel extends VmDiskListModelBase
         }
     }
 
-    protected void UpdateIsDiskHotPlugAvailable()
+    protected void updateIsDiskHotPlugAvailable()
     {
         VM vm = getEntity();
         Version clusterCompatibilityVersion = vm.getVdsGroupCompatibilityVersion();
         if (clusterCompatibilityVersion == null) {
             setIsDiskHotPlugSupported(false);
         } else {
-            setIsDiskHotPlugSupported((Boolean) AsyncDataProvider.GetConfigValuePreConverted(
+            setIsDiskHotPlugSupported((Boolean) AsyncDataProvider.getConfigValuePreConverted(
                     ConfigurationValues.HotPlugEnabled, clusterCompatibilityVersion.toString()));
         }
     }
 
-    protected void UpdateLiveStorageMigrationEnabled()
+    protected void updateLiveStorageMigrationEnabled()
     {
         final VM vm = getEntity();
 
-        AsyncDataProvider.GetDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 VmDiskListModel model = (VmDiskListModel) target;
@@ -703,7 +703,7 @@ public class VmDiskListModel extends VmDiskListModelBase
                 Version dcCompatibilityVersion = dataCenter.getcompatibility_version() != null
                         ? dataCenter.getcompatibility_version() : new Version();
 
-                AsyncDataProvider.IsCommandCompatible(new AsyncQuery(model,
+                AsyncDataProvider.isCommandCompatible(new AsyncQuery(model,
                         new INewAsyncCallback() {
                             @Override
                             public void onSuccess(Object target, Object returnValue) {

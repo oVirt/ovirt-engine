@@ -98,7 +98,7 @@ public class TemplateDiskListModel extends SearchableListModel
         setChangeQuotaCommand(new UICommand("changeQuota", this)); //$NON-NLS-1$
         getChangeQuotaCommand().setIsAvailable(false);
 
-        UpdateActionAvailability();
+        updateActionAvailability();
 
         setStorageDomains(new ArrayList<StorageDomain>());
     }
@@ -110,10 +110,10 @@ public class TemplateDiskListModel extends SearchableListModel
 
         if (getEntity() != null)
         {
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
         }
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -161,7 +161,7 @@ public class TemplateDiskListModel extends SearchableListModel
         else
         {
             this.value = value;
-            AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
+            AsyncDataProvider.getStorageDomainList(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -175,21 +175,21 @@ public class TemplateDiskListModel extends SearchableListModel
                     }));
         }
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void selectedItemsChanged()
     {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -199,11 +199,11 @@ public class TemplateDiskListModel extends SearchableListModel
 
         if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
-            UpdateActionAvailability();
+            updateActionAvailability();
         }
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         getCopyCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
                 && isCopyCommandAvailable());
@@ -236,11 +236,11 @@ public class TemplateDiskListModel extends SearchableListModel
 
         if (command == getCopyCommand())
         {
-            Copy();
+            copy();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         } else if (command == getChangeQuotaCommand()) {
             changeQuota();
         } else if (command.getName().equals("onChangeQuota")) { //$NON-NLS-1$
@@ -248,7 +248,7 @@ public class TemplateDiskListModel extends SearchableListModel
         }
     }
 
-    private void Copy()
+    private void copy()
     {
         ArrayList<DiskImage> disks = (ArrayList<DiskImage>) getSelectedItems();
 
@@ -270,10 +270,10 @@ public class TemplateDiskListModel extends SearchableListModel
         model.setHashName("copy_disk"); //$NON-NLS-1$
         model.setEntity(this);
         model.init(disks);
-        model.StartProgress(null);
+        model.startProgress(null);
     }
 
-    private void Cancel()
+    private void cancel()
     {
         setWindow(null);
     }
@@ -295,7 +295,7 @@ public class TemplateDiskListModel extends SearchableListModel
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().assignQuotaForDisk());
         model.setHashName("change_quota_disks"); //$NON-NLS-1$
-        model.StartProgress(null);
+        model.startProgress(null);
         model.init(disks);
 
         UICommand command = new UICommand("onChangeQuota", this); //$NON-NLS-1$
@@ -324,13 +324,13 @@ public class TemplateDiskListModel extends SearchableListModel
             paramerterList.add(parameters);
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.ChangeQuotaForDisk, paramerterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
-                        Cancel();
+                        cancel();
                     }
                 },
                 this);

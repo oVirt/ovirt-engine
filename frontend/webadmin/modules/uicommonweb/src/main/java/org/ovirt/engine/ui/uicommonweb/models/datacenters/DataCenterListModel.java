@@ -192,13 +192,13 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         setActivateCommand(new UICommand("Activate", this)); //$NON-NLS-1$
         setGuideCommand(new UICommand("Guide", this)); //$NON-NLS-1$
 
-        UpdateActionAvailability();
+        updateActionAvailability();
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
     }
 
-    public void Guide()
+    public void guide()
     {
         DataCenterGuideModel model = new DataCenterGuideModel();
         setWindow(model);
@@ -209,7 +209,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
             setGuideContext(dataCenter.getId());
         }
 
-        AsyncDataProvider.GetDataCenterById(new AsyncQuery(this,
+        AsyncDataProvider.getDataCenterById(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -244,7 +244,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
     }
 
     @Override
-    public boolean IsSearchStringMatch(String searchString)
+    public boolean isSearchStringMatch(String searchString)
     {
         return searchString.trim().toLowerCase().startsWith("datacenter"); //$NON-NLS-1$
     }
@@ -267,7 +267,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         setItems(getAsyncResult().getData());
     }
 
-    public void New()
+    public void newEntity()
     {
         if (getWindow() != null)
         {
@@ -291,7 +291,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         model.getCommands().add(tempVar2);
     }
 
-    public void Edit()
+    public void edit()
     {
         StoragePool dataCenter = (StoragePool) getSelectedItem();
 
@@ -318,7 +318,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         model.getDescription().setEntity(dataCenter.getdescription());
         model.setOriginalName(dataCenter.getname());
 
-        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
+        AsyncDataProvider.getStorageDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -377,7 +377,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         model.getCommands().add(tempVar2);
     }
 
-    public void ForceRemove()
+    public void forceRemove()
     {
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
@@ -404,7 +404,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         model.getCommands().add(tempVar2);
     }
 
-    public void RecoveryStorage()
+    public void recoveryStorage()
     {
         final ConfirmationModel windowModel = new ConfirmationModel();
         setWindow(windowModel);
@@ -413,12 +413,12 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         windowModel.getLatch().setIsAvailable(true);
         windowModel.getLatch().setIsChangable(true);
 
-        windowModel.StartProgress(null);
+        windowModel.startProgress(null);
 
-        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                windowModel.StopProgress();
+                windowModel.stopProgress();
                 List<StorageDomain> storageDomainList = (List<StorageDomain>) returnValue;
                 List<EntityModel> models = new ArrayList<EntityModel>();
                 for (StorageDomain a : storageDomainList) {
@@ -464,16 +464,16 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         }));
     }
 
-    public void OnRecover()
+    public void onRecover()
     {
 
         final ConfirmationModel windowModel = (ConfirmationModel) getWindow();
-        if (!windowModel.Validate())
+        if (!windowModel.validate())
         {
             return;
         }
 
-        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 StorageDomain master = null;
@@ -507,29 +507,29 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                         parameters.add(new RecoveryStoragePoolParameters(((StoragePool) getSelectedItem()).getId(),
                                 a.getId()));
                     }
-                    windowModel.StartProgress(null);
+                    windowModel.startProgress(null);
                     Frontend.RunMultipleAction(VdcActionType.RecoveryStoragePool, parameters,
                             new IFrontendMultipleActionAsyncCallback() {
                                 @Override
                                 public void executed(FrontendMultipleActionAsyncResult result) {
 
                                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                                    localModel.StopProgress();
-                                    Cancel();
+                                    localModel.stopProgress();
+                                    cancel();
 
                                 }
                             }, windowModel);
                 }
                 else
                 {
-                    Cancel();
+                    cancel();
                 }
             }
         }),
                 ((StoragePool) getSelectedItem()).getId());
     }
 
-    public void Activate()
+    public void activate()
     {
         // Frontend.RunMultipleActions(VdcActionType.ActivateStoragePool,
         // SelectedItems.Cast<storage_pool>()
@@ -538,7 +538,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         // );
     }
 
-    public void OnRemove()
+    public void onRemove()
     {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
@@ -553,7 +553,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
             parameters.add(new StoragePoolParametersBase(a.getId()));
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.RemoveStoragePool, parameters,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -561,17 +561,17 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                     public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.StopProgress();
-                        Cancel();
+                        localModel.stopProgress();
+                        cancel();
 
                     }
                 }, model);
     }
 
-    public void OnForceRemove()
+    public void onForceRemove()
     {
         ConfirmationModel model = (ConfirmationModel) getWindow();
-        if (!model.Validate())
+        if (!model.validate())
         {
             return;
         }
@@ -580,29 +580,29 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         tempVar.setForceDelete(true);
         parametersBase = tempVar;
         Frontend.RunAction(VdcActionType.RemoveStoragePool, parametersBase);
-        Cancel();
+        cancel();
     }
 
-    public void Cancel()
+    public void cancel()
     {
-        CancelConfirmation();
+        cancelConfirmation();
 
         setGuideContext(null);
         setWindow(null);
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
-    public void CancelConfirmation()
+    public void cancelConfirmation()
     {
         setConfirmWindow(null);
     }
 
-    public void OnSave()
+    public void onSave()
     {
         DataCenterModel model = (DataCenterModel) getWindow();
 
-        if (!model.Validate())
+        if (!model.validate())
         {
             return;
         }
@@ -641,7 +641,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         }
         else
         {
-            OnSaveInternal();
+            onSaveInternal();
         }
     }
 
@@ -658,7 +658,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                                 if (((ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue()).size() == 0) {
                                     promptNoQuotaInDCMessage();
                                 } else {
-                                    OnSaveInternal();
+                                    onSaveInternal();
                                 }
                             }
                         }));
@@ -685,7 +685,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         getConfirmWindow().getCommands().add(tempVar2);
     }
 
-    public void OnSaveInternal()
+    public void onSaveInternal()
     {
         DataCenterModel model = (DataCenterModel) getWindow();
 
@@ -698,7 +698,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                 model.getIsNew() ? new StoragePool() : (StoragePool) Cloner.clone(getSelectedItem());
 
         // cancel confirm window if there is
-        CancelConfirmation();
+        cancelConfirmation();
 
         // Save changes.
         dataCenter.setname((String) model.getName().getEntity());
@@ -708,7 +708,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         dataCenter.setQuotaEnforcementType((QuotaEnforcementTypeEnum) model.getQuotaEnforceTypeListModel()
                 .getSelectedItem());
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
 
         if (model.getIsNew()) {
@@ -719,7 +719,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
                         DataCenterListModel localModel = (DataCenterListModel) result.getState();
-                        localModel.PostOnSaveInternal(result.getReturnValue());
+                        localModel.postOnSaveInternal(result.getReturnValue());
                     }
                 },
                 this);
@@ -733,26 +733,26 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
                         DataCenterListModel localModel = (DataCenterListModel) result.getState();
-                        localModel.PostOnSaveInternal(result.getReturnValue().get(0));
+                        localModel.postOnSaveInternal(result.getReturnValue().get(0));
                     }
                 },
                 this);
         }
     }
 
-    public void PostOnSaveInternal(VdcReturnValueBase returnValue)
+    public void postOnSaveInternal(VdcReturnValueBase returnValue)
     {
         DataCenterModel model = (DataCenterModel) getWindow();
 
-        model.StopProgress();
+        model.stopProgress();
 
-        Cancel();
+        cancel();
 
         if (model.getIsNew() && returnValue != null && returnValue.getSucceeded()) {
 
             setGuideContext(returnValue.getActionReturnValue());
-            UpdateActionAvailability();
-            getGuideCommand().Execute();
+            updateActionAvailability();
+            getGuideCommand().execute();
         }
     }
 
@@ -760,14 +760,14 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void selectedItemsChanged()
     {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -793,7 +793,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
         if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
-            UpdateActionAvailability();
+            updateActionAvailability();
         }
     }
 
@@ -808,7 +808,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         }
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         ArrayList<StoragePool> items =
                 getSelectedItems() != null ? new ArrayList<StoragePool>(Linq.<StoragePool> cast(getSelectedItems()))
@@ -867,11 +867,11 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
         if (command == getNewCommand())
         {
-            New();
+            newEntity();
         }
         else if (command == getEditCommand())
         {
-            Edit();
+            edit();
         }
         else if (command == getRemoveCommand())
         {
@@ -879,47 +879,47 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         }
         else if (command == getForceRemoveCommand())
         {
-            ForceRemove();
+            forceRemove();
         }
         else if (command == getActivateCommand())
         {
-            Activate();
+            activate();
         }
         else if (command == getGuideCommand())
         {
-            Guide();
+            guide();
         }
         else if (command == getRecoveryStorageCommand())
         {
-            RecoveryStorage();
+            recoveryStorage();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
-            OnSave();
+            onSave();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
-            OnRemove();
+            onRemove();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnForceRemove")) //$NON-NLS-1$
         {
-            OnForceRemove();
+            onForceRemove();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnSaveInternal")) //$NON-NLS-1$
         {
-            OnSaveInternal();
+            onSaveInternal();
         }
         else if (StringHelper.stringsEqual(command.getName(), "CancelConfirmation")) //$NON-NLS-1$
         {
-            CancelConfirmation();
+            cancelConfirmation();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRecover")) //$NON-NLS-1$
         {
-            OnRecover();
+            onRecover();
         }
     }
 
@@ -937,13 +937,13 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         if (systemTreeSelectedItem != value)
         {
             systemTreeSelectedItem = value;
-            OnSystemTreeSelectedItemChanged();
+            onSystemTreeSelectedItemChanged();
         }
     }
 
-    private void OnSystemTreeSelectedItemChanged()
+    private void onSystemTreeSelectedItemChanged()
     {
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override

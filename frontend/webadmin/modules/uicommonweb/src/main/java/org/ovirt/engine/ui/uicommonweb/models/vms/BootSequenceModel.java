@@ -93,9 +93,9 @@ public class BootSequenceModel extends ListModel
         setMoveItemUpCommand(new UICommand("MoveItemUp", this)); //$NON-NLS-1$
         setMoveItemDownCommand(new UICommand("MoveItemDown", this)); //$NON-NLS-1$
 
-        InitializeItems();
+        initializeItems();
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     public int getSelectedItemIndex()
@@ -103,7 +103,7 @@ public class BootSequenceModel extends ListModel
         return getSelectedItem() != null ? getItems().indexOf(getSelectedItem()) : -1;
     }
 
-    public void MoveItemDown()
+    public void moveItemDown()
     {
         if (getSelectedItemIndex() < getItems().size() - 1)
         {
@@ -111,7 +111,7 @@ public class BootSequenceModel extends ListModel
         }
     }
 
-    public void MoveItemUp()
+    public void moveItemUp()
     {
         if (getSelectedItemIndex() > 0)
         {
@@ -119,7 +119,7 @@ public class BootSequenceModel extends ListModel
         }
     }
 
-    private void InitializeItems()
+    private void initializeItems()
     {
         ObservableCollection<EntityModel> items = new ObservableCollection<EntityModel>();
         EntityModel tempVar = new EntityModel();
@@ -145,11 +145,11 @@ public class BootSequenceModel extends ListModel
 
         if (command == getMoveItemUpCommand())
         {
-            MoveItemUp();
+            moveItemUp();
         }
         else if (command == getMoveItemDownCommand())
         {
-            MoveItemDown();
+            moveItemDown();
         }
     }
 
@@ -157,10 +157,10 @@ public class BootSequenceModel extends ListModel
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         getMoveItemUpCommand().setIsExecutionAllowed(getSelectedItem() != null);
         getMoveItemDownCommand().setIsExecutionAllowed(getSelectedItem() != null);

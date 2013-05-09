@@ -24,7 +24,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public abstract class IUserPortalListModel extends ListWithDetailsModel implements UserSelectedDisplayProtocolManager
 {
-    private static final ConsoleOptionsFrontendPersister frontendPersister = (ConsoleOptionsFrontendPersister) TypeResolver.getInstance().Resolve(ConsoleOptionsFrontendPersister.class);
+    private static final ConsoleOptionsFrontendPersister frontendPersister = (ConsoleOptionsFrontendPersister) TypeResolver.getInstance().resolve(ConsoleOptionsFrontendPersister.class);
 
     private boolean canConnectAutomatically;
 
@@ -59,28 +59,28 @@ public abstract class IUserPortalListModel extends ListWithDetailsModel implemen
         this.editConsoleCommand = editConsoleCommand;
     }
 
-    public abstract void OnVmAndPoolLoad();
+    public abstract void onVmAndPoolLoad();
 
     protected HashMap<Guid, VmPool> poolMap;
 
-    public VmPool ResolveVmPoolById(Guid id)
+    public VmPool resolveVmPoolById(Guid id)
     {
         return poolMap.get(id);
     }
 
     // Return a list of VMs with status 'UP'
-    public ArrayList<UserPortalItemModel> GetStatusUpVms(Iterable items)
+    public ArrayList<UserPortalItemModel> getStatusUpVms(Iterable items)
     {
-        return GetUpVms(items, true);
+        return getUpVms(items, true);
     }
 
     // Return a list of up VMs
-    public ArrayList<UserPortalItemModel> GetUpVms(Iterable items)
+    public ArrayList<UserPortalItemModel> getUpVms(Iterable items)
     {
-        return GetUpVms(items, false);
+        return getUpVms(items, false);
     }
 
-    private ArrayList<UserPortalItemModel> GetUpVms(Iterable items, boolean onlyVmStatusUp)
+    private ArrayList<UserPortalItemModel> getUpVms(Iterable items, boolean onlyVmStatusUp)
     {
         ArrayList<UserPortalItemModel> upVms = new ArrayList<UserPortalItemModel>();
         if (items != null)
@@ -95,7 +95,7 @@ public abstract class IUserPortalListModel extends ListWithDetailsModel implemen
                     continue;
                 }
                 if ((onlyVmStatusUp && vm.getStatus() == VMStatus.Up)
-                        || (!onlyVmStatusUp && userPortalItemModel.getDefaultConsoleModel().IsVmUp()))
+                        || (!onlyVmStatusUp && userPortalItemModel.getDefaultConsoleModel().isVmUp()))
                 {
                     upVms.add(userPortalItemModel);
                 }

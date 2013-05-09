@@ -44,9 +44,9 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     }
 
     @Override
-    public void Initialize(SystemTreeItemModel systemTreeSelectedItem)
+    public void initialize(SystemTreeItemModel systemTreeSelectedItem)
     {
-        super.Initialize(systemTreeSelectedItem);
+        super.initialize(systemTreeSelectedItem);
 
         getModel().getDisksAllocationModel().setIsVolumeFormatAvailable(false);
         getModel().getDisksAllocationModel().setIsAliasChangable(true);
@@ -54,7 +54,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
         getModel().getProvisioning().setIsAvailable(false);
         getModel().getProvisioning().setEntity(false);
 
-        AsyncDataProvider.GetDataCenterByClusterServiceList(new AsyncQuery(getModel(), new INewAsyncCallback() {
+        AsyncDataProvider.getDataCenterByClusterServiceList(new AsyncQuery(getModel(), new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
 
@@ -65,7 +65,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                         list.add(a);
                     }
                 }
-                model.SetDataCenter(model, list);
+                model.setDataCenter(model, list);
 
                 getPoolModelBehaviorInitializedEvent().raise(this, EventArgs.Empty);
 
@@ -74,7 +74,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     }
 
     @Override
-    public void DataCenter_SelectedItemChanged()
+    public void dataCenter_SelectedItemChanged()
     {
         StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
 
@@ -83,7 +83,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
         getModel().setIsHostAvailable(dataCenter.getstorage_pool_type() != StorageType.LOCALFS);
 
-        AsyncDataProvider.GetClusterByServiceList(new AsyncQuery(new Object[] { this, getModel() }, new INewAsyncCallback() {
+        AsyncDataProvider.getClusterByServiceList(new AsyncQuery(new Object[] { this, getModel() }, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
 
@@ -91,9 +91,9 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                 PoolModelBehaviorBase behavior = (PoolModelBehaviorBase) array[0];
                 UnitVmModel model = (UnitVmModel) array[1];
                 ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
-                model.SetClusters(model, clusters, null);
-                behavior.InitTemplate();
-                behavior.InitCdImage();
+                model.setClusters(model, clusters, null);
+                behavior.initTemplate();
+                behavior.initCdImage();
 
             }
         }, getModel().getHash()), dataCenter.getId(), true, false);
@@ -137,11 +137,11 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             }
             else
             {
-                UpdateDefaultTimeZone();
+                updateDefaultTimeZone();
             }
 
             // Update domain list
-            UpdateDomain();
+            updateDomain();
 
             ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) getModel().getCluster().getItems();
             VDSGroup selectCluster =
@@ -180,7 +180,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                 getModel().getStorageDomain().setIsChangable(true);
 
                 getModel().setIsBlankTemplate(false);
-                InitDisks();
+                initDisks();
             }
             else
             {
@@ -193,12 +193,12 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
             getModel().getProvisioning().setEntity(false);
 
-            InitPriority(vmBase.getPriority());
-            InitStorageDomains();
+            initPriority(vmBase.getPriority());
+            initStorageDomains();
 
             // use min. allocated memory from the template, if specified
             if (vmBase.getMinAllocatedMem() == 0) {
-                UpdateMinAllocatedMemory();
+                updateMinAllocatedMemory();
             } else {
                 getModel().getMinAllocatedMemory().setEntity(vmBase.getMinAllocatedMem());
             }
@@ -206,19 +206,19 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     }
 
     @Override
-    public void Template_SelectedItemChanged() {
+    public void template_SelectedItemChanged() {
         // override if there is a need to do some actions
     }
 
     protected abstract DisplayType extractDisplayType(VmBase vmBase);
 
     @Override
-    public void Cluster_SelectedItemChanged()
+    public void cluster_SelectedItemChanged()
     {
-        UpdateDefaultHost();
+        updateDefaultHost();
         updateCustomPropertySheet();
-        UpdateMinAllocatedMemory();
-        UpdateNumOfSockets();
+        updateMinAllocatedMemory();
+        updateNumOfSockets();
         if ((VmTemplate) getModel().getTemplate().getSelectedItem() != null) {
             VmTemplate template = (VmTemplate) getModel().getTemplate().getSelectedItem();
             updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
@@ -226,18 +226,18 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     }
 
     @Override
-    public void DefaultHost_SelectedItemChanged()
+    public void defaultHost_SelectedItemChanged()
     {
-        UpdateCdImage();
+        updateCdImage();
     }
 
     @Override
-    public void Provisioning_SelectedItemChanged()
+    public void provisioning_SelectedItemChanged()
     {
     }
 
     @Override
-    public void UpdateMinAllocatedMemory()
+    public void updateMinAllocatedMemory()
     {
         VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
         if (cluster == null)
@@ -250,11 +250,11 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                 .setEntity((int) ((Integer) getModel().getMemSize().getEntity() * overCommitFactor));
     }
 
-    private void InitTemplate()
+    private void initTemplate()
     {
         StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
 
-        AsyncDataProvider.GetTemplateListByDataCenter(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getTemplateListByDataCenter(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target1, Object returnValue1) {
 
@@ -275,7 +275,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
     protected abstract void setupSelectedTemplate(ListModel model, List<VmTemplate> templates);
 
-    private void PostInitTemplate(ArrayList<VmTemplate> templates)
+    private void postInitTemplate(ArrayList<VmTemplate> templates)
     {
         // If there was some template selected before, try select it again.
         VmTemplate oldTemplate = (VmTemplate) getModel().getTemplate().getSelectedItem();
@@ -287,23 +287,23 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                         : new Linq.TemplatePredicate(Guid.Empty)));
     }
 
-    public void InitCdImage()
+    public void initCdImage()
     {
-        UpdateCdImage();
+        updateCdImage();
     }
 
     @Override
-    public void UpdateIsDisksAvailable()
+    public void updateIsDisksAvailable()
     {
         getModel().setIsDisksAvailable(getModel().getDisks() != null
                 && getModel().getProvisioning().getIsChangable());
     }
 
     @Override
-    public boolean Validate() {
+    public boolean validate() {
         boolean isNew = getModel().getIsNew();
         int maxAllowedVms = getMaxVmsInPool();
-        int assignedVms = getModel().getAssignedVms().asConvertible().Integer();
+        int assignedVms = getModel().getAssignedVms().asConvertible().integer();
 
         getModel().getNumOfDesktops().validateEntity(
 
@@ -328,7 +328,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
         getModel().setIsPoolTabValid(true);
 
-        return super.Validate()
+        return super.validate()
                 && getModel().getName().getIsValid()
                 && getModel().getNumOfDesktops().getIsValid()
                 && getModel().getPrestartedVms().getIsValid();

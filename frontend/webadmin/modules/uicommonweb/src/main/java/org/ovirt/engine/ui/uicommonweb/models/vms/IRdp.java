@@ -18,5 +18,5 @@ public interface IRdp
 
     void setUseLocalDrives(boolean value);
 
-    void Connect();
+    void connect();
 }

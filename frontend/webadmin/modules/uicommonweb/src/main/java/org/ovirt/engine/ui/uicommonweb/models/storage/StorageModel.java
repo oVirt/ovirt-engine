@@ -207,18 +207,18 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         setAvailableStorageItems(new ListModel());
         getAvailableStorageItems().getSelectedItemChangedEvent().addListener(this);
 
-        localFSPath = (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.RhevhLocalFSPath);
+        localFSPath = (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.RhevhLocalFSPath);
     }
 
     @Override
-    public void Initialize()
+    public void initialize()
     {
-        super.Initialize();
+        super.initialize();
 
         setHash(getHashName() + new Date());
         behavior.setHash(getHash());
 
-        InitDataCenter();
+        initDataCenter();
     }
 
     @Override
@@ -230,11 +230,11 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         {
             if (sender == getDataCenter())
             {
-                DataCenter_SelectedItemChanged();
+                dataCenter_SelectedItemChanged();
             }
             else if (sender == getHost())
             {
-                Host_SelectedItemChanged();
+                host_SelectedItemChanged();
             }
             else if (sender == getAvailableStorageItems())
             {
@@ -247,41 +247,41 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         }
         else if (ev.matchesDefinition(NfsStorageModel.PathChangedEventDefinition))
         {
-            NfsStorageModel_PathChanged(sender, args);
+            nfsStorageModel_PathChanged(sender, args);
         }
         else if (ev.matchesDefinition(Frontend.QueryStartedEventDefinition)
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
-            Frontend_QueryStarted();
+            frontend_QueryStarted();
         }
         else if (ev.matchesDefinition(Frontend.QueryCompleteEventDefinition)
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
-            Frontend_QueryComplete();
+            frontend_QueryComplete();
         }
     }
 
     private int queryCounter;
 
-    public void Frontend_QueryStarted()
+    public void frontend_QueryStarted()
     {
         queryCounter++;
         if (getProgress() == null)
         {
-            StartProgress(null);
+            startProgress(null);
         }
     }
 
-    public void Frontend_QueryComplete()
+    public void frontend_QueryComplete()
     {
         queryCounter--;
         if (queryCounter == 0)
         {
-            StopProgress();
+            stopProgress();
         }
     }
 
-    private void NfsStorageModel_PathChanged(Object sender, EventArgs args)
+    private void nfsStorageModel_PathChanged(Object sender, EventArgs args)
     {
         NfsStorageModel senderModel = (NfsStorageModel) sender;
 
@@ -302,8 +302,8 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 
         if (getSelectedItem() != null)
         {
-            UpdateFormat();
-            UpdateHost();
+            updateFormat();
+            updateHost();
         }
     }
 
@@ -328,9 +328,9 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         }
     }
 
-    private void DataCenter_SelectedItemChanged()
+    private void dataCenter_SelectedItemChanged()
     {
-        UpdateItemsAvailability();
+        updateItemsAvailability();
         updateDataCenterAlert();
     }
 
@@ -347,7 +347,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         }
     }
 
-    private void Host_SelectedItemChanged()
+    private void host_SelectedItemChanged()
     {
         VDS host = (VDS) getHost().getSelectedItem();
         if (getSelectedItem() != null)
@@ -365,7 +365,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 
             if (host != null)
             {
-                getSelectedItem().getUpdateCommand().Execute();
+                getSelectedItem().getUpdateCommand().execute();
 
                 VDSType vdsType = ((VDS) this.getHost().getSelectedItem()).getVdsType();
                 String prefix = vdsType.equals(VDSType.oVirtNode) ? localFSPath : ""; //$NON-NLS-1$
@@ -385,7 +385,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         }
     }
 
-    private void InitDataCenter()
+    private void initDataCenter()
     {
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() != SystemTreeItemType.System)
         {
@@ -396,7 +396,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
             case Storages:
             case Storage: {
                 SystemTreeItemModel dataCenterItem =
-                        SystemTreeItemModel.FindAncestor(SystemTreeItemType.DataCenter, getSystemTreeSelectedItem());
+                        SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, getSystemTreeSelectedItem());
                 StoragePool dc = (StoragePool) dataCenterItem.getEntity();
 
                 getDataCenter().setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dc })));
@@ -414,7 +414,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                 getHost().setSelectedItem(host);
 
                 SystemTreeItemModel dataCenterItem =
-                        SystemTreeItemModel.FindAncestor(SystemTreeItemType.DataCenter, getSystemTreeSelectedItem());
+                        SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, getSystemTreeSelectedItem());
                 StoragePool dc = (StoragePool) dataCenterItem.getEntity();
 
                 getDataCenter().setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dc })));
@@ -433,7 +433,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
             // -> fill DataCenters drop-down with all possible Data-Centers, choose the empty one:
             // [TODO: In case of an Unattached SD, choose only DCs of the same type]
             {
-                AsyncDataProvider.GetDataCenterList(new AsyncQuery(new Object[] { this, behavior },
+                AsyncDataProvider.getDataCenterList(new AsyncQuery(new Object[] { this, behavior },
                         new INewAsyncCallback() {
                             @Override
                             public void onSuccess(Object target, Object returnValue) {
@@ -443,8 +443,8 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                                 StorageModelBehavior storageModelBehavior = (StorageModelBehavior) array[1];
                                 List<StoragePool> dataCenters =
                                         (ArrayList<StoragePool>) returnValue;
-                                dataCenters = storageModelBehavior.FilterDataCenter(dataCenters);
-                                StorageModel.AddEmptyDataCenterToList(dataCenters);
+                                dataCenters = storageModelBehavior.filterDataCenter(dataCenters);
+                                StorageModel.addEmptyDataCenterToList(dataCenters);
                                 StoragePool oldSelectedItem =
                                         (StoragePool) storageModel.getDataCenter().getSelectedItem();
                                 storageModel.getDataCenter().setItems(dataCenters);
@@ -467,7 +467,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 
             else // "Edit Storage" mode:
             {
-                AsyncDataProvider.GetDataCentersByStorageDomain(new AsyncQuery(this,
+                AsyncDataProvider.getDataCentersByStorageDomain(new AsyncQuery(this,
                         new INewAsyncCallback() {
                             @Override
                             public void onSuccess(Object target, Object returnValue) {
@@ -478,7 +478,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                                         (ArrayList<StoragePool>) returnValue;
                                 if (dataCentersWithStorage.size() < 1 || dataCentersWithStorage.get(0) == null)
                                 {
-                                    StorageModel.AddEmptyDataCenterToList(dataCenters);
+                                    StorageModel.addEmptyDataCenterToList(dataCenters);
                                 }
                                 else
                                 {
@@ -496,7 +496,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         }
     }
 
-    private static void AddEmptyDataCenterToList(List<StoragePool> dataCenters)
+    private static void addEmptyDataCenterToList(List<StoragePool> dataCenters)
     {
         StoragePool tempVar = new StoragePool();
         tempVar.setId(UnassignedDataCenterId);
@@ -504,7 +504,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         dataCenters.add(tempVar);
     }
 
-    void UpdateHost()
+    void updateHost()
     {
         if (getDataCenter().getItems() == null)
         {
@@ -553,7 +553,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                         StorageModel storageModel = (StorageModel) model;
                         Iterable<VDS> hosts =
                                 (ArrayList<VDS>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                        storageModel.PostUpdateHost(hosts);
+                        storageModel.postUpdateHost(hosts);
                     }
                 };
                 Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Hosts: status=Up " + dataCenterQueryLine.toString(), //$NON-NLS-1$
@@ -564,27 +564,27 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         {
             if (dataCenter == null || dataCenter.getId().equals(UnassignedDataCenterId))
             {
-                AsyncDataProvider.GetHostList(new AsyncQuery(this,
+                AsyncDataProvider.getHostList(new AsyncQuery(this,
                         new INewAsyncCallback() {
                             @Override
                             public void onSuccess(Object target, Object returnValue) {
 
                                 StorageModel storageModel = (StorageModel) target;
                                 Iterable<VDS> hosts = (Iterable<VDS>) returnValue;
-                                storageModel.PostUpdateHost(hosts);
+                                storageModel.postUpdateHost(hosts);
                             }
                         }, getHash()));
             }
             else
             {
-                AsyncDataProvider.GetHostListByDataCenter(new AsyncQuery(this,
+                AsyncDataProvider.getHostListByDataCenter(new AsyncQuery(this,
                         new INewAsyncCallback() {
                             @Override
                             public void onSuccess(Object target, Object returnValue) {
 
                                 StorageModel storageModel = (StorageModel) target;
                                 Iterable<VDS> hosts = (Iterable<VDS>) returnValue;
-                                storageModel.PostUpdateHost(hosts);
+                                storageModel.postUpdateHost(hosts);
 
                             }
                         }, getHash()), dataCenter.getId());
@@ -592,7 +592,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         }
     }
 
-    public void PostUpdateHost(Iterable<VDS> hosts)
+    public void postUpdateHost(Iterable<VDS> hosts)
     {
         // Filter hosts
         hosts = Linq.where(hosts, new Linq.HostStatusPredicate(VDSStatus.Up));
@@ -644,7 +644,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         return null;
     }
 
-    void UpdateFormat()
+    void updateFormat()
     {
         StoragePool dataCenter = (StoragePool) getDataCenter().getSelectedItem();
 
@@ -726,17 +726,17 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         getFormat().setSelectedItem(selectItem);
     }
 
-    private void UpdateItemsAvailability()
+    private void updateItemsAvailability()
     {
         if (getItems() == null)
         {
             return;
         }
 
-        behavior.UpdateItemsAvailability();
+        behavior.updateItemsAvailability();
     }
 
-    public boolean Validate() {
+    public boolean validate() {
         ValidationResult result = new NotEmptyValidation().validate(getHost().getSelectedItem());
         if (!result.getSuccess()) {
             getHost().setIsValid(false);
@@ -752,7 +752,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                 new LengthValidation(BusinessEntitiesDefinitions.GENERAL_MAX_SIZE),
                 new SpecialAsciiI18NOrNoneValidation() });
 
-        return getName().getIsValid() && getHost().getIsValid() && getIsValid() && getSelectedItem().Validate() && getDescription().getIsValid();
+        return getName().getIsValid() && getHost().getIsValid() && getIsValid() && getSelectedItem().validate() && getDescription().getIsValid();
     }
 
     private SystemTreeItemModel privateSystemTreeSelectedItem;

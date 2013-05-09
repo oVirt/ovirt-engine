@@ -174,7 +174,7 @@ public class SubTabClusterGeneralPresenter extends AbstractSubTabPresenter<VDSGr
                     new ClickHandler() {
                         @Override
                         public void onClick(ClickEvent event) {
-                            command.Execute();
+                            command.execute();
                         }
                     });
         }

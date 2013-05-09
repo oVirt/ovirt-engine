@@ -66,7 +66,7 @@ public abstract class ListWithDetailsModel extends SearchableListModel
 
             if (oldValue instanceof SearchableListModel)
             {
-                ((SearchableListModel) oldValue).EnsureAsyncSearchStopped();
+                ((SearchableListModel) oldValue).ensureAsyncSearchStopped();
             }
         }
 
@@ -119,7 +119,7 @@ public abstract class ListWithDetailsModel extends SearchableListModel
             // If selected item become null, make sure we stop all activity on an active detail model.
             if (getActiveDetailModel() != null && getActiveDetailModel() instanceof SearchableListModel)
             {
-                ((SearchableListModel) getActiveDetailModel()).EnsureAsyncSearchStopped();
+                ((SearchableListModel) getActiveDetailModel()).ensureAsyncSearchStopped();
             }
         }
 
@@ -143,9 +143,9 @@ public abstract class ListWithDetailsModel extends SearchableListModel
     }
 
     @Override
-    public void EnsureAsyncSearchStopped()
+    public void ensureAsyncSearchStopped()
     {
-        super.EnsureAsyncSearchStopped();
+        super.ensureAsyncSearchStopped();
 
         if (getDetailModels() != null)
         {
@@ -155,7 +155,7 @@ public abstract class ListWithDetailsModel extends SearchableListModel
                 if (model instanceof SearchableListModel)
                 {
                     SearchableListModel listModel = (SearchableListModel) model;
-                    listModel.EnsureAsyncSearchStopped();
+                    listModel.ensureAsyncSearchStopped();
                 }
             }
         }

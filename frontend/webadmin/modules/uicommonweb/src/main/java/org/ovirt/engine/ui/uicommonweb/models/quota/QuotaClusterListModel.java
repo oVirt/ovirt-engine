@@ -47,7 +47,7 @@ public class QuotaClusterListModel extends SearchableListModel {
         if (getEntity() == null) {
             return;
         }
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
     @Override

@@ -29,7 +29,7 @@ public class TemplateVmListModel extends VmListModel
     protected void onEntityChanged()
     {
         super.onEntityChanged();
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
     @Override

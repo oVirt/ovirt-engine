@@ -279,7 +279,7 @@ public class HostSetupNetworksModel extends EntityModel {
                 okTarget = new BaseCommandTarget() {
                     @Override
                     public void executeCommand(UICommand command) {
-                        if (!mgmntDialogModel.Validate()) {
+                        if (!mgmntDialogModel.validate()) {
                             return;
                         }
                         entity.setBootProtocol(mgmntDialogModel.getBootProtocol());
@@ -324,7 +324,7 @@ public class HostSetupNetworksModel extends EntityModel {
                 okTarget = new BaseCommandTarget() {
                     @Override
                     public void executeCommand(UICommand command) {
-                        if (!networkDialogModel.Validate()) {
+                        if (!networkDialogModel.validate()) {
                             return;
                         }
                         entity.setBootProtocol(networkDialogModel.getBootProtocol());
@@ -393,7 +393,7 @@ public class HostSetupNetworksModel extends EntityModel {
 
                         @Override
                         public void executeCommand(UICommand command) {
-                            if (!bondPopup.Validate()) {
+                            if (!bondPopup.validate()) {
                                 return;
                             }
                             sourceListModel.setConfirmWindow(null);
@@ -404,7 +404,7 @@ public class HostSetupNetworksModel extends EntityModel {
                             List<LogicalNetworkModel> networks = new ArrayList<LogicalNetworkModel>();
                             networks.addAll(nic1.getItems());
                             networks.addAll(nic2.getItems());
-                            networkCommand.Execute(bond);
+                            networkCommand.execute(bond);
                             redraw();
 
                             // Attach the previous networks
@@ -422,7 +422,7 @@ public class HostSetupNetworksModel extends EntityModel {
             popupWindow = bondPopup;
         } else {
             // just execute the command
-            networkCommand.Execute();
+            networkCommand.execute();
             redraw();
             return;
         }
@@ -483,7 +483,7 @@ public class HostSetupNetworksModel extends EntityModel {
     private void initAllModels(boolean fetchFromBackend) {
         if (fetchFromBackend) {
             // run query for networks, this chains the query for nics, and also stops progress when done
-            StartProgress(null);
+            startProgress(null);
             queryNetworks();
         } else {
             initNetworkModels();
@@ -654,7 +654,7 @@ public class HostSetupNetworksModel extends EntityModel {
                 List<VdsNetworkInterface> allNics = (List<VdsNetworkInterface>) returnValue2;
                 HostSetupNetworksModel.this.allNics = allNics;
                 initNicModels();
-                StopProgress();
+                stopProgress();
             }
         };
 
@@ -683,7 +683,7 @@ public class HostSetupNetworksModel extends EntityModel {
         };
 
         VDS vds = (VDS) getEntity();
-        AsyncDataProvider.GetClusterNetworkList(asyncQuery, vds.getVdsGroupId());
+        AsyncDataProvider.getClusterNetworkList(asyncQuery, vds.getVdsGroupId());
     }
 
     private void initDcNetworkParams() {
@@ -750,7 +750,7 @@ public class HostSetupNetworksModel extends EntityModel {
 
     public void onSetupNetworks() {
         // Determines the connectivity timeout in seconds
-        AsyncDataProvider.GetNetworkConnectivityCheckTimeoutInSeconds(new AsyncQuery(sourceListModel,
+        AsyncDataProvider.getNetworkConnectivityCheckTimeoutInSeconds(new AsyncQuery(sourceListModel,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -770,7 +770,7 @@ public class HostSetupNetworksModel extends EntityModel {
         params.setVdsId(((VDS) getEntity()).getId());
         params.setNetworksToSync(model.getNetworksToSync());
 
-        model.StartProgress(null);
+        model.startProgress(null);
         Frontend.RunAction(VdcActionType.SetupNetworks, params, new IFrontendActionAsyncCallback() {
 
             @Override
@@ -785,14 +785,14 @@ public class HostSetupNetworksModel extends EntityModel {
                     }
                     else
                     {
-                        model.StopProgress();
+                        model.stopProgress();
                         sourceListModel.setWindow(null);
                         sourceListModel.search();
                     }
                 }
                 else
                 {
-                    model.StopProgress();
+                    model.stopProgress();
                 }
             }
         });

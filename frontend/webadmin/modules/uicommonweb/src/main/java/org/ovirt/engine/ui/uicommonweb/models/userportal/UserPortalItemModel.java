@@ -366,7 +366,7 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
             throw new UnsupportedOperationException();
         }
 
-        behavior.OnEntityChanged();
+        behavior.onEntityChanged();
     }
 
     public void clearReferences() {
@@ -394,7 +394,7 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
         setCommands(null);
     }
 
-    public boolean IsVmUp()
+    public boolean isVmUp()
     {
         switch (getStatus())
         {
@@ -414,14 +414,14 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
 
     // to simpler integration with the editor framework
     public boolean getIsVmUp() {
-        return IsVmUp();
+        return isVmUp();
     }
 
     @Override
     protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
     {
         super.entityPropertyChanged(sender, e);
-        behavior.EntityPropertyChanged(e);
+        behavior.entityPropertyChanged(e);
     }
 
     @Override
@@ -435,7 +435,7 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
     public void executeCommand(UICommand command)
     {
         super.executeCommand(command);
-        behavior.ExecuteCommand(command);
+        behavior.executeCommand(command);
     }
 
     public Guid getId() {

@@ -147,7 +147,7 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
 
             @Override
             public void onClick(ClickEvent event) {
-                applyPasswordButton.getCommand().Execute();
+                applyPasswordButton.getCommand().execute();
             }
         });
     }

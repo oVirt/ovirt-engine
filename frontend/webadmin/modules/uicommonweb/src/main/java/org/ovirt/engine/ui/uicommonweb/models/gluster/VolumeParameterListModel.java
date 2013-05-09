@@ -114,7 +114,7 @@ public class VolumeParameterListModel extends SearchableListModel {
         VolumeParameterModel volumeParameterModel = new VolumeParameterModel();
         volumeParameterModel.setTitle(ConstantsManager.getInstance().getConstants().addOptionVolume());
         setWindow(volumeParameterModel);
-        volumeParameterModel.StartProgress(null);
+        volumeParameterModel.startProgress(null);
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -141,7 +141,7 @@ public class VolumeParameterListModel extends SearchableListModel {
                 }
 
                 innerParameterModel.getKeyList().setItems(optionInfoList);
-                innerParameterModel.StopProgress();
+                innerParameterModel.stopProgress();
 
                 UICommand command = new UICommand("OnSetParameter", volumeParameterListModel); //$NON-NLS-1$
                 command.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -153,7 +153,7 @@ public class VolumeParameterListModel extends SearchableListModel {
                 innerParameterModel.getCommands().add(command);
             }
         };
-        AsyncDataProvider.GetGlusterVolumeOptionInfoList(_asyncQuery, volume.getClusterId());
+        AsyncDataProvider.getGlusterVolumeOptionInfoList(_asyncQuery, volume.getClusterId());
     }
 
     private void onSetParameter() {
@@ -165,7 +165,7 @@ public class VolumeParameterListModel extends SearchableListModel {
 
         VolumeParameterModel model = (VolumeParameterModel) getWindow();
 
-        if (!model.Validate())
+        if (!model.validate())
         {
             return;
         }
@@ -175,7 +175,7 @@ public class VolumeParameterListModel extends SearchableListModel {
         option.setKey((String) model.getSelectedKey().getEntity());
         option.setValue((String) model.getValue().getEntity());
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunAction(VdcActionType.SetGlusterVolumeOption,
                 new GlusterVolumeOptionParameters(option),
@@ -193,7 +193,7 @@ public class VolumeParameterListModel extends SearchableListModel {
     {
         VolumeParameterModel model = (VolumeParameterModel) getWindow();
 
-        model.StopProgress();
+        model.stopProgress();
 
         if (returnValue != null && returnValue.getSucceeded())
         {
@@ -223,7 +223,7 @@ public class VolumeParameterListModel extends SearchableListModel {
 
         volumeParameterModel.getKeyList().setIsChangable(false);
         volumeParameterModel.getSelectedKey().setIsChangable(false);
-        volumeParameterModel.StartProgress(null);
+        volumeParameterModel.startProgress(null);
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -256,7 +256,7 @@ public class VolumeParameterListModel extends SearchableListModel {
                 innerParameterModel.getSelectedKey().setEntity(selectedOption.getKey());
                 innerParameterModel.getValue().setEntity(selectedOption.getValue());
 
-                innerParameterModel.StopProgress();
+                innerParameterModel.stopProgress();
 
                 UICommand command = new UICommand("OnSetParameter", volumeParameterListModel); //$NON-NLS-1$
                 command.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -268,7 +268,7 @@ public class VolumeParameterListModel extends SearchableListModel {
                 innerParameterModel.getCommands().add(command);
             }
         };
-        AsyncDataProvider.GetGlusterVolumeOptionInfoList(_asyncQuery, volume.getClusterId());
+        AsyncDataProvider.getGlusterVolumeOptionInfoList(_asyncQuery, volume.getClusterId());
     }
 
     private GlusterVolumeOptionInfo getCifsVolumeOption() {
@@ -326,7 +326,7 @@ public class VolumeParameterListModel extends SearchableListModel {
         ResetGlusterVolumeOptionsParameters parameters =
                 new ResetGlusterVolumeOptionsParameters(selectedOption.getVolumeId(), selectedOption.getKey(), false);
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunAction(VdcActionType.ResetGlusterVolumeOptions,
                 parameters,
@@ -335,7 +335,7 @@ public class VolumeParameterListModel extends SearchableListModel {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.StopProgress();
+                        localModel.stopProgress();
                         cancel();
                     }
                 }, model);
@@ -380,7 +380,7 @@ public class VolumeParameterListModel extends SearchableListModel {
         ResetGlusterVolumeOptionsParameters parameters =
                 new ResetGlusterVolumeOptionsParameters(volume.getId(), null, false);
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunAction(VdcActionType.ResetGlusterVolumeOptions,
                 parameters,
@@ -389,7 +389,7 @@ public class VolumeParameterListModel extends SearchableListModel {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.StopProgress();
+                        localModel.stopProgress();
                         cancel();
                     }
                 }, model);

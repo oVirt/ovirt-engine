@@ -22,13 +22,13 @@ public class TypeResolver
         this.implementation = implementation;
     }
 
-    public static void Initialize(ITypeResolver implementation)
+    public static void initialize(ITypeResolver implementation)
     {
         setInstance(new TypeResolver(implementation));
     }
 
-    public Object Resolve(java.lang.Class type)
+    public Object resolve(java.lang.Class type)
     {
-        return implementation.Resolve(type);
+        return implementation.resolve(type);
     }
 }

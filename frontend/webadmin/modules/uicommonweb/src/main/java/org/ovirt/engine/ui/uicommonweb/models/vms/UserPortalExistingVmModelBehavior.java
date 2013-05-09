@@ -32,21 +32,21 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
     }
 
     @Override
-    public void Initialize(SystemTreeItemModel systemTreeSelectedItem) {
-        super.Initialize(systemTreeSelectedItem);
+    public void initialize(SystemTreeItemModel systemTreeSelectedItem) {
+        super.initialize(systemTreeSelectedItem);
 
         // The custom properties tab should be hidden on the User Portal
         getModel().setIsCustomPropertiesTabAvailable(false);
     }
 
     @Override
-    public void DataCenter_SelectedItemChanged()
+    public void dataCenter_SelectedItemChanged()
     {
         StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
         getModel().setIsHostAvailable(dataCenter.getstorage_pool_type() != StorageType.LOCALFS);
 
         // Get clusters with permitted edit action
-        AsyncDataProvider.GetClustersWithPermittedAction(new AsyncQuery(new Object[] { this, getModel() },
+        AsyncDataProvider.getClustersWithPermittedAction(new AsyncQuery(new Object[] { this, getModel() },
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -55,9 +55,9 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
                         ExistingVmModelBehavior behavior = (ExistingVmModelBehavior) array[0];
                         UnitVmModel model = (UnitVmModel) array[1];
                         ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
-                        InitClusters(clusters, model);
-                        behavior.InitTemplate();
-                        behavior.InitCdImage();
+                        initClusters(clusters, model);
+                        behavior.initTemplate();
+                        behavior.initCdImage();
 
                     }
                 }, getModel().getHash()), CREATE_VM, true, false);
@@ -70,11 +70,11 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
     }
 
     @Override
-    protected void UpdateCdImage() {
+    protected void updateCdImage() {
         updateUserCdImage(getVm().getStoragePoolId());
     }
 
-    private void InitClusters(ArrayList<VDSGroup> clusters, UnitVmModel model)
+    private void initClusters(ArrayList<VDSGroup> clusters, UnitVmModel model)
     {
         // Filter clusters list (include only clusters that belong to the selected datacenter)
         ArrayList<VDSGroup> filteredList = new ArrayList<VDSGroup>();
@@ -97,18 +97,18 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
         if (!listContainsVmCluster)
         {
             // Add VM's cluster if not contained in the cluster list
-            AddVmCluster(filteredList);
+            addVmCluster(filteredList);
         }
         else
         {
             Collections.sort(filteredList, new Linq.VdsGroupByNameComparer());
-            model.SetClusters(model, filteredList, vm.getVdsGroupId().getValue());
+            model.setClusters(model, filteredList, vm.getVdsGroupId().getValue());
         }
     }
 
-    private void AddVmCluster(ArrayList<VDSGroup> clusters)
+    private void addVmCluster(ArrayList<VDSGroup> clusters)
     {
-        AsyncDataProvider.GetClusterById(new AsyncQuery(new Object[] { getModel(), clusters },
+        AsyncDataProvider.getClusterById(new AsyncQuery(new Object[] { getModel(), clusters },
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -122,7 +122,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
                             clusterList.add(cluster);
                         }
                         Collections.sort(clusterList, new Linq.VdsGroupByNameComparer());
-                        model.SetClusters(model, clusterList, vm.getVdsGroupId().getValue());
+                        model.setClusters(model, clusterList, vm.getVdsGroupId().getValue());
 
                     }
                 }, getModel().getHash()), vm.getVdsGroupId());

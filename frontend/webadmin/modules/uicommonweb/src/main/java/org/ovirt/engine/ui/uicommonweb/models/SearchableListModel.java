@@ -109,7 +109,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
             ArrayList<IVdcQueryable> items =
                     getSelectedItems() != null ? Linq.<IVdcQueryable> cast(getSelectedItems())
                             : new ArrayList<IVdcQueryable>();
-            UpdateReportCommandAvailability(reportCommand, items);
+            updateReportCommandAvailability(reportCommand, items);
 
             return reportCommand;
         } else {
@@ -201,7 +201,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
     {
         if (asyncResult != value)
         {
-            AsyncResultChanging(value, asyncResult);
+            asyncResultChanging(value, asyncResult);
             asyncResult = value;
             onPropertyChanged(new PropertyChangedEventArgs("AsyncResult")); //$NON-NLS-1$
         }
@@ -219,7 +219,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         if (!StringHelper.stringsEqual(searchString, value))
         {
             searchString = value;
-            SearchStringChanged();
+            searchStringChanged();
             onPropertyChanged(new PropertyChangedEventArgs("SearchString")); //$NON-NLS-1$
         }
     }
@@ -283,7 +283,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
     protected SearchableListModel()
     {
         // Configure this instance.
-        getConfigurator().Configure(this);
+        getConfigurator().configure(this);
 
         setSearchCommand(new UICommand("Search", this)); //$NON-NLS-1$
         setSearchNextPageCommand(new UICommand("SearchNextPage", this)); //$NON-NLS-1$
@@ -292,7 +292,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         setSearchPageSize(UnknownInteger);
         asyncCallback = new PrivateAsyncCallback(this);
 
-        UpdateActionAvailability();
+        updateActionAvailability();
 
         // Most of SearchableListModels will not have paging. The ones that
         // should have paging will set it explicitly in their constructors.
@@ -303,7 +303,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
     /**
      * Returns value indicating whether the specified search string is matching this list model.
      */
-    public boolean IsSearchStringMatch(String searchString)
+    public boolean isSearchStringMatch(String searchString)
     {
         return true;
     }
@@ -348,7 +348,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
 
     @Override
     public void refresh() {
-        getForceRefreshCommand().Execute();
+        getForceRefreshCommand().execute();
     }
 
     @Override
@@ -385,7 +385,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
 
     protected abstract String getListName();
 
-    protected void SearchStringChanged()
+    protected void searchStringChanged()
     {
     }
 
@@ -398,7 +398,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         }
         else
         {
-            EnsureAsyncSearchStopped();
+            ensureAsyncSearchStopped();
 
             if (getIsQueryFirstTime())
             {
@@ -427,7 +427,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         }
     }
 
-    public void ForceRefresh()
+    public void forceRefresh()
     {
         getTimer().stop();
         setIsQueryFirstTime(true);
@@ -443,7 +443,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
 
     }
 
-    protected void OpenReport()
+    protected void openReport()
     {
         setWidgetModel(createReportModel());
     }
@@ -493,7 +493,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         return date.getYear() + "-" + date.getMonth() + "-" + date.getDate(); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    private void AsyncResultChanging(RegistrationResult newValue, RegistrationResult oldValue)
+    private void asyncResultChanging(RegistrationResult newValue, RegistrationResult oldValue)
     {
         if (oldValue != null)
         {
@@ -513,7 +513,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
 
         if (ev.matchesDefinition(RegistrationResult.RetrievedEventDefinition))
         {
-            AsyncResult_Retrieved();
+            asyncResult_Retrieved();
         }
         if (ev.matchesDefinition(ProvideTickEvent.Definition))
         {
@@ -521,7 +521,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         }
     }
 
-    private void AsyncResult_Retrieved()
+    private void asyncResult_Retrieved()
     {
         // Update IsEmpty flag.
 
@@ -539,7 +539,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         }
     }
 
-    private void ResetIsEmpty()
+    private void resetIsEmpty()
     {
         // Note: Do NOT use IList: 'Items' is not necissarily IList
         // (e.g in Monitor models, the different ListModels' Items are
@@ -559,8 +559,8 @@ public abstract class SearchableListModel extends ListModel implements GridContr
     {
         super.itemsChanged();
 
-        ResetIsEmpty();
-        UpdatePagingAvailability();
+        resetIsEmpty();
+        updatePagingAvailability();
     }
 
     @Override
@@ -568,39 +568,39 @@ public abstract class SearchableListModel extends ListModel implements GridContr
     {
         super.itemsCollectionChanged(sender, e);
 
-        ResetIsEmpty();
-        UpdatePagingAvailability();
+        resetIsEmpty();
+        updatePagingAvailability();
     }
 
     @Override
     protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void selectedItemsChanged() {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
-    private void UpdateReportCommandAvailability(ReportCommand reportCommand, List<?> selectedItems) {
+    private void updateReportCommandAvailability(ReportCommand reportCommand, List<?> selectedItems) {
         reportCommand.setIsExecutionAllowed((!reportCommand.isMultiple() && (selectedItems.size() == 1))
                 || (reportCommand.isMultiple() && (selectedItems.size() > 1)));
     }
 
-    private void UpdateActionAvailability() {
+    private void updateActionAvailability() {
         List<?> items =
                 getSelectedItems() != null ? getSelectedItems()
                         : Collections.emptyList();
 
         for (ReportCommand reportCommand : openReportCommands)
         {
-            UpdateReportCommandAvailability(reportCommand, items);
+            updateReportCommandAvailability(reportCommand, items);
         }
     }
 
-    protected void UpdatePagingAvailability()
+    protected void updatePagingAvailability()
     {
         getSearchNextPageCommand().setIsExecutionAllowed(getSearchNextPageCommand().getIsAvailable()
                 && getNextSearchPageAllowed());
@@ -608,7 +608,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
                 && getPreviousSearchPageAllowed());
     }
 
-    private void SetSearchStringPage(int newSearchPageNumber)
+    private void setSearchStringPage(int newSearchPageNumber)
     {
         if (Regex.IsMatch(getSearchString(), PAGE_STRING_REGEX, RegexOptions.IgnoreCase))
         {
@@ -622,16 +622,16 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         }
     }
 
-    protected void SearchNextPage()
+    protected void searchNextPage()
     {
-        SetSearchStringPage(getNextSearchPageNumber());
-        getSearchCommand().Execute();
+        setSearchStringPage(getNextSearchPageNumber());
+        getSearchCommand().execute();
     }
 
-    protected void SearchPreviousPage()
+    protected void searchPreviousPage()
     {
-        SetSearchStringPage(getPreviousSearchPageNumber());
-        getSearchCommand().Execute();
+        setSearchStringPage(getPreviousSearchPageNumber());
+        getSearchCommand().execute();
     }
 
     protected boolean getNextSearchPageAllowed()
@@ -716,7 +716,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
 
             itemsChanging(value, items);
             items = value;
-            UpdatePagingAvailability();
+            updatePagingAvailability();
             getItemsChangedEvent().raise(this, EventArgs.Empty);
             onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
 
@@ -811,7 +811,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
     {
     }
 
-    public void EnsureAsyncSearchStopped()
+    public void ensureAsyncSearchStopped()
     {
         getTimer().stop();
         if (getAsyncResult() != null && !getAsyncResult().getId().equals(NGuid.Empty))
@@ -831,18 +831,18 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         }
         else if (command == getSearchNextPageCommand())
         {
-            SearchNextPage();
+            searchNextPage();
         }
         else if (command == getSearchPreviousPageCommand())
         {
-            SearchPreviousPage();
+            searchPreviousPage();
         }
         else if (command == getForceRefreshCommand())
         {
-            ForceRefresh();
+            forceRefresh();
         } else if (command instanceof ReportCommand) {
             ReportCommand reportCommand = (ReportCommand) command;
-            OpenReport();
+            openReport();
         }
 
         if (command != null && command.isAutoRefresh()) {
@@ -868,7 +868,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
                     privateAsyncCallback1.ApplySearchPageSize((Integer) result1);
                 }
             };
-            AsyncDataProvider.GetSearchResultsLimit(_asyncQuery1);
+            AsyncDataProvider.getSearchResultsLimit(_asyncQuery1);
         }
 
         public void RequestSearch()
@@ -886,11 +886,11 @@ public abstract class SearchableListModel extends ListModel implements GridContr
             // If there search was requested before max result limit was retrieved, do it now.
             if (searchRequested && !model.getTimer().isActive())
             {
-                model.getSearchCommand().Execute();
+                model.getSearchCommand().execute();
             }
 
             // Sure paging functionality.
-            model.UpdatePagingAvailability();
+            model.updatePagingAvailability();
         }
     }
 

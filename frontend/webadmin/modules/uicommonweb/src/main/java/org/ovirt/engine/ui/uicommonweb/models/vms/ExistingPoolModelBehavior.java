@@ -33,8 +33,8 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
     }
 
     @Override
-    protected void ChangeDefualtHost() {
-        super.ChangeDefualtHost();
+    protected void changeDefualtHost() {
+        super.changeDefualtHost();
 
         doChangeDefautlHost(pool.getDedicatedVmForVds());
     }
@@ -45,14 +45,14 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
     }
 
     @Override
-    public void Template_SelectedItemChanged() {
-        super.Template_SelectedItemChanged();
+    public void template_SelectedItemChanged() {
+        super.template_SelectedItemChanged();
         getModel().setIsDisksAvailable(true);
         updateHostPinning(pool.getMigrationSupport());
     }
 
     @Override
-    protected void PostInitTemplate() {
+    protected void postInitTemplate() {
         setupWindowModelFrom(pool.getStaticData());
         getModel().setIsDisksAvailable(true);
     }
@@ -67,14 +67,14 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
     }
 
     @Override
-    protected void PostInitStorageDomains() {
+    protected void postInitStorageDomains() {
         ArrayList<DiskModel> disks = (ArrayList<DiskModel>) getModel().getDisks();
         if (disks == null) {
             return;
         }
 
         StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
-        AsyncDataProvider.GetPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
 
@@ -82,7 +82,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
 
                 ArrayList<DiskModel> disks = (ArrayList<DiskModel>) behavior.getModel().getDisks();
                 ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
-                ArrayList<StorageDomain> activeStorageDomains = FilterStorageDomains(storageDomains);
+                ArrayList<StorageDomain> activeStorageDomains = filterStorageDomains(storageDomains);
 
                 DisksAllocationModel disksAllocationModel = behavior.getModel().getDisksAllocationModel();
                 disksAllocationModel.setActiveStorageDomains(activeStorageDomains);
@@ -110,8 +110,8 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
         }, getModel().getHash()), dataCenter.getId(), ActionGroup.CREATE_VM);
     }
 
-    public boolean Validate() {
-        boolean parentValidation = super.Validate();
+    public boolean validate() {
+        boolean parentValidation = super.validate();
         if (getModel().getNumOfDesktops().getIsValid()) {
             getModel().getNumOfDesktops().validateEntity(new IValidation[] { new ExistingPoolNameLengthValidation(
                     (String) getModel().getName().getEntity(),

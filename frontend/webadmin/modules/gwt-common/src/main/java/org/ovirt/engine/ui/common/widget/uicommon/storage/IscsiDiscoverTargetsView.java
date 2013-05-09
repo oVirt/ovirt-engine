@@ -186,7 +186,7 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
             @Override
             public void onKeyPress(KeyPressEvent event) {
                 if (KeyCodes.KEY_ENTER == event.getNativeEvent().getKeyCode()) {
-                    object.getDiscoverTargetsCommand().Execute();
+                    object.getDiscoverTargetsCommand().execute();
                     setIsFocused(false);
                 }
             }
@@ -211,14 +211,14 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
         discoverButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                discoverButton.getCommand().Execute();
+                discoverButton.getCommand().execute();
             }
         });
 
         loginAllButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                loginAllButton.getCommand().Execute();
+                loginAllButton.getCommand().execute();
             }
         });
     }

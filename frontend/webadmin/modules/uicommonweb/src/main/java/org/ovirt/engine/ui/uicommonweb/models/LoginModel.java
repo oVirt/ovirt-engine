@@ -193,7 +193,7 @@ public class LoginModel extends Model
 
             }
         };
-        AsyncDataProvider.GetDomainListViaPublic(_asyncQuery, false);
+        AsyncDataProvider.getDomainListViaPublic(_asyncQuery, false);
     }
 
     @Override
@@ -203,24 +203,24 @@ public class LoginModel extends Model
 
         if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition) && sender == getUserName())
         {
-            UserName_EntityChanged();
+            userName_EntityChanged();
         }
     }
 
-    private void UserName_EntityChanged()
+    private void userName_EntityChanged()
     {
-        getDomain().setIsChangable(GetDomainAvailability());
+        getDomain().setIsChangable(getDomainAvailability());
     }
 
-    private boolean GetDomainAvailability()
+    private boolean getDomainAvailability()
     {
         // Check whether the user name contains domain part.
-        boolean hasDomain = GetUserNameParts((String) getUserName().getEntity())[1] != null;
+        boolean hasDomain = getUserNameParts((String) getUserName().getEntity())[1] != null;
 
         return !hasDomain;
     }
 
-    private String[] GetUserNameParts(String value)
+    private String[] getUserNameParts(String value)
     {
         if (!StringHelper.isNullOrEmpty(value))
         {
@@ -234,18 +234,18 @@ public class LoginModel extends Model
         return new String[] { "", null }; //$NON-NLS-1$
     }
 
-    public void Login()
+    public void login()
     {
-        if (!Validate())
+        if (!validate())
         {
             return;
         }
 
-        StartProgress(null);
+        startProgress(null);
         disableLoginScreen();
 
         String fullUserName = (String) getUserName().getEntity();
-        String[] parts = GetUserNameParts(fullUserName);
+        String[] parts = getUserNameParts(fullUserName);
         String domain = parts[1];
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -280,7 +280,7 @@ public class LoginModel extends Model
                     {
                         raiseLoggedInEvent();
                     }
-                    StopProgress();
+                    stopProgress();
                 }
             }
         };
@@ -295,7 +295,7 @@ public class LoginModel extends Model
         AsyncDataProvider.initCache(this);
     }
 
-    public void AutoLogin(VdcUser user)
+    public void autoLogin(VdcUser user)
     {
         loggingInAutomatically = true;
         getUserName().setEntity(user.getUserName());
@@ -312,7 +312,7 @@ public class LoginModel extends Model
         getLoginCommand().setIsExecutionAllowed(false);
     }
 
-    protected boolean Validate()
+    protected boolean validate()
     {
         getUserName().validateEntity(new IValidation[] { new NotEmptyValidation() });
         getPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
@@ -328,15 +328,15 @@ public class LoginModel extends Model
 
         if (command == getLoginCommand())
         {
-            Login();
+            login();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
     }
 
-    public void Cancel()
+    public void cancel()
     {
         setWindow(null);
     }
@@ -349,7 +349,7 @@ public class LoginModel extends Model
         getDomain().setIsChangable(true);
         getLoginCommand().setIsExecutionAllowed(true);
         loggingInAutomatically = false;
-        StopProgress();
+        stopProgress();
     }
 
 }

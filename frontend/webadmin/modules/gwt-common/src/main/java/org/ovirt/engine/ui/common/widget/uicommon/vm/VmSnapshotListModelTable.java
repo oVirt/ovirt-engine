@@ -184,7 +184,7 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
             public String getCustomToolTip() {
                 if (!getModel().getIsCloneVmSupported() && getModel().getEntity() != null) {
                     CommandVersionsInfo commandVersionsInfo =
-                            AsyncDataProvider.GetCommandVersionsInfo(VdcActionType.AddVmFromSnapshot);
+                            AsyncDataProvider.getCommandVersionsInfo(VdcActionType.AddVmFromSnapshot);
                     String minimalClusterVersion = commandVersionsInfo != null ?
                             commandVersionsInfo.getClusterVersion().toString(2) : ""; //$NON-NLS-1$
                     return messages.cloneVmNotSupported(minimalClusterVersion);

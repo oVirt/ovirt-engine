@@ -49,11 +49,11 @@ public class AsyncIterator<T> {
         this.source = source;
     }
 
-    public void Iterate(AsyncIteratorFunc<T> func, AsyncIteratorPredicate<T> action) {
-        Iterate(func, action, null);
+    public void iterate(AsyncIteratorFunc<T> func, AsyncIteratorPredicate<T> action) {
+        iterate(func, action, null);
     }
 
-    public void Iterate(AsyncIteratorFunc<T> func, AsyncIteratorPredicate<T> action, String frontendContext) {
+    public void iterate(AsyncIteratorFunc<T> func, AsyncIteratorPredicate<T> action, String frontendContext) {
 
         setCounter(0);
 

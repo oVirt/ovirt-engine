@@ -26,7 +26,7 @@ public final class Extensions
     /**
      * Flattens an exception tree, exception itself and all inner ones.
      */
-    public static Iterable<RuntimeException> Flatten(RuntimeException source)
+    public static Iterable<RuntimeException> flatten(RuntimeException source)
     {
         ArrayList<RuntimeException> result = new ArrayList<RuntimeException>();
         RuntimeException ex = source;

@@ -141,7 +141,7 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
         if (model instanceof SearchableListModel && !model.getLastExecutedCommand().getIsCancel()) {
             // Refresh the grid using ForceRefresh command
             SearchableListModel searchableList = (SearchableListModel) model;
-            searchableList.getForceRefreshCommand().Execute();
+            searchableList.getForceRefreshCommand().execute();
         }
     }
 

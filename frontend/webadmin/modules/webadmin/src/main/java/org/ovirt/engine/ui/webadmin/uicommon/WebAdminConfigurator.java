@@ -61,8 +61,8 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
     }
 
     @Override
-    public void Configure(ISpice spice) {
-        super.Configure(spice);
+    public void configure(ISpice spice) {
+        super.configure(spice);
         spice.setWANDisableEffects(new ArrayList<WANDisableEffects>());
         spice.setWanOptionsEnabled(false);
 

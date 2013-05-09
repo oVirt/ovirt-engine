@@ -135,9 +135,9 @@ public interface ISpice
 
     void setUsbFilter(String value);
 
-    void Connect();
+    void connect();
 
-    void Install();
+    void install();
 
     void setCurrentVersion(Version currentVersion);
 

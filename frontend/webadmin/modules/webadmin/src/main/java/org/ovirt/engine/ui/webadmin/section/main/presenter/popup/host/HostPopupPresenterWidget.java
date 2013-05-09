@@ -61,7 +61,7 @@ public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWi
             @Override
             public void onClick(ClickEvent event) {
                 getView().flush();
-                getView().getTestButton().getCommand().Execute();
+                getView().getTestButton().getCommand().execute();
             }
         }));
     }

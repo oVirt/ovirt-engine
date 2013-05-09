@@ -49,7 +49,7 @@ public class PoolNameLengthValidation implements IValidation {
     }
 
     protected int getMaxNameLength() {
-        return AsyncDataProvider.IsWindowsOsType(osType) ?
+        return AsyncDataProvider.isWindowsOsType(osType) ?
                 UnitVmModel.WINDOWS_VM_NAME_MAX_LIMIT :
                 UnitVmModel.NON_WINDOWS_VM_NAME_MAX_LIMIT;
     }

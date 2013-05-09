@@ -5,5 +5,5 @@ import org.ovirt.engine.core.compat.Guid;
 
 public interface IVmPoolResolutionService
 {
-    VmPool ResolveVmPoolById(Guid id);
+    VmPool resolveVmPoolById(Guid id);
 }

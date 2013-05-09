@@ -298,8 +298,8 @@ public class ResourcesModel extends SearchableListModel
                 getDefinedCPUs().setEntity(definedCPUs);
                 getUsedCPUs().setEntity(usedCPUs);
                 getUsedCPUsPercentage().setEntity(usedCPUs * 100 / definedCPUs);
-                getDefinedMemory().setEntity(SizeParser(definedMemory));
-                getUsedMemory().setEntity(SizeParser(usedMemory));
+                getDefinedMemory().setEntity(sizeParser(definedMemory));
+                getUsedMemory().setEntity(sizeParser(usedMemory));
                 getUsedMemoryPercentage().setEntity(usedMemory * 100 / definedMemory);
                 getTotalDisksSize().setEntity(totalDisksSize >= 1 ? totalDisksSize + "GB" : "<1GB"); //$NON-NLS-1$ //$NON-NLS-2$
                 getTotalSnapshotsSize().setEntity(totalSnapshotsSize >= 1 ? totalSnapshotsSize + "GB" : "<1GB"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -370,7 +370,7 @@ public class ResourcesModel extends SearchableListModel
 
     // Temporarily converter
     // TODO: Use converters infrastructure in UICommon
-    public String SizeParser(long sizeInMb)
+    public String sizeParser(long sizeInMb)
     {
         return ((sizeInMb >= 1024 && sizeInMb % 1024 == 0) ? (sizeInMb / 1024 + "GB") : (sizeInMb + "MB")); //$NON-NLS-1$ //$NON-NLS-2$
     }

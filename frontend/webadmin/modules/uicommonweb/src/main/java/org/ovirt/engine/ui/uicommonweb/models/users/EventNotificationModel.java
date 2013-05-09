@@ -100,7 +100,7 @@ public class EventNotificationModel extends Model
         setEmail(new EntityModel());
     }
 
-    public void ExpandAll()
+    public void expandAll()
     {
         // EventGroupModels.Each(a => a.IsExpanded = true);
         for (SelectionTreeNodeModel a : getEventGroupModels())
@@ -109,7 +109,7 @@ public class EventNotificationModel extends Model
         }
     }
 
-    public void CollapseAll()
+    public void collapseAll()
     {
         // EventGroupModels.Each(a => a.IsExpanded = false);
         for (SelectionTreeNodeModel a : getEventGroupModels())
@@ -118,7 +118,7 @@ public class EventNotificationModel extends Model
         }
     }
 
-    public boolean Validate()
+    public boolean validate()
     {
         getEmail().validateEntity(new IValidation[] { new NotEmptyValidation(), new EmailValidation() });
 
@@ -132,11 +132,11 @@ public class EventNotificationModel extends Model
 
         if (command == getExpandAllCommand())
         {
-            ExpandAll();
+            expandAll();
         }
         if (command == getCollapseAllCommand())
         {
-            CollapseAll();
+            collapseAll();
         }
     }
 

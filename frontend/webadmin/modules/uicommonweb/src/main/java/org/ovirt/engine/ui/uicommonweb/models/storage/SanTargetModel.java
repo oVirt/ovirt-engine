@@ -149,7 +149,7 @@ public class SanTargetModel extends EntityModel
         setLunsList(new ListModel());
     }
 
-    private void Login()
+    private void login()
     {
         getLoggedInEvent().raise(this, EventArgs.Empty);
     }
@@ -161,7 +161,7 @@ public class SanTargetModel extends EntityModel
 
         if (command == getLoginCommand())
         {
-            Login();
+            login();
         }
     }
 }

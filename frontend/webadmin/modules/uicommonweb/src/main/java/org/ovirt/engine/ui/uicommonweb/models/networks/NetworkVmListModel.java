@@ -61,7 +61,7 @@ public class NetworkVmListModel extends SearchableListModel
     @Override
     protected void onEntityChanged() {
         super.onEntityChanged();
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
     @Override
@@ -129,7 +129,7 @@ public class NetworkVmListModel extends SearchableListModel
 
         if (e.PropertyName.equals("name")) //$NON-NLS-1$
         {
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
         }
     }
 

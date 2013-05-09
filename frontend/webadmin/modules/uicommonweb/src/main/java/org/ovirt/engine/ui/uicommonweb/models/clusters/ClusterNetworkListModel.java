@@ -94,14 +94,14 @@ public class ClusterNetworkListModel extends SearchableListModel
         setSetAsDisplayCommand(new UICommand("SetAsDisplay", this)); //$NON-NLS-1$
         setNewNetworkCommand(new UICommand("New", this)); //$NON-NLS-1$
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void onEntityChanged()
     {
         super.onEntityChanged();
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
     @Override
@@ -151,7 +151,7 @@ public class ClusterNetworkListModel extends SearchableListModel
         setItems(getAsyncResult().getData());
     }
 
-    public void SetAsDisplay()
+    public void setAsDisplay()
     {
         Network network = (Network) getSelectedItem();
 
@@ -160,7 +160,7 @@ public class ClusterNetworkListModel extends SearchableListModel
                 true));
     }
 
-    public void Manage()
+    public void manage()
     {
         if (getWindow() != null)
         {
@@ -185,7 +185,7 @@ public class ClusterNetworkListModel extends SearchableListModel
             }
         };
         // fetch the list of DC Networks
-        AsyncDataProvider.GetNetworkList(_asyncQuery, storagePoolId);
+        AsyncDataProvider.getNetworkList(_asyncQuery, storagePoolId);
     }
 
     private ClusterNetworkManageModel createNetworkList(List<Network> dcNetworks) {
@@ -222,7 +222,7 @@ public class ClusterNetworkListModel extends SearchableListModel
         return listModel;
     }
 
-    public void OnManage() {
+    public void onManage() {
         final ClusterNetworkManageModel windowModel = (ClusterNetworkManageModel) getWindow();
 
         List<ClusterNetworkModel> manageList = windowModel.getItems();
@@ -284,17 +284,17 @@ public class ClusterNetworkListModel extends SearchableListModel
             }
 
             private void doFinish() {
-                windowModel.StopProgress();
-                Cancel();
-                ForceRefresh();
+                windowModel.stopProgress();
+                cancel();
+                forceRefresh();
             }
         };
 
         callback.executed(new FrontendMultipleActionAsyncResult(null, null, null));
-        windowModel.StartProgress(null);
+        windowModel.startProgress(null);
     }
 
-    public void Cancel()
+    public void cancel()
     {
         setWindow(null);
     }
@@ -310,17 +310,17 @@ public class ClusterNetworkListModel extends SearchableListModel
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void selectedItemsChanged()
     {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         Network network = (Network) getSelectedItem();
 
@@ -330,7 +330,7 @@ public class ClusterNetworkListModel extends SearchableListModel
                 && network.getCluster().getStatus() != NetworkStatus.NON_OPERATIONAL);
     }
 
-    public void New()
+    public void newEntity()
     {
         if (getWindow() != null)
         {
@@ -355,7 +355,7 @@ public class ClusterNetworkListModel extends SearchableListModel
 
                 }
             };
-            AsyncDataProvider.GetDataCenterById(_asyncQuery, getEntity().getStoragePoolId().getValue());
+            AsyncDataProvider.getDataCenterById(_asyncQuery, getEntity().getStoragePoolId().getValue());
         }
     }
 
@@ -366,24 +366,24 @@ public class ClusterNetworkListModel extends SearchableListModel
 
         if (command == getManageCommand())
         {
-            Manage();
+            manage();
         }
         else if (command == getSetAsDisplayCommand())
         {
-            SetAsDisplay();
+            setAsDisplay();
         }
 
         else if (StringHelper.stringsEqual(command.getName(), "OnManage")) //$NON-NLS-1$
         {
-            OnManage();
+            onManage();
         }
         else if (StringHelper.stringsEqual(command.getName(), "New")) //$NON-NLS-1$
         {
-            New();
+            newEntity();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
     }
 

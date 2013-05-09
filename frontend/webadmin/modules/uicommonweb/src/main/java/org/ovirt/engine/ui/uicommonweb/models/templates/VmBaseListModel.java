@@ -24,7 +24,7 @@ import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
 
-    protected void Export(String title)
+    protected void export(String title)
     {
         T selectedEntity = (T) getSelectedItem();
         if (selectedEntity == null)
@@ -39,12 +39,12 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
 
         ExportVmModel model = new ExportVmModel();
         setWindow(model);
-        model.StartProgress(null);
+        model.startProgress(null);
         model.setTitle(title);
         model.setHashName("export_virtual_machine"); //$NON-NLS-1$
         setupExportModel(model);
 
-        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this,
+        AsyncDataProvider.getStorageDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -62,7 +62,7 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
                             }
                         }
 
-                        vmListModel.PostExportGetStorageDomainList(filteredStorageDomains);
+                        vmListModel.postExportGetStorageDomainList(filteredStorageDomains);
                     }
                 }), extractStoragePoolIdNullSafe(selectedEntity));
 
@@ -70,7 +70,7 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
         sendWarningForNonExportableDisks(selectedEntity);
     }
 
-    private void PostExportGetStorageDomainList(List<StorageDomain> storageDomains)
+    private void postExportGetStorageDomainList(List<StorageDomain> storageDomains)
     {
         ExportVmModel model = (ExportVmModel) getWindow();
         model.getStorage().setItems(storageDomains);
@@ -95,7 +95,7 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
             tempVar.setIsDefault(true);
             tempVar.setIsCancel(true);
             model.getCommands().add(tempVar);
-            model.StopProgress();
+            model.stopProgress();
         }
         else if (storageDomains.isEmpty()) {
             model.getCollapseSnapshots().setIsChangable(false);
@@ -108,7 +108,7 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
             tempVar2.setIsDefault(true);
             tempVar2.setIsCancel(true);
             model.getCommands().add(tempVar2);
-            model.StopProgress();
+            model.stopProgress();
         }
         else if (noActiveStorage) {
             model.getCollapseSnapshots().setIsChangable(false);
@@ -123,7 +123,7 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
             tempVar3.setIsDefault(true);
             tempVar3.setIsCancel(true);
             model.getCommands().add(tempVar3);
-            model.StopProgress();
+            model.stopProgress();
         }
         else {
             showWarningOnExistingEntities(model, getEntityExportDomain());
@@ -141,7 +141,7 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
 
     protected void showWarningOnExistingEntities(ExportVmModel model, final VdcQueryType getVmOrTemplateQuery) {
         Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();
-        AsyncDataProvider.GetDataCentersByStorageDomain(new AsyncQuery(new Object[] { this, model },
+        AsyncDataProvider.getDataCentersByStorageDomain(new AsyncQuery(new Object[] { this, model },
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -149,12 +149,12 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
                         VmBaseListModel vmListModel = (VmBaseListModel) array[0];
                         ExportVmModel exportVmModel = (ExportVmModel) array[1];
                         List<StoragePool> storagePools = (List<StoragePool>) returnValue;
-                        vmListModel.PostShowWarningOnExistingVms(exportVmModel, storagePools, getVmOrTemplateQuery);
+                        vmListModel.postShowWarningOnExistingVms(exportVmModel, storagePools, getVmOrTemplateQuery);
                     }
                 }), storageDomainId);
     }
 
-    private void PostShowWarningOnExistingVms(final ExportVmModel exportModel,
+    private void postShowWarningOnExistingVms(final ExportVmModel exportModel,
             List<StoragePool> storagePools,
             VdcQueryType getVmOrTemplateQuery) {
         StoragePool storagePool = storagePools.size() > 0 ? storagePools.get(0) : null;
@@ -188,7 +188,7 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
                         windowModel.setMessage(composeEntityOnStorage(composeExistingVmsWarningMessage(foundVms)));
                     }
 
-                    exportModel.StopProgress();
+                    exportModel.stopProgress();
                 }
             };
 
@@ -197,7 +197,7 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
                     new GetAllFromExportDomainQueryParameters(storagePool.getId(), storageDomainId);
             Frontend.RunQuery(getVmOrTemplateQuery, tempVar, _asyncQuery);
         } else {
-            exportModel.StopProgress();
+            exportModel.stopProgress();
         }
     }
 

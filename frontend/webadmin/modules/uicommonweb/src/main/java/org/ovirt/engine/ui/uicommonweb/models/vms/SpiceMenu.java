@@ -17,25 +17,25 @@ public class SpiceMenu
         return items;
     }
 
-    public List<SpiceMenuItem> Descendants()
+    public List<SpiceMenuItem> descendants()
     {
         ArrayList<SpiceMenuItem> list = new ArrayList<SpiceMenuItem>();
         for (SpiceMenuItem item : items)
         {
-            DescendantsInternal(list, item);
+            descendantsInternal(list, item);
         }
 
         return list;
     }
 
-    private void DescendantsInternal(List<SpiceMenuItem> list, SpiceMenuItem root)
+    private void descendantsInternal(List<SpiceMenuItem> list, SpiceMenuItem root)
     {
         list.add(root);
         if (root instanceof SpiceMenuContainerItem)
         {
             for (SpiceMenuItem item : ((SpiceMenuContainerItem) root).getItems())
             {
-                DescendantsInternal(list, item);
+                descendantsInternal(list, item);
             }
         }
     }
@@ -46,13 +46,13 @@ public class SpiceMenu
         StringBuilder builder = new StringBuilder();
         for (SpiceMenuItem item : getItems())
         {
-            builder.append(ItemToString(item, null));
+            builder.append(itemToString(item, null));
         }
 
         return builder.toString();
     }
 
-    private String ItemToString(SpiceMenuItem item, SpiceMenuItem parent)
+    private String itemToString(SpiceMenuItem item, SpiceMenuItem parent)
     {
         StringBuilder builder = new StringBuilder();
         int parentID = parent != null ? parent.getId() : 0;
@@ -80,7 +80,7 @@ public class SpiceMenu
             {
                 for (SpiceMenuItem localItem : containerItem.getItems())
                 {
-                    builder.append(ItemToString(localItem, containerItem));
+                    builder.append(itemToString(localItem, containerItem));
                 }
             }
         }

@@ -22,11 +22,11 @@ public abstract class NetworkOperationCommandTarget implements ICommandTarget {
         NetworkItemModel<?> op1 = command.getOp1();
         NetworkItemModel<?> op2 = command.getOp2();
         List<VdsNetworkInterface> allNics = command.getAllNics();
-        ExecuteNetworkCommand(op1, op2, allNics, params);
+        executeNetworkCommand(op1, op2, allNics, params);
 
     }
 
-    protected abstract void ExecuteNetworkCommand(NetworkItemModel<?> op1,
+    protected abstract void executeNetworkCommand(NetworkItemModel<?> op1,
             NetworkItemModel<?> op2,
             List<VdsNetworkInterface> allNics, Object... params);
 }

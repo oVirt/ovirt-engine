@@ -146,14 +146,14 @@ public abstract class ConsoleModel extends EntityModel {
         setConnectCommand(new UICommand("Connect", this)); //$NON-NLS-1$
     }
 
-    protected abstract void Connect();
+    protected abstract void connect();
 
     @Override
     protected void onEntityChanged()
     {
         super.onEntityChanged();
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -163,11 +163,11 @@ public abstract class ConsoleModel extends EntityModel {
 
         if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
-            UpdateActionAvailability();
+            updateActionAvailability();
         }
     }
 
-    protected void UpdateActionAvailability()
+    protected void updateActionAvailability()
     {
     }
 
@@ -178,21 +178,21 @@ public abstract class ConsoleModel extends EntityModel {
 
         if (command == getConnectCommand())
         {
-            Connect();
+            connect();
         }
     }
 
-    public boolean IsVmConnectReady()
+    public boolean isVmConnectReady()
     {
         if (getForceVmStatusUp())
         {
             return getEntity().getStatus() == VMStatus.Up;
         }
 
-        return IsVmUp();
+        return isVmUp();
     }
 
-    public boolean IsVmUp()
+    public boolean isVmUp()
     {
         switch (getEntity().getStatus())
         {
@@ -218,7 +218,7 @@ public abstract class ConsoleModel extends EntityModel {
         VM vm = getEntity();
         if (vm.getAllowConsoleReconnect() || vm.getConsoleCurentUserName() == null ||
                 Frontend.getLoggedInUser().getUserId().equals(vm.getConsoleUserId())) {
-            command.Execute();
+            command.execute();
             return;
         }
 
@@ -235,7 +235,7 @@ public abstract class ConsoleModel extends EntityModel {
             {
                 boolean returnValue = ((Boolean) ((VdcQueryReturnValue)result).getReturnValue());
                 if (returnValue) {
-                    command.Execute();
+                    command.execute();
                 } else {
                     displayConsoleConnectConfirmPopup(command);
                 }
@@ -254,7 +254,7 @@ public abstract class ConsoleModel extends EntityModel {
         UICommand confirmAndCloseCommand = new UICommand("Confirm", new BaseCommandTarget() { //$NON-NLS-1$
             @Override
             public void executeCommand(UICommand uiCommand) {
-                onConfirmCommand.Execute();
+                onConfirmCommand.execute();
                 parentModel.setWindow(null);
             }
         });

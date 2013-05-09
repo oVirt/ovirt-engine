@@ -101,7 +101,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if (!sameEntity(listModel.getSelectedItem(), model)) {
-                    getView().setNotSelected(model.IsVmUp());
+                    getView().setNotSelected(model.isVmUp());
                 } else {
                     getView().setSelected();
                 }
@@ -165,7 +165,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
 
     void executeCommand(UICommand command) {
         if (command != null) {
-            command.Execute();
+            command.execute();
         }
     }
 
@@ -216,7 +216,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
 
     void setupDefaultVmStyles() {
         if (!isSelected()) {
-            if (model.IsVmUp()) {
+            if (model.isVmUp()) {
                 getView().setVmUpStyle();
             } else {
                 getView().setVmDownStyle();

@@ -122,7 +122,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         Collections.sort(getActiveStorageDomains(), new Linq.StorageDomainByNameComparer());
 
         if (!getActiveStorageDomains().isEmpty()) {
-            AsyncDataProvider.GetDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
                     MoveOrCopyDiskModel model = (MoveOrCopyDiskModel) target;
@@ -223,7 +223,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             getCommands().add(cancelCommand);
         }
 
-        StopProgress();
+        stopProgress();
     }
 
     protected ArrayList<StorageDomain> filterStoragesByDatacenterId(ArrayList<StorageDomain> storageDomains,
@@ -264,17 +264,17 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         return null;
     }
 
-    protected void OnExecute() {
+    protected void onExecute() {
         if (this.getProgress() != null)
         {
             return;
         }
 
-        if (!this.Validate()) {
+        if (!this.validate()) {
             return;
         }
 
-        StartProgress(null);
+        startProgress(null);
     }
 
     protected ArrayList<VdcActionParametersBase> getParameters() {
@@ -321,10 +321,10 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     {
         super.executeCommand(command);
 
-        OnExecute();
+        onExecute();
     }
 
-    public boolean Validate() {
+    public boolean validate() {
         if (getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED
                 || getQuotaEnforcementType() == QuotaEnforcementTypeEnum.SOFT_ENFORCEMENT) {
             return true;
@@ -340,7 +340,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     }
 
     protected void cancel() {
-        StopProgress();
+        stopProgress();
         ((ListModel) getEntity()).setWindow(null);
     }
 }

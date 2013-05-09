@@ -22,8 +22,8 @@ public class EditDiskModel extends AbstractDiskModel
     }
 
     @Override
-    public void Initialize() {
-        super.Initialize();
+    public void initialize() {
+        super.initialize();
 
         getStorageDomain().setIsChangable(false);
         getHost().setIsChangable(false);
@@ -48,7 +48,7 @@ public class EditDiskModel extends AbstractDiskModel
             setVolumeFormat(diskImage.getVolumeFormat());
             Guid storageDomainId = diskImage.getStorageIds().get(0);
 
-            AsyncDataProvider.GetStorageDomainById(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getStorageDomainById(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
                     DiskModel diskModel = (DiskModel) target;
@@ -85,7 +85,7 @@ public class EditDiskModel extends AbstractDiskModel
 
     @Override
     public void updateInterface(StoragePool datacenter) {
-        getDiskInterface().setItems(AsyncDataProvider.GetDiskInterfaceList());
+        getDiskInterface().setItems(AsyncDataProvider.getDiskInterfaceList());
         getDiskInterface().setSelectedItem(getDisk().getDiskInterface());
     }
 
@@ -105,14 +105,14 @@ public class EditDiskModel extends AbstractDiskModel
             return;
         }
         super.onSave();
-        StartProgress(null);
+        startProgress(null);
 
         UpdateVmDiskParameters parameters = new UpdateVmDiskParameters(getVmId(), getDisk().getId(), getDisk());
         Frontend.RunAction(VdcActionType.UpdateVmDisk, parameters, new IFrontendActionAsyncCallback() {
             @Override
             public void executed(FrontendActionAsyncResult result) {
                 EditDiskModel diskModel = (EditDiskModel) result.getState();
-                diskModel.StopProgress();
+                diskModel.stopProgress();
                 diskModel.cancel();
             }
         }, this);

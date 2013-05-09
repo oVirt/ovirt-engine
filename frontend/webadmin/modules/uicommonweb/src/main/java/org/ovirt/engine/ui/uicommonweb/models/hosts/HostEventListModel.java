@@ -25,7 +25,7 @@ public class HostEventListModel extends SubTabEventListModel
 
         if (getEntity() != null)
         {
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
         }
         else
         {
@@ -50,7 +50,7 @@ public class HostEventListModel extends SubTabEventListModel
 
         if (e.PropertyName.equals("vds_name")) //$NON-NLS-1$
         {
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
         }
     }
 }

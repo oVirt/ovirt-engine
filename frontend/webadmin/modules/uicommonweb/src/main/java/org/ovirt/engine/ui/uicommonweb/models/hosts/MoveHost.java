@@ -59,23 +59,23 @@ public class MoveHost extends ListModel
         getCluster().getSelectedItemChangedEvent().addListener(this);
     }
 
-    private void Cluster_SelectedItemChanged()
+    private void cluster_SelectedItemChanged()
     {
         if (getCluster().getSelectedItem() != null)
         {
-            AsyncDataProvider.GetHostList(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getHostList(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
 
                     MoveHost moveHost = (MoveHost) target;
                     ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
-                    moveHost.PostGetHostList(hosts);
+                    moveHost.postGetHostList(hosts);
                 }
             }));
         }
     }
 
-    private void PostGetHostList(ArrayList<VDS> hosts) {
+    private void postGetHostList(ArrayList<VDS> hosts) {
 
         VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
         ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) getCluster().getItems();
@@ -119,11 +119,11 @@ public class MoveHost extends ListModel
 
         if (ev.matchesDefinition(selectedItemChangedEventDefinition) && sender == getCluster())
         {
-            Cluster_SelectedItemChanged();
+            cluster_SelectedItemChanged();
         }
     }
 
-    public boolean Validate()
+    public boolean validate()
     {
         getCluster().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 

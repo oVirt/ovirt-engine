@@ -654,7 +654,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
         vncKeyboardLayoutEditor = new ListModelListBoxEditor<Object>(new AbstractRenderer<Object>() {
 
-            final String globalLayout = (String)AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.VncKeyboardLayout);
+            final String globalLayout = (String)AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayout);
 
             @Override
             public String render(Object object) {
@@ -894,7 +894,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         nativeUsbWarningMessage.setVisible(object.getUsbPolicy().getSelectedItem() == UsbPolicy.ENABLED_NATIVE
                 && vdsGroup != null
                 && vdsGroup.getcompatibility_version() != null
-                && !(Boolean) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.MigrationSupportForNativeUsb,
+                && !(Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MigrationSupportForNativeUsb,
                         vdsGroup.getcompatibility_version().getValue()));
     }
 

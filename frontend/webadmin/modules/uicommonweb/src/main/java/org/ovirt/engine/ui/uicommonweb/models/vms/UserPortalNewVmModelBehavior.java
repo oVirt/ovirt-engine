@@ -37,13 +37,13 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
     private static final ActionGroup CREATE_VM = ActionGroup.CREATE_VM;
 
     @Override
-    public void Initialize(SystemTreeItemModel systemTreeSelectedItem)
+    public void initialize(SystemTreeItemModel systemTreeSelectedItem)
     {
         // The custom properties tab should be hidden on the User Portal
         getModel().setIsCustomPropertiesTabAvailable(false);
 
         // Get datacenters with permitted create action
-        AsyncDataProvider.GetDataCentersWithPermittedActionOnClusters(new AsyncQuery(getModel(),
+        AsyncDataProvider.getDataCentersWithPermittedActionOnClusters(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -58,14 +58,14 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                             }
                         }
                         model.setIsDatacenterAvailable(list.size() > 0);
-                        model.SetDataCenter(model, list);
+                        model.setDataCenter(model, list);
 
                     }
                 }, getModel().getHash()), CREATE_VM, true, false);
     }
 
     @Override
-    public void DataCenter_SelectedItemChanged()
+    public void dataCenter_SelectedItemChanged()
     {
         StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
         getModel().setIsHostAvailable(dataCenter.getstorage_pool_type() != StorageType.LOCALFS);
@@ -105,12 +105,12 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
         ArrayList<VmTemplate> templates =
                 (ArrayList<VmTemplate>) returnValueList.get(1).getReturnValue();
 
-        InitClusters(clusters, true, false);
-        InitTemplates(templates);
-        InitCdImage();
+        initClusters(clusters, true, false);
+        initTemplates(templates);
+        initCdImage();
     }
 
-    private void InitClusters(ArrayList<VDSGroup> clusters, boolean supportsVirtService, boolean supportsGlusterService)
+    private void initClusters(ArrayList<VDSGroup> clusters, boolean supportsVirtService, boolean supportsGlusterService)
     {
         // Filter clusters list (include only clusters that belong to the selected datacenter)
         ArrayList<VDSGroup> filteredList = new ArrayList<VDSGroup>();
@@ -126,10 +126,10 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
         }
 
         Collections.sort(filteredList, new Linq.VdsGroupByNameComparer());
-        getModel().SetClusters(getModel(), filteredList, null);
+        getModel().setClusters(getModel(), filteredList, null);
     }
 
-    private void InitTemplates(ArrayList<VmTemplate> templates)
+    private void initTemplates(ArrayList<VmTemplate> templates)
     {
         // Filter templates list (include only templates that belong to the selected datacenter)
         ArrayList<VmTemplate> templatesList = new ArrayList<VmTemplate>();
@@ -172,7 +172,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                 oldTemplate != null ? new Linq.TemplatePredicate(oldTemplate.getId())
                         : new Linq.TemplatePredicate(NGuid.Empty)));
 
-        UpdateIsDisksAvailable();
+        updateIsDisksAvailable();
     }
 
     /**

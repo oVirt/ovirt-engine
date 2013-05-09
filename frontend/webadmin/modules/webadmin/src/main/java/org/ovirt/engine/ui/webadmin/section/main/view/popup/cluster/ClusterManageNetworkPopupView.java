@@ -241,7 +241,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
             protected boolean canEdit(EntityModel model) {
                 ClusterNetworkModel clusterNetworkModel = ((ClusterNetworkModel) model);
                 Boolean migrationNetworkEnabled =
-                        (Boolean) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.MigrationNetworkEnabled,
+                        (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MigrationNetworkEnabled,
                          clusterNetworkModel.getCluster().getcompatibility_version().toString());
                 return migrationNetworkEnabled && clusterNetworkModel.isAttached();
             }

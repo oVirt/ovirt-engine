@@ -102,7 +102,7 @@ public class StorageIsoListModel extends SearchableListModel
 
         if (getIsAvailable())
         {
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
         }
     }
 
@@ -148,7 +148,7 @@ public class StorageIsoListModel extends SearchableListModel
         imagesListParams.setForceRefresh(true);
         imagesListParams.setRefresh(getIsQueryFirstTime());
 
-        StartProgress(null);
+        startProgress(null);
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -158,7 +158,7 @@ public class StorageIsoListModel extends SearchableListModel
             {
                 VdcQueryReturnValue returnValue = (VdcQueryReturnValue) returnObject;
 
-                StopProgress();
+                stopProgress();
 
                 if (!returnValue.getSucceeded()) {
                     return;
@@ -184,7 +184,7 @@ public class StorageIsoListModel extends SearchableListModel
                     entityList.add(entityItem);
                 }
 
-                UpdateIsoModels(entityList);
+                updateIsoModels(entityList);
                 setIsEmpty(entityList.isEmpty());
             }
         };
@@ -199,7 +199,7 @@ public class StorageIsoListModel extends SearchableListModel
         syncSearch();
     }
 
-    private void UpdateIsoModels(ArrayList<EntityModel> items)
+    private void updateIsoModels(ArrayList<EntityModel> items)
     {
         ArrayList<EntityModel> newItems = new ArrayList<EntityModel>();
 

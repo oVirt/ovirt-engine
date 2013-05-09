@@ -40,7 +40,7 @@ public class RemoveStorageModel extends Model
         getFormat().setEntity(false);
     }
 
-    public boolean Validate()
+    public boolean validate()
     {
         getHostList().setIsValid(getHostList().getSelectedItem() != null);
 

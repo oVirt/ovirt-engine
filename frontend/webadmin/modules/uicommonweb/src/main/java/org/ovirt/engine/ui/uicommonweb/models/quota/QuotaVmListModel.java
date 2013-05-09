@@ -54,7 +54,7 @@ public class QuotaVmListModel extends SearchableListModel {
     protected void onEntityChanged()
     {
         super.onEntityChanged();
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
     @Override

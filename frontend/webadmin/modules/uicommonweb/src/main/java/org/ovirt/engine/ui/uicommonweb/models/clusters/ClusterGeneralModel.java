@@ -173,7 +173,7 @@ public class ClusterGeneralModel extends EntityModel {
 
         if (getEntity() != null)
         {
-            UpdateVolumeDetails();
+            updateVolumeDetails();
             updateAlerts();
             updateConsoleAddressPartiallyOverridden(getEntity());
             updateProperties();
@@ -234,7 +234,7 @@ public class ClusterGeneralModel extends EntityModel {
         command.setIsCancel(true);
         hostsModel.getCommands().add(command);
 
-        hostsModel.StartProgress(null);
+        hostsModel.startProgress(null);
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -261,10 +261,10 @@ public class ClusterGeneralModel extends EntityModel {
                     }
                     hostsModel.getHosts().setItems(list);
                 }
-                hostsModel.StopProgress();
+                hostsModel.stopProgress();
             }
         };
-        AsyncDataProvider.GetGlusterHostsNewlyAdded(_asyncQuery, getEntity().getId(), true);
+        AsyncDataProvider.getGlusterHostsNewlyAdded(_asyncQuery, getEntity().getId(), true);
 
     }
 
@@ -279,7 +279,7 @@ public class ClusterGeneralModel extends EntityModel {
             return;
         }
 
-        hostsModel.StartProgress(null);
+        hostsModel.startProgress(null);
         ArrayList<VdcActionParametersBase> parametersList = new ArrayList<VdcActionParametersBase>();
         for (Object object : hostsModel.getHosts().getItems()) {
             HostDetailModel hostDetailModel = (HostDetailModel) ((EntityModel) object).getEntity();
@@ -309,7 +309,7 @@ public class ClusterGeneralModel extends EntityModel {
 
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
-                        hostsModel.StopProgress();
+                        hostsModel.stopProgress();
                         boolean isAllCanDoPassed = true;
                         for (VdcReturnValueBase returnValueBase : result.getReturnValue())
                         {
@@ -322,7 +322,7 @@ public class ClusterGeneralModel extends EntityModel {
                         if (isAllCanDoPassed)
                         {
                             updateAlerts();
-                            Cancel();
+                            cancel();
                         }
                     }
                 }, null);
@@ -350,7 +350,7 @@ public class ClusterGeneralModel extends EntityModel {
         command.setIsCancel(true);
         hostsModel.getCommands().add(command);
 
-        hostsModel.StartProgress(null);
+        hostsModel.startProgress(null);
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -373,10 +373,10 @@ public class ClusterGeneralModel extends EntityModel {
                     }
                     hostsModel.getHosts().setItems(hostList);
                 }
-                hostsModel.StopProgress();
+                hostsModel.stopProgress();
             }
         };
-        AsyncDataProvider.GetGlusterHostsNewlyAdded(_asyncQuery, getEntity().getId(), true);
+        AsyncDataProvider.getGlusterHostsNewlyAdded(_asyncQuery, getEntity().getId(), true);
     }
 
     public void onDetachNewGlusterHosts()
@@ -398,16 +398,16 @@ public class ClusterGeneralModel extends EntityModel {
             parametersList.add(new RemoveGlusterServerParameters(getEntity().getId(), host, force));
         }
         Frontend.RunMultipleAction(VdcActionType.RemoveGlusterServer, parametersList);
-        Cancel();
+        cancel();
     }
 
-    public void Cancel()
+    public void cancel()
     {
         setWindow(null);
     }
 
 
-    private void UpdateVolumeDetails()
+    private void updateVolumeDetails()
     {
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -435,7 +435,7 @@ public class ClusterGeneralModel extends EntityModel {
                 setNoOfVolumesDown(volumesDown);
             }
         };
-        AsyncDataProvider.GetVolumeList(_asyncQuery, getEntity().getname());
+        AsyncDataProvider.getVolumeList(_asyncQuery, getEntity().getname());
     }
 
     private void updateAlerts()
@@ -462,7 +462,7 @@ public class ClusterGeneralModel extends EntityModel {
                     }
                 }
             };
-            AsyncDataProvider.GetGlusterHostsNewlyAdded(_asyncQuery, getEntity().getId(), false);
+            AsyncDataProvider.getGlusterHostsNewlyAdded(_asyncQuery, getEntity().getId(), false);
         }
         else
         {
@@ -494,7 +494,7 @@ public class ClusterGeneralModel extends EntityModel {
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
     }
 

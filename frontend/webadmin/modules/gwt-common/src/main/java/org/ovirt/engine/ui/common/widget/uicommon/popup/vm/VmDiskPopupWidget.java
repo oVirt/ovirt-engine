@@ -676,7 +676,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         diskModel.setSanStorageModel(sanStorageModel);
 
         // Execute 'UpdateCommand' to call 'GetDeviceList'
-        sanStorageModel.getUpdateCommand().Execute();
+        sanStorageModel.getUpdateCommand().execute();
     }
 
     public boolean handleEnterKeyDisabled() {

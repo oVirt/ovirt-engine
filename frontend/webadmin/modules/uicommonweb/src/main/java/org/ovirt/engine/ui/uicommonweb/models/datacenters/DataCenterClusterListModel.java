@@ -23,7 +23,7 @@ public class DataCenterClusterListModel extends ClusterListModel
     protected void onEntityChanged()
     {
         super.onEntityChanged();
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
     @Override
@@ -43,7 +43,7 @@ public class DataCenterClusterListModel extends ClusterListModel
 
         if (e.PropertyName.equals("name")) //$NON-NLS-1$
         {
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
         }
     }
 }

@@ -9,10 +9,10 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ISpicePlugin;
 
 public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
     private static Logger logger = Logger.getLogger(SpicePluginImpl.class.getName());
-    private final Configurator configurator = (Configurator) TypeResolver.getInstance().Resolve(Configurator.class);
+    private final Configurator configurator = (Configurator) TypeResolver.getInstance().resolve(Configurator.class);
 
     @Override
-    public void Connect() {
+    public void connect() {
         logger.warning("Connecting via spice..."); //$NON-NLS-1$
 
         if (configurator.isClientLinuxFirefox()) {
@@ -369,7 +369,7 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
                                                    }-*/;
 
     @Override
-    public void Install() {
+    public void install() {
         logger.finer("Spice must be installed ahead..."); //$NON-NLS-1$
         InstallNatively();
     }

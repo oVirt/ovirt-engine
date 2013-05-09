@@ -33,7 +33,7 @@ public class ApplicationModeHelper {
 
     public static ArrayList<EventNotificationEntity> getModeSpecificEventNotificationTypeList() {
         ArrayList<EventNotificationEntity> subList = new ArrayList<EventNotificationEntity>();
-        for (EventNotificationEntity entity : AsyncDataProvider.GetEventNotificationTypeList()) {
+        for (EventNotificationEntity entity : AsyncDataProvider.getEventNotificationTypeList()) {
             if ((entity.getAvailableInModes() & UI_MODE.getValue()) > 0) {
                 subList.add(entity);
             }

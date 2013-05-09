@@ -120,7 +120,7 @@ public class EditQuotaClusterModel extends EntityModel {
         });
     }
 
-    public boolean Validate() {
+    public boolean validate() {
         IntegerValidation intValidation = new IntegerValidation();
         intValidation.setMinimum(1);
         getSpecificMemValue().setIsValid(true);

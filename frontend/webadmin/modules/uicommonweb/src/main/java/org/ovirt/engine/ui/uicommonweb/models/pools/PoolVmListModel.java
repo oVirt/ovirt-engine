@@ -53,14 +53,14 @@ public class PoolVmListModel extends VmListModel
 
         setDetachCommand(new UICommand("Detach", this)); //$NON-NLS-1$
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void onEntityChanged()
     {
         super.onEntityChanged();
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
     @Override
@@ -80,11 +80,11 @@ public class PoolVmListModel extends VmListModel
 
         if (e.PropertyName.equals("vm_pool_name")) //$NON-NLS-1$
         {
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
         }
     }
 
-    public void Detach()
+    public void detach()
     {
         if (getConfirmWindow() != null)
         {
@@ -125,11 +125,11 @@ public class PoolVmListModel extends VmListModel
         model.getCommands().add(tempVar2);
     }
 
-    public void OnDetach()
+    public void onDetach()
     {
         ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
 
-        boolean latchChecked = !model.Validate();
+        boolean latchChecked = !model.validate();
 
         if (model.getProgress() != null || latchChecked)
         {
@@ -143,14 +143,14 @@ public class PoolVmListModel extends VmListModel
             list.add(new RemoveVmFromPoolParameters(vm.getId(), true));
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.RemoveVmFromPool, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.StopProgress();
+                        localModel.stopProgress();
                         cancel();
 
                     }
@@ -161,14 +161,14 @@ public class PoolVmListModel extends VmListModel
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void selectedItemsChanged()
     {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -178,11 +178,11 @@ public class PoolVmListModel extends VmListModel
 
         if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
-            UpdateActionAvailability();
+            updateActionAvailability();
         }
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         // var items = SelectedItems != null ? SelectedItems.Cast<VM>().ToList() : new List<VM>();
         ArrayList<VM> items =
@@ -208,11 +208,11 @@ public class PoolVmListModel extends VmListModel
 
         if (command == getDetachCommand())
         {
-            Detach();
+            detach();
         }
         if (StringHelper.stringsEqual(command.getName(), "OnDetach")) //$NON-NLS-1$
         {
-            OnDetach();
+            onDetach();
         }
         if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {

@@ -59,7 +59,7 @@ public class UserPermissionModel extends Model
         setRole(new ListModel());
     }
 
-    public boolean Validate()
+    public boolean validate()
     {
         getRole().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 

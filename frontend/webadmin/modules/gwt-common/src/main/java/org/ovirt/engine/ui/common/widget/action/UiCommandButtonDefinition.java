@@ -222,7 +222,7 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
 
     @Override
     public void onClick(List<T> selectedItems) {
-        command.Execute();
+        command.execute();
     }
 
     @Override

@@ -83,7 +83,7 @@ public class VmMonitorModel extends EntityModel
             refreshTimer = new GridTimer("VmMonitorModel") { //$NON-NLS-1$
                         @Override
                         public void execute() {
-                            Refresh();
+                            refresh();
                         }
                     };
             refreshTimer.setRefreshRate(1000);
@@ -120,11 +120,11 @@ public class VmMonitorModel extends EntityModel
 
         if (command == getRefreshCommand())
         {
-            Refresh();
+            refresh();
         }
     }
 
-    private void Refresh()
+    private void refresh()
     {
         if (getEntity() == null)
         {
@@ -146,6 +146,6 @@ public class VmMonitorModel extends EntityModel
                         : vm1.getUsageNetworkPercent()));
             }
         };
-        AsyncDataProvider.GetVmById(_asyncQuery, vm.getId());
+        AsyncDataProvider.getVmById(_asyncQuery, vm.getId());
     }
 }

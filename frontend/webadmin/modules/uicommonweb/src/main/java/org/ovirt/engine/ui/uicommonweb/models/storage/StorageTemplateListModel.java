@@ -40,7 +40,7 @@ public class StorageTemplateListModel extends SearchableListModel
     {
         super.onEntityChanged();
 
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
     @Override

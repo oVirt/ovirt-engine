@@ -56,7 +56,7 @@ public class TemplateStorageListModel extends SearchableListModel
 
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -66,10 +66,10 @@ public class TemplateStorageListModel extends SearchableListModel
 
         if (getEntity() != null)
         {
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
         }
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -116,7 +116,7 @@ public class TemplateStorageListModel extends SearchableListModel
         {
             this.value = value;
             VmTemplate template = (VmTemplate) getEntity();
-            AsyncDataProvider.GetTemplateDiskList(new AsyncQuery(this,
+            AsyncDataProvider.getTemplateDiskList(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -151,7 +151,7 @@ public class TemplateStorageListModel extends SearchableListModel
         }
     }
 
-    private void Remove()
+    private void remove()
     {
         VmTemplate template = (VmTemplate) getEntity();
 
@@ -187,7 +187,7 @@ public class TemplateStorageListModel extends SearchableListModel
         model.getCommands().add(tempVar2);
     }
 
-    private void OnRemove()
+    private void onRemove()
     {
         VmTemplate template = (VmTemplate) getEntity();
         ConfirmationModel model = (ConfirmationModel) getWindow();
@@ -202,22 +202,22 @@ public class TemplateStorageListModel extends SearchableListModel
             parameters.add(params);
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.RemoveDisk, parameters,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.StopProgress();
-                        Cancel();
+                        localModel.stopProgress();
+                        cancel();
                     }
                 }, this);
 
-        Cancel();
+        cancel();
     }
 
-    private void Cancel()
+    private void cancel()
     {
         setWindow(null);
     }
@@ -226,7 +226,7 @@ public class TemplateStorageListModel extends SearchableListModel
     protected void selectedItemsChanged()
     {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -236,11 +236,11 @@ public class TemplateStorageListModel extends SearchableListModel
 
         if (e.PropertyName.equals("status")) //$NON-NLS-1$
         {
-            UpdateActionAvailability();
+            updateActionAvailability();
         }
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         VmTemplate template = (VmTemplate) getEntity();
         ArrayList<StorageDomainModel> selectedItems = getSelectedItems() != null ?
@@ -278,15 +278,15 @@ public class TemplateStorageListModel extends SearchableListModel
 
         if (command == getRemoveCommand())
         {
-            Remove();
+            remove();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
-            OnRemove();
+            onRemove();
         }
     }
 

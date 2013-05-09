@@ -138,7 +138,7 @@ public class ClusterServiceModel extends EntityModel {
                 getHostList().setItems(hostList);
             }
         };
-        AsyncDataProvider.GetHostListByCluster(asyncQuery, getEntity().getname());
+        AsyncDataProvider.getHostListByCluster(asyncQuery, getEntity().getname());
     }
 
     private void updateServiceTypeList() {
@@ -165,7 +165,7 @@ public class ClusterServiceModel extends EntityModel {
                 filterServices();
             }
         };
-        AsyncDataProvider.GetClusterGlusterServices(asyncQuery, getEntity().getId());
+        AsyncDataProvider.getClusterGlusterServices(asyncQuery, getEntity().getId());
     }
 
     private void filterServices() {

@@ -78,7 +78,7 @@ public class DataCenterNetworkListModel extends SearchableListModel
     public DataCenterNetworkListModel()
     {
         // get management network name
-        ENGINE_NETWORK = (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
+        ENGINE_NETWORK = (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
 
         setTitle(ConstantsManager.getInstance().getConstants().logicalNetworksTitle());
         setHashName("logical_networks"); //$NON-NLS-1$
@@ -87,14 +87,14 @@ public class DataCenterNetworkListModel extends SearchableListModel
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void onEntityChanged()
     {
         super.onEntityChanged();
-        getSearchCommand().Execute();
+        getSearchCommand().execute();
     }
 
     @Override
@@ -190,17 +190,17 @@ public class DataCenterNetworkListModel extends SearchableListModel
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void selectedItemsChanged()
     {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         List tempVar = getSelectedItems();
         ArrayList selectedItems =

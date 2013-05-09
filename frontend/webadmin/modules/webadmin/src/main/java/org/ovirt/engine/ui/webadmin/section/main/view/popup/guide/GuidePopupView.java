@@ -203,7 +203,7 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> impl
         guideButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                command.Execute();
+                command.execute();
             }
         });
 

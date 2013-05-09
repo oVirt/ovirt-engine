@@ -418,7 +418,7 @@ public class PoolGeneralModel extends EntityModel
 
         if (getEntity() != null)
         {
-            UpdateProperties();
+            updateProperties();
         }
     }
 
@@ -426,10 +426,10 @@ public class PoolGeneralModel extends EntityModel
     protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
     {
         super.entityPropertyChanged(sender, e);
-        UpdateProperties();
+        updateProperties();
     }
 
-    private void UpdateProperties()
+    private void updateProperties()
     {
         VmPool pool = (VmPool) getEntity();
 
@@ -473,10 +473,10 @@ public class PoolGeneralModel extends EntityModel
                     translator = EnumTranslator.Create(UsbPolicy.class);
                     poolGeneralModel.setUsbPolicy(translator.get(getvm().getUsbPolicy()));
 
-                    setHasDomain(AsyncDataProvider.IsWindowsOsType(getvm().getVmOs()));
+                    setHasDomain(AsyncDataProvider.isWindowsOsType(getvm().getVmOs()));
                     poolGeneralModel.setDomain(getvm().getVmDomain());
 
-                    setHasTimeZone(AsyncDataProvider.IsWindowsOsType(getvm().getVmOs()));
+                    setHasTimeZone(AsyncDataProvider.isWindowsOsType(getvm().getVmOs()));
                     poolGeneralModel.setTimeZone(getvm().getTimeZone());
 
                     poolGeneralModel.setIsStateless(getvm().isStateless());
@@ -502,7 +502,7 @@ public class PoolGeneralModel extends EntityModel
                                     }
                                 }
 
-                                poolGeneralModel1.UpdateStorageDomain();
+                                poolGeneralModel1.updateStorageDomain();
                             }
                         };
 
@@ -515,7 +515,7 @@ public class PoolGeneralModel extends EntityModel
                                 .getConstants()
                                 .anyHostInCluster());
 
-                        poolGeneralModel.UpdateStorageDomain();
+                        poolGeneralModel.updateStorageDomain();
                     }
                 }
                 else
@@ -546,7 +546,7 @@ public class PoolGeneralModel extends EntityModel
                 _asyncQuery);
     }
 
-    private void UpdateStorageDomain()
+    private void updateStorageDomain()
     {
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);

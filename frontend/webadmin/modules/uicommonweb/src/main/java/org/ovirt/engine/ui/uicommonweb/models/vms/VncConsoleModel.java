@@ -30,12 +30,12 @@ public class VncConsoleModel extends ConsoleModel
     }
 
     @Override
-    protected void Connect()
+    protected void connect()
     {
         if (getEntity() == null || getEntity().getRunOnVds() == null) {
             return;
         }
-        getLogger().Debug("VNC console info..."); //$NON-NLS-1$
+        getLogger().debug("VNC console info..."); //$NON-NLS-1$
 
         UICommand setVmTicketCommand = new UICommand("setVmCommand", new BaseCommandTarget() { //$NON-NLS-1$
             @Override
@@ -97,9 +97,9 @@ public class VncConsoleModel extends ConsoleModel
     }
 
     @Override
-    protected void UpdateActionAvailability()
+    protected void updateActionAvailability()
     {
-        super.UpdateActionAvailability();
+        super.updateActionAvailability();
 
         getConnectCommand().setIsExecutionAllowed(getEntity() != null
                 && getEntity().getDisplayType() == DisplayType.vnc

@@ -15,15 +15,15 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 public class ImportStorageModelBehavior extends StorageModelBehavior
 {
     @Override
-    public List<StoragePool> FilterDataCenter(List<StoragePool> source)
+    public List<StoragePool> filterDataCenter(List<StoragePool> source)
     {
         return Linq.toList(Linq.where(source, new Linq.DataCenterStatusPredicate(StoragePoolStatus.Up)));
     }
 
     @Override
-    public void UpdateItemsAvailability()
+    public void updateItemsAvailability()
     {
-        super.UpdateItemsAvailability();
+        super.updateItemsAvailability();
 
         StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
 
@@ -31,7 +31,7 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
         {
             if (item.getRole() == StorageDomainType.ISO)
             {
-                AsyncDataProvider.GetIsoDomainByDataCenterId(new AsyncQuery(new Object[] { this, item },
+                AsyncDataProvider.getIsoDomainByDataCenterId(new AsyncQuery(new Object[] { this, item },
                         new INewAsyncCallback() {
                             @Override
                             public void onSuccess(Object target, Object returnValue) {
@@ -39,14 +39,14 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
                                 Object[] array = (Object[]) target;
                                 ImportStorageModelBehavior behavior = (ImportStorageModelBehavior) array[0];
                                 IStorageModel storageModelItem = (IStorageModel) array[1];
-                                behavior.PostUpdateItemsAvailability(behavior, storageModelItem, returnValue == null);
+                                behavior.postUpdateItemsAvailability(behavior, storageModelItem, returnValue == null);
 
                             }
                         }, getHash()), dataCenter.getId());
             }
             else if (item.getRole() == StorageDomainType.ImportExport)
             {
-                AsyncDataProvider.GetExportDomainByDataCenterId(new AsyncQuery(new Object[] { this, item },
+                AsyncDataProvider.getExportDomainByDataCenterId(new AsyncQuery(new Object[] { this, item },
                         new INewAsyncCallback() {
                             @Override
                             public void onSuccess(Object target, Object returnValue) {
@@ -54,19 +54,19 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
                                 Object[] array = (Object[]) target;
                                 ImportStorageModelBehavior behavior = (ImportStorageModelBehavior) array[0];
                                 IStorageModel storageModelItem = (IStorageModel) array[1];
-                                behavior.PostUpdateItemsAvailability(behavior, storageModelItem, returnValue == null);
+                                behavior.postUpdateItemsAvailability(behavior, storageModelItem, returnValue == null);
 
                             }
                         }, getHash()), dataCenter.getId());
             }
             else
             {
-                PostUpdateItemsAvailability(this, item, false);
+                postUpdateItemsAvailability(this, item, false);
             }
         }
     }
 
-    public void PostUpdateItemsAvailability(ImportStorageModelBehavior behavior,
+    public void postUpdateItemsAvailability(ImportStorageModelBehavior behavior,
             IStorageModel item,
             boolean isNoStorageAttached)
     {
@@ -80,6 +80,6 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
         model.setIsSelectable((dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)
                 || (item.getRole() == StorageDomainType.ISO && isNoStorageAttached) || (item.getRole() == StorageDomainType.ImportExport && isNoStorageAttached)));
 
-        behavior.OnStorageModelUpdated(item);
+        behavior.onStorageModelUpdated(item);
     }
 }

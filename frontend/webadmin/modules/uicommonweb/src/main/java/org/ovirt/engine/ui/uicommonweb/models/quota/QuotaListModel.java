@@ -156,10 +156,10 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         Quota newQuota = new Quota();
         qModel.setEntity(newQuota);
         setWindow(qModel);
-        qModel.StartProgress(null);
+        qModel.startProgress(null);
 
         if(populateDataCenter){
-            AsyncDataProvider.GetDataCenterList(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getDataCenterList(new AsyncQuery(this, new INewAsyncCallback() {
 
                 @Override
                 public void onSuccess(Object model, Object returnValue) {
@@ -194,7 +194,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                 if(selectedDataCenter == null){
                     return;
                 }
-                AsyncDataProvider.GetClusterList(new AsyncQuery(this, new INewAsyncCallback() {
+                AsyncDataProvider.getClusterList(new AsyncQuery(this, new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
                         ArrayList<VDSGroup> clusterList = (ArrayList<VDSGroup>) returnValue;
@@ -218,14 +218,14 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
                     }
                 }), selectedDataCenter.getId());
-                AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
+                AsyncDataProvider.getStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
 
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
                         ArrayList<StorageDomain> storageList = (ArrayList<StorageDomain>) returnValue;
                         if (storageList == null || storageList.size() == 0) {
                             qModel.getAllDataCenterStorages().setItems(new ArrayList<QuotaStorage>());
-                            qModel.StopProgress();
+                            qModel.stopProgress();
                             return;
                         }
                         ArrayList<QuotaStorage> quotaStorageList = new ArrayList<QuotaStorage>();
@@ -243,7 +243,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                             quotaStorageList.add(quotaStorage);
                         }
                         qModel.getAllDataCenterStorages().setItems(quotaStorageList);
-                        qModel.StopProgress();
+                        qModel.stopProgress();
                     }
                 }), selectedDataCenter.getId());
 
@@ -267,7 +267,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
     private void onCreateQuotaInternal(boolean isClone) {
         QuotaModel model = (QuotaModel) getWindow();
-        if (!model.Validate()) {
+        if (!model.validate()) {
             return;
         }
         Quota quota = (Quota) model.getEntity();
@@ -422,14 +422,14 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                 }
 
                 setWindow(qModel);
-                qModel.StartProgress(null);
+                qModel.startProgress(null);
 
                 qModel.getDataCenter().getSelectedItemChangedEvent().addListener(new IEventListener() {
 
                     @Override
                     public void eventRaised(Event ev, Object sender, EventArgs args) {
                         StoragePool selectedDataCenter = (StoragePool) qModel.getDataCenter().getSelectedItem();
-                        AsyncDataProvider.GetClusterList(new AsyncQuery(this, new INewAsyncCallback() {
+                        AsyncDataProvider.getClusterList(new AsyncQuery(this, new INewAsyncCallback() {
 
                             @Override
                             public void onSuccess(Object model, Object returnValue) {
@@ -474,7 +474,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                                 }
                             }
                         }), selectedDataCenter.getId());
-                        AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
+                        AsyncDataProvider.getStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
 
                             @Override
                             public void onSuccess(Object model, Object returnValue) {
@@ -485,7 +485,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                                     if (quota.getGlobalQuotaStorage() == null) {
                                         qModel.getSpecificStorageQuota().setEntity(true);
                                     }
-                                    qModel.StopProgress();
+                                    qModel.stopProgress();
                                     return;
                                 }
                                 ArrayList<QuotaStorage> quotaStorageList = new ArrayList<QuotaStorage>();
@@ -519,7 +519,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                                 if (quota.getGlobalQuotaStorage() == null) {
                                     qModel.getSpecificStorageQuota().setEntity(true);
                                 }
-                                qModel.StopProgress();
+                                qModel.stopProgress();
                             }
                         }), selectedDataCenter.getId());
 
@@ -593,7 +593,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
             prms.add(crudParameters);
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.RemoveQuota, prms,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -601,7 +601,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                     public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.StopProgress();
+                        localModel.stopProgress();
                         cancel();
 
                     }
@@ -685,11 +685,11 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
     public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
         if (systemTreeSelectedItem != value) {
             systemTreeSelectedItem = value;
-            OnSystemTreeSelectedItemChanged();
+            onSystemTreeSelectedItemChanged();
         }
     }
 
-    private void OnSystemTreeSelectedItemChanged() {
+    private void onSystemTreeSelectedItemChanged() {
         search();
     }
 
@@ -699,7 +699,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
     }
 
     @Override
-    public boolean IsSearchStringMatch(String searchString)
+    public boolean isSearchStringMatch(String searchString)
     {
         return searchString.trim().toLowerCase().startsWith("quota"); //$NON-NLS-1$
     }

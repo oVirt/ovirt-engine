@@ -42,13 +42,13 @@ public class UserPortalRunOnceModel extends RunOnceModel {
 
    @Override
    protected void onRunOnce() {
-       StartProgress(null);
+       startProgress(null);
 
        Frontend.RunAction(VdcActionType.RunVmOnce, createRunVmOnceParams(),
                new IFrontendActionAsyncCallback() {
                    @Override
                    public void executed(FrontendActionAsyncResult result) {
-                       StopProgress();
+                       stopProgress();
                        commandTarget.executeCommand(runOnceCommand);
                    }
                }, this);

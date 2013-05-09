@@ -115,7 +115,7 @@ public class RoleModel extends Model
         setIsAdminRole(new EntityModel());
     }
 
-    public void ExpandAll()
+    public void expandAll()
     {
         // PermissionGroupModels.Each(a => a.IsExpanded = true );
         for (SelectionTreeNodeModel stm : getPermissionGroupModels())
@@ -128,7 +128,7 @@ public class RoleModel extends Model
         }
     }
 
-    public void CollapseAll()
+    public void collapseAll()
     {
         // PermissionGroupModels.Each(a => a.IsExpanded = false);
         for (SelectionTreeNodeModel stm : getPermissionGroupModels())
@@ -141,7 +141,7 @@ public class RoleModel extends Model
         }
     }
 
-    public boolean Validate()
+    public boolean validate()
     {
         RegexValidation tempVar = new RegexValidation();
         tempVar.setExpression("^\\w.{0,125}$"); //$NON-NLS-1$
@@ -164,11 +164,11 @@ public class RoleModel extends Model
 
         if (command == getExpandAllCommand())
         {
-            ExpandAll();
+            expandAll();
         }
         else if (command == getCollapseAllCommand())
         {
-            CollapseAll();
+            collapseAll();
         }
     }
 }

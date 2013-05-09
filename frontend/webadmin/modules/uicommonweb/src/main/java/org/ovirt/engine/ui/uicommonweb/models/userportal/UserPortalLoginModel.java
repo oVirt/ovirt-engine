@@ -179,15 +179,15 @@ public class UserPortalLoginModel extends LoginModel
     }
 
     @Override
-    public void Login()
+    public void login()
     {
         // Completely override the base class functionality.
-        if (!Validate())
+        if (!validate())
         {
             return;
         }
 
-        StartProgress(null);
+        startProgress(null);
 
         getUserName().setIsChangable(false);
         getPassword().setIsChangable(false);
@@ -226,13 +226,13 @@ public class UserPortalLoginModel extends LoginModel
                             getIsAutoConnect().setIsChangable(true);
                             model.getLoginFailedEvent().raise(this, EventArgs.Empty);
                         }
-                        StopProgress();
+                        stopProgress();
                     }
                 },
                 this);
     }
 
-    private void ChangePassword()
+    private void changePassword()
     {
         // TODO: Invoke the async query and handle failure correctly
         Frontend.RunAction(VdcActionType.ChangeUserPassword,
@@ -243,9 +243,9 @@ public class UserPortalLoginModel extends LoginModel
     }
 
     @Override
-    protected boolean Validate()
+    protected boolean validate()
     {
-        boolean baseValidation = super.Validate();
+        boolean baseValidation = super.validate();
 
         if (getIsChangingPassword())
         {
@@ -271,18 +271,18 @@ public class UserPortalLoginModel extends LoginModel
 
         if (command == getChangePasswordCommand())
         {
-            ChangePassword();
+            changePassword();
         }
     }
 
     // Update IsENGINEUser flag.
     // Get 'ENGINEUser' role's ActionGroups (and proceed to Step2).
-    public void UpdateIsENGINEUser(VdcUser LoggedUser)
+    public void updateIsENGINEUser(VdcUser LoggedUser)
     {
         setENGINEUserActionGroupList(new ArrayList<ActionGroup>());
         this.setLoggedUser(LoggedUser);
 
-        AsyncDataProvider.GetRoleActionGroupsByRoleId(new AsyncQuery(this,
+        AsyncDataProvider.getRoleActionGroupsByRoleId(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -293,7 +293,7 @@ public class UserPortalLoginModel extends LoginModel
                         // so we need to apply the same logic to this ActionGroup as for
                         // engine user role's action group.
                         loginModel.getENGINEUserActionGroupList().add(ConsumeQuotaActionGroup);
-                        loginModel.GetUserRoles(loginModel);
+                        loginModel.getUserRoles(loginModel);
 
                     }
                 }), ApplicationGuids.engineUser.asGuid());
@@ -301,10 +301,10 @@ public class UserPortalLoginModel extends LoginModel
 
     // Get logged user's permissions and create a list of roles associated with the user (and proceed to Step3).
     // Use only as 'Step2' of 'UpdateIsENGINEUser'
-    public void GetUserRoles(Object targetObject)
+    public void getUserRoles(Object targetObject)
     {
         UserPortalLoginModel loginModel = (UserPortalLoginModel) targetObject;
-        AsyncDataProvider.GetPermissionsByAdElementId(new AsyncQuery(targetObject,
+        AsyncDataProvider.getPermissionsByAdElementId(new AsyncQuery(targetObject,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -332,11 +332,11 @@ public class UserPortalLoginModel extends LoginModel
                         if (roleIdList.size() > 0)
                         {
                             loginModel1.setRolesCounter(roleIdList.size());
-                            loginModel1.UpdateUserActionGroups(loginModel1, roleIdList);
+                            loginModel1.updateUserActionGroups(loginModel1, roleIdList);
                         }
                         else
                         {
-                            CheckIsENGINEUser(loginModel1);
+                            checkIsENGINEUser(loginModel1);
                         }
 
                     }
@@ -364,7 +364,7 @@ public class UserPortalLoginModel extends LoginModel
     // Create a list of ActionGroups associated with the user by retrieving each role's ActionGroups (and proceed to
     // Step4).
     // Use only as 'Step3' of 'UpdateIsENGINEUser'
-    public void UpdateUserActionGroups(Object targetObject, ArrayList<Guid> roleIdList)
+    public void updateUserActionGroups(Object targetObject, ArrayList<Guid> roleIdList)
     {
         ArrayList<VdcQueryParametersBase> queryParamsList =
                 new ArrayList<VdcQueryParametersBase>();
@@ -388,7 +388,7 @@ public class UserPortalLoginModel extends LoginModel
                     }
                     UserPortalLoginModel.this.setRolesCounter(UserPortalLoginModel.this.getRolesCounter() - 1);
                     if (UserPortalLoginModel.this.getRolesCounter() == 0) {
-                        CheckIsENGINEUser(UserPortalLoginModel.this);
+                        checkIsENGINEUser(UserPortalLoginModel.this);
                     }
                 }
             }
@@ -399,7 +399,7 @@ public class UserPortalLoginModel extends LoginModel
     // the logged user is not 'ENGINEUser' - Update IsENGINEUser to false; Otherwise, true.
     // Raise 'LoggedIn' event after updating the flag.
     // Use only as 'Step4' of 'UpdateIsENGINEUser'
-    public void CheckIsENGINEUser(Object targetObject)
+    public void checkIsENGINEUser(Object targetObject)
     {
         UserPortalLoginModel loginModel = (UserPortalLoginModel) targetObject;
         loginModel.getIsENGINEUser().setEntity(null);

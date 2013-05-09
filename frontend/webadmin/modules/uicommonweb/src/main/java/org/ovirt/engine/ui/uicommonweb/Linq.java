@@ -910,7 +910,7 @@ public final class Linq
             ListModel volumeList = new ListModel();
             volumeList.setItems((diskImage.getVolumeType() == VolumeType.Preallocated ?
                     new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] { VolumeType.Preallocated }))
-                    : AsyncDataProvider.GetVolumeTypeList()));
+                    : AsyncDataProvider.getVolumeTypeList()));
             volumeList.setSelectedItem(diskImage.getVolumeType());
             diskModel.setVolumeType(volumeList);
         }

@@ -153,12 +153,12 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
-        UpdateActionAvailability();
+        updateActionAvailability();
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
         if (getCustomPropertiesKeysList() == null) {
-            AsyncDataProvider.GetCustomPropertiesList(new AsyncQuery(this,
+            AsyncDataProvider.getCustomPropertiesList(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -184,7 +184,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
     }
 
     @Override
-    public boolean IsSearchStringMatch(String searchString)
+    public boolean isSearchStringMatch(String searchString)
     {
         return searchString.trim().toLowerCase().startsWith("pool"); //$NON-NLS-1$
     }
@@ -212,7 +212,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
         super.search();
     }
 
-    public void New()
+    public void newEntity()
     {
         if (getWindow() != null)
         {
@@ -226,7 +226,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
         model.setTitle(ConstantsManager.getInstance().getConstants().newPoolTitle());
         model.setHashName("new_pool"); //$NON-NLS-1$
         model.setVmType(VmType.Desktop);
-        model.Initialize(getSystemTreeSelectedItem());
+        model.initialize(getSystemTreeSelectedItem());
 
         UICommand command = new UICommand("OnSave", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -239,7 +239,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
         model.getCommands().add(command);
     }
 
-    public void Edit()
+    public void edit()
     {
         final VmPool pool = (VmPool) getSelectedItem();
 
@@ -319,12 +319,12 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
 
                         PoolModel model = new PoolModel(behavior);
                         model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
-                        model.StartProgress("");
+                        model.startProgress("");
                         setWindow(model);
                         model.setTitle(ConstantsManager.getInstance().getConstants().editPoolTitle());
                         model.setHashName("edit_pool"); //$NON-NLS-1$
                         model.setVmType(VmType.Desktop);
-                        model.Initialize(getSystemTreeSelectedItem());
+                        model.initialize(getSystemTreeSelectedItem());
                         model.getName().setEntity(pool.getName());
                         model.getDescription().setEntity(pool.getVmPoolDescription());
                         model.getAssignedVms().setEntity(pool.getAssignedVmsCount());
@@ -378,7 +378,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
         model.getCommands().add(tempVar2);
     }
 
-    public void OnRemove()
+    public void onRemove()
     {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
@@ -394,7 +394,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
             list.add(new VmPoolParametersBase(pool.getVmPoolId()));
         }
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunMultipleAction(VdcActionType.RemoveVmPool, list,
                 new IFrontendMultipleActionAsyncCallback() {
@@ -402,14 +402,14 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                     public void executed(FrontendMultipleActionAsyncResult result) {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
-                        localModel.StopProgress();
-                        Cancel();
+                        localModel.stopProgress();
+                        cancel();
 
                     }
                 }, model);
     }
 
-    public void OnSave()
+    public void onSave()
     {
         final PoolModel model = (PoolModel) getWindow();
 
@@ -420,11 +420,11 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
 
         if (!model.getIsNew() && getSelectedItem() == null)
         {
-            Cancel();
+            cancel();
             return;
         }
 
-        if (!model.Validate())
+        if (!model.validate())
         {
             return;
         }
@@ -434,7 +434,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
         final String name = (String) model.getName().getEntity();
 
         // Check name unicitate.
-        AsyncDataProvider.IsPoolNameUnique(new AsyncQuery(this,
+        AsyncDataProvider.isPoolNameUnique(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -454,7 +454,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         pool.setName((String) model.getName().getEntity());
                         pool.setVmPoolDescription((String) model.getDescription().getEntity());
                         pool.setVdsGroupId(((VDSGroup) model.getCluster().getSelectedItem()).getId());
-                        pool.setPrestartedVms(model.getPrestartedVms().asConvertible().Integer());
+                        pool.setPrestartedVms(model.getPrestartedVms().asConvertible().integer());
 
                         EntityModel poolTypeSelectedItem = (EntityModel) model.getPoolType().getSelectedItem();
                         pool.setVmPoolType((VmPoolType) poolTypeSelectedItem.getEntity());
@@ -511,7 +511,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         AddVmPoolWithVmsParameters param =
                                 new AddVmPoolWithVmsParameters(pool, desktop, model.getNumOfDesktops()
                                         .asConvertible()
-                                        .Integer(), 0);
+                                        .integer(), 0);
 
                         param.setStorageDomainId(Guid.Empty);
                         param.setDiskInfoDestinationMap(model.getDisksAllocationModel()
@@ -521,7 +521,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                             desktop.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
                         }
 
-                        model.StartProgress(null);
+                        model.startProgress(null);
 
                         if (model.getIsNew())
                         {
@@ -530,8 +530,8 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                                     new IFrontendMultipleActionAsyncCallback() {
                                         @Override
                                         public void executed(FrontendMultipleActionAsyncResult result) {
-                                            Cancel();
-                                            StopProgress();
+                                            cancel();
+                                            stopProgress();
                                         }
                                     },
                                     this);
@@ -543,8 +543,8 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                                     new IFrontendMultipleActionAsyncCallback() {
                                         @Override
                                         public void executed(FrontendMultipleActionAsyncResult result) {
-                                            Cancel();
-                                            StopProgress();
+                                            cancel();
+                                            stopProgress();
                                         }
                                     },
                                     this);
@@ -555,7 +555,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                 name);
     }
 
-    public void Cancel()
+    public void cancel()
     {
         setWindow(null);
     }
@@ -564,24 +564,24 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void selectedItemsChanged()
     {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
     protected void selectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e)
     {
         super.selectedItemPropertyChanged(sender, e);
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
-    private void UpdateActionAvailability()
+    private void updateActionAvailability()
     {
         getEditCommand().setIsExecutionAllowed(getSelectedItem() != null && getSelectedItems() != null
                 && getSelectedItems().size() == 1 && hasVms(getSelectedItem()));
@@ -604,11 +604,11 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
 
         if (command == getNewCommand())
         {
-            New();
+            newEntity();
         }
         if (command == getEditCommand())
         {
-            Edit();
+            edit();
         }
         if (command == getRemoveCommand())
         {
@@ -616,15 +616,15 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
         }
         if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
         if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
-            OnSave();
+            onSave();
         }
         if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
-            OnRemove();
+            onRemove();
         }
     }
 

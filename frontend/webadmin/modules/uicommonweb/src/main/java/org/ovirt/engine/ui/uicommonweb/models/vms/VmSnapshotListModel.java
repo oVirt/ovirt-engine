@@ -224,7 +224,7 @@ public class VmSnapshotListModel extends SearchableListModel
         getSnapshotsMap().put(null, new SnapshotModel());
 
         if (getCustomPropertiesKeysList() == null) {
-            AsyncDataProvider.GetCustomPropertiesList(new AsyncQuery(this,
+            AsyncDataProvider.getCustomPropertiesList(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -271,7 +271,7 @@ public class VmSnapshotListModel extends SearchableListModel
         }
         isEntityChanged = false;
 
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     @Override
@@ -279,7 +279,7 @@ public class VmSnapshotListModel extends SearchableListModel
     {
         super.setEntity(value);
 
-        UpdateIsCloneVmSupported();
+        updateIsCloneVmSupported();
     }
 
     @Override
@@ -290,7 +290,7 @@ public class VmSnapshotListModel extends SearchableListModel
         if (getEntity() != null)
         {
             isEntityChanged = true;
-            getSearchCommand().Execute();
+            getSearchCommand().execute();
         }
     }
 
@@ -310,11 +310,11 @@ public class VmSnapshotListModel extends SearchableListModel
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
 
         if (getSelectedItem() != null) {
             Snapshot snapshot = ((Snapshot) getSelectedItem());
-            UpdateVmConfigurationBySnapshot(snapshot.getId());
+            updateVmConfigurationBySnapshot(snapshot.getId());
         }
     }
 
@@ -322,7 +322,7 @@ public class VmSnapshotListModel extends SearchableListModel
     protected void selectedItemsChanged()
     {
         super.selectedItemsChanged();
-        UpdateActionAvailability();
+        updateActionAvailability();
     }
 
     private void remove()
@@ -355,12 +355,12 @@ public class VmSnapshotListModel extends SearchableListModel
         }
     }
 
-    private void OnRemove()
+    private void onRemove()
     {
         Snapshot snapshot = (Snapshot) getSelectedItem();
         if (snapshot == null)
         {
-            Cancel();
+            cancel();
             return;
         }
 
@@ -373,10 +373,10 @@ public class VmSnapshotListModel extends SearchableListModel
 
         getCanSelectSnapshot().setEntity(false);
 
-        Cancel();
+        cancel();
     }
 
-    private void Undo()
+    private void undo()
     {
         VM vm = (VM) getEntity();
         if (vm != null)
@@ -390,7 +390,7 @@ public class VmSnapshotListModel extends SearchableListModel
         }
     }
 
-    private void Commit()
+    private void commit()
     {
         VM vm = (VM) getEntity();
         if (vm != null)
@@ -404,7 +404,7 @@ public class VmSnapshotListModel extends SearchableListModel
         }
     }
 
-    private void Preview()
+    private void preview()
     {
         VM vm = (VM) getEntity();
         if (vm != null)
@@ -418,7 +418,7 @@ public class VmSnapshotListModel extends SearchableListModel
         }
     }
 
-    private void New()
+    private void newEntity()
     {
         VM vm = (VM) getEntity();
         if (vm == null)
@@ -437,7 +437,7 @@ public class VmSnapshotListModel extends SearchableListModel
         model.setHashName("create_snapshot"); //$NON-NLS-1$
 
         model.setVm(vm);
-        model.Initialize();
+        model.initialize();
 
         UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
         cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
@@ -450,23 +450,23 @@ public class VmSnapshotListModel extends SearchableListModel
         model.setCloseCommand(closeCommand);
     }
 
-    public void PostOnNew(List<VdcReturnValueBase> returnValues) {
+    public void postOnNew(List<VdcReturnValueBase> returnValues) {
 
         SnapshotModel model = (SnapshotModel) getWindow();
 
-        model.StopProgress();
+        model.stopProgress();
 
         if (returnValues != null && Linq.all(returnValues, new Linq.CanDoActionSucceedPredicate())) {
-            Cancel();
+            cancel();
         }
     }
 
-    private void Cancel()
+    private void cancel()
     {
         setWindow(null);
     }
 
-    private void CloneVM()
+    private void cloneVM()
     {
         Snapshot snapshot = (Snapshot) getSelectedItem();
         if (snapshot == null)
@@ -485,9 +485,9 @@ public class VmSnapshotListModel extends SearchableListModel
         model.setVmType(selectedVm.getVmType());
         setWindow(model);
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
-        AsyncDataProvider.GetVmConfigurationBySnapshot(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getVmConfigurationBySnapshot(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 VmSnapshotListModel vmSnapshotListModel = (VmSnapshotListModel) target;
@@ -501,7 +501,7 @@ public class VmSnapshotListModel extends SearchableListModel
                 model.setTitle(ConstantsManager.getInstance().getConstants().cloneVmFromSnapshotTitle());
                 model.setHashName("clone_vm_from_snapshot"); //$NON-NLS-1$
                 model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
-                model.Initialize(vmSnapshotListModel.getSystemTreeSelectedItem());
+                model.initialize(vmSnapshotListModel.getSystemTreeSelectedItem());
 
                 UICommand tempVar = new UICommand("OnCloneVM", vmSnapshotListModel); //$NON-NLS-1$
                 tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -512,23 +512,23 @@ public class VmSnapshotListModel extends SearchableListModel
                 tempVar2.setIsCancel(true);
                 model.getCommands().add(tempVar2);
 
-                vmSnapshotListModel.StopProgress();
+                vmSnapshotListModel.stopProgress();
             }
         }), snapshot.getId());
     }
 
-    private void OnCloneVM()
+    private void onCloneVM()
     {
         UnitVmModel model = (UnitVmModel) getWindow();
         CloneVmFromSnapshotModelBehavior behavior = (CloneVmFromSnapshotModelBehavior) model.getBehavior();
         Snapshot snapshot = (Snapshot) getSelectedItem();
         if (snapshot == null)
         {
-            Cancel();
+            cancel();
             return;
         }
 
-        if (!model.Validate())
+        if (!model.validate())
         {
             return;
         }
@@ -593,14 +593,14 @@ public class VmSnapshotListModel extends SearchableListModel
 
         HashMap<Guid, DiskImage> imageToDestinationDomainMap =
                 model.getDisksAllocationModel().getImageToDestinationDomainMap();
-        ArrayList<DiskImage> diskInfoList = CreateDiskInfoList();
+        ArrayList<DiskImage> diskInfoList = createDiskInfoList();
 
         AddVmFromSnapshotParameters parameters =
                 new AddVmFromSnapshotParameters(getcurrentVm().getStaticData(), snapshot.getId());
         parameters.setDiskInfoDestinationMap(imageToDestinationDomainMap);
         setupAddVmFromSnapshotParameters(parameters);
 
-        model.StartProgress(null);
+        model.startProgress(null);
 
         Frontend.RunAction(VdcActionType.AddVmFromSnapshot, parameters,
                 new IFrontendActionAsyncCallback() {
@@ -608,12 +608,12 @@ public class VmSnapshotListModel extends SearchableListModel
                     public void executed(FrontendActionAsyncResult result) {
 
                         VmSnapshotListModel vmSnapshotListModel = (VmSnapshotListModel) result.getState();
-                        vmSnapshotListModel.getWindow().StopProgress();
+                        vmSnapshotListModel.getWindow().stopProgress();
                         VdcReturnValueBase returnValueBase = result.getReturnValue();
                         if (returnValueBase != null && returnValueBase.getSucceeded())
                         {
-                            vmSnapshotListModel.Cancel();
-                            vmSnapshotListModel.UpdateActionAvailability();
+                            vmSnapshotListModel.cancel();
+                            vmSnapshotListModel.updateActionAvailability();
                         }
                     }
                 }, this);
@@ -623,7 +623,7 @@ public class VmSnapshotListModel extends SearchableListModel
         // do nothing - no additional setup needed
     }
 
-    private ArrayList<DiskImage> CreateDiskInfoList()
+    private ArrayList<DiskImage> createDiskInfoList()
     {
         UnitVmModel model = (UnitVmModel) getWindow();
         ArrayList<DiskImage> diskInfoList = new ArrayList<DiskImage>();
@@ -645,7 +645,7 @@ public class VmSnapshotListModel extends SearchableListModel
         return diskInfoList;
     }
 
-    public void UpdateActionAvailability()
+    public void updateActionAvailability()
     {
         VM vm = (VM) getEntity();
         Snapshot snapshot = (Snapshot) getSelectedItem();
@@ -726,13 +726,13 @@ public class VmSnapshotListModel extends SearchableListModel
         return null;
     }
 
-    public void UpdateVmConfigurationBySnapshot(Guid snapshotId)
+    public void updateVmConfigurationBySnapshot(Guid snapshotId)
     {
         SnapshotModel snapshotModel = snapshotsMap.get(snapshotId);
-        snapshotModel.UpdateVmConfiguration();
+        snapshotModel.updateVmConfiguration();
     }
 
-    protected void UpdateIsCloneVmSupported()
+    protected void updateIsCloneVmSupported()
     {
         if (getEntity() == null)
         {
@@ -741,7 +741,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
         VM vm = (VM) getEntity();
 
-        AsyncDataProvider.GetDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 VmSnapshotListModel model = (VmSnapshotListModel) target;
@@ -751,7 +751,7 @@ public class VmSnapshotListModel extends SearchableListModel
                 Version minClusterVersion = vm.getVdsGroupCompatibilityVersion();
                 Version minDcVersion = dataCenter.getcompatibility_version();
 
-                AsyncDataProvider.IsCommandCompatible(new AsyncQuery(model, new INewAsyncCallback() {
+                AsyncDataProvider.isCommandCompatible(new AsyncQuery(model, new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
                         VmSnapshotListModel model = (VmSnapshotListModel) target;
@@ -769,19 +769,19 @@ public class VmSnapshotListModel extends SearchableListModel
 
         if (command == getNewCommand())
         {
-            New();
+            newEntity();
         }
         else if (command == getPreviewCommand())
         {
-            Preview();
+            preview();
         }
         else if (command == getCommitCommand())
         {
-            Commit();
+            commit();
         }
         else if (command == getUndoCommand())
         {
-            Undo();
+            undo();
         }
         else if (command == getRemoveCommand())
         {
@@ -789,19 +789,19 @@ public class VmSnapshotListModel extends SearchableListModel
         }
         else if (command == getCloneVmCommand())
         {
-            CloneVM();
+            cloneVM();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
-            OnRemove();
+            onRemove();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
-            Cancel();
+            cancel();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnCloneVM")) //$NON-NLS-1$
         {
-            OnCloneVM();
+            onCloneVM();
         }
     }
 

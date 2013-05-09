@@ -208,7 +208,7 @@ public class ReportsListModel extends SearchableListModel {
     }
 
     @Override
-    public boolean IsSearchStringMatch(String searchString)
+    public boolean isSearchStringMatch(String searchString)
     {
         return searchString.trim().toLowerCase().startsWith("reports"); //$NON-NLS-1$
     }

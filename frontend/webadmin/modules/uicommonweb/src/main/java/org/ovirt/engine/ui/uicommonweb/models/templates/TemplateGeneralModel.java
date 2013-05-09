@@ -427,7 +427,7 @@ public class TemplateGeneralModel extends EntityModel
 
         if (super.getEntity() != null)
         {
-            UpdateProperties();
+            updateProperties();
         }
     }
 
@@ -436,10 +436,10 @@ public class TemplateGeneralModel extends EntityModel
     {
         super.entityPropertyChanged(sender, e);
 
-        UpdateProperties();
+        updateProperties();
     }
 
-    private void UpdateProperties()
+    private void updateProperties()
     {
         VmTemplate template = getEntity();
 
@@ -469,10 +469,10 @@ public class TemplateGeneralModel extends EntityModel
         translator = EnumTranslator.Create(OriginType.class);
         setOrigin(translator.get(template.getOrigin()));
 
-        setHasDomain(AsyncDataProvider.IsWindowsOsType(template.getOs()));
+        setHasDomain(AsyncDataProvider.isWindowsOsType(template.getOs()));
         setDomain(template.getDomain());
 
-        setHasTimeZone(AsyncDataProvider.IsWindowsOsType(template.getOs()));
+        setHasTimeZone(AsyncDataProvider.isWindowsOsType(template.getOs()));
         setTimeZone(template.getTimeZone());
 
         setHasUsbPolicy(true);
