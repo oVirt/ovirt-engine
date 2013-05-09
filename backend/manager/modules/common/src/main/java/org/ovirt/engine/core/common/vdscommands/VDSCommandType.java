@@ -93,7 +93,6 @@ public enum VDSCommandType {
     GetVGList("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     GetVGInfo("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     GetDeviceList("org.ovirt.engine.core.vdsbroker.vdsbroker"),
-    GetDeviceInfo("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     GetDevicesVisibility("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     SPMGetAllTasksStatuses("org.ovirt.engine.core.vdsbroker.irsbroker"),
     SPMGetTaskStatus("org.ovirt.engine.core.vdsbroker.irsbroker"),

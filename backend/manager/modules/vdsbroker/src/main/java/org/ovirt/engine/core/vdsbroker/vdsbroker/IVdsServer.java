@@ -129,8 +129,6 @@ public interface IVdsServer {
 
     LUNListReturnForXmlRpc getDeviceList(int storageType);
 
-    OneLUNReturnForXmlRpc getDeviceInfo(String devGUID);
-
     DevicesVisibilityMapReturnForXmlRpc getDevicesVisibility(String[] devicesList);
 
     IQNListReturnForXmlRpc discoverSendTargets(Map<String, String> args);

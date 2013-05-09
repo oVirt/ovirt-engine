@@ -631,18 +631,6 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public OneLUNReturnForXmlRpc getDeviceInfo(String devGUID) {
-        try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.getDeviceInfo(devGUID);
-            OneLUNReturnForXmlRpc wrapper = new OneLUNReturnForXmlRpc(xmlRpcReturnValue);
-            return wrapper;
-        } catch (UndeclaredThrowableException ute) {
-            throw new XmlRpcRunTimeException(ute);
-        }
-
-    }
-
-    @Override
     public DevicesVisibilityMapReturnForXmlRpc getDevicesVisibility(String[] devicesList) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getDevicesVisibility(devicesList);

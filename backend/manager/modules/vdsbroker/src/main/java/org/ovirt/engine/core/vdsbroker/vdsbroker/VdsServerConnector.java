@@ -114,8 +114,6 @@ public interface VdsServerConnector {
 
     public Map<String, Object> getDeviceList(int storageType);
 
-    public Map<String, Object> getDeviceInfo(String devGUID);
-
     public Map<String, Object> getDevicesVisibility(String[] devicesList);
 
     public Map<String, Object> discoverSendTargets(Map<String, String> args);
