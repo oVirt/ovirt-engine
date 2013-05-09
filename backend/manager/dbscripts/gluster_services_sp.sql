@@ -54,22 +54,22 @@ LANGUAGE plpgsql;
 
 -- Fetch services of given server
 Create or replace FUNCTION GetGlusterServerServicesByServerId(v_server_id UUID)
-    RETURNS SETOF gluster_server_services
+    RETURNS SETOF gluster_server_services_view
     AS $procedure$
 BEGIN
     RETURN  QUERY SELECT *
-    FROM    gluster_server_services
+    FROM    gluster_server_services_view
     WHERE   server_id = v_server_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
 -- Fetch services from all servers of given cluster
 Create or replace FUNCTION GetGlusterServerServicesByClusterId(v_cluster_id UUID)
-    RETURNS SETOF gluster_server_services
+    RETURNS SETOF gluster_server_services_view
     AS $procedure$
 BEGIN
     RETURN  QUERY SELECT s.*
-    FROM    gluster_server_services s, vds_static v
+    FROM    gluster_server_services_view s, vds_static v
     WHERE   s.server_id = v.vds_id
     AND     v.vds_group_id = v_cluster_id;
 END; $procedure$
@@ -88,22 +88,22 @@ LANGUAGE plpgsql;
 
 -- Fetch a server service by it's ID
 Create or replace FUNCTION GetGlusterServerServiceByGlusterServerServiceId(v_id UUID)
-RETURNS SETOF gluster_server_services
+RETURNS SETOF gluster_server_services_view
 AS $procedure$
 BEGIN
     RETURN  QUERY SELECT *
-    FROM    gluster_server_services
+    FROM    gluster_server_services_view
     WHERE   id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
 -- Fetch all server services
 Create or replace FUNCTION GetAllFromGlusterServerServices()
-RETURNS SETOF gluster_server_services
+RETURNS SETOF gluster_server_services_view
 AS $procedure$
 BEGIN
     RETURN  QUERY SELECT *
-    FROM    gluster_server_services;
+    FROM    gluster_server_services_view;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -117,17 +117,6 @@ BEGIN
     FROM    gluster_services
     WHERE   service_type = v_service_type
     AND     service_name = v_service_name;
-END; $procedure$
-LANGUAGE plpgsql;
-
--- Fetch services for given server
-Create or replace FUNCTION GetServicesByServerId(v_server_id UUID)
-RETURNS SETOF gluster_server_services
-AS $procedure$
-BEGIN
-    RETURN  QUERY SELECT *
-    FROM    gluster_server_services
-    WHERE   server_id = v_server_id;
 END; $procedure$
 LANGUAGE plpgsql;
 

@@ -12,6 +12,7 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDAOTestCase;
 
@@ -24,8 +25,13 @@ public class GlusterServerServiceDaoTest extends BaseDAOTestCase {
     private static final String SERVER2_ID = "2001751e-549b-4e7a-aff6-32d36856c125";
     private static final String CLUSTER_ID = "ae956031-6be2-43d6-bb8f-5191c9253314";
     private static final String SERVICE1_ID = "c83c9ee3-b7d8-4709-ae4b-5d86a152e6b1";
+    private static final String SERVICE1_NAME = "gluster-swift-test-1";
+    private static final ServiceType SERVICE1_TYPE = ServiceType.GLUSTER_SWIFT;
     private static final String SERVICE2_ID = "fc00df54-4fcd-4495-8756-b217780bdad7";
+    private static final String SERVICE2_NAME = "gluster-test";
+    private static final ServiceType SERVICE2_TYPE = ServiceType.GLUSTER;
     private static final String SERVER1_SERVICE_ID = "c77b4d6a-a2c9-4c9f-a873-3dbff8a34720";
+
     private static final Integer PID_1 = 11111;
     private static final Integer PID_2 = 22222;
     private static final Integer NEW_PID = 33333;
@@ -67,7 +73,7 @@ public class GlusterServerServiceDaoTest extends BaseDAOTestCase {
     @Test
     public void testGetAllWithQuery() {
         List<GlusterServerService> services =
-                dao.getAllWithQuery("select * from gluster_server_services where status = '"
+                dao.getAllWithQuery("select * from gluster_server_services_view where status = '"
                         + GlusterServiceStatus.STOPPED.name() + "'");
 
         assertTrue(services != null);
@@ -109,6 +115,7 @@ public class GlusterServerServiceDaoTest extends BaseDAOTestCase {
         service.setId(Guid.createGuidFromString(NEW_SERVICE_ID));
         service.setServerId(Guid.createGuidFromString(SERVER1_ID));
         service.setServiceId(Guid.createGuidFromString(SERVICE2_ID));
+        service.setServiceType(SERVICE2_TYPE);
         service.setStatus(GlusterServiceStatus.FAILED);
         service.setMessage("test message");
         service.setPid(NEW_PID);
@@ -119,12 +126,16 @@ public class GlusterServerServiceDaoTest extends BaseDAOTestCase {
 
     private void verifyServiceOnServer2(GlusterServerService service) {
         assertEquals(SERVICE2_ID, service.getServiceId().toString());
+        assertEquals(SERVICE2_NAME, service.getServiceName());
+        assertEquals(SERVICE2_TYPE, service.getServiceType());
         assertEquals(PID_2, service.getPid());
         assertEquals(GlusterServiceStatus.STOPPED, service.getStatus());
     }
 
     private void verifyServiceOnServer1(GlusterServerService service) {
         assertEquals(SERVICE1_ID, service.getServiceId().toString());
+        assertEquals(SERVICE1_NAME, service.getServiceName());
+        assertEquals(SERVICE1_TYPE, service.getServiceType());
         assertEquals(PID_1, service.getPid());
         assertEquals(GlusterServiceStatus.RUNNING, service.getStatus());
     }

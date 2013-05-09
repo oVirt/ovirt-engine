@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
@@ -72,6 +73,8 @@ public class GlusterServerServiceDaoDbFacadeImpl extends MassOperationsGenericDa
             entity.setId(Guid.createGuidFromString(rs.getString("id")));
             entity.setServerId(Guid.createGuidFromString(rs.getString("server_id")));
             entity.setServiceId(Guid.createGuidFromString(rs.getString("service_id")));
+            entity.setServiceName(rs.getString("service_name"));
+            entity.setServiceType(ServiceType.valueOf(rs.getString("service_type")));
             entity.setMessage(rs.getString("message"));
             entity.setPid(rs.getInt("pid"));
             entity.setStatus(GlusterServiceStatus.valueOf(rs.getString("status")));

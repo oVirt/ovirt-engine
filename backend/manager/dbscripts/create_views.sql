@@ -1493,3 +1493,11 @@ SELECT gluster_volumes.*,
        vds_groups.name AS vds_group_name
 FROM gluster_volumes
 INNER JOIN vds_groups ON gluster_volumes.cluster_id = vds_groups.vds_group_id;
+
+CREATE OR REPLACE VIEW gluster_server_services_view
+AS
+SELECT gluster_server_services.*,
+       gluster_services.service_name,
+       gluster_services.service_type
+FROM gluster_server_services
+INNER JOIN gluster_services ON gluster_server_services.service_id = gluster_services.id;
