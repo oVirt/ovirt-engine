@@ -1,8 +1,11 @@
 package org.ovirt.engine.core.utils.ssh;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayOutputStream;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+
 import javax.naming.AuthenticationException;
 
 import org.junit.After;
@@ -11,7 +14,6 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * Basic tests.

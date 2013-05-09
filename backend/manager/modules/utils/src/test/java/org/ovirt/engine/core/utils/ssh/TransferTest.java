@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.utils.ssh;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -12,11 +14,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * Long transfer test.

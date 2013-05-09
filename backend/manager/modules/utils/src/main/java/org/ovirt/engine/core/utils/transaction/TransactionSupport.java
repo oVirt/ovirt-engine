@@ -1,13 +1,21 @@
 package org.ovirt.engine.core.utils.transaction;
 
-import org.ovirt.engine.core.utils.ejb.EjbUtils;
+import javax.ejb.TransactionRolledbackLocalException;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.Status;
+import javax.transaction.Synchronization;
+import javax.transaction.SystemException;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+
+import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
+import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.compat.TransactionScopeOption;
-
-import javax.transaction.*;
-import javax.ejb.TransactionRolledbackLocalException;
 
 public class TransactionSupport {
 

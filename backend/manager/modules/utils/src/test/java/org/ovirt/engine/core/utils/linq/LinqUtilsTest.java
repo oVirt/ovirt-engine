@@ -1,9 +1,14 @@
 package org.ovirt.engine.core.utils.linq;
 
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Test;
 
 /**
  * Created by IntelliJ IDEA. User: gmostizk Date: Aug 9, 2009 Time: 4:05:52 PM To change this template use File |

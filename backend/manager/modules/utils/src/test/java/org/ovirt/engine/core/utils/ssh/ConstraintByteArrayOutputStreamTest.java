@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.utils.ssh;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * SSHClient.ConstraintByteArrayOutputStream tests.
