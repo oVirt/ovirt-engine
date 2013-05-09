@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 public final class SearchObjects {
     // objects
@@ -45,43 +47,44 @@ public final class SearchObjects {
     private static final String HOST_BY_CPU = "Host: sortby cpu_usage desc";
     private static final String DATACENTER_BY_NAME = "DataCenter: sortby name";
     private static final String VM_BY_STATUS = "Vms: status=Up or status=PoweringUp or status=PoweredDown or status=MigratingTo or status=WaitForLaunch or status=RebootInProgress or status=PoweringDown or status=Paused or status=Unknown sortby cpu_usage desc";
-    private static final HashSet<String> SAFE_SEARCH_EXPR = new  HashSet<String>();
+    @SuppressWarnings("serial")
+    private static final Set<String> SAFE_SEARCH_EXPR = Collections.unmodifiableSet(new HashSet<String>() {
+        {
+            final char SEPERATOR = ':';
 
-    private static void init() {
-        final char SEPERATOR = ':';
-
-        SAFE_SEARCH_EXPR.add(VDS_OBJ_NAME.toLowerCase() + SEPERATOR);
-        SAFE_SEARCH_EXPR.add(VDS_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
-        SAFE_SEARCH_EXPR.add(VM_OBJ_NAME.toLowerCase() + SEPERATOR);
-        SAFE_SEARCH_EXPR.add(VM_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
-        SAFE_SEARCH_EXPR.add(AUDIT_OBJ_NAME.toLowerCase() + SEPERATOR);
-        SAFE_SEARCH_EXPR.add(AUDIT_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
-        SAFE_SEARCH_EXPR.add(TEMPLATE_OBJ_NAME.toLowerCase() + SEPERATOR);
-        SAFE_SEARCH_EXPR.add(TEMPLATE_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
-        SAFE_SEARCH_EXPR.add(VDC_USER_OBJ_NAME.toLowerCase() + SEPERATOR);
-        SAFE_SEARCH_EXPR.add(VDC_USER_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
-        SAFE_SEARCH_EXPR.add(VDC_POOL_OBJ_NAME.toLowerCase() + SEPERATOR);
-        SAFE_SEARCH_EXPR.add(VDC_POOL_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
-        SAFE_SEARCH_EXPR.add(VDC_CLUSTER_OBJ_NAME.toLowerCase() + SEPERATOR);
-        SAFE_SEARCH_EXPR.add(VDC_CLUSTER_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
-        SAFE_SEARCH_EXPR.add(VDC_STORAGE_POOL_OBJ_NAME.toLowerCase() + SEPERATOR);
-        SAFE_SEARCH_EXPR.add(VDC_STORAGE_DOMAIN_OBJ_NAME.toLowerCase() + SEPERATOR);
-        SAFE_SEARCH_EXPR.add(VDC_STORAGE_DOMAIN_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
-        SAFE_SEARCH_EXPR.add(VDC_STORAGE_DOMAIN_IMAGE_OBJ_NAME.toLowerCase() + SEPERATOR);
-        SAFE_SEARCH_EXPR.add(DISK_OBJ_NAME.toLowerCase() + SEPERATOR);
-        SAFE_SEARCH_EXPR.add(DISK_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
-        SAFE_SEARCH_EXPR.add(GLUSTER_VOLUME_OBJ_NAME.toLowerCase() + SEPERATOR);
-        SAFE_SEARCH_EXPR.add(GLUSTER_VOLUME_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
-        SAFE_SEARCH_EXPR.add(QUOTA_OBJ_NAME.toLowerCase() + SEPERATOR);
-        SAFE_SEARCH_EXPR.add(QUOTA_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
-        SAFE_SEARCH_EXPR.add(NETWORK_OBJ_NAME.toLowerCase() + SEPERATOR);
-        SAFE_SEARCH_EXPR.add(NETWORK_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
-        SAFE_SEARCH_EXPR.add(ALERT.toLowerCase());
-        SAFE_SEARCH_EXPR.add(ERROR.toLowerCase());
-        SAFE_SEARCH_EXPR.add(HOST_BY_CPU.toLowerCase());
-        SAFE_SEARCH_EXPR.add(DATACENTER_BY_NAME.toLowerCase());
-        SAFE_SEARCH_EXPR.add(VM_BY_STATUS.toLowerCase());
-    }
+            add(VDS_OBJ_NAME.toLowerCase() + SEPERATOR);
+            add(VDS_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
+            add(VM_OBJ_NAME.toLowerCase() + SEPERATOR);
+            add(VM_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
+            add(AUDIT_OBJ_NAME.toLowerCase() + SEPERATOR);
+            add(AUDIT_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
+            add(TEMPLATE_OBJ_NAME.toLowerCase() + SEPERATOR);
+            add(TEMPLATE_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
+            add(VDC_USER_OBJ_NAME.toLowerCase() + SEPERATOR);
+            add(VDC_USER_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
+            add(VDC_POOL_OBJ_NAME.toLowerCase() + SEPERATOR);
+            add(VDC_POOL_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
+            add(VDC_CLUSTER_OBJ_NAME.toLowerCase() + SEPERATOR);
+            add(VDC_CLUSTER_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
+            add(VDC_STORAGE_POOL_OBJ_NAME.toLowerCase() + SEPERATOR);
+            add(VDC_STORAGE_DOMAIN_OBJ_NAME.toLowerCase() + SEPERATOR);
+            add(VDC_STORAGE_DOMAIN_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
+            add(VDC_STORAGE_DOMAIN_IMAGE_OBJ_NAME.toLowerCase() + SEPERATOR);
+            add(DISK_OBJ_NAME.toLowerCase() + SEPERATOR);
+            add(DISK_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
+            add(GLUSTER_VOLUME_OBJ_NAME.toLowerCase() + SEPERATOR);
+            add(GLUSTER_VOLUME_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
+            add(QUOTA_OBJ_NAME.toLowerCase() + SEPERATOR);
+            add(QUOTA_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
+            add(NETWORK_OBJ_NAME.toLowerCase() + SEPERATOR);
+            add(NETWORK_PLU_OBJ_NAME.toLowerCase() + SEPERATOR);
+            add(ALERT.toLowerCase());
+            add(ERROR.toLowerCase());
+            add(HOST_BY_CPU.toLowerCase());
+            add(DATACENTER_BY_NAME.toLowerCase());
+            add(VM_BY_STATUS.toLowerCase());
+        }
+    });
 
     /**
      * Determines if a search expression is safe.
@@ -89,9 +92,6 @@ public final class SearchObjects {
      * @return boolean
      */
     public static boolean isSafeExpression(String expr) {
-        if (SAFE_SEARCH_EXPR.size() == 0) {
-            init();
-        }
         return SAFE_SEARCH_EXPR.contains(expr.toLowerCase());
     }
 }
