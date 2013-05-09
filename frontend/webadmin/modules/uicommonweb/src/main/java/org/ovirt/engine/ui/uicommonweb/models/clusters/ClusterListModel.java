@@ -352,6 +352,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         clusterModel.setEntity(cluster);
         clusterModel.init(true);
         clusterModel.getClusterPolicyModel().setEditClusterPolicyFirst(clusterPolicyFirst);
+        clusterModel.getClusterPolicyModel().getEnableTrustedService().setEntity(cluster.supportsTrustedService());
         setWindow(clusterModel);
         clusterModel.setTitle(ConstantsManager.getInstance().getConstants().editClusterTitle());
         clusterModel.setHashName("edit_cluster"); //$NON-NLS-1$
@@ -367,7 +368,18 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         clusterModel.getClusterPolicyModel().setOverCommitHighLevel(cluster.gethigh_utilization());
 
         clusterModel.getClusterPolicyModel().saveDefaultValues();
-
+        if (cluster.supportsTrustedService())
+        {
+            clusterModel.getEnableGlusterService().setIsChangable(false);
+        }
+        if (cluster.supportsVirtService()&& !cluster.supportsGlusterService())
+        {
+            clusterModel.getClusterPolicyModel().getEnableTrustedService().setIsChangable(true);
+        }
+        else
+        {
+            clusterModel.getClusterPolicyModel().getEnableTrustedService().setIsChangable(false);
+        }
 
         AsyncDataProvider.getAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
@@ -410,6 +422,21 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                     }
                 };
                 AsyncDataProvider.getVmListByClusterName(asyncQuery1, cluster.getName());
+                AsyncQuery asyncQuery2 = new AsyncQuery();
+                asyncQuery2.setModel(clusterModel);
+                asyncQuery2.asyncCallback = new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object model1, Object result)
+                    {
+                        ArrayList<VDS> vdsList = (ArrayList<VDS>) result;
+                        if (vdsList.size() > 0)
+                        {
+                            clusterModel.getClusterPolicyModel().getEnableTrustedService().setIsChangable(false);
+                            clusterModel.getClusterPolicyModel().getEnableTrustedService().setInfo(ConstantsManager.getInstance().getConstants().trustedServiceDisabled());
+                        }
+                    }
+                };
+                AsyncDataProvider.getHostListByCluster(asyncQuery2, cluster.getName());
             }
         }));
 
@@ -617,6 +644,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         cluster.setVirtService((Boolean) model.getEnableOvirtService().getEntity());
         cluster.setGlusterService((Boolean) model.getEnableGlusterService().getEntity());
         cluster.setselection_algorithm(model.getClusterPolicyModel().getSelectionAlgorithm());
+        cluster.setTrustedService((Boolean) model.getClusterPolicyModel().getEnableTrustedService().getEntity());
         if (model.getClusterPolicyModel().getOverCommitTime().getIsAvailable())
         {
             cluster.setcpu_over_commit_duration_minutes(Integer.parseInt(model.getClusterPolicyModel().getOverCommitTime()

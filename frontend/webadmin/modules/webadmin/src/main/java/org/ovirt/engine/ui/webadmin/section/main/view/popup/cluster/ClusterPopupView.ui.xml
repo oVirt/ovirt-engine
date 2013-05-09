@@ -91,17 +91,19 @@
 		.minLabel {
 			height: 10px;
 			width: 10px;
-			margin: 3px;
+			margin-top: 3px;
+			margin-left: 6px;
 			background-color: #AFBF27;
 		}
 		.maxLabel {
 			height: 10px;
 			width: 10px;
-			margin: 3px;
+			margin-top: 3px;
+			margin-left: 6px;
 			background-color: #4E9FDD;
 		}
 		.marginPanel {
-			margin: 5px;
+			margin: 6px;
 		}
 		.topMarginPanel {
 			margin-top: 10px;
@@ -120,7 +122,7 @@
 		}
 		.labelStyle {
 			margin-top: 3px;
-			margin-left: 5px;
+			margin-left: 6px;
 		}
 		.gerySplitPanel {
 			background-color: grey;
@@ -196,8 +198,9 @@
 				<t:tab>
 					<t:DialogTab ui:field="clusterPolicyTab">
 						<t:content>
-							<g:VerticalPanel>
-								<g:FlowPanel width="300px">
+							<g:FlowPanel>
+								<g:FlowPanel addStyleNames="{style.radioButtonsTabContent}">
+									<g:Label ui:field="schedulePolicyPanelTitle" addStyleNames="{style.panelTitle}" />
 									<g:HorizontalPanel addStyleNames="{style.marginPanel}">
 										<g:RadioButton ui:field="policyRadioButton_none"/>
 										<g:RadioButton ui:field="policyRadioButton_evenDist"/>
@@ -214,7 +217,7 @@
 														   addStyleNames="{style.geryPanel}" />
 										</g:HorizontalPanel>
 									</g:FlowPanel>
-									<g:HorizontalPanel ui:field="timeHorizontalPanel" height="20px">
+									<g:HorizontalPanel ui:field="timeHorizontalPanel" width="70px" height="20px">
 										<g:Label ui:field="forTimeLabel" addStyleNames="{style.labelStyle}"/>
 										<e:EntityModelTextBoxEditor ui:field="overCommitTimeEditor" width="40px" height="20px" addStyleNames="{style.timeTextBoxEditorWidget}"/>
 										<g:Label ui:field="minTimeLabel" addStyleNames="{style.labelStyle}"/>
@@ -230,7 +233,11 @@
 										<g:Label ui:field="minServiceLevelLabel"/>
 									</g:HorizontalPanel>
 								</g:FlowPanel>
-							</g:VerticalPanel>
+								<g:FlowPanel ui:field="additionPropsPanel" addStyleNames="{style.nestedSubsequentPanel}">
+									<g:Label ui:field="additionPropsPanelTitle" addStyleNames="{style.panelTitle}" />
+									<e:EntityModelCheckBoxEditor ui:field="enableTrustedServiceEditor" />
+								</g:FlowPanel>
+							</g:FlowPanel>
 						</t:content>
 					</t:DialogTab>
 				</t:tab>

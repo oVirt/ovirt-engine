@@ -1925,4 +1925,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Host must be migratable when highly available is selected")
     String hostIsHa();
+
+    @DefaultStringValue("Cann't switch host cluster between trust cluster and non-trust cluster due to host existed in the cluster")
+    String trustedServiceDisabled();
 }

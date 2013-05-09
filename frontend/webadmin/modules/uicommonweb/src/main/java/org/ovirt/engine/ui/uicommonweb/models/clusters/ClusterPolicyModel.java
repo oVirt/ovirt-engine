@@ -113,6 +113,16 @@ public class ClusterPolicyModel extends EntityModel {
         }
     }
 
+    private EntityModel privateEnableTrustedService;
+
+    public EntityModel getEnableTrustedService() {
+        return privateEnableTrustedService;
+    }
+
+    public void setEnableTrustedService(EntityModel value) {
+        this.privateEnableTrustedService = value;
+    }
+
     public void saveDefaultValues()
     {
         if (getSelectionAlgorithm() == VdsSelectionAlgorithm.EvenlyDistribute)
@@ -159,7 +169,7 @@ public class ClusterPolicyModel extends EntityModel {
         }
 
         setOverCommitTime(new EntityModel());
-
+        setEnableTrustedService(new EntityModel(false));
         // Set all properties according to default selected algorithm:
         selectionAlgorithmChanged();
     }

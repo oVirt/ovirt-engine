@@ -255,6 +255,10 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     @Ignore
     SimplePanel rightDummySlider;
 
+    @UiField
+    @Ignore
+    Label schedulePolicyPanelTitle;
+
     @UiField(provided = true)
     @Ignore
     RadioButton policyRadioButton_none;
@@ -282,6 +286,15 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     @UiField
     @Ignore
     Label minTimeLabel;
+
+    @UiField
+    @Ignore
+    Label additionPropsPanelTitle;
+
+    @UiField(provided = true)
+    @Path(value = "clusterPolicyModel.enableTrustedService.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor enableTrustedServiceEditor;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -322,6 +335,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         optimizationCustomEditor.setContentWidgetStyleName(style.fullWidth());
 
         countThreadsAsCoresEditor.setContentWidgetStyleName(style.fullWidth());
+        enableTrustedServiceEditor.setContentWidgetStyleName(style.fullWidth());
 
         overCommitTimeEditor.addContentWidgetStyleName(style.timeTextBoxEditorWidget());
     }
@@ -361,6 +375,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
         clusterPolicyTab.setLabel(constants.clusterPopupClusterPolicyTabLabel());
 
+       schedulePolicyPanelTitle.setText(constants.clusterPolicySchedulePolicyPanelTitle());
         policyRadioButton_none.setText(constants.clusterPolicyNoneLabel());
         policyRadioButton_evenDist.setText(constants.clusterPolicyEvenDistLabel());
         policyRadioButton_powerSave.setText(constants.clusterPolicyPowSaveLabel());
@@ -368,6 +383,9 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         minServiceLevelLabel.setText(constants.clusterPolicyMinServiceLevelLabel());
         forTimeLabel.setText(constants.clusterPolicyForTimeLabel());
         minTimeLabel.setText(constants.clusterPolicyMinTimeLabel());
+
+       additionPropsPanelTitle.setText(constants.clusterPolicyAdditionalPropsPanelTitle());
+       enableTrustedServiceEditor.setLabel(constants.clusterPolicyEnableTrustedServiceLabel());
     }
 
     private void initRadioButtonEditors() {
@@ -413,6 +431,8 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         importGlusterConfigurationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         countThreadsAsCoresEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+
+        enableTrustedServiceEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     private void initInfoIcons(ApplicationResources resources, ApplicationConstants constants, ApplicationTemplates templates)

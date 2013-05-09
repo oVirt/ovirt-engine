@@ -607,6 +607,26 @@ public class ClusterModel extends EntityModel
                 if (!getAllowClusterWithVirtGlusterEnabled() && (Boolean) getEnableOvirtService().getEntity()) {
                     getEnableGlusterService().setEntity(Boolean.FALSE);
                 }
+                getEnableGlusterService().setIsChangable(true);
+                getClusterPolicyModel().getEnableTrustedService().setEntity(false);
+                if (getEnableOvirtService().getEntity() != null
+                        && (Boolean)getEnableOvirtService().getEntity())
+                {
+                    if (getEnableGlusterService().getEntity() != null
+                            && !(Boolean)getEnableGlusterService().getEntity())
+                    {
+                        getClusterPolicyModel().getEnableTrustedService().setIsChangable(true);
+                    }
+                    else
+                    {
+                        getClusterPolicyModel().getEnableTrustedService().setIsChangable(false);
+                    }
+
+                }
+                else
+                {
+                    getClusterPolicyModel().getEnableTrustedService().setIsChangable(false);
+                }
             }
         });
         getEnableOvirtService().setEntity(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
@@ -641,6 +661,41 @@ public class ClusterModel extends EntityModel
                     getGlusterHostAddress().setIsAvailable(false);
                     getGlusterHostFingerprint().setIsAvailable(false);
                     getGlusterHostPassword().setIsAvailable(false);
+                }
+                if (getEnableGlusterService().getEntity() != null
+                        && (Boolean) getEnableGlusterService().getEntity())
+                {
+                    getClusterPolicyModel().getEnableTrustedService().setEntity(false);
+                    getClusterPolicyModel().getEnableTrustedService().setIsChangable(false);
+                }
+                else
+                {
+                    if (getEnableOvirtService().getEntity() != null
+                            && (Boolean)getEnableOvirtService().getEntity())
+                    {
+                        getClusterPolicyModel().getEnableTrustedService().setIsChangable(true);
+                    }
+                    else
+                    {
+                        getClusterPolicyModel().getEnableTrustedService().setIsChangable(false);
+                    }
+                }
+            }
+
+       });
+
+        getClusterPolicyModel().getEnableTrustedService().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (getClusterPolicyModel().getEnableTrustedService().getEntity() != null
+                        && (Boolean)getClusterPolicyModel().getEnableTrustedService().getEntity())
+                {
+                    getEnableGlusterService().setEntity(false);
+                    getEnableGlusterService().setIsChangable(false);
+                }
+                else
+                {
+                    getEnableGlusterService().setIsChangable(true);
                 }
             }
         });

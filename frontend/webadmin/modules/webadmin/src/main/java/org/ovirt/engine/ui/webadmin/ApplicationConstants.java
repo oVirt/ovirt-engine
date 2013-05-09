@@ -127,6 +127,15 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Description")
     String clusterNewNetworkDescriptionLabel();
 
+    @DefaultStringValue("Scheduling Policy")
+    String clusterPolicySchedulePolicyPanelTitle();
+
+    @DefaultStringValue("Additional Properties")
+    String clusterPolicyAdditionalPropsPanelTitle();
+
+    @DefaultStringValue("Enable Trusted Service")
+    String clusterPolicyEnableTrustedServiceLabel();
+
     @DefaultStringValue("VM network")
     String clusterNewNetworkPopupVmNetworkLabel();
 
