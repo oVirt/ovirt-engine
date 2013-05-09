@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.bll.storage;
 
-import org.ovirt.engine.core.bll.*;
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.common.vdscommands.*;
+import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.common.queries.DiscoverSendTargetsQueryParameters;
+import org.ovirt.engine.core.common.vdscommands.DiscoverSendTargetsVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 
 public class DiscoverSendTargetsQuery<P extends DiscoverSendTargetsQueryParameters> extends QueriesCommandBase<P> {
     public DiscoverSendTargetsQuery(P parameters) {

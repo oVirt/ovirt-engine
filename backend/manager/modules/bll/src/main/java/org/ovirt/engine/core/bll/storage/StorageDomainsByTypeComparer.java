@@ -2,7 +2,8 @@ package org.ovirt.engine.core.bll.storage;
 
 import java.io.Serializable;
 import java.util.Comparator;
-import org.ovirt.engine.core.bll.*;
+
+import org.ovirt.engine.core.bll.CommandBase;
 
 public class StorageDomainsByTypeComparer implements Comparator<CommandBase>, Serializable {
     @Override

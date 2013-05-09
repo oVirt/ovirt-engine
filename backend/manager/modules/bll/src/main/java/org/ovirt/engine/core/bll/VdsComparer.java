@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
+import org.ovirt.engine.core.compat.NotImplementedException;
 
 /**
  * Base class for comparing between vdss

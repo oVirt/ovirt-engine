@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VM;
 
 /**
  * Algorithm. For server with desktops and server without desktop server with

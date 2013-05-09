@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.*;
+import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
 
 public class GetTasksStatusesByTasksIDsQuery<P extends GetTasksStatusesByTasksIDsParameters>
         extends QueriesCommandBase<P> {

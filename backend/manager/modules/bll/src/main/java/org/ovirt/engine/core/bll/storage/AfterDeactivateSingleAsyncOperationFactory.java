@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.utils.*;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.ISingleAsyncOperation;
 
 public class AfterDeactivateSingleAsyncOperationFactory extends ActivateDeactivateSingleAsyncOperationFactory {
     private boolean _isLastMaster;

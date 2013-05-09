@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VM;
 
 /**
  * This comparer chose Vds with more memory available as best

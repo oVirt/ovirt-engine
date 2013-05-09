@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
-import org.ovirt.engine.core.utils.*;
+import org.ovirt.engine.core.utils.ISingleAsyncOperation;
 
 public class RefreshStoragePoolAndDisconnectAsyncOperationFactory extends ActivateDeactivateSingleAsyncOperationFactory {
 

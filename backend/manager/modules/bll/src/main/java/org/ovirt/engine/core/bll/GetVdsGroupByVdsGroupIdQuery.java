@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.dal.dbbroker.*;
+import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetVdsGroupByVdsGroupIdQuery<P extends GetVdsGroupByVdsGroupIdParameters> extends QueriesCommandBase<P> {
     public GetVdsGroupByVdsGroupIdQuery(P parameters) {

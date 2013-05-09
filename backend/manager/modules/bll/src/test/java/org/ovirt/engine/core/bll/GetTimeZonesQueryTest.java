@@ -1,14 +1,16 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+
 import java.util.Map;
 import java.util.TimeZone;
+
 import org.junit.Test;
 import org.ovirt.engine.core.common.queries.TimeZoneQueryParams;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.SysprepHandler;
-
-import static org.mockito.Mockito.when;
-
 
 public class GetTimeZonesQueryTest extends AbstractSysprepQueryTest<TimeZoneQueryParams, GetTimeZonesQuery<TimeZoneQueryParams>> {
 

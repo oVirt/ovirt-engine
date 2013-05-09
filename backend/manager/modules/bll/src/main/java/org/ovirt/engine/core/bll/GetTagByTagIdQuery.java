@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.*;
+import org.ovirt.engine.core.common.queries.GetTagByTagIdParameters;
 
 public class GetTagByTagIdQuery<P extends GetTagByTagIdParameters> extends QueriesCommandBase<P> {
     public GetTagByTagIdQuery(P parameters) {

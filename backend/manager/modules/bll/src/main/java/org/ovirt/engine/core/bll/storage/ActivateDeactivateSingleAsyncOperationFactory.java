@@ -2,9 +2,9 @@ package org.ovirt.engine.core.bll.storage;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.utils.ISingleAsyncOperation;
 import org.ovirt.engine.core.utils.ISingleAsyncOperationFactory;
 
@@ -25,6 +25,7 @@ public abstract class ActivateDeactivateSingleAsyncOperationFactory implements I
         return _storagePool;
     }
 
+    @Override
     public void initialize(ArrayList parameters) {
         if (!(parameters.get(0) instanceof ArrayList)) {
             throw new InvalidOperationException();
@@ -44,5 +45,6 @@ public abstract class ActivateDeactivateSingleAsyncOperationFactory implements I
         _storagePool = (StoragePool) parameters.get(2);
     }
 
+    @Override
     public abstract ISingleAsyncOperation createSingleAsyncOperation();
 }

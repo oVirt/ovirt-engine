@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.bll.storage;
 
 import java.util.Collections;
-import org.ovirt.engine.core.bll.*;
-import org.ovirt.engine.core.common.action.*;
+
+import org.ovirt.engine.core.bll.SortedMultipleActionsRunnerBase;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
 
 public class DeactivateStorageDomainsMultipleActionRunner extends SortedMultipleActionsRunnerBase {
     public DeactivateStorageDomainsMultipleActionRunner(VdcActionType actionType,

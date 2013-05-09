@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.dal.dbbroker.*;
+import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleNameParameters;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetRoleByNameQuery<P extends MultilevelAdministrationByRoleNameParameters> extends QueriesCommandBase<P> {
     public GetRoleByNameQuery(P parameters)
