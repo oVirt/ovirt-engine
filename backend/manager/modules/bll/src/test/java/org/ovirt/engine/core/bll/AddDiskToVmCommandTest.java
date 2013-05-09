@@ -23,6 +23,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.DiskValidator;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -160,59 +161,28 @@ public class AddDiskToVmCommandTest {
     }
 
     @Test
-    public void canDoActionThinProvisioningSpaceCheckSucceeds() throws Exception {
-        final int availableSize = 6;
-        final int usedSize = 4;
-        Guid sdid = Guid.newGuid();
-        initializeCommand(sdid, VolumeType.Sparse);
+    public void canDoActionSpaceValidationSucceeds() {
+        Guid storageId = Guid.newGuid();
+        initializeCommand(storageId, VolumeType.Preallocated);
 
         mockVm();
-        mockStorageDomain(sdid, availableSize, usedSize);
+        mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
+        doReturn(mockStorageDomainValidatorWithSpace()).when(command).createStorageDomainValidator();
 
         assertTrue(command.canDoAction());
     }
 
     @Test
-    public void canDoActionThinProvisioningSpaceCheckFailsSize() {
-        final int availableSize = 4;
-        final int usedSize = 6;
-        Guid sdid = Guid.newGuid();
-        initializeCommand(sdid, VolumeType.Sparse);
+    public void canDoActionSpaceValidationFails() {
+
+        Guid storageId = Guid.newGuid();
+        initializeCommand(storageId, VolumeType.Sparse);
 
         mockVm();
-        mockStorageDomain(sdid, availableSize, usedSize);
+        mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
-
-        assertFalse(command.canDoAction());
-        assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN.toString()));
-    }
-
-    @Test
-    public void canDoActionPreallocatedSpaceCheckSucceeds() {
-        final int availableSize = 12;
-        final int usedSize = 8;
-        Guid sdid = Guid.newGuid();
-        initializeCommand(sdid, VolumeType.Preallocated);
-
-        mockVm();
-        mockStorageDomain(sdid, availableSize, usedSize);
-        mockStoragePoolIsoMap();
-        assertTrue(command.canDoAction());
-    }
-
-    @Test
-    public void canDoActionPreallocatedSpaceCheckFailsSize() {
-        final int availableSize = 3;
-        final int usedSize = 7;
-        Guid sdid = Guid.newGuid();
-        initializeCommand(sdid, VolumeType.Preallocated);
-
-        mockVm();
-        mockStorageDomain(sdid, availableSize, usedSize);
-        mockStoragePoolIsoMap();
+        doReturn(mockStorageDomainValidatorWithoutSpace()).when(command).createStorageDomainValidator();
 
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
@@ -394,6 +364,26 @@ public class AddDiskToVmCommandTest {
         when(snapshotsValidator.vmNotDuringSnapshot(any(Guid.class))).thenReturn(ValidationResult.VALID);
         when(snapshotsValidator.vmNotInPreview(any(Guid.class))).thenReturn(ValidationResult.VALID);
         return snapshotsValidator;
+    }
+
+    private static StorageDomainValidator mockStorageDomainValidatorWithoutSpace() {
+        StorageDomainValidator storageDomainValidator = mockStorageDomainValidator();
+        when(storageDomainValidator.hasSpaceForNewDisk(any(DiskImage.class))).thenReturn(
+                new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN));
+        return storageDomainValidator;
+    }
+
+    private static StorageDomainValidator mockStorageDomainValidatorWithSpace() {
+        StorageDomainValidator storageDomainValidator = mockStorageDomainValidator();
+        when(storageDomainValidator.hasSpaceForNewDisk(any(DiskImage.class))).thenReturn(ValidationResult.VALID);
+        return storageDomainValidator;
+    }
+
+    private static StorageDomainValidator mockStorageDomainValidator() {
+        StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
+        when(storageDomainValidator.isDomainExistAndActive()).thenReturn(ValidationResult.VALID);
+        when(storageDomainValidator.isDomainWithinThresholds()).thenReturn(ValidationResult.VALID);
+        return storageDomainValidator;
     }
 
     private DiskValidator spyDiskValidator(Disk disk) {

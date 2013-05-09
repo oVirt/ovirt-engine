@@ -5,6 +5,7 @@ import java.util.Set;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StorageDomain extends IVdcQueryable implements BusinessEntityWithStatus<Guid, StorageDomainStatus>, Nameable, Commented {
@@ -129,6 +130,11 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntityWithSt
 
     public Integer getAvailableDiskSize() {
         return getStorageDynamicData().getAvailableDiskSize();
+    }
+
+    @JsonIgnore
+    public long getAvailableDiskSizeInBytes() {
+        return getAvailableDiskSize() * SizeConverter.BYTES_IN_GB;
     }
 
     public void setAvailableDiskSize(Integer availableDiskSize) {

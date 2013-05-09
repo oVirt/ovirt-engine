@@ -5,6 +5,7 @@ import java.util.Date;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DiskImage extends DiskImageBase implements IImage {
@@ -275,6 +276,11 @@ public class DiskImage extends DiskImageBase implements IImage {
             }
         }
         return actualDiskWithSnapthotsSize;
+    }
+
+    @JsonIgnore
+    public double getActualDiskWithSnapshotsSizeInBytes() {
+        return getActualDiskWithSnapshotsSize() * SizeConverter.BYTES_IN_GB;
     }
 
     /**

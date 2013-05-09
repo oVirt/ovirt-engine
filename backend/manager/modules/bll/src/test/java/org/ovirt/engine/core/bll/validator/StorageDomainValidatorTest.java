@@ -7,14 +7,18 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-/** A test case for the {@link StorageDomainValidator} class. */
+/**
+ * A test case for the {@link StorageDomainValidator} class.
+ * The hasSpaceForNewDisk() method is covered separately in
+ * {@link StorageDomainValidatorFreeSpaceTest}.
+ */
 public class StorageDomainValidatorTest {
     private StorageDomain domain;
     private StorageDomainValidator validator;

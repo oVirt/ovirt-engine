@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.validator;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,6 +11,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -17,6 +20,10 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class StorageDomainValidator {
+
+    private static final double QCOW_OVERHEAD_FACTOR = 1.1;
+    private static final long INITIAL_BLOCK_ALLOCATION_SIZE = 1024L * 1024L * 1024L;
+    private static final long EMPTY_QCOW_HEADER_SIZE = 1024L * 1024L;
 
     private StorageDomain storageDomain;
 
@@ -71,6 +78,41 @@ public class StorageDomainValidator {
 
     private static Integer getLowDiskSpaceThreshold() {
         return Config.<Integer> getValue(ConfigValues.FreeSpaceCriticalLowInGB);
+    }
+
+    public ValidationResult hasSpaceForNewDisks(Collection<DiskImage> diskImages) {
+        double availableSize = storageDomain.getAvailableDiskSizeInBytes();
+        double totalSizeForDisks = 0.0;
+
+        for (DiskImage diskImage : diskImages) {
+            double sizeForDisk = diskImage.getSize();
+
+            if (diskImage.getVolumeFormat() == VolumeFormat.COW) {
+                if (storageDomain.getStorageType().isFileDomain()) {
+                    sizeForDisk = EMPTY_QCOW_HEADER_SIZE;
+                } else {
+                    sizeForDisk = INITIAL_BLOCK_ALLOCATION_SIZE;
+                }
+            } else if (diskImage.getVolumeType() == VolumeType.Sparse) {
+                sizeForDisk = EMPTY_QCOW_HEADER_SIZE;
+            }
+            totalSizeForDisks += sizeForDisk;
+        }
+
+        return validateRequiredSpace(availableSize, totalSizeForDisks);
+    }
+
+    public ValidationResult hasSpaceForNewDisk(DiskImage diskImage) {
+        return hasSpaceForNewDisks(Collections.singleton(diskImage));
+    }
+
+    private ValidationResult validateRequiredSpace(double availableSize, double requiredSize) {
+        if (availableSize >= requiredSize) {
+            return ValidationResult.VALID;
+        }
+
+        return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN,
+                storageName());
     }
 
     public static Map<StorageDomain, Integer> getSpaceRequirementsForStorageDomains(Collection<DiskImage> images,

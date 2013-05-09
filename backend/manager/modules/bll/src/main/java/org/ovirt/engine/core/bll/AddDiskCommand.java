@@ -34,7 +34,6 @@ import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -43,7 +42,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -149,13 +147,14 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     private boolean checkIfImageDiskCanBeAdded(VM vm) {
         boolean returnValue;
         DiskValidator diskValidator = getDiskValidator(getParameters().getDiskInfo());
-
+        StorageDomainValidator storageDomainValidator = createStorageDomainValidator();
         // vm agnostic checks
         returnValue =
-                validate(new StorageDomainValidator(getStorageDomain()).isDomainExistAndActive()) &&
+                validate(storageDomainValidator.isDomainExistAndActive()) &&
                 !isShareableDiskOnGlusterDomain() &&
                 checkImageConfiguration() &&
-                hasFreeSpace(getStorageDomain()) &&
+                validate(storageDomainValidator.hasSpaceForNewDisk(getDiskImageInfo())) &&
+                validate(storageDomainValidator.isDomainWithinThresholds()) &&
                 checkExceedingMaxBlockDiskSize() &&
                 canAddShareableDisk() &&
                 validate(diskValidator.isVirtIoScsiValid(vm));
@@ -230,21 +229,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     @Override
     protected boolean isVmExist() {
         return getParameters().getVmId() == null || Guid.Empty.equals(getParameters().getVmId()) || super.isVmExist();
-    }
-
-    private boolean hasFreeSpace(StorageDomain storageDomain) {
-        if (getDiskImageInfo().getVolumeType() == VolumeType.Preallocated) {
-            return doesStorageDomainhaveSpaceForRequest(storageDomain);
-        }
-        return isStorageDomainWithinThresholds(storageDomain);
-    }
-
-    protected boolean doesStorageDomainhaveSpaceForRequest(StorageDomain storageDomain) {
-        return validate(new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(getDiskImageInfo().getSizeInGigabytes()));
-    }
-
-    protected boolean isStorageDomainWithinThresholds(StorageDomain storageDomain) {
-        return validate(new StorageDomainValidator(storageDomain).isDomainWithinThresholds());
     }
 
     /** @return The disk from the parameters, cast to a {@link DiskImage} */
@@ -551,5 +535,9 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 getRequestDiskSpace()));
         }
         return list;
+    }
+
+    protected StorageDomainValidator createStorageDomainValidator() {
+        return new StorageDomainValidator(getStorageDomain());
     }
 }
