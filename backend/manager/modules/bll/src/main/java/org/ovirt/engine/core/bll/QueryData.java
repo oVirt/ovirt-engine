@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-public class QueryData2 {
+public class QueryData {
     private String query;
     private String type;
     private java.util.Date date = new java.util.Date(0);

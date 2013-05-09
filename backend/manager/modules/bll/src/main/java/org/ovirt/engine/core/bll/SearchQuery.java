@@ -49,7 +49,7 @@ import org.ovirt.engine.core.searchbackend.SyntaxContainer;
 import org.ovirt.engine.core.searchbackend.SyntaxError;
 
 public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<P> {
-    private static final HashMap<String, QueryData2> mQueriesCache = new HashMap<String, QueryData2>();
+    private static final HashMap<String, QueryData> mQueriesCache = new HashMap<String, QueryData>();
 
     public SearchQuery(P parameters) {
         super(parameters);
@@ -145,7 +145,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     private List<VM> searchVmsFromDb() {
         List<VM> returnValue = null;
 
-        QueryData2 data = initQueryData(true);
+        QueryData data = initQueryData(true);
         if (data == null) {
             returnValue = new ArrayList<VM>();
             getQueryReturnValue().setExceptionString(getQueryReturnValue().getExceptionString());
@@ -186,7 +186,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
      * @return The result of the query
      */
     private <T extends IVdcQueryable> List<T> adSearch(LdapQueryType ldapQueryType, AdActionType adActionType) {
-        QueryData2 data = initQueryData(true);
+        QueryData data = initQueryData(true);
 
         if (data == null) {
             return new ArrayList<T>();
@@ -228,7 +228,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     private final <T extends IVdcQueryable> List<T> genericSearch(final SearchDAO<T> dao,
             final boolean useCache,
             final Filter<T> filter) {
-        final QueryData2 data = initQueryData(useCache);
+        final QueryData data = initQueryData(useCache);
         if (data == null) {
             return new ArrayList<T>();
         }
@@ -274,8 +274,8 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         return genericSearch(getDbFacade().getNetworkViewDao(), true, null);
     }
 
-    private QueryData2 initQueryData(boolean useCache) {
-        QueryData2 data = null;
+    private QueryData initQueryData(boolean useCache) {
+        QueryData data = null;
         boolean isExistsValue = false;
         boolean IsFromYesterday = false;
         boolean isSafe = false;
@@ -302,7 +302,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             // search text.
             if (!isExistsValue || IsFromYesterday) {
                 log.debugFormat("ResourceManager::searchBusinessObjects(''{0}'') - entered", searchText);
-                data = new QueryData2();
+                data = new QueryData();
                 ISyntaxChecker curSyntaxChecker;
                 String[] splitted = searchText.split("[:@ ]");
                 final String objectName = splitted[0].toUpperCase();
