@@ -70,6 +70,9 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         condition=lambda self: self._enabled,
         name=osetupcons.Stages.AIO_CONFIG_AVAILABLE,
+        before=[
+            osetupcons.Stages.DIALOG_TITLES_S_NETWORK,
+        ],
     )
     def _constomization(self):
         if self.environment[
@@ -87,6 +90,10 @@ class Plugin(plugin.PluginBase):
                 prompt=True,
                 default=False,
             )
+        if self.environment[osetupcons.AIOEnv.CONFIGURE]:
+            self.environment[
+                osetupcons.ConfigEnv.FQDN_REVERSE_VALIDATION
+            ] = True
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,

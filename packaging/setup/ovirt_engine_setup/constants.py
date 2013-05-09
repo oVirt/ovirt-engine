@@ -722,6 +722,8 @@ class ConfigEnv(object):
     def FIREWALL_MANAGER(self):
         return 'OVESETUP_CONFIG/firewallManager'
 
+    FQDN_REVERSE_VALIDATION = 'OVESETUP_CONFIG/fqdnReverseValidation'
+
 
 @util.export
 @util.codegen
