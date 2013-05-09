@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.errors;
 
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 
 public class VdcFault extends IVdcQueryable {
     private static final long serialVersionUID = -8004317251171749327L;

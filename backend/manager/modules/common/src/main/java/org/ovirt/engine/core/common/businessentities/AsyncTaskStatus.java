@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import org.ovirt.engine.core.compat.*;
 import java.io.Serializable;
+
+import org.ovirt.engine.core.compat.StringHelper;
 
 public class AsyncTaskStatus implements Serializable {
     private static final long serialVersionUID = -7569773307084259828L;
