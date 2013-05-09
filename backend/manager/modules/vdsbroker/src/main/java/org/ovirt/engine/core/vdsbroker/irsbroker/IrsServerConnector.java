@@ -16,9 +16,6 @@ public interface IrsServerConnector {
             String srcVolUUID, String dstImgGUID, String dstVolUUID, String descr, String dstSdUUID, int volType,
             int volFormat, int preallocate, String postZero, String force);
 
-    public Map<String, Object> setVolumeDescription(String sdUUID, String spUUID, String imgGUID, String volUUID,
-            String description);
-
     public Map<String, Object> mergeSnapshots(String sdUUID, String spUUID, String vmGUID, String imgGUID,
             String ancestorUUID, String successorUUID);
 

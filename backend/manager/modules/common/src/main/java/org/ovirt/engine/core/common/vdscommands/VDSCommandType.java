@@ -62,7 +62,6 @@ public enum VDSCommandType {
     CopyImage("org.ovirt.engine.core.vdsbroker.irsbroker"),
     CreateSnapshot("org.ovirt.engine.core.vdsbroker.irsbroker"),
     MergeSnapshots("org.ovirt.engine.core.vdsbroker.irsbroker"),
-    SetImageDescription("org.ovirt.engine.core.vdsbroker.irsbroker"),
     IsoPrefix("org.ovirt.engine.core.vdsbroker.irsbroker"),
     IsoDirectory("org.ovirt.engine.core.vdsbroker.irsbroker"),
     ResetIrs("org.ovirt.engine.core.vdsbroker.irsbroker"),

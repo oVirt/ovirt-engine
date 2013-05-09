@@ -15,9 +15,6 @@ public interface IIrsServer {
             String dstImgGUID, String dstVolUUID, String descr, String dstSdUUID, int volType, int volFormat,
             int preallocate, String postZero, String force);
 
-    StatusOnlyReturnForXmlRpc setVolumeDescription(String sdUUID, String spUUID, String imgGUID, String volUUID,
-            String description);
-
     OneUuidReturnForXmlRpc mergeSnapshots(String sdUUID, String spUUID, String vmGUID, String imgGUID,
             String ancestorUUID, String successorUUID, String postZero);
 
