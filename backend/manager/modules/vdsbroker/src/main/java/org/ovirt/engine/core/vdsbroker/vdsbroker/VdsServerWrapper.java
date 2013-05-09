@@ -95,18 +95,6 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public OneVmReturnForXmlRpc reset(String vmId) {
-        try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.reset(vmId);
-            OneVmReturnForXmlRpc wrapper = new OneVmReturnForXmlRpc(xmlRpcReturnValue);
-            return wrapper;
-        } catch (UndeclaredThrowableException ute) {
-            throw new XmlRpcRunTimeException(ute);
-        }
-
-    }
-
-    @Override
     public OneVmReturnForXmlRpc resume(String vmId) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.cont(vmId);

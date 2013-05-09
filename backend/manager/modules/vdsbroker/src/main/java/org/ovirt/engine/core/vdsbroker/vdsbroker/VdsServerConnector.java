@@ -14,8 +14,6 @@ public interface VdsServerConnector {
 
     public Map<String, Object> hibernate(String vmId, String hiberVolHandle);
 
-    public Map<String, Object> reset(String vmId);
-
     public Map<String, Object> cont(String vmId);
 
     public Map<String, Object> list();

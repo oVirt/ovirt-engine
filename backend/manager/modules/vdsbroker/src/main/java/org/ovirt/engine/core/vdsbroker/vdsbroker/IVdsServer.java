@@ -28,8 +28,6 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc hibernate(String vmId, String hiberVolHandle);
 
-    OneVmReturnForXmlRpc reset(String vmId);
-
     OneVmReturnForXmlRpc resume(String vmId);
 
     VMListReturnForXmlRpc list();
