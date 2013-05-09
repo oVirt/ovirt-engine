@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.searchbackend;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.RefObject;
 
 /**
  * An interface to be implemented by all Condition fields auto completers

@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.searchbackend;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.StringFormat;
 
 public class SyntaxObject {
     protected SyntaxObjectType mType = SyntaxObjectType.forValue(0);
