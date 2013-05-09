@@ -299,7 +299,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 ----------------------------------------------------------------
--- [user_action_map] Table
+-- [permissions] Table
 --
 
 
