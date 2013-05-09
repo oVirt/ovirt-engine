@@ -438,18 +438,6 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc validateStorageDomain(String sdUUID) {
-        try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.validateStorageDomain(sdUUID);
-            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
-            return wrapper;
-        } catch (UndeclaredThrowableException ute) {
-            throw new XmlRpcRunTimeException(ute);
-        }
-
-    }
-
-    @Override
     public StatusOnlyReturnForXmlRpc createStorageDomain(int domainType, String sdUUID, String domainName, String arg,
             int storageType, String storageFormatType) {
         try {

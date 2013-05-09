@@ -93,8 +93,6 @@ public interface IVdsServer {
 
     ServerConnectionListReturnForXmlRpc getStorageConnectionsList(String spUUID);
 
-    StatusOnlyReturnForXmlRpc validateStorageDomain(String sdUUID);
-
     StatusOnlyReturnForXmlRpc createStorageDomain(int domainType, String sdUUID, String domainName, String arg,
             int storageType, String storageFormatType);
 

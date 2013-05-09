@@ -78,8 +78,6 @@ public interface VdsServerConnector {
 
     public Map<String, Object> getStorageConnectionsList(String spUUID);
 
-    public Map<String, Object> validateStorageDomain(String sdUUID);
-
     public Map<String, Object> createStorageDomain(int domainType, String sdUUID, String domainName, String arg,
             int storageType, String storageFormatType);
 
