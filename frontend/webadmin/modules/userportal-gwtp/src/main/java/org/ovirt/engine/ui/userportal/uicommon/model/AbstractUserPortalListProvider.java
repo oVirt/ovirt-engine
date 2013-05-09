@@ -20,6 +20,11 @@ public abstract class AbstractUserPortalListProvider<M extends IUserPortalListMo
 
     private List<UserPortalItemModel> currentItems;
 
+    /**
+     * Force an update of the view regardless of if anything has changed.
+     */
+    private boolean forceUpdate = false;
+
     public AbstractUserPortalListProvider(BaseClientGinjector ginjector, CurrentUser user) {
         super(ginjector, user);
     }
@@ -33,10 +38,8 @@ public abstract class AbstractUserPortalListProvider<M extends IUserPortalListMo
         }
 
         // Subsequent data update, with item change
-        else if (itemsChanged(items, currentItems)) {
-            for(UserPortalItemModel itemModel: currentItems) {
-                itemModel.clearReferences();
-            }
+        else if (forceUpdate || itemsChanged(items, currentItems)) {
+            clearReferences();
             super.updateDataProvider(items);
         }
 
@@ -45,7 +48,23 @@ public abstract class AbstractUserPortalListProvider<M extends IUserPortalListMo
             retainSelectedItems();
         }
 
+        forceUpdate = false;
         currentItems = items;
+    }
+
+    private void clearReferences() {
+        for(UserPortalItemModel itemModel: currentItems) {
+            itemModel.clearReferences();
+        }
+    }
+
+    /**
+     * Instead of clearing the items in the model, just mark a flag that forces the
+     * view to update the grid when updateProvider is called.
+     */
+    @Override
+    public void onManualRefresh() {
+        forceUpdate = true;
     }
 
     /**

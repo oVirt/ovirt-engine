@@ -76,7 +76,7 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
                 new SimpleRefreshManager(dataProvider, eventBus, clientStorage));
     }
 
-    public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
+    public SimpleActionTable(final SearchableTableModelProvider<T, ?> dataProvider,
             Resources resources, Resources headerResources,
             EventBus eventBus, AbstractRefreshManager<RefreshPanel> refreshManager) {
         super(dataProvider, resources, headerResources, eventBus);
@@ -91,6 +91,8 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
         refreshManager.setManualRefreshCallback(new ManualRefreshCallback() {
             @Override
             public void onManualRefresh() {
+                //Do any special refresh options.
+                dataProvider.onManualRefresh();
                 setLoadingState(LoadingState.LOADING);
             }
         });

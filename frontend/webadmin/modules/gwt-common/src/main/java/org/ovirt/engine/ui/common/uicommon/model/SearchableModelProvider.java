@@ -16,7 +16,12 @@ public interface SearchableModelProvider<T, M extends SearchableListModel> exten
 
     /**
      * Updates the item selection of the model.
+     * @param items The list of items to select.
      */
     void setSelectedItems(List<T> items);
 
+    /**
+     * Implement this method if you wish to do anything additional when manually refreshing.
+     */
+    void onManualRefresh();
 }

@@ -70,6 +70,10 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
         getModel().setSelectedItems(items);
     }
 
+    public void onManualRefresh() {
+        //Do nothing by default.
+    }
+
     @Override
     public Object getKey(T item) {
         if (item instanceof IVdcQueryable) {
