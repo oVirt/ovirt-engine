@@ -302,7 +302,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             // search text.
             if (!isExistsValue || IsFromYesterday) {
                 log.debugFormat("ResourceManager::searchBusinessObjects(''{0}'') - entered", searchText);
-                data = new QueryData();
+                String queryDomain = null;
                 ISyntaxChecker curSyntaxChecker;
                 String[] splitted = searchText.split("[:@ ]");
                 final String objectName = splitted[0].toUpperCase();
@@ -311,12 +311,11 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                         || (SearchObjects.AD_GROUP_OBJ_NAME.equals(objectName))
                         || (SearchObjects.AD_GROUP_PLU_OBJ_NAME.equals(objectName))) {
                     if (searchText.indexOf('@') > 0 && splitted.length > 1) {
-                        data.setDomain(splitted[1]);
+                        queryDomain = splitted[1];
                         searchText = searchText.substring(0, searchText.indexOf('@'))
                                 + searchText.substring(searchText.indexOf(':'));
                     } else {
-                        String domain = getDefaultDomain();
-                        data.setDomain(domain);
+                        queryDomain = getDefaultDomain();
                     }
                     curSyntaxChecker = SyntaxCheckerFactory.CreateADSyntaxChecker(Config
                             .<String> GetValue(ConfigValues.AuthenticationMethod));
@@ -359,9 +358,11 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                     return null;
                 }
                 // An expression is considered safe if matches a trivial search.
-                data.setQType(searchObj.getSearchObjectStr());
-                data.setQuery(curSyntaxChecker.generateQueryFromSyntaxContainer(searchObj, isSafe));
-                data.setDate(new Date());
+                data =
+                        new QueryData(curSyntaxChecker.generateQueryFromSyntaxContainer(searchObj, isSafe),
+                                searchObj.getSearchObjectStr(),
+                                new Date(),
+                                queryDomain);
                 // when looking for tags , the query contains all parent children tag id's
                 // statically, therefore , in order to reflect changes in the parent tree
                 // we should not rely on the cached query in such case and have to build the
