@@ -238,14 +238,8 @@ public class VmDeviceUtils {
             // create sound card for a desktop VM if not exists
             if (vmBase.getVmType() == VmType.Desktop) {
                 List<VmDevice> list = DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdAndType(vmBase.getId(), VmDeviceType.SOUND.getName());
-                if (list.size() == 0) {
-                    String soundDevice = VmInfoBuilderBase.getSoundDevice(vm.getStaticData(), vm.getVdsGroupCompatibilityVersion());
-                    addManagedDevice(new VmDeviceId(Guid.NewGuid(), vmBase.getId()),
-                            VmDeviceType.SOUND,
-                            VmDeviceType.getSoundDeviceType(soundDevice),
-                            new HashMap<String, Object>(),
-                            true,
-                            true);
+                if (list.isEmpty()) {
+                    addSoundCard(vm.getStaticData(), vm.getVdsGroupCompatibilityVersion());
                 }
             }
             int numOfMonitors = (vm.getDisplayType() == DisplayType.vnc) ? Math.max(1, vm.getNumOfMonitors()) : vm.getNumOfMonitors();
@@ -256,6 +250,21 @@ public class VmDeviceUtils {
 
         }
     }
+
+    private static void addSoundCard(VmBase vmBase) {
+        addSoundCard(vmBase, ClusterUtils.getCompatilibilyVersion(vmBase));
+    }
+
+    private static void addSoundCard(VmBase vmBase, Version vdsGroupCompatibilityVersion) {
+        String soundDevice = VmInfoBuilderBase.getSoundDevice(vmBase, vdsGroupCompatibilityVersion);
+        addManagedDevice(new VmDeviceId(Guid.NewGuid(), vmBase.getId()),
+                VmDeviceType.SOUND,
+                VmDeviceType.getSoundDeviceType(soundDevice),
+                new HashMap<String, Object>(),
+                true,
+                true);
+    }
+
     /**
      * Copies relevant entries on "Vm from Template" or "Template from VM" creation.
      *
@@ -652,6 +661,7 @@ public class VmDeviceUtils {
      */
     private static <T extends VmBase> void addOtherDevices(T entity, List<VmDevice> vmDeviceToAdd) {
         boolean hasCD = false;
+        boolean hasSoundCard = false;
         for (VmDevice vmDevice : entity.getManagedDeviceMap().values()) {
             if (isDiskOrInterface(vmDevice)) {
                 continue; // skip disks/interfaces that were added separately.
@@ -663,10 +673,16 @@ public class VmDeviceUtils {
             if (vmDevice.getDevice().equals(VmDeviceType.CDROM.getName())){
                 hasCD = true;
             }
+            if (vmDevice.getDevice().equals(VmDeviceType.SOUND.getName())){
+                hasSoundCard = true;
+            }
             vmDeviceToAdd.add(vmDevice);
         }
         if (!hasCD) { // add an empty CD
             addEmptyCD(entity.getId());
+        }
+        if (!hasSoundCard && entity.getVmType() == VmType.Desktop) {
+            addSoundCard(entity);
         }
         for (VmDevice vmDevice : entity.getUnmanagedDeviceList()) {
             vmDeviceToAdd.add(vmDevice);
