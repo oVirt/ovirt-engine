@@ -964,8 +964,14 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Invalid E-Mail address")
     String invalidEmailAddressInvalidReason();
 
-    @DefaultStringValue("Address is not a valid host name or IP address.")
+    @DefaultStringValue("The given host address is neither a valid host name nor a valid IP address.")
     String addressIsNotValidHostNameOrIpAddressInvalidReason();
+
+    @DefaultStringValue("Given URI is of an invalid format.")
+    String uriInvalidFormat();
+
+    @DefaultStringValue("Given URL contains invalid scheme, only 'http://' is allowed.")
+    String urlSchemeNotHttp();
 
     @DefaultStringValue("Switch to maintenance mode to enable Upgrade.")
     String switchToMaintenanceModeToEnableUpgradeReason();

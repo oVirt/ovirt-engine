@@ -6,9 +6,13 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.Uri;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.UrlValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("deprecation")
@@ -69,7 +73,17 @@ public class ProviderModel extends Model {
     }
 
     private boolean validate() {
-        return true;
+        getName().validateEntity(new IValidation[] { new NotEmptyValidation() });
+
+        Uri url = new Uri((String) getUrl().getEntity());
+        if (url.getScheme().isEmpty()) {
+            url.setScheme(Uri.SCHEME_HTTP);
+            getUrl().setEntity(url.toString());
+        }
+        getUrl().validateEntity(new IValidation[] { new NotEmptyValidation(),
+                new UrlValidation(new String[] { Uri.SCHEME_HTTP }) });
+
+        return getName().getIsValid() && getUrl().getIsValid();
     }
 
     private void cancel() {
