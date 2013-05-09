@@ -57,7 +57,7 @@ while [ -n "$1" ]; do
     esac
 done
 
-validationlist="fkvalidator.sh encodingvalidator.sh"
+validationlist="fkvalidator.sh"
 
 for script in ${validationlist}; do
         $dbutils/${script} ${USERNAME} ${SERVERNAME} ${PORT} ${DATABASE} -q ${extra_params} || error=1
