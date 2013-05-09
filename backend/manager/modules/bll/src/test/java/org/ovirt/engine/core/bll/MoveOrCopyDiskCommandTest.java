@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
@@ -17,7 +18,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.validator.DiskValidator;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
@@ -99,7 +103,7 @@ public class MoveOrCopyDiskCommandTest {
     }
 
     @Test
-    public void canDoActionCanNotFindTemplet() throws Exception {
+    public void canDoActionCanNotFindTemplate() throws Exception {
         initializeCommand(ImageOperation.Copy);
         initTemplateDiskImage();
         doReturn(null).when(command).getTemplateForImage();
@@ -115,7 +119,7 @@ public class MoveOrCopyDiskCommandTest {
         destStorageId = srcStorageId;
         initializeCommand(ImageOperation.Move);
         initVmDiskImage();
-        initVm();
+        initVmForFail();
         initSrcStorageDomain();
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
@@ -127,7 +131,7 @@ public class MoveOrCopyDiskCommandTest {
     public void canDoActionVmIsNotDown() throws Exception {
         initializeCommand(ImageOperation.Move);
         initVmDiskImage();
-        initVm();
+        initVmForFail();
         initSrcStorageDomain();
         initDestStorageDomain();
         doReturn(vmDeviceDao).when(command).getVmDeviceDAO();
@@ -141,7 +145,7 @@ public class MoveOrCopyDiskCommandTest {
     public void canDoActionDiskIsLocked() throws Exception {
         initializeCommand(ImageOperation.Move);
         initVmDiskImage();
-        initVm();
+        initVmForFail();
         command.getImage().setImageStatus(ImageStatus.LOCKED);
         doReturn(vmDeviceDao).when(command).getVmDeviceDAO();
         assertFalse(command.canDoAction());
@@ -162,7 +166,39 @@ public class MoveOrCopyDiskCommandTest {
                 VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED.toString()));
     }
 
-    protected void initVm() {
+    @Test
+    public void canDoActionNotEnoughSpace() throws Exception {
+        initializeCommand(ImageOperation.Move);
+        initVmForSpace();
+        initVmDiskImage();
+        initSrcStorageDomain();
+        initDestStorageDomain();
+        doReturn(mockStorageDomainValidatorWithoutSpace()).when(command).createStorageDomainValidator();
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN);
+    }
+
+    @Test
+    public void canDoActionEnoughSpace() throws Exception {
+        initializeCommand(ImageOperation.Move);
+        initVmForSpace();
+        initVmDiskImage();
+        initSrcStorageDomain();
+        initDestStorageDomain();
+        doReturn(mockStorageDomainValidatorWithSpace()).when(command).createStorageDomainValidator();
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+    }
+
+    protected void initVmForSpace() {
+        VM vm = new VM();
+        vm.setStatus(VMStatus.Down);
+        doReturn(vmDao).when(command).getVmDAO();
+        when(vmDao.get(any(Guid.class))).thenReturn(vm);
+        VmDevice device = new VmDevice();
+        List<Pair<VM, VmDevice>> vmList = Collections.singletonList(new Pair<>(vm, device));
+        when(vmDao.getVmsWithPlugInfo(any(Guid.class))).thenReturn(vmList);
+    }
+
+    protected void initVmForFail() {
         VM vm = new VM();
         vm.setStatus(VMStatus.Down);
         doReturn(vmDao).when(command).getVmDAO();
@@ -186,6 +222,26 @@ public class MoveOrCopyDiskCommandTest {
         when(vmDao.getVmsWithPlugInfo(any(Guid.class))).thenReturn(vmList);
     }
 
+    private static StorageDomainValidator mockStorageDomainValidatorWithoutSpace() {
+        StorageDomainValidator storageDomainValidator = mockStorageDomainValidator();
+        when(storageDomainValidator.hasSpaceForClonedDisk(any(DiskImage.class))).thenReturn(
+                new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN));
+        return storageDomainValidator;
+    }
+
+    private static StorageDomainValidator mockStorageDomainValidatorWithSpace() {
+        StorageDomainValidator storageDomainValidator = mockStorageDomainValidator();
+        when(storageDomainValidator.hasSpaceForClonedDisk(any(DiskImage.class))).thenReturn(ValidationResult.VALID);
+        return storageDomainValidator;
+    }
+
+    private static StorageDomainValidator mockStorageDomainValidator() {
+        StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
+        when(storageDomainValidator.isDomainExistAndActive()).thenReturn(ValidationResult.VALID);
+        when(storageDomainValidator.isDomainWithinThresholds()).thenReturn(ValidationResult.VALID);
+        return storageDomainValidator;
+    }
+
     private void initSrcStorageDomain() {
         StorageDomain stDomain = new StorageDomain();
         stDomain.setStatus(StorageDomainStatus.Active);
@@ -207,12 +263,10 @@ public class MoveOrCopyDiskCommandTest {
                 destStorageId,
                 operation)));
 
-        // Spy away the storage domain checker methods
-        doReturn(true).when(command).isStorageDomainSpaceWithinThresholds();
-
-        // Spy away the image handler methods
+        // Spy away the image handler method
         doReturn(true).when(command).checkImageConfiguration();
-        doReturn(Collections.emptyList()).when(command).getAllImageSnapshots();
+
+        doReturn(mockStorageDomainValidatorWithSpace()).when(command).createStorageDomainValidator();
 
         doReturn(false).when(command).acquireLock();
     }
@@ -227,6 +281,12 @@ public class MoveOrCopyDiskCommandTest {
         DiskImage diskImage = new DiskImage();
         diskImage.setVmEntityType(VmEntityType.VM);
         when(diskImageDao.get(any(Guid.class))).thenReturn(diskImage);
+    }
+
+    private DiskValidator spyDiskValidator(Disk disk) {
+        DiskValidator diskValidator = spy(new DiskValidator(disk));
+        doReturn(diskValidator).when(command).createDiskValidator();
+        return diskValidator;
     }
 
     /**

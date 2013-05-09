@@ -102,6 +102,33 @@ public class StorageDomainValidator {
         return validateRequiredSpace(availableSize, totalSizeForDisks);
     }
 
+    public ValidationResult hasSpaceForClonedDisks(Collection<DiskImage> diskImages) {
+        double availableSize = storageDomain.getAvailableDiskSizeInBytes();
+        double totalSizeForDisks = 0.0;
+
+        for (DiskImage diskImage : diskImages) {
+            double diskCapacity = diskImage.getSize();
+            double sizeForDisk = diskCapacity;
+
+            if ((storageDomain.getStorageType().isFileDomain() && diskImage.getVolumeType() == VolumeType.Sparse) ||
+                    storageDomain.getStorageType().isBlockDomain() && diskImage.getVolumeFormat() == VolumeFormat.COW) {
+                double usedSapce = diskImage.getActualDiskWithSnapshotsSizeInBytes();
+                sizeForDisk = Math.min(diskCapacity, usedSapce);
+            }
+
+            if (diskImage.getVolumeFormat() == VolumeFormat.COW) {
+                sizeForDisk = Math.ceil(QCOW_OVERHEAD_FACTOR * sizeForDisk);
+            }
+            totalSizeForDisks += sizeForDisk;
+        }
+
+        return validateRequiredSpace(availableSize, totalSizeForDisks);
+    }
+
+    public ValidationResult hasSpaceForClonedDisk(DiskImage diskImage) {
+        return hasSpaceForClonedDisks(Collections.singleton(diskImage));
+    }
+
     public ValidationResult hasSpaceForNewDisk(DiskImage diskImage) {
         return hasSpaceForNewDisks(Collections.singleton(diskImage));
     }

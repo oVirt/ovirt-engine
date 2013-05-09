@@ -16,7 +16,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 
 /**
  * A test case for the {@link StorageDomainValidator} class.
- * The hasSpaceForNewDisk() method is covered separately in
+ * The hasSpaceForClonedDisk() and hasSpaceForNewDisk() methods are covered separately in
  * {@link StorageDomainValidatorFreeSpaceTest}.
  */
 public class StorageDomainValidatorTest {

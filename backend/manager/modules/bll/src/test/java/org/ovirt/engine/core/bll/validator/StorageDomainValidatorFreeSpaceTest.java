@@ -22,13 +22,17 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 public class StorageDomainValidatorFreeSpaceTest {
     private DiskImage disk;
     private StorageDomain sd;
+
+    private boolean isValidForCloned;
     private boolean isValidForNew;
 
     public StorageDomainValidatorFreeSpaceTest(DiskImage disk,
-                                               StorageDomain sd,
-                                               boolean isValidForNew) {
+            StorageDomain sd,
+            boolean isValidForCloned,
+            boolean isValidForNew) {
         this.disk = disk;
         this.sd = sd;
+        this.isValidForCloned = isValidForCloned;
         this.isValidForNew = isValidForNew;
     }
 
@@ -55,6 +59,7 @@ public class StorageDomainValidatorFreeSpaceTest {
                         sd.setAvailableDiskSize(107); // GB
 
                         params.add(new Object[] { disk, sd,
+                                volumeFormat == VolumeFormat.RAW && volumeType == VolumeType.Sparse,
                                 volumeFormat == VolumeFormat.COW || volumeType == VolumeType.Sparse });
                     }
                 }
@@ -62,6 +67,14 @@ public class StorageDomainValidatorFreeSpaceTest {
         }
 
         return params;
+    }
+
+    @Test
+    public void testValidateClonedDisk() {
+        StorageDomainValidator sdValidator = new StorageDomainValidator(sd);
+        assertEquals(disk.getVolumeFormat() + ", " + disk.getVolumeType() + ", " + sd.getStorageType(),
+                isValidForCloned,
+                sdValidator.hasSpaceForClonedDisk(disk).isValid());
     }
 
     @Test

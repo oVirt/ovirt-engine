@@ -147,26 +147,15 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      * @return
      */
     protected boolean validateSpaceRequirements() {
-        if (!isStorageDomainSpaceWithinThresholds()) {
-            return false;
+        StorageDomainValidator storageDomainValidator = createStorageDomainValidator();
+        if (validate(storageDomainValidator.isDomainWithinThresholds())) {
+            getImage().getSnapshots().addAll(getAllImageSnapshots());
+            return validate(storageDomainValidator.hasSpaceForClonedDisk(getImage()));
         }
-
-        getImage().getSnapshots().addAll(getAllImageSnapshots());
-        if (!isDomainHasStorageSpaceForRequest()) {
-            return false;
-        }
-        return true;
+        return false;
     }
 
-    private boolean isDomainHasStorageSpaceForRequest() {
-        return validate(new StorageDomainValidator(getStorageDomain()).isDomainHasSpaceForRequest(Math.round(getImage().getActualDiskWithSnapshotsSize())));
-    }
-
-    protected boolean isStorageDomainSpaceWithinThresholds() {
-        return validate(new StorageDomainValidator(getStorageDomain()).isDomainWithinThresholds());
-    }
-
-    protected List<DiskImage> getAllImageSnapshots() {
+    private List<DiskImage> getAllImageSnapshots() {
         return ImagesHandler.getAllImageSnapshots(getImage().getImageId(), getImage().getImageTemplateId());
     }
 
@@ -206,7 +195,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      * @return
      */
     protected boolean checkCanBeMoveInVm() {
-        return validate(new DiskValidator(getImage()).isDiskPluggedToVmsThatAreNotDown(false, getVmsWithVmDeviceInfoForDiskId()));
+        return validate(createDiskValidator().isDiskPluggedToVmsThatAreNotDown(false, getVmsWithVmDeviceInfoForDiskId()));
     }
 
     /**
@@ -335,7 +324,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     /**
      * The following method will determine if a provided vm/template exists
-     * @param retValue
      * @return
      */
     private boolean canFindVmOrTemplate() {
@@ -440,4 +428,11 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         return jobProperties;
     }
 
+    protected StorageDomainValidator createStorageDomainValidator() {
+        return new StorageDomainValidator(getStorageDomain());
+    }
+
+    protected DiskValidator createDiskValidator() {
+        return new DiskValidator(getImage());
+    }
 }
