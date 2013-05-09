@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import org.ovirt.engine.core.bll.attestationbroker.AttestThread;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
@@ -54,7 +55,10 @@ import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
+import org.ovirt.engine.core.vdsbroker.attestation.AttestationService;
+import org.ovirt.engine.core.vdsbroker.attestation.AttestationValue;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
+import org.ovirt.engine.core.common.businessentities.AttestationResultEnum;
 
 /**
  * Initialize Vds on its loading. For storages: First connect all storage
@@ -75,13 +79,41 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         setVds(parameters.getVds());
     }
 
+    private boolean initTrustedService() {
+        List <String> hosts = new ArrayList<String> ();
+
+        if (AttestThread.isTrustedVds(getVds().getId())) {
+            return true;
+        }
+
+        hosts.add(getVds().getHostName());
+        List<AttestationValue> value = new ArrayList<AttestationValue> ();
+        try {
+            value = AttestationService.getInstance().attestHosts(hosts);
+        } catch (Exception e) {
+            log.errorFormat("Encounter an exception while attesting host's trustworthiness for Host {0}, Error is {1}",
+                    hosts,
+                    e);
+        }
+        if (value.size() > 0 && value.get(0).getTrustLevel() == AttestationResultEnum.TRUSTED) {
+            return true;
+        } else {
+            setNonOperational(NonOperationalReason.UNTRUSTED, null);
+            return false;
+        }
+    }
+
     @Override
     protected void executeCommand() {
         VDSGroup vdsGroup = getVdsGroup();
 
         boolean initSucceeded = true;
 
-        if (vdsGroup.supportsVirtService()) {
+        if (vdsGroup.supportsTrustedService()) {
+            initSucceeded = initTrustedService();
+        }
+
+        if (initSucceeded && vdsGroup.supportsVirtService()) {
             initSucceeded = initVirtResources();
         }
 

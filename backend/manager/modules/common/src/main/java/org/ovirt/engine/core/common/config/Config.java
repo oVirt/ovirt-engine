@@ -33,4 +33,15 @@ public final class Config {
                 Config.<String> GetValue(ConfigValues.oVirtISOsRepositoryPath));
     }
 
+    /**
+     * Fetch the AttestationTruststoreUrl configuration value and, if it is not an absolute path, resolve it relative to the
+     * CABaseDirectory configuration value.
+     *
+     * @return an absolute path for AttestaionTruststore
+     */
+    public static String resolveAttestationTrustStorePath() {
+        return ConfigUtil.resolvePath(Config.<String> GetValue(ConfigValues.DataDir),
+                Config.<String> GetValue(ConfigValues.AttestationTruststore));
+    }
+
 }

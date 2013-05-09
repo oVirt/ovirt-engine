@@ -142,4 +142,8 @@ public interface VdsGroupDAO extends DAO, SearchDAO<VDSGroup> {
      *  @param emulatedMachine
      */
     void setEmulatedMachine(Guid vdsGroupId, String emulatedMachine);
+   /**
+    * Retries trusted cluster
+    */
+    List<VDSGroup> getTrustedClusters();
 }

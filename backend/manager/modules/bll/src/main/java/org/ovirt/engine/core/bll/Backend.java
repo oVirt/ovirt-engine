@@ -36,6 +36,10 @@ import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -70,6 +74,7 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.osinfo.OsInfoPreferencesLoader;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
+import org.ovirt.engine.core.bll.attestationbroker.AttestThread;
 
 // Here we use a Singleton Bean
 // The @Startup annotation is to make sure the bean is initialized on startup.
@@ -235,6 +240,43 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(QuotaManager.getInstance(),
                 "updateQuotaCache",  new Class[] {}, new Object[] {},
                 1, quotaCacheIntervalInMinutes, TimeUnit.MINUTES);
+        //initializes attestation
+        initAttestation();
+    }
+
+    private void initAttestation() {
+        List<VDSGroup> vdsGroups = DbFacade.getInstance().getVdsGroupDao().getTrustedClusters();
+        List<VDS> trustedVdsList = new ArrayList<>();
+        List<String> trustedVdsNames = new ArrayList<>();
+
+        if (vdsGroups == null || vdsGroups.size() == 0) {
+            return;
+        }
+        for (VDSGroup vdsGroup : vdsGroups) {
+            List<VDS> vdssInGroup = DbFacade.getInstance().getVdsDao().
+                    getAllForVdsGroupWithStatus(vdsGroup.getId(), VDSStatus.Up);
+            if (vdssInGroup != null) {
+                trustedVdsList.addAll(vdssInGroup);
+            }
+        }
+
+        for (VDS vds : trustedVdsList) {
+            trustedVdsNames.add(vds.getHostName());
+            setNonOperational(NonOperationalReason.UNINITIALIZED, vds);
+        }
+
+        try {
+            AttestThread attestThread = new AttestThread(trustedVdsNames);
+            attestThread.start();//start a thread to attest the hosts
+        } catch (Exception e) {
+            log.error("Failed to initialize attestation cache", e);
+        }
+    }
+
+    private void setNonOperational(NonOperationalReason reason, VDS vds) {
+        vds.setNonOperationalReason(reason);
+        vds.setStatus(VDSStatus.NonOperational);
+        DbFacade.getInstance().getVdsDynamicDao().update(vds.getDynamicData());
     }
 
     private void initSearchDependencies() {

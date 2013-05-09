@@ -17,6 +17,8 @@ public enum NonOperationalReason {
     GLUSTER_COMMAND_FAILED(9),
     GLUSTER_HOST_UUID_NOT_FOUND(10),
     EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER(11),
+    UNTRUSTED(10),
+    UNINITIALIZED(11),
     ;
 
     private final int value;

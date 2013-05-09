@@ -18,6 +18,7 @@ import org.ovirt.engine.core.compat.Version;
 
 public class VdsGroupDAOTest extends BaseDAOTestCase {
     private static final int NUMBER_OF_GROUPS = 9;
+    private static final int NUMBER_OF_TRUSTED_GROUPS = 4;
     private static final int NUMBER_OF_GROUPS_FOR_PRIVELEGED_USER = 1;
 
     private VdsGroupDAO dao;
@@ -347,6 +348,22 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
         dao.setEmulatedMachine(existingVdsGroup.getId(), updatedValue);
 
         assertEquals(updatedValue, dao.get(existingVdsGroup.getId()).getEmulatedMachine());
+    }
+
+    /**
+     * Test that the correct vds_groups are fetched when looking for trusted_services
+     */
+    @Test
+    public void testGetAllTrustedVdsGroups() {
+        List<VDSGroup> trustedClusters = dao.getTrustedClusters();
+
+        assertNotNull(trustedClusters);
+        assertFalse(trustedClusters.isEmpty());
+        assertEquals(trustedClusters.size(), NUMBER_OF_TRUSTED_GROUPS);
+        assertTrue(trustedClusters.contains(dao.get(FixturesTool.VDS_GROUP_RHEL6_NFS)));
+        assertTrue(trustedClusters.contains(dao.get(FixturesTool.VDS_GROUP_RHEL6_NFS_2)));
+        assertTrue(trustedClusters.contains(dao.get(FixturesTool.VDS_GROUP_RHEL6_LOCALFS)));
+        assertTrue(trustedClusters.contains(dao.get(FixturesTool.VDS_GROUP_RHEL6_NFS_NO_SPECIFIC_QUOTAS)));
     }
 
     /**

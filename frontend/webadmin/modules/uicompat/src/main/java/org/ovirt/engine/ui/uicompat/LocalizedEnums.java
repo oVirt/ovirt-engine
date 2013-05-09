@@ -22,7 +22,11 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String NonOperationalReason___TIMEOUT_RECOVERING_FROM_CRASH();
 
-    String NonOperationalReason___GLUSTER_COMMAND_FAILED();
+        String NonOperationalReason___GLUSTER_COMMAND_FAILED();
+
+        String NonOperationalReason___UNTRUSTED();
+
+        String NonOperationalReason___UNINITIALIZED();
 
     String NonOperationalReason___GLUSTER_HOST_UUID_NOT_FOUND();
 

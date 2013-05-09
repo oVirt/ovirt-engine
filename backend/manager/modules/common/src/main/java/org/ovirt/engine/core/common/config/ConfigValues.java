@@ -1328,6 +1328,39 @@ public enum ConfigValues {
     GlusterHostUUIDSupport(427),
 
     @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("AttestationService/resources/PollHosts")
+    PollUri(427),
+
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("TrustStore.jks")
+    AttestationTruststore(428),
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("8443")
+    AttestationPort(429),
+
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("password")
+    @OptionBehaviourAttribute(behaviour = OptionBehaviour.Password)
+    AttestationTruststorePass(430),
+
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("oat-server")
+    AttestationServer(431),
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("10")
+    AttestationFirstStageSize(432),
+
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    SecureConnectionWithOATServers(433),
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("20")
+    AttestationSecondStageSize(434),
+
+    @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Auto")
     KeystoneAuthUrl(427),
 

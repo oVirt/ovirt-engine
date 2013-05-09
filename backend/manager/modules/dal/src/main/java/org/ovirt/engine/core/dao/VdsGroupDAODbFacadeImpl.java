@@ -136,6 +136,12 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
         getCallsHandler().executeModification("UpdateVdsGroupEmulatedMachine", parameterSource);
     }
 
+    public List<VDSGroup> getTrustedClusters() {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("trusted_service", true);
+        return getCallsHandler().executeReadList("GetTrustedVdsGroups",VdsGroupRowMapper.instance,parameterSource);
+    }
+
     private MapSqlParameterSource getVdsGroupParamSource(VDSGroup group) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("description", group.getdescription())
@@ -160,7 +166,8 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 .addValue("virt_service", group.supportsVirtService())
                 .addValue("gluster_service", group.supportsGlusterService())
                 .addValue("tunnel_migration", group.isTunnelMigration())
-                .addValue("emulated_machine", group.getEmulatedMachine());
+                .addValue("emulated_machine", group.getEmulatedMachine())
+                .addValue("trusted_service", group.supportsTrustedService());
         return parameterSource;
     }
 
@@ -199,6 +206,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             entity.setGlusterService(rs.getBoolean("gluster_service"));
             entity.setTunnelMigration(rs.getBoolean("tunnel_migration"));
             entity.setEmulatedMachine(rs.getString("emulated_machine"));
+            entity.setTrustedService(rs.getBoolean("trusted_service"));
             return entity;
         }
     }

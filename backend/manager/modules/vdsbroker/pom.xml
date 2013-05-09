@@ -60,6 +60,12 @@
     </dependency>
 
     <dependency>
+       <groupId>org.codehaus.jackson</groupId>
+       <artifactId>jackson-core-asl</artifactId>
+       <version>${jackson-core-asl.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
     </dependency>

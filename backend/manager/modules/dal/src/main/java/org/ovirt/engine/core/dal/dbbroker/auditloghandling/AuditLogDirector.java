@@ -346,6 +346,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.VDS_TIME_DRIFT_ALERT, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.PROXY_HOST_SELECTION, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.VDS_UNTRUSTED, AuditLogSeverity.ERROR);
     }
 
     @SuppressWarnings("deprecation")

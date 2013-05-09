@@ -70,6 +70,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     private String emulatedMachine;
 
+    private boolean trustedService = false;
+
     public VDSGroup() {
         selection_algorithm = VdsSelectionAlgorithm.None;
         high_utilization = -1;
@@ -252,6 +254,14 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         this.emulatedMachine = emulatedMachine;
     }
 
+    public void setTrustedService(boolean trustedService) {
+        this.trustedService = trustedService;
+    }
+
+    public boolean supportsTrustedService() {
+        return trustedService;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -276,6 +286,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         result = prime * result + (glusterService ? 1231 : 1237);
         result = prime * result + (tunnelMigration ? 1231 : 1237);
         result = prime * result + (emulatedMachine == null ? 0 : emulatedMachine.hashCode());
+        result = prime * result + (trustedService ? 1231 : 1237);
         return result;
     }
 
@@ -310,6 +321,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
                 && virtService == other.virtService
                 && glusterService == other.glusterService
                 && tunnelMigration == other.tunnelMigration
-                && ObjectUtils.objectsEqual(emulatedMachine, other.emulatedMachine));
+                && ObjectUtils.objectsEqual(emulatedMachine, other.emulatedMachine)
+                && trustedService == other.trustedService);
     }
 }

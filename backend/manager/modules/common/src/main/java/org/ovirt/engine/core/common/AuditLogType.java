@@ -754,6 +754,9 @@ public enum AuditLogType {
 
     //watchdog
     WATCHDOG_EVENT(9901),
+
+    //trusted service
+    VDS_UNTRUSTED(10000, AuditLogTimeInterval.MINUTE.getValue()),
     ;
 
     private int intValue;

@@ -570,6 +570,15 @@ select fn_db_add_config_value('SshSoftFencingCommand', 'service vdsmd restart', 
 select fn_db_add_config_value('SshSoftFencingCommand', 'service vdsmd restart', '3.2');
 select fn_db_add_config_value('SshSoftFencingCommand', '/usr/bin/vdsm-tool service-restart vdsmd', '3.3');
 
+--attestation configuration
+select fn_db_add_config_value('SecureConnectionWithOATServers','true','general');
+select fn_db_add_config_value('PollUri','AttestationService/resources/PollHosts','general');
+select fn_db_add_config_value('AttestationTruststore','TrustStore.jks','general');
+select fn_db_add_config_value('AttestationPort','8443','general');
+select fn_db_add_config_value('AttestationTruststorePass','password','general');
+select fn_db_add_config_value('AttestationServer','oat-server','general');
+select fn_db_add_config_value('AttestationFirstStageSize','10','general');
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------
