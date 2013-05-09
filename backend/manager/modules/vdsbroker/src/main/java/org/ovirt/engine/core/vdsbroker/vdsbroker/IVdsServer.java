@@ -65,8 +65,6 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc monitorCommand(String vmId, String monitorCommand);
 
-    StatusOnlyReturnForXmlRpc sendHcCmdToDesktop(String vmId, String hcCommand);
-
     StatusOnlyReturnForXmlRpc setVmTicket(String vmId, String otp64, String sec);
 
     StatusOnlyReturnForXmlRpc setVmTicket(String vmId, String otp64, String sec, String connectionAction, Map<String, String> params);

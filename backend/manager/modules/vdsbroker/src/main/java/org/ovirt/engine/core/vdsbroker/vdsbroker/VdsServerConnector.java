@@ -50,8 +50,6 @@ public interface VdsServerConnector {
 
     public Map<String, Object> monitorCommand(String vmId, String monitorCommand);
 
-    public Map<String, Object> sendHcCmdToDesktop(String vmId, String hcCommand);
-
     public Map<String, Object> setVmTicket(String vmId, String otp64, String sec);
 
     public Map<String, Object> setVmTicket(String vmId, String otp64, String sec, String connectionAction, Map<String, String> params);
