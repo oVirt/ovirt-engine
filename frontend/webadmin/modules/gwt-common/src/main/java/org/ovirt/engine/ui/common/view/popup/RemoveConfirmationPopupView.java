@@ -85,7 +85,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
     @Override
     public void setMessage(String message) {
         if (getHashName() != null && getHashName().startsWith("remove_")) { //$NON-NLS-1$
-            super.setMessage(messages.removeConfirmationPopupMessage(message));
+            super.setMessage(constants.removeConfirmationPopupMessage());
         } else {
             super.setMessage(message);
         }

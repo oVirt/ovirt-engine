@@ -1254,4 +1254,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("No items to display")
     String noItemsToDisplay();
 
+    @DefaultStringValue("Are you sure you want to remove the following items?")
+    String removeConfirmationPopupMessage();
 }
