@@ -51,7 +51,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 && validate(validatorNew.networkPrefixValid())
                 && validate(validatorNew.vlanIdNotUsed())
                 && validate(validatorOld.networkIsSet())
-                && validate(validatorOld.notChangingManagementNetwork(getNetwork()))
+                && validate(validatorOld.notRenamingManagementNetwork(getNetwork()))
                 && validate(validatorNew.networkNameNotUsed())
                 && validate(validatorOld.networkNotUsedByVms())
                 && validate(validatorOld.networkNotUsedByTemplates());
@@ -81,7 +81,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             super(network);
         }
 
-        public ValidationResult notChangingManagementNetwork(Network newNetwork) {
+        public ValidationResult notRenamingManagementNetwork(Network newNetwork) {
             String managementNetwork = Config.<String> GetValue(ConfigValues.ManagementNetwork);
             return network.getName().equals(managementNetwork) &&
                     !newNetwork.getName().equals(managementNetwork)
