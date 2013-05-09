@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.vdsbroker;
 
-import org.ovirt.engine.core.common.vdscommands.*;
+import org.ovirt.engine.core.common.vdscommands.UpdateVdsVMsClearedVDSCommandParameters;
 
 public class UpdateVdsVMsClearedVDSCommand<P extends UpdateVdsVMsClearedVDSCommandParameters>
         extends VdsIdVDSCommandBase<P> {

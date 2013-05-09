@@ -2,11 +2,11 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.List;
 
-import org.ovirt.engine.core.vdsbroker.irsbroker.*;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.vdscommands.*;
+import org.ovirt.engine.core.common.vdscommands.CreateVGVDSCommandParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
 
 public class CreateVGVDSCommand<P extends CreateVGVDSCommandParameters> extends VdsBrokerCommand<P> {
     private OneUuidReturnForXmlRpc _result;

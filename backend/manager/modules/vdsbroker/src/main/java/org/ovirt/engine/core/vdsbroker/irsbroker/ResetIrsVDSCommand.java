@@ -1,13 +1,15 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.*;
-import org.ovirt.engine.core.common.businessentities.*;
-import org.ovirt.engine.core.vdsbroker.*;
-import org.ovirt.engine.core.common.errors.*;
-
-import org.ovirt.engine.core.common.vdscommands.*;
-import org.ovirt.engine.core.dal.dbbroker.*;
+import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.vdscommands.ResetIrsVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.SpmStopVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 public class ResetIrsVDSCommand<P extends ResetIrsVDSCommandParameters> extends IrsBrokerCommand<P> {
     public ResetIrsVDSCommand(P parameters) {

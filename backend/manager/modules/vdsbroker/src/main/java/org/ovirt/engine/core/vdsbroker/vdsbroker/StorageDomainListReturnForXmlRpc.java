@@ -2,7 +2,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.Map;
 
-import org.ovirt.engine.core.vdsbroker.irsbroker.*;
+import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
 
 public final class StorageDomainListReturnForXmlRpc extends StatusReturnForXmlRpc {
     private static final String DOMLIST = "domlist";

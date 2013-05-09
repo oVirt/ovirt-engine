@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import org.ovirt.engine.core.common.vdscommands.*;
+import org.ovirt.engine.core.common.vdscommands.StartSpiceVDSCommandParameters;
 
 public class StartSpiceVDSCommand<P extends StartSpiceVDSCommandParameters> extends VdsBrokerCommand<P> {
     private String _ip;

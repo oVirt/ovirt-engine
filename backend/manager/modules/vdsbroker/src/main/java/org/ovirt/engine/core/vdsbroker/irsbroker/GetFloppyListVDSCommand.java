@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-import org.ovirt.engine.core.vdsbroker.vdsbroker.*;
-import org.ovirt.engine.core.common.vdscommands.*;
+import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSExceptionBase;
 
 public class GetFloppyListVDSCommand<P extends IrsBaseVDSCommandParameters> extends GetIsoListVDSCommand<P> {
     protected IsoListReturnForXmlRpc _isoList;

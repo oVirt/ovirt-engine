@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-import org.ovirt.engine.core.vdsbroker.*;
-import org.ovirt.engine.core.common.vdscommands.*;
+import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.ResetIrsVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 public class SpmStopOnIrsVDSCommand<P extends IrsBaseVDSCommandParameters> extends IrsBrokerCommand<P> {
     public SpmStopOnIrsVDSCommand(P parameters) {

@@ -2,7 +2,7 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import java.util.Map;
 
-import org.ovirt.engine.core.vdsbroker.vdsbroker.*;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
 
 public class StatusReturnForXmlRpc {
     private static final String STATUS = "status";

@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.vdsbroker;
 
-import org.ovirt.engine.core.common.vdscommands.*;
+import org.ovirt.engine.core.common.vdscommands.IsVmDuringInitiatingVDSCommandParameters;
 
 public class IsVmDuringInitiatingVDSCommand<P extends IsVmDuringInitiatingVDSCommandParameters>
 extends VDSCommandBase<P> {

@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.vdscommands.*;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.vdscommands.SetVmTicketVDSCommandParameters;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class SetVmTicketVDSCommand<P extends SetVmTicketVDSCommandParameters> extends VdsBrokerCommand<P> {

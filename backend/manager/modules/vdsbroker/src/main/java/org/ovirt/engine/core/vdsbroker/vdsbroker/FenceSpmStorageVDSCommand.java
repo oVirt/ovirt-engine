@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import org.ovirt.engine.core.common.vdscommands.*;
+import org.ovirt.engine.core.common.vdscommands.FenceSpmStorageVDSCommandParameters;
 
 public class FenceSpmStorageVDSCommand<P extends FenceSpmStorageVDSCommandParameters> extends VdsBrokerCommand<P> {
     public FenceSpmStorageVDSCommand(P parameters) {

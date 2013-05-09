@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-import org.ovirt.engine.core.common.vdscommands.*;
+import org.ovirt.engine.core.common.vdscommands.DeactivateStorageDomainVDSCommandParameters;
 
 public class DeactivateStorageDomainVDSCommand<P extends DeactivateStorageDomainVDSCommandParameters>
         extends IrsBrokerCommand<P> {

@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-import org.ovirt.engine.core.common.vdscommands.*;
+import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 
 public class ResetISOPathVDSCommand<P extends IrsBaseVDSCommandParameters> extends IrsBrokerCommand<P> {
     public ResetISOPathVDSCommand(P parameters) {

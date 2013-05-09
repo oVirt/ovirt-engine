@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import org.ovirt.engine.core.common.vdscommands.*;
+import org.ovirt.engine.core.common.vdscommands.RefreshStoragePoolVDSCommandParameters;
 
 public class RefreshStoragePoolVDSCommand<P extends RefreshStoragePoolVDSCommandParameters>
         extends VdsBrokerCommand<P> {

@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.vdscommands.*;
+import org.ovirt.engine.core.common.vdscommands.VmLogonVDSCommandParameters;
+import org.ovirt.engine.core.compat.Guid;
 
 public class VmLogonVDSCommand<P extends VmLogonVDSCommandParameters> extends VdsBrokerCommand<P> {
     private Guid mVmId = new Guid();

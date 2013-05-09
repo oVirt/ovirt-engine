@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-import org.ovirt.engine.core.vdsbroker.vdsbroker.*;
-import org.ovirt.engine.core.common.vdscommands.*;
+import org.ovirt.engine.core.common.vdscommands.ActivateStorageDomainVDSCommandParameters;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
 
 public class ActivateStorageDomainVDSCommand<P extends ActivateStorageDomainVDSCommandParameters>
         extends IrsBrokerCommand<P> {

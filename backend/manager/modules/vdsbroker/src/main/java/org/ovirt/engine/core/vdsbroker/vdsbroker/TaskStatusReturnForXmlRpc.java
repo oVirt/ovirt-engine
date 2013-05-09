@@ -2,7 +2,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.Map;
 
-import org.ovirt.engine.core.vdsbroker.irsbroker.*;
+import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
 
 public final class TaskStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
     private static final String TASK_STATUS = "taskStatus";
@@ -14,7 +14,7 @@ public final class TaskStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
     @SuppressWarnings("unchecked")
     public TaskStatusReturnForXmlRpc(Map<String, Object> innerMap) {
         super(innerMap);
-        Object temp = (Object) innerMap.get(TASK_STATUS);
+        Object temp = innerMap.get(TASK_STATUS);
         if (temp != null) {
             TaskStatus = new TaskStatusForXmlRpc((Map<String, Object>) temp);
         }

@@ -2,9 +2,8 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.errors.*;
-
-import org.ovirt.engine.core.common.vdscommands.*;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.vdscommands.ExtendStorageDomainVDSCommandParameters;
 
 public class ExtendStorageDomainVDSCommand<P extends ExtendStorageDomainVDSCommandParameters>
         extends IrsBrokerCommand<P> {

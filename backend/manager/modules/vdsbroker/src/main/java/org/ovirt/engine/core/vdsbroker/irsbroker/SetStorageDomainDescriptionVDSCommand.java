@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-import org.ovirt.engine.core.common.vdscommands.*;
+import org.ovirt.engine.core.common.vdscommands.SetStorageDomainDescriptionVDSCommandParameters;
 
 public class SetStorageDomainDescriptionVDSCommand<P extends SetStorageDomainDescriptionVDSCommandParameters>
         extends IrsBrokerCommand<P> {

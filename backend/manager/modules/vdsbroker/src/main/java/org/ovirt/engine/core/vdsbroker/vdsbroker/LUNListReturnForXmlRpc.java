@@ -2,7 +2,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.Map;
 
-import org.ovirt.engine.core.vdsbroker.irsbroker.*;
+import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcObjectDescriptor;
 
 public final class LUNListReturnForXmlRpc extends StatusReturnForXmlRpc {
