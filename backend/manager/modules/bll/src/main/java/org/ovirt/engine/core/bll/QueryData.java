@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Date;
+
 public class QueryData {
     private String query;
     private String type;
-    private java.util.Date date = new java.util.Date(0);
+    private Date date = new Date(0);
     private String domain;
 
     public String getDomain() {
@@ -38,11 +40,11 @@ public class QueryData {
         type = value;
     }
 
-    public java.util.Date getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(java.util.Date value) {
+    public void setDate(Date value) {
         date = value;
     }
 }
