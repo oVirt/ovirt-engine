@@ -1,0 +1,39 @@
+.TH engine-config 8 "May 9, 2013" "" ""
+.SH NAME
+engine-config \- Engine management settings tool
+.SH SYNOPSIS
+.B engine-config ACTION [--cver=version] [-p | --properties=/path/to/alternate/property/fie] [-c | --config=/path/to/alternate/config/file]
+
+Where:
+    ACTION            action to perform, \f see details below
+    version           relevant configuration version to use.
+    -p, --properties= (optional) use the given alternate properties file.
+    -c, --config=     (optional) use the given alternate configuration file.
+
+Available actions:
+     \fB\-l\fR, \fB\-\-list\fR
+       list available configuration keys.
+
+     \fB\-a\fR, \fB\-\-all\fR
+           get all available configuration values.
+
+     \fB\-g key\fR, \fB\-\-get\fR=key [--cversion=version]
+           get the value of the given key for the given version. If a version is not given, the values of all existing
+versions are returned.
+
+     \fB\-s\fR key=val --cver=version, \fB\-\-set\fR key=val --cver=version
+           set the value of the given key for the given version. The cver version is mandatory for this action
+
+     \fB\-h\fR, \fB\-\-help\fR
+       list available configuration keys.
+           display this help and exit.
+
+.B NOTE:
+      In order for your change(s) to take effect, restart the oVirt engine
+      For more info about the engine-config keys: http://www.ovirt.org/Engine_config_options
+
+.SH BUGS
+Report bugs to <http://bugzilla.redhat.com>
+
+.SH COPYRIGHT
+Copyright 2010-2013 Red Hat, Inc.

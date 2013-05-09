@@ -411,6 +411,7 @@ install_config:
 
 	# Install man pages
 	install -m 644 packaging/man/engine-manage-domains.8 $(DESTDIR)$(MAN_DIR)/man8/
+	install -m 644 packaging/man/engine-config.8 $(DESTDIR)$(MAN_DIR)/man8/
 
 install_sysprep:
 	@echo "*** Deploying sysperp"
