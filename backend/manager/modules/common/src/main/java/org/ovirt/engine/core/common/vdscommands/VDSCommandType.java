@@ -47,7 +47,6 @@ public enum VDSCommandType {
     HSMGetAllTasksStatuses("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     HSMGetTaskStatus("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     HSMGetAllTasksInfo("org.ovirt.engine.core.vdsbroker.vdsbroker"),
-    HSMGetTaskInfo("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     HSMStopTask("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     HSMClearTask("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     HSMRevertTask("org.ovirt.engine.core.vdsbroker.vdsbroker"),

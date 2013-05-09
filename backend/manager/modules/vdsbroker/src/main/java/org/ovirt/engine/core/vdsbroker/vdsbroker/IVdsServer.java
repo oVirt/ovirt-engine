@@ -157,8 +157,6 @@ public interface IVdsServer {
 
     TaskStatusListReturnForXmlRpc getAllTasksStatuses();
 
-    TaskInfoReturnForXmlRpc getTaskInfo(String taskUUID);
-
     TaskInfoListReturnForXmlRpc getAllTasksInfo();
 
     StatusOnlyReturnForXmlRpc stopTask(String taskUUID);

@@ -764,18 +764,6 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public TaskInfoReturnForXmlRpc getTaskInfo(String taskUUID) {
-        try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.getTaskInfo(taskUUID);
-            TaskInfoReturnForXmlRpc wrapper = new TaskInfoReturnForXmlRpc(xmlRpcReturnValue);
-            return wrapper;
-        } catch (UndeclaredThrowableException ute) {
-            throw new XmlRpcRunTimeException(ute);
-        }
-
-    }
-
-    @Override
     public TaskInfoListReturnForXmlRpc getAllTasksInfo() {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getAllTasksInfo();

@@ -142,8 +142,6 @@ public interface VdsServerConnector {
 
     public Map<String, Object> getAllTasksStatuses();
 
-    public Map<String, Object> getTaskInfo(String taskUUID);
-
     public Map<String, Object> getAllTasksInfo();
 
     public Map<String, Object> stopTask(String taskUUID);
