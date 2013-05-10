@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # This script is designed to run the configuration tool.
 # The tool's configuration should be under the /etc directory.
@@ -8,86 +8,73 @@
 . "$(dirname "$(readlink -f "$0")")"/engine-prolog.sh
 
 usage () {
-        printf "engine-config: get/set/list configuration\n"
-        printf "USAGE:\n"
-        printf "\tengine-config ACTION [--cver=version] [-p | --properties=/path/to/alternate/property/file] [-c | --config=/path/to/alternate/config/file]\n"
-        printf "Where:\n"
-        printf "\tACTION              action to perform, see details below\n"
-        printf "\tversion             relevant configuration version to use.\n"
-        printf "\t-p, --properties=   (optional) use the given alternate properties file.\n"
-        printf "\t-c, --config=       (optional) use the given alternate configuration file.\n"
-        printf "\n"
-        printf "\tAvailable actions:\n"
-        printf "\t-l, --list\n"
-        printf "\t\tlist available configuration keys.\n"
-        printf "\t-a, --all\n"
-        printf "\t\tget all available configuration values.\n"
-        printf "\t-g key, --get=key [--cver=version]\n"
-        printf "\t\tget the value of the given key for the given version. If a version is not given, the values of all existing versions are returned.\n"
-        printf "\t-s key=val [--cver=version], --set key=val [--cver=version]\n"
-        printf "\t\tset the value of the given key for the given version. The cver version is required for this action only when the version is not 'general'.\n"
-        printf "\t-h, --help\n"
-        printf "\t\tdisplay this help and exit.\n"
-        printf "\n"
-        printf "### Notes: \n"
-        printf "### 1. Passwords: password can be set in interactive mode ie:\n"
-        printf "###        engine-config -s PasswordEntry=interactive\n"
-        printf "###    or via file with one of the following options:\n"
-        printf "###        engine-config -s PasswordEntry --admin-pass-file=/tmp/mypass\n"
-        printf "###        engine-config -s PasswordEntry=/tmp/mypass\n"
-        printf "###    PasswordEntry varies between the different password options\n"
-        printf "###    See engine-config -h <OptionName> for more specific details\n"
-        printf "### 2. In order for your change(s) to take effect,\n"
-        printf "###    restart the oVirt engine service (using: 'service ovirt-engine restart').\n"
-        printf "################################################################################\n"
+	cat << __EOF__
+engine-config: get/set/list configuration
+USAGE:
+        engine-config ACTION [--cver=version] [-p | --properties=/path/to/alternate/property/file] [-c | --config=/path/to/alternate/config/file]
+Where:
+        ACTION              action to perform, see details below
+        version             relevant configuration version to use.
+        -p, --properties=   (optional) use the given alternate properties file.
+        -c, --config=       (optional) use the given alternate configuration file.
 
-        return 0
+        Available actions:
+        -l, --list
+                list available configuration keys.
+        -a, --all
+                get all available configuration values.
+        -g key, --get=key [--cver=version]
+                get the value of the given key for the given version. If a version is not given, the values of all existing versions are returned.
+        -s key=val [--cver=version], --set key=val [--cver=version]
+                set the value of the given key for the given version. The cver version is required for this action only when the version is not 'general'.
+        -h, --help
+                display this help and exit.
+
+### Notes:
+### 1. Passwords: password can be set in interactive mode ie:
+###        engine-config -s PasswordEntry=interactive
+###    or via file with one of the following options:
+###        engine-config -s PasswordEntry --admin-pass-file=/tmp/mypass
+###        engine-config -s PasswordEntry=/tmp/mypass
+###    PasswordEntry varies between the different password options
+###    See engine-config -h <OptionName> for more specific details
+### 2. In order for your change(s) to take effect,
+###    restart the oVirt engine service (using: 'service ovirt-engine restart').
+################################################################################
+__EOF__
+	return 0
 }
 
-# Support alternate configuration file
+# TODO:
+# why do we need CONF_FILE here?
+# we do not use any vairable
 CONF_FILE="${ENGINE_ETC}/engine-config/engine-config.conf"
 
-found=0
-for ((i=1; i<=$# && ! found; i++))
-do
-        var="${!i}"
-        next=$[$i+1]
-        next="${!next}"
+parseArgs() {
+	while [ -n "$1" ]; do
+		local x="$1"
+		local v="${x#*=}"
+		shift
+		case "${x}" in
+			-c)
+				CONF_FILE="$1"
+				shift
+			;;
+			-configFile=*)
+				CONF_FILE="${v}"
+			;;
+			-h|-help|--help)
+				usage
+				exit 0
+			;;
+		esac
+	done
+}
+# do this in function so we do not lose $@
+parseArgs "$@"
 
-        if [ "-c" == "${var}" ]; then
-                CONF_FILE="${next}"
-                found=1
-        elif [ `echo "${var}" | grep -i '\-\-config\='` ]; then
-                candidate=${var#--config=}
-                if [ -s $candidate ]; then
-                        CONF_FILE=$candidate
-                else
-                        CONF_FILE=
-                fi
-                found=1
-        fi
-done
-
-if [ ${found} -eq 1 -a "x" == "x$CONF_FILE" ]; then
-        die "Error! Alternate conf file '$candidate' is empty or does not exist!\n"
-fi
-
-if [ ! -s $CONF_FILE ]; then
-        CONF_FILE=./engine-config.conf
-fi
-. $CONF_FILE
-
-# Check basic argument constraints
-if [ "$#" -gt 8 -o "$#" -lt 1 ]; then
-        usage
-        die "Error: wrong argument number: $#.\n"
-fi
-
-
-if [ "$1" == "--help" -o "$1" == "-h" -a "$#" -eq 1 ]; then
-        usage
-        exit 0
-fi
+[ -s "${CONF_FILE}" ] || die "Configuration file '${CONF_FILE}' is either empty or does not exist"
+. "${CONF_FILE}"
 
 #
 # Add this option to the java command line to enable remote debugging in
@@ -100,11 +87,10 @@ fi
 # not possible to debug the execution of the main method.
 #
 
-# Run!
 exec "${JAVA_HOME}/bin/java" \
-  -Dlog4j.configuration="file:${ENGINE_ETC}/engine-config/log4j.xml" \
-  -Djboss.modules.write-indexes=false \
-  -jar "${JBOSS_HOME}/jboss-modules.jar" \
-  -dependencies org.ovirt.engine.core.tools \
-  -class org.ovirt.engine.core.config.EngineConfig \
-  "$@"
+	-Dlog4j.configuration="file:${ENGINE_ETC}/engine-config/log4j.xml" \
+	-Djboss.modules.write-indexes=false \
+	-jar "${JBOSS_HOME}/jboss-modules.jar" \
+	-dependencies org.ovirt.engine.core.tools \
+	-class org.ovirt.engine.core.config.EngineConfig \
+	"$@"

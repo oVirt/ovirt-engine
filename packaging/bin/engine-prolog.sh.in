@@ -1,6 +1,7 @@
 # Print an error message to stderr and exit with an error code:
 die() {
-    printf >&2 "$@\n"
+    local m="$1"
+    echo "FATAL: ${m}" >&2
     exit 1
 }
 
