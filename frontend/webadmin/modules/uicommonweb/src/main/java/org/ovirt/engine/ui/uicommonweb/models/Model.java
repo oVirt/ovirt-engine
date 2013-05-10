@@ -140,6 +140,16 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         }
     }
 
+    private EntityModel advancedMode;
+
+    public EntityModel getAdvancedMode() {
+        return advancedMode;
+    }
+
+    public void setAdvancedMode(EntityModel advancedMode) {
+        this.advancedMode = advancedMode;
+    }
+
     private String privatehashName;
 
     private String gethashName()
@@ -427,6 +437,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         setIsSelectable(true);
 
         setCommands(new ObservableCollection<UICommand>());
+
     }
 
     protected ILogger lookupLogger() {

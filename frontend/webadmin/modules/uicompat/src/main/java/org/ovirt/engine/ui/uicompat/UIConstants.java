@@ -32,6 +32,12 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Action")
     String action();
 
+    @DefaultStringValue("Show Advanced Options")
+    String showAdvancedOptions();
+
+    @DefaultStringValue("Hide Advanced Options")
+    String hideAdvancedOptions();
+
     // Titles
     @DefaultStringValue("")
     String empty();
@@ -1904,4 +1910,5 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Time Zone is not changeable for Linux VMs")
     String timeZoneNotChangeableForLinuxVms();
+
 }

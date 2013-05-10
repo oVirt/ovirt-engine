@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
+import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.hiddenField;
+
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
@@ -16,7 +18,10 @@ public class VmDesktopNewPopupWidget extends AbstractVmPopupWidget {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    public VmDesktopNewPopupWidget(CommonApplicationConstants constants, CommonApplicationResources resources, CommonApplicationMessages messages, CommonApplicationTemplates applicationTemplates) {
+    public VmDesktopNewPopupWidget(CommonApplicationConstants constants,
+            CommonApplicationResources resources,
+            CommonApplicationMessages messages,
+            CommonApplicationTemplates applicationTemplates) {
         super(constants, resources, messages, applicationTemplates);
     }
 
@@ -28,20 +33,21 @@ public class VmDesktopNewPopupWidget extends AbstractVmPopupWidget {
     @Override
     public void edit(UnitVmModel unitVmModel) {
         super.edit(unitVmModel);
-        initTabAvailabilityListeners();
 
         if (unitVmModel.isVmAttachedToPool()) {
+            // this just disables it, does not hides it
             specificHost.setEnabled(false);
             specificHostLabel.setStyleName(style.labelDisabled(), true);
             customPropertiesSheetEditor.setEnabled(false);
         }
+
+        changeApplicationLevelVisibility(highAvailabilityTab, true);
     }
 
-    private void initTabAvailabilityListeners() {
-        highAvailabilityTab.setVisible(true);
-
-        // only avail for desktop mode
-        isStatelessEditor.setVisible(true);
-        numOfMonitorsEditor.setVisible(true);
+    @Override
+    protected PopupWidgetConfigMap createWidgetConfiguration() {
+        return super.createWidgetConfiguration().
+                putAll(poolSpecificFields(), hiddenField()).
+                update(highAvailabilityTab, hiddenField());
     }
 }

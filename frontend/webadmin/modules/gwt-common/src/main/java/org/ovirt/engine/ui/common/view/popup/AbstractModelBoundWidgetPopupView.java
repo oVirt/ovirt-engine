@@ -60,4 +60,8 @@ public abstract class AbstractModelBoundWidgetPopupView<T extends Model> extends
     private void setFocusTraversalOrder() {
         dialogPanel.setTabIndexes(popupWidget.setTabIndexes(1));
     }
+
+    protected AbstractModelBoundPopupWidget<T> getContentWidget() {
+       return popupWidget;
+    }
 }

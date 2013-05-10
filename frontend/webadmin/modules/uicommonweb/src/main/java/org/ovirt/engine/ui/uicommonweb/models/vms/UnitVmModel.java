@@ -1070,6 +1070,7 @@ public class UnitVmModel extends Model {
         this.behavior = behavior;
         this.behavior.setModel(this);
 
+        setAdvancedMode(new EntityModel(false));
         setStorageDomain(new NotChangableForVmInPoolListModel());
         setName(new NotChangableForVmInPoolEntityModel());
         setNumOfMonitors(new NotChangableForVmInPoolListModel());

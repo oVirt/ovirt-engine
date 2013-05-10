@@ -64,6 +64,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalRunOnceModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalVmEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalVmSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmBasedWidgetSwitchModeCommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
@@ -735,17 +736,22 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     private void newInternal(VmType vmType)
     {
         UnitVmModel model = new UnitVmModel(new UserPortalNewVmModelBehavior());
-        setWindow(model);
+        model.setVmType(vmType);
         model.setTitle(ConstantsManager.getInstance()
                 .getMessages()
                 .newVmTitle(vmType == VmType.Server ? ConstantsManager.getInstance().getConstants().serverVmType()
                         : ConstantsManager.getInstance().getConstants().desktopVmType()));
         model.setHashName("new_" + (vmType == VmType.Server ? "server" : "desktop")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         model.setIsNew(true);
-        model.setVmType(vmType);
         model.setCustomPropertiesKeysList(CustomPropertiesKeysList);
 
+        setWindow(model);
+
         model.initialize(null);
+
+        VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
+        switchModeCommand.init(model);
+        model.getCommands().add(switchModeCommand);
 
         // Ensures that the default provisioning is "Clone" for a new server and "Thin" for a new desktop.
         boolean selectValue = model.getVmType() == VmType.Server;
@@ -791,6 +797,10 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         setWindow(model);
 
         model.initialize(null);
+
+        VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
+        switchModeCommand.init(model);
+        model.getCommands().add(switchModeCommand);
 
         UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());

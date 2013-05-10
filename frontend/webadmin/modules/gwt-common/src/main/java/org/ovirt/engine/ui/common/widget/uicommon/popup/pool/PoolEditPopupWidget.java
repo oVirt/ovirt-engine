@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.pool;
 
+import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.hiddenField;
+import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
 import java.text.ParseException;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -10,6 +12,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRenderer;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -117,6 +120,17 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
         resourceAllocationTab.disableContent();
         bootOptionsTab.disableContent();
         customPropertiesTab.disableContent();
+    }
+
+    @Override
+    protected PopupWidgetConfigMap createWidgetConfiguration() {
+        return super.createWidgetConfiguration().
+                update(numOfVmsEditor, hiddenField()).
+                update(newPoolEditVmsPanel, hiddenField()).
+                update(newPoolEditMaxAssignedVmsPerUserPanel, hiddenField()).
+                update(editPoolEditVmsPanel, simpleField()).
+                update(editPoolIncraseNumOfVmsPanel, simpleField()).
+                update(editPoolEditMaxAssignedVmsPerUserPanel, simpleField());
     }
 
 }

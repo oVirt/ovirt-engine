@@ -1,6 +1,9 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup;
 
+import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -37,6 +40,7 @@ import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.MemorySizeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -70,8 +74,9 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.ValueLabel;
+import com.google.gwt.user.client.ui.Widget;
 
-public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidget<UnitVmModel> {
+public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWidget<UnitVmModel> {
 
     interface Driver extends SimpleBeanEditorDriver<UnitVmModel, AbstractVmPopupWidget> {
     }
@@ -122,7 +127,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @Ignore
     public Label nameLabel;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "name.entity")
     @WithElementId("name")
     public EntityModelTextBoxOnlyEditor nameEditor;
@@ -131,7 +136,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @Ignore
     public InfoIcon poolNameIcon;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "description.entity")
     @WithElementId("description")
     public EntityModelTextBoxEditor descriptionEditor;
@@ -150,17 +155,17 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @Ignore
     HTML cpuPinningLabel;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "totalCPUCores.entity")
     @WithElementId("totalCPUCores")
     public EntityModelTextBoxEditor totalvCPUsEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "numOfSockets.selectedItem")
     @WithElementId("numOfSockets")
     public ListModelListBoxEditor<Object> numOfSocketsEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "coresPerSocket.selectedItem")
     @WithElementId("coresPerSocket")
     public ListModelListBoxEditor<Object> corePerSocketEditor;
@@ -204,12 +209,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @Ignore
     public InfoIcon editPoolMaxAssignedVmsPerUserIcon;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "prestartedVms.entity")
     @WithElementId("prestartedVms")
     public EntityModelTextBoxOnlyEditor prestartedVmsEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Path("maxAssignedVmsPerUser.entity")
     @WithElementId("maxAssignedVmsPerUser")
     public EntityModelTextBoxOnlyEditor maxAssignedVmsPerUserEditor;
@@ -252,7 +257,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @Ignore
     public Label editPrestartedVmsLabel;
 
-    @UiField
+    @UiField(provided = true)
     @Path("prestartedVms.entity")
     @WithElementId("editPrestartedVms")
     public EntityModelTextBoxOnlyEditor editPrestartedVmsEditor;
@@ -262,7 +267,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @WithElementId("incraseNumOfVms")
     public EntityModelTextBoxOnlyEditor incraseNumOfVmsEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Path("maxAssignedVmsPerUser.entity")
     @WithElementId("editMaxAssignedVmsPerUser")
     public EntityModelTextBoxOnlyEditor editMaxAssignedVmsPerUserEditor;
@@ -362,7 +367,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @WithElementId("isAutoAssign")
     public EntityModelRadioButtonEditor isAutoAssignEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "cpuPinning.entity")
     @WithElementId("cpuPinning")
     public EntityModelTextBoxEditor cpuPinning;
@@ -391,7 +396,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @Path(value = "watchdogAction.selectedItem")
     @WithElementId("watchdogAction")
     public ListModelListBoxEditor<Object> watchdogActionEditor;
-
 
     // ==Resource Allocation Tab==
     @UiField
@@ -462,17 +466,17 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @UiField
     protected FlowPanel linuxBootOptionsPanel;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "kernel_path.entity")
     @WithElementId("kernelPath")
     public EntityModelTextBoxEditor kernel_pathEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "initrd_path.entity")
     @WithElementId("initrdPath")
     public EntityModelTextBoxEditor initrd_pathEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Path(value = "kernel_parameters.entity")
     @WithElementId("kernelParameters")
     public EntityModelTextBoxEditor kernel_parametersEditor;
@@ -523,27 +527,28 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         initListBoxEditors();
         // Contains a special parser/renderer
         memSizeEditor = new EntityModelTextBoxEditor(
-                new MemorySizeRenderer(constants), new MemorySizeParser());
+                new MemorySizeRenderer(constants), new MemorySizeParser(), new ModeSwitchingVisibilityRenderer());
         minAllocatedMemoryEditor = new EntityModelTextBoxEditor(
-                new MemorySizeRenderer(constants), new MemorySizeParser());
+                new MemorySizeRenderer(constants), new MemorySizeParser(), new ModeSwitchingVisibilityRenderer());
 
         // TODO: How to align right without creating the widget manually?
-        hostCpuEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        isHighlyAvailableEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        watchdogModelEditor = new ListModelListBoxEditor<Object>();
-        watchdogActionEditor = new ListModelListBoxEditor<Object>();
-        isStatelessEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        isRunAndPauseEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        isDeleteProtectedEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        isSmartcardEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        cdAttachedEditor = new EntityModelCheckBoxEditor(Align.LEFT);
-        allowConsoleReconnectEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        hostCpuEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
+        isHighlyAvailableEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
+        watchdogModelEditor = new ListModelListBoxEditor<Object>(new ModeSwitchingVisibilityRenderer());
+        watchdogActionEditor = new ListModelListBoxEditor<Object>(new ModeSwitchingVisibilityRenderer());
+        isStatelessEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
+        isRunAndPauseEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
+        isDeleteProtectedEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
+        isSmartcardEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
+        cdAttachedEditor = new EntityModelCheckBoxEditor(Align.LEFT, new ModeSwitchingVisibilityRenderer());
+        allowConsoleReconnectEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
 
         priorityEditor = new EntityModelCellTable<ListModel>(
                 (Resources) GWT.create(ButtonCellTableResources.class));
         disksAllocationView = new DisksAllocationView(constants);
 
         initPoolSpecificWidgets(resources, messages);
+        initTextBoxEditors();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
@@ -553,13 +558,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
         applyStyles();
 
-        poolTab.setVisible(false);
-
         localize(constants);
 
-        generateIds();
+        super.initializeModeSwitching(generalTab);
 
-        hidePoolSpecificFields();
+        generateIds();
 
         priorityEditor.addEntityModelColumn(new TextColumnWithTooltip<EntityModel>() {
             @Override
@@ -569,6 +572,21 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         }, ""); //$NON-NLS-1$
 
         driver.initialize(this);
+    }
+
+    private void initTextBoxEditors() {
+        descriptionEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+        totalvCPUsEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+        numOfVmsEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+        cpuPinning = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+        kernel_pathEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+        initrd_pathEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+        kernel_parametersEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+        nameEditor = new EntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
+        prestartedVmsEditor = new EntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
+        editPrestartedVmsEditor = new EntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
+        maxAssignedVmsPerUserEditor = new EntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
+        editMaxAssignedVmsPerUserEditor = new EntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
     }
 
     protected void initPoolSpecificWidgets(CommonApplicationResources resources,
@@ -586,8 +604,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
         poolNameIcon =
                 new InfoIcon(applicationTemplates.italicText(messages.poolNameHelp()), resources);
-
-        poolNameIcon.setVisible(false);
 
         newPoolMaxAssignedVmsPerUserIcon =
                 new InfoIcon(applicationTemplates.italicText(messages.maxAssignedVmsPerUserHelp()), resources);
@@ -616,15 +632,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         numOfVmsEditor = new EntityModelTextBoxEditor();
     }
 
-    private void hidePoolSpecificFields() {
-        numOfVmsEditor.setVisible(false);
-        newPoolEditVmsPanel.setVisible(false);
-        newPoolEditMaxAssignedVmsPerUserPanel.setVisible(false);
-        editPoolEditVmsPanel.setVisible(false);
-        editPoolIncraseNumOfVmsPanel.setVisible(false);
-        editPoolEditMaxAssignedVmsPerUserPanel.setVisible(false);
-    }
-
     protected abstract void generateIds();
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -635,30 +642,33 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
             public String renderNullSafe(Object object) {
                 return ((StoragePool) object).getname();
             }
-        });
+        }, new ModeSwitchingVisibilityRenderer());
 
         clusterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
                 return ((VDSGroup) object).getname();
             }
-        });
+        }, new ModeSwitchingVisibilityRenderer());
 
         quotaEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
                 return ((Quota) object).getQuotaName();
             }
-        });
+        }, new ModeSwitchingVisibilityRenderer());
 
         templateEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
                 return ((VmTemplate) object).getName();
             }
-        });
+        }, new ModeSwitchingVisibilityRenderer());
 
-        oSTypeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
+        oSTypeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
+
+        numOfSocketsEditor = new ListModelListBoxEditor<Object>(new ModeSwitchingVisibilityRenderer());
+        corePerSocketEditor = new ListModelListBoxEditor<Object>(new ModeSwitchingVisibilityRenderer());
 
         // Pools
         poolTypeEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
@@ -666,7 +676,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
             public String renderNullSafe(Object object) {
                 return ((EntityModel) object).getTitle();
             }
-        });
+        }, new ModeSwitchingVisibilityRenderer());
 
         // Windows Sysprep
         domainEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
@@ -674,7 +684,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
             public String renderNullSafe(Object object) {
                 return object.toString();
             }
-        });
+        }, new ModeSwitchingVisibilityRenderer());
 
         timeZoneEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
@@ -686,7 +696,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
                     return timeZone.getDisplayValue();
                 }
             }
-        });
+        }, new ModeSwitchingVisibilityRenderer());
 
         // Console tab
         displayProtocolEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
@@ -694,19 +704,21 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
             public String renderNullSafe(Object object) {
                 return ((EntityModel) object).getTitle();
             }
-        });
+        }, new ModeSwitchingVisibilityRenderer());
 
-        usbSupportEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
+        usbSupportEditor =
+                new ListModelListBoxEditor<Object>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
         numOfMonitorsEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
                 return object.toString();
             }
-        });
+        }, new ModeSwitchingVisibilityRenderer());
 
         vncKeyboardLayoutEditor = new ListModelListBoxEditor<Object>(new AbstractRenderer<Object>() {
 
-            final String globalLayout = (String)AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayout);
+            final String globalLayout =
+                    (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayout);
 
             @Override
             public String render(Object object) {
@@ -717,23 +729,27 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
                 }
             }
 
-        });
+        }, new ModeSwitchingVisibilityRenderer());
 
         // Host Tab
         specificHost = new RadioButton("runVmOnHostGroup"); //$NON-NLS-1$
-        isAutoAssignEditor = new EntityModelRadioButtonEditor("runVmOnHostGroup"); //$NON-NLS-1$
+        isAutoAssignEditor =
+                new EntityModelRadioButtonEditor("runVmOnHostGroup", new ModeSwitchingVisibilityRenderer()); //$NON-NLS-1$
         defaultHostEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
                 return ((VDS) object).getName();
             }
-        });
+        }, new ModeSwitchingVisibilityRenderer());
 
-        migrationModeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
+        migrationModeEditor =
+                new ListModelListBoxEditor<Object>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
 
         // Resource Allocation
-        provisioningThinEditor = new EntityModelRadioButtonEditor("provisioningGroup"); //$NON-NLS-1$
-        provisioningCloneEditor = new EntityModelRadioButtonEditor("provisioningGroup"); //$NON-NLS-1$
+        provisioningThinEditor =
+                new EntityModelRadioButtonEditor("provisioningGroup", new ModeSwitchingVisibilityRenderer()); //$NON-NLS-1$
+        provisioningCloneEditor =
+                new EntityModelRadioButtonEditor("provisioningGroup", new ModeSwitchingVisibilityRenderer()); //$NON-NLS-1$
 
         // Boot Options Tab
         firstBootDeviceEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
@@ -741,21 +757,21 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
             public String renderNullSafe(Object object) {
                 return ((EntityModel) object).getTitle();
             }
-        });
+        }, new ModeSwitchingVisibilityRenderer());
 
         secondBootDeviceEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
                 return ((EntityModel) object).getTitle();
             }
-        });
+        }, new ModeSwitchingVisibilityRenderer());
 
         cdImageEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
                 return (String) object;
             }
-        });
+        }, new ModeSwitchingVisibilityRenderer());
     }
 
     protected void localize(CommonApplicationConstants constants) {
@@ -846,15 +862,16 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     }
 
     @Override
-    public void edit(UnitVmModel object) {
-        priorityEditor.setRowData(new ArrayList<EntityModel>());
-        priorityEditor.edit(object.getPriority());
-        driver.edit(object);
-        initTabAvailabilityListeners(object);
-        initListeners(object);
-        initCustomPropertySheet(object);
+    public void edit(UnitVmModel model) {
+        super.edit(model);
 
-        // numOfVmsLabel.setVisible(false);
+        priorityEditor.setRowData(new ArrayList<EntityModel>());
+        priorityEditor.edit(model.getPriority());
+        driver.edit(model);
+        initTabAvailabilityListeners(model);
+        initListeners(model);
+        initCustomPropertySheet(model);
+        hideAlwaysHiddenFields();
     }
 
     private void initCustomPropertySheet(final UnitVmModel object) {
@@ -868,11 +885,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     }
 
     protected void setupHostTabAvailability(UnitVmModel model) {
-        hostTab.setVisible(model.getIsHostAvailable());
+        changeApplicationLevelVisibility(hostTab, model.getIsHostAvailable());
     }
 
     protected void setupCustomPropertiesAvailability(UnitVmModel model) {
-        customPropertiesTab.setVisible(model.getIsCustomPropertiesTabAvailable());
+        changeApplicationLevelVisibility(customPropertiesTab, model.getIsCustomPropertiesTabAvailable());
     }
 
     private void initListeners(final UnitVmModel object) {
@@ -919,12 +936,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
                 provisioningCloneEditor.setEnabled(isProvisioningChangable);
 
                 boolean isProvisioningAvailable = object.getProvisioning().getIsAvailable();
-                provisionSelectionPanel.setVisible(isProvisioningAvailable);
+                changeApplicationLevelVisibility(provisionSelectionPanel, isProvisioningAvailable);
 
                 boolean isDisksAvailable = object.getIsDisksAvailable();
-                disksAllocationPanel.setVisible(isDisksAvailable);
+                changeApplicationLevelVisibility(disksAllocationPanel, isDisksAvailable);
 
-                storageAllocationPanel.setVisible(isProvisioningAvailable || isDisksAvailable);
+                changeApplicationLevelVisibility(storageAllocationPanel, isProvisioningAvailable || isDisksAvailable);
             }
         });
 
@@ -949,11 +966,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
      */
     protected void updateUsbNativeMessageVisibility(final UnitVmModel object) {
         VDSGroup vdsGroup = (VDSGroup) object.getCluster().getSelectedItem();
-        nativeUsbWarningMessage.setVisible(object.getUsbPolicy().getSelectedItem() == UsbPolicy.ENABLED_NATIVE
-                && vdsGroup != null
-                && vdsGroup.getcompatibility_version() != null
-                && !(Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MigrationSupportForNativeUsb,
-                        vdsGroup.getcompatibility_version().getValue()));
+
+        changeApplicationLevelVisibility(nativeUsbWarningMessage,
+                object.getUsbPolicy().getSelectedItem() == UsbPolicy.ENABLED_NATIVE
+                        && vdsGroup != null
+                        && vdsGroup.getcompatibility_version() != null
+                        && !(Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MigrationSupportForNativeUsb,
+                                vdsGroup.getcompatibility_version().getValue()));
     }
 
     private void addDiskAllocation(UnitVmModel model) {
@@ -991,7 +1010,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
                         resourceAllocationTab.markAsInvalid(null);
                     }
                 } else if ("IsHighlyAvailable".equals(propName)) { //$NON-NLS-1$
-                    highAvailabilityTab.setVisible((Boolean) vm.getIsHighlyAvailable().getEntity());
+                    changeApplicationLevelVisibility(highAvailabilityTab, (Boolean) vm.getIsHighlyAvailable()
+                            .getEntity());
                 } else if ("IsBootSequenceTabValid".equals(propName)) { //$NON-NLS-1$
                     if ((Boolean) vm.getIsHighlyAvailable().getEntity()) {
                         bootOptionsTab.markAsValid();
@@ -1007,10 +1027,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
                 }
                 else if ("IsDisksAvailable".equals(propName)) { //$NON-NLS-1$
                     boolean isDisksAvailable = vm.getIsDisksAvailable();
-                    disksAllocationPanel.setVisible(isDisksAvailable);
+                    changeApplicationLevelVisibility(disksAllocationPanel, isDisksAvailable);
 
                     boolean isProvisioningAvailable = vm.getProvisioning().getIsAvailable();
-                    storageAllocationPanel.setVisible(isProvisioningAvailable || isDisksAvailable);
+                    changeApplicationLevelVisibility(storageAllocationPanel, isProvisioningAvailable
+                            || isDisksAvailable);
 
                     if (isDisksAvailable) {
                         // Update warning message by disks status
@@ -1025,23 +1046,20 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
             }
         });
 
-        // High Availability only avail in server mode
-        highAvailabilityTab.setVisible(vm.getVmType().equals(VmType.Server));
-
         // TODO: Move to a more appropriate method
         vm.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
                 if ("IsLinuxOS".equals(propName)) { //$NON-NLS-1$
-                    linuxBootOptionsPanel.setVisible(vm.getIsLinuxOS());
+                    changeApplicationLevelVisibility(linuxBootOptionsPanel, vm.getIsLinuxOS());
                 }
             }
         });
 
         // only avail for desktop mode
-        isStatelessEditor.setVisible(vm.getVmType().equals(VmType.Desktop));
-        numOfMonitorsEditor.setVisible(vm.getVmType().equals(VmType.Desktop));
+        changeApplicationLevelVisibility(isStatelessEditor, vm.getVmType().equals(VmType.Desktop));
+        changeApplicationLevelVisibility(numOfMonitorsEditor, vm.getVmType().equals(VmType.Desktop));
 
         defaultHostEditor.setEnabled(false);
         specificHost.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -1069,12 +1087,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
             }
         });
 
-        cpuPinningLabel.setVisible(vm.getCpuPinning().getIsChangable());
+        changeApplicationLevelVisibility(cpuPinningLabel, vm.getCpuPinning().getIsChangable());
         vm.getCpuPinning().getPropertyChangedEvent().addListener(new IEventListener() {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                cpuPinningLabel.setVisible(vm.getCpuPinning().getIsChangable());
+                changeApplicationLevelVisibility(cpuPinningLabel, vm.getCpuPinning().getIsChangable());
             }
         });
 
@@ -1216,8 +1234,60 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
         // ==Custom Properties Tab==
         nextTabIndex = customPropertiesTab.setTabIndexes(nextTabIndex);
-//        customPropertiesSheetEditor.setTabIndex(nextTabIndex++);
 
         return nextTabIndex;
+    }
+
+    @Override
+    protected PopupWidgetConfigMap createWidgetConfiguration() {
+        return super.createWidgetConfiguration().
+                putAll(allTabs(), simpleField().visibleInAdvancedModeOnly()).
+                putAll(adancedFieldsFromGeneralTab(), simpleField().visibleInAdvancedModeOnly()).
+                putAll(consoleTabWidgets(), simpleField().visibleInAdvancedModeOnly()).
+                update(consoleTab, simpleField()).
+                update(numOfMonitorsEditor, simpleField());
+    }
+
+    protected List<Widget> consoleTabWidgets() {
+        return Arrays.<Widget> asList(
+                displayProtocolEditor,
+                usbSupportEditor,
+                isSmartcardEnabledEditor,
+                nativeUsbWarningMessage,
+                expander,
+                numOfMonitorsEditor,
+                vncKeyboardLayoutEditor
+                );
+    }
+
+    protected List<Widget> poolSpecificFields() {
+        return Arrays.<Widget> asList(numOfVmsEditor,
+                newPoolEditVmsPanel,
+                editPoolEditVmsPanel,
+                editPoolIncraseNumOfVmsPanel,
+                poolTab,
+                prestartedVmsEditor,
+                poolNameIcon,
+                newPoolEditMaxAssignedVmsPerUserPanel,
+                editPoolEditMaxAssignedVmsPerUserPanel);
+    }
+
+    protected List<Widget> allTabs() {
+        return Arrays.<Widget> asList(initialRunTab,
+                consoleTab,
+                hostTab,
+                resourceAllocationTab,
+                bootOptionsTab,
+                customPropertiesTab,
+                highAvailabilityTab,
+                poolTab);
+    }
+
+    protected List<Widget> adancedFieldsFromGeneralTab() {
+        return Arrays.<Widget> asList(
+                memSizeEditor,
+                totalvCPUsEditor,
+                generalAdvancedParameterExpander
+                );
     }
 }

@@ -5,6 +5,7 @@ import com.google.gwt.text.shared.Parser;
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.user.client.ui.Widget;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
+import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 
 /*
  * Represents a Model bound editor containing only a TextBox with no label.
@@ -15,15 +16,19 @@ public class EntityModelTextBoxOnlyEditor extends AbstractValidatedWidgetWithLab
     private final WidgetWithLabelEditor<Object, EntityModelTextBoxOnlyEditor> editor;
 
     public EntityModelTextBoxOnlyEditor(Renderer<Object> renderer, Parser<Object> parser) {
-        this(new EntityModelTextBox(renderer, parser));
+        this(new EntityModelTextBox(renderer, parser), new VisibilityRenderer.SimpleVisibilityRenderer());
+    }
+
+    public EntityModelTextBoxOnlyEditor(VisibilityRenderer visibilityRenderer) {
+        this(new EntityModelTextBox(), visibilityRenderer);
     }
 
     public EntityModelTextBoxOnlyEditor() {
-        this(new EntityModelTextBox());
+        this(new EntityModelTextBox(), new VisibilityRenderer.SimpleVisibilityRenderer());
     }
 
-    public EntityModelTextBoxOnlyEditor(EntityModelTextBox textBox) {
-        super(textBox);
+    public EntityModelTextBoxOnlyEditor(EntityModelTextBox textBox, VisibilityRenderer visibilityRenderer) {
+        super(textBox, visibilityRenderer);
         this.editor = WidgetWithLabelEditor.of(getContentWidget().asEditor(), this);
     }
 

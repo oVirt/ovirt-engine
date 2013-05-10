@@ -100,6 +100,16 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTreeContext, UserSelectedDisplayProtocolManager
 {
 
+    private UICommand newVMCommand;
+
+    public UICommand getNewVmCommand() {
+        return newVMCommand;
+    }
+
+    private void setNewVmCommand(UICommand newVMCommand) {
+        this.newVMCommand = newVMCommand;
+    }
+
     private UICommand privateNewServerCommand;
 
     public UICommand getNewServerCommand()
@@ -409,6 +419,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         consoleModelsCache = new ConsoleModelsCache(this);
         setConsoleHelpers();
 
+        setNewVmCommand(new UICommand("NewVM", this)); //$NON-NLS-1$
         setNewServerCommand(new UICommand("NewServer", this)); //$NON-NLS-1$
         setNewDesktopCommand(new UICommand("NewDesktop", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
@@ -727,6 +738,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         model.initialize(getSystemTreeSelectedItem());
 
+        VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
+        switchModeCommand.init(model);
+        model.getCommands().add(switchModeCommand);
+
         // Ensures that the default provisioning is "Clone" for a new server and "Thin" for a new desktop.
         boolean selectValue = model.getVmType() == VmType.Server;
         model.getProvisioning().setEntity(selectValue);
@@ -794,6 +809,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
 
         model.initialize(this.getSystemTreeSelectedItem());
+
+        VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
+        switchModeCommand.init(model);
+        model.getCommands().add(switchModeCommand);
 
         UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -2537,6 +2556,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 "OnEditConsoleSave".equals(command.getName())) { //$NON-NLS-1$
             setWindow(null);
         }
+
     }
 
     private void connectToConsoles() {

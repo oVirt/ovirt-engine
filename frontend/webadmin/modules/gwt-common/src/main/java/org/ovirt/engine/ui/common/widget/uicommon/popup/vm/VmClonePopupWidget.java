@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
+import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.hiddenField;
+import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
+
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
@@ -17,7 +20,10 @@ public class VmClonePopupWidget extends AbstractVmPopupWidget {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    public VmClonePopupWidget(CommonApplicationConstants constants, CommonApplicationResources resources, CommonApplicationMessages messages, CommonApplicationTemplates applicationTemplates) {
+    public VmClonePopupWidget(CommonApplicationConstants constants,
+            CommonApplicationResources resources,
+            CommonApplicationMessages messages,
+            CommonApplicationTemplates applicationTemplates) {
         super(constants, resources, messages, applicationTemplates);
     }
 
@@ -36,11 +42,18 @@ public class VmClonePopupWidget extends AbstractVmPopupWidget {
         boolean isDesktop = vm.getVmType().equals(VmType.Desktop);
 
         // High Availability only available in server mode
-        highAvailabilityTab.setVisible(!isDesktop);
+        changeApplicationLevelVisibility(highAvailabilityTab, !isDesktop);
 
         // only available for desktop mode
-        isStatelessEditor.setVisible(isDesktop);
-        numOfMonitorsEditor.setVisible(isDesktop);
+        changeApplicationLevelVisibility(isStatelessEditor, isDesktop);
+        changeApplicationLevelVisibility(numOfMonitorsEditor, isDesktop);
     }
 
+    @Override
+    protected PopupWidgetConfigMap createWidgetConfiguration() {
+        return super.createWidgetConfiguration().
+                putAll(poolSpecificFields(), hiddenField()).
+                update(consoleTab, simpleField().visibleInAdvancedModeOnly());
+
+    }
 }

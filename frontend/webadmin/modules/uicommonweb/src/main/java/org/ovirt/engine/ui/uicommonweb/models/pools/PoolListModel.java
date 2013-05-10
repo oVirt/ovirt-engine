@@ -50,6 +50,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExistingPoolModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewPoolModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmBasedWidgetSwitchModeCommand;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -219,6 +220,10 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
         model.setVmType(VmType.Desktop);
         model.initialize(getSystemTreeSelectedItem());
 
+        VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
+        switchModeCommand.init(model);
+        model.getCommands().add(switchModeCommand);
+
         UICommand command = new UICommand("OnSave", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().ok());
         command.setIsDefault(true);
@@ -295,6 +300,10 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
 
                                 model.getProvisioning().setIsChangable(false);
                                 model.getStorageDomain().setIsChangable(false);
+
+                                VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
+                                switchModeCommand.init(model);
+                                model.getCommands().add(switchModeCommand);
 
                                 UICommand command = new UICommand("OnSave", poolListModel); //$NON-NLS-1$
                                 command.setTitle(ConstantsManager.getInstance().getConstants().ok());

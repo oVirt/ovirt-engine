@@ -96,4 +96,7 @@ public class DialogTabPanel extends Composite {
         tabContainer.addStyleName(styleName);
     }
 
+    public DialogTab getActiveTab() {
+        return activeTab;
+    }
 }

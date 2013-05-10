@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.LabelElement;
@@ -27,7 +28,11 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
     }
 
     public BaseEntityModelCheckboxEditor(Align labelAlign, BaseEntityModelCheckbox<T> contentWidget) {
-        super(contentWidget);
+        this(labelAlign, contentWidget, new VisibilityRenderer.SimpleVisibilityRenderer());
+    }
+
+    public BaseEntityModelCheckboxEditor(Align labelAlign, BaseEntityModelCheckbox<T> contentWidget, VisibilityRenderer visibilityRendere) {
+        super(contentWidget, visibilityRendere);
 
         this.editor = WidgetWithLabelEditor.of(getContentWidget().asEditor(), this);
         this.useCheckBoxWidgetLabel = labelAlign == Align.RIGHT;

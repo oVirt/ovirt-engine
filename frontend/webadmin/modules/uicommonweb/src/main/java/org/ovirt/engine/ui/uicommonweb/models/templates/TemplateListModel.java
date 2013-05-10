@@ -48,6 +48,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ExportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TemplateVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmBasedWidgetSwitchModeCommand;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -298,6 +299,10 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         model.setVmType(template.getVmType());
 
         model.initialize(this.getSystemTreeSelectedItem());
+
+        VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
+        switchModeCommand.init(model);
+        model.getCommands().add(switchModeCommand);
 
         UICommand command;
 

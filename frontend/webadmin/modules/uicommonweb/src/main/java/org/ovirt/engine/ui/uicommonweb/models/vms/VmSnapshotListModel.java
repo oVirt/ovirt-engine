@@ -501,6 +501,10 @@ public class VmSnapshotListModel extends SearchableListModel
                 model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
                 model.initialize(vmSnapshotListModel.getSystemTreeSelectedItem());
 
+                VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
+                switchModeCommand.init(model);
+                model.getCommands().add(switchModeCommand);
+
                 UICommand tempVar = new UICommand("OnCloneVM", vmSnapshotListModel); //$NON-NLS-1$
                 tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
                 tempVar.setIsDefault(true);

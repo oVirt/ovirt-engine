@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.pool;
 
+import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.hiddenField;
+
 import java.text.ParseException;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -11,6 +13,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelRenderer;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget;
+import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -26,7 +29,10 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    public PoolNewPopupWidget(CommonApplicationConstants constants, CommonApplicationResources resources, CommonApplicationMessages messages, CommonApplicationTemplates applicationTemplates) {
+    public PoolNewPopupWidget(CommonApplicationConstants constants,
+            CommonApplicationResources resources,
+            CommonApplicationMessages messages,
+            CommonApplicationTemplates applicationTemplates) {
         super(constants, resources, messages, applicationTemplates);
     }
 
@@ -39,29 +45,10 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
     public void edit(final UnitVmModel object) {
         super.edit(object);
         initTabAvailabilityListeners(object);
-        isStatelessEditor.setVisible(false);
-        poolNameIcon.setVisible(true);
-        isRunAndPauseEditor.setVisible(false);
 
         if (object.getIsNew()) {
-            prestartedVmsEditor.setEnabled(false);
-            maxAssignedVmsPerUserEditor.setEnabled(false);
             object.getNumOfDesktops().setEntity("1"); //$NON-NLS-1$
-
-            numOfVmsEditor.setVisible(true);
-            newPoolEditVmsPanel.setVisible(true);
-            newPoolEditMaxAssignedVmsPerUserPanel.setVisible(true);
-            editPoolEditVmsPanel.setVisible(false);
-            editPoolIncraseNumOfVmsPanel.setVisible(false);
-            editPoolEditMaxAssignedVmsPerUserPanel.setVisible(false);
-        } else {
-            numOfVmsEditor.setVisible(false);
-            newPoolEditVmsPanel.setVisible(false);
-            newPoolEditMaxAssignedVmsPerUserPanel.setVisible(false);
-            editPoolEditVmsPanel.setVisible(true);
-            prestartedVmsEditor.setEnabled(true);
-            editPoolIncraseNumOfVmsPanel.setVisible(true);
-            editPoolEditMaxAssignedVmsPerUserPanel.setVisible(true);
+            prestartedVmsEditor.setEnabled(false);
         }
     }
 
@@ -90,8 +77,17 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
                 }
             }
         });
+    }
 
-        poolTab.setVisible(true);
+    @Override
+    protected PopupWidgetConfigMap createWidgetConfiguration() {
+        return super.createWidgetConfiguration().
+                update(highAvailabilityTab, hiddenField()).
+                putOne(isStatelessEditor, hiddenField()).
+                putOne(isRunAndPauseEditor, hiddenField()).
+                putOne(editPoolEditVmsPanel, hiddenField()).
+                putOne(editPoolIncraseNumOfVmsPanel, hiddenField()).
+                putOne(editPoolEditMaxAssignedVmsPerUserPanel, hiddenField());
     }
 
 }

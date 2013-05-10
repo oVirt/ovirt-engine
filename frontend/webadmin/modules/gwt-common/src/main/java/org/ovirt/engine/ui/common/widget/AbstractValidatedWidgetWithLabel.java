@@ -62,9 +62,16 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
      */
     private boolean keepTitleOnSetEnabled = false;
 
-    public AbstractValidatedWidgetWithLabel(W contentWidget) {
+    private final VisibilityRenderer renderer;
+
+    public AbstractValidatedWidgetWithLabel(W contentWidget, VisibilityRenderer renderer) {
         this.contentWidget = contentWidget;
+        this.renderer = renderer;
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
+    }
+
+    public AbstractValidatedWidgetWithLabel(W contentWidget) {
+        this(contentWidget, new VisibilityRenderer.SimpleVisibilityRenderer());
     }
 
     @Override
@@ -134,7 +141,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
 
     @Override
     public void setAccessible(boolean accessible) {
-        wrapperPanel.setVisible(accessible);
+        wrapperPanel.setVisible(renderer.render(this, accessible));
     }
 
     @Override
