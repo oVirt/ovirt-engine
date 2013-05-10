@@ -170,14 +170,6 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
     }
 
     @Override
-    protected void asyncSearch() {
-        super.asyncSearch();
-
-        setAsyncResult(null);
-        setItems(getAsyncResult().getData());
-    }
-
-    @Override
     protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();

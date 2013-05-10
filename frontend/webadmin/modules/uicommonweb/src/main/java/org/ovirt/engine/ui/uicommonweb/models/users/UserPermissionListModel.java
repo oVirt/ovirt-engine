@@ -113,15 +113,6 @@ public class UserPermissionListModel extends SearchableListModel
 
     }
 
-    @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-
-        setAsyncResult(null);
-        setItems(getAsyncResult().getData());
-    }
-
     public void remove()
     {
         if (getWindow() != null)

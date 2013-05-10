@@ -192,13 +192,6 @@ public class StorageIsoListModel extends SearchableListModel
         Frontend.RunQuery(VdcQueryType.GetImagesList, imagesListParams, _asyncQuery);
     }
 
-    @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-        syncSearch();
-    }
-
     private void updateIsoModels(ArrayList<EntityModel> items)
     {
         ArrayList<EntityModel> newItems = new ArrayList<EntityModel>();

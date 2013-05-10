@@ -343,13 +343,6 @@ public class TemplateBackupModel extends VmBackupModel
     }
 
     @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-        syncSearch();
-    }
-
-    @Override
     public void executeCommand(UICommand command)
     {
         if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$

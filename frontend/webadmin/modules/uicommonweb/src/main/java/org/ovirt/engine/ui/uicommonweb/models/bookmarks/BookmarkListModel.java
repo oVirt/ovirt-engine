@@ -160,13 +160,6 @@ public class BookmarkListModel extends SearchableListModel
         Frontend.RunQuery(VdcQueryType.GetAllBookmarks, new VdcQueryParametersBase(), _asyncQuery);
     }
 
-    @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-        syncSearch();
-    }
-
     public void remove()
     {
         if (getWindow() != null)

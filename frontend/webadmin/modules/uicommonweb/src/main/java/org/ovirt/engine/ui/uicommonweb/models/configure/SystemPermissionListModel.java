@@ -67,14 +67,6 @@ public class SystemPermissionListModel extends SearchableListModel
     }
 
     @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-
-        setAsyncResult(null);
-    }
-
-    @Override
     protected void syncSearch()
     {
         super.syncSearch();

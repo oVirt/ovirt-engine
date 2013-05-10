@@ -150,7 +150,7 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
                 if (event.getSelectedItem() == BOOKMARK_INDEX) {
                     bookmarkModelProvider.getModel().executeBookmarksSearch();
                 } else {
-                    bookmarkModelProvider.getModel().ensureAsyncSearchStopped();
+                    bookmarkModelProvider.getModel().stopRefresh();
                 }
             }
         });

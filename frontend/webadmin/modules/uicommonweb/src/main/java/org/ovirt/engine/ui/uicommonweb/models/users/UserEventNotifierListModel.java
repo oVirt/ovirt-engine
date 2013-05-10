@@ -92,15 +92,6 @@ public class UserEventNotifierListModel extends SearchableListModel
                 new GetEventSubscribersBySubscriberIdParameters(getEntity().getuser_id()));
     }
 
-    @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-
-        setAsyncResult(null);
-        setItems(getAsyncResult().getData());
-    }
-
     public void manageEvents()
     {
         EventNotificationModel model = new EventNotificationModel();

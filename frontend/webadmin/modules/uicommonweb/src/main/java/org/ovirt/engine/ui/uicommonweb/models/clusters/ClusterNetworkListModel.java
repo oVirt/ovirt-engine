@@ -141,15 +141,6 @@ public class ClusterNetworkListModel extends SearchableListModel
         Frontend.RunQuery(VdcQueryType.GetAllNetworksByClusterId, tempVar, _asyncQuery);
     }
 
-    @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-
-        setAsyncResult(null);
-        setItems(getAsyncResult().getData());
-    }
-
     public void setAsDisplay()
     {
         Network network = (Network) getSelectedItem();

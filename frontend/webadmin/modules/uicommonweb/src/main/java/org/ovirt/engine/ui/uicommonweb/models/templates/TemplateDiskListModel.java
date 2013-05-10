@@ -138,15 +138,6 @@ public class TemplateDiskListModel extends SearchableListModel
     }
 
     @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-
-        setAsyncResult(null);
-        setItems(getAsyncResult().getData());
-    }
-
-    @Override
     public void setItems(Iterable value)
     {
         if (!getStorageDomains().isEmpty() || ignoreStorageDomains)

@@ -282,15 +282,6 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         super.syncSearch(VdcQueryType.Search, tempVar);
     }
 
-    @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-
-        setAsyncResult(null);
-        setItems(getAsyncResult().getData());
-    }
-
     public void newEntity()
     {
         if (getWindow() != null)

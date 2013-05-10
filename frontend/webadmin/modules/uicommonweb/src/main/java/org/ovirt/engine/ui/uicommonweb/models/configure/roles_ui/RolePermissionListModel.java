@@ -88,20 +88,6 @@ public class RolePermissionListModel extends SearchableListModel
         search();
     }
 
-    @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-
-        if (getEntity() == null)
-        {
-            return;
-        }
-
-        setAsyncResult(null);
-        setItems(getAsyncResult().getData());
-    }
-
     private void updateActionAvailability()
     {
         getRemoveCommand().setIsExecutionAllowed(getSelectedItem() != null

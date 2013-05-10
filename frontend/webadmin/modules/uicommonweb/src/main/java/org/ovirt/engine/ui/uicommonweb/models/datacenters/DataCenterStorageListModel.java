@@ -215,15 +215,6 @@ public class DataCenterStorageListModel extends SearchableListModel
         Frontend.RunQuery(VdcQueryType.GetStorageDomainsByStoragePoolId, tempVar, _asyncQuery);
     }
 
-    @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-
-        setAsyncResult(null);
-        setItems(getAsyncResult().getData());
-    }
-
     public void maintenance()
     {
         // Frontend.RunMultipleActions(VdcActionType.DeactivateStorageDomain,

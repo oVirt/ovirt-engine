@@ -282,15 +282,6 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         super.syncSearch(VdcQueryType.Search, tempVar);
     }
 
-    @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-
-        setAsyncResult(null);
-        setItems(getAsyncResult().getData());
-    }
-
     private void edit()
     {
         VmTemplate template = (VmTemplate) getSelectedItem();

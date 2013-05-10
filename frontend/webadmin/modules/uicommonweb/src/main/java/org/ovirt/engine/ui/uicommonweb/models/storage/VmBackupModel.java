@@ -538,12 +538,6 @@ public class VmBackupModel extends ManageBackupModel {
     }
 
     @Override
-    protected void asyncSearch() {
-        super.asyncSearch();
-        syncSearch();
-    }
-
-    @Override
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
 

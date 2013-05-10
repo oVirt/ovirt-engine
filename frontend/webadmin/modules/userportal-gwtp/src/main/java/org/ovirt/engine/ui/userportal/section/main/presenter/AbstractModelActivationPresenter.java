@@ -44,7 +44,7 @@ public abstract class AbstractModelActivationPresenter<T, M extends SearchableLi
         } else {
             // Stop model
             currentModel.setItems(null);
-            currentModel.ensureAsyncSearchStopped();
+            currentModel.stopRefresh();
         }
     }
 

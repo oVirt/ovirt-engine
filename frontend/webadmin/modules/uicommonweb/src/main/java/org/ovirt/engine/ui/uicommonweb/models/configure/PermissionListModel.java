@@ -108,23 +108,6 @@ public class PermissionListModel extends SearchableListModel
         super.syncSearch(VdcQueryType.GetPermissionsForObject, tempVar);
     }
 
-    @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-
-        VdcObjectType objType = getObjectType();
-        boolean directOnly = (objType == VdcObjectType.VM ? true : false);
-
-        GetPermissionsForObjectParameters tempVar = new GetPermissionsForObjectParameters();
-        tempVar.setObjectId(getEntityGuid());
-        tempVar.setVdcObjectType(objType);
-        tempVar.setDirectOnly(directOnly);
-        setAsyncResult(null);
-
-        setItems(getAsyncResult().getData());
-    }
-
     private void add()
     {
         if (getWindow() != null)

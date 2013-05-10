@@ -709,15 +709,15 @@ public class CommonModel extends ListModel
         // Stop search on all list models.
         for (SearchableListModel listModel : getItems())
         {
-            listModel.ensureAsyncSearchStopped();
+            listModel.stopRefresh();
         }
 
-        getEventList().ensureAsyncSearchStopped();
-        getAlertList().ensureAsyncSearchStopped();
-        getTaskList().ensureAsyncSearchStopped();
-        getBookmarkList().ensureAsyncSearchStopped();
-        getRoleListModel().ensureAsyncSearchStopped();
-        getSystemPermissionListModel().ensureAsyncSearchStopped();
+        getEventList().stopRefresh();
+        getAlertList().stopRefresh();
+        getTaskList().stopRefresh();
+        getBookmarkList().stopRefresh();
+        getRoleListModel().stopRefresh();
+        getSystemPermissionListModel().stopRefresh();
 
         if (Frontend.getIsUserLoggedIn())
         {
@@ -880,7 +880,7 @@ public class CommonModel extends ListModel
                 listWithDetails.setActiveDetailModel(null);
             }
 
-            oldModel.ensureAsyncSearchStopped();
+            oldModel.stopRefresh();
         }
     }
 

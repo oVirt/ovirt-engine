@@ -128,13 +128,6 @@ public class NetworkTemplateListModel extends SearchableListModel
         Frontend.RunQuery(VdcQueryType.GetVmTemplatesAndNetworkInterfacesByNetworkId, params, asyncQuery);
     }
 
-    @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-        syncSearch();
-    }
-
     private void updateActionAvailability()
     {
         getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && !getSelectedItems().isEmpty());

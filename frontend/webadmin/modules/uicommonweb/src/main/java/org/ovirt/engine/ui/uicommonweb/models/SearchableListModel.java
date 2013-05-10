@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.compat.Match;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.RegexOptions;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -141,19 +140,6 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         privateIsTimerDisabled = value;
     }
 
-    // Update IsAsync wisely! Set it once after initializing the SearchableListModel object.
-    private boolean privateIsAsync;
-
-    public boolean getIsAsync()
-    {
-        return privateIsAsync;
-    }
-
-    public void setIsAsync(boolean value)
-    {
-        privateIsAsync = value;
-    }
-
     private String privateDefaultSearchString;
 
     public String getDefaultSearchString()
@@ -188,23 +174,6 @@ public abstract class SearchableListModel extends ListModel implements GridContr
     public void setSearchPageSize(int value)
     {
         privateSearchPageSize = value;
-    }
-
-    private RegistrationResult asyncResult;
-
-    public RegistrationResult getAsyncResult()
-    {
-        return asyncResult;
-    }
-
-    public void setAsyncResult(RegistrationResult value)
-    {
-        if (asyncResult != value)
-        {
-            asyncResultChanging(value, asyncResult);
-            asyncResult = value;
-            onPropertyChanged(new PropertyChangedEventArgs("AsyncResult")); //$NON-NLS-1$
-        }
     }
 
     private String searchString;
@@ -282,9 +251,6 @@ public abstract class SearchableListModel extends ListModel implements GridContr
 
     protected SearchableListModel()
     {
-        // Configure this instance.
-        getConfigurator().configure(this);
-
         setSearchCommand(new UICommand("Search", this)); //$NON-NLS-1$
         setSearchNextPageCommand(new UICommand("SearchNextPage", this)); //$NON-NLS-1$
         setSearchPreviousPageCommand(new UICommand("SearchPreviousPage", this)); //$NON-NLS-1$
@@ -332,12 +298,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
                 @Override
                 public void execute() {
                     logger.fine(SearchableListModel.this.getClass().getName() + ": Executing search"); //$NON-NLS-1$
-                    if (getIsAsync())
-                    {
-                        asyncSearch();
-                    } else {
-                        syncSearch();
-                    }
+                    syncSearch();
                 }
 
             });
@@ -398,7 +359,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         }
         else
         {
-            ensureAsyncSearchStopped();
+            stopRefresh();
 
             if (getIsQueryFirstTime())
             {
@@ -406,23 +367,16 @@ public abstract class SearchableListModel extends ListModel implements GridContr
                 setSelectedItems(null);
             }
 
-            if (getIsAsync())
+            if (getIsTimerDisabled() == false)
             {
-                asyncSearch();
+                setIsQueryFirstTime(true);
+                syncSearch();
+                setIsQueryFirstTime(false);
+                getTimer().start();
             }
             else
             {
-                if (getIsTimerDisabled() == false)
-                {
-                    setIsQueryFirstTime(true);
-                    syncSearch();
-                    setIsQueryFirstTime(false);
-                    getTimer().start();
-                }
-                else
-                {
-                    syncSearch();
-                }
+                syncSearch();
             }
         }
     }
@@ -804,20 +758,9 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         setIsQueryFirstTime(false);
     }
 
-    /**
-     * Override this method to take care on async fetching.
-     */
-    protected void asyncSearch()
-    {
-    }
-
-    public void ensureAsyncSearchStopped()
+    public void stopRefresh()
     {
         getTimer().stop();
-        if (getAsyncResult() != null && !getAsyncResult().getId().equals(NGuid.Empty))
-        {
-            setAsyncResult(null);
-        }
     }
 
     @Override

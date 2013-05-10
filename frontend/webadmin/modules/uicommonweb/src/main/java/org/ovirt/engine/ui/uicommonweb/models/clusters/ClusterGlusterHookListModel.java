@@ -278,12 +278,6 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
     }
 
     @Override
-    protected void asyncSearch() {
-        super.asyncSearch();
-        syncSearch();
-    }
-
-    @Override
     protected String getListName() {
         return "ClusterGlusterHookListModel"; //$NON-NLS-1$
     }

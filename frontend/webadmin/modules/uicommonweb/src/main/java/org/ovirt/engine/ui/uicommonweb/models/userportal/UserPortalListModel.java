@@ -358,13 +358,6 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     }
 
     @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-        syncSearch();
-    }
-
-    @Override
     protected void initDetailModels()
     {
         super.initDetailModels();

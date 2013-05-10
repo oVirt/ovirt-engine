@@ -390,13 +390,6 @@ public class TagListModel extends SearchableListModel
         setSelectedItems(list);
     }
 
-    @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-        syncSearch();
-    }
-
     private void reset()
     {
         setSelectedItems(new ArrayList<TagModel>());

@@ -190,13 +190,6 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
     }
 
     @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-        syncSearch();
-    }
-
-    @Override
     protected void syncSearch()
     {
         super.syncSearch();

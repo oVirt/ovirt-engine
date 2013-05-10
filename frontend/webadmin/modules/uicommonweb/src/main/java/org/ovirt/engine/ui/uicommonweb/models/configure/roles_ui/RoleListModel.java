@@ -193,34 +193,6 @@ public class RoleListModel extends ListWithDetailsModel
     }
 
     @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object ReturnValue)
-            {
-                RoleListModel roleListModel = (RoleListModel) model;
-                ArrayList<Role> filteredList = new ArrayList<Role>();
-                for (Role item : (ArrayList<Role>) ((VdcQueryReturnValue) ReturnValue).getReturnValue())
-                {
-                    if (roleListModel.getItemsFilter() == null || roleListModel.getItemsFilter() == item.getType())
-                    {
-                        filteredList.add(item);
-                    }
-                }
-
-                roleListModel.setItems(filteredList);
-            }
-        };
-
-        Frontend.RunQuery(VdcQueryType.GetAllRoles, new MultilevelAdministrationsQueriesParameters(), _asyncQuery);
-    }
-
-    @Override
     protected void syncSearch()
     {
         super.syncSearch();

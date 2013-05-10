@@ -665,15 +665,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         super.syncSearch(VdcQueryType.Search, tempVar);
     }
 
-    @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-
-        setAsyncResult(null);
-        setItems(getAsyncResult().getData());
-    }
-
     private void updateConsoleModels() {
         final List selectedItems = getSelectedItems();
         if (selectedItems == null || selectedItems.isEmpty()) {

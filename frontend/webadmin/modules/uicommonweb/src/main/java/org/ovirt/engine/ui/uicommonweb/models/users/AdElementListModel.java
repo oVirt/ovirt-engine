@@ -365,13 +365,6 @@ public class AdElementListModel extends SearchableListModel
         }
     }
 
-    @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-        syncSearch();
-    }
-
     private ArrayList<EntityModel> privateusers;
 
     public ArrayList<EntityModel> getusers()

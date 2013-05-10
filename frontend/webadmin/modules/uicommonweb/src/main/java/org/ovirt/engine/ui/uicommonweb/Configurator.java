@@ -6,7 +6,6 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -51,20 +50,6 @@ public abstract class Configurator {
     protected String usbFilter = DEFAULT_USB_FILTER;
 
     private boolean isInitialized;
-
-    /**
-     * Gets the value indicating whether the model state should be changed asynchronous in response on property change
-     * or command execution.
-     */
-    private boolean privateIsAsync;
-
-    public boolean getIsAsync() {
-        return privateIsAsync;
-    }
-
-    protected void setIsAsync(boolean value) {
-        privateIsAsync = value;
-    }
 
     /**
      * Gets or sets the value specifying what is the desired Spice version.
@@ -238,10 +223,6 @@ public abstract class Configurator {
 
     public String getUsbFilter() {
         return usbFilter;
-    }
-
-    public void configure(SearchableListModel searchableListModel) {
-        searchableListModel.setIsAsync(getIsAsync());
     }
 
     public void updateDocumentationBaseURL() {

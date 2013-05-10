@@ -93,13 +93,6 @@ public class StorageVmListModel extends SearchableListModel
     }
 
     @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-        syncSearch();
-    }
-
-    @Override
     protected String getListName() {
         return "StorageVmListModel"; //$NON-NLS-1$
     }

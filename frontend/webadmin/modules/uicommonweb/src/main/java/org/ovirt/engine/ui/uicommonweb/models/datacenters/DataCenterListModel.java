@@ -258,15 +258,6 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
     }
 
-    @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-
-        setAsyncResult(null);
-        setItems(getAsyncResult().getData());
-    }
-
     public void newEntity()
     {
         if (getWindow() != null)

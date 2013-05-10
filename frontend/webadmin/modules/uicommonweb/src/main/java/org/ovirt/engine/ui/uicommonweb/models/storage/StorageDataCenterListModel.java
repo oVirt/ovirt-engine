@@ -228,15 +228,6 @@ public class StorageDataCenterListModel extends SearchableListModel
         Frontend.RunQuery(VdcQueryType.GetStorageDomainListById, tempVar, _asyncQuery);
     }
 
-    @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-
-        setAsyncResult(null);
-        setItems(getAsyncResult().getData());
-    }
-
     private void attach()
     {
         if (getWindow() != null)

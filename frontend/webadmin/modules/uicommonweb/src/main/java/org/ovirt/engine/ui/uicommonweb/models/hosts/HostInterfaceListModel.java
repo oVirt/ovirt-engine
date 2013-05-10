@@ -439,14 +439,6 @@ public class HostInterfaceListModel extends SearchableListModel
         // }
     }
 
-    @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-
-        syncSearch();
-    }
-
     private void updateItems(Iterable<VdsNetworkInterface> source)
     {
         ArrayList<HostInterfaceLineModel> items = new ArrayList<HostInterfaceLineModel>();

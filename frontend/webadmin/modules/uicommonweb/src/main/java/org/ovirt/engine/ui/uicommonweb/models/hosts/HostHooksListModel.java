@@ -123,13 +123,6 @@ public class HostHooksListModel extends SearchableListModel
     }
 
     @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-        syncSearch();
-    }
-
-    @Override
     protected String getListName() {
         return "HostHooksListModel"; //$NON-NLS-1$
     }

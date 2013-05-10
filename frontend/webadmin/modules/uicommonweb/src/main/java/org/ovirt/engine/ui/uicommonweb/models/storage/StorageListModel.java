@@ -256,15 +256,6 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         super.syncSearch(VdcQueryType.Search, tempVar);
     }
 
-    @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-
-        setAsyncResult(null);
-        setItems(getAsyncResult().getData());
-    }
-
     private void newDomain()
     {
         if (getWindow() != null)

@@ -92,13 +92,6 @@ public class StorageTemplateListModel extends SearchableListModel
     }
 
     @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-        syncSearch();
-    }
-
-    @Override
     protected String getListName() {
         return "StorageTemplateListModel"; //$NON-NLS-1$
     }

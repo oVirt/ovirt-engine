@@ -73,15 +73,6 @@ public class TemplateStorageListModel extends SearchableListModel
     }
 
     @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-
-        setAsyncResult(null);
-        setItems(getAsyncResult().getData());
-    }
-
-    @Override
     protected void syncSearch()
     {
         if (getEntity() == null)

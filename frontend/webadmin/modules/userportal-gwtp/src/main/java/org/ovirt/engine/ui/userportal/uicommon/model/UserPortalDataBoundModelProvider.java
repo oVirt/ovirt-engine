@@ -113,7 +113,7 @@ public abstract class UserPortalDataBoundModelProvider<T, M extends SearchableLi
     @Override
     public void onUserLoginChange(UserLoginChangeEvent event) {
         if (!user.isLoggedIn()) {
-            getModel().ensureAsyncSearchStopped();
+            getModel().stopRefresh();
         }
     }
 

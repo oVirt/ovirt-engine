@@ -149,13 +149,6 @@ public class EventListModel extends ListWithDetailsModel
         getRefreshCommand().execute();
     }
 
-    @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-        syncSearch();
-    }
-
     protected void refreshModel()
     {
         AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback() {
@@ -228,9 +221,9 @@ public class EventListModel extends ListWithDetailsModel
     }
 
     @Override
-    public void ensureAsyncSearchStopped()
+    public void stopRefresh()
     {
-        super.ensureAsyncSearchStopped();
+        super.stopRefresh();
 
         timer.stop();
     }

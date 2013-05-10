@@ -112,15 +112,6 @@ public class TemplateInterfaceListModel extends SearchableListModel
                 new IdQueryParameters(getEntityStronglyTyped().getId()));
     }
 
-    @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-
-        setAsyncResult(null);
-        setItems(getAsyncResult().getData());
-    }
-
     private void newEntity()
     {
         if (getWindow() != null)

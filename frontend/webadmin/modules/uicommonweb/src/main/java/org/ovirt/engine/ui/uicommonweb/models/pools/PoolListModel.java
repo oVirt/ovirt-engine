@@ -198,15 +198,6 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
     }
 
     @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-
-        setAsyncResult(null);
-        setItems(getAsyncResult().getData());
-    }
-
-    @Override
     public void search()
     {
         super.search();

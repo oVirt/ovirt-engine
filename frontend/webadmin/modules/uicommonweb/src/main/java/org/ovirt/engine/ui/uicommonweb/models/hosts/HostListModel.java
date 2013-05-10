@@ -1446,15 +1446,6 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         super.syncSearch(VdcQueryType.Search, tempVar);
     }
 
-    @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-
-        setAsyncResult(null);
-        setItems(getAsyncResult().getData());
-    }
-
     public void cancel()
     {
         cancelConfirm();

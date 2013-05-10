@@ -24,12 +24,6 @@ public class HostVmListModel extends VmListModel
     }
 
     @Override
-    protected void asyncSearch()
-    {
-        search();
-    }
-
-    @Override
     protected void syncSearch()
     {
         search();

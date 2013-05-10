@@ -419,15 +419,6 @@ public class UserListModel extends ListWithDetailsModel
         }
     }
 
-    @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-
-        setAsyncResult(null);
-        setItems(getAsyncResult().getData());
-    }
-
     public void cancel()
     {
         setWindow(null);

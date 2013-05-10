@@ -13,12 +13,9 @@ import org.ovirt.engine.core.searchbackend.SyntaxError;
 import org.ovirt.engine.core.searchbackend.SyntaxObjectType;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicompat.ITaskTarget;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
-import org.ovirt.engine.ui.uicompat.Task;
-import org.ovirt.engine.ui.uicompat.TaskContext;
 
-public class SearchSuggestModel extends SearchableListModel implements ITaskTarget
+public class SearchSuggestModel extends SearchableListModel
 {
     private final ISyntaxChecker syntaxChecker;
 
@@ -91,18 +88,10 @@ public class SearchSuggestModel extends SearchableListModel implements ITaskTarg
     }
 
     @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-
-        Task.Create(this, null).InvokeUIThread();
-    }
-
-    @Override
     protected void syncSearch()
     {
         super.syncSearch();
-        asyncSearch();
+        updateOptionsAsync(getPrefix() + getSearchString());
     }
 
     public void updateOptionsAsync(String search)
@@ -233,12 +222,6 @@ public class SearchSuggestModel extends SearchableListModel implements ITaskTarg
 
             setSearchString(searchString);
         }
-    }
-
-    @Override
-    public void run(TaskContext context)
-    {
-        updateOptionsAsync(getPrefix() + getSearchString());
     }
 
     @Override

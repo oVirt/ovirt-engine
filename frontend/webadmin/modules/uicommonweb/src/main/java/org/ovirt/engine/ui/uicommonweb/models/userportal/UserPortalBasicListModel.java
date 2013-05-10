@@ -157,13 +157,6 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
     }
 
     @Override
-    protected void asyncSearch()
-    {
-        super.asyncSearch();
-        syncSearch();
-    }
-
-    @Override
     public void setItems(Iterable value) {
         if (items != value)
         {
