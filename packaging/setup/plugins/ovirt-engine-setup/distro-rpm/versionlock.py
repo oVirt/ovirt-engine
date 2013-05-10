@@ -20,6 +20,7 @@
 Yum versionlock configuration plugin.
 """
 
+import os
 import platform
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
@@ -61,6 +62,31 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self._enabled,
     )
     def _configversionlock(self):
+        #Can't assume we're the owner of the locking list.
+        content = osetupcons.Const.RPM_LOCK_LIST
+        self.environment[
+            osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
+        ].createGroup(
+            group='versionlock',
+            description='YUM version locking configuration',
+            optional=False
+        ).addLines(
+            'versionlock',
+            osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
+            '\n'.join(content).format(
+                version=osetupcons.Const.RPM_VERSION,
+                release=osetupcons.Const.RPM_RELEASE,
+            ).splitlines()
+        )
+        if os.path.exists(
+            osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK
+        ):
+            with open(
+                osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK
+            ) as f:
+                for line in f.read().splitlines():
+                    if line.find(osetupcons.Const.ENGINE_PACKAGE_NAME) == -1:
+                        content.append(line)
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
                 name=osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
@@ -68,16 +94,11 @@ class Plugin(plugin.PluginBase):
                 mode=0o644,
                 enforcePermissions=True,
                 content=(
-                    '\n'.join(
-                        osetupcons.Const.RPM_LOCK_LIST
-                    ).format(
+                    '\n'.join(content).format(
                         version=osetupcons.Const.RPM_VERSION,
                         release=osetupcons.Const.RPM_RELEASE,
                     )
                 ),
-                modifiedList=self.environment[
-                    otopicons.CoreEnv.MODIFIED_FILES
-                ],
             )
         )
         self.environment[

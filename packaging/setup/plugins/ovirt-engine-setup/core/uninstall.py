@@ -46,6 +46,10 @@ class RegisterGroups(object):
             osetupcons.CoreEnv.FILE_GROUP_PREFIX + group,
             []
         )
+        self.environment.setdefault(
+            osetupcons.CoreEnv.LINES_GROUP_PREFIX + group,
+            {}
+        )
         self.config[group] = {}
         self.config[group]['description'] = description
         self.config[group]['optional'] = optional
@@ -59,6 +63,11 @@ class RegisterGroups(object):
         self.environment[
             osetupcons.CoreEnv.FILE_GROUP_PREFIX + group
         ].append(fileList)
+
+    def addLines(self, group, filename, lines):
+        self.environment[
+            osetupcons.CoreEnv.LINES_GROUP_PREFIX + group
+        ].setdefault(filename, []).extend(lines)
 
 
 @util.export
@@ -111,6 +120,29 @@ class Plugin(plugin.PluginBase):
                         self._digestFile(name),
                     )
 
+        def _addLines(section, changes):
+            for file_index, filename in enumerate(
+                sorted(set(changes))
+            ):
+                for line_index, content in enumerate(
+                    sorted(set(changes[filename]))
+                ):
+                    if os.path.exists(filename):
+                        prefix = 'line.{file_index:03}{line_index:03}'.format(
+                            file_index=file_index,
+                            line_index=line_index,
+                        )
+                        config.set(
+                            section,
+                            prefix + '.name',
+                            filename,
+                        )
+                        config.set(
+                            section,
+                            prefix + '.content',
+                            content,
+                        )
+
         _addFiles(
             osetupcons.Const.FILE_GROUP_SECTION_PREFIX + 'core',
             self.environment[
@@ -149,6 +181,21 @@ class Plugin(plugin.PluginBase):
                 fileList,
                 group_config['description'],
                 group_config['optional'],
+            )
+
+        for section, changes in [
+            (
+                key[len(osetupcons.CoreEnv.LINES_GROUP_PREFIX):],
+                changes,
+            )
+            for key, changes in self.environment.items()
+            if key.startswith(
+                osetupcons.CoreEnv.LINES_GROUP_PREFIX
+            )
+        ]:
+            _addLines(
+                osetupcons.Const.FILE_GROUP_SECTION_PREFIX + section,
+                changes,
             )
 
         output = os.path.join(

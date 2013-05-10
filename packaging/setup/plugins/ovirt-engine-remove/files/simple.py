@@ -29,6 +29,8 @@ _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 from otopi import util
 from otopi import plugin
+from otopi import constants as otopicons
+from otopi import filetransaction
 
 
 from ovirt_engine_setup import constants as osetupcons
@@ -61,11 +63,26 @@ class Plugin(plugin.PluginBase):
                 )
             )
 
+    def _cleanLines(self, filename, remove_lines):
+        new_content = []
+        with open(filename, 'r') as f:
+            old_content = f.read().splitlines()
+        for line in old_content:
+            if line not in remove_lines:
+                new_content.append(line)
+        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+            filetransaction.FileTransaction(
+                name=filename,
+                content=new_content
+            )
+        )
+
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
         self._infos = None
         self._files = {}
         self._toremove = None
+        self._lines = {}
         self._descriptions = {}
 
     @plugin.event(
@@ -147,6 +164,21 @@ class Plugin(plugin.PluginBase):
                         files.setdefault(comps[1], {})[comps[2]] = value
                 return {f['name']: f['md5'] for f in files.values()}
 
+            def getLines(section):
+                associated_lines = {}
+                aggregated_lines = {}
+                for name, value in config.items(section):
+                    comps = name.split('.')
+                    if comps[0] == 'line':
+                        associated_lines.setdefault(
+                            comps[1], {}
+                        )[comps[2]] = value
+                for f in associated_lines.values():
+                    aggregated_lines.setdefault(
+                        f['name'], []
+                    ).append(f['content'])
+                return aggregated_lines
+
             for uninstall_group in [
                 x.strip()
                 for x in self.environment[
@@ -164,9 +196,14 @@ class Plugin(plugin.PluginBase):
                     self._files.update(
                         getFiles(uninstall_section)
                     )
+                    self._lines.update(
+                        getLines(uninstall_section)
+                    )
             unremovable.update(getFiles('unremovable'))
 
         self._toremove = set(self._files.keys()) - set(unremovable.keys())
+        self._tomodifylines = self._lines.keys()
+        self.logger.debug('tomodifylines=%s', self._tomodifylines)
         self.logger.debug('files=%s', self._files)
         self.logger.debug('unremovable=%s', unremovable)
         self.logger.debug('toremove=%s', self._toremove)
@@ -176,6 +213,10 @@ class Plugin(plugin.PluginBase):
         priority=plugin.Stages.PRIORITY_LOW,
     )
     def _misc(self):
+        self.logger.info(_('Removing added lines'))
+        for f in self._tomodifylines:
+            if os.path.exists(f):
+                self._cleanLines(f, self._lines[f])
         self.logger.info(_('Removing files'))
         for f in self._toremove:
             if os.path.exists(f):
