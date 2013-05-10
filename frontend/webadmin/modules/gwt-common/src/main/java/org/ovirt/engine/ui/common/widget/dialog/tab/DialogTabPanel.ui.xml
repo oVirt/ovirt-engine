@@ -8,17 +8,34 @@
 			width: 160px;
 			height: 100%;
 			background-color: #E5E5E5;
+			border-right: 1px solid #CED8DF;
 		}
 		
 		.content {
+		}
+
+		.contentContainer {
 			overflow: hidden;
 			padding-left: 5px;
+		}
+
+		.header {
+			background-color: #D3D3D3;
+			border-bottom: 1px solid #CED8DF;
+			margin-bottom: 15px;
+			padding-top: 6px;
+			margin-top: 4px;
+			margin-right: 3px;
+			display: none;
 		}
 	</ui:style>
 
 	<g:HTMLPanel>
 		<g:FlowPanel ui:field="tabContainer" addStyleNames="{style.bar}" />
-		<g:SimplePanel ui:field="tabContentContainer" addStyleNames="{style.content}" />
+		<g:FlowPanel addStyleNames="{style.contentContainer}">
+			<g:SimplePanel ui:field="tabHeaderContainer" addStyleNames="{style.header}" />
+			<g:SimplePanel ui:field="tabContentContainer" addStyleNames="{style.content}" />
+		</g:FlowPanel>
 		<div style="clear: both;" />
 	</g:HTMLPanel>
 

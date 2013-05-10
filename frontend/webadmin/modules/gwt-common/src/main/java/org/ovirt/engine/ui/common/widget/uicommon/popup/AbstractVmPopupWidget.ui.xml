@@ -10,14 +10,6 @@
     <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
 
     <ui:style type="org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget.Style">
-		.generalTabTopDecorator {
-			background-color: #D3D3D3;
-			margin-top: 4px;
-			margin-right: 3px;
-			margin-bottom: 20px;
-			padding-top: 6px;
-			padding-bottom: 6px;
-		}
 
 		.sectionPanel {
 			margin-bottom: 20px;
@@ -208,18 +200,23 @@
 			width: 250px !important;
         }
 
+        .headerPanel {
+			padding-bottom: 6px;
+		}
 	</ui:style>
 
 	<t:DialogTabPanel width="100%" height="100%">
+		<t:header>
+			<g:FlowPanel addStyleNames="{style.headerPanel}">
+				<e:ListModelListBoxEditor ui:field="dataCenterEditor" />
+				<e:ListModelListBoxEditor ui:field="clusterEditor" />
+				<e:ListModelListBoxEditor ui:field="quotaEditor" />
+			</g:FlowPanel>
+		</t:header>
 		<t:tab>
 			<t:DialogTab ui:field="generalTab">
 				<t:content>
 					<g:FlowPanel>
-						<g:FlowPanel addStyleNames="{style.generalTabTopDecorator}">
-							<e:ListModelListBoxEditor ui:field="dataCenterEditor" />
-							<e:ListModelListBoxEditor ui:field="clusterEditor" />
-							<e:ListModelListBoxEditor ui:field="quotaEditor" />
-						</g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.sectionPanel}">
 							<g:FlowPanel addStyleNames="{style.name}">
 								<g:FlowPanel addStyleNames="{style.prestartedLabelWithHelp}">

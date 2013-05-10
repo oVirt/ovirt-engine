@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.dialog.tab;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -21,6 +22,9 @@ public class DialogTabPanel extends Composite {
     }
 
     @UiField
+    SimplePanel tabHeaderContainer;
+
+    @UiField
     FlowPanel tabContainer;
 
     @UiField
@@ -34,6 +38,12 @@ public class DialogTabPanel extends Composite {
     public DialogTabPanel(String height) {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         getWidget().setHeight(height);
+    }
+
+    @UiChild(tagname = "header", limit = 1)
+    public void setHeader(Widget widget) {
+        tabHeaderContainer.getElement().getStyle().setDisplay(Display.BLOCK);
+        tabHeaderContainer.add(widget);
     }
 
     @UiChild(tagname = "tab")
