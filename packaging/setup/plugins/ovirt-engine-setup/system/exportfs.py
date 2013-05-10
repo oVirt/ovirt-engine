@@ -40,7 +40,7 @@ class Plugin(plugin.PluginBase):
     NFS exports configuration plugin.
     """
 
-    def _delete_path(self, path, conf):
+    def _delete_path(self, path, conf, modifiedList):
         conf_content = ''
         if os.path.exists(conf):
             with open(conf, 'r') as src_file:
@@ -55,9 +55,7 @@ class Plugin(plugin.PluginBase):
                         repl='',
                         string=conf_content
                     ),
-                    modifiedList=self.environment[
-                        otopicons.CoreEnv.MODIFIED_FILES
-                    ],
+                    modifiedList=modifiedList,
                 )
             )
 
@@ -92,10 +90,12 @@ class Plugin(plugin.PluginBase):
             osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
         ] is not None
 
-    #FIXME: after iso_domain _add_iso_domain_to_db
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: self._enabled,
+        after=[
+            osetupcons.Stages.CONFIG_ISO_DOMAIN_AVAILABLE,
+        ]
     )
     def _misc(self):
         """
@@ -104,6 +104,17 @@ class Plugin(plugin.PluginBase):
         what we had before.
         In /etc/exports make sure we have our own path.
         """
+        uninstall_files = []
+        self.environment[
+            osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
+        ].createGroup(
+            group='exportfs',
+            description='NFS exports configuration',
+            optional=True
+        ).addFiles(
+            group='exportfs',
+            fileList=uninstall_files,
+        )
         path = self.environment[
             osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
         ]
@@ -127,15 +138,14 @@ class Plugin(plugin.PluginBase):
             self._delete_path(
                 path,
                 osetupcons.FileLocations.NFS_EXPORT_FILE,
+                uninstall_files
             )
 
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
                 name=self._conf,
                 content=content,
-                modifiedList=self.environment[
-                    otopicons.CoreEnv.MODIFIED_FILES
-                ],
+                modifiedList=uninstall_files,
             )
         )
 

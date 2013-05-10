@@ -35,6 +35,32 @@ from otopi import plugin
 from ovirt_engine_setup import constants as osetupcons
 
 
+class RegisterGroups(object):
+    def __init__(self, environment):
+        super(RegisterGroups, self).__init__()
+        self.environment = environment
+        self.config = {}
+
+    def createGroup(self, group, description, optional):
+        self.environment.setdefault(
+            osetupcons.CoreEnv.FILE_GROUP_PREFIX + group,
+            []
+        )
+        self.config[group] = {}
+        self.config[group]['description'] = description
+        self.config[group]['optional'] = optional
+        return self
+
+    def addFiles(self, group, fileList):
+        # Note that we are using append instead of extend because we're
+        # usually appending an empty list that will be filled later
+        # when the filetransactions will be executed. We need to preserve
+        # the object reference!
+        self.environment[
+            osetupcons.CoreEnv.FILE_GROUP_PREFIX + group
+        ].append(fileList)
+
+
 @util.export
 class Plugin(plugin.PluginBase):
     """Uninstall plugin."""
@@ -56,6 +82,9 @@ class Plugin(plugin.PluginBase):
             osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES,
             []
         )
+        self.environment[
+            osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
+        ] = RegisterGroups(self.environment)
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLEANUP,
@@ -64,8 +93,10 @@ class Plugin(plugin.PluginBase):
         config = configparser.ConfigParser()
         config.optionxform = str
 
-        def _addFiles(section, files):
+        def _addFiles(section, files, description, optional):
             config.add_section(section)
+            config.set(section, 'description', description)
+            config.set(section, 'optional', optional)
             for index, name in enumerate(sorted(set(files))):
                 if os.path.exists(name):
                     prefix = 'file.{index:03}'.format(index=index)
@@ -81,17 +112,44 @@ class Plugin(plugin.PluginBase):
                     )
 
         _addFiles(
-            'files',
+            osetupcons.Const.FILE_GROUP_SECTION_PREFIX + 'core',
             self.environment[
                 otopicons.CoreEnv.MODIFIED_FILES
             ],
+            'Core files',
+            False,
         )
         _addFiles(
             'unremovable',
             self.environment[
                 osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
             ],
+            'Unremovable files',
+            False,
         )
+
+        for section, content in [
+            (
+                key[len(osetupcons.CoreEnv.FILE_GROUP_PREFIX):],
+                content,
+            )
+            for key, content in self.environment.items()
+            if key.startswith(
+                osetupcons.CoreEnv.FILE_GROUP_PREFIX
+            )
+        ]:
+            fileList = []
+            for x in content:
+                fileList.extend(x)
+            group_config = self.environment[
+                osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
+            ].config[section]
+            _addFiles(
+                osetupcons.Const.FILE_GROUP_SECTION_PREFIX + section,
+                fileList,
+                group_config['description'],
+                group_config['optional'],
+            )
 
         output = os.path.join(
             osetupcons.FileLocations.OVIRT_ENGINE_UNINSTALL_DIR,

@@ -499,6 +499,8 @@ class Const(object):
             )
         ]
 
+    FILE_GROUP_SECTION_PREFIX = 'file_group_'
+
 
 @util.export
 @util.codegen
@@ -509,6 +511,10 @@ class CoreEnv(object):
     DEVELOPER_MODE = 'OVESETUP_CORE/developerMode'
     UNINSTALL_UNREMOVABLE_FILES = 'OVESETUP_CORE/uninstallUnremovableFiles'
     REMOVE = 'OVESETUP_CORE/remove'
+    FILE_GROUP_PREFIX = 'OVESETUP_CORE_MODIFIED_FILE_GROUP/'
+    UNINSTALL_ENABLED_FILE_GROUPS = 'OVESETUP_CORE/uninstallEnabledFileGroups'
+    REGISTER_UNINSTALL_GROUPS = 'OVESETUP_CORE/registerUninstallGroups'
+    CONFIRM_UNINSTALL_GROUPS = 'OVESETUP_CORE/confirmUninstallGroups'
 
 
 @util.export
