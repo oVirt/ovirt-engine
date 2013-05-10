@@ -5,7 +5,9 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
 
 /**
  * VDS command to fetch list of services with their status
- * @param <P> The parameters class to be used with this command
+ *
+ * @param <P>
+ *            The parameters class to be used with this command
  */
 public class GlusterServicesListVDSCommand<P extends GlusterServicesListVDSParameters> extends AbstractGlusterBrokerCommand<P> {
     private GlusterServicesReturnForXmlRpc glusterServices;
@@ -16,7 +18,9 @@ public class GlusterServicesListVDSCommand<P extends GlusterServicesListVDSParam
 
     @Override
     protected void ExecuteVdsBrokerCommand() {
-        glusterServices = getBroker().glusterServicesList(getParameters().getServiceNames().toArray(new String[0]));
+        glusterServices =
+                getBroker().glusterServicesList(getParameters().getVdsId(),
+                        getParameters().getServiceNames().toArray(new String[0]));
         ProceedProxyReturnValue();
         if (getVDSReturnValue().getSucceeded()) {
             setReturnValue(glusterServices.getServices());

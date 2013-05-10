@@ -1,12 +1,16 @@
 package org.ovirt.engine.core.vdsbroker.gluster;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterService;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
 
 /**
@@ -19,11 +23,14 @@ public class GlusterServicesReturnForXmlRpc extends StatusReturnForXmlRpc {
     private static final String STATUS = "status";
     private static final String MESSAGE = "message";
 
+    private Guid serverId;
+    private static final Map<String, GlusterService> servicesMap = getServicesMap();
     private List<GlusterServerService> services;
 
     @SuppressWarnings("unchecked")
-    public GlusterServicesReturnForXmlRpc(Map<String, Object> innerMap) {
+    public GlusterServicesReturnForXmlRpc(Guid serverId, Map<String, Object> innerMap) {
         super(innerMap);
+        this.serverId = serverId;
 
         if (mStatus.mCode != GlusterConstants.CODE_SUCCESS) {
             return;
@@ -36,13 +43,31 @@ public class GlusterServicesReturnForXmlRpc extends StatusReturnForXmlRpc {
     }
 
     private GlusterServerService getService(Map<String, Object> serviceMap) {
-        GlusterServerService service = new GlusterServerService();
-        service.setServiceName((String) serviceMap.get(NAME));
-        service.setPid(Integer.parseInt((String) serviceMap.get(PID)));
-        service.setStatus(GlusterServiceStatus.valueOf((String) serviceMap.get(STATUS)));
-        service.setMessage((String) serviceMap.get(MESSAGE));
+        GlusterServerService serverService = new GlusterServerService();
+        serverService.setServiceName((String) serviceMap.get(NAME));
+        serverService.setPid(Integer.parseInt((String) serviceMap.get(PID)));
+        serverService.setStatus(GlusterServiceStatus.valueOf((String) serviceMap.get(STATUS)));
+        serverService.setMessage((String) serviceMap.get(MESSAGE));
+        serverService.setServerId(serverId);
 
-        return service;
+        GlusterService service = servicesMap.get(serverService.getServiceName());
+        if (service != null) {
+            serverService.setServiceId(service.getId());
+            serverService.setServiceType(service.getServiceType());
+        }
+
+        return serverService;
+    }
+
+    private static Map<String, GlusterService> getServicesMap() {
+        Map<String, GlusterService> serviceNames = new HashMap<String, GlusterService>();
+
+        List<GlusterService> services = DbFacade.getInstance().getGlusterServiceDao().getAll();
+        for (GlusterService service : services) {
+            serviceNames.put(service.getServiceName(), service);
+        }
+
+        return serviceNames;
     }
 
     public List<GlusterServerService> getServices() {

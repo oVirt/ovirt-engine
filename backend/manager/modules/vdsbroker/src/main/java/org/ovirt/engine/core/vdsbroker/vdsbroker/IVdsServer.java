@@ -247,5 +247,5 @@ public interface IVdsServer {
 
     OneUuidReturnForXmlRpc glusterHostUUIDGet();
 
-    GlusterServicesReturnForXmlRpc glusterServicesList(String[] serviceNames);
+    GlusterServicesReturnForXmlRpc glusterServicesList(Guid serverId, String[] serviceNames);
 }
