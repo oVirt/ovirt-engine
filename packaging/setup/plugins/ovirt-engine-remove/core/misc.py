@@ -86,5 +86,20 @@ class Plugin(plugin.PluginBase):
             state=False,
         )
 
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CLOSEUP,
+        before=[
+            osetupcons.Stages.DIALOG_TITLES_E_SUMMARY,
+        ],
+        after=[
+            osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
+        ],
+    )
+    def _closeup(self):
+        self.dialog.note(
+            text=_(
+                'Engine setup successfully cleaned up'
+            ),
+        )
 
 # vim: expandtab tabstop=4 shiftwidth=4

@@ -173,26 +173,5 @@ class Plugin(plugin.PluginBase):
             text=_('END OF CONFIGURATION'),
         )
 
-    @plugin.event(
-        stage=plugin.Stages.STAGE_CLOSEUP,
-        name=osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
-    )
-    def _title_s_summary(self):
-        self._title(
-            text=_('SUMMARY'),
-        )
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_CLOSEUP,
-        name=osetupcons.Stages.DIALOG_TITLES_E_SUMMARY,
-        after=[
-            osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
-        ],
-    )
-    def _title_e_summary(self):
-        self._title(
-            text=_('END OF SUMMARY'),
-        )
-
 
 # vim: expandtab tabstop=4 shiftwidth=4
