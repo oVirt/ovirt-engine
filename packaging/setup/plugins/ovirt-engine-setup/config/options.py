@@ -30,6 +30,7 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup import dialog
 
 
 @util.export
@@ -72,8 +73,9 @@ class Plugin(plugin.PluginBase):
             )
         else:
             if self.environment[osetupcons.ConfigEnv.ADMIN_PASSWORD] is None:
+                valid = False
                 password = None
-                while True:
+                while not valid:
                     password = self.dialog.queryString(
                         name='OVESETUP_CONFIG_ADMIN_SETUP',
                         note=_('Engine admin password: '),
@@ -88,9 +90,35 @@ class Plugin(plugin.PluginBase):
                     )
 
                     if password != password2:
-                        self.logger.warning('Passwords do not match')
+                        self.logger.warning(_('Passwords do not match'))
                     else:
-                        break  # do while missing in python
+                        try:
+                            import cracklib
+                            cracklib.FascistCheck(password)
+                            valid = True
+                        except ImportError:
+                            # do not force this optional feature
+                            self.logger.debug(
+                                'cannot import cracklib',
+                                exc_info=True,
+                            )
+                            valid = True
+                        except ValueError as e:
+                            self.logger.warning(
+                                _('Password is weak: {error}').format(
+                                    error=e,
+                                )
+                            )
+                            valid = dialog.queryBoolean(
+                                dialog=self.dialog,
+                                name='OVESETUP_CONFIG_WEAK_ENGINE_PASSWORD',
+                                note=_(
+                                    'Use weak password? '
+                                    '(@VALUES@) [@DEFAULT@]: '
+                                ),
+                                prompt=True,
+                                default=False,
+                            )
 
                 self.environment[
                     osetupcons.ConfigEnv.ADMIN_PASSWORD
