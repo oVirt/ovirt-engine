@@ -162,4 +162,6 @@ public interface SnapshotDao extends GenericDao<Snapshot, Guid>, StatusAwareDao<
      * @return Whether a snapshot of the given ID exists for the VM or not.
      */
     boolean exists(Guid vmId, Guid snapshotId);
+
+    int getNumOfSnapshotsByMemory(String memoryVolume);
 }

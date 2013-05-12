@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
@@ -33,9 +34,15 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
+import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -88,47 +95,102 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
         }
 
-        // If the VM hasn't got any images - simply remove the snapshot.
+        final Snapshot snapshot = getSnapshotDao().get(getParameters().getSnapshotId());
+
+        boolean snapshotHasImages = hasImages();
+        boolean removeSnapshotMemory = shouldRemoveMemorySnapshotVolumes(snapshot.getMemoryVolume());
+
+        // If the VM hasn't got any images and memory - simply remove the snapshot.
         // No need for locking, VDSM tasks, and all that jazz.
-        if (!hasImages()) {
+        if (!snapshotHasImages && !removeSnapshotMemory) {
             getSnapshotDao().remove(getParameters().getSnapshotId());
             setSucceeded(true);
             return;
         }
 
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                Snapshot snapshot = getSnapshotDao().get(getParameters().getSnapshotId());
-                getCompensationContext().snapshotEntityStatus(snapshot, snapshot.getStatus());
-                getSnapshotDao().updateStatus(
-                        getParameters().getSnapshotId(), SnapshotStatus.LOCKED);
-                getCompensationContext().stateChanged();
-                return null;
-            }
-        });
+        lockSnapshot(snapshot);
         freeLock();
         getParameters().setEntityId(getVmId());
 
+        if (snapshotHasImages) {
+            removeImages();
+        }
+
+        if (removeSnapshotMemory) {
+            removeMemory(snapshot);
+        }
+
+        setSucceeded(true);
+    }
+
+    /**
+     * There is a one to many relation between memory volumes and snapshots, so memory
+     * volumes should be removed only if the only snapshot that points to them is removed
+     */
+    private boolean shouldRemoveMemorySnapshotVolumes(String memoryVolume) {
+        return !memoryVolume.isEmpty() &&
+                getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolume) == 1;
+    }
+
+    private void removeMemory(final Snapshot snapshot) {
+        List<Guid> guids = GuidUtils.getGuidListFromString(snapshot.getMemoryVolume());
+
+        // get all vm disks in order to check post zero - if one of the
+        // disks is marked with wipe_after_delete
+        boolean postZero =
+                LinqUtils.filter(getDiskDao().getAllForVm(getVm().getId()),
+                        new Predicate<Disk>() {
+                    @Override
+                    public boolean eval(Disk disk) {
+                        return disk.isWipeAfterDelete();
+                    }
+                }).size() > 0;
+
+        // delete first image
+        // the next 'DeleteImageGroup' command should also take care of the
+        // image removal:
+        VDSReturnValue vdsRetValue = runVdsCommand(
+                VDSCommandType.DeleteImageGroup,
+                new DeleteImageGroupVDSCommandParameters(guids.get(1), guids.get(0), guids.get(2),
+                        postZero, false, getVm().getVdsGroupCompatibilityVersion().toString()));
+
+        if (!vdsRetValue.getSucceeded()) {
+            log.errorFormat("Cannot remove memory dump volume for snapshot {0}", snapshot.getId());
+        }
+        else {
+            Guid guid =
+                    createTask(vdsRetValue.getCreationInfo(), VdcActionType.RemoveSnapshot, VdcObjectType.Storage, guids.get(0));
+            getReturnValue().getTaskIdList().add(guid);
+        }
+
+        // delete second image
+        // the next 'DeleteImageGroup' command should also take care of the image removal:
+        vdsRetValue = runVdsCommand(
+                VDSCommandType.DeleteImageGroup,
+                new DeleteImageGroupVDSCommandParameters(guids.get(1), guids.get(0), guids.get(4),
+                        postZero, false, getVm().getVdsGroupCompatibilityVersion().toString()));
+
+        if (!vdsRetValue.getSucceeded()) {
+            log.errorFormat("Cannot remove memory metadata volume for snapshot {0}", snapshot.getId());
+        }
+        else {
+            Guid guid =
+                    createTask(vdsRetValue.getCreationInfo(), VdcActionType.RemoveSnapshot, VdcObjectType.Storage, guids.get(0));
+            getReturnValue().getTaskIdList().add(guid);
+        }
+    }
+
+    private void removeImages() {
         for (final DiskImage source : getSourceImages()) {
 
-            // The following line is ok because we have tested in the
-            // candoaction that the vm
+            // The following line is ok because we have tested in the candoaction that the vm
             // is not a template and the vm is not in preview mode and that
             // this is not the active snapshot.
             DiskImage dest = getDiskImageDao().getAllSnapshotsForParent(source.getImageId()).get(0);
 
-            ImagesContainterParametersBase tempVar = new ImagesContainterParametersBase(source.getImageId(),
-                    getVmId());
-            tempVar.setDestinationImageId(dest.getImageId());
-            tempVar.setEntityId(getParameters().getEntityId());
-            tempVar.setParentParameters(getParameters());
-            tempVar.setParentCommand(getActionType());
-            ImagesContainterParametersBase p = tempVar;
             VdcReturnValueBase vdcReturnValue = getBackend().runInternalAction(
                     VdcActionType.RemoveSnapshotSingleDisk,
-                    p,
+                    buildRemoveSnapshotSingleDiskParameters(source, dest),
                     ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
             if (vdcReturnValue != null && vdcReturnValue.getInternalTaskIdList() != null) {
@@ -140,7 +202,31 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             quotasToRemoveFromCache.add(dest.getQuotaId());
             QuotaManager.getInstance().removeQuotaFromCache(getStoragePoolId().getValue(), quotasToRemoveFromCache);
         }
-        setSucceeded(true);
+    }
+
+    private void lockSnapshot(final Snapshot snapshot) {
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+
+            @Override
+            public Void runInTransaction() {
+                getCompensationContext().snapshotEntityStatus(snapshot, snapshot.getStatus());
+                getSnapshotDao().updateStatus(
+                        getParameters().getSnapshotId(), SnapshotStatus.LOCKED);
+                getCompensationContext().stateChanged();
+                return null;
+            }
+        });
+    }
+
+    private ImagesContainterParametersBase buildRemoveSnapshotSingleDiskParameters(final DiskImage source,
+            DiskImage dest) {
+        ImagesContainterParametersBase parameters =
+                new ImagesContainterParametersBase(source.getImageId(), getVmId());
+        parameters.setDestinationImageId(dest.getImageId());
+        parameters.setEntityId(getParameters().getEntityId());
+        parameters.setParentParameters(getParameters());
+        parameters.setParentCommand(getActionType());
+        return parameters;
     }
 
     @Override

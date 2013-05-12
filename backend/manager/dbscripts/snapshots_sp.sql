@@ -314,3 +314,16 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+
+Create or replace FUNCTION GetNumOfSnapshotsByMemoryVolume(
+    v_memory_volume VARCHAR(255))
+RETURNS SETOF BIGINT
+AS $procedure$
+BEGIN
+    RETURN QUERY
+    SELECT COUNT(*)
+    FROM   snapshots
+    WHERE  memory_volume = v_memory_volume;
+END; $procedure$
+LANGUAGE plpgsql;
+

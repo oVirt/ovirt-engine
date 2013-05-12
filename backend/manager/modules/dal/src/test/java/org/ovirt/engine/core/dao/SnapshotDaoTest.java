@@ -24,6 +24,10 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
 
     private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
     private static final Guid EXISTING_SNAPSHOT_ID = new Guid("a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89");
+    private static final String EXISTING_MEMORY_VOLUME =
+            "11111111-1111-1111-1111-111111111111,22222222-2222-2222-2222-222222222222,33333333-3333-3333-3333-333333333333,44444444-4444-4444-4444-444444444444,55555555-5555-5555-5555-555555555555,66666666-6666-6666-6666-666666666666";
+    private static final String NON_EXISTING_MEMORY_VOLUME =
+            "21111111-1111-1111-1111-111111111111,22222222-2222-2222-2222-222222222222,33333333-3333-3333-3333-333333333333,44444444-4444-4444-4444-444444444444,55555555-5555-5555-5555-555555555555,66666666-6666-6666-6666-666666666666";
     private static final int TOTAL_SNAPSHOTS = 2;
 
     @Override
@@ -106,6 +110,16 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
 
         assertNull(dao.get(snapshotId));
         assertNull(dao.get(newSnapshotId));
+    }
+
+    @Test
+    public void getZeroSnapshotsByMemory() {
+        assertEquals(dao.getNumOfSnapshotsByMemory(NON_EXISTING_MEMORY_VOLUME), 0);
+    }
+
+    @Test
+    public void getOneSnapshotsByMemory() {
+        assertEquals(dao.getNumOfSnapshotsByMemory(EXISTING_MEMORY_VOLUME), 1);
     }
 
     @Test
