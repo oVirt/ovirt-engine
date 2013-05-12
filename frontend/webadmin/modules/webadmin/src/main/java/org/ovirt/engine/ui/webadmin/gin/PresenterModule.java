@@ -153,6 +153,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.SubTabPoolPe
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.SubTabPoolVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.provider.ProviderSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.provider.SubTabProviderGeneralPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.provider.SubTabProviderNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.QuotaSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaEventPresenter;
@@ -346,6 +347,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.pool.SubTabPoolPermiss
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.pool.SubTabPoolVmView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.provider.ProviderSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.provider.SubTabProviderGeneralView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.provider.SubTabProviderNetworkView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.QuotaSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.SubTabQuotaClusterView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.SubTabQuotaEventView;
@@ -882,6 +884,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabProviderGeneralPresenter.ViewDef.class,
                 SubTabProviderGeneralView.class,
                 SubTabProviderGeneralPresenter.ProxyDef.class);
+        bindPresenter(SubTabProviderNetworkPresenter.class,
+                SubTabProviderNetworkPresenter.ViewDef.class,
+                SubTabProviderNetworkView.class,
+                SubTabProviderNetworkPresenter.ProxyDef.class);
 
         // Main section: popups
 

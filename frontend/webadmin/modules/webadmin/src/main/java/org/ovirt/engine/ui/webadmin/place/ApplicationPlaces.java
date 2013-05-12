@@ -300,6 +300,9 @@ public class ApplicationPlaces {
     // Provider
     public static final String providerGeneralSubTabPlace = providerMainTabPlace + SUB_TAB_PREFIX + "general"; //$NON-NLS-1$
 
+    public static final String providerNetworkSubTabPlace = providerMainTabPlace + SUB_TAB_PREFIX
+            + "networks"; //$NON-NLS-1$
+
 
     // Default places
 

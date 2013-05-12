@@ -79,6 +79,7 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
 
         list.add(new ProviderGeneralModel());
+        list.add(new ProviderNetworkListModel());
 
         setDetailModels(list);
     }

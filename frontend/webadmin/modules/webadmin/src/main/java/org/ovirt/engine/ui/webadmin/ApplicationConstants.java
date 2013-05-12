@@ -2818,4 +2818,11 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("General")
     String providerGeneralSubTabLabel();
+
+    @DefaultStringValue("Networks")
+    String providerNetworksSubTabLabel();
+
+    // Provider Network
+    @DefaultStringValue("External ID")
+    String externalIdProviderNetwork();
 }

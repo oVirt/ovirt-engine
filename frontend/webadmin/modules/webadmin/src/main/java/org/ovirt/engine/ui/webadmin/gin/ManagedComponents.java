@@ -79,6 +79,7 @@ import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
+import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderNetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
@@ -198,6 +199,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.SubTabPoolPe
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.SubTabPoolVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.provider.ProviderSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.provider.SubTabProviderGeneralPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.provider.SubTabProviderNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.QuotaSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaEventPresenter;
@@ -723,4 +725,8 @@ public interface ManagedComponents {
     AsyncProvider<SubTabProviderGeneralPresenter> getSubTabProviderGeneralPresenter();
 
     DetailModelProvider<ProviderListModel, ProviderGeneralModel> getSubTabProviderGeneralModelProvider();
+
+    AsyncProvider<SubTabProviderNetworkPresenter> getSubTabProviderNetworkPresenter();
+
+    SearchableDetailModelProvider<Network, ProviderListModel, ProviderNetworkListModel> getSubTabProviderNetworkModelProvider();
 }
