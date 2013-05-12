@@ -68,6 +68,28 @@ class Plugin(plugin.PluginBase):
             if connection is not None:
                 connection.commit()
 
+    def _checkDbEncoding(self, environment):
+
+        statement = database.Statement(environment=environment)
+        encoding = statement.execute(
+            statement="""
+                show server_encoding
+            """,
+            ownConnection=True,
+            transaction=False,
+        )[0]['server_encoding']
+        if encoding.lower() != 'utf8':
+            raise RuntimeError(
+                _(
+                    'Encoding of the engine database is {encoding}. '
+                    'Engine installation is only supported on servers '
+                    'with default encoding set to UTF8. Please fix the '
+                    'default DB encoding before you continue'
+                ).format(
+                    encoding=encoding,
+                )
+            )
+
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
 
@@ -234,6 +256,7 @@ class Plugin(plugin.PluginBase):
             if interactive:
                 try:
                     utils.tryDatabaseConnect(dbenv)
+                    self._checkDbEncoding(dbenv)
                     self.environment.update(dbenv)
                     connectionValid = True
                 except RuntimeError as e:

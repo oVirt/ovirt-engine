@@ -1071,6 +1071,39 @@ def retry(func, tries=None, timeout=None, sleep=1):
 
             time.sleep(sleep)
 
+
+def checkDbEncoding(dbAdminUser, dbHost, dbPort, dbName):
+    """ checkDbEncoding checks DB default encoding on DB server"""
+
+    logging.info("Checking encoding of the provided database on a remote server.")
+    out, rc = execRemoteSqlCommand(
+        userName=dbAdminUser,
+        dbHost=dbHost,
+        dbPort=dbPort,
+        dbName=dbName,
+        sqlQuery=(
+            "show server_encoding;"
+        ),
+    )
+
+    # Error in looking for encoding, meaning we don't have enough privileges
+    # to enquire it.
+    if rc:
+        logging.error(output_messages.ERR_DB_CHECK_ENCODING, dbHost)
+        raise Exception("\n" + output_messages.ERR_DB_CHECK_ENCODING % dbHost + "\n")
+
+    if not "utf8" in out.lower():
+        msg = (
+            "\nDatabase '%s' has an incorrect encoding "
+            "on a server '%s'. It should have an UTF8 "
+            "encoding. Please fix the DB encoding "
+            "before you continue.\n" % (dbName, dbHost)
+        )
+        logging.info(msg)
+        raise Exception(msg)
+    else:
+        logging.debug("DB encoding is UTF8")
+
 def checkIfDbIsUp():
     """
     func to test is db is up

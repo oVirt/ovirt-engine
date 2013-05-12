@@ -251,6 +251,7 @@ ERR_DB_RENAME = "Failed to rename DB '%s' to '%s'. Check that there are no activ
 ERR_DB_GET_SPACE = "Error: Failed to get %s database size."
 ERR_DB_CONNECTION = "Could not connect to host %s with provided credentials. Check that your settings are correct."
 ERR_DB_CREATE_PRIV = "Couldn't create temp database on server %s. Check provided credentials."
+ERR_DB_CHECK_ENCODING = "Couldn't check temp database encoding on server %s. Check provided credentials."
 ERR_DB_DROP_PRIV = "Couldn't drop temp database on server %s. Check provided credentials."
 ERR_DB_CONNECTIONS_BLOCK = "Error: failed to block new DB connections"
 ERR_DB_CONNECTIONS_CLEAR = "Error: failed to clear active DB connections"

@@ -317,6 +317,9 @@ def validateRemoteDB(param={}, options=[]):
         # DB Create check
         _checkCreateDbPrivilege(param["DB_ADMIN"], param["DB_HOST"], param["DB_PORT"])
 
+        # DB Encoding check
+        _checkDbEncoding(param["DB_ADMIN"], param["DB_HOST"], param["DB_PORT"])
+
         # Delete DB check
         _checkDropDbPrivilege(param["DB_ADMIN"], param["DB_HOST"], param["DB_PORT"])
 
@@ -505,8 +508,23 @@ def _checkCreateDbPrivilege(dbAdminUser, dbHost, dbPort):
     else:
         logging.info("Successfully created temp database on server %s." % dbHost)
 
+def _checkDbEncoding(dbAdminUser, dbHost, dbPort):
+    """ _checkDbEncoding checks DB default encoding on DB server"""
+
+    logging.info("Checking encoding of the database 'ovirt_engine_test' on remote server.")
+    try:
+        utils.checkDbEncoding(
+            dbAdminUser=dbAdminUser,
+            dbHost=dbHost,
+            dbPort=dbPort,
+            dbName="ovirt_engine_test",
+        )
+    except Exception, e:
+        raise e
+
+
 def _checkDropDbPrivilege(dbAdminUser, dbHost, dbPort):
-    """ _checkCreateDbPrivilege checks CREATE DB privilege on DB server"""
+    """ _checkDropDbPrivilege checks DROP DB privilege on DB server"""
 
     logging.info("Deleting the test database from the remote server")
     out, rc = utils.execRemoteSqlCommand(dbAdminUser, dbHost, dbPort,
