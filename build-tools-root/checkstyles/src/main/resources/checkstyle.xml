@@ -16,6 +16,7 @@
     <property name="cacheFile" value="${checkstyle.cache.file}"/>
     <module name="RedundantImport"/>
     <module name="UnusedImports"/>
+    <module name="AvoidStarImport"/>
     <module name="checks.NlsCheck">
       <property name="run" value="${runNlsCheck}" default="false"/>
     </module>
