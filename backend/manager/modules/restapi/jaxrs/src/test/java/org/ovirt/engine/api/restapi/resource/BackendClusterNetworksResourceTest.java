@@ -92,15 +92,19 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         VDSGroup vdsGroup = setUpVDSGroupExpectations(CLUSTER_ID);
 
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(1, null);
-        setUpGetClusterExpectations();
-        setUpGetNetworksByDataCenterExpectations(1, null);
-        setUpActionExpectations(VdcActionType.AttachNetworkToVdsGroup,
-                AttachNetworkToVdsGroupParameter.class,
-                new String[] { "VdsGroupId" },
-                new Object[] { CLUSTER_ID },
-                true,
-                true);
+
+        setUpCreationExpectations(VdcActionType.AttachNetworkToVdsGroup,
+                                  AttachNetworkToVdsGroupParameter.class,
+                                  new String[] { "VdsGroupId" },
+                                  new Object[] { CLUSTER_ID },
+                                  true,
+                                  true,
+                                  null,
+                                  VdcQueryType.GetAllNetworksByClusterId,
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
+                                  new Object[] { CLUSTER_ID },
+                                  asList(getEntity(0)));
         Network model = getModel(0);
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
@@ -119,17 +123,14 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
     }
 
     private void doTestBadAddNetwork(boolean canDo, boolean success, String detail) throws Exception {
-        VDSGroup vdsGroup = setUpVDSGroupExpectations(CLUSTER_ID);
+        setUpVDSGroupExpectations(CLUSTER_ID);
 
-        setUriInfo(setUpBasicUriExpectations());
-        setUpGetClusterExpectations();
-        setUpGetNetworksByDataCenterExpectations(1, null);
-        setUpActionExpectations(VdcActionType.AttachNetworkToVdsGroup,
-                AttachNetworkToVdsGroupParameter.class,
-                new String[] { "VdsGroupId" },
-                new Object[] { CLUSTER_ID },
-                canDo,
-                success);
+        setUriInfo(setUpActionExpectations(VdcActionType.AttachNetworkToVdsGroup,
+                                           AttachNetworkToVdsGroupParameter.class,
+                                           new String[] { "VdsGroupId" },
+                                           new Object[] { CLUSTER_ID },
+                                           canDo,
+                                           success));
         Network model = getModel(0);
 
         try {
