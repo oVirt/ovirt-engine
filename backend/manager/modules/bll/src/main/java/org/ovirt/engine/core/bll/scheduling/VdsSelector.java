@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.scheduling;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -135,7 +135,6 @@ public class VdsSelector {
             VDS target_vds = DbFacade.getInstance().getVdsDao().get(getDestinationVdsId());
             log.infoFormat("Checking for a specific VDS only - id:{0}, name:{1}, host_name(ip):{2}",
                     getDestinationVdsId(), target_vds.getName(), target_vds.getHostName());
-            VmHandler.UpdateVmGuestAgentVersion(getVm());
             result = getVdsToRunOn(Arrays.asList(target_vds), isMigrate);
         }
         return result;
@@ -183,17 +182,15 @@ public class VdsSelector {
         for (VDS curVds : vdss) {
             noVDSs = false;
 
-            ValidationResult result = validateHostIsReadyToRun(curVds, sb, isMigrate);
-            if (result.isValid()) {
+            VdcBllMessages result = validateHostIsReadyToRun(curVds, sb, isMigrate);
+            if (result == null) {
                 return true;
             } else {
-                if (messageToReturn.getValue() < result.getMessage().getValue()) {
-                    messageToReturn = result.getMessage();
-                    /**
-                     * save version of current vds for later use
-                     */
-                    vdsVersion = curVds.getVersion();
-                }
+                messageToReturn = result;
+                /**
+                 * save version of current vds for later use
+                 */
+                vdsVersion = curVds.getVersion();
             }
         }
 
@@ -208,7 +205,6 @@ public class VdsSelector {
              * action message
              */
             if (messageToReturn == VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_VERSION && vdsVersion != null) {
-                VmHandler.UpdateVmGuestAgentVersion(getVm());
                 messages.add("$toolsVersion " + getVm().getPartialVersion());
                 messages.add("$serverVersion " + vdsVersion.getRpmName());
 
@@ -325,18 +321,18 @@ public class VdsSelector {
         }
     });
 
-    private ValidationResult validateHostIsReadyToRun(final VDS vds, StringBuilder sb, boolean isMigrate) {
+    private VdcBllMessages validateHostIsReadyToRun(final VDS vds, StringBuilder sb, boolean isMigrate) {
         // buffer the mismatches as we go
         sb.append(" VDS ").append(vds.getName()).append(" ").append(vds.getId()).append(" ");
 
         for(HostValidator validator : this.hostValidators) {
             VdcBllMessages result = validator.validate(vds, sb, isMigrate);
             if(result != null) {
-                return new ValidationResult(result);
+                return result;
             }
         }
 
-        return ValidationResult.VALID;
+        return null;
     }
 
     /**
@@ -431,7 +427,7 @@ public class VdsSelector {
         StringBuilder sb = new StringBuilder();
         final List<VDS> readyToRun = new ArrayList<VDS>();
         for (VDS curVds : vdss) {
-            if (validateHostIsReadyToRun(curVds, sb, isMigrate) == ValidationResult.VALID) {
+            if (validateHostIsReadyToRun(curVds, sb, isMigrate) == null) {
                 readyToRun.add(curVds);
             }
         }
@@ -523,7 +519,7 @@ public class VdsSelector {
         VDS bestVDS = list.get(0);
         for (int i = 1; i < list.size(); i++) {
             VDS curVds = list.get(i);
-            if (comparer.IsBetter(bestVDS, curVds, getVm()))
+            if (comparer.isBetter(bestVDS, curVds, getVm()))
             // if (((bestVDS.physical_mem_mb - bestVDS.mem_commited) <
             // (curVds.physical_mem_mb - curVds.mem_commited)))
             {
@@ -533,7 +529,7 @@ public class VdsSelector {
         /**
          * add chosen vds to running vdss list.
          */
-        comparer.BestVdsProcedure(bestVDS);
+        comparer.bestVdsProcedure(bestVDS);
         getRunVdssList().add(bestVDS.getId());
         return bestVDS.getId();
     }

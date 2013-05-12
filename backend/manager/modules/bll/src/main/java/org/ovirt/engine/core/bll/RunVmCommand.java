@@ -19,6 +19,8 @@ import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
+import org.ovirt.engine.core.bll.scheduling.VdsFreeMemoryChecker;
+import org.ovirt.engine.core.bll.scheduling.VdsSelector;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
@@ -611,6 +613,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     protected boolean getVdsToRunOn() {
         // use destination vds or default vds or none
         setVdsId(getVdsSelector().getVdsToRunOn(false));
+        VmHandler.UpdateVmGuestAgentVersion(getVm());
         setVds(null);
         setVdsName(null);
         if (getVdsId().equals(Guid.Empty)) {

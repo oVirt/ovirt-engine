@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.scheduling.VdsFreeMemoryChecker;
+import org.ovirt.engine.core.bll.scheduling.VdsSelector;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -81,6 +83,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     protected void initVdss() {
         setVdsIdRef(new Guid(getVm().getRunOnVds().toString()));
         setVdsDestinationId(getVdsSelector().getVdsToRunOn(true));
+        VmHandler.UpdateVmGuestAgentVersion(getVm());
         // make _destinationVds null in order to refresh it from db in case it
         // changed.
         _destinationVds = null;

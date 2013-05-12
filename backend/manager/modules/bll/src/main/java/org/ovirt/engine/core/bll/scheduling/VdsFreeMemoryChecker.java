@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.scheduling;
 
 import org.apache.commons.logging.Log;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -18,7 +18,7 @@ public class VdsFreeMemoryChecker {
 
     public boolean evaluate(VDS vds, VM vm) {
         // first check if this host has enough memory run the VM.
-        if (!RunVmCommandBase.hasMemoryToRunVM(vds, vm)) {
+        if (!SlaValidator.getInstance().hasMemoryToRunVM(vds, vm)) {
 
             if (vds.getPendingVmemSize() == 0) {
                 // there are no pending VMs to run - we hit the hard limit of memory, no special treatment
@@ -35,7 +35,7 @@ public class VdsFreeMemoryChecker {
             vds = DbFacade.getInstance().getVdsDao().get(vds.getId());
 
             // check free memory on the updated host
-            return RunVmCommandBase.hasMemoryToRunVM(vds, vm);
+            return SlaValidator.getInstance().hasMemoryToRunVM(vds, vm);
         }
         return true;
     }

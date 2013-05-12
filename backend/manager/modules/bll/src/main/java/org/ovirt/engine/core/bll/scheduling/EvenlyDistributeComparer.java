@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.scheduling;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -19,7 +19,7 @@ public class EvenlyDistributeComparer extends VdsComparer {
     }
 
     @Override
-    public boolean IsBetter(VDS x, VDS y, VM vm) {
+    public boolean isBetter(VDS x, VDS y, VM vm) {
         if (VdsSelector.getEffectiveCpuCores(x) == null
                 || VdsSelector.getEffectiveCpuCores(y) == null
                 || x.getUsageCpuPercent() == null
@@ -34,6 +34,6 @@ public class EvenlyDistributeComparer extends VdsComparer {
     }
 
     @Override
-    public void BestVdsProcedure(VDS x) {
+    public void bestVdsProcedure(VDS x) {
     }
 }

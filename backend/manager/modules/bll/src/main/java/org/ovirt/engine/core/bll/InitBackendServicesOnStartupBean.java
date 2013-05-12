@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.DependsOn;
@@ -7,11 +8,16 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
 import org.ovirt.engine.core.bll.gluster.GlusterJobsManager;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.provider.ExternalTrustStoreInitializer;
+import org.ovirt.engine.core.bll.scheduling.MigrationHandler;
+import org.ovirt.engine.core.bll.scheduling.VdsLoadBalancer;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.exceptions.InitializationException;
@@ -43,9 +49,19 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
         AsyncTaskManager.getInstance().InitAsyncTaskManager();
         OvfDataUpdater.getInstance().initOvfDataUpdater();
 
-        if (Config.<Boolean> GetValue(ConfigValues.EnableVdsLoadBalancing)) {
-            VdsLoadBalancer.EnableLoadBalancer();
-        }
+        VdsLoadBalancer.getInstance().setMigrationHandler(new MigrationHandler() {
+
+            @Override
+            public void migrateVMs(List<Pair<Guid, Guid>> list) {
+                for (Pair<Guid, Guid> pair : list) {
+                    MigrateVmToServerParameters parameters =
+                            new MigrateVmToServerParameters(false, pair.getFirst(), pair.getSecond());
+                    Backend.getInstance().runInternalAction(VdcActionType.MigrateVmToServer,
+                            parameters,
+                            ExecutionHandler.createInternalJobContext());
+                }
+            }
+        });
 
         ThreadPoolUtil.execute(new Runnable() {
             @Override

@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.scheduling;
 
 import java.util.Collections;
 import java.util.Comparator;

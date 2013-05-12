@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.scheduling;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 public class PowerSaveComparer extends EvenlyDistributeComparer {
 
     @Override
-    public boolean IsBetter(VDS x, VDS y, VM vm) {
+    public boolean isBetter(VDS x, VDS y, VM vm) {
 
         boolean returnValue = false;
 
@@ -23,7 +23,7 @@ public class PowerSaveComparer extends EvenlyDistributeComparer {
                 returnValue = true;
             }
         } else if (!y_has_zero) {
-            return super.IsBetter(x, y, vm);
+            return super.isBetter(x, y, vm);
         }
         return returnValue;
     }

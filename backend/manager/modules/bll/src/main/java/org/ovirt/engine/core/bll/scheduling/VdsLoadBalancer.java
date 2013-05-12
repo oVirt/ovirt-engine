@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.scheduling;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -7,9 +7,9 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
@@ -19,8 +19,22 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
  */
 public final class VdsLoadBalancer {
     private static Log log = LogFactory.getLog(VdsLoadBalancer.class);
+    private static VdsLoadBalancer instance = null;
+    private MigrationHandler migrationHandler = null;
 
-    private static VdsLoadBalancer instance = new VdsLoadBalancer();
+    public static VdsLoadBalancer getInstance() {
+        if (instance == null) {
+            synchronized (VdsLoadBalancer.class) {
+                if (instance == null) {
+                    instance = new VdsLoadBalancer();
+                    if (Config.<Boolean> GetValue(ConfigValues.EnableVdsLoadBalancing)) {
+                        EnableLoadBalancer();
+                    }
+                }
+            }
+        }
+        return instance;
+    }
 
     private VdsLoadBalancer() {
     }
@@ -40,7 +54,7 @@ public final class VdsLoadBalancer {
                         group.gethigh_utilization(), group.getlow_utilization(),
                         group.getcpu_over_commit_duration_minutes(),
                         Config.<Integer> GetValue(ConfigValues.UtilizationThresholdInPercent));
-                loadBalancingAlgorithm.LoadBalance();
+                migrationHandler.migrateVMs(loadBalancingAlgorithm.LoadBalance());
             } else {
                 log.debugFormat("VdsLoadBalancer: Cluster {0} skipped because no selection algorithm selected.",
                         group.getname());
@@ -54,5 +68,12 @@ public final class VdsLoadBalancer {
                 new Object[] {}, Config.<Integer> GetValue(ConfigValues.VdsLoadBalancingeIntervalInMinutes),
                 Config.<Integer> GetValue(ConfigValues.VdsLoadBalancingeIntervalInMinutes), TimeUnit.MINUTES);
         log.info("Finished scheduling to enable vds load balancer");
+    }
+
+    public void setMigrationHandler(MigrationHandler migrationHandler) {
+        if (this.migrationHandler != null) {
+            throw new RuntimeException("Load balance migration handler should be set only once");
+        }
+        this.migrationHandler = migrationHandler;
     }
 }

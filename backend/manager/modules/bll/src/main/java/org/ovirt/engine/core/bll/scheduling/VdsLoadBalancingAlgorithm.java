@@ -1,5 +1,6 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.scheduling;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -7,13 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.Function;
@@ -107,7 +106,14 @@ public abstract class VdsLoadBalancingAlgorithm {
         return new VdsCpuVdsLoadBalancingAlgorithm(group);
     }
 
-    public void LoadBalance() {
+    /**
+     * LoadBalace method iterates over the cluster's hosts and determine which hosts are over/under utilized according
+     * to derivative logic, then it selects the best vm to migrate out of these hosts.
+     * @return a list of pairs <vmId, hostID> VM and Host, which later engine try to migrate: vm to migrate ->
+     *         destination host
+     */
+    public List<Pair<Guid, Guid>> LoadBalance() {
+        List<Pair<Guid, Guid>> migrationList = new ArrayList<Pair<Guid, Guid>>();
         setAllRelevantVdss(DbFacade.getInstance().getVdsDao().getAllForVdsGroupWithoutMigrating(getVdsGroup().getId()));
         log.infoFormat("VdsLoadBalancer: number of relevant vdss (no migration, no pending): {0}.",
                 getAllRelevantVdss().size());
@@ -116,12 +122,13 @@ public abstract class VdsLoadBalancingAlgorithm {
         InitUnderUtilizedList();
         if (getOverUtilizedServers().size() != 0
                 && (getReadyToMigrationServers().size() != 0 || getUnderUtilizedServers().size() != 0)) {
-            ProceedOverUtilizedServers();
+            migrationList.addAll(ProceedOverUtilizedServers());
         }
         if (getUnderUtilizedServers().size() > 0
                 && (getReadyToMigrationServers().size() > 0 || getUnderUtilizedServers().size() > 1)) {
-            ProceedUnderUtilizedServers();
+            migrationList.addAll(ProceedUnderUtilizedServers());
         }
+        return migrationList;
     }
 
     protected abstract void InitOverUtilizedList();
@@ -130,7 +137,7 @@ public abstract class VdsLoadBalancingAlgorithm {
 
     protected abstract void InitUnderUtilizedList();
 
-    private void ProceedOverUtilizedServers() {
+    private List<Pair<Guid, Guid>> ProceedOverUtilizedServers() {
         List<Guid> overUtilizedServersIds = LinqUtils.foreach(getOverUtilizedServers().values(),
                 new Function<VDS, Guid>() {
                     @Override
@@ -138,6 +145,7 @@ public abstract class VdsLoadBalancingAlgorithm {
                         return vds.getId();
                     }
                 });
+        List<Pair<Guid, Guid>> vmVdsMigrationList = new ArrayList<Pair<Guid, Guid>>();
         for (Guid vdsId : overUtilizedServersIds) {
             VDS vds = getOverUtilizedServers().get(vdsId);
             log.infoFormat("VdsLoadBalancer: Server {0} decided as overutilized", vds.getName());
@@ -178,11 +186,7 @@ public abstract class VdsLoadBalancingAlgorithm {
                     /**
                      * Migrate vm from OverUtilezed server
                      */
-                    MigrateVmToServerParameters parameters =
-                        new MigrateVmToServerParameters(false, vm.getId(), destinationVdsId);
-                    Backend.getInstance().runInternalAction(VdcActionType.MigrateVmToServer,
-                            parameters,
-                            ExecutionHandler.createInternalJobContext());
+                    vmVdsMigrationList.add(new Pair<Guid, Guid>(vm.getId(), destinationVdsId));
                     /**
                      * Remove server from list
                      */
@@ -195,9 +199,10 @@ public abstract class VdsLoadBalancingAlgorithm {
                 log.info("VdsLoadBalancer: No vms found to migrate on this server");
             }
         }
+        return vmVdsMigrationList;
     }
 
-    private void ProceedUnderUtilizedServers() {
+    private List<Pair<Guid, Guid>> ProceedUnderUtilizedServers() {
         List<Guid> underUtilizedServersIds = LinqUtils.foreach(getUnderUtilizedServers().values(),
                 new Function<VDS, Guid>() {
                     @Override
@@ -206,6 +211,7 @@ public abstract class VdsLoadBalancingAlgorithm {
                     }
                 });
         Set<Guid> processed = new HashSet<Guid>();
+        List<Pair<Guid, Guid>> vmVdsMigrationList = new ArrayList<Pair<Guid, Guid>>();
         for (Guid vdsId : underUtilizedServersIds) {
             if (!processed.contains(vdsId)) {
                 VDS vds = getUnderUtilizedServers().get(vdsId);
@@ -251,11 +257,7 @@ public abstract class VdsLoadBalancingAlgorithm {
                                 vds.getName());
                     } else {
                         Guid destinationVdsId = destinationVds.getId();
-                        MigrateVmToServerParameters parameters =
-                            new MigrateVmToServerParameters(false, vm.getId(), destinationVdsId);
-                        Backend.getInstance().runInternalAction(VdcActionType.MigrateVmToServer,
-                                parameters,
-                                ExecutionHandler.createInternalJobContext());
+                        vmVdsMigrationList.add(new Pair<Guid, Guid>(vm.getId(), destinationVdsId));
                         currentList.remove(destinationVdsId);
                         log.infoFormat(
                                 "VdsLoadBalancer: Desktop {0} migrated from underutilized server {1} to server {2}",
@@ -273,6 +275,7 @@ public abstract class VdsLoadBalancingAlgorithm {
                                                          // passed vm on it
             }
         }
+        return vmVdsMigrationList;
     }
 
     private java.util.List<VM> getMigrableVmsRunningOnVds(Guid vdsId) {
@@ -293,8 +296,8 @@ public abstract class VdsLoadBalancingAlgorithm {
             @Override
             public boolean eval(VDS p) {
                 return (p.getVdsGroupId().equals(vm.getVdsGroupId())
-                        && RunVmCommandBase.hasMemoryToRunVM(p, vm)
-                        && RunVmCommandBase.hasCpuToRunVM(p, vm));
+                        && SlaValidator.getInstance().hasMemoryToRunVM(p, vm)
+                        && SlaValidator.getInstance().hasCpuToRunVM(p, vm));
             }
         });
     }
