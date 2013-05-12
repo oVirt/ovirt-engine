@@ -76,4 +76,8 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider,
                                                  ProviderRowMapper.INSTANCE,
                                                  getCustomMapSqlParameterSource().addValue("provider_type", providerType.toString()));
     }
+
+    public List<Provider> getAllWithQuery(String query) {
+        return jdbcTemplate.query(query, ProviderRowMapper.INSTANCE);
+    }
 }

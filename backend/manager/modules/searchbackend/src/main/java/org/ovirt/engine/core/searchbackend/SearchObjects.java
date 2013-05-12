@@ -40,6 +40,8 @@ public final class SearchObjects {
     public static final String VM_NETWORK_INTERFACE_OBJ_NAME = "VNIC";
     public static final String NETWORK_CLUSTER_OBJ_NAME = "CLUSTER_NETWORK";
     public static final String NETWORK_HOST_OBJ_NAME = "HOST_NETWORK";
+    public static final String PROVIDER_OBJ_NAME = "PROVIDER";
+    public static final String PROVIDER_PLU_OBJ_NAME = "PROVIDERS";
 
     //special searches
     private static final String ALERT = "EVENTS: severity=alert";
@@ -78,6 +80,8 @@ public final class SearchObjects {
             add(QUOTA_PLU_OBJ_NAME.toLowerCase() + SEPARATOR);
             add(NETWORK_OBJ_NAME.toLowerCase() + SEPARATOR);
             add(NETWORK_PLU_OBJ_NAME.toLowerCase() + SEPARATOR);
+            add(PROVIDER_OBJ_NAME.toLowerCase() + SEPARATOR);
+            add(PROVIDER_PLU_OBJ_NAME.toLowerCase() + SEPARATOR);
             add(ALERT.toLowerCase());
             add(ERROR.toLowerCase());
             add(HOST_BY_CPU.toLowerCase());

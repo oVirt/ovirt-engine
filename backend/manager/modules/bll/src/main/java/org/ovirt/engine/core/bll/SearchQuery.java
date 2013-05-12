@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -116,6 +117,10 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         }
         case Network: {
             returnValue = searchNetworks();
+            break;
+        }
+        case Provider: {
+            returnValue = searchProviders();
             break;
         }
         default: {
@@ -256,6 +261,10 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
     private List<NetworkView> searchNetworks() {
         return genericSearch(getDbFacade().getNetworkViewDao(), true, null);
+    }
+
+    private List<Provider> searchProviders() {
+        return genericSearch(getDbFacade().getProviderDao(), true, null);
     }
 
     private QueryData initQueryData(boolean useCache) {

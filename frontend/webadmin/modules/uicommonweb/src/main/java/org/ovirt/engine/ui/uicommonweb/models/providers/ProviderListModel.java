@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.GetAllProvidersParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
@@ -37,7 +35,7 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
 
         setDefaultSearchString("Provider:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
-        // setSearchObjects(new String[] { SearchObjects.PROVIDER_OBJ_NAME, SearchObjects.PROVIDER_PLU_OBJ_NAME });
+        setSearchObjects(new String[] { SearchObjects.PROVIDER_OBJ_NAME, SearchObjects.PROVIDER_PLU_OBJ_NAME });
         setAvailableInModes(ApplicationMode.VirtOnly);
 
         setAddCommand(new UICommand(CMD_ADD, this));
@@ -135,22 +133,9 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
 
     @Override
     protected void syncSearch() {
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
-
-            @SuppressWarnings("unchecked")
-            @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                setItems((List<Provider>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
-            }
-        };
-
-        GetAllProvidersParameters params =
-                new GetAllProvidersParameters();
-        params.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetAllProviders,
-                params,
-                asyncQuery);
+        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.Provider);
+        tempVar.setMaxCount(getSearchPageSize());
+        super.syncSearch(VdcQueryType.Search, tempVar);
     }
 
     private void add() {

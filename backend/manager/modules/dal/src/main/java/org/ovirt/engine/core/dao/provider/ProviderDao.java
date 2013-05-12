@@ -6,8 +6,9 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.GenericDao;
+import org.ovirt.engine.core.dao.SearchDAO;
 
-public interface ProviderDao extends GenericDao<Provider, Guid> {
+public interface ProviderDao extends GenericDao<Provider, Guid>, SearchDAO<Provider> {
 
     /**
      * Query for the provider by name.

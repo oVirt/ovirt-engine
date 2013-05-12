@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dao;
 
+import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -376,4 +377,6 @@ public class FixturesTool {
      * A test provider that exists.
      */
     public static final String PROVIDER_NAME = "provider";
+
+    public static final ProviderType PROVIDER_TYPE = ProviderType.OPENSTACK_NETWORK;
 }

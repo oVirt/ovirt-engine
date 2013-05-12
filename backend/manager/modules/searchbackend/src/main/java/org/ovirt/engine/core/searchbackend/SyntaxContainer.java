@@ -204,6 +204,8 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
         }
         else if (SearchObjects.NETWORK_OBJ_NAME.equals(obj) || SearchObjects.NETWORK_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.NETWORK_OBJ_NAME;
+        } else if (SearchObjects.PROVIDER_OBJ_NAME.equals(obj) || SearchObjects.PROVIDER_PLU_OBJ_NAME.equals(obj)) {
+            retval = SearchObjects.PROVIDER_OBJ_NAME;
         } else {
             retval = obj;
 

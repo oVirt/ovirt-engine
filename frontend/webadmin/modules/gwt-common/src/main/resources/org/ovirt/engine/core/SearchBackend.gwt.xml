@@ -66,6 +66,7 @@
 		<include name="searchbackend/NetworkCrossRefAutoCompleter.java" />
 		<include name="searchbackend/NetworkInterfaceConditionFieldAutoCompleter.java" />
 		<include name="searchbackend/NetworkClusterConditionFieldAutoCompleter.java" />
+		<include name="searchbackend/ProviderConditionFieldAutoCompleter.java" />
 		<!--======================SEARCHBACKEND/GLUSTER====================== -->
 		<include name="searchbackend/gluster/GlusterVolumeConditionFieldAutoCompleter.java" />
 		<include name="searchbackend/gluster/GlusterVolumeCrossRefAutoCompleter.java" />

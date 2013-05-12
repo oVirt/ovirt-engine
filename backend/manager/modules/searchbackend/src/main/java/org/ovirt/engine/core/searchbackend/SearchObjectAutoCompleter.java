@@ -26,6 +26,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         mVerbs.add(SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME);
         mVerbs.add(SearchObjects.QUOTA_OBJ_NAME);
         mVerbs.add(SearchObjects.NETWORK_PLU_OBJ_NAME);
+        mVerbs.add(SearchObjects.PROVIDER_PLU_OBJ_NAME);
 
         buildCompletions();
         mVerbs.add(SearchObjects.VM_OBJ_NAME);
@@ -38,6 +39,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         mVerbs.add(SearchObjects.VDC_CLUSTER_OBJ_NAME);
         mVerbs.add(SearchObjects.GLUSTER_VOLUME_OBJ_NAME);
         mVerbs.add(SearchObjects.NETWORK_OBJ_NAME);
+        mVerbs.add(SearchObjects.PROVIDER_OBJ_NAME);
 
         // vms - vds
         addJoin(SearchObjects.VM_OBJ_NAME, "run_on_vds", SearchObjects.VDS_OBJ_NAME, "vds_id");
@@ -281,6 +283,12 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                             "network_vds_view",
                             "vds_name",
                             "network_name ASC"));
+                    put(SearchObjects.PROVIDER_OBJ_NAME, new EntitySearchInfo(null,
+                            new ProviderConditionFieldAutoCompleter(),
+                            "providers",
+                            "providers",
+                            "id",
+                            "name ASC"));
                 }
             });
 
@@ -303,6 +311,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
             put(SearchObjects.VDC_POOL_PLU_OBJ_NAME, SearchObjects.VDC_POOL_OBJ_NAME);
             put(SearchObjects.VDC_STORAGE_DOMAIN_PLU_OBJ_NAME, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME);
             put(SearchObjects.NETWORK_PLU_OBJ_NAME, SearchObjects.NETWORK_OBJ_NAME);
+            put(SearchObjects.PROVIDER_PLU_OBJ_NAME, SearchObjects.PROVIDER_OBJ_NAME);
         }
     });
 

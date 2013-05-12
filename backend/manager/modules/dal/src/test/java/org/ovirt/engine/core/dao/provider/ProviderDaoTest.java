@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao.provider;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -60,5 +61,29 @@ public class ProviderDaoTest extends BaseGenericDaoTestCase<Guid, Provider, Prov
     @Test
     public void getByNameNonExistant() throws Exception {
         assertNull(dao.getByName(FixturesTool.PROVIDER_NAME + FixturesTool.PROVIDER_NAME));
+    }
+
+    @Test
+    public void searchQueryByExistentName() throws Exception {
+        assertEquals(FixturesTool.PROVIDER_NAME,
+                dao.getAllWithQuery(String.format("SELECT * FROM providers WHERE name = '%s'",
+                        FixturesTool.PROVIDER_NAME)).get(0).getName());
+    }
+
+    @Test
+    public void searchQueryByNonExistentName() throws Exception {
+        assertTrue(dao.getAllWithQuery("SELECT * FROM providers WHERE name = 'foo'").isEmpty());
+    }
+
+    @Test
+    public void searchQueryByExistentType() throws Exception {
+        assertEquals(FixturesTool.PROVIDER_NAME,
+                dao.getAllWithQuery(String.format("SELECT * FROM providers WHERE provider_type = '%s'",
+                        FixturesTool.PROVIDER_TYPE.name())).get(0).getName());
+    }
+
+    @Test
+    public void searchQueryByNonExistentType() throws Exception {
+        assertTrue(dao.getAllWithQuery("SELECT * FROM providers WHERE provider_type = 'foo'").isEmpty());
     }
 }
