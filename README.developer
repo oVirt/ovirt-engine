@@ -36,6 +36,7 @@ Locate pg_hba.conf within your distribution,
 common locations are:
  - /var/lib/pgsql/data/pg_hba.conf
  - /etc/postgresql-*/pg_hba.conf
+ - /etc/postgresql/*/main/pg_hba.conf
 
 Within pg_hba.conf set method to 'password' for
 127.0.0.1/32 and ::1/128.
@@ -75,6 +76,9 @@ clean
 
 install-dev
     Install a development environment at PREFIX.
+
+dist
+    Create source tarball.
 
 BUILD CUSTOMIZATION
 
@@ -154,4 +158,29 @@ Acess using HTTP or HTTPS:
  - http://<server>:8080
  - http://<server>:8443
 
-Debug port is available at port 127.0.0.1:8787
+Debug port is available at 127.0.0.1:8787
+
+RPM PACKAGING
+
+$ make dist
+$ rpmbuild -ts @tarball@
+# yum-builddep @srpm@
+# rpmbuild -tb @tarball@
+
+The following spec file variables are available for package customization:
+
+ovirt_build_quick [0]
+    Quick build, best for syntax checks.
+
+ovirt_build_minimal [0]
+    Build minimal Firefox only package.
+
+ovirt_build_gwt [1]
+    Build gwt components.
+
+ovirt_build_locales [1]
+    Build extra locales.
+
+Example:
+
+# rpmbuild -D"ovirt_build_minimal 1" -tb @tarball@
