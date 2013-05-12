@@ -1,0 +1,7 @@
+<FindBugsFilter>
+    <Match>
+        <Class name="org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunctionResultHelper" />
+        <Method name="getResultAsBoolean"/>
+        <Bug code="NP"/>
+    </Match>
+</FindBugsFilter>
