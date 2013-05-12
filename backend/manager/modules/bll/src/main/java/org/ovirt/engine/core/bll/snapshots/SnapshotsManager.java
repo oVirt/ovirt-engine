@@ -62,6 +62,7 @@ public class SnapshotsManager {
      *            The VM to save the snapshot for.
      * @param compensationContext
      *            Context for saving compensation details.
+     * @return the newly created snapshot
      */
     public Snapshot addActiveSnapshot(Guid snapshotId,
             VM vm,
@@ -69,6 +70,59 @@ public class SnapshotsManager {
         return addActiveSnapshot(snapshotId,
                 vm,
                 SnapshotStatus.OK,
+                "",
+                compensationContext);
+    }
+
+    /**
+     * Save an active snapshot for the VM, without saving the configuration.<br>
+     * The snapshot is created in status {@link SnapshotStatus#OK} by default.
+     *
+     * @see #addActiveSnapshot(Guid, VM, SnapshotStatus, CompensationContext)
+     * @param snapshotId
+     *            The ID for the snapshot.
+     * @param vm
+     *            The VM to save the snapshot for.
+     * @param snapshotStatus
+     *            The initial status of the created snapshot
+     * @param compensationContext
+     *            Context for saving compensation details.
+     * @return the newly created snapshot
+     */
+    public Snapshot addActiveSnapshot(Guid snapshotId,
+            VM vm,
+            SnapshotStatus snapshotStatus,
+            final CompensationContext compensationContext) {
+        return addActiveSnapshot(snapshotId,
+                vm,
+                snapshotStatus,
+                "",
+                compensationContext);
+    }
+
+    /**
+     * Save an active snapshot for the VM, without saving the configuration.<br>
+     * The snapshot is created in status {@link SnapshotStatus#OK} by default.
+     *
+     * @see #addActiveSnapshot(Guid, VM, SnapshotStatus, CompensationContext)
+     * @param snapshotId
+     *            The ID for the snapshot.
+     * @param vm
+     *            The VM to save the snapshot for.
+     * @param memoryVolume
+     *            The memory state for the created snapshot
+     * @param compensationContext
+     *            Context for saving compensation details.
+     * @return the newly created snapshot
+     */
+    public Snapshot addActiveSnapshot(Guid snapshotId,
+            VM vm,
+            String memoryVolume,
+            final CompensationContext compensationContext) {
+        return addActiveSnapshot(snapshotId,
+                vm,
+                SnapshotStatus.OK,
+                memoryVolume,
                 compensationContext);
     }
 
@@ -88,6 +142,7 @@ public class SnapshotsManager {
     public Snapshot addActiveSnapshot(Guid snapshotId,
             VM vm,
             SnapshotStatus snapshotStatus,
+            String memoryVolume,
             final CompensationContext compensationContext) {
         return addSnapshot(snapshotId,
                 "Active VM",
@@ -95,7 +150,7 @@ public class SnapshotsManager {
                 SnapshotType.ACTIVE,
                 vm,
                 false,
-                StringUtils.EMPTY,
+                memoryVolume,
                 compensationContext);
     }
 
@@ -112,6 +167,8 @@ public class SnapshotsManager {
      *            The snapshot type.
      * @param vm
      *            The VM to save in configuration.
+     * @param memoryVolume
+     *            the volume in which the snapshot's memory is stored
      * @param compensationContext
      *            Context for saving compensation details.
      * @return the added snapshot
@@ -120,9 +177,10 @@ public class SnapshotsManager {
             String description,
             SnapshotType snapshotType,
             VM vm,
+            String memoryVolume,
             final CompensationContext compensationContext) {
         return addSnapshot(snapshotId, description, SnapshotStatus.LOCKED,
-                snapshotType, vm, true, StringUtils.EMPTY, compensationContext);
+                snapshotType, vm, true, memoryVolume, compensationContext);
     }
 
     /**
