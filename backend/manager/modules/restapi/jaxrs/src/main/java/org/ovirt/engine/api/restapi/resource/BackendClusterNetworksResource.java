@@ -35,15 +35,22 @@ public class BackendClusterNetworksResource
     @Override
     public Response add(Network network) {
         validateParameters(network, "name"); //right now, name is mandatory (future - id alone will be enough)
-        if (!network.isSetId()) {
-            network.setId(getNetworkId(network.getName(), clusterId));
+        String networkId = getNetworkId(network.getName(), clusterId);
+        if (networkId == null) {
+            notFound(Network.class);
         }
+
+        if (!network.isSetId()) {
+            network.setId(networkId);
+        } else if (!network.getId().equals(networkId)) {
+            badRequest("Network ID provided does not match the ID for network with name: " + network.getName());
+        }
+
         org.ovirt.engine.core.common.businessentities.network.Network entity = map(network);
         return performCreate(addAction,
                                getActionParameters(network, entity),
                                new NetworkIdResolver(network.getName()));
     }
-
 
     @Override
     protected VdcQueryParametersBase getQueryParameters() {
