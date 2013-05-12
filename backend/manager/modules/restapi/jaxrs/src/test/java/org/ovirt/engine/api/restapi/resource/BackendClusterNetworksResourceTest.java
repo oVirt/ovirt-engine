@@ -89,10 +89,10 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
 
     @Test
     public void testAddNetwork() throws Exception {
-        VDSGroup vdsGroup = setUpVDSGroupExpectations(CLUSTER_ID);
+        setUpVDSGroupExpectations(CLUSTER_ID);
 
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(1, null);
+        setUpEntityQueryExpectations(2, null);
         setUpGetClusterExpectations();
         setUpGetNetworksByDataCenterExpectations(1, null);
         setUpActionExpectations(VdcActionType.AttachNetworkToVdsGroup,
@@ -119,10 +119,11 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
     }
 
     private void doTestBadAddNetwork(boolean canDo, boolean success, String detail) throws Exception {
-        VDSGroup vdsGroup = setUpVDSGroupExpectations(CLUSTER_ID);
+        setUpVDSGroupExpectations(CLUSTER_ID);
 
         setUriInfo(setUpBasicUriExpectations());
         setUpGetClusterExpectations();
+        setUpEntityQueryExpectations(1, null);
         setUpGetNetworksByDataCenterExpectations(1, null);
         setUpActionExpectations(VdcActionType.AttachNetworkToVdsGroup,
                 AttachNetworkToVdsGroupParameter.class,
@@ -162,7 +163,6 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
     @Test
     public void testAddIncompleteParameters_noName() throws Exception {
         Network model = new Network();
-        model.setId(GUIDS[0].toString());
         model.setDescription(DESCRIPTIONS[0]);
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
@@ -170,7 +170,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "Network", "add", "name");
+            verifyIncompleteException(wae, "Network", "add", "id|name");
         }
     }
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.AssignedNetworkResource;
@@ -34,22 +35,35 @@ public class BackendClusterNetworksResource
 
     @Override
     public Response add(Network network) {
-        validateParameters(network, "name"); //right now, name is mandatory (future - id alone will be enough)
-        String networkId = getNetworkId(network.getName(), clusterId);
-        if (networkId == null) {
-            notFound(Network.class);
+        validateParameters(network, "id|name");
+
+        String networkName = null;
+        if (network.isSetId()) {
+            org.ovirt.engine.core.common.businessentities.network.Network net = lookupNetwork(asGuid(network.getId()));
+            if (net == null) {
+                notFound(Network.class);
+            }
+            networkName = net.getName();
+        }
+
+        String networkId = null;
+        if (network.isSetName()) {
+            networkId = getNetworkId(network.getName(), clusterId);
+            if (networkId == null) {
+                notFound(Network.class);
+            }
         }
 
         if (!network.isSetId()) {
             network.setId(networkId);
-        } else if (!network.getId().equals(networkId)) {
+        } else if (network.isSetName() && !network.getId().equals(networkId)) {
             badRequest("Network ID provided does not match the ID for network with name: " + network.getName());
         }
 
         org.ovirt.engine.core.common.businessentities.network.Network entity = map(network);
         return performCreate(addAction,
                                getActionParameters(network, entity),
-                               new NetworkIdResolver(network.getName()));
+                               new NetworkIdResolver(StringUtils.defaultIfEmpty(network.getName(),networkName)));
     }
 
     @Override
