@@ -134,8 +134,9 @@ public class ReapedMap<K, V> extends HashMap<K, V> {
     public synchronized void clear() {
         super.clear();
         reapableMap.clear();
-        while (queue.poll() != null)
-            ;
+        while (queue.poll() != null) {
+            // do nothing
+        }
     }
 
     /**

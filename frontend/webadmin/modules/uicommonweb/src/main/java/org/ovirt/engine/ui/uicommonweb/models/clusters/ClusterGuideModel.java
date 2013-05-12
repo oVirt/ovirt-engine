@@ -77,7 +77,6 @@ public class ClusterGuideModel extends GuideModel
                     public void onSuccess(Object target, Object returnValue) {
                         ClusterGuideModel clusterGuideModel = (ClusterGuideModel) target;
                         ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
-                        ;
                         clusterGuideModel.hosts = hosts;
                         clusterGuideModel.updateOptionsNonLocalFS();
                     }
@@ -89,7 +88,6 @@ public class ClusterGuideModel extends GuideModel
                     public void onSuccess(Object target, Object returnValue) {
                         ClusterGuideModel clusterGuideModel = (ClusterGuideModel) target;
                         ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
-                        ;
                         clusterGuideModel.allHosts = hosts;
                         clusterGuideModel.updateOptionsNonLocalFS();
                     }
@@ -114,7 +112,6 @@ public class ClusterGuideModel extends GuideModel
                     public void onSuccess(Object target, Object returnValue) {
                         ClusterGuideModel clusterGuideModel = (ClusterGuideModel) target;
                         VDS localStorageHost = (VDS) returnValue;
-                        ;
                         clusterGuideModel.localStorageHost = localStorageHost;
                         clusterGuideModel.updateOptionsLocalFS();
                     }
@@ -394,7 +391,6 @@ public class ClusterGuideModel extends GuideModel
                         HostModel model = (HostModel) clusterGuideModel.getWindow();
 
                         ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) returnValue;
-                        ;
                         model.getDataCenter().setItems(dataCenters);
                         if (getEntity().getStoragePoolId() != null)
                         {

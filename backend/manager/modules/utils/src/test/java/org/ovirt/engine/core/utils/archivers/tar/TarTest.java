@@ -60,7 +60,9 @@ public class TarTest {
                 is = new DigestInputStream(fis, fmd);
                 byte buf[] = new byte[1024];
                 int n;
-                while ((n = is.read(buf)) != -1);
+                while ((n = is.read(buf)) != -1) {
+                    // do nothing
+                }
                 md.update(fmd.digest());
             }
             finally {

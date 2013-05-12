@@ -197,7 +197,6 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDAOTestCase{
 
         // POOL : STORAGE_POOL_NFS_2
         toUpdate.add(FixturesTool.VM_TEMPLATE_RHEL6_1);
-        ;
         toUpdate.add(FixturesTool.VM_RHEL5_POOL_60);
 
         List<Long> values = new LinkedList<Long>();

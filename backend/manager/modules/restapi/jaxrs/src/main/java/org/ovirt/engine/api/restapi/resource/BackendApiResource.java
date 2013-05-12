@@ -345,7 +345,7 @@ public class BackendApiResource
             try {
                 if (baos != null) baos.close();
                 if (is != null) is.close();
-            } catch (IOException e) {;}
+            } catch (IOException ignored) {}
         }
     }
 
