@@ -129,8 +129,8 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
 
                 if (!lunModel.getIsSelected()) {
                     table.getSelectionModel().setSelected(lunModel, false);
-                    table.redraw();
                 }
+                table.redraw();
             }
         }
     };
@@ -164,10 +164,10 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         table.edit(listModel);
         table.setWidth("100%", true); //$NON-NLS-1$
 
-        if (!multiSelection) {
-            rootModel.getPropertyChangedEvent().removeListener(lunModelSelectedItemListener);
-            rootModel.getPropertyChangedEvent().addListener(lunModelSelectedItemListener, table);
+        rootModel.getPropertyChangedEvent().removeListener(lunModelSelectedItemListener);
+        rootModel.getPropertyChangedEvent().addListener(lunModelSelectedItemListener, table);
 
+        if (!multiSelection) {
             table.getSelectionModel().addSelectionChangeHandler(new Handler() {
                 @Override
                 public void onSelectionChange(SelectionChangeEvent event) {

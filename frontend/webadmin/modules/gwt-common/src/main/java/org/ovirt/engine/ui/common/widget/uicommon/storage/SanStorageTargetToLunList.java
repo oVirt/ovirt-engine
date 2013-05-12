@@ -26,6 +26,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -135,9 +136,10 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         });
         loginButton.getElement().getStyle().setFloat(Float.RIGHT);
         loginButton.getElement().getStyle().setMarginRight(2, Unit.PX);
-        loginButton.getElement().getStyle().setProperty("lineHeight", "18px"); //$NON-NLS-1$ //$NON-NLS-2$
+        loginButton.getElement().getStyle().setProperty("lineHeight", "20px"); //$NON-NLS-1$ //$NON-NLS-2$
 
         panel.add(loginButton);
+        panel.setCellVerticalAlignment(loginButton, HasVerticalAlignment.ALIGN_MIDDLE);
         panel.setCellWidth(loginButton, "30px"); //$NON-NLS-1$
     }
 
