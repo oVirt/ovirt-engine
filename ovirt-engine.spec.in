@@ -542,6 +542,13 @@ fi
 %{_mavenpomdir}/JPP.%{name}-utils.pom
 %endif
 
+# should be actually be
+# at setup package, but as we use
+# versionlock we cannot move these until
+# 3.4
+%{engine_data}/conf/engine-config-install.properties
+%{engine_data}/conf/ovirt-engine-proxy.conf.in
+
 # Documentation:
 %doc LICENSE
 
@@ -692,9 +699,7 @@ fi
 
 # Configuration files
 %{engine_data}/conf/iptables.default
-%{engine_data}/conf/engine-config-install.properties
 %{engine_data}/conf/nfs.sysconfig
-%{engine_data}/conf/ovirt-engine-proxy.conf.in
 %{engine_data}/conf/ovirt-engine-root-redirect.conf.in
 %{engine_data}/conf/version
 
