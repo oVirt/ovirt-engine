@@ -68,9 +68,37 @@ directory, use:
 
 $ make clean install-dev PREFIX=$HOME/ovirt-engine
 
-BUILD_FLAGS
-    By default admin console and user portal components are built.
-    If not required (2nd build and on), BUILD_FLAGS="" can be specified.
+BUILD TARGETS
+
+clean
+    Clean project.
+
+install-dev
+    Install a development environment at PREFIX.
+
+BUILD CUSTOMIZATION
+
+The following Makefile environment variables are available for build
+customization:
+
+PREFIX [/usr/local]
+    Installation root directory.
+
+BUILD_GWT [1]
+    Build GWT.
+
+BUILD_GWT_USERPORTAL [1]
+    Build user portal if gwt is enabled.
+
+BUILD_GWT_WEBADMIN [1]
+    Build web admin if gwt is enabled.
+
+BUILD_LOCALES [0]
+    Build additional locales.
+
+BUILD_TEST_FLAGS [-D skipTests]
+    By default, unit tests are disabled, to enable specify
+    BUILD_TEST_FLAGS=""
 
 EXTRA_BUILD_FLAGS_DEV
     Any maven build flags requires for building.
@@ -78,17 +106,12 @@ EXTRA_BUILD_FLAGS_DEV
     For example, if your machine is low on memory, use:
     EXTRA_BUILD_FLAGS_DEV="-Dgwt-plugin.localWorkers=2"
 
-EXTRA_BUILD_FLAGS_DEV_GWT
+EXTRA_BUILD_FLAGS_DEV_GWT [-D gwt.userAgent=gecko1_8]
     By default, only the gecko1_8 support is built, building all
     permutations is possible by specifying EXTRA_BUILD_FLAGS_DEV_GWT="".
 
-BUILD_TEST_FLAGS
-    By default, unit tests are disabled, to enable specify
-    BUILD_TEST_FLAGS=""
-
-DEV_REBUILD
-    If non java components where modified, DEV_REBUILD="0" can be
-    specified to skip java build.
+DEV_REBUILD [1]
+    Disable if only packaging components were modified.
 
 SETUP
 
