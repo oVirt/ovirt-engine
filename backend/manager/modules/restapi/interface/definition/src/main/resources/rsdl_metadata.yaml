@@ -2308,7 +2308,7 @@ actions:
       parameterType: Tag
       signatures:
       - mandatoryArguments: {tag.name: 'xs:string'}
-        optionalArguments: {tag.description: 'xs:string', tag.parent.tag.name: 'xs:string'}
+        optionalArguments: {tag.description: 'xs:string', tag.parent.tag.id|name: 'xs:string'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
