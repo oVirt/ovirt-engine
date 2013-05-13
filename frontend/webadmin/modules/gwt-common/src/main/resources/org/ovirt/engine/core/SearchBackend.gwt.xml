@@ -61,14 +61,14 @@
 		<include name="searchbackend/PostgresSqlInjectionChecker.java" />
 		<include name="searchbackend/ValueValidationFunction.java" />
 		<include name="searchbackend/NetworkHostConditionFieldAutoCompleter.java" />
-		<!--======================SEARCHBACKEND/GLUSTER====================== -->
-		<include name="searchbackend/gluster/GlusterVolumeConditionFieldAutoCompleter.java" />
-		<include name="searchbackend/gluster/GlusterVolumeCrossRefAutoCompleter.java" />
 		<include name="searchbackend/QuotaConditionFieldAutoCompleter.java" />
 		<include name="searchbackend/NetworkConditionFieldAutoCompleter.java" />
 		<include name="searchbackend/NetworkCrossRefAutoCompleter.java" />
 		<include name="searchbackend/NetworkInterfaceConditionFieldAutoCompleter.java" />
 		<include name="searchbackend/NetworkClusterConditionFieldAutoCompleter.java" />
+		<!--======================SEARCHBACKEND/GLUSTER====================== -->
+		<include name="searchbackend/gluster/GlusterVolumeConditionFieldAutoCompleter.java" />
+		<include name="searchbackend/gluster/GlusterVolumeCrossRefAutoCompleter.java" />
 	</source>
 
 	<super-source path="ui/uioverrides" />
