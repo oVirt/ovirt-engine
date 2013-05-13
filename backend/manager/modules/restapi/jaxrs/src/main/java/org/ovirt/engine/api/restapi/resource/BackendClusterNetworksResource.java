@@ -42,8 +42,9 @@ public class BackendClusterNetworksResource
             org.ovirt.engine.core.common.businessentities.network.Network net = lookupNetwork(asGuid(network.getId()));
             if (net == null) {
                 notFound(Network.class);
+            } else {
+                networkName = net.getName();
             }
-            networkName = net.getName();
         }
 
         String networkId = null;
