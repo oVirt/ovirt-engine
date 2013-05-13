@@ -86,6 +86,17 @@
         <groupId>org.ovirt.engine</groupId>
         <artifactId>jboss-modules-maven-plugin</artifactId>
       </plugin>
+      <plugin>
+         <groupId>org.codehaus.mojo</groupId>
+         <artifactId>findbugs-maven-plugin</artifactId>
+         <version>${findbugs.version}</version>
+         <configuration>
+           <xmlOutput>true</xmlOutput>
+           <!-- Optional directory to put findbugs xdoc xml report -->
+           <excludeFilterFile>exclude-filters.xml</excludeFilterFile>
+           <xmlOutputDirectory>target/site</xmlOutputDirectory>
+         </configuration>
+      </plugin>
     </plugins>
   </build>
 
@@ -99,6 +110,17 @@
             <configuration combine.self="override">
               <excludes/>
             </configuration>
+          </plugin>
+          <plugin>
+             <groupId>org.codehaus.mojo</groupId>
+             <artifactId>findbugs-maven-plugin</artifactId>
+             <version>${findbugs.version}</version>
+             <configuration>
+               <xmlOutput>true</xmlOutput>
+               <!-- Optional directory to put findbugs xdoc xml report -->
+               <excludeFilterFile>exclude-filters.xml</excludeFilterFile>
+               <xmlOutputDirectory>target/site</xmlOutputDirectory>
+             </configuration>
           </plugin>
         </plugins>
       </build>

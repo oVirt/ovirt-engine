@@ -1,0 +1,7 @@
+<FindBugsFilter>
+     <Match>
+       <Class name="org.ovirt.engine.core.config.entity.ConfigKey" />
+       <Method name="toString"/>
+       <Bug code="DE"/>
+     </Match>
+</FindBugsFilter>
