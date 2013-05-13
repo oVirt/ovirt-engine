@@ -208,8 +208,11 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return Collections.singletonMap(getVmTemplateId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, getTemplateExclusiveLockMessage()));
+        if (getVmTemplate() != null) {
+            return Collections.singletonMap(getVmTemplateId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, getTemplateExclusiveLockMessage()));
+        }
+        return null;
     }
 
     private String getTemplateExclusiveLockMessage() {
