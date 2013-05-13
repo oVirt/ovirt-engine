@@ -828,7 +828,7 @@ actions:
       parameterType: StorageDomain
       signatures:
       - mandatoryArguments: {storagedomain.host.id|name: 'xs:string'}
-        optionalArguments: {}
+        optionalArguments: {storagedomain.format: 'xs:boolean'}
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
