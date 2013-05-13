@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -82,6 +83,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private boolean mResume;
     private boolean _isVmRunningStateless;
     private boolean isFailedStatlessSnapshot;
+    /** Indicates whether restoration of memory from snapshot is supported for the VM */
+    private boolean memorySnapshotSupported;
 
     protected RunVmCommand(Guid commandId) {
         super(commandId);
@@ -129,6 +132,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
             // set vm disks
             VmHandler.updateDisksForVm(getVm(), getDiskDao().getAllForVm(getVm().getId()));
+
+            if (getVm().getStatus() != VMStatus.Suspended) {
+                memorySnapshotSupported = FeatureSupported.memorySnapshot(getVm().getVdsGroupCompatibilityVersion());
+            }
         }
     }
 
@@ -444,11 +451,29 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     /**
-     * Initial the parameters for the VDSM command for VM creation
+     * Initial the parameters for the VDSM command of VM creation
      * @return the VDS create VM parameters
      */
     protected CreateVmVDSCommandParameters initVdsCreateVmParams() {
-        return new CreateVmVDSCommandParameters(getVdsId(), getVm());
+        VM vmToBeCreated = getVm();
+
+        if (vmToBeCreated.getStatus() == VMStatus.Suspended) {
+            return new CreateVmVDSCommandParameters(getVdsId(), vmToBeCreated);
+        }
+
+        if (!memorySnapshotSupported) {
+            vmToBeCreated.setHibernationVolHandle(StringUtils.EMPTY);
+            return new CreateVmVDSCommandParameters(getVdsId(), vmToBeCreated);
+        }
+
+        // otherwise, use the memory that is saved on the active snapshot (might be empty)
+        Snapshot activeSnapshotOfVmToBeCreated =
+                getDbFacade().getSnapshotDao().get(vmToBeCreated.getId(), SnapshotType.ACTIVE);
+        vmToBeCreated.setHibernationVolHandle(activeSnapshotOfVmToBeCreated.getMemoryVolume());
+        CreateVmVDSCommandParameters parameters =
+                new CreateVmVDSCommandParameters(getVdsId(), vmToBeCreated);
+        parameters.setClearHibernationVolumes(true);
+        return parameters;
     }
 
     @Override

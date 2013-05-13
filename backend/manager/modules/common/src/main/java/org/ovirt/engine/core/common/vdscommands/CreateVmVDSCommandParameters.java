@@ -5,20 +5,21 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 
 public class CreateVmVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
-    public CreateVmVDSCommandParameters(Guid vdsId, VM vm) {
-        super(vdsId, vm.getId());
-        _vm = vm;
-    }
 
-    private VM _vm;
-
+    private VM vm;
     private SysPrepParams sysPrepParams;
-
-    public VM getVm() {
-        return _vm;
-    }
+    private boolean clearHibernationVolumes;
 
     public CreateVmVDSCommandParameters() {
+    }
+
+    public CreateVmVDSCommandParameters(Guid vdsId, VM vm) {
+        super(vdsId, vm.getId());
+        this.vm = vm;
+    }
+
+    public VM getVm() {
+        return vm;
     }
 
     @Override
@@ -32,5 +33,13 @@ public class CreateVmVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
 
     public void setSysPrepParams(SysPrepParams sysPrepParams) {
         this.sysPrepParams = sysPrepParams;
+    }
+
+    public boolean isClearHibernationVolumes() {
+        return clearHibernationVolumes;
+    }
+
+    public void setClearHibernationVolumes(boolean clearHibernationVolumes) {
+        this.clearHibernationVolumes = clearHibernationVolumes;
     }
 }

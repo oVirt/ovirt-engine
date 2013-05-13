@@ -71,6 +71,9 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                                         public Object runInTransaction() {
                                             HandleVdsInformation();
                                             vm.setRunOnVds(getVdsId());
+                                            if (getParameters().isClearHibernationVolumes()) {
+                                                vm.setHibernationVolHandle(StringUtils.EMPTY);
+                                            }
                                             DbFacade.getInstance().getVmDynamicDao().update(vm.getDynamicData());
                                             return null;
                                         }

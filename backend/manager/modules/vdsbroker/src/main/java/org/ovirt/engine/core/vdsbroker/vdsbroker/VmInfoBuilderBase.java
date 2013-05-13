@@ -16,7 +16,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.comparators.DiskImageByDiskAliasComparator;
@@ -94,8 +93,7 @@ public abstract class VmInfoBuilderBase {
         }
         createInfo.put(VdsProperties.niceLevel,
                 String.valueOf(vm.getNiceLevel()));
-        if (vm.getStatus() == VMStatus.Suspended
-                && !StringUtils.isEmpty(vm.getHibernationVolHandle())) {
+        if (!StringUtils.isEmpty(vm.getHibernationVolHandle())) {
             createInfo.put(VdsProperties.hiberVolHandle,
                     vm.getHibernationVolHandle());
         }
