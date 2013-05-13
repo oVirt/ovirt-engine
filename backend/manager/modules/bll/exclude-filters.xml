@@ -22,4 +22,10 @@
        <Method name="testUpdateParent"/>
        <Bug code="NP"/>
      </Match>
+
+     <Match>
+       <Class name="org.ovirt.engine.core.bll.IsoDomainListSyncronizer" />
+       <Method name="getInstance"/>
+       <Bug code="DC"/>
+     </Match>
 </FindBugsFilter>

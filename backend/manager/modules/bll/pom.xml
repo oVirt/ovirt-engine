@@ -214,7 +214,7 @@
             <version>${findbugs.version}</version>
             <configuration>
               <xmlOutput>true</xmlOutput>
-              <!-- Optional derectory to put findbugs xdoc xml report -->
+              <!-- Optional directory to put findbugs xdoc xml report -->
               <excludeFilterFile>exclude-filters.xml</excludeFilterFile>
               <xmlOutputDirectory>target/site</xmlOutputDirectory>
             </configuration>
