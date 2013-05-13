@@ -670,4 +670,18 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String VdsTransparentHugePagesState___MAdvise();
 
     String VdsTransparentHugePagesState___Always();
+
+    String GlusterHookStage___PRE();
+
+    String GlusterHookStage___POST();
+
+    String GlusterHookStatus___ENABLED();
+
+    String GlusterHookStatus___DISABLED();
+
+    String GlusterHookStatus___MISSING();
+
+    String GlusterHookContentType___TEXT();
+
+    String GlusterHookContentType___BINARY();
 }

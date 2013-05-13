@@ -336,17 +336,4 @@ public interface Enums extends LocalizedEnums {
 
     String ServiceType___SHD();
 
-    String GlusterHookStage___PRE();
-
-    String GlusterHookStage___POST();
-
-    String GlusterHookStatus___ENABLED();
-
-    String GlusterHookStatus___DISABLED();
-
-    String GlusterHookStatus___MISSING();
-
-    String GlusterHookContentType___TEXT();
-
-    String GlusterHookContentType___BINARY();
 }
