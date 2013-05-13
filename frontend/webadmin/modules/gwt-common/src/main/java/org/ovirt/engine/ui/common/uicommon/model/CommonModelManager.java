@@ -17,7 +17,7 @@ import com.google.gwt.event.shared.EventBus;
  */
 public class CommonModelManager {
 
-    private static CommonModel commonModel;
+    private static CommonModel commonModel = null;
 
     /**
      * Creates new {@link CommonModel} instance and sets up necessary event listeners.
