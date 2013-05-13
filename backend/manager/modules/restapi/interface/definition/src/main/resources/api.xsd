@@ -1110,6 +1110,7 @@
           <xs:element name="gluster_service" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="threads_as_cores" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="tunnel_migration" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="trusted_service" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <!-- Also a rel="networks" link -->
         </xs:sequence>
       </xs:extension>

@@ -69,6 +69,9 @@ public class ClusterMapper {
         if (model.isSetTunnelMigration()) {
             entity.setTunnelMigration(model.isTunnelMigration());
         }
+        if (model.isSetTrustedService()){
+            entity.setTrustedService(model.isTrustedService());
+        }
         return entity;
     }
 
@@ -100,6 +103,7 @@ public class ClusterMapper {
         model.setGlusterService(entity.supportsGlusterService());
         model.setThreadsAsCores(entity.getCountThreadsAsCores());
         model.setTunnelMigration(entity.isTunnelMigration());
+        model.setTrustedService(entity.supportsTrustedService());
         return model;
     }
 
