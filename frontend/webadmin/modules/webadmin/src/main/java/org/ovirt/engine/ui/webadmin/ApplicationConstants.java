@@ -2647,6 +2647,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Name")
     String nameProvider();
 
+    @DefaultStringValue("Type")
+    String typeProvider();
+
     @DefaultStringValue("Description")
     String descriptionProvider();
 

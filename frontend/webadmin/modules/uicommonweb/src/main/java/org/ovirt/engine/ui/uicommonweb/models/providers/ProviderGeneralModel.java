@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.providers;
 
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -10,10 +11,12 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class ProviderGeneralModel extends EntityModel {
 
     private static final String PROPERTY_NAME = "Name"; //$NON-NLS-1$
+    private static final String PROPERTY_TYPE = "Type"; //$NON-NLS-1$
     private static final String PROPERTY_DESCRIPTION = "Description"; //$NON-NLS-1$
     private static final String PROPERTY_URL = "Url"; //$NON-NLS-1$
 
     private String name;
+    private ProviderType type;
     private String description;
     private String url;
 
@@ -42,6 +45,7 @@ public class ProviderGeneralModel extends EntityModel {
         Provider provider = (Provider) getEntity();
 
         setName(provider.getName());
+        setType(provider.getType());
         setDescription(provider.getDescription());
         setUrl(provider.getUrl());
     }
@@ -54,6 +58,17 @@ public class ProviderGeneralModel extends EntityModel {
         if (!StringHelper.stringsEqual(name, value)) {
             name = value;
             onPropertyChanged(new PropertyChangedEventArgs(PROPERTY_NAME));
+        }
+    }
+
+    public ProviderType getType() {
+        return type;
+    }
+
+    public void setType(ProviderType value) {
+        if (value != type) {
+            type = value;
+            onPropertyChanged(new PropertyChangedEventArgs(PROPERTY_TYPE));
         }
     }
 

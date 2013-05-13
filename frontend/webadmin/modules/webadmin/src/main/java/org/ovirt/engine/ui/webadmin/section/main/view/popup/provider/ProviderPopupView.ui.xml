@@ -12,6 +12,7 @@
 		<d:content>
 			<g:FlowPanel>
 				<e:EntityModelTextBoxEditor ui:field="nameEditor" />
+				<e:ListModelListBoxEditor ui:field="typeEditor" />
 				<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
 				<e:EntityModelTextBoxEditor ui:field="urlEditor" />
 			</g:FlowPanel>

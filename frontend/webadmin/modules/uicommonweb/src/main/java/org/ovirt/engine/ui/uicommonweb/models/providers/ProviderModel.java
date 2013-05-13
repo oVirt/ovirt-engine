@@ -1,8 +1,12 @@
 package org.ovirt.engine.ui.uicommonweb.models.providers;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -26,6 +30,7 @@ public class ProviderModel extends Model {
     private final Provider provider;
 
     private EntityModel privateName;
+    private ListModel privateType;
     private EntityModel privateDescription;
     private EntityModel privateUrl;
 
@@ -35,6 +40,14 @@ public class ProviderModel extends Model {
 
     private void setName(EntityModel value) {
         privateName = value;
+    }
+
+    public ListModel getType() {
+        return privateType;
+    }
+
+    private void setType(ListModel value) {
+        privateType = value;
     }
 
     public EntityModel getDescription() {
@@ -59,8 +72,13 @@ public class ProviderModel extends Model {
         this.provider = provider;
 
         setName(new EntityModel(provider.getName()));
+        setType(new ListModel());
         setDescription(new EntityModel(provider.getDescription()));
         setUrl(new EntityModel(provider.getUrl()));
+
+        List<ProviderType> allTypes = Arrays.asList(ProviderType.values());
+        getType().setItems(allTypes);
+        getType().setSelectedItem(provider.getType());
 
         UICommand tempVar = new UICommand(CMD_SAVE, this);
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -74,6 +92,7 @@ public class ProviderModel extends Model {
 
     private boolean validate() {
         getName().validateEntity(new IValidation[] { new NotEmptyValidation() });
+        getType().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         Uri url = new Uri((String) getUrl().getEntity());
         if (url.getScheme().isEmpty()) {
@@ -83,7 +102,7 @@ public class ProviderModel extends Model {
         getUrl().validateEntity(new IValidation[] { new NotEmptyValidation(),
                 new UrlValidation(new String[] { Uri.SCHEME_HTTP }) });
 
-        return getName().getIsValid() && getUrl().getIsValid();
+        return getName().getIsValid() && getType().getIsValid() && getUrl().getIsValid();
     }
 
     private void cancel() {
@@ -96,6 +115,7 @@ public class ProviderModel extends Model {
         }
 
         provider.setName((String) privateName.getEntity());
+        provider.setType((ProviderType) privateType.getSelectedItem());
         provider.setDescription((String) privateDescription.getEntity());
         provider.setUrl((String) privateUrl.getEntity());
 
