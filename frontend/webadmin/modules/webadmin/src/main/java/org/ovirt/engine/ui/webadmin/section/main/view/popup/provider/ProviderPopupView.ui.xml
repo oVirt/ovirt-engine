@@ -6,15 +6,26 @@
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.ProviderPopupView.Style">
 		.contentStyle {
 		}
+
+		.sectionStyle {
+			margin-top: 20px;
+		}
 	</ui:style>
 
-	<d:SimpleDialogPanel width="450px" height="320px">
+	<d:SimpleDialogPanel width="450px" height="340px">
 		<d:content>
 			<g:FlowPanel>
-				<e:EntityModelTextBoxEditor ui:field="nameEditor" />
-				<e:ListModelListBoxEditor ui:field="typeEditor" />
-				<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
-				<e:EntityModelTextBoxEditor ui:field="urlEditor" />
+				<g:FlowPanel>
+					<e:EntityModelTextBoxEditor ui:field="nameEditor" />
+					<e:ListModelListBoxEditor ui:field="typeEditor" />
+					<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
+					<e:EntityModelTextBoxEditor ui:field="urlEditor" />
+				</g:FlowPanel>
+				<g:FlowPanel addStyleNames="{style.sectionStyle}">
+					<e:EntityModelCheckBoxEditor ui:field="requiresAuthenticationEditor" />
+					<e:EntityModelTextBoxEditor ui:field="usernameEditor" />
+					<e:EntityModelPasswordBoxEditor ui:field="passwordEditor" />
+				</g:FlowPanel>
 			</g:FlowPanel>
 		</d:content>
 	</d:SimpleDialogPanel>

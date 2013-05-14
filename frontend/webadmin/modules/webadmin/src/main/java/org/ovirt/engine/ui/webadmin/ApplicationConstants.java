@@ -2656,6 +2656,15 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("URL")
     String urlProvider();
 
+    @DefaultStringValue("Requires Authentication")
+    String requiresAuthenticationProvider();
+
+    @DefaultStringValue("Username")
+    String usernameProvider();
+
+    @DefaultStringValue("Password")
+    String passwordProvider();
+
     @DefaultStringValue("Add")
     String addProvider();
 

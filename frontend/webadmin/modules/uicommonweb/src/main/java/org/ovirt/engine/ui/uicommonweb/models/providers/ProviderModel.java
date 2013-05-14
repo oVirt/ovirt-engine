@@ -18,6 +18,11 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.UrlValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 @SuppressWarnings("deprecation")
 public class ProviderModel extends Model {
@@ -33,6 +38,9 @@ public class ProviderModel extends Model {
     private ListModel privateType;
     private EntityModel privateDescription;
     private EntityModel privateUrl;
+    private EntityModel privateRequiresAuthentication;
+    private EntityModel privateUsername;
+    private EntityModel privatePassword;
 
     public EntityModel getName() {
         return privateName;
@@ -66,15 +74,53 @@ public class ProviderModel extends Model {
         privateUrl = value;
     }
 
+    public EntityModel getRequiresAuthentication() {
+        return privateRequiresAuthentication;
+    }
+
+    private void setRequiresAuthentication(EntityModel value) {
+        privateRequiresAuthentication = value;
+    }
+
+    public EntityModel getUsername() {
+        return privateUsername;
+    }
+
+    private void setUsername(EntityModel value) {
+        privateUsername = value;
+    }
+
+    public EntityModel getPassword() {
+        return privatePassword;
+    }
+
+    private void setPassword(EntityModel value) {
+        privatePassword = value;
+    }
+
     public ProviderModel(ListModel sourceListModel, VdcActionType action, Provider provider) {
         this.sourceListModel = sourceListModel;
         this.action = action;
         this.provider = provider;
 
+        setRequiresAuthentication(new EntityModel());
+        getRequiresAuthentication().getEntityChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                boolean requiresAuthentication = (Boolean) privateRequiresAuthentication.getEntity();
+                getUsername().setIsChangable(requiresAuthentication);
+                getPassword().setIsChangable(requiresAuthentication);
+            }
+        });
+
         setName(new EntityModel(provider.getName()));
         setType(new ListModel());
         setDescription(new EntityModel(provider.getDescription()));
         setUrl(new EntityModel(provider.getUrl()));
+        setUsername(new EntityModel(provider.getUsername()));
+        setPassword(new EntityModel(provider.getPassword()));
+        getRequiresAuthentication().setEntity(provider.isRequiringAuthentication());
 
         List<ProviderType> allTypes = Arrays.asList(ProviderType.values());
         getType().setItems(allTypes);
@@ -93,6 +139,8 @@ public class ProviderModel extends Model {
     private boolean validate() {
         getName().validateEntity(new IValidation[] { new NotEmptyValidation() });
         getType().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        getUsername().validateEntity(new IValidation[] { new NotEmptyValidation() });
+        getPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
 
         Uri url = new Uri((String) getUrl().getEntity());
         if (url.getScheme().isEmpty()) {
@@ -102,7 +150,8 @@ public class ProviderModel extends Model {
         getUrl().validateEntity(new IValidation[] { new NotEmptyValidation(),
                 new UrlValidation(new String[] { Uri.SCHEME_HTTP }) });
 
-        return getName().getIsValid() && getType().getIsValid() && getUrl().getIsValid();
+        return getName().getIsValid() && getType().getIsValid() && getUrl().getIsValid() && getUsername().getIsValid()
+                && getPassword().getIsValid();
     }
 
     private void cancel() {
@@ -118,6 +167,13 @@ public class ProviderModel extends Model {
         provider.setType((ProviderType) privateType.getSelectedItem());
         provider.setDescription((String) privateDescription.getEntity());
         provider.setUrl((String) privateUrl.getEntity());
+
+        boolean requiresAuthentication = (Boolean) privateRequiresAuthentication.getEntity();
+        provider.setRequiringAuthentication(requiresAuthentication);
+        if (requiresAuthentication) {
+            provider.setUsername((String) privateUsername.getEntity());
+            provider.setPassword((String) privatePassword.getEntity());
+        }
 
         Frontend.RunAction(action, new ProviderParameters(provider));
         cancel();

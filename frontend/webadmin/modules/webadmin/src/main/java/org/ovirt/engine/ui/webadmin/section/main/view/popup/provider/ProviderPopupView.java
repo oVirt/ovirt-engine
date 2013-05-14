@@ -3,7 +3,10 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.provider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
@@ -54,6 +57,21 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     @WithElementId
     EntityModelTextBoxEditor urlEditor;
 
+    @UiField(provided = true)
+    @Path(value = "requiresAuthentication.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor requiresAuthenticationEditor;
+
+    @UiField
+    @Path(value = "username.entity")
+    @WithElementId
+    EntityModelTextBoxEditor usernameEditor;
+
+    @UiField
+    @Path(value = "password.entity")
+    @WithElementId
+    EntityModelPasswordBoxEditor passwordEditor;
+
     @UiField
     Style style;
 
@@ -61,7 +79,10 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     @Inject
     public ProviderPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
+
         typeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
+        requiresAuthenticationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
@@ -74,6 +95,9 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         typeEditor.setLabel(constants.typeProvider());
         descriptionEditor.setLabel(constants.descriptionProvider());
         urlEditor.setLabel(constants.urlProvider());
+        requiresAuthenticationEditor.setLabel(constants.requiresAuthenticationProvider());
+        usernameEditor.setLabel(constants.usernameProvider());
+        passwordEditor.setLabel(constants.passwordProvider());
     }
 
     @Override
