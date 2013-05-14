@@ -92,9 +92,9 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         setUpVDSGroupExpectations(CLUSTER_ID);
 
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(2, null);
-        setUpGetClusterExpectations();
-        setUpGetNetworksByDataCenterExpectations(1, null);
+        setUpEntityQueryExpectations(1, null);
+        setUpGetClusterExpectations(2, null);
+        setUpGetNetworksByDataCenterExpectations(2, null);
         setUpActionExpectations(VdcActionType.AttachNetworkToVdsGroup,
                 AttachNetworkToVdsGroupParameter.class,
                 new String[] { "VdsGroupId" },
@@ -122,9 +122,8 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         setUpVDSGroupExpectations(CLUSTER_ID);
 
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetClusterExpectations();
-        setUpEntityQueryExpectations(1, null);
-        setUpGetNetworksByDataCenterExpectations(1, null);
+        setUpGetClusterExpectations(2, null);
+        setUpGetNetworksByDataCenterExpectations(2, null);
         setUpActionExpectations(VdcActionType.AttachNetworkToVdsGroup,
                 AttachNetworkToVdsGroupParameter.class,
                 new String[] { "VdsGroupId" },
@@ -148,7 +147,25 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         model.setName("orcus");
         model.setDescription(DESCRIPTIONS[0]);
         setUpEntityQueryExpectations(1, null);
-        setUpGetClusterExpectations();
+        setUpGetClusterExpectations(1, null);
+        setUpGetNetworksByDataCenterExpectations(1, null);
+        setUpVDSGroupExpectations(CLUSTER_ID);
+        setUpActionExpectations(VdcActionType.AttachNetworkToVdsGroup,
+                AttachNetworkToVdsGroupParameter.class,
+                new String[] { "VdsGroupId" },
+                new Object[] { CLUSTER_ID },
+                true,
+                true);
+        collection.add(model);
+    }
+
+    @Test
+    public void testAddIdSuppliedButNoName() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        Network model = new Network();
+        model.setId("11111111-1111-1111-1111-111111111111");
+        setUpEntityQueryExpectations(1, null);
+        setUpGetClusterExpectations(1, null);
         setUpGetNetworksByDataCenterExpectations(1, null);
         setUpVDSGroupExpectations(CLUSTER_ID);
         setUpActionExpectations(VdcActionType.AttachNetworkToVdsGroup,
@@ -208,7 +225,8 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         }
     }
 
-    protected void setUpGetClusterExpectations() {
+    protected void setUpGetClusterExpectations(int times, Object failure) {
+        while (times-- > 0) {
             VDSGroup cluster = new VDSGroup();
             cluster.setStoragePoolId(GUIDS[2]);
             setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupById,
@@ -218,6 +236,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
                     cluster,
                     null);
         }
+    }
 
     protected void setUpQueryExpectations(String query) throws Exception {
         setUpEntityQueryExpectations(1);
