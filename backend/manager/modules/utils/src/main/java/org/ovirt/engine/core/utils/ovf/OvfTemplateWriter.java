@@ -39,6 +39,9 @@ public class OvfTemplateWriter extends OvfWriter {
         _writer.WriteStartElement("IsDisabled");
         _writer.WriteRaw(String.valueOf(_vmTemplate.isDisabled()));
         _writer.WriteEndElement();
+        _writer.WriteStartElement("TrustedService");
+        _writer.WriteRaw(String.valueOf(_vmTemplate.isTrustedService()));
+        _writer.WriteEndElement();
     }
 
     @Override

@@ -403,6 +403,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setVncKeyboardLayout(rs.getString("vnc_keyboard_layout"));
             entity.setRunAndPause(rs.getBoolean("is_run_and_pause"));
             entity.setLastWatchdogEvent(getLong(rs, "last_watchdog_event"));
+            entity.setTrustedService(rs.getBoolean("trusted_service"));
             return entity;
         }
     }

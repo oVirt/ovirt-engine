@@ -1355,6 +1355,16 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         this.transparentHugePages = value;
     }
 
+    private boolean trustedService;
+
+    public void setTrustedService(boolean trustedService) {
+        this.trustedService = trustedService;
+    }
+
+    public boolean isTrustedService() {
+        return trustedService;
+    }
+
     @Override
     public Object getQueryableId() {
         return getId();

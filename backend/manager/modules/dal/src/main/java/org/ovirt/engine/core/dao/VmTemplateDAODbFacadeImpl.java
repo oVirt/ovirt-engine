@@ -233,6 +233,7 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
             entity.setTunnelMigration((Boolean) rs.getObject("tunnel_migration"));
             entity.setVncKeyboardLayout(rs.getString("vnc_keyboard_layout"));
             entity.setMinAllocatedMem(rs.getInt("min_allocated_mem"));
+            entity.setTrustedService(rs.getBoolean("trusted_service"));
             return entity;
         }
     }

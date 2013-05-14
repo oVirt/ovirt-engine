@@ -162,6 +162,11 @@ public class OvfTemplateReader extends OvfReader {
         if (node != null) {
             _vmTemplate.setDisabled(Boolean.parseBoolean(node.InnerText));
         }
+
+        node = content.SelectSingleNode("TrustedService");
+        if (node != null) {
+            _vmTemplate.setTrustedService(Boolean.parseBoolean(node.InnerText));
+        }
     }
 
     @Override

@@ -33,6 +33,8 @@ public class VmTemplate extends VmBase {
 
     private Guid storagePoolId;
 
+    private boolean trustedService;
+
     private String storagePoolName;
 
     private Map<Guid, DiskImage> diskMap = new HashMap<Guid, DiskImage>();
@@ -123,6 +125,14 @@ public class VmTemplate extends VmBase {
 
     public void setVdsGroupName(String value) {
         vdsGroupName = value;
+    }
+
+    public void setTrustedService(boolean trustedService) {
+        this.trustedService = trustedService;
+    }
+
+    public boolean isTrustedService() {
+        return trustedService;
     }
 
     @Override

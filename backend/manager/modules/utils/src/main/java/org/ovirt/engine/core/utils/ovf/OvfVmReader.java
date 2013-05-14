@@ -206,6 +206,10 @@ public class OvfVmReader extends OvfReader {
                 _vm.setAppList(_images.get(0).getAppList());
             }
         }
+       node = content.SelectSingleNode("TrustedService");
+       if (node != null) {
+           _vm.setTrustedService(Boolean.parseBoolean(node.InnerText));
+       }
     }
 
     @Override
