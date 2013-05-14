@@ -134,7 +134,7 @@ public class GlusterServerService extends IVdcQueryable implements BusinessEntit
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + getId().hashCode();
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((serverId == null) ? 0 : serverId.hashCode());
         result = prime * result + ((serviceId == null) ? 0 : serviceId.hashCode());
         result = prime * result + ((status == null) ? 0 : status.hashCode());

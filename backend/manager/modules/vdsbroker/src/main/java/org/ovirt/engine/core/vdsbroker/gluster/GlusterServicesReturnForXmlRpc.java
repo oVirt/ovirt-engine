@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
@@ -45,7 +46,8 @@ public class GlusterServicesReturnForXmlRpc extends StatusReturnForXmlRpc {
     private GlusterServerService getService(Map<String, Object> serviceMap) {
         GlusterServerService serverService = new GlusterServerService();
         serverService.setServiceName((String) serviceMap.get(NAME));
-        serverService.setPid(Integer.parseInt((String) serviceMap.get(PID)));
+        String pid = (String) serviceMap.get(PID);
+        serverService.setPid(StringUtils.isEmpty(pid) ? null : Integer.parseInt(pid));
         serverService.setStatus(GlusterServiceStatus.valueOf((String) serviceMap.get(STATUS)));
         serverService.setMessage((String) serviceMap.get(MESSAGE));
         serverService.setServerId(serverId);
