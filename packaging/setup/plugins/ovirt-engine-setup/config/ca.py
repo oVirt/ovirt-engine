@@ -49,6 +49,10 @@ class Plugin(plugin.PluginBase):
         ],
     )
     def _misc(self):
+        uninstall_files = []
+        self.environment[
+            osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
+        ].addFiles('ca_pki', uninstall_files)
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
                 name=(
@@ -96,9 +100,7 @@ class Plugin(plugin.PluginBase):
                     engine_store_password=osetupcons.Const.PKI_PASSWORD,
                     engine_store_alias='1',
                 ),
-                modifiedList=self.environment[
-                    otopicons.CoreEnv.MODIFIED_FILES
-                ],
+                modifiedList=uninstall_files,
             )
         )
 

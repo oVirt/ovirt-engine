@@ -67,6 +67,13 @@ class Plugin(plugin.PluginBase):
                 osetupcons.PKIEnv.STORE_PASS
             ]
         )
+        self.environment[
+            osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
+        ].createGroup(
+            group='ca_pki',
+            description='PKI configuration and keys',
+            optional=True
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
@@ -127,6 +134,13 @@ class Plugin(plugin.PluginBase):
         # please DON'T increase this size, any value over 55 will fail the
         # setup. the truncated host-fqdn is concatenated with a random string
         # to create a unique CN value.
+        uninstall_files = []
+        self.environment[
+            osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
+        ].addFiles(
+            group='ca_pki',
+            fileList=uninstall_files,
+        )
         MAX_HOST_FQDN_LEN = 55
 
         self.logger.info(_('Creating CA'))
@@ -153,9 +167,7 @@ class Plugin(plugin.PluginBase):
                                 )
                             }
                         ),
-                        modifiedList=self.environment[
-                            otopicons.CoreEnv.MODIFIED_FILES
-                        ],
+                        modifiedList=uninstall_files,
                     ),
                 )
 
@@ -178,9 +190,7 @@ class Plugin(plugin.PluginBase):
                 )
             ),
         )
-        self.environment[
-            otopicons.CoreEnv.MODIFIED_FILES
-        ].extend(
+        uninstall_files.extend(
             (
                 osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CERT,
                 osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_STORE,
@@ -210,9 +220,7 @@ class Plugin(plugin.PluginBase):
                 ),
             ),
         )
-        self.environment[
-            otopicons.CoreEnv.MODIFIED_FILES
-        ].append(
+        uninstall_files.append(
             osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY
         )
 
@@ -223,9 +231,7 @@ class Plugin(plugin.PluginBase):
                 osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
                 osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT
             )
-            self.environment[
-                otopicons.CoreEnv.MODIFIED_FILES
-            ].append(
+            uninstall_files.append(
                 osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT
             )
 
