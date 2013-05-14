@@ -212,7 +212,9 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String AuditLogType___GLUSTER_VOLUME_CREATE_FAILED();
 
-	String AuditLogType___GLUSTER_VOLUME_OPTION_SET();
+	String AuditLogType___GLUSTER_VOLUME_OPTION_ADDED();
+
+	String AuditLogType___GLUSTER_VOLUME_OPTION_MODIFIED();
 
 	String AuditLogType___GLUSTER_VOLUME_OPTION_SET_FAILED();
 

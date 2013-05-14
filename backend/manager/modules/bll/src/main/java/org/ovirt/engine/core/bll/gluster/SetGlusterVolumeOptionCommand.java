@@ -20,6 +20,8 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 @LockIdNameAttribute(isWait = true)
 public class SetGlusterVolumeOptionCommand extends GlusterVolumeCommandBase<GlusterVolumeOptionParameters> {
 
+    private boolean optionValueExists;
+
     public SetGlusterVolumeOptionCommand(GlusterVolumeOptionParameters params) {
         super(params);
     }
@@ -66,8 +68,15 @@ public class SetGlusterVolumeOptionCommand extends GlusterVolumeCommandBase<Glus
         // update the option value if it exists, else add it
         GlusterVolumeOptionEntity existingOption = getGlusterVolume().getOption(option.getKey());
         if (existingOption != null) {
+            if(option.getValue().equalsIgnoreCase(existingOption.getValue())) {
+                return;
+            }
+
+            optionValueExists = true;
+            addCustomValue(GlusterConstants.OPTION_OLD_VALUE, existingOption.getValue());
             getGlusterOptionDao().updateVolumeOption(existingOption.getId(), option.getValue());
         } else {
+            optionValueExists = false;
             getGlusterOptionDao().save(option);
         }
     }
@@ -75,7 +84,7 @@ public class SetGlusterVolumeOptionCommand extends GlusterVolumeCommandBase<Glus
     @Override
     public AuditLogType getAuditLogTypeValue() {
         if (getSucceeded()) {
-            return AuditLogType.GLUSTER_VOLUME_OPTION_SET;
+            return ((optionValueExists) ? AuditLogType.GLUSTER_VOLUME_OPTION_MODIFIED : AuditLogType.GLUSTER_VOLUME_OPTION_ADDED);
         } else {
             return errorType == null ? AuditLogType.GLUSTER_VOLUME_OPTION_SET_FAILED : errorType;
         }

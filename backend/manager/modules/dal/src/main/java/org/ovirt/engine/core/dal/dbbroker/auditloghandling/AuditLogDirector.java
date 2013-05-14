@@ -61,7 +61,8 @@ public final class AuditLogDirector {
     private static void initGlusterSeverities() {
         severities.put(AuditLogType.GLUSTER_VOLUME_CREATE, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.GLUSTER_VOLUME_CREATE_FAILED, AuditLogSeverity.ERROR);
-        severities.put(AuditLogType.GLUSTER_VOLUME_OPTION_SET, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.GLUSTER_VOLUME_OPTION_ADDED, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.GLUSTER_VOLUME_OPTION_MODIFIED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.GLUSTER_VOLUME_OPTION_SET_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.GLUSTER_VOLUME_START, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.GLUSTER_VOLUME_START_FAILED, AuditLogSeverity.ERROR);
