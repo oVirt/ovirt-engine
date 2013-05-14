@@ -524,7 +524,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         getNewCommand().setIsExecutionAllowed(true);
 
         getEditCommand().setIsExecutionAllowed(getSelectedItem() != null && getSelectedItems() != null
-                && getSelectedItems().size() == 1 && isVmDown() && !isDiskLocked);
+                && getSelectedItems().size() == 1 && (isVmDown() || !disk.getPlugged()) && !isDiskLocked);
 
         getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
                 && isRemoveCommandAvailable());
