@@ -238,6 +238,19 @@ public class DocsServletTest {
     }
 
     /**
+     * Test method for {@link org.ovirt.engine.core.DocsServlet#
+     * getLocaleFromRequest(javax.servlet.http.HttpServletRequest)}.
+     */
+    @Test
+    public void testGetLocaleFromRequest_withHash() {
+        Locale result = testServlet.getLocaleFromRequest(mockRequest);
+        assertEquals("The locale should be en-US", Locale.US, result);
+        when(mockRequest.getHeader(DocsServlet.REFERER)).thenReturn("http://127.0.0.1:8700/webadmin/webadmin/WebAdmin.html?locale=fr#basic");
+        result = testServlet.getLocaleFromRequest(mockRequest);
+        assertEquals("The locale should be fr", Locale.FRENCH, result);
+    }
+
+    /**
      * Test method for {@link org.ovirt.engine.core.DocsServlet#getLocaleFromRequest(javax.servlet.http.HttpServletRequest)}.
      */
     @Test
@@ -256,7 +269,17 @@ public class DocsServletTest {
     public void testGetLocaleFromRequest_Path() {
         when(mockRequest.getPathInfo()).thenReturn("/ja/index.html");
         Locale result = testServlet.getLocaleFromRequest(mockRequest);
-        assertEquals("The locale should be fr", Locale.JAPANESE, result);
+        assertEquals("The locale should be ja", Locale.JAPANESE, result);
+    }
+
+    /**
+     * Test method for {@link org.ovirt.engine.core.DocsServlet#getLocaleFromRequest(javax.servlet.http.HttpServletRequest)}.
+     */
+    @Test
+    public void testGetLocaleFromRequest_Path_Underscore() {
+        when(mockRequest.getPathInfo()).thenReturn("/ja-JP/index.html");
+        Locale result = testServlet.getLocaleFromRequest(mockRequest);
+        assertEquals("The locale should be ja_JP", Locale.JAPAN, result);
     }
 
     /**

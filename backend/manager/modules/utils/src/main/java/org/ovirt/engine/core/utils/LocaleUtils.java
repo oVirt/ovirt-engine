@@ -29,7 +29,8 @@ public class LocaleUtils {
     public static Locale getLocaleFromString(String localeString, boolean returnDefaultLocale) {
         Locale result = returnDefaultLocale ? null : Locale.US;
         try {
-            result = org.apache.commons.lang.LocaleUtils.toLocale(localeString);
+            result = org.apache.commons.lang.LocaleUtils.toLocale(localeString != null ?
+                    localeString.replaceAll("\\-", "_") : localeString);
             if(result == null && returnDefaultLocale) {
                 result = Locale.US;
             }
