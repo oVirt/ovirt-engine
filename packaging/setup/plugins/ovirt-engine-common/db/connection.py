@@ -85,6 +85,9 @@ class Plugin(plugin.PluginBase):
     )
     def _setup(self):
 
+        dbovirtutils = database.OvirtUtils(plugin=self)
+        dbovirtutils.detectCommands()
+
         dbenv = None
         config = osetuputil.ConfigFile([
             osetupcons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG
@@ -141,12 +144,11 @@ class Plugin(plugin.PluginBase):
                 self.environment[otopicons.CoreEnv.LOG_FILTER].append(
                     dbenv[osetupcons.DBEnv.PASSWORD]
                 )
-                utils = database.OvirtUtils(environment=self.environment)
-                utils.tryDatabaseConnect(dbenv)
+                dbovirtutils.tryDatabaseConnect(dbenv)
                 self.environment.update(dbenv)
                 self.environment[
                     osetupcons.DBEnv.NEW_DATABASE
-                ] = utils.isNewDatabase()
+                ] = dbovirtutils.isNewDatabase()
             except RuntimeError as e:
                 self.logger.debug(
                     _(

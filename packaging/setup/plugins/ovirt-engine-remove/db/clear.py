@@ -49,9 +49,9 @@ class Plugin(plugin.PluginBase):
         )
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_VALIDATION,
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
     )
-    def _validation(self):
+    def _customization(self):
         if self.environment[
             osetupcons.DBEnv.REMOVE_EMPTY_DATABASE
         ] is None:
@@ -78,20 +78,22 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _misc(self):
-        self.logger.info(
-            _("Clearing database '{database}'").format(
-                database=self.environment[
-                    osetupcons.DBEnv.DATABASE
-                ],
-            ),
-        )
 
         try:
-            utils = database.OvirtUtils(environment=self.environment)
-            utils.tryDatabaseConnect()
-            utils.clearOvirtEngineDatabase()
+            dbovirtutils = database.OvirtUtils(plugin=self)
+            dbovirtutils.tryDatabaseConnect()
+            dbovirtutils.backup()
+            self.logger.info(
+                _("Clearing database '{database}'").format(
+                    database=self.environment[
+                        osetupcons.DBEnv.DATABASE
+                    ],
+                ),
+            )
+            dbovirtutils.clearOvirtEngineDatabase()
 
         except RuntimeError as e:
+            self.logger.debug('exception', exc_info=True)
             self.logger.warning(
                 _(
                     'Cannot connect to database: {error}'

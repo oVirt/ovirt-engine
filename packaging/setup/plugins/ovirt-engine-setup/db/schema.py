@@ -20,8 +20,6 @@
 
 
 import os
-import datetime
-import tempfile
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -41,13 +39,6 @@ class Plugin(plugin.PluginBase):
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_SETUP,
-    )
-    def _setup(self):
-        self.command.detect('psql')
-        self.command.detect('pg_dump')
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
@@ -117,39 +108,8 @@ class Plugin(plugin.PluginBase):
         ],
     )
     def _miscUpgrade(self):
-        fd, backupFile = tempfile.mkstemp(
-            prefix='engine-%s.' % (
-                datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-            ),
-            suffix='.sql',
-            dir=osetupcons.FileLocations.OVIRT_ENGINE_DB_BACKUP_DIR,
-        )
-        os.close(fd)
-
-        self.logger.info(
-            _("Backing up database to '{file}'.").format(
-                file=backupFile,
-            )
-        )
-        self.execute(
-            (
-                self.command.get('pg_dump'),
-                '-E', 'UTF8',
-                '--disable-dollar-quoting',
-                '--disable-triggers',
-                '--format=p',
-                '-U', self.environment[osetupcons.DBEnv.USER],
-                '-h', self.environment[osetupcons.DBEnv.HOST],
-                '-p', str(self.environment[osetupcons.DBEnv.PORT]),
-                '-f', backupFile,
-                self.environment[osetupcons.DBEnv.DATABASE],
-            ),
-            envAppend={
-                'PGPASSFILE': self.environment[
-                    osetupcons.DBEnv.PGPASS_FILE
-                ]
-            },
-        )
+        dbovirtutils = database.OvirtUtils(plugin=self)
+        backupFile = dbovirtutils.backup()
 
         #
         # TODO
@@ -208,25 +168,8 @@ class Plugin(plugin.PluginBase):
             self.logger.warning(_('Rolling back upgrade'))
 
             try:
-                utils = database.OvirtUtils(environment=self.environment)
-                utils.clearOvirtEngineDatabase()
-
-                self.execute(
-                    (
-                        self.command.get('psql'),
-                        '-w',
-                        '-h', self.environment[osetupcons.DBEnv.HOST],
-                        '-p', str(self.environment[osetupcons.DBEnv.PORT]),
-                        '-U', self.environment[osetupcons.DBEnv.USER],
-                        '-d', self.environment[osetupcons.DBEnv.DATABASE],
-                        '-f', backupFile,
-                    ),
-                    envAppend={
-                        'PGPASSFILE': self.environment[
-                            osetupcons.DBEnv.PGPASS_FILE
-                        ]
-                    },
-                )
+                dbovirtutils.clearOvirtEngineDatabase()
+                dbovirtutils.restore(backupfile=backupFile)
             except Exception as e:
                 self.logger.debug(
                     'Exception during database restore',

@@ -258,8 +258,8 @@ class Plugin(plugin.PluginBase):
 
         if hasDatabase and hasUser:
             try:
-                utils = database.OvirtUtils(self.environment)
-                if not utils.isNewDatabase(
+                dbovirtutils = database.OvirtUtils(plugin=self)
+                if not dbovirtutils.isNewDatabase(
                     host='',
                     user='postgres',
                 ):

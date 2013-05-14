@@ -19,9 +19,7 @@
 """Connection plugin."""
 
 
-import os
 import socket
-import tempfile
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -112,6 +110,8 @@ class Plugin(plugin.PluginBase):
         ],
     )
     def _customization(self):
+        dbovirtutils = database.OvirtUtils(plugin=self)
+
         interactive = None in (
             self.environment[osetupcons.DBEnv.HOST],
             self.environment[osetupcons.DBEnv.PORT],
@@ -252,10 +252,9 @@ class Plugin(plugin.PluginBase):
                 osetupcons.DBEnv.DATABASE: db,
             }
 
-            utils = database.OvirtUtils(environment=self.environment)
             if interactive:
                 try:
-                    utils.tryDatabaseConnect(dbenv)
+                    dbovirtutils.tryDatabaseConnect(dbenv)
                     self._checkDbEncoding(dbenv)
                     self.environment.update(dbenv)
                     connectionValid = True
@@ -274,37 +273,9 @@ class Plugin(plugin.PluginBase):
         try:
             self.environment[
                 osetupcons.DBEnv.NEW_DATABASE
-            ] = utils.isNewDatabase()
+            ] = dbovirtutils.isNewDatabase()
         except:
             self.logger.debug('database connection failed', exc_info=True)
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_MISC,
-        name=osetupcons.Stages.DB_CREDENTIALS_AVAILABLE,
-    )
-    def _pgpass(self):
-        fd, pgpass = tempfile.mkstemp(
-            prefix='pgpass',
-            suffix='.tmp',
-        )
-        os.chmod(pgpass, 0o600)
-        with open(pgpass, 'w') as f:
-            f.write(
-                (
-                    '# DB USER credentials.\n'
-                    '{host}:{port}:{database}:{user}:{password}\n'
-                ).format(
-                    host=self.environment[osetupcons.DBEnv.HOST],
-                    port=self.environment[osetupcons.DBEnv.PORT],
-                    database=self.environment[osetupcons.DBEnv.DATABASE],
-                    user=self.environment[osetupcons.DBEnv.USER],
-                    password=self.environment[osetupcons.DBEnv.PASSWORD],
-                ),
-            )
-
-        self.environment[
-            osetupcons.DBEnv.PGPASS_FILE
-        ] = pgpass
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
@@ -329,16 +300,6 @@ class Plugin(plugin.PluginBase):
         ] = database.Statement(
             environment=self.environment,
         )
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_CLEANUP,
-    )
-    def _cleanup(self):
-        f = self.environment[
-            osetupcons.DBEnv.PGPASS_FILE
-        ]
-        if f is not None and os.path.exists(f):
-            os.unlink(f)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

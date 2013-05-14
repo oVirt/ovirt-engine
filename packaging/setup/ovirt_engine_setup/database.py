@@ -16,7 +16,10 @@
 #
 
 
+import os
 import base64
+import tempfile
+import datetime
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -216,11 +219,19 @@ class OvirtUtils(base.Base):
 
     @property
     def environment(self):
-        return self._environment
+        return self._plugin.environment
 
-    def __init__(self, environment):
+    @property
+    def command(self):
+        return self._plugin.command
+
+    def __init__(self, plugin):
         super(OvirtUtils, self).__init__()
-        self._environment = environment
+        self._plugin = plugin
+
+    def detectCommands(self):
+        self.command.detect('pg_dump')
+        self.command.detect('psql')
 
     def tryDatabaseConnect(self, environment=None):
 
@@ -279,7 +290,7 @@ class OvirtUtils(base.Base):
 
     def clearOvirtEngineDatabase(self):
         statement = Statement(
-            environment=self._environment,
+            environment=self.environment,
         )
         try:
             spdrops = statement.execute(
@@ -375,5 +386,67 @@ class OvirtUtils(base.Base):
                 transaction=False,
             )
 
+    def backup(
+        self,
+        prefix='engine',
+    ):
+        fd, backupFile = tempfile.mkstemp(
+            prefix='%s-%s.' % (
+                prefix,
+                datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+            ),
+            suffix='.sql',
+            dir=osetupcons.FileLocations.OVIRT_ENGINE_DB_BACKUP_DIR,
+        )
+        os.close(fd)
+
+        self.logger.info(
+            _("Backing up database to '{file}'.").format(
+                file=backupFile,
+            )
+        )
+        self._plugin.execute(
+            (
+                self.command.get('pg_dump'),
+                '-E', 'UTF8',
+                '--disable-dollar-quoting',
+                '--disable-triggers',
+                '--format=p',
+                '-U', self.environment[osetupcons.DBEnv.USER],
+                '-h', self.environment[osetupcons.DBEnv.HOST],
+                '-p', str(self.environment[osetupcons.DBEnv.PORT]),
+                '-f', backupFile,
+                self.environment[osetupcons.DBEnv.DATABASE],
+            ),
+            envAppend={
+                'PGPASSFILE': self.environment[
+                    osetupcons.DBEnv.PGPASS_FILE
+                ]
+            },
+        )
+
+        return backupFile
+
+    def restore(
+        self,
+        backupFile,
+    ):
+        self.clearOvirtEngineDatabase()
+        self._plugin.execute(
+            (
+                self.command.get('psql'),
+                '-w',
+                '-h', self.environment[osetupcons.DBEnv.HOST],
+                '-p', str(self.environment[osetupcons.DBEnv.PORT]),
+                '-U', self.environment[osetupcons.DBEnv.USER],
+                '-d', self.environment[osetupcons.DBEnv.DATABASE],
+                '-f', backupFile,
+            ),
+            envAppend={
+                'PGPASSFILE': self.environment[
+                    osetupcons.DBEnv.PGPASS_FILE
+                ]
+            },
+        )
 
 # vim: expandtab tabstop=4 shiftwidth=4
