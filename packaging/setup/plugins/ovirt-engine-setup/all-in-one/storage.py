@@ -84,7 +84,7 @@ class Plugin(plugin.PluginBase):
         """
         interactive = self.environment[
             osetupcons.AIOEnv.STORAGE_DOMAIN_DIR
-        ]
+        ] is None
 
         validDomain = False
         while not validDomain:
@@ -96,16 +96,16 @@ class Plugin(plugin.PluginBase):
                     default_dir += '-%s' % (
                         datetime.datetime.utcnow().strftime('%Y%m%d%H%M%S')
                     )
-
-                self.environment[
-                    osetupcons.AIOEnv.STORAGE_DOMAIN_DIR
-                ] = self.dialog.queryString(
-                    name='OVESETUP_AIO_STORAGE_DOMAIN_DIR',
-                    note=_('Local storage domain path [@DEFAULT@]: '),
-                    prompt=True,
-                    caseSensitive=True,
-                    default=default_dir,
-                )
+                if interactive:
+                    self.environment[
+                        osetupcons.AIOEnv.STORAGE_DOMAIN_DIR
+                    ] = self.dialog.queryString(
+                        name='OVESETUP_AIO_STORAGE_DOMAIN_DIR',
+                        note=_('Local storage domain path [@DEFAULT@]: '),
+                        prompt=True,
+                        caseSensitive=True,
+                        default=default_dir,
+                    )
 
                 self._validateDomain(
                     path=self.environment[
