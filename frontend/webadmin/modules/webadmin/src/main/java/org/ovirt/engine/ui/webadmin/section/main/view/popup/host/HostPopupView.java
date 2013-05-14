@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -40,6 +42,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -47,6 +50,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
@@ -96,6 +100,21 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @Path(value = "name.entity")
     @WithElementId("name")
     EntityModelTextBoxEditor nameEditor;
+
+    @UiField
+    @Path(value = "providerSearchFilter.entity")
+    @WithElementId("providerSearchFilter")
+    EntityModelTextBoxEditor providerSearchFilterEditor;
+
+    @UiField(provided = true)
+    @Path(value = "externalHostName.selectedItem")
+    @WithElementId("externalHostName")
+    ListModelListBoxEditor<Object> externalHostNameEditor;
+
+    @UiField(provided = true)
+    @Path(value = "providers.selectedItem")
+    @WithElementId("providers")
+    ListModelListBoxEditor<Object> providersEditor;
 
     @UiField
     @Path(value = "host.entity")
@@ -174,6 +193,11 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @WithElementId("pmSecure")
     EntityModelCheckBoxEditor pmSecureEditor;
 
+    @UiField(provided = true)
+    @Path(value = "externalHostProviderEnabled.entity")
+    @WithElementId("externalHostProviderEnabled")
+    EntityModelCheckBoxEditor externalHostProviderEnabledEditor;
+
     @UiField
     FlowPanel pmSecondaryPanel;
 
@@ -231,6 +255,9 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     UiCommandButton downButton;
 
     @UiField
+    Image updateHostsButton;
+
+    @UiField
     @Ignore
     Label testMessage;
 
@@ -267,8 +294,18 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     EntityModelTextBoxEditor consoleAddress;
 
     @UiField
+    @Path(value = "providerSearchFilterLabel.entity")
+    EntityModelTextBoxEditor providerSearchFilterLabel;
+
+    @UiField
     @Path(value = "consoleAddressEnabled.entity")
     EntityModelCheckBoxEditor consoleAddressEnabled;
+
+    @UiField(provided = true)
+    InfoIcon providerSearchInfoIcon;
+
+    @UiField
+    FlowPanel externalProviderPanel;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -295,10 +332,18 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     private void initInfoIcon(ApplicationConstants constants) {
         consoleAddressInfoIcon =
                 new InfoIcon(applicationTemplates.italicText(constants.enableConsoleAddressOverrideHelpMessage()), resources); //$NON-NLS-1$
+        providerSearchInfoIcon =
+                new InfoIcon(applicationTemplates.italicText(constants.providerSearchInfo()), resources);
     }
 
     private void addStyles() {
         overrideIpTablesEditor.addContentWidgetStyleName(style.overrideIpStyle());
+        externalHostProviderEnabledEditor.addContentWidgetStyleName(style.checkBox());
+        providerSearchFilterEditor.addContentWidgetStyleName(style.searchFilter());
+        providerSearchFilterEditor.setStyleName(style.searchFilterLabel());
+        providerSearchFilterEditor.setLabelStyleName(style.emptyEditor());
+        providerSearchFilterLabel.addContentWidgetStyleName(style.emptyEditor());
+        providerSearchFilterLabel.setStyleName(style.searchFilterLabel());
     }
 
     private void initEditors() {
@@ -314,6 +359,20 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
             @Override
             public String renderNullSafe(Object object) {
                 return ((VDSGroup) object).getname();
+            }
+        });
+
+        externalHostNameEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+            @Override
+            public String renderNullSafe(Object object) {
+                return ((VDS) object).getName();
+            }
+        });
+
+        providersEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+            @Override
+            public String renderNullSafe(Object object) {
+                return ((Provider) object).getName();
             }
         });
 
@@ -340,6 +399,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
 
         // Check boxes
         pmEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        externalHostProviderEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     void localize(ApplicationConstants constants) {
@@ -351,7 +411,9 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         hostAddressEditor.setLabel(constants.hostPopupHostAddressLabel());
         rootPasswordEditor.setLabel(constants.hostPopupRootPasswordLabel());
         overrideIpTablesEditor.setLabel(constants.hostPopupOverrideIpTablesLabel());
-
+        externalHostProviderEnabledEditor.setLabel(constants.hostPopupEnableExternalHostProvider());
+        externalHostNameEditor.setLabel(constants.hostPopupExternalHostName());
+        providerSearchFilterLabel.setLabel(constants.hostPopupProviderSearchFilter());
         // Power Management tab
         powerManagementTab.setLabel(constants.hostPopupPowerManagementTabLabel());
         pmEnabledEditor.setLabel(constants.hostPopupPmEnabledLabel());
@@ -449,6 +511,8 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
             }
         });
 
+        updateHostsButton.setResource(resources.searchButtonImage());
+
         // Bind proxy list.
         object.getPmProxyPreferencesList().getItemsChangedEvent().addListener(new IEventListener() {
             @Override
@@ -525,6 +589,8 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         });
 
         updatePmPanelsVisibility(true);
+
+        externalProviderPanel.setVisible(object.showExternalProviderPanel());
     }
 
     private void updatePmPanelsVisibility(boolean primary) {
@@ -579,6 +645,11 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     }
 
     @Override
+    public HasClickHandlers getUpdateHostsButton() {
+        return updateHostsButton;
+    }
+
+    @Override
     public void showPowerManagement() {
         tabPanel.switchTab(powerManagementTab);
     }
@@ -588,6 +659,14 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         String radioButton();
 
         String overrideIpStyle();
+
+        String checkBox();
+
+        String searchFilter();
+
+        String searchFilterLabel();
+
+        String emptyEditor();
     }
 
 }

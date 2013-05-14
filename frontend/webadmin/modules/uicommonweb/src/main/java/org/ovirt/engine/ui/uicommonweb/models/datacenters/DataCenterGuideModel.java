@@ -51,6 +51,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MoveHost;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.NewHostModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.FcpStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.IStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.IscsiStorageModel;
@@ -1536,7 +1537,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
     public void addHost()
     {
-        HostModel model = new HostModel();
+        HostModel model = new NewHostModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newHostTitle());
         model.setHashName("new_host_guide_me"); //$NON-NLS-1$

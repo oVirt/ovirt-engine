@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -523,7 +522,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             return;
         }
 
-        final HostModel hostModel = new HostModel();
+        final NewHostModel hostModel = new NewHostModel();
         setWindow(hostModel);
         hostModel.setTitle(ConstantsManager.getInstance().getConstants().newHostTitle());
         hostModel.setHashName("new_host"); //$NON-NLS-1$
@@ -674,9 +673,9 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) result;
                 VDS host = (VDS) hostListModel.getSelectedItem();
 
-                final HostModel hostModel = new HostModel();
+                final HostModel hostModel = new EditHostModel();
                 hostListModel.setWindow(hostModel);
-                prepareModelForApproveEdit(host, hostModel, dataCenters, isEditWithPMemphasis);
+                hostModel.updateModelFromVds(host, dataCenters, isEditWithPMemphasis, getSystemTreeSelectedItem());
                 hostModel.setTitle(ConstantsManager.getInstance().getConstants().editHostTitle());
                 hostModel.setHashName("edit_host"); //$NON-NLS-1$
 
@@ -1111,7 +1110,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     public void approve()
     {
         VDS host = (VDS) getSelectedItem();
-        HostModel hostModel = new HostModel();
+        HostModel hostModel = new EditHostModel();
         setWindow(hostModel);
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -1123,7 +1122,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 HostModel innerHostModel = (HostModel) hostListModel.getWindow();
                 ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) result;
                 VDS host = (VDS) hostListModel.getSelectedItem();
-                hostListModel.prepareModelForApproveEdit(host, innerHostModel, dataCenters, false);
+                innerHostModel.updateModelFromVds(host, dataCenters, false, getSystemTreeSelectedItem());
                 innerHostModel.setTitle(ConstantsManager.getInstance().getConstants().editAndApproveHostTitle());
                 innerHostModel.setHashName("edit_and_approve_host"); //$NON-NLS-1$
 
@@ -1138,121 +1137,6 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             }
         };
         AsyncDataProvider.getDataCenterList(_asyncQuery);
-    }
-
-    private void prepareModelForApproveEdit(VDS vds,
-            HostModel model,
-            ArrayList<StoragePool> dataCenters,
-            boolean isEditWithPMemphasis)
-    {
-        model.setHostId(vds.getId());
-        model.getRootPassword().setIsAvailable(false);
-        model.getOverrideIpTables().setIsAvailable(false);
-        model.setSpmPriorityValue(vds.getVdsSpmPriority());
-        model.setOriginalName(vds.getName());
-        model.getName().setEntity(vds.getName());
-        model.getHost().setEntity(vds.getHostName());
-        model.getPort().setEntity(vds.getPort());
-
-        boolean consoleAddressEnabled = vds.getConsoleAddress() != null;
-        model.getConsoleAddressEnabled().setEntity(consoleAddressEnabled);
-        model.getConsoleAddress().setEntity(vds.getConsoleAddress());
-        model.getConsoleAddress().setIsChangable(consoleAddressEnabled);
-
-        if (vds.getStatus() != VDSStatus.InstallFailed)
-        {
-            model.getHost().setIsChangable(false);
-        }
-
-        // Set primary PM parameters.
-        model.getManagementIp().setEntity(vds.getManagementIp());
-        model.getPmUserName().setEntity(vds.getPmUser());
-        model.getPmPassword().setEntity(vds.getPmPassword());
-        model.getPmType().setSelectedItem(vds.getPmType());
-        model.setPmOptionsMap(VdsStatic.PmOptionsStringToMap(vds.getPmOptions()).asMap());
-
-        // Set secondary PM parameters.
-        model.getPmSecondaryIp().setEntity(vds.getPmSecondaryIp());
-        model.getPmSecondaryUserName().setEntity(vds.getPmSecondaryUser());
-        model.getPmSecondaryPassword().setEntity(vds.getPmSecondaryPassword());
-        model.getPmSecondaryType().setSelectedItem(vds.getPmSecondaryType());
-        model.setPmSecondaryOptionsMap(vds.getPmSecondaryOptionsMap().asMap());
-
-        // Set other PM parameters.
-        if (isEditWithPMemphasis) {
-            model.setIsPowerManagementTabSelected(true);
-            model.getIsPm().setEntity(true);
-            model.getIsPm().setIsChangable(false);
-        } else {
-            model.getIsPm().setEntity(vds.getpm_enabled());
-        }
-
-        model.getPmSecondaryConcurrent().setEntity(vds.isPmSecondaryConcurrent());
-
-
-        if (dataCenters != null)
-        {
-            model.getDataCenter().setItems(dataCenters);
-            model.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters,
-                    new Linq.DataCenterPredicate(vds.getStoragePoolId())));
-            if (model.getDataCenter().getSelectedItem() == null) {
-                model.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters));
-            }
-        }
-
-        ArrayList<VDSGroup> clusters;
-        if (model.getCluster().getItems() == null)
-        {
-            VDSGroup tempVar = new VDSGroup();
-            tempVar.setname(vds.getVdsGroupName());
-            tempVar.setId(vds.getVdsGroupId());
-            tempVar.setcompatibility_version(vds.getVdsGroupCompatibilityVersion());
-            model.getCluster()
-                    .setItems(new ArrayList<VDSGroup>(Arrays.asList(new VDSGroup[] { tempVar })));
-        }
-        clusters = (ArrayList<VDSGroup>) model.getCluster().getItems();
-        model.getCluster().setSelectedItem(Linq.firstOrDefault(clusters,
-                new Linq.ClusterPredicate(vds.getVdsGroupId())));
-        if (model.getCluster().getSelectedItem() == null)
-        {
-            model.getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
-        }
-
-        if (vds.getStatus() != VDSStatus.Maintenance && vds.getStatus() != VDSStatus.PendingApproval)
-        {
-            model.getDataCenter()
-                    .setChangeProhibitionReason("Data Center can be changed only when the Host is in Maintenance mode."); //$NON-NLS-1$
-            model.getDataCenter().setIsChangable(false);
-            model.getCluster()
-                    .setChangeProhibitionReason("Cluster can be changed only when the Host is in Maintenance mode."); //$NON-NLS-1$
-            model.getCluster().setIsChangable(false);
-        }
-        else if (getSystemTreeSelectedItem() != null)
-        {
-            switch (getSystemTreeSelectedItem().getType())
-            {
-            case Host:
-                model.getName().setIsChangable(false);
-                model.getName().setInfo("Cannot edit Host's Name in this tree context"); //$NON-NLS-1$
-                break;
-            case Hosts:
-            case Cluster:
-            case Cluster_Gluster:
-                model.getCluster().setIsChangable(false);
-                model.getCluster().setInfo("Cannot change Host's Cluster in tree context"); //$NON-NLS-1$
-                model.getDataCenter().setIsChangable(false);
-                break;
-            case DataCenter:
-                StoragePool selectDataCenter = (StoragePool) getSystemTreeSelectedItem().getEntity();
-                model.getDataCenter()
-                        .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { selectDataCenter })));
-                model.getDataCenter().setSelectedItem(selectDataCenter);
-                model.getDataCenter().setIsChangable(false);
-                break;
-            default:
-                break;
-            }
-        }
     }
 
     public void onApprove()

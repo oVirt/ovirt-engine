@@ -1,13 +1,17 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetNewVdsFenceStatusParameters;
@@ -27,6 +31,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.validation.BaseI18NValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.HostAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -41,7 +46,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class HostModel extends Model
+public abstract class HostModel extends Model
 {
 
     public static final int HostNameMaxLength = 255;
@@ -62,6 +67,18 @@ public class HostModel extends Model
     private void setTestCommand(UICommand value)
     {
         privateTestCommand = value;
+    }
+
+    private UICommand privateUpdateHostsCommand;
+
+    public UICommand getUpdateHostsCommand()
+    {
+        return privateUpdateHostsCommand;
+    }
+
+    private void setUpdateHostsCommand(UICommand value)
+    {
+        privateUpdateHostsCommand = value;
     }
 
     public boolean getIsNew()
@@ -103,6 +120,30 @@ public class HostModel extends Model
     private void setName(EntityModel value)
     {
         privateName = value;
+    }
+
+    private EntityModel privateProviderSearchFilterLabel;
+
+    public EntityModel getProviderSearchFilterLabel()
+    {
+        return privateProviderSearchFilterLabel;
+    }
+
+    private void setProviderSearchFilterLabel(EntityModel value)
+    {
+        privateProviderSearchFilterLabel = value;
+    }
+
+    private EntityModel privateProviderSearchFilter;
+
+    public EntityModel getProviderSearchFilter()
+    {
+        return privateProviderSearchFilter;
+    }
+
+    private void setProviderSearchFilter(EntityModel value)
+    {
+        privateProviderSearchFilter = value;
     }
 
     private EntityModel privateHost;
@@ -577,6 +618,40 @@ public class HostModel extends Model
         spmPriority = value;
     }
 
+    private ListModel privateExternalHostName;
+
+    public ListModel getExternalHostName()
+    {
+        return privateExternalHostName;
+    }
+
+    protected void setExternalHostName(ListModel value)
+    {
+        privateExternalHostName = value;
+    }
+
+    private EntityModel externalHostProviderEnabled;
+
+    public EntityModel getExternalHostProviderEnabled() {
+        return externalHostProviderEnabled;
+    }
+
+    public void setExternalHostProviderEnabled(EntityModel externalHostProviderEnabled) {
+        this.externalHostProviderEnabled = externalHostProviderEnabled;
+    }
+
+    private ListModel privateProviders;
+
+    public ListModel getProviders()
+    {
+        return privateProviders;
+    }
+
+    protected void setProviders(ListModel value)
+    {
+        privateProviders = value;
+    }
+
     public HostModel()
     {
         setTestCommand(new UICommand("Test", new ICommandTarget() { //$NON-NLS-1$
@@ -588,6 +663,17 @@ public class HostModel extends Model
             @Override
             public void executeCommand(UICommand uiCommand, Object... parameters) {
                 test();
+            }
+        }));
+        setUpdateHostsCommand(new UICommand("", new ICommandTarget() { //$NON-NLS-1$
+            @Override
+            public void executeCommand(UICommand command) {
+                updateHosts();
+            }
+
+            @Override
+            public void executeCommand(UICommand uiCommand, Object... parameters) {
+                updateHosts();
             }
         }));
         setProxyUpCommand(new UICommand("Up", new ICommandTarget() {    //$NON-NLS-1$
@@ -625,7 +711,6 @@ public class HostModel extends Model
         setOverrideIpTables(new EntityModel());
         getOverrideIpTables().setEntity(false);
 
-
         IEventListener pmListener = new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
@@ -633,6 +718,17 @@ public class HostModel extends Model
             }
         };
 
+        setExternalHostName(new ListModel());
+        getExternalHostName().setIsAvailable(false);
+        setExternalHostProviderEnabled(new EntityModel());
+        getExternalHostProviderEnabled().setIsAvailable(false);
+        setProviders(new ListModel());
+        getProviders().setIsAvailable(false);
+        setProviderSearchFilter(new EntityModel());
+        getProviderSearchFilter().setIsAvailable(false);
+        setProviderSearchFilterLabel(new EntityModel());
+        getProviderSearchFilterLabel().setIsAvailable(false);
+        getUpdateHostsCommand().setIsExecutionAllowed(false);
         // Initialize primary PM fields.
         setManagementIp(new EntityModel());
         setPmUserName(new EntityModel());
@@ -1265,4 +1361,115 @@ public class HostModel extends Model
     private boolean isEntityModelEmpty(EntityModel model) {
         return !(model.getEntity() != null && !model.getEntity().equals(""));
     }
+
+    public void updateModelFromVds(VDS vds,
+            ArrayList<StoragePool> dataCenters,
+            boolean isEditWithPMemphasis,
+            SystemTreeItemModel selectedSystemTreeItem)
+    {
+        setHostId(vds.getId());
+        getRootPassword().setIsAvailable(showInstallationProperties());
+        getOverrideIpTables().setIsAvailable(showInstallationProperties());
+        setSpmPriorityValue(vds.getVdsSpmPriority());
+        setOriginalName(vds.getName());
+        getName().setEntity(vds.getName());
+        getHost().setEntity(vds.getHostName());
+        setHostPort(vds);
+        boolean consoleAddressEnabled = vds.getConsoleAddress() != null;
+        getConsoleAddressEnabled().setEntity(consoleAddressEnabled);
+        getConsoleAddress().setEntity(vds.getConsoleAddress());
+        getConsoleAddress().setIsChangable(consoleAddressEnabled);
+
+        setAllowChangeHost(vds);
+
+        // Set primary PM parameters.
+        getManagementIp().setEntity(vds.getManagementIp());
+        getPmUserName().setEntity(vds.getPmUser());
+        getPmPassword().setEntity(vds.getPmPassword());
+        getPmType().setSelectedItem(vds.getPmType());
+        setPmOptionsMap(VdsStatic.PmOptionsStringToMap(vds.getPmOptions()).asMap());
+
+        // Set secondary PM parameters.
+        getPmSecondaryIp().setEntity(vds.getPmSecondaryIp());
+        getPmSecondaryUserName().setEntity(vds.getPmSecondaryUser());
+        getPmSecondaryPassword().setEntity(vds.getPmSecondaryPassword());
+        getPmSecondaryType().setSelectedItem(vds.getPmSecondaryType());
+        setPmSecondaryOptionsMap(vds.getPmSecondaryOptionsMap().asMap());
+
+        // Set other PM parameters.
+        if (isEditWithPMemphasis) {
+            setIsPowerManagementTabSelected(true);
+            getIsPm().setEntity(true);
+            getIsPm().setIsChangable(false);
+        } else {
+            getIsPm().setEntity(vds.getpm_enabled());
+        }
+
+        getPmSecondaryConcurrent().setEntity(vds.isPmSecondaryConcurrent());
+
+        updateModelDataCenterFromVds(dataCenters, vds);
+
+        ArrayList<VDSGroup> clusters;
+        if (getCluster().getItems() == null)
+        {
+            VDSGroup tempVar = new VDSGroup();
+            tempVar.setname(vds.getVdsGroupName());
+            tempVar.setId(vds.getVdsGroupId());
+            tempVar.setcompatibility_version(vds.getVdsGroupCompatibilityVersion());
+            getCluster()
+                    .setItems(new ArrayList<VDSGroup>(Arrays.asList(new VDSGroup[] { tempVar })));
+        }
+        clusters = (ArrayList<VDSGroup>) getCluster().getItems();
+        updateModelClusterFromVds(clusters, vds);
+        if (getCluster().getSelectedItem() == null)
+        {
+            getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
+        }
+
+        if (vds.getStatus() != VDSStatus.Maintenance && vds.getStatus() != VDSStatus.PendingApproval) {
+            setAllowChangeHostPlacementPropertiesWhenNotInMaintenance();
+        }
+        else if (selectedSystemTreeItem != null)
+        {
+            switch (selectedSystemTreeItem.getType())
+            {
+            case Host:
+                getName().setIsChangable(false);
+                getName().setInfo("Cannot edit Host's Name in this tree context"); //$NON-NLS-1$
+                break;
+            case Hosts:
+            case Cluster:
+            case Cluster_Gluster:
+                getCluster().setIsChangable(false);
+                getCluster().setInfo("Cannot change Host's Cluster in tree context"); //$NON-NLS-1$
+                getDataCenter().setIsChangable(false);
+                break;
+            case DataCenter:
+                StoragePool selectDataCenter = (StoragePool) selectedSystemTreeItem.getEntity();
+                getDataCenter()
+                        .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { selectDataCenter })));
+                getDataCenter().setSelectedItem(selectDataCenter);
+                getDataCenter().setIsChangable(false);
+                break;
+            default:
+                break;
+            }
+        }
+    }
+
+    protected abstract boolean showInstallationProperties();
+
+    public abstract boolean showExternalProviderPanel();
+
+    protected abstract void updateModelDataCenterFromVds(ArrayList<StoragePool> dataCenters, VDS vds);
+
+    protected abstract void updateModelClusterFromVds(ArrayList<VDSGroup> clusters, VDS vds);
+
+    protected abstract void setAllowChangeHost(VDS vds);
+
+    protected abstract void setAllowChangeHostPlacementPropertiesWhenNotInMaintenance();
+
+    protected abstract void updateHosts();
+
+    protected abstract void setHostPort(VDS vds);
 }

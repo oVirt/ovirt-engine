@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
@@ -68,6 +69,7 @@ import org.ovirt.engine.core.common.queries.GetDataCentersWithPermittedActionOnC
 import org.ovirt.engine.core.common.queries.GetDomainListParameters;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
 import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParameters;
+import org.ovirt.engine.core.common.queries.GetHostListFromExternalProviderParameters;
 import org.ovirt.engine.core.common.queries.GetImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
 import org.ovirt.engine.core.common.queries.GetPermittedStorageDomainsByStoragePoolIdParameters;
@@ -2470,6 +2472,36 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.GetAllSiblingVlanInterfaces,
                 new InterfaceAndIdQueryParameters(vdsID, iface), aQuery);
 
+    }
+
+    public static void GetExternalProviderHostList(AsyncQuery aQuery, Guid providerId, boolean filterOutExistingHosts, String searchFilter) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                if (source == null)
+                {
+                    return new ArrayList<VDS>();
+                }
+                return source;
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.GetHostListFromExternalProvider, new GetHostListFromExternalProviderParameters(providerId, filterOutExistingHosts, searchFilter), aQuery);
+    }
+
+    public static void GetAllProviders(AsyncQuery aQuery) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                if (source == null)
+                {
+                    return new ArrayList<Provider>();
+                }
+                return source;
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.GetAllProviders, new VdcQueryParametersBase(), aQuery);
     }
 
     private static void getAllChildVlanInterfaces(Guid vdsID, List<VdsNetworkInterface> ifaces, IFrontendMultipleQueryAsyncCallback callback)

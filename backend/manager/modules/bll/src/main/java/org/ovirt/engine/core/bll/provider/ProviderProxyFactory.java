@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.provider;
 
+import org.ovirt.engine.core.bll.host.provider.foreman.ForemanHostProviderProxy;
 import org.ovirt.engine.core.common.businessentities.Provider;
 
 /**
@@ -21,7 +22,7 @@ public class ProviderProxyFactory {
      * @return The proxy for communicating with the provider
      */
     public <P extends ProviderProxy> P create(Provider provider) {
-        return (P) null;
+        return (P) new ForemanHostProviderProxy(provider);
     }
 
     /**

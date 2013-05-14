@@ -28,6 +28,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.GuideModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MoveHost;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.NewHostModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -372,7 +373,7 @@ public class ClusterGuideModel extends GuideModel
 
     public void addHost()
     {
-        HostModel model = new HostModel();
+        HostModel model = new NewHostModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newHostTitle());
         model.setHashName("new_host"); //$NON-NLS-1$

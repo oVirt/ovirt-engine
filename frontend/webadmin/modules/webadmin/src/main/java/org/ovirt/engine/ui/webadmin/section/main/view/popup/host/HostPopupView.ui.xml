@@ -27,6 +27,15 @@
             margin: 10px 5px;
         }
 
+        .filterLabel {
+            padding: 0 5px;
+            padding-top: 10px;
+        }
+
+        .filterIcon {
+            display: inline-block;
+        }
+
         .headerLabel {
             font-weight: bold;
             margin-top: 10px;
@@ -100,9 +109,50 @@
             float: right;
             width: 230px;
         }
+
+        .checkBox .gwt-CheckBox{
+            padding: 0px !important;
+            border-width: 0px !important;
+        }
+
+        .checkBox {
+            padding: 0px;
+        }
+
+        .searchButton {
+            padding-bottom: 5px;
+            display: inline-block;
+        }
+
+        .searchFilter {
+            width: 197px;
+            display: inline-block;
+            padding-left: 0px;
+        }
+
+        .searchPanel {
+            display: inline-block;
+            float: right;
+            line-height: 30px;
+            padding-bottom: 0;
+            padding-left: 5px;
+            padding-right: 5px;
+            padding-top: 0;
+            width: 230px;
+            height: 30px;
+        }
+
+        .searchFilterLabel {
+            display: inline-block;
+        }
+
+        .emptyEditor {
+            display: none;
+        }
+
     </ui:style>
 
-    <d:SimpleDialogPanel width="650px" height="500px">
+    <d:SimpleDialogPanel width="700px" height="500px">
         <d:content>
             <t:DialogTabPanel ui:field="tabPanel" height="100%">
                 <t:tab>
@@ -112,6 +162,25 @@
                                 <g:FlowPanel addStyleNames="{style.generalTabTopDecorator}">
                                     <e:ListModelListBoxEditor ui:field="dataCenterEditor"/>
                                     <e:ListModelListBoxEditor ui:field="clusterEditor"/>
+                                </g:FlowPanel>
+                                <g:FlowPanel ui:field="externalProviderPanel" addStyleNames="{style.generalTabTopDecorator}">
+                                    <g:HorizontalPanel width="100%">
+                                      <e:EntityModelCheckBoxEditor ui:field="externalHostProviderEnabledEditor"/>
+                                      <e:ListModelListBoxEditor ui:field="providersEditor"/>
+                                    </g:HorizontalPanel>
+                                    <g:FlowPanel width="100%">
+                                        <g:FlowPanel addStyleNames="{style.filterIcon}">
+                                          <e:EntityModelTextBoxEditor ui:field="providerSearchFilterLabel"/>
+                                          <d:InfoIcon ui:field="providerSearchInfoIcon" addStyleNames="{style.filterIcon}"/>
+                                        </g:FlowPanel>
+                                        <g:FlowPanel addStyleNames="{style.searchPanel}">
+                                           <g:HorizontalPanel verticalAlignment="middle">
+                                             <e:EntityModelTextBoxEditor ui:field="providerSearchFilterEditor"/>
+                                             <g:Image ui:field="updateHostsButton"/>
+                                           </g:HorizontalPanel>
+                                        </g:FlowPanel>
+                                    </g:FlowPanel>
+                                    <e:ListModelListBoxEditor ui:field="externalHostNameEditor"/>
                                 </g:FlowPanel>
                                 <e:EntityModelTextBoxEditor ui:field="nameEditor"/>
                                 <e:EntityModelTextBoxEditor ui:field="hostAddressEditor"/>

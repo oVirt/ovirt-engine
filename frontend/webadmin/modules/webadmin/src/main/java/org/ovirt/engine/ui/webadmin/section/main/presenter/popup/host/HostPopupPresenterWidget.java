@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
@@ -18,6 +19,7 @@ public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWi
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<HostModel> {
 
         HasUiCommandClickHandlers getTestButton();
+        HasClickHandlers getUpdateHostsButton();
 
         /**
          * Switch to the power management tab.
@@ -36,6 +38,7 @@ public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWi
         super.init(model);
 
         addTestButtonListener();
+        addUpdateHostsListener(model);
         addPowerManagementListener(model);
 
     }
@@ -65,4 +68,14 @@ public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWi
             }
         }));
     }
+
+    private void addUpdateHostsListener(final HostModel model) {
+        registerHandler(getView().getUpdateHostsButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                model.getUpdateHostsCommand().execute();
+            }
+        }));
+    }
+
 }

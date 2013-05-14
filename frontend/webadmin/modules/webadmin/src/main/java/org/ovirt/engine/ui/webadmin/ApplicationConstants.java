@@ -397,6 +397,18 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Automatically configure host firewall")
     String hostPopupOverrideIpTablesLabel();
 
+    @DefaultStringValue("Show External Providers")
+    String hostPopupEnableExternalHostProvider();
+
+    @DefaultStringValue("External Hosts")
+    String hostPopupExternalHostName();
+
+    @DefaultStringValue("Update Hosts")
+    String hostPopupUpdateHosts();
+
+    @DefaultStringValue("Provider search filter")
+    String hostPopupProviderSearchFilter();
+
     @DefaultStringValue("Enable Power Management")
     String hostPopupPmEnabledLabel();
 
@@ -2292,6 +2304,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("If after changing the networks configuration the connectivity from the Host to the Engine is lost, changes are rolled back .")
     String checkConnectivityInfoPart2();
+
+    @DefaultStringValue("Provider specific search. Check provider documentation for more information. Empty filter returns all hosts .")
+    String providerSearchInfo();
 
     @DefaultStringValue("Changes done to the Networking configuration are temporary until explicitly saved.")
     String commitChangesInfoPart1();
