@@ -8,6 +8,7 @@ import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.model.DiskStatus;
 import org.ovirt.engine.api.model.Quota;
+import org.ovirt.engine.api.model.ScsiGenericIO;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
@@ -67,6 +68,12 @@ public class DiskMapper {
         }
         if (disk.isSetLunStorage()) {
             ((LunDisk)engineDisk).setLun(StorageLogicalUnitMapper.map(disk.getLunStorage(), null));
+            if (disk.isSetSgio() && engineDisk.getDiskInterface() == map(DiskInterface.VIRTIO_SCSI, null)) {
+                ScsiGenericIO scsiGenericIO = ScsiGenericIO.fromValue(disk.getSgio());
+                if (scsiGenericIO != null) {
+                    engineDisk.setSgio(map(scsiGenericIO, null));
+                }
+            }
         } else {
             mapDiskToDiskImageProperties(disk, (DiskImage) engineDisk);
         }
@@ -139,6 +146,9 @@ public class DiskMapper {
             mapDiskImageToDiskFields((DiskImage) entity, model);
         } else {
             model.setLunStorage(StorageLogicalUnitMapper.map(((LunDisk) entity).getLun(), new Storage()));
+            if (entity.getSgio() != null && entity.getDiskInterface() == map(DiskInterface.VIRTIO_SCSI, null)) {
+                model.setSgio(map(entity.getSgio(), null));
+            }
         }
         return model;
     }
@@ -208,6 +218,8 @@ public class DiskMapper {
             return org.ovirt.engine.core.common.businessentities.DiskInterface.IDE;
         case VIRTIO:
             return org.ovirt.engine.core.common.businessentities.DiskInterface.VirtIO;
+        case VIRTIO_SCSI:
+            return org.ovirt.engine.core.common.businessentities.DiskInterface.VirtIO_SCSI;
         default:
             return null;
         }
@@ -220,6 +232,34 @@ public class DiskMapper {
             return DiskInterface.IDE.value();
         case VirtIO:
             return DiskInterface.VIRTIO.value();
+        case VirtIO_SCSI:
+            return DiskInterface.VIRTIO_SCSI.value();
+        default:
+            return null;
+        }
+    }
+
+    @Mapping(from = ScsiGenericIO.class, to = org.ovirt.engine.core.common.businessentities.ScsiGenericIO.class)
+    public static org.ovirt.engine.core.common.businessentities.ScsiGenericIO map(
+            ScsiGenericIO scsiGenericIO,
+            org.ovirt.engine.core.common.businessentities.ScsiGenericIO template) {
+        switch (scsiGenericIO) {
+        case FILTERED:
+            return org.ovirt.engine.core.common.businessentities.ScsiGenericIO.FILTERED;
+        case UNFILTERED:
+            return org.ovirt.engine.core.common.businessentities.ScsiGenericIO.UNFILTERED;
+        default:
+            return null;
+        }
+    }
+
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.ScsiGenericIO.class, to = String.class)
+    public static String map(org.ovirt.engine.core.common.businessentities.ScsiGenericIO scsiGenericIO, String template) {
+        switch (scsiGenericIO) {
+        case FILTERED:
+            return ScsiGenericIO.FILTERED.value();
+        case UNFILTERED:
+            return ScsiGenericIO.UNFILTERED.value();
         default:
             return null;
         }

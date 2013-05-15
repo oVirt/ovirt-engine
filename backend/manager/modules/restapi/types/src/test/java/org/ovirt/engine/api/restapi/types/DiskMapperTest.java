@@ -8,6 +8,7 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.model.DiskStatus;
+import org.ovirt.engine.api.model.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 
 public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImage, DiskImage> {
@@ -20,6 +21,7 @@ public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImag
     protected Disk postPopulate(Disk model) {
         model.setFormat(MappingTestHelper.shuffle(DiskFormat.class).value());
         model.setInterface(MappingTestHelper.shuffle(DiskInterface.class).value());
+        model.setSgio(MappingTestHelper.shuffle(ScsiGenericIO.class).value());
         model.setStatus(StatusUtils.create(MappingTestHelper.shuffle(DiskStatus.class)));
         model.setLunStorage(null);
         return model;

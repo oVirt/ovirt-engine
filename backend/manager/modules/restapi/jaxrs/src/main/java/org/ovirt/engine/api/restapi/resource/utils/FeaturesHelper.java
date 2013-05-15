@@ -53,6 +53,7 @@ public class FeaturesHelper {
         if (VersionUtils.greaterOrEqual(version, BackendCapabilitiesResource.VERSION_3_3)) {
             addFeatureVmApplications(features);
             addFeatureVnicCustomProperties(features);
+            addFeatureVirtioScsi(features);
         }
         return features;
     }
@@ -237,6 +238,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("VM NIC Custom Properties");
         feature.setDescription("Ability to add custom properties to vm nic.");
+        features.getFeature().add(feature);
+    }
+
+    private void addFeatureVirtioScsi(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Virtio-SCSI Support");
+        feature.setDescription("Support for paravirtualized SCSI controller device.");
         features.getFeature().add(feature);
     }
 }

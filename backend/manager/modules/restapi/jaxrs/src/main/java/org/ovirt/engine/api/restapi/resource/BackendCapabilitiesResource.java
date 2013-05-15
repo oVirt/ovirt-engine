@@ -62,6 +62,8 @@ import org.ovirt.engine.api.model.ReportedDeviceType;
 import org.ovirt.engine.api.model.ReportedDeviceTypes;
 import org.ovirt.engine.api.model.SchedulingPolicies;
 import org.ovirt.engine.api.model.SchedulingPolicyType;
+import org.ovirt.engine.api.model.ScsiGenericIO;
+import org.ovirt.engine.api.model.ScsiGenericIoOptions;
 import org.ovirt.engine.api.model.StorageDomainStates;
 import org.ovirt.engine.api.model.StorageDomainStatus;
 import org.ovirt.engine.api.model.StorageDomainType;
@@ -211,6 +213,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addReportedDeviceTypes(version, ReportedDeviceType.values());
         addIpVersions(version, IpVersion.values());
         addCpuModes(version, CpuMode.values());
+        addScsiGenericIoOptions(version, ScsiGenericIO.values());
 
         version.setFeatures(featuresHelper.getFeatures(v));
 
@@ -231,6 +234,15 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
             version.setCpuModes(new CpuModes());
             for (CpuMode mode : values) {
                 version.getCpuModes().getCpuModes().add(mode.value());
+            }
+        }
+    }
+
+    private void addScsiGenericIoOptions(VersionCaps version, ScsiGenericIO[] values) {
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_3)) {
+            version.setSgioOptions(new ScsiGenericIoOptions());
+            for (ScsiGenericIO mode : values) {
+                version.getSgioOptions().getScsiGenericIoOptions().add(mode.value());
             }
         }
     }

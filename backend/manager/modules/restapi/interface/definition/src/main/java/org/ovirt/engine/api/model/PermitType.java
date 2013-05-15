@@ -94,6 +94,7 @@ public enum PermitType {
     EDIT_DISK_PROPERTIES,
     CONFIGURE_DISK_STORAGE,
     DELETE_DISK,
+    CONFIGURE_SCSI_GENERIC_IO,
 
     // Vm Interface action groups
     PORT_MIRRORING,

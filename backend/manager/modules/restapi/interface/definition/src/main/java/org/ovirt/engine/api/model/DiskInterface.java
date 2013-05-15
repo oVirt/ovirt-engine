@@ -17,7 +17,7 @@
 package org.ovirt.engine.api.model;
 
 public enum DiskInterface {
-    IDE, VIRTIO;
+    IDE, VIRTIO_SCSI, VIRTIO;
 
     public String value() {
         return name().toLowerCase();

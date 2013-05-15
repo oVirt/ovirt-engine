@@ -367,6 +367,7 @@ actions:
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
+          disk.sgio: xs:string
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -397,6 +398,7 @@ actions:
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
+          disk.sgio: xs:string
           disk.storage_domains.storage_domain--COLLECTION: {storage_domain.id|name: 'xs:string'}
       - mandatoryArguments: {disk.id: 'xs:string'}
         optionalArguments: {disk.active: 'xs:boolean'}
@@ -753,6 +755,7 @@ actions:
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
+          disk.sgio: xs:string
           disk.storage_domains.storage_domain--COLLECTION: {storage_domain.id|name: 'xs:string'}
     urlparams: {}
     headers:
@@ -3102,6 +3105,7 @@ actions:
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
+          disk.sgio: xs:string
     urlparams:
       unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
@@ -3161,6 +3165,7 @@ actions:
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
+          disk.sgio: xs:string
     urlparams:
       unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:

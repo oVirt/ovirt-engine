@@ -168,6 +168,8 @@ public class PermitMapper {
             return PermitType.INJECT_EXTERNAL_EVENTS;
         case MANIPULATE_GLUSTER_SERVICE:
             return PermitType.MANIPULATE_GLUSTER_SERVICE;
+        case CONFIGURE_SCSI_GENERIC_IO:
+            return PermitType.CONFIGURE_SCSI_GENERIC_IO;
         default:
             return null;
         }
@@ -300,6 +302,8 @@ public class PermitMapper {
             return ActionGroup.DELETE_STORAGE_POOL_NETWORK;
         case ASSIGN_CLUSTER_NETWORK:
             return ActionGroup.ASSIGN_CLUSTER_NETWORK;
+        case CONFIGURE_SCSI_GENERIC_IO:
+            return ActionGroup.CONFIGURE_SCSI_GENERIC_IO;
         default:
             return null;
         }

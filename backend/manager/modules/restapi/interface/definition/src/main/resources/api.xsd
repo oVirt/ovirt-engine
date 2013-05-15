@@ -583,6 +583,7 @@
           <xs:element ref="nfs_versions" minOccurs="0"/>
           <xs:element ref="pm_proxy_types" minOccurs="0"/>
           <xs:element ref="cpu_modes" minOccurs="0"/>
+          <xs:element ref="sgio_options" minOccurs="0"/>
 
           <!-- Gluster related -->
           <xs:element ref="gluster_volume_types" minOccurs="0"/>
@@ -898,6 +899,20 @@
         <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="CpuModes"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="sgio_options" type="ScsiGenericIoOptions"/>
+
+  <xs:complexType name="ScsiGenericIoOptions">
+    <xs:sequence>
+      <xs:element name="sgio_options" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="ScsiGenericIoOptions"/>
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
@@ -2441,6 +2456,7 @@
           <xs:element name="active" type="xs:boolean" minOccurs="0"/>
           <xs:element ref="quota" minOccurs="0" maxOccurs="1"/>
           <xs:element name="lun_storage" type="Storage" minOccurs="0"/>
+          <xs:element name="sgio" type="xs:string" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
