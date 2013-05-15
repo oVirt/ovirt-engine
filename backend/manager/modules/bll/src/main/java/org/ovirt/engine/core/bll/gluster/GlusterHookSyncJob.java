@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
+import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHookVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -76,6 +77,7 @@ public class GlusterHookSyncJob extends GlusterJob {
 
         try {
             List<GlusterHookEntity> existingHooks = getHooksDao().getByClusterId(clusterId);
+            List<Callable<Pair<GlusterHookEntity, VDSReturnValue>>> contentTasksList = new ArrayList<Callable<Pair<GlusterHookEntity,VDSReturnValue>>>();
 
             Map<String, GlusterHookEntity> existingHookMap = new HashMap<String,GlusterHookEntity>();
             Map<Guid, Set<VDS>> existingHookServersMap = new HashMap<Guid,Set<VDS>>();
@@ -97,7 +99,7 @@ public class GlusterHookSyncJob extends GlusterJob {
 
 
             for (Pair<VDS, VDSReturnValue> pairResult : pairResults) {
-                VDS server = pairResult.getFirst();
+                final VDS server = pairResult.getFirst();
                 upServers.add(server);
 
                 if (!pairResult.getSecond().getSucceeded()) {
@@ -158,7 +160,9 @@ public class GlusterHookSyncJob extends GlusterJob {
                             newHook.setId(Guid.NewGuid());
                             log.infoFormat("Detected new hook {0} in server {1}, adding to engine hooks", key,server);
                             logMessage(clusterId, key, AuditLogType.GLUSTER_HOOK_ADDED);
-                            //for new hook we need to fetch content as well -TBD: in another patch
+
+                            updateContentTasksList(contentTasksList, newHook, server);
+
                             existingHookServersMap.put(newHook.getId(),new HashSet<VDS>());
                         }
                         Integer conflictStatus = getConflictStatus(newHook, fetchedHook);
@@ -173,9 +177,7 @@ public class GlusterHookSyncJob extends GlusterJob {
             }
 
             //Save new hooks
-            for (GlusterHookEntity hook: newHookMap.values()) {
-                getHooksDao().save(hook);
-            }
+            saveNewHooks(newHookMap, contentTasksList);
 
             //Add new server hooks
             for (GlusterServerHook serverHook: newServerHooks) {
@@ -187,44 +189,7 @@ public class GlusterHookSyncJob extends GlusterJob {
                 getHooksDao().updateGlusterServerHook(serverHook);
             }
 
-            //Add missing conflicts for hooks that are missing on any one of the servers
-            for (Guid hookId: existingHookServersMap.keySet()) {
-                if (existingHookServersMap.get(hookId).size() == upServers.size()) {
-                    //hook is present in all of the servers. Nothing to do
-                    continue;
-                }
-                //Get servers on which the hooks are missing.
-                Set<VDS> hookMissingServers = new HashSet<VDS>(upServers);
-                hookMissingServers.removeAll(existingHookServersMap.get(hookId));
-
-                for (VDS missingServer : hookMissingServers) {
-                    GlusterServerHook missingServerHook = new GlusterServerHook();
-                    missingServerHook.setHookId(hookId);
-                    missingServerHook.setServerId(missingServer.getId());
-                    missingServerHook.setStatus(GlusterHookStatus.MISSING);
-                    getHooksDao().saveOrUpdateGlusterServerHook(missingServerHook);
-                }
-                //get the hook from database, as we don't have the hookkey for it
-                GlusterHookEntity hookEntity = getHooksDao().getById(hookId);
-                if (existingHookMap.get(hookEntity.getHookKey()) != null) {
-                    //if it was an already existing hook, get the hook with
-                    //updated conflict values from map
-                    hookEntity = existingHookMap.get(hookEntity.getHookKey());
-                }
-                hookEntity.addMissingConflict();
-                existingHookMap.put(hookEntity.getHookKey(), hookEntity);
-            }
-
-            //Update conflict status for existing hooks
-            for (GlusterHookEntity hook: existingHookMap.values()) {
-                // Check if aggregated conflict status is different from existing hook
-                Integer oldConflictStatus = existingHookConflictMap.get(hook.getHookKey());
-                if (!(hook.getConflictStatus().equals(oldConflictStatus))) {
-                    log.debugFormat("Conflict change detected for hook {0} in cluster {1} ", hook.getHookKey(),clusterId);
-                    logMessage(clusterId,hook.getHookKey(), AuditLogType.GLUSTER_HOOK_CONFLICT_DETECTED);
-                    getHooksDao().updateGlusterHookConflictStatus(hook.getId(), hook.getConflictStatus());
-                }
-            }
+            syncExistingHooks(existingHookMap, existingHookServersMap, existingHookConflictMap, upServers);
 
             //Update missing conflicts for hooks found only in db and not on any of the servers
             Set<String> hooksOnlyInDB = new HashSet<String>(existingHookMap.keySet());
@@ -242,7 +207,94 @@ public class GlusterHookSyncJob extends GlusterJob {
 
     }
 
-    private void updateHookServerMap(Map<Guid, Set<VDS>> existingHookServersMap,
+    private void saveNewHooks(Map<String, GlusterHookEntity> newHookMap,
+            List<Callable<Pair<GlusterHookEntity, VDSReturnValue>>> contentTasksList) {
+        for (GlusterHookEntity hook: newHookMap.values()) {
+            getHooksDao().save(hook);
+        }
+        //retrieve and update hook content
+        saveHookContent(contentTasksList);
+    }
+
+    private void saveHookContent(List<Callable<Pair<GlusterHookEntity, VDSReturnValue>>> contentTasksList) {
+
+        if (contentTasksList.isEmpty()) {
+            return;
+        }
+        List<Pair<GlusterHookEntity, VDSReturnValue>> pairResults = ThreadPoolUtil.invokeAll(contentTasksList);
+
+        for (Pair<GlusterHookEntity, VDSReturnValue> pairResult: pairResults) {
+            final GlusterHookEntity hook = pairResult.getFirst();
+            if (!pairResult.getSecond().getSucceeded()) {
+                log.infoFormat("Failed to get content of hook {0} with error {1} ", hook.getHookKey(),
+                        pairResult.getSecond().getVdsError().getMessage());
+                logMessage(hook.getClusterId(), hook.getHookKey(), AuditLogType.GLUSTER_HOOK_GETCONTENT_FAILED);
+                continue;
+            }
+            final String content = (String)pairResult.getSecond().getReturnValue();
+            getHooksDao().updateGlusterHookContent(hook.getId(), hook.getChecksum(), content);
+        }
+
+    }
+
+    private void syncExistingHooks(Map<String, GlusterHookEntity> existingHookMap,
+            Map<Guid, Set<VDS>> existingHookServersMap,
+            Map<String, Integer> existingHookConflictMap,
+            Set<VDS> upServers) {
+        //Add missing conflicts for hooks that are missing on any one of the servers
+        for (Guid hookId: existingHookServersMap.keySet()) {
+            if (existingHookServersMap.get(hookId).size() == upServers.size()) {
+                //hook is present in all of the servers. Nothing to do
+                continue;
+            }
+            //Get servers on which the hooks are missing.
+            Set<VDS> hookMissingServers = new HashSet<VDS>(upServers);
+            hookMissingServers.removeAll(existingHookServersMap.get(hookId));
+
+            for (VDS missingServer : hookMissingServers) {
+                GlusterServerHook missingServerHook = new GlusterServerHook();
+                missingServerHook.setHookId(hookId);
+                missingServerHook.setServerId(missingServer.getId());
+                missingServerHook.setStatus(GlusterHookStatus.MISSING);
+                getHooksDao().saveOrUpdateGlusterServerHook(missingServerHook);
+            }
+            //get the hook from database, as we don't have the hookkey for it
+            GlusterHookEntity hookEntity = getHooksDao().getById(hookId);
+            if (existingHookMap.get(hookEntity.getHookKey()) != null) {
+                //if it was an already existing hook, get the hook with
+                //updated conflict values from map
+                hookEntity = existingHookMap.get(hookEntity.getHookKey());
+            }
+            hookEntity.addMissingConflict();
+            existingHookMap.put(hookEntity.getHookKey(), hookEntity);
+        }
+
+        //Update conflict status for existing hooks
+        for (GlusterHookEntity hook: existingHookMap.values()) {
+            // Check if aggregated conflict status is different from existing hook
+            Integer oldConflictStatus = existingHookConflictMap.get(hook.getHookKey());
+            if (!(hook.getConflictStatus().equals(oldConflictStatus))) {
+                log.debugFormat("Conflict change detected for hook {0} in cluster {1} ", hook.getHookKey(),hook.getClusterId());
+                logMessage(hook.getClusterId(),hook.getHookKey(), AuditLogType.GLUSTER_HOOK_CONFLICT_DETECTED);
+                getHooksDao().updateGlusterHookConflictStatus(hook.getId(), hook.getConflictStatus());
+            }
+        }
+    }
+
+    private void updateContentTasksList(List<Callable<Pair<GlusterHookEntity, VDSReturnValue>>> contentTasksList,
+            final GlusterHookEntity hook,
+            final VDS server) {
+        contentTasksList.add(new Callable<Pair<GlusterHookEntity, VDSReturnValue>>() {
+            @Override
+            public Pair<GlusterHookEntity, VDSReturnValue> call() throws Exception {
+                VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GetGlusterHookContent,
+                        new GlusterHookVDSParameters(server.getId(), hook.getGlusterCommand(), hook.getStage(), hook.getName()));
+                return new Pair<GlusterHookEntity, VDSReturnValue>(hook, returnValue);
+            }
+        });
+    }
+
+   private void updateHookServerMap(Map<Guid, Set<VDS>> existingHookServersMap,
             Guid hookId,
             VDS server) {
         Set<VDS> hookServers =  existingHookServersMap.get(hookId);

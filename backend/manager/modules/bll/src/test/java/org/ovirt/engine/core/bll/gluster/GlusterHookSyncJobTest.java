@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
+import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHookVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
@@ -93,7 +94,7 @@ public class GlusterHookSyncJobTest {
 
         List<VDSGroup> clusters = new ArrayList<VDSGroup>();
         clusters.add(createCluster(0));
-        clusters.add(createCluster(1));
+        clusters.add(createCluster(1)); //to check for empty cluster
 
         doReturn(clusters).when(clusterDao).getAll();
     }
@@ -125,6 +126,13 @@ public class GlusterHookSyncJobTest {
         VDSReturnValue vdsRetValue = new VDSReturnValue();
         vdsRetValue.setSucceeded(true);
         vdsRetValue.setReturnValue(list);
+        return vdsRetValue;
+    }
+
+    private Object getHookContentVDSReturnVal() {
+        VDSReturnValue vdsRetValue = new VDSReturnValue();
+        vdsRetValue.setSucceeded(true);
+        vdsRetValue.setReturnValue("CONTENT");
         return vdsRetValue;
     }
 
@@ -219,7 +227,7 @@ public class GlusterHookSyncJobTest {
     }
 
     @Test
-    public void syncHooksWhenHookMissinginDB() {
+    public void syncHooksWhenNewHooksFound() {
         initMocks();
         doReturn(getHooksList(1, true)).when(hooksDao).getByClusterId(CLUSTER_GUIDS[0]);
 
@@ -228,8 +236,12 @@ public class GlusterHookSyncJobTest {
         doReturn(getHooksListVDSReturnVal(3)).when(hookSyncJob).runVdsCommand(eq(VDSCommandType.GlusterHooksList),
                 argThat(vdsServer2()));
 
+        doReturn(getHookContentVDSReturnVal()).when(hookSyncJob).runVdsCommand(eq(VDSCommandType.GetGlusterHookContent),
+                any(GlusterHookVDSParameters.class));
+
         hookSyncJob.refreshHooks();
         Mockito.verify(hooksDao, times(2)).save(any(GlusterHookEntity.class));
+        Mockito.verify(hooksDao, times(2)).updateGlusterHookContent(any(Guid.class),any(String.class),any(String.class));
         Mockito.verify(hooksDao, times(0)).saveOrUpdateGlusterServerHook(any(GlusterServerHook.class));
         Mockito.verify(hooksDao, times(0)).updateGlusterHookConflictStatus(any(Guid.class),any(Integer.class));
     }
