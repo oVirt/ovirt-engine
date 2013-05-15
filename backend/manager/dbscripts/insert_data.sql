@@ -25,7 +25,7 @@ INSERT INTO vds_groups (vds_group_id,name,description,storage_pool_id,compatibil
 insert into network (id,name,description,storage_pool_id) select v_id_0009, 'engine', 'Management Network', v_storage_pool_id where not exists (select * from network);
 insert into network_cluster (network_id, cluster_id, status) select v_id_0009,v_cluster_id,1 where not exists (select * from network_cluster);
 insert into image_templates (it_guid,os,os_version,creation_date,size,description,bootable) select v_id_0000,'-','-','2008/04/01 00:00:00',85899345920,'Blanc Image Template',false where not exists (select it_guid from image_templates where it_guid = v_id_0000);
-insert into vm_templates (vmt_guid,name,mem_size_mb,os,creation_date,child_count,num_of_sockets,cpu_per_socket,description,vds_group_id,domain,num_of_monitors,status) select v_id_0000,'Blank' ,512,0,'2008/04/01 00:00:00',0,1,1,'Blank template',v_cluster_id,'',1,0 where not exists (select vmt_guid from vm_templates where vmt_guid = v_id_0000);
+insert into vm_templates (vmt_guid,name,mem_size_mb,os,creation_date,child_count,num_of_sockets,cpu_per_socket,description,vds_group_id,domain,num_of_monitors,status) select v_id_0000,'Blank' ,1024,0,'2008/04/01 00:00:00',0,1,1,'Blank template',v_cluster_id,'',1,0 where not exists (select vmt_guid from vm_templates where vmt_guid = v_id_0000);
 insert into vm_template_image_map (it_guid,vmt_guid,internal_drive_mapping) select v_id_0000,v_id_0000,'1' where not exists (select * from vm_template_image_map where it_guid = v_id_0000  and vmt_guid = v_id_0000);
 
 delete from event_map;
