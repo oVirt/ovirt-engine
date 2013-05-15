@@ -230,4 +230,8 @@ public interface VdsServerConnector {
     public Map<String, Object> glusterHookRead(String glusterCommand, String stage, String hookName);
 
     public Map<String,Object> glusterHookUpdate(String glusterCommand, String stage, String hookName, String content, String checksum);
+
+    public Map<String,Object> glusterHookAdd(String glusterCommand, String stage, String hookName, String content, String checksum, Boolean enabled);
+
+    public Map<String,Object> glusterHookRemove(String glusterCommand, String stage, String hookName);
 }

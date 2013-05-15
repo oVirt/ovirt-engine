@@ -15,6 +15,7 @@ public class GlusterHookVDSParameters extends VdsIdVDSCommandParametersBase {
     private GlusterHookStage stage;
     private String content;
     private String checksum;
+    private Boolean enabled;
 
     public GlusterHookVDSParameters(Guid serverId, String glusterCommand, GlusterHookStage stage, String hookName) {
         super(serverId);
@@ -30,6 +31,8 @@ public class GlusterHookVDSParameters extends VdsIdVDSCommandParametersBase {
      * @param stage - PRE/POST stage
      * @param hookName - file name
      * @param content - non-encoded text content
+     * @param content - encoded text content
+     * @param checksum - checksum of content
      */
     public GlusterHookVDSParameters(Guid serverId, String glusterCommand, GlusterHookStage stage, String hookName,
             String content, String checksum) {
@@ -39,6 +42,22 @@ public class GlusterHookVDSParameters extends VdsIdVDSCommandParametersBase {
         setHookName(hookName);
         setHookContent(content);
         setChecksum(checksum);
+    }
+
+    /**
+     *
+     * @param serverId
+     * @param glusterCommand - gluster command the hook is intended for
+     * @param stage - PRE/POST stage
+     * @param hookName - file name
+     * @param content - encoded text content
+     * @param checksum - checksum of content
+     * @param enabled - if the hook needs to be enabled/not
+     */
+    public GlusterHookVDSParameters(Guid serverId, String glusterCommand, GlusterHookStage stage, String hookName,
+            String content, String checksum, Boolean enabled) {
+        this(serverId, glusterCommand, stage, hookName, content, checksum);
+        setEnabled(enabled);
     }
 
     public String getHookContent() {
@@ -79,6 +98,14 @@ public class GlusterHookVDSParameters extends VdsIdVDSCommandParametersBase {
 
     public void setChecksum(String checksum) {
         this.checksum = checksum;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
 }

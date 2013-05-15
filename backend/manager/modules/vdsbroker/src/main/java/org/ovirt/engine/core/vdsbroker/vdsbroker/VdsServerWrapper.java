@@ -1175,4 +1175,27 @@ public class VdsServerWrapper implements IVdsServer {
             throw new XmlRpcRunTimeException(ute);
         }
     }
+
+      @Override
+    public StatusOnlyReturnForXmlRpc glusterHookAdd(String glusterCommand, String stage, String hookName,
+            String content, String checksum, Boolean enabled) {
+          try {
+              Map<String, Object> xmlRpcReturnValue = vdsServer.glusterHookAdd(glusterCommand, stage, hookName, content, checksum, enabled);
+              StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+              return wrapper;
+          } catch (UndeclaredThrowableException ute) {
+              throw new XmlRpcRunTimeException(ute);
+          }
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterHookRemove(String glusterCommand, String stage, String hookName) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterHookRemove(glusterCommand, stage, hookName);
+            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
 }

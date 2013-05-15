@@ -243,4 +243,8 @@ public interface IVdsServer {
     GlusterHookContentInfoReturnForXmlRpc glusterHookRead(String glusterCommand, String stage, String hookName);
 
     StatusOnlyReturnForXmlRpc glusterHookUpdate(String glusterCommand, String stage, String hookName, String content, String checksum);
+
+    StatusOnlyReturnForXmlRpc glusterHookAdd(String glusterCommand, String stage, String hookName, String content, String checksum, Boolean enabled);
+
+    StatusOnlyReturnForXmlRpc glusterHookRemove(String glusterCommand, String stage, String hookName);
 }

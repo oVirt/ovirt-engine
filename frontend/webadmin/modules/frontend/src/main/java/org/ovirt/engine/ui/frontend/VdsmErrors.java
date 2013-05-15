@@ -750,4 +750,16 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Failed to update gluster hook.")
     String GlusterHookUpdateFailed();
+
+    @DefaultStringValue("Failed to add hook as hook already exists.")
+    String GlusterHookAlreadyExists();
+
+    @DefaultStringValue("Failed to update hook due to mismatch in checksum.")
+    String GlusterHookChecksumMismatch();
+
+    @DefaultStringValue("Failed to add hook")
+    String GlusterHookAddFailed();
+
+    @DefaultStringValue("Failed to remove hook")
+    String GlusterHookRemoveFailed();
 }
