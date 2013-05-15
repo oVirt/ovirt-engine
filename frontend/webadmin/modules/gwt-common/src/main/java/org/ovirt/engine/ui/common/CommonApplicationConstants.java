@@ -836,6 +836,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Is Shareable")
     String isShareableVmDiskPopup();
 
+    @DefaultStringValue("Allow Privileged SCSI I/O")
+    String isSgIoUnfilteredEditor();
+
     @DefaultStringValue("Activate")
     String activateVmDiskPopup();
 

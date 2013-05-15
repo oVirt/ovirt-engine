@@ -5,10 +5,12 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
-import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -40,6 +42,7 @@ public class EditDiskModel extends AbstractDiskModel
         getDescription().setEntity(getDisk().getDiskDescription());
         getIsShareable().setEntity(getDisk().isShareable());
         getIsWipeAfterDelete().setEntity(getDisk().isWipeAfterDelete());
+        getIsSgIoUnfiltered().setEntity(getDisk().getSgio() == ScsiGenericIO.UNFILTERED);
 
         if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
             DiskImage diskImage = (DiskImage) getDisk();
@@ -84,8 +87,8 @@ public class EditDiskModel extends AbstractDiskModel
     }
 
     @Override
-    public void updateInterface(StoragePool datacenter) {
-        getDiskInterface().setItems(AsyncDataProvider.getDiskInterfaceList());
+    public void updateInterface(Version clusterVersion) {
+        super.updateInterface(clusterVersion);
         getDiskInterface().setSelectedItem(getDisk().getDiskInterface());
     }
 

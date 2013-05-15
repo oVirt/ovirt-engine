@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -27,6 +28,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -43,10 +45,10 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyQuotaValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
-import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public abstract class AbstractDiskModel extends DiskModel
 {
@@ -59,6 +61,7 @@ public abstract class AbstractDiskModel extends DiskModel
     private EntityModel isAttachDisk;
     private EntityModel isInternal;
     private EntityModel isDirectLunDiskAvaialable;
+    private EntityModel isSgIoUnfiltered;
 
     private ListModel storageType;
     private ListModel host;
@@ -130,6 +133,14 @@ public abstract class AbstractDiskModel extends DiskModel
 
     public void setIsDirectLunDiskAvaialable(EntityModel isDirectLunDiskAvaialable) {
         this.isDirectLunDiskAvaialable = isDirectLunDiskAvaialable;
+    }
+
+    public EntityModel getIsSgIoUnfiltered() {
+        return isSgIoUnfiltered;
+    }
+
+    public void setIsSgIoUnfiltered(EntityModel isSgIoUnfiltered) {
+        this.isSgIoUnfiltered = isSgIoUnfiltered;
     }
 
     public ListModel getStorageType() {
@@ -235,6 +246,9 @@ public abstract class AbstractDiskModel extends DiskModel
         setIsPlugged(new EntityModel());
         getIsPlugged().setEntity(true);
 
+        setIsSgIoUnfiltered(new EntityModel());
+        getIsSgIoUnfiltered().setIsAvailable(false);
+
         setIsDirectLunDiskAvaialable(new EntityModel());
         getIsDirectLunDiskAvaialable().setEntity(true);
 
@@ -251,6 +265,7 @@ public abstract class AbstractDiskModel extends DiskModel
         getHost().setIsAvailable(false);
 
         getVolumeType().getSelectedItemChangedEvent().addListener(this);
+        getDiskInterface().getSelectedItemChangedEvent().addListener(this);
 
         setInternalAttachableDisks(new ListModel());
         setExternalAttachableDisks(new ListModel());
@@ -261,8 +276,6 @@ public abstract class AbstractDiskModel extends DiskModel
     protected abstract boolean isDatacenterAvailable(StoragePool dataCenter);
 
     protected abstract void updateWipeAfterDelete(StorageType storageType);
-
-    protected abstract void updateInterface(StoragePool datacenter);
 
     protected abstract DiskImage getDiskImage();
 
@@ -467,6 +480,10 @@ public abstract class AbstractDiskModel extends DiskModel
         volumeType_SelectedItemChanged();
     }
 
+    public void updateInterface(Version clusterVersion) {
+        getDiskInterface().setItems(AsyncDataProvider.getDiskInterfaceList(clusterVersion));
+    }
+
     private void updateQuota(StoragePool datacenter) {
         if (datacenter.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)
                 || !(Boolean) getIsInternal().getEntity()) {
@@ -553,6 +570,12 @@ public abstract class AbstractDiskModel extends DiskModel
         updateShareable(volumeType, storageType);
     }
 
+    private void DiskInterface_SelectedItemChanged() {
+        boolean isInternal = (Boolean) getIsInternal().getEntity();
+        DiskInterface diskInterface = (DiskInterface) getDiskInterface().getSelectedItem();
+        getIsSgIoUnfiltered().setIsAvailable(!isInternal && DiskInterface.VirtIO_SCSI.equals(diskInterface));
+    }
+
     private void wipeAfterDelete_EntityChanged(EventArgs e) {
         if (!getIsWipeAfterDelete().getIsChangable() && (Boolean) getIsWipeAfterDelete().getEntity())
         {
@@ -596,15 +619,16 @@ public abstract class AbstractDiskModel extends DiskModel
     private void datacenter_SelectedItemChanged() {
         StoragePool datacenter = (StoragePool) getDataCenter().getSelectedItem();
         boolean isInternal = getIsInternal().getEntity() != null ? (Boolean) getIsInternal().getEntity() : false;
+        boolean isInVm = getVm() != null;
 
         if (datacenter == null) {
             return;
         }
 
-        updateInterface(datacenter);
         updateVolumeType(datacenter.getstorage_pool_type());
         updateShareableDiskEnabled(datacenter);
         updateDirectLunDiskEnabled(datacenter);
+        updateInterface(isInVm ? getVm().getVdsGroupCompatibilityVersion() : null);
 
         if (isInternal) {
             updateStorageDomains(datacenter);
@@ -686,6 +710,11 @@ public abstract class AbstractDiskModel extends DiskModel
         }
         else {
             LunDisk lunDisk = getLunDisk();
+            DiskInterface diskInterface = (DiskInterface) getDiskInterface().getSelectedItem();
+            if (DiskInterface.VirtIO_SCSI.equals(diskInterface)) {
+                lunDisk.setSgio(Boolean.TRUE.equals((Boolean) getIsSgIoUnfiltered().getEntity()) ?
+                        ScsiGenericIO.UNFILTERED : ScsiGenericIO.FILTERED);
+            }
             setDisk(lunDisk);
         }
 
@@ -733,6 +762,10 @@ public abstract class AbstractDiskModel extends DiskModel
         else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getVolumeType())
         {
             volumeType_SelectedItemChanged();
+        }
+        else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getDiskInterface())
+        {
+            DiskInterface_SelectedItemChanged();
         }
         else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getDataCenter())
         {

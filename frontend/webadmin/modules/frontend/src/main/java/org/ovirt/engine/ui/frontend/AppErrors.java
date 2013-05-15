@@ -2086,6 +2086,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type} without at least one active disk.\nPlease activate a disk and rerun the VM.")
     String VM_CANNOT_RUN_FROM_DISK_WITHOUT_PLUGGED_DISK();
 
+    @DefaultStringValue("Cannot ${action} ${type}. SCSI Generic IO is not supported for image disk.")
+    String SCSI_GENERIC_IO_IS_NOT_SUPPORTED_FOR_IMAGE_DISK();
+
+    @DefaultStringValue("Virtio-SCSI interface is only available on cluster level 3.3 or higher.")
+    String VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL();
+
     // Suspected (not in use?)
     @DefaultStringValue("Cannot Login. User Password has expired, Please change your password.")
     String USER_PASSWORD_EXPIRED();

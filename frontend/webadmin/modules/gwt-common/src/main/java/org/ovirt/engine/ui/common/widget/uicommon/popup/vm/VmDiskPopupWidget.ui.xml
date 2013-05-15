@@ -102,6 +102,7 @@
 					<e:EntityModelCheckBoxEditor ui:field="wipeAfterDeleteEditor" addStyleNames="{style.checkBoxEditor}"/>
 					<e:EntityModelCheckBoxEditor ui:field="isBootableEditor" addStyleNames="{style.checkBoxEditor}" />
 					<e:EntityModelCheckBoxEditor ui:field="isShareableEditor" addStyleNames="{style.checkBoxEditor}"/>
+					<e:EntityModelCheckBoxEditor ui:field="isSgIoUnfilteredEditor" addStyleNames="{style.checkBoxEditor}"/>
 				</g:VerticalPanel>
 			</g:HorizontalPanel>
 			<g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}" />

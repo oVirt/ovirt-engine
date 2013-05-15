@@ -142,6 +142,11 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     EntityModelCheckBoxEditor isShareableEditor;
 
     @UiField(provided = true)
+    @Path("isSgIoUnfiltered.entity")
+    @WithElementId("isSgIoUnfiltered")
+    EntityModelCheckBoxEditor isSgIoUnfilteredEditor;
+
+    @UiField(provided = true)
     @Path("isPlugged.entity")
     @WithElementId("isPlugged")
     EntityModelCheckBoxEditor isPluggedEditor;
@@ -238,6 +243,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         wipeAfterDeleteEditor.setLabel(constants.wipeAfterDeleteVmDiskPopup());
         isBootableEditor.setLabel(constants.isBootableVmDiskPopup());
         isShareableEditor.setLabel(constants.isShareableVmDiskPopup());
+        isSgIoUnfilteredEditor.setLabel(constants.isSgIoUnfilteredEditor());
         attachEditor.setLabel(constants.attachDiskVmDiskPopup());
         isPluggedEditor.setLabel(constants.activateVmDiskPopup());
     }
@@ -260,12 +266,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
             }
         });
 
-        interfaceEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            public String renderNullSafe(Object object) {
-                return object.toString();
-            }
-        });
+        interfaceEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
 
         datacenterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
@@ -280,6 +281,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         wipeAfterDeleteEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isBootableEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isShareableEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        isSgIoUnfilteredEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isPluggedEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         attachEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
@@ -723,6 +725,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         wipeAfterDeleteEditor.setTabIndex(nextTabIndex++);
         isBootableEditor.setTabIndex(nextTabIndex++);
         isShareableEditor.setTabIndex(nextTabIndex++);
+        isSgIoUnfilteredEditor.setTabIndex(nextTabIndex++);
 
         isPluggedEditor.setTabIndex(nextTabIndex++);
 

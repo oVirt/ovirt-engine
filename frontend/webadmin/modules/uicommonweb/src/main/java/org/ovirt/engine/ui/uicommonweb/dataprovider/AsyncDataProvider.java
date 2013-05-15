@@ -2745,12 +2745,22 @@ public final class AsyncDataProvider {
         }));
     }
 
-    public static ArrayList<DiskInterface> getDiskInterfaceList()
+    public static ArrayList<DiskInterface> getDiskInterfaceList(Version clusterVersion)
     {
-        return new ArrayList<DiskInterface>(Arrays.asList(new DiskInterface[] {
-                DiskInterface.IDE,
-                DiskInterface.VirtIO
-        }));
+        ArrayList<DiskInterface> diskInterfaces = new ArrayList<DiskInterface>(
+                Arrays.asList(new DiskInterface[] {
+                        DiskInterface.IDE,
+                        DiskInterface.VirtIO
+                }));
+
+        boolean isVirtIOScsiEnabled = clusterVersion != null ? (Boolean) AsyncDataProvider.getConfigValuePreConverted(
+                ConfigurationValues.VirtIoScsiEnabled, clusterVersion.getValue()) : true;
+
+        if (isVirtIOScsiEnabled) {
+            diskInterfaces.add(DiskInterface.VirtIO_SCSI);
+        }
+
+        return diskInterfaces;
     }
 
     public static String getNewNicName(ArrayList<VmNetworkInterface> existingInterfaces)

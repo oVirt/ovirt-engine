@@ -11,11 +11,12 @@ import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -132,8 +133,8 @@ public class NewDiskModel extends AbstractDiskModel
     }
 
     @Override
-    public void updateInterface(StoragePool datacenter) {
-        getDiskInterface().setItems(AsyncDataProvider.getDiskInterfaceList());
+    public void updateInterface(Version clusterVersion) {
+        super.updateInterface(clusterVersion);
         getDiskInterface().setSelectedItem(DiskInterface.VirtIO);
     }
 

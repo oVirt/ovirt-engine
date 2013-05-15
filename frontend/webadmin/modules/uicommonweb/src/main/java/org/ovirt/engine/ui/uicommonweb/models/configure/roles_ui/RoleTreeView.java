@@ -459,7 +459,11 @@ public class RoleTreeView
                                                                 new RoleNode(ActionGroup.EDIT_DISK_PROPERTIES,
                                                                         ConstantsManager.getInstance()
                                                                                 .getConstants()
-                                                                                .allowToChangePropertiesOfTheDiskRoleTreeTooltip()) }) }) });
+                                                                                .allowToChangePropertiesOfTheDiskRoleTreeTooltip()),
+                                                                new RoleNode(ActionGroup.CONFIGURE_SCSI_GENERIC_IO,
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowToChangeSGIORoleTreeTooltip()) }) }) });
 
         // nothing to filter
         if (!ApplicationModeHelper.getUiMode().equals(ApplicationMode.AllModes)) {

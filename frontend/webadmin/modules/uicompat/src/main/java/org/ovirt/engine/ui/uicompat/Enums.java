@@ -269,6 +269,8 @@ public interface Enums extends LocalizedEnums {
 
     String DiskInterface___VirtIO();
 
+    String DiskInterface___VirtIO_SCSI();
+
     String Snapshot$SnapshotStatus___OK();
 
     String Snapshot$SnapshotStatus___LOCKED();

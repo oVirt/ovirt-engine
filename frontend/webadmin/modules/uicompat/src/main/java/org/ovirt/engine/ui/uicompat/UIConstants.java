@@ -1229,6 +1229,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Allow to change properties of the Disk")
     String allowToChangePropertiesOfTheDiskRoleTreeTooltip();
 
+    @DefaultStringValue("Allow to change SCSI I/O privileges")
+    String allowToChangeSGIORoleTreeTooltip();
+
     @DefaultStringValue("No")
     String noAlerts();
 
