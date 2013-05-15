@@ -5,28 +5,29 @@ import java.util.Map;
 
 public enum DiskInterface {
 
-    IDE(0),
-    VirtIO(2);
+    IDE("ide"),
+    VirtIO_SCSI("scsi"),
+    VirtIO("virtio");
 
-    private int intValue;
-    private static Map<Integer, DiskInterface> mappings;
+    private String name;
+    private static Map<String, DiskInterface> mappings;
 
     static {
-        mappings = new HashMap<Integer, DiskInterface>();
+        mappings = new HashMap<String, DiskInterface>();
         for (DiskInterface error : values()) {
-            mappings.put(error.getValue(), error);
+            mappings.put(error.getName(), error);
         }
     }
 
-    private DiskInterface(int value) {
-        intValue = value;
+    private DiskInterface(String name) {
+        this.name = name;
     }
 
-    public int getValue() {
-        return intValue;
+    public String getName() {
+        return name;
     }
 
-    public static DiskInterface forValue(int value) {
-        return mappings.get(value);
+    public static DiskInterface forValue(String name) {
+        return mappings.get(name);
     }
 }

@@ -62,6 +62,7 @@ SELECT images.image_guid as image_guid,
     base_disks.wipe_after_delete as wipe_after_delete,
     base_disks.propagate_errors,
     base_disks.boot as boot,
+    base_disks.sgio as sgio,
     images.quota_id as quota_id,
     quota.quota_name as quota_name,
     storage_pool.quota_enforcement_type,
@@ -128,7 +129,7 @@ SELECT                storage_for_image_view.storage_id as storage_id, storage_f
                       images_storage_domain_view.app_list as app_list, images_storage_domain_view.vm_snapshot_id as vm_snapshot_id,
                       images_storage_domain_view.volume_type as volume_type, images_storage_domain_view.image_group_id as image_group_id,
                       images_storage_domain_view.active as active, images_storage_domain_view.volume_format as volume_format,
-                      images_storage_domain_view.disk_interface as disk_interface, images_storage_domain_view.boot as boot, images_storage_domain_view.wipe_after_delete as wipe_after_delete, images_storage_domain_view.propagate_errors as propagate_errors,
+                      images_storage_domain_view.disk_interface as disk_interface, images_storage_domain_view.boot as boot, images_storage_domain_view.wipe_after_delete as wipe_after_delete, images_storage_domain_view.propagate_errors as propagate_errors, images_storage_domain_view.sgio as sgio,
                       images_storage_domain_view.entity_type as entity_type,images_storage_domain_view.number_of_vms as number_of_vms,images_storage_domain_view.vm_names as vm_names,
                       images_storage_domain_view.quota_id as quota_id, images_storage_domain_view.quota_name as quota_name, images_storage_domain_view.quota_enforcement_type,
                       images_storage_domain_view.disk_id, images_storage_domain_view.disk_alias as disk_alias, images_storage_domain_view.disk_description as disk_description,images_storage_domain_view.shareable as shareable
@@ -148,7 +149,8 @@ SELECT storage_impl.*,
        bd.disk_alias,
        bd.disk_description,
        bd.shareable,
-       bd.boot
+       bd.boot,
+       bd.sgio
 FROM
 (
     SELECT 0 AS disk_storage_type,
@@ -954,7 +956,7 @@ SELECT vm_images_view.storage_id, vm_images_view.storage_path, vm_images_view.st
        vm_images_view.imagestatus, vm_images_view.lastmodified, vm_images_view.app_list, vm_images_view.vm_snapshot_id, vm_images_view.volume_type,
        vm_images_view.image_group_id, vm_images_view.active, vm_images_view.volume_format, vm_images_view.disk_interface,
        vm_images_view.boot, vm_images_view.wipe_after_delete, vm_images_view.propagate_errors, vm_images_view.entity_type, vm_images_view.number_of_vms, vm_images_view.vm_names, vm_images_view.quota_id,
-       vm_images_view.quota_name, vm_images_view.disk_alias, vm_images_view.disk_description,
+       vm_images_view.quota_name, vm_images_view.disk_alias, vm_images_view.disk_description, vm_images_view.sgio,
        storage_domains_with_hosts_view.id, storage_domains_with_hosts_view.storage, storage_domains_with_hosts_view.storage_name,
        storage_domains_with_hosts_view.available_disk_size, storage_domains_with_hosts_view.used_disk_size,
        storage_domains_with_hosts_view.commited_disk_size, storage_domains_with_hosts_view.storage_type,

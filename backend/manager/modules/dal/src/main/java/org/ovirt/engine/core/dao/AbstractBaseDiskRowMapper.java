@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
+import org.ovirt.engine.core.common.businessentities.ScsiGenericIO;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -32,6 +33,7 @@ public abstract class AbstractBaseDiskRowMapper<T extends BaseDisk> implements R
 
         disk.setShareable(rs.getBoolean("shareable"));
         disk.setBoot(rs.getBoolean("boot"));
+        disk.setSgio(ScsiGenericIO.forValue(rs.getInt("sgio")));
         return disk;
     }
 

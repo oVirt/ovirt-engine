@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
+import org.ovirt.engine.core.common.businessentities.ScsiGenericIO;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -35,7 +36,7 @@ public class BaseDiskDaoTest extends BaseGenericDaoTestCase<Guid, BaseDisk, Base
                 PropagateErrors.Off,
                 "DiskName",
                 "",
-                false, false);
+                false, false, ScsiGenericIO.FILTERED);
     }
 
     @Override

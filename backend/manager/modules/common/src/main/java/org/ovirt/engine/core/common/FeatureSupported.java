@@ -122,4 +122,13 @@ public class FeatureSupported {
     public static boolean memorySnapshot(Version version) {
         return supportedInConfig(ConfigValues.MemorySnapshotSupported, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if Virtio-SCSI is supported for the cluster version, <code>false</code> if it's not.
+     */
+    public static boolean virtIoScsi(Version version) {
+        return supportedInConfig(ConfigValues.VirtIoScsiEnabled, version);
+    }
 }

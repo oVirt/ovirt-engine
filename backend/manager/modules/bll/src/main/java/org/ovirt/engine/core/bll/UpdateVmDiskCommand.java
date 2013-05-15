@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.DiskValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
@@ -63,6 +64,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             return false;
         }
 
+        DiskValidator diskValidator = new DiskValidator(newDisk);
         List<VM> vmsDiskPluggedTo = getVmDAO().getForDisk(oldDisk.getId()).get(Boolean.TRUE);
 
         if (vmsDiskPluggedTo != null && !vmsDiskPluggedTo.isEmpty()) {
@@ -84,7 +86,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
         // Set disk alias name in the disk retrieved from the parameters.
         ImagesHandler.setDiskAlias(newDisk, getVm());
-        return validateShareableDisk();
+        return validateShareableDisk() && validate(diskValidator.isVirtIoScsiValid(getVm()));
     }
 
 
@@ -223,6 +225,12 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             listPermissionSubjects.add(new PermissionSubject(diskId,
                     VdcObjectType.Disk,
                     ActionGroup.EDIT_DISK_PROPERTIES));
+
+            if (oldDisk != null && newDisk != null && oldDisk.getSgio() != newDisk.getSgio()) {
+                listPermissionSubjects.add(new PermissionSubject(diskId,
+                        VdcObjectType.Disk,
+                        ActionGroup.CONFIGURE_SCSI_GENERIC_IO));
+            }
         }
         return listPermissionSubjects;
     }
@@ -240,6 +248,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 oldDisk.setDiskAlias(newDisk.getDiskAlias());
                 oldDisk.setDiskDescription(newDisk.getDiskDescription());
                 oldDisk.setShareable(newDisk.isShareable());
+                oldDisk.setSgio(newDisk.getSgio());
                 getBaseDiskDao().update(oldDisk);
                 if (oldDisk.getDiskStorageType() == DiskStorageType.IMAGE) {
                     DiskImage diskImage = (DiskImage) oldDisk;

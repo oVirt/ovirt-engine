@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.utils;
 public enum VmDeviceType {
     FLOPPY("floppy", "14"),
     DISK("disk", "17"),
+    LUN("lun"),
     CDROM("cdrom", "15"),
     INTERFACE("interface", "10"),
     BRIDGE("bridge", "3"),

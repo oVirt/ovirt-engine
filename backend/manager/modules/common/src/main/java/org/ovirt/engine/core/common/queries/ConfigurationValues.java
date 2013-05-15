@@ -90,7 +90,8 @@ public enum ConfigurationValues {
     VncKeyboardLayoutValidValues(ConfigAuthType.User),
     SupportCustomDeviceProperties(ConfigAuthType.User),
     CustomDeviceProperties(ConfigAuthType.User),
-    MultipleGatewaysSupported
+    MultipleGatewaysSupported,
+    VirtIoScsiEnabled(ConfigAuthType.User)
     ;
 
     public static enum ConfigAuthType {

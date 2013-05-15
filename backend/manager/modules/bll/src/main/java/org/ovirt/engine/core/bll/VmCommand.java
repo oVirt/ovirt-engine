@@ -128,9 +128,17 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         pciInUse += LinqUtils.filter(disks, new Predicate<T>() {
             @Override
             public boolean eval(T a) {
-                return a.getDiskInterface() != DiskInterface.IDE;
+                return a.getDiskInterface() == DiskInterface.VirtIO;
             }
         }).size();
+
+        // VirtIO SCSI controller requires one PCI slot
+        pciInUse += LinqUtils.filter(disks, new Predicate<T>() {
+            @Override
+            public boolean eval(T a) {
+                return a.getDiskInterface() == DiskInterface.VirtIO_SCSI;
+            }
+        }).isEmpty() ? 0 : 1;
 
         if (pciInUse > MAX_PCI_SLOTS) {
             result = false;

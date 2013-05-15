@@ -231,6 +231,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmDrives() {
+        boolean containsVirtioScsiDisk = true;
         List<Disk> disks = getSortedDisks();
         for (Disk disk : disks) {
             Map<String, Object> struct = new HashMap<String, Object>();
@@ -252,6 +253,14 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     break;
                 case VirtIO:
                     struct.put(VdsProperties.INTERFACE, VdsProperties.Virtio);
+                    break;
+                case VirtIO_SCSI:
+                    struct.put(VdsProperties.INTERFACE, VdsProperties.Scsi);
+                    if (disk.getDiskStorageType() == DiskStorageType.LUN) {
+                        struct.put(VdsProperties.Device, VmDeviceType.LUN.getName());
+                        struct.put(VdsProperties.Sgio, disk.getSgio().toString().toLowerCase());
+                    }
+                    containsVirtioScsiDisk = true;
                     break;
                 default:
                     logUnsupportedInterfaceType();
@@ -289,6 +298,14 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 devices.add(struct);
                 addToManagedDevices(vmDevice);
             }
+        }
+
+        if (containsVirtioScsiDisk) {
+            Map<String, Object> struct = new HashMap<String, Object>();
+            struct.put(VdsProperties.Type, VmDeviceType.CONTROLLER.getName());
+            struct.put(VdsProperties.Device, VdsProperties.Scsi);
+            struct.put(VdsProperties.Model, VdsProperties.VirtioScsi);
+            devices.add(struct);
         }
     }
 

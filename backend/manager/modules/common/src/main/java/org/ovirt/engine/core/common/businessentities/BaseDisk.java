@@ -71,6 +71,8 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
 
     private boolean boot;
 
+    private ScsiGenericIO sgio;
+
     public BaseDisk() {
     }
 
@@ -81,7 +83,8 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
             String diskAlias,
             String diskDescription,
             boolean shareable,
-            boolean boot) {
+            boolean boot,
+            ScsiGenericIO sgio) {
         super();
         this.id = id;
         this.diskInterface = diskInterface;
@@ -91,6 +94,7 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
         this.diskDescription = diskDescription;
         this.shareable = shareable;
         this.boot = boot;
+        this.sgio = sgio;
     }
 
     @Override
@@ -172,6 +176,14 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
         boot = value;
     }
 
+    public ScsiGenericIO getSgio() {
+        return sgio;
+    }
+
+    public void setSgio(ScsiGenericIO sgio) {
+        this.sgio = sgio;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -184,6 +196,7 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
         result = prime * result + (shareable ? 1231 : 1237);
         result = prime * result + (isWipeAfterDelete() ? 1231 : 1237);
         result = prime * result + (boot ? 1231 : 1237);
+        result = prime * result + ((sgio == null) ? 0 : sgio.hashCode());
         return result;
     }
 
@@ -206,6 +219,7 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
                 && propagateErrors == other.propagateErrors
                 && shareable == other.shareable
                 && isWipeAfterDelete() == other.isWipeAfterDelete()
-                && boot == other.boot);
+                && boot == other.boot)
+                && sgio == other.sgio;
     }
 }

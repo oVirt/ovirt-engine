@@ -28,8 +28,10 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
+import org.ovirt.engine.core.common.businessentities.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -37,9 +39,9 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
@@ -64,7 +66,10 @@ public class AddDiskToVmCommandTest {
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.MaxBlockDiskSize, MAX_BLOCK_SIZE),
             mockConfig(ConfigValues.FreeSpaceCriticalLowInGB, FREE_SPACE_CRITICAL_LOW_IN_GB),
-            mockConfig(ConfigValues.ShareableDiskEnabled, Version.v3_1.toString(), true)
+            mockConfig(ConfigValues.ShareableDiskEnabled, Version.v3_1.toString(), true),
+            mockConfig(ConfigValues.VirtIoScsiEnabled, Version.v3_3.toString(), true),
+            mockConfig(ConfigValues.VirtIoScsiUnsupportedOsList,
+                    Arrays.asList("WindowsXP", "RHEL5", "RHEL5x64", "RHEL4", "RHEL4x64", "RHEL3", "RHEL3x64"))
             );
 
     @Mock
@@ -473,6 +478,12 @@ public class AddDiskToVmCommandTest {
         return image;
     }
 
+    private static DiskImage createVirtIoScsiDiskImage() {
+        DiskImage image = new DiskImage();
+        image.setDiskInterface(DiskInterface.VirtIO_SCSI);
+        return image;
+    }
+
     private static LunDisk createISCSILunDisk() {
         LunDisk disk = new LunDisk();
         LUNs lun = new LUNs();
@@ -597,7 +608,61 @@ public class AddDiskToVmCommandTest {
         vm.getDiskMap().put(Guid.NewGuid(), disk);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_EXCEEDED_MAX_PCI_SLOTS);
+    }
 
+    @Test
+    public void testVirtIoScsiNotSupportedByOs() {
+        DiskImage disk = createVirtIoScsiDiskImage();
+        AddDiskParameters parameters = createParameters();
+        parameters.setDiskInfo(disk);
+
+        Guid storageId = Guid.NewGuid();
+        initializeCommand(storageId, parameters);
+        mockStorageDomain(storageId);
+        mockStoragePoolIsoMap();
+
+        VM vm = mockVm();
+        vm.setVdsGroupCompatibilityVersion(Version.v3_3);
+        vm.setVmOs(VmOsType.RHEL5);
+
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
+    }
+
+    @Test
+    public void testLunDiskWithSgioCanBeAdded() {
+        DiskImage disk = createVirtIoScsiDiskImage();
+        disk.setSgio(ScsiGenericIO.UNFILTERED);
+
+        AddDiskParameters parameters = createParameters();
+        parameters.setDiskInfo(disk);
+
+        Guid storageId = Guid.NewGuid();
+        initializeCommand(storageId, parameters);
+        mockStorageDomain(storageId);
+        mockStoragePoolIsoMap();
+
+        VM vm = mockVm();
+        vm.setVdsGroupCompatibilityVersion(Version.v3_3);
+
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.SCSI_GENERIC_IO_IS_NOT_SUPPORTED_FOR_IMAGE_DISK);
+    }
+
+    @Test
+    public void testDiskImageWithSgioCantBeAdded() {
+        LunDisk disk = createISCSILunDisk();
+        disk.setDiskInterface(DiskInterface.VirtIO_SCSI);
+        disk.setSgio(ScsiGenericIO.UNFILTERED);
+
+        AddDiskParameters parameters = createParameters();
+        parameters.setDiskInfo(disk);
+        initializeCommand(Guid.NewGuid(), parameters);
+
+        VM vm = mockVm();
+        vm.setVdsGroupCompatibilityVersion(Version.v3_3);
+
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 
     private void fillDiskMap(LunDisk disk, VM vm, int expectedMapSize) {

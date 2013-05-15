@@ -236,6 +236,9 @@ public final class VdsProperties {
     public static final String Optional = "optional";
     public static final String ReadOnly = "readonly";
     public static final String Virtio = "virtio";
+    public static final String VirtioScsi = "virtio-scsi";
+    public static final String Scsi = "scsi";
+    public static final String Sgio = "sgio";
     public static final String Path = "path";
     public static final String Ide = "ide";
     public static final String Fdc = "fdc";

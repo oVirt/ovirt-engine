@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
 
@@ -38,10 +39,9 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
         Disk disk = getParameters().getDisk();
         VmDevice vmDevice = getParameters().getVmDevice();
 
-        drive.put(VdsProperties.Type, "disk");
-        drive.put(VdsProperties.Device, "disk");
+        drive.put(VdsProperties.Type, VmDeviceType.DISK.getName());
         addAddress(drive, getParameters().getVmDevice().getAddress());
-        drive.put(VdsProperties.INTERFACE, disk.getDiskInterface().toString().toLowerCase());
+        drive.put(VdsProperties.INTERFACE, disk.getDiskInterface().getName());
         drive.put(VdsProperties.Shareable, String.valueOf(disk.isShareable()));
         drive.put(VdsProperties.Optional, Boolean.FALSE.toString());
         drive.put(VdsProperties.ReadOnly, String.valueOf(vmDevice.getIsReadOnly()));
@@ -49,6 +49,7 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
 
         if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
             DiskImage diskImage = (DiskImage) disk;
+            drive.put(VdsProperties.Device, VmDeviceType.DISK.getName());
             drive.put(VdsProperties.Format, diskImage.getVolumeFormat().toString().toLowerCase());
             drive.put(VdsProperties.DomainId, diskImage.getStorageIds().get(0).toString());
             drive.put(VdsProperties.PoolId, diskImage.getStoragePoolId().toString());
@@ -57,6 +58,7 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
             drive.put(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString().toLowerCase());
         } else {
             LunDisk lunDisk = (LunDisk) disk;
+            drive.put(VdsProperties.Device, VmDeviceType.LUN.getName());
             drive.put(VdsProperties.Guid, lunDisk.getLun().getLUN_id());
             drive.put(VdsProperties.Format, VolumeFormat.RAW.toString().toLowerCase());
             drive.put(VdsProperties.PropagateErrors, PropagateErrors.Off.toString()

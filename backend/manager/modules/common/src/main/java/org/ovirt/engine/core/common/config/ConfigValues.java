@@ -1378,6 +1378,16 @@ public enum ConfigValues {
     @DefaultValueAttribute("/osinfo.conf.d")
     OsRepositoryConfDir(512),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    VirtIoScsiEnabled(513),
+
+    @Reloadable
+    @TypeConverterAttribute(java.util.List.class)
+    @DefaultValueAttribute("WindowsXP,RHEL5,RHEL5x64,RHEL4,RHEL4x64,RHEL3,RHEL3x64")
+    @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
+    VirtIoScsiUnsupportedOsList(514),
+
     Invalid(65535);
 
     private int intValue;

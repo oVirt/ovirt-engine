@@ -23,6 +23,7 @@ import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
@@ -36,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
+import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
@@ -53,8 +55,8 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -303,6 +305,10 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             return false;
         }
 
+        if (!validateDiskInterface(imageList)) {
+            return false;
+        }
+
         setVmTemplateId(getVm().getVmtGuid());
         if (!templateExists() || !checkTemplateInStorageDomain() || !checkImagesGUIDsLegal() || !canAddVm()) {
             return false;
@@ -374,6 +380,22 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             addCanDoActionMessage(String.format("$VmName %1$s", duplicateVm.getName()));
             return false;
         }
+        return true;
+    }
+
+    protected boolean isDiskExists(Guid id) {
+        return getBaseDiskDao().exists(id);
+    }
+
+    protected boolean validateDiskInterface(Iterable<DiskImage> images) {
+        for (DiskImage diskImage : images) {
+            if (diskImage.getDiskInterface() == DiskInterface.VirtIO_SCSI &&
+                    !FeatureSupported.virtIoScsi(getVdsGroup().getcompatibility_version())) {
+                addCanDoActionMessage(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -987,6 +1009,11 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     @Override
     protected AuditLogType getAuditLogTypeForInvalidInterfaces() {
         return AuditLogType.IMPORTEXPORT_IMPORT_VM_INVALID_INTERFACES;
+    }
+
+    @Override
+    public VDSGroup getVdsGroup() {
+        return super.getVdsGroup();
     }
 
     @Override

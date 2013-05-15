@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.utils.WipeAfterDeleteUtils;
+import org.ovirt.engine.core.bll.validator.DiskValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -29,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskLunMap;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
+import org.ovirt.engine.core.common.businessentities.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -107,6 +109,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     protected boolean checkIfLunDiskCanBeAdded() {
         LUNs lun = ((LunDisk) getParameters().getDiskInfo()).getLun();
+        DiskValidator diskValidator = new DiskValidator(getParameters().getDiskInfo());
+
         switch (lun.getLunType()) {
         case UNKNOWN:
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_HAS_NO_VALID_TYPE);
@@ -132,11 +136,16 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             return false;
         }
 
+        if (!validate(diskValidator.isVirtIoScsiValid(getVm()))) {
+            return false;
+        }
+
         return true;
     }
 
     private boolean checkIfImageDiskCanBeAdded(VM vm) {
         boolean returnValue;
+        DiskValidator diskValidator = new DiskValidator(getParameters().getDiskInfo());
 
         // vm agnostic checks
         returnValue =
@@ -144,7 +153,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 checkImageConfiguration() &&
                 hasFreeSpace(getStorageDomain()) &&
                 checkExceedingMaxBlockDiskSize() &&
-                canAddShareableDisk();
+                canAddShareableDisk() &&
+                validate(diskValidator.isVirtIoScsiValid(vm));
 
         if (returnValue && vm != null) {
             StoragePool sp = getStoragePool(); // Note this is done according to the VM's spId.
@@ -307,6 +317,11 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             listPermissionSubjects.add(new PermissionSubject(Guid.SYSTEM,
                     VdcObjectType.System,
                     ActionGroup.CREATE_DISK));
+            if (getParameters().getDiskInfo().getSgio() == ScsiGenericIO.UNFILTERED) {
+                listPermissionSubjects.add(new PermissionSubject(Guid.SYSTEM,
+                        VdcObjectType.System,
+                        ActionGroup.CONFIGURE_SCSI_GENERIC_IO));
+            }
         } else {
             listPermissionSubjects.add(new PermissionSubject(getParameters().getStorageDomainId(),
                     VdcObjectType.Storage,

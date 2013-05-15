@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.DiskValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
@@ -94,6 +95,11 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
         if (isImageDisk && getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
                 ((DiskImage) disk).getStorageIds().get(0), getVm().getStoragePoolId())) == null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
+        }
+
+        DiskValidator diskValidator = new DiskValidator(disk);
+        if (!validate(diskValidator.isVirtIoScsiValid(getVm()))) {
+            return false;
         }
 
         if (!isVmNotInPreviewSnapshot()) {

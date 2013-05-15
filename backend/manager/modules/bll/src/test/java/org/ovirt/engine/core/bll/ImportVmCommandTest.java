@@ -8,6 +8,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,17 +24,20 @@ import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
@@ -41,7 +45,9 @@ import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 public class ImportVmCommandTest {
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.VirtIoScsiEnabled, Version.v3_2.toString(), false)
+            );
 
     @Rule
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
@@ -79,6 +85,7 @@ public class ImportVmCommandTest {
         doReturn(Collections.<VM> singletonList(createVM())).when(cmd).getVmsFromExportDomain();
         doReturn(new VmTemplate()).when(cmd).getVmTemplate();
         doReturn(new StoragePool()).when(cmd).getStoragePool();
+        doReturn(new VDSGroup()).when(cmd).getVdsGroup();
 
         return cmd;
     }
@@ -224,5 +231,14 @@ public class ImportVmCommandTest {
 
         cmd.addVmImagesAndSnapshots();
         assertEquals("Disk alias not generated", "testVm_Disk1", activeDisk.getDiskAlias());
+    }
+
+    @Test
+    public void testValidateClusterSupportForVirtioScsi() {
+        ImportVmCommand cmd = setupDiskSpaceTest(0);
+        cmd.getParameters().getVm().getDiskMap().values().iterator().next().setDiskInterface(DiskInterface.VirtIO_SCSI);
+        cmd.getVdsGroup().setcompatibility_version(Version.v3_2);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+                VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
     }
 }
