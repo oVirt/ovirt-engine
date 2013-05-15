@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -31,6 +32,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -95,6 +97,12 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         permissionList.add(new PermissionSubject(getVmIdFromSnapshot(),
                 VdcObjectType.VM,
                 getActionType().getActionGroup()));
+        for (DiskImage disk : getParameters().getDiskInfoDestinationMap().values()) {
+            if (disk.getStorageIds() != null && !disk.getStorageIds().isEmpty()) {
+                permissionList.add(new PermissionSubject(GuidUtils.getGuidValue(disk.getStorageIds().get(0)),
+                        VdcObjectType.Storage, ActionGroup.CREATE_DISK));
+            }
+        }
         addPermissionSubjectForAdminLevelProperties(permissionList);
         return permissionList;
     }
