@@ -10,9 +10,9 @@ public class ObjectUtilsTest {
 
     @Test
     public void testObjectsEqual() {
-        Integer ten = new Integer(10);
-        assertFalse(ObjectUtils.objectsEqual(ten, new Integer(20)));
-        assertTrue(ObjectUtils.objectsEqual(ten, new Integer(10)));
+        Integer ten = Integer.valueOf(10);
+        assertFalse(ObjectUtils.objectsEqual(ten, Integer.valueOf(20)));
+        assertTrue(ObjectUtils.objectsEqual(ten, Integer.valueOf(10)));
         assertTrue(ObjectUtils.objectsEqual(null, null));
         assertFalse(ObjectUtils.objectsEqual(ten, null));
         assertFalse(ObjectUtils.objectsEqual(null, ten));
