@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
@@ -54,7 +55,7 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
         int ideCount = 0, pciCount = 0;
         List<Disk> disks = getSortedDisks();
         List<VmDevice> vmDiskDevices = DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(
-                vm.getId(), VmDeviceType.DISK.getName(), VmDeviceType.DISK.getName());
+                vm.getId(), VmDeviceGeneralType.DISK, VmDeviceType.DISK.getName());
         for (Disk temp : disks) {
 
             DiskImage disk = (DiskImage) temp;

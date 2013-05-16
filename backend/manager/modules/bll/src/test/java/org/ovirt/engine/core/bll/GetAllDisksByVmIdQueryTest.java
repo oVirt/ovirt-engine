@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
@@ -79,7 +80,7 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisk
         vmDeviceDAOMock = mock(VmDeviceDAO.class);
         when(dbFacadeMock.getVmDeviceDao()).thenReturn(vmDeviceDAOMock);
         when(vmDeviceDAOMock.getVmDeviceByVmIdTypeAndDevice(vmID,
-                VmDeviceType.DISK.getName(),
+                VmDeviceGeneralType.DISK,
                 VmDeviceType.DISK.getName(),
                 getUser().getUserId(),
                 getQueryParameters().isFiltered())).
@@ -94,7 +95,7 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisk
 
     private static VmDevice createVMDevice(Guid vmID, DiskImage disk) {
         return new VmDevice(new VmDeviceId(disk.getImageId(), vmID),
-                VmDeviceType.DISK.getName(),
+                VmDeviceGeneralType.DISK,
                 VmDeviceType.DISK.getName(),
                 "",
                 1,

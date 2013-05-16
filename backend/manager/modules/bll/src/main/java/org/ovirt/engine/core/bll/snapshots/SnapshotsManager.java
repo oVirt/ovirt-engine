@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
@@ -406,7 +407,7 @@ public class SnapshotsManager {
      */
     private void removeDisksNotInSnapshot(Guid vmId, List<Guid> diskIdsFromSnapshot) {
         for (VmDevice vmDevice : getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(
-                vmId, VmDeviceType.DISK.getName(), VmDeviceType.DISK.getName())) {
+                vmId, VmDeviceGeneralType.DISK, VmDeviceType.DISK.getName())) {
             if (!diskIdsFromSnapshot.contains(vmDevice.getDeviceId())) {
                 Disk disk = getDiskDao().get(vmDevice.getDeviceId());
                 if (disk.isAllowSnapshot()) {

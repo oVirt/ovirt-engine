@@ -38,7 +38,7 @@ public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends Vd
         VmNetworkInterface nic = getParameters().getNic();
         VmDevice vmDevice = getParameters().getVmDevice();
 
-        map.put(VdsProperties.Type, VmDeviceType.INTERFACE.getName());
+        map.put(VdsProperties.Type, vmDevice.getType().getValue());
         map.put(VdsProperties.Device, VmDeviceType.BRIDGE.getName());
         map.put(VdsProperties.MAC_ADDR, nic.getMacAddress());
         map.put(VdsProperties.NETWORK, StringUtils.defaultString(nic.getNetworkName()));

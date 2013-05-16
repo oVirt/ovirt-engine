@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
@@ -1187,9 +1188,9 @@ public class VdsUpdateRunTimeInfo {
     }
 
     private boolean devicePluggable(VmDevice device) {
-        return (VmDeviceType.DISK.getName().equals(device.getDevice()) && VmDeviceType.DISK.getName().equals(device.getType()))
+        return (VmDeviceType.DISK.getName().equals(device.getDevice()) && VmDeviceGeneralType.DISK == device.getType())
                 || (VmDeviceType.BRIDGE.getName().equals(device.getDevice())
-                && VmDeviceType.INTERFACE.getName().equals(device.getType()));
+                && VmDeviceGeneralType.INTERFACE == device.getType());
     }
 
     /**
@@ -1211,7 +1212,7 @@ public class VdsUpdateRunTimeInfo {
             Object o = device.get(VdsProperties.SpecParams);
             newDeviceId = Guid.NewGuid();
             VmDeviceId id = new VmDeviceId(newDeviceId, vmId);
-            VmDevice newDevice = new VmDevice(id, typeName, deviceName, address,
+            VmDevice newDevice = new VmDevice(id, VmDeviceGeneralType.forValue(typeName), deviceName, address,
                     0,
                     o == null ? new HashMap<String, Object>() : (Map<String, Object>) o,
                     false,

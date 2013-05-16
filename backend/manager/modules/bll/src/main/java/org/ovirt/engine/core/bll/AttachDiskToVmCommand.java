@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -129,7 +130,7 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
 
     protected VmDevice createVmDevice() {
         return new VmDevice(new VmDeviceId(disk.getId(), getVmId()),
-                VmDeviceType.DISK.getName(),
+                VmDeviceGeneralType.DISK,
                 VmDeviceType.DISK.getName(),
                 "",
                 0,

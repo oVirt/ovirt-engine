@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -19,11 +20,11 @@ public class GetVmPayloadQuery<P extends IdQueryParameters> extends QueriesComma
     protected void executeQueryCommand() {
         if (MultiLevelAdministrationHandler.isAdminUser(getUser())) {
             VmDeviceDAO dao = getDbFacade().getVmDeviceDao();
-            List<VmDevice> disks = dao.getVmDeviceByVmIdAndType(getParameters().getId(), VmDeviceType.DISK.getName());
+            List<VmDevice> disks = dao.getVmDeviceByVmIdAndType(getParameters().getId(), VmDeviceGeneralType.DISK);
 
             for (VmDevice disk : disks) {
                 if (VmPayload.isPayload(disk.getSpecParams())) {
-                    VmPayload payload = new VmPayload(VmDeviceType.valueOf(disk.getType().toUpperCase()),
+                    VmPayload payload = new VmPayload(VmDeviceType.valueOf(disk.getType().name()),
                             disk.getSpecParams());
                     payload.setType(VmDeviceType.valueOf(disk.getDevice().toUpperCase()));
                     payload.setContent(new String(Base64.decodeBase64(payload.getContent())));

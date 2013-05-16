@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -24,17 +25,17 @@ public class VmDeviceCommonUtils {
     public final static String CDROM_IMAGE_ID = "11111111-1111-1111-1111-111111111111";
 
     public static boolean isNetwork(VmDevice device) {
-        return (device.getType().equals(VmDeviceType.INTERFACE.getName()));
+        return device.getType() == VmDeviceGeneralType.INTERFACE;
     }
 
     public static boolean isDisk(VmDevice device) {
-        return (device.getType().equals(VmDeviceType.DISK.getName()) && device.getDevice()
-                .equals(VmDeviceType.DISK.getName()));
+        return device.getType() == VmDeviceGeneralType.DISK
+                && device.getDevice().equals(VmDeviceType.DISK.getName());
     }
 
     public static boolean isCD(VmDevice device) {
-        return (device.getType().equals(VmDeviceType.DISK.getName()) && device.getDevice()
-                .equals(VmDeviceType.CDROM.getName()));
+        return device.getType() == VmDeviceGeneralType.DISK
+                && device.getDevice().equals(VmDeviceType.CDROM.getName());
     }
 
     /**
@@ -134,8 +135,7 @@ public class VmDeviceCommonUtils {
      */
     private static int setNetworkBootOrder(List<VmDevice> devices, int bootOrder) {
         for (VmDevice device : devices) {
-            if (device.getType().equals(
-                    VmDeviceType.INTERFACE.getName())
+            if (device.getType() == VmDeviceGeneralType.INTERFACE
                     && device.getDevice().equals(
                             VmDeviceType.BRIDGE.getName())) {
                 if (device.getIsPlugged()) {
@@ -155,8 +155,7 @@ public class VmDeviceCommonUtils {
      */
     private static int setCDBootOrder(List<VmDevice> devices, int bootOrder) {
         for (VmDevice device : devices) {
-            if (device.getType()
-                    .equals(VmDeviceType.DISK.getName())
+            if (device.getType() == VmDeviceGeneralType.DISK
                     && device.getDevice().equals(
                             VmDeviceType.CDROM.getName())) {
                 if (device.getIsPlugged()) {
@@ -182,8 +181,7 @@ public class VmDeviceCommonUtils {
             int bootOrder,
             boolean isOldCluster) {
         for (VmDevice device : devices) {
-            if (device.getType()
-                    .equals(VmDeviceType.DISK.getName())
+            if (device.getType() == VmDeviceGeneralType.DISK
                     && device.getDevice().equals(
                             VmDeviceType.DISK.getName())) {
                 Guid id = device.getDeviceId();
@@ -257,21 +255,20 @@ public class VmDeviceCommonUtils {
         return (version.compareTo(Version.v3_1) < 0);
     }
 
-    public static boolean isInWhiteList(String type, String device) {
+    public static boolean isInWhiteList(VmDeviceGeneralType type, String device) {
         String expr = getDeviceTypeSearchExpr(type, device);
         String whiteList = Config.GetValue(ConfigValues.ManagedDevicesWhiteList);
         return (whiteList.indexOf(expr) >= 0);
     }
 
     private static boolean isBootable(VmDevice device) {
-        return (VmDeviceType.DISK.getName().equals(device.getType()) || VmDeviceType.INTERFACE.getName()
-                .equals(device.getType()));
+        return (VmDeviceGeneralType.DISK == device.getType() || VmDeviceGeneralType.INTERFACE == device.getType());
     }
 
-    private static String getDeviceTypeSearchExpr(String type, String device) {
+    private static String getDeviceTypeSearchExpr(VmDeviceGeneralType type, String device) {
         StringBuilder sb = new StringBuilder();
         sb.append("type=");
-        sb.append(type);
+        sb.append(type.getValue());
         sb.append(" device=");
         sb.append(device);
         sb.append(" ");
@@ -281,13 +278,11 @@ public class VmDeviceCommonUtils {
     /**
      * is special device - device which is managed, but contains the general properties
      */
-    public static boolean isSpecialDevice(String device, String type) {
-        return (VmDeviceType.SOUND.getName().equals(type) ||
-                VmDeviceType.USB.getName().equals(device) ||
-                (VmDeviceType.SMARTCARD.getName().equals(device) && VmDeviceType.SMARTCARD.getName().equals(type)) ||
-                (VmDeviceType.SPICEVMC.getName().equals(device) && VmDeviceType.REDIR.getName().equals(type))
-                || (VmDeviceType.MEMBALLOON.getName()
-                        .equals(device) && VmDeviceType.BALLOON.getName().equals(type)) || (VmDeviceType.WATCHDOG.getName()
-                .equals(device) && VmDeviceType.WATCHDOG.getName().equals(type)));
+    public static boolean isSpecialDevice(String device, VmDeviceGeneralType type) {
+        return (VmDeviceGeneralType.SOUND == type || VmDeviceType.USB.getName().equals(device)
+                || (VmDeviceType.SMARTCARD.getName().equals(device) && VmDeviceGeneralType.SMARTCARD == type)
+                || (VmDeviceType.SPICEVMC.getName().equals(device) && VmDeviceGeneralType.CHANNEL == type)
+                || (VmDeviceType.MEMBALLOON.getName().equals(device) && VmDeviceGeneralType.BALLOON == type))
+                || (VmDeviceType.WATCHDOG.getName().equals(device) && VmDeviceGeneralType.WATCHDOG == type);
     }
 }

@@ -22,7 +22,7 @@ public class UpdateVmInterfaceVDSCommand extends VdsBrokerCommand<VmNicDeviceVDS
 
     protected Map<String, Object> initDeviceStructure() {
         Map<String, Object> deviceStruct = new HashMap<String, Object>();
-        deviceStruct.put(VdsProperties.DeviceType, getParameters().getVmDevice().getType());
+        deviceStruct.put(VdsProperties.DeviceType, getParameters().getVmDevice().getType().getValue());
         deviceStruct.put(VdsProperties.Alias, getParameters().getVmDevice().getAlias());
 
         VmNetworkInterface nic = getParameters().getNic();

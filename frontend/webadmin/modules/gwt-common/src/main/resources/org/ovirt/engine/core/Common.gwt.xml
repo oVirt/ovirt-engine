@@ -107,6 +107,7 @@
 		<include name="common/businessentities/VmBase.java" />
 		<include name="common/businessentities/VmDynamic.java" />
 		<include name="common/businessentities/VmDevice.java" />
+		<include name="common/businessentities/VmDeviceGeneralType.java" />
 		<include name="common/businessentities/VmDeviceId.java" />
 		<include name="common/businessentities/VmExitStatus.java" />
 		<include name="common/businessentities/VmOsType.java" />

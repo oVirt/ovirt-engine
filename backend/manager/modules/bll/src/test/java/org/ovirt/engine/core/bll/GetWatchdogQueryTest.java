@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -45,8 +46,9 @@ public class GetWatchdogQueryTest extends AbstractQueryTest<IdQueryParameters, G
         watchdogSpecParams.put("model", "i6300esb");
         watchdogSpecParams.put("action", "reset");
         VmDevice vmDevice = new VmDevice(new VmDeviceId(new Guid("6f86b8a4-e721-4149-b2df-056eb621b16a"),
-                vmId), VmDeviceType.WATCHDOG.getName(), "watchdog", "", 1, watchdogSpecParams, true, true, true, "");
-        Mockito.when(vmDeviceDaoMock.getVmDeviceByVmIdAndType(vmId, VmDeviceType.WATCHDOG.getName()))
+                vmId), VmDeviceGeneralType.WATCHDOG, VmDeviceType.WATCHDOG.getName(), "", 1, watchdogSpecParams, true,
+                true, true, "");
+        Mockito.when(vmDeviceDaoMock.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.WATCHDOG))
                 .thenReturn(Arrays.asList(vmDevice));
         GetWatchdogQuery<IdQueryParameters> query =
                 new GetWatchdogQuery<IdQueryParameters>(new IdQueryParameters(vmId));

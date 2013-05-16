@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -37,7 +38,6 @@ import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
@@ -131,7 +131,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         VmPayload payload = getParameters().getVmPayload();
 
         if (payload != null || getParameters().isClearPayload()) {
-            List<VmDevice> disks = dao.getVmDeviceByVmIdAndType(getVmId(), VmDeviceType.DISK.getName());
+            List<VmDevice> disks = dao.getVmDeviceByVmIdAndType(getVmId(), VmDeviceGeneralType.DISK);
             VmDevice oldPayload = null;
             for (VmDevice disk : disks) {
                 if (VmPayload.isPayload(disk.getSpecParams())) {
@@ -148,7 +148,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
             if (!getParameters().isClearPayload()) {
                 VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.NewGuid(), getVmId()),
-                        VmDeviceType.DISK,
+                        VmDeviceGeneralType.DISK,
                         payload.getType(),
                         payload.getSpecParams(),
                         true,

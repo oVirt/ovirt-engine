@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -43,7 +44,7 @@ public class GetAllDisksByVmIdQuery<P extends GetAllDisksByVmIdParameters> exten
         List<VmDevice> disksVmDevices =
                 getDbFacade().getVmDeviceDao()
                         .getVmDeviceByVmIdTypeAndDevice(getParameters().getVmId(),
-                                VmDeviceType.DISK.getName(),
+                                VmDeviceGeneralType.DISK,
                                 VmDeviceType.DISK.getName(),
                                 getUserID(),
                                 getParameters().isFiltered());

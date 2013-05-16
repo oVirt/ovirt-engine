@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
@@ -336,7 +337,7 @@ public final class ImagesHandler {
     public static void addDiskToVm(BaseDisk disk, Guid vmId) {
         DbFacade.getInstance().getBaseDiskDao().save(disk);
         VmDeviceUtils.addManagedDevice(new VmDeviceId(disk.getId(), vmId),
-                VmDeviceType.DISK,
+                VmDeviceGeneralType.DISK,
                 VmDeviceType.DISK,
                 null,
                 true,

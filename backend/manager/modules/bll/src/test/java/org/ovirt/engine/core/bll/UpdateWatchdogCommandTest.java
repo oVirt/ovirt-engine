@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.compat.Guid;
@@ -37,6 +38,7 @@ public class UpdateWatchdogCommandTest {
         final VmDAO vmDaoMock = Mockito.mock(VmDAO.class);
         Mockito.when(vmDaoMock.get(new Guid("a09f57b1-5739-4352-bf88-a6f834ed46db"))).thenReturn(null);
         UpdateWatchdogCommand command = new UpdateWatchdogCommand(params) {
+            @Override
             public VmDAO getVmDAO() {
                 return vmDaoMock;
             }
@@ -55,8 +57,9 @@ public class UpdateWatchdogCommandTest {
         final VmDAO vmDaoMock = Mockito.mock(VmDAO.class);
         Mockito.when(vmDaoMock.get(vmGuid)).thenReturn(new VM());
         final VmDeviceDAO deviceDAO = Mockito.mock(VmDeviceDAO.class);
-        Mockito.when(deviceDAO.getVmDeviceByVmIdAndType(vmGuid, "watchdog")).thenReturn(Collections.singletonList(new VmDevice()));
+        Mockito.when(deviceDAO.getVmDeviceByVmIdAndType(vmGuid, VmDeviceGeneralType.WATCHDOG)).thenReturn(Collections.singletonList(new VmDevice()));
         UpdateWatchdogCommand command = new UpdateWatchdogCommand(params) {
+            @Override
             public VmDAO getVmDAO() {
                 return vmDaoMock;
             }

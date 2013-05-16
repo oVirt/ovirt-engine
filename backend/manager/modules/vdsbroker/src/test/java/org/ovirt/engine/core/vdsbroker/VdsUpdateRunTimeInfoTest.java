@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -110,7 +111,7 @@ public class VdsUpdateRunTimeInfoTest {
         deviceProperties.put(VdsProperties.DeviceId, deviceID.toString());
         deviceProperties.put(VdsProperties.Address, Collections.emptyMap());
         deviceProperties.put(VdsProperties.Device, "aDevice");
-        deviceProperties.put(VdsProperties.Type, "aType");
+        deviceProperties.put(VdsProperties.Type, VmDeviceGeneralType.DISK.getValue());
 
         vm.put(VdsProperties.Devices, new HashMap[] { new HashMap(deviceProperties) });
         vmInfo = new HashMap[] { vm };

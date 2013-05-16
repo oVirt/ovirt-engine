@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -18,11 +19,15 @@ public interface VmDeviceDAO extends GenericDao<VmDevice, VmDeviceId>, MassOpera
 
     List<VmDevice> getVmDeviceByVmId(Guid vmId);
 
-    List<VmDevice> getVmDeviceByVmIdAndType(Guid vmId, String type);
+    List<VmDevice> getVmDeviceByVmIdAndType(Guid vmId, VmDeviceGeneralType type);
 
-    List<VmDevice> getVmDeviceByVmIdTypeAndDevice(Guid vmId, String type, String device);
+    List<VmDevice> getVmDeviceByVmIdTypeAndDevice(Guid vmId, VmDeviceGeneralType type, String device);
 
-    List<VmDevice> getVmDeviceByVmIdTypeAndDevice(Guid vmId, String type, String device, Guid userID, boolean isFiltered);
+    List<VmDevice> getVmDeviceByVmIdTypeAndDevice(Guid vmId,
+            VmDeviceGeneralType type,
+            String device,
+            Guid userID,
+            boolean isFiltered);
 
     List<VmDevice> getUnmanagedDevicesByVmId(Guid vmId);
 

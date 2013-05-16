@@ -33,7 +33,7 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
     /**
      * The device name.
      */
-    private String type;
+    private VmDeviceGeneralType type;
 
     /**
      * The device address.
@@ -74,7 +74,7 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
     public VmDevice() {
     }
 
-    public VmDevice(VmDeviceId id, String type, String device, String address,
+    public VmDevice(VmDeviceId id, VmDeviceGeneralType type, String device, String address,
             int bootOrder,
             Map<String, Object> specParams,
             boolean isManaged,
@@ -133,11 +133,11 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
         this.device = device;
     }
 
-    public String getType() {
+    public VmDeviceGeneralType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(VmDeviceGeneralType type) {
         this.type = type;
     }
 

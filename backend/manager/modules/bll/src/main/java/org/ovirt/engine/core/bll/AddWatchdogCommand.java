@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -25,7 +26,7 @@ public class AddWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParame
         VmDevice watchdogDevice = new VmDevice();
         watchdogDevice.setId(new VmDeviceId(new Guid(), getParameters().getId()));
         watchdogDevice.setDevice(VmDeviceType.WATCHDOG.getName());
-        watchdogDevice.setType(VmDeviceType.WATCHDOG.getName());
+        watchdogDevice.setType(VmDeviceGeneralType.WATCHDOG);
         watchdogDevice.setAddress(StringUtils.EMPTY);
         watchdogDevice.setSpecParams(getSpecParams());
         getVmDeviceDao().save(watchdogDevice);

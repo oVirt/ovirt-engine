@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -311,7 +312,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         int numOfMonitors = vmBase.getNumOfMonitors();
         int i = 0;
         for (VmDevice vmDevice : devices) {
-            if (vmDevice.getType().equals(VmDeviceType.VIDEO.getName())) {
+            if (vmDevice.getType() == VmDeviceGeneralType.VIDEO) {
                 _writer.WriteStartElement("Item");
                 _writer.WriteStartElement(RASD_URI, "Caption");
                 _writer.WriteRaw("Graphical Controller");
@@ -338,7 +339,7 @@ public abstract class OvfWriter implements IOvfBuilder {
     protected void writeCd(VmBase vmBase) {
         Collection<VmDevice> devices = vmBase.getManagedDeviceMap().values();
         for (VmDevice vmDevice : devices) {
-            if (vmDevice.getType().equals(VmDeviceType.CDROM.getName())) {
+            if (vmDevice.getDevice().equals(VmDeviceType.CDROM.getName())) {
                 _writer.WriteStartElement("Item");
                 _writer.WriteStartElement(RASD_URI, "Caption");
                 _writer.WriteRaw("CDROM");
@@ -358,7 +359,7 @@ public abstract class OvfWriter implements IOvfBuilder {
 
     private void writeVmDeviceInfo(VmDevice vmDevice) {
         _writer.WriteStartElement(OvfProperties.VMD_TYPE);
-        _writer.WriteRaw(String.valueOf(vmDevice.getType()));
+        _writer.WriteRaw(String.valueOf(vmDevice.getType().getValue()));
         _writer.WriteEndElement();
         _writer.WriteStartElement(OvfProperties.VMD_DEVICE);
         _writer.WriteRaw(String.valueOf(vmDevice.getDevice()));

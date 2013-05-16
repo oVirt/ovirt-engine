@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.permissions;
@@ -340,7 +341,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 getDiskLunMapDao().save(new DiskLunMap(getParameters().getDiskInfo().getId(), lun.getLUN_id()));
                 if (getVm() != null) {
                     VmDeviceUtils.addManagedDevice(new VmDeviceId(getParameters().getDiskInfo().getId(), getVmId()),
-                            VmDeviceType.DISK,
+                            VmDeviceGeneralType.DISK,
                             VmDeviceType.DISK,
                             null,
                             getVm().getStatus() == VMStatus.Down,
@@ -375,7 +376,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             getCompensationContext().snapshotNewEntity(VmDeviceUtils.addManagedDevice(new VmDeviceId(getParameters().getDiskInfo()
                     .getId(),
                     getVmId()),
-                    VmDeviceType.DISK,
+                    VmDeviceGeneralType.DISK,
                     VmDeviceType.DISK,
                     null,
                     getVm().getStatus() == VMStatus.Down,

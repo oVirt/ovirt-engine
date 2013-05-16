@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
@@ -207,10 +208,10 @@ public abstract class OvfReader implements IOvfBuilder {
         }
         if (node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS) != null
                 && !StringUtils.isEmpty(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).InnerText)) {
-            vmDevice.setType(String.valueOf(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).InnerText));
+            vmDevice.setType(VmDeviceGeneralType.forValue(String.valueOf(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).InnerText)));
         } else {
             int resourceType = getResourceType(node, OvfProperties.VMD_RESOURCE_TYPE);
-            vmDevice.setType(VmDeviceType.getoVirtDevice(resourceType).getName());
+            vmDevice.setType(VmDeviceGeneralType.forValue(VmDeviceType.getoVirtDevice(resourceType).getName()));
         }
         if (node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS) != null
                 && !StringUtils.isEmpty(node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS).InnerText)) {

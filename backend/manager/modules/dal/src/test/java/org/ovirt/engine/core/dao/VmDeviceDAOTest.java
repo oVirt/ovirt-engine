@@ -12,6 +12,7 @@ import junit.framework.Assert;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -40,7 +41,7 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
     @Override
     protected VmDevice generateNewEntity() {
         return new VmDevice(new VmDeviceId(Guid.NewGuid(), EXISTING_VM_ID),
-                "disk",
+                VmDeviceGeneralType.DISK,
                 "floppy",
                 "type:'drive', controller:'0', bus:'0', unit:'1'",
                 2,
@@ -75,27 +76,36 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
 
     @Test
     public void testGetVmDeviceByVmIdTypeAndDeviceNoFiltering() {
-        List<VmDevice> devices = dao.getVmDeviceByVmIdTypeAndDevice(EXISTING_VM_ID, "disk", "disk");
+        List<VmDevice> devices = dao.getVmDeviceByVmIdTypeAndDevice(EXISTING_VM_ID, VmDeviceGeneralType.DISK, "disk");
         assertGetVMDeviceByIdTypeAndDeviceFullResult(devices);
     }
 
     @Test
     public void testGetVmDeviceByVmIdTypeAndDeviceFilteringSetToFlase() {
-        List<VmDevice> devices = dao.getVmDeviceByVmIdTypeAndDevice(EXISTING_VM_ID, "disk", "disk", null, false);
+        List<VmDevice> devices =
+                dao.getVmDeviceByVmIdTypeAndDevice(EXISTING_VM_ID, VmDeviceGeneralType.DISK, "disk", null, false);
         assertGetVMDeviceByIdTypeAndDeviceFullResult(devices);
     }
 
     @Test
     public void testGetVmDeviceByVmIdTypeAndDeviceFilteringWithPermissions() {
         List<VmDevice> devices =
-                dao.getVmDeviceByVmIdTypeAndDevice(EXISTING_VM_ID, "disk", "disk", PRIVILEGED_USER_ID, true);
+                dao.getVmDeviceByVmIdTypeAndDevice(EXISTING_VM_ID,
+                        VmDeviceGeneralType.DISK,
+                        "disk",
+                        PRIVILEGED_USER_ID,
+                        true);
         assertGetVMDeviceByIdTypeAndDeviceFullResult(devices);
     }
 
     @Test
     public void testGetVmDeviceByVmIdTypeAndDeviceFilteringWithoutPermissions() {
         List<VmDevice> devices =
-                dao.getVmDeviceByVmIdTypeAndDevice(EXISTING_VM_ID, "disk", "disk", UNPRIVILEGED_USER_ID, true);
+                dao.getVmDeviceByVmIdTypeAndDevice(EXISTING_VM_ID,
+                        VmDeviceGeneralType.DISK,
+                        "disk",
+                        UNPRIVILEGED_USER_ID,
+                        true);
         assertTrue("A user without any permissions should not see any devices", devices.isEmpty());
     }
 
@@ -110,7 +120,11 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
     @Test
     public void testGetVmDeviceByVmIdTypeAndDeviceFilteringWithPermissionsNoFiltering() {
         List<VmDevice> devices =
-                dao.getVmDeviceByVmIdTypeAndDevice(EXISTING_VM_ID, "disk", "disk", PRIVILEGED_USER_ID, false);
+                dao.getVmDeviceByVmIdTypeAndDevice(EXISTING_VM_ID,
+                        VmDeviceGeneralType.DISK,
+                        "disk",
+                        PRIVILEGED_USER_ID,
+                        false);
         assertGetVMDeviceByIdTypeAndDeviceFullResult(devices);
     }
 
@@ -126,7 +140,7 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
         boolean queryRes = dao.isMemBalloonEnabled(EXISTING_VM_ID);
         List<VmDevice> devices =
                 dao.getVmDeviceByVmIdTypeAndDevice(EXISTING_VM_ID,
-                        VmDeviceType.BALLOON.getName(),
+                        VmDeviceGeneralType.BALLOON,
                         VmDeviceType.MEMBALLOON.getName());
         assertTrue((queryRes && !devices.isEmpty()) || (!queryRes && devices.isEmpty()));
     }

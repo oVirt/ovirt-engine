@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -61,13 +62,13 @@ public class VmDeviceUtils {
             // if the console type has changed, recreate Video devices
             if (oldVmBase.getDefaultDisplayType() != entity.getDefaultDisplayType()) {
                 // delete all video device
-                for (VmDevice device : dao.getVmDeviceByVmIdAndType(oldVmBase.getId(), VmDeviceType.VIDEO.getName())) {
+                for (VmDevice device : dao.getVmDeviceByVmIdAndType(oldVmBase.getId(), VmDeviceGeneralType.VIDEO)) {
                     dao.remove(device.getId());
                 }
                 // add video device per each monitor
                 for (int i = 0; i<entity.getNumOfMonitors();i++) {
                     addManagedDevice(new VmDeviceId(Guid.NewGuid(), entity.getId()),
-                            VmDeviceType.VIDEO,
+                            VmDeviceGeneralType.VIDEO,
                             entity.getDefaultDisplayType().getVmDeviceType(),
                             getMemExpr(entity.getNumOfMonitors()),
                             true,
@@ -101,7 +102,7 @@ public class VmDeviceUtils {
                     DbFacade.getInstance()
                             .getVmDeviceDao()
                             .getVmDeviceByVmIdTypeAndDevice(vmId,
-                                    VmDeviceType.SMARTCARD.getName(),
+                                    VmDeviceGeneralType.SMARTCARD,
                                     VmDeviceType.SMARTCARD.getName());
             for (VmDevice device : vmDevices) {
                 dao.remove(device.getId());
@@ -113,7 +114,7 @@ public class VmDeviceUtils {
 
     public static void addSmartcardDevice(Guid vmId) {
         VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.NewGuid(), vmId),
-                VmDeviceType.SMARTCARD,
+                VmDeviceGeneralType.SMARTCARD,
                 VmDeviceType.SMARTCARD,
                 new SmartcardSpecParams(),
                 true,
@@ -134,14 +135,14 @@ public class VmDeviceUtils {
             List<VmDevice> list =
                     DbFacade.getInstance()
                             .getVmDeviceDao()
-                            .getVmDeviceByVmIdAndType(vmId, VmDeviceType.SOUND.getName());
+                            .getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.SOUND);
             removeNumberOfDevices(list, list.size());
 
             // create new device
             String soundDevice =
                     VmInfoBuilderBase.getSoundDevice(newVmBase, oldVm.getVdsGroupCompatibilityVersion());
             addManagedDevice(new VmDeviceId(Guid.NewGuid(), vmId),
-                    VmDeviceType.SOUND,
+                    VmDeviceGeneralType.SOUND,
                     VmDeviceType.getSoundDeviceType(soundDevice),
                     new HashMap<String, Object>(),
                     true,
@@ -169,7 +170,7 @@ public class VmDeviceUtils {
         // indicates that VM should have CD either from its own (iso_path) or from the snapshot it was cloned from.
         boolean shouldHaveCD = StringUtils.isNotEmpty(isoPath);
         // indicates if VM has already a non empty CD in DB
-        boolean hasAlreadyCD = (!(DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(vmBase.getId(), VmDeviceType.DISK.getName(), VmDeviceType.CDROM.getName())).isEmpty());
+        boolean hasAlreadyCD = (!(DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(vmBase.getId(), VmDeviceGeneralType.DISK, VmDeviceType.CDROM.getName())).isEmpty());
         boolean addCD = (!hasAlreadyCD && shouldHaveCD);
         for (VmDevice device : devicesDataToUse) {
             id = Guid.NewGuid();
@@ -178,51 +179,69 @@ public class VmDeviceUtils {
                 //add CD if not exists
                 if (addCD) {
                     setCdPath(specParams, "", isoPath);
-                    addManagedDevice(new VmDeviceId(Guid.NewGuid(),dstId) , VmDeviceType.DISK, VmDeviceType.CDROM, specParams, true, true);
+                    addManagedDevice(new VmDeviceId(Guid.NewGuid(),dstId) , VmDeviceGeneralType.DISK, VmDeviceType.CDROM, specParams, true, true, null);
                 }
                 // updating USB slots
                 updateUSBSlots(null, vmBase);
                 // add mem balloon if defined
                 updateMemoryBalloon(null, vmBase, vm.isBalloonEnabled());
             }
-            if (VmDeviceType.DISK.getName().equals(device.getType())
-                    && VmDeviceType.DISK.getName().equals(device.getDevice())) {
-                if (diskCount < disks.size()) {
-                    id = (disks.get(diskCount++)).getId();
-                }
-            } else if (VmDeviceType.INTERFACE.getName().equals(device.getType())) {
-                if (ifaceCount < ifaces.size()) {
-                    id = ifaces.get(ifaceCount++).getId();
-                }
-            } else if (VmDeviceType.CONTROLLER.getName().equals(device.getType())
-                    && VmDeviceType.USB.getName().equals(device.getDevice())) {
-                specParams = device.getSpecParams();
-            } else if (VmDeviceType.VIDEO.getName().equals(device.getType())) {
-                if (isVm) {
-                    // src is template and target is VM. video devices will be created according
-                    // to the new VMStatic params
-                    continue;
-                } else {
-                    specParams.putAll(getMemExpr(vmBase.getNumOfMonitors()));
-                }
-            } else if (VmDeviceType.DISK.getName().equals(device.getType())
-                    && VmDeviceType.CDROM.getName().equals(device.getDevice())) {
-                // check here is source VM had CD (Vm from snapshot)
-                String srcCdPath = (String) device.getSpecParams().get(VdsProperties.Path);
-                shouldHaveCD = (!StringUtils.isEmpty(srcCdPath) || shouldHaveCD);
-                if (!hasAlreadyCD && shouldHaveCD) {
-                    setCdPath(specParams, srcCdPath, isoPath);
-                }
-                else {// CD already exists
-                    continue;
-                }
-            }
-            else if (VmDeviceType.BALLOON.getName().equals(device.getType())){
-                specParams.put(VdsProperties.Model, VdsProperties.Virtio);
-            } else if (VmDeviceType.SMARTCARD.getName().equals(device.getType())) {
-                specParams = new SmartcardSpecParams();
-            } else if (VmDeviceType.WATCHDOG.getName().equals(device.getType())) {
-                specParams.putAll(device.getSpecParams());
+
+            switch(device.getType()) {
+                case DISK:
+                    if (VmDeviceType.DISK.getName().equals(device.getDevice())) {
+                        if (diskCount < disks.size()) {
+                            id = (disks.get(diskCount++)).getId();
+                        }
+                    } else if (VmDeviceType.CDROM.getName().equals(device.getDevice())) {
+                        // check here is source VM had CD (Vm from snapshot)
+                        String srcCdPath = (String) device.getSpecParams().get(VdsProperties.Path);
+                        shouldHaveCD = (!StringUtils.isEmpty(srcCdPath) || shouldHaveCD);
+                        if (!hasAlreadyCD && shouldHaveCD) {
+                            setCdPath(specParams, srcCdPath, isoPath);
+                        }
+                        else {// CD already exists
+                            continue;
+                        }
+                    }
+                    break;
+
+                case INTERFACE:
+                    if (ifaceCount < ifaces.size()) {
+                        id = ifaces.get(ifaceCount++).getId();
+                    }
+                    break;
+
+                case CONTROLLER:
+                    if (VmDeviceType.USB.getName().equals(device.getDevice())) {
+                        specParams = device.getSpecParams();
+                    }
+                    break;
+
+                case VIDEO:
+                    if (isVm) {
+                        // src is template and target is VM. video devices will be created according
+                        // to the new VMStatic params
+                        continue;
+                    } else {
+                        specParams.putAll(getMemExpr(vmBase.getNumOfMonitors()));
+                    }
+                    break;
+
+                case BALLOON:
+                    specParams.put(VdsProperties.Model, VdsProperties.Virtio);
+                    break;
+
+                case SMARTCARD:
+                    specParams = new SmartcardSpecParams();
+                    break;
+
+                case WATCHDOG:
+                    specParams.putAll(device.getSpecParams());
+                    break;
+
+                default:
+                    break;
             }
             device.setId(new VmDeviceId(id, dstId));
             device.setSpecParams(specParams);
@@ -239,7 +258,7 @@ public class VmDeviceUtils {
 
             // create sound card for a desktop VM if not exists
             if (vmBase.getVmType() == VmType.Desktop) {
-                List<VmDevice> list = DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdAndType(vmBase.getId(), VmDeviceType.SOUND.getName());
+                List<VmDevice> list = DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdAndType(vmBase.getId(), VmDeviceGeneralType.SOUND);
                 if (list.isEmpty()) {
                     addSoundCard(vm.getStaticData(), vm.getVdsGroupCompatibilityVersion());
                 }
@@ -260,7 +279,7 @@ public class VmDeviceUtils {
     private static void addSoundCard(VmBase vmBase, Version vdsGroupCompatibilityVersion) {
         String soundDevice = VmInfoBuilderBase.getSoundDevice(vmBase, vdsGroupCompatibilityVersion);
         addManagedDevice(new VmDeviceId(Guid.NewGuid(), vmBase.getId()),
-                VmDeviceType.SOUND,
+                VmDeviceGeneralType.SOUND,
                 VmDeviceType.getSoundDeviceType(soundDevice),
                 new HashMap<String, Object>(),
                 true,
@@ -289,7 +308,7 @@ public class VmDeviceUtils {
     private static void addVideoDevice(VmBase vm) {
         addManagedDevice(
                 new VmDeviceId(Guid.NewGuid(),vm.getId()),
-                VmDeviceType.VIDEO,
+                VmDeviceGeneralType.VIDEO,
                 vm.getDefaultDisplayType().getVmDeviceType(),
                 getMemExpr(vm.getNumOfMonitors()),
                 true,
@@ -317,7 +336,12 @@ public class VmDeviceUtils {
      * @return The device that was added.
      */
     public static VmDevice addNetworkInterfaceDevice(VmDeviceId id, boolean plugged) {
-        return addManagedDevice(id, VmDeviceType.INTERFACE, VmDeviceType.BRIDGE, Collections.<String, Object> emptyMap(), plugged, false);
+        return addManagedDevice(id,
+                VmDeviceGeneralType.INTERFACE,
+                VmDeviceType.BRIDGE,
+                Collections.<String, Object> emptyMap(),
+                plugged,
+                false);
     }
 
     /**
@@ -331,7 +355,7 @@ public class VmDeviceUtils {
      * @return newly created VmDevice instance
      */
     public static VmDevice addManagedDevice(VmDeviceId id,
-            VmDeviceType type,
+            VmDeviceGeneralType type,
             VmDeviceType device,
             Map<String, Object> specParams,
             boolean plugged,
@@ -353,15 +377,15 @@ public class VmDeviceUtils {
      * @return New created VmDevice instance
      */
     public static VmDevice addManagedDevice(VmDeviceId id,
-            VmDeviceType type,
+            VmDeviceGeneralType type,
             VmDeviceType device,
             Map<String, Object> specParams,
             boolean is_plugged,
             boolean isReadOnly) {
         VmDevice managedDevice =
             new VmDevice(id,
-                        type.getName(),
-                        device.getName(),
+                    type,
+                    device.getName(),
                     "",
                     0,
                     specParams,
@@ -371,7 +395,7 @@ public class VmDeviceUtils {
                     "");
         dao.save(managedDevice);
         // If we add Disk/Interface/CD/Floppy, we have to recalculate boot order
-        if (type.equals(VmDeviceType.DISK) || type.equals(VmDeviceType.INTERFACE )) {
+        if (type == VmDeviceGeneralType.DISK || type == VmDeviceGeneralType.INTERFACE) {
             // recalculate boot sequence
             VmBase vmBase = DbFacade.getInstance().getVmStaticDao().get(id.getVmId());
             updateBootOrderInVmDeviceAndStoreToDB(vmBase);
@@ -451,7 +475,7 @@ public class VmDeviceUtils {
      *            NOTE : Only one CD is currently supported.
      */
     private static void updateCdInVmDevice(VmBase oldVmBase, VmBase newVmBase) {
-        List<VmDevice> cdList = DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(oldVmBase.getId(), VmDeviceType.DISK.getName(), VmDeviceType.CDROM.getName());
+        List<VmDevice> cdList = DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(oldVmBase.getId(), VmDeviceGeneralType.DISK, VmDeviceType.CDROM.getName());
         if (cdList.size() > 0){ // this is done only for safety, each VM must have at least an Empty CD
             VmDevice cd = cdList.get(0); // only one managed CD is currently supported.
             cd.getSpecParams()
@@ -477,7 +501,7 @@ public class VmDeviceUtils {
                     .getNumOfMonitors(); i++) {
                 Guid newId = Guid.NewGuid();
                 VmDeviceUtils.addManagedDevice(new VmDeviceId(newId, newStatic.getId()),
-                        VmDeviceType.VIDEO,
+                        VmDeviceGeneralType.VIDEO,
                         VmDeviceType.QXL,
                         getMemExpr(newStatic.getNumOfMonitors()),
                         true,
@@ -488,7 +512,7 @@ public class VmDeviceUtils {
                     .getInstance()
                     .getVmDeviceDao()
                     .getVmDeviceByVmIdAndType(newStatic.getId(),
-                            VmDeviceType.VIDEO.getName());
+                            VmDeviceGeneralType.VIDEO);
             removeNumberOfDevices(list, prevNumOfMonitors - newStatic.getNumOfMonitors());
         }
     }
@@ -560,7 +584,7 @@ public class VmDeviceUtils {
             Guid deviceId = disk.getId();
             VmDevice vmDevice =
                     addManagedDevice(new VmDeviceId(deviceId, id),
-                            VmDeviceType.DISK,
+                            VmDeviceGeneralType.DISK,
                             VmDeviceType.DISK,
                             null,
                             true,
@@ -629,7 +653,7 @@ public class VmDeviceUtils {
             Guid deviceId = iface.getId();
             VmDevice vmDevice =
                     addManagedDevice(new VmDeviceId(deviceId, id),
-                            VmDeviceType.INTERFACE,
+                            VmDeviceGeneralType.INTERFACE,
                             VmDeviceType.BRIDGE,
                             null,
                             true,
@@ -669,7 +693,7 @@ public class VmDeviceUtils {
                 continue; // skip disks/interfaces that were added separately.
             }
             vmDevice.setIsManaged(true);
-            if (vmDevice.getType().equals(VmDeviceType.VIDEO.getName())) {
+            if (vmDevice.getType() == VmDeviceGeneralType.VIDEO) {
                 vmDevice.setSpecParams(getMemExpr(entity.getNumOfMonitors()));
             }
             if (vmDevice.getDevice().equals(VmDeviceType.CDROM.getName())){
@@ -708,7 +732,7 @@ public class VmDeviceUtils {
     private static void addUsbSlots(VmBase vm, int numOfSlots) {
         for (int index = 1; index <= numOfSlots; index++) {
             VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
-                    VmDeviceType.REDIR,
+                    VmDeviceGeneralType.CHANNEL,
                     VmDeviceType.SPICEVMC,
                     getUsbSlotSpecParams(),
                     true,
@@ -720,14 +744,14 @@ public class VmDeviceUtils {
         // For each controller we need to create one EHCI and companion UHCI controllers
         for (int index = 0; index < numOfControllers; index++) {
             VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
-                    VmDeviceType.CONTROLLER,
+                    VmDeviceGeneralType.CONTROLLER,
                     VmDeviceType.USB,
                     getUsbControllerSpecParams(EHCI_MODEL, 1, index),
                     true,
                     false);
             for (int companionIndex = 1; companionIndex <= COMPANION_USB_CONTROLLERS; companionIndex++) {
                 VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
-                        VmDeviceType.CONTROLLER,
+                        VmDeviceGeneralType.CONTROLLER,
                         VmDeviceType.USB,
                         getUsbControllerSpecParams(UHCI_MODEL, companionIndex, index),
                         true,
@@ -759,7 +783,7 @@ public class VmDeviceUtils {
     }
 
     private static List<VmDevice> getUsbRedirectDevices(VmBase vm) {
-        List<VmDevice> list = dao.getVmDeviceByVmIdTypeAndDevice(vm.getId(),VmDeviceType.REDIR.getName(), VmDeviceType.SPICEVMC.getName());
+        List<VmDevice> list = dao.getVmDeviceByVmIdTypeAndDevice(vm.getId(),VmDeviceGeneralType.CHANNEL, VmDeviceType.SPICEVMC.getName());
 
         return list;
     }
@@ -785,7 +809,7 @@ public class VmDeviceUtils {
     }
 
     private static void removeUsbControllers(VmBase vm) {
-        List<VmDevice> list = dao.getVmDeviceByVmIdTypeAndDevice(vm.getId(), VmDeviceType.CONTROLLER.getName(), VmDeviceType.USB.getName());
+        List<VmDevice> list = dao.getVmDeviceByVmIdTypeAndDevice(vm.getId(), VmDeviceGeneralType.CONTROLLER, VmDeviceType.USB.getName());
         for(VmDevice vmDevice : list) {
             dao.remove(vmDevice.getId());
         }
@@ -797,7 +821,7 @@ public class VmDeviceUtils {
      */
     private static void addEmptyCD(Guid dstId) {
         VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.NewGuid(), dstId),
-                VmDeviceType.DISK,
+                VmDeviceGeneralType.DISK,
                 VmDeviceType.CDROM,
                 Collections.<String, Object> singletonMap(VdsProperties.Path, ""),
                 true,
@@ -812,7 +836,7 @@ public class VmDeviceUtils {
                 // add a balloon device
                 Map<String,Object> specParams = new HashMap<String, Object>();
                 specParams.put(VdsProperties.Model, VdsProperties.Virtio);
-                addManagedDevice(new VmDeviceId(Guid.NewGuid(),newVm.getId()) , VmDeviceType.BALLOON, VmDeviceType.MEMBALLOON, specParams, true, true);
+                addManagedDevice(new VmDeviceId(Guid.NewGuid(),newVm.getId()) , VmDeviceGeneralType.BALLOON, VmDeviceType.MEMBALLOON, specParams, true, true, null);
             }
             else {
                 // remove the balloon device
@@ -820,7 +844,7 @@ public class VmDeviceUtils {
                 .getInstance()
                 .getVmDeviceDao()
                 .getVmDeviceByVmIdAndType(newVm.getId(),
-                        VmDeviceType.BALLOON.getName());
+                        VmDeviceGeneralType.BALLOON);
                 removeNumberOfDevices(list,1);
             }
         }
@@ -838,9 +862,10 @@ public class VmDeviceUtils {
     }
 
     private static boolean isDiskOrInterface(VmDevice vmDevice) {
-        return(vmDevice.getDevice().equals(VmDeviceType.DISK.getName()) && vmDevice.getType().equals(VmDeviceType.DISK.getName())) ||
+        return(vmDevice.getDevice().equals(VmDeviceType.DISK.getName())
+                && vmDevice.getType() == VmDeviceGeneralType.DISK) ||
         (vmDevice.getDevice().equals(VmDeviceType.BRIDGE.getName())
-        && vmDevice.getType().equals(VmDeviceType.INTERFACE.getName()));
+                && vmDevice.getType() == VmDeviceGeneralType.INTERFACE);
     }
 }
 

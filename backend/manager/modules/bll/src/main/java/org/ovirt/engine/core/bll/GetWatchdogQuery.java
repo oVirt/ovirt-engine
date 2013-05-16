@@ -4,11 +4,11 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 
 public class GetWatchdogQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
@@ -17,9 +17,10 @@ public class GetWatchdogQuery<P extends IdQueryParameters> extends QueriesComman
         super(parameters);
     }
 
+    @Override
     protected void executeQueryCommand() {
         final List<VmDevice> vmDevices = getVmDeviceDAO().getVmDeviceByVmIdAndType(getParameters().getId(),
-                VmDeviceType.WATCHDOG.getName());
+                VmDeviceGeneralType.WATCHDOG);
         if (vmDevices != null && !vmDevices.isEmpty()) {
             VmDevice device = vmDevices.get(0);
             VmWatchdog watchdog = new VmWatchdog();

@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -501,13 +502,13 @@ public class VmHandler {
                 DbFacade.getInstance()
                         .getVmDeviceDao()
                         .getVmDeviceByVmIdTypeAndDevice(vmId,
-                                VmDeviceType.DISK.getName(),
+                                VmDeviceGeneralType.DISK,
                                 VmDeviceType.CDROM.getName());
         List<VmDevice> floppyList =
                 DbFacade.getInstance()
                         .getVmDeviceDao()
                         .getVmDeviceByVmIdTypeAndDevice(vmId,
-                                VmDeviceType.DISK.getName(),
+                                VmDeviceGeneralType.DISK,
                                 VmDeviceType.FLOPPY.getName());
 
         return (cdList.size() > 1 || floppyList.size() > 1);

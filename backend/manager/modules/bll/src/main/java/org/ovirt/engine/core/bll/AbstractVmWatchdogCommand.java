@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 
 /**
@@ -23,13 +24,14 @@ public abstract class AbstractVmWatchdogCommand<T extends WatchdogParameters> ex
 
     protected List<VmDevice> getWatchdogs() {
         return getVmDeviceDao().getVmDeviceByVmIdAndType(getParameters().getId(),
-                VmDeviceType.WATCHDOG.getName());
+                VmDeviceGeneralType.WATCHDOG);
     }
 
     protected VmDeviceDAO getVmDeviceDao() {
         return getDbFacade().getVmDeviceDao();
     }
 
+    @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
         permissionList.add(new PermissionSubject(getParameters().getId(),

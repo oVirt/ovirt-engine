@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
@@ -54,7 +55,7 @@ public class VmNetworkInterfaceDaoTest extends BaseDAOTestCase {
         newVmInterface.setType(3);
         newVmInterface.setMacAddress("01:C0:81:21:71:17");
 
-        newVmDevice.setType("interface");
+        newVmDevice.setType(VmDeviceGeneralType.INTERFACE);
         newVmDevice.setDevice("bridge");
         newVmDevice.setAddress("sample");
         newVmDevice.setBootOrder(1);

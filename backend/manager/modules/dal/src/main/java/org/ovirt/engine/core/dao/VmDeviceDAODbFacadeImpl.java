@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.SerializationFactory;
@@ -38,7 +39,7 @@ public class VmDeviceDAODbFacadeImpl extends
 
         return createIdParameterMapper(entity.getId())
                 .addValue("device", entity.getDevice())
-                .addValue("type", entity.getType())
+                .addValue("type", entity.getType().getValue())
                 .addValue("address", entity.getAddress())
                 .addValue("boot_order", entity.getBootOrder())
                 .addValue("spec_params",
@@ -71,25 +72,25 @@ public class VmDeviceDAODbFacadeImpl extends
     }
 
     @Override
-    public List<VmDevice> getVmDeviceByVmIdAndType(Guid vmId, String type) {
+    public List<VmDevice> getVmDeviceByVmIdAndType(Guid vmId, VmDeviceGeneralType type) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_id", vmId)
-                .addValue("type", type);
+                .addValue("type", type.getValue());
         return getCallsHandler().executeReadList("GetVmDeviceByVmIdAndType",
                 createEntityRowMapper(), parameterSource);
     }
 
     @Override
-    public List<VmDevice> getVmDeviceByVmIdTypeAndDevice(Guid vmId, String type, String device) {
+    public List<VmDevice> getVmDeviceByVmIdTypeAndDevice(Guid vmId, VmDeviceGeneralType type, String device) {
         return getVmDeviceByVmIdTypeAndDevice(vmId, type, device, null, false);
     }
 
     @Override
     public List<VmDevice> getVmDeviceByVmIdTypeAndDevice
-        (Guid vmId, String type, String device, Guid userID, boolean isFiltered) {
+            (Guid vmId, VmDeviceGeneralType type, String device, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_id", vmId)
-                .addValue("type", type)
+                .addValue("type", type.getValue())
                 .addValue("device", device)
                 .addValue("user_id", userID)
                 .addValue("is_filtered", isFiltered);
@@ -133,7 +134,7 @@ public class VmDeviceDAODbFacadeImpl extends
                     Guid.createGuidFromString(rs
                             .getString("vm_id"))));
             vmDevice.setDevice(rs.getString("device"));
-            vmDevice.setType(rs.getString("type"));
+            vmDevice.setType(VmDeviceGeneralType.forValue(rs.getString("type")));
             vmDevice.setAddress(rs.getString("address"));
             vmDevice.setBootOrder(rs.getInt("boot_order"));
             String specParams = rs.getString("spec_params");

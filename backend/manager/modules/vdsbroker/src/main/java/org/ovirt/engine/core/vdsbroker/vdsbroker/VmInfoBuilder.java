@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -73,7 +74,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     private void addVideoCardByDisplayType(DisplayType displayType) {
         Map<String, Object> struct = new HashMap<String, Object>();
         // create a monitor as an unmanaged device
-        struct.put(VdsProperties.Type, VmDeviceType.VIDEO.getName());
+        struct.put(VdsProperties.Type, VmDeviceGeneralType.VIDEO.getValue());
         struct.put(VdsProperties.Device, displayType.getVmDeviceType().getName());
         struct.put(VdsProperties.SpecParams, getNewMonitorSpecParams());
         struct.put(VdsProperties.DeviceId, String.valueOf(Guid.NewGuid()));
@@ -87,7 +88,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         List<VmDevice> vmVideoDevices =
                 DbFacade.getInstance()
                         .getVmDeviceDao()
-                        .getVmDeviceByVmIdAndType(vmId, VmDeviceType.VIDEO.getName());
+                        .getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.VIDEO);
         for (VmDevice vmVideoDevice : vmVideoDevices) {
             // skip unmanaged devices (handled separately)
             if (!vmVideoDevice.getIsManaged()) {
@@ -95,7 +96,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             }
 
             Map<String, Object> struct = new HashMap<String, Object>();
-            struct.put(VdsProperties.Type, vmVideoDevice.getType());
+            struct.put(VdsProperties.Type, vmVideoDevice.getType().getValue());
             struct.put(VdsProperties.Device, vmVideoDevice.getDevice());
             addAddress(vmVideoDevice, struct);
             struct.put(VdsProperties.SpecParams, vmVideoDevice.getSpecParams());
@@ -112,7 +113,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         if (vm.getVmPayload() != null && vm.getVmPayload().getType() == VmDeviceType.CDROM) {
             VmDevice vmDevice =
                     new VmDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
-                            VmDeviceType.DISK.getName(),
+                            VmDeviceGeneralType.DISK,
                             VmDeviceType.CDROM.getName(),
                             "",
                             0,
@@ -129,7 +130,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         if (vm.isRunOnce() && !StringUtils.isEmpty(vm.getCdPath())) {
             VmDevice vmDevice =
                     new VmDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
-                            VmDeviceType.DISK.getName(),
+                            VmDeviceGeneralType.DISK,
                             VmDeviceType.CDROM.getName(),
                             "",
                             0,
@@ -147,7 +148,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     DbFacade.getInstance()
                             .getVmDeviceDao()
                             .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
-                                    VmDeviceType.DISK.getName(),
+                                    VmDeviceGeneralType.DISK,
                                     VmDeviceType.CDROM.getName());
             for (VmDevice vmDevice : vmDevices) {
                 // skip unamanged devices (handled separtely)
@@ -169,7 +170,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         if (vm.getVmPayload() != null && vm.getVmPayload().getType() == VmDeviceType.FLOPPY) {
             VmDevice vmDevice =
                     new VmDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
-                            VmDeviceType.DISK.getName(),
+                            VmDeviceGeneralType.DISK,
                             VmDeviceType.FLOPPY.getName(),
                             "",
                             0,
@@ -186,7 +187,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         else if (vm.isRunOnce() && !StringUtils.isEmpty(vm.getFloppyPath())) {
             VmDevice vmDevice =
                     new VmDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
-                            VmDeviceType.DISK.getName(),
+                            VmDeviceGeneralType.DISK,
                             VmDeviceType.FLOPPY.getName(),
                             "",
                             0,
@@ -204,7 +205,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     DbFacade.getInstance()
                             .getVmDeviceDao()
                             .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
-                                    VmDeviceType.DISK.getName(),
+                                    VmDeviceGeneralType.DISK,
                                     VmDeviceType.FLOPPY.getName());
             for (VmDevice vmDevice : vmDevices) {
                 // skip unamanged devices (handled separtely)
@@ -239,7 +240,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 continue;
             }
             if (vmDevice.getIsPlugged()) {
-                struct.put(VdsProperties.Type, vmDevice.getType());
+                struct.put(VdsProperties.Type, vmDevice.getType().getValue());
                 struct.put(VdsProperties.Device, vmDevice.getDevice());
                 switch (disk.getDiskInterface()) {
                 case IDE:
@@ -293,7 +294,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 Entities.businessEntitiesById(DbFacade.getInstance()
                         .getVmDeviceDao()
                         .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
-                                VmDeviceType.INTERFACE.getName(),
+                                VmDeviceGeneralType.INTERFACE,
                                 VmDeviceType.BRIDGE.getName()));
 
         for (VmNetworkInterface vmInterface : vm.getInterfaces()) {
@@ -344,10 +345,10 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     DbFacade.getInstance()
                             .getVmDeviceDao()
                             .getVmDeviceByVmIdAndType(vm.getId(),
-                                    VmDeviceType.SOUND.getName());
+                                    VmDeviceGeneralType.SOUND);
             for (VmDevice vmDevice : vmDevices) {
                 Map struct = new HashMap();
-                struct.put(VdsProperties.Type, vmDevice.getType());
+                struct.put(VdsProperties.Type, vmDevice.getType().getValue());
                 struct.put(VdsProperties.Device, vmDevice.getDevice());
                 struct.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
                 struct.put(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
@@ -373,7 +374,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 id.append("_");
                 id.append(vmDevice.getDeviceId());
                 if (VmDeviceCommonUtils.isInWhiteList(vmDevice.getType(), vmDevice.getDevice())) {
-                    struct.put(VdsProperties.Type, vmDevice.getType());
+                    struct.put(VdsProperties.Type, vmDevice.getType().getValue());
                     struct.put(VdsProperties.Device, vmDevice.getDevice());
                     addAddress(vmDevice, struct);
                     struct.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
@@ -425,7 +426,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
         VmDevice vmDevice =
                 new VmDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
-                        VmDeviceType.DISK.getName(),
+                        VmDeviceGeneralType.DISK,
                         VmDeviceType.FLOPPY.getName(),
                         "",
                         0,
@@ -458,7 +459,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             VmDevice vmDevice,
             String nicModel,
             Version clusterVersion) {
-        struct.put(VdsProperties.Type, vmDevice.getType());
+        struct.put(VdsProperties.Type, vmDevice.getType().getValue());
         struct.put(VdsProperties.Device, vmDevice.getDevice());
         struct.put(VdsProperties.NETWORK, StringUtils.defaultString(vmInterface.getNetworkName()));
 
@@ -490,7 +491,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     }
 
     private static void addFloppyDetails(VmDevice vmDevice, Map<String, Object> struct) {
-        struct.put(VdsProperties.Type, vmDevice.getType());
+        struct.put(VdsProperties.Type, vmDevice.getType().getValue());
         struct.put(VdsProperties.Device, vmDevice.getDevice());
         struct.put(VdsProperties.Index, "0"); // IDE slot 2 is reserved by VDSM to CDROM
         struct.put(VdsProperties.INTERFACE, VdsProperties.Fdc);
@@ -499,7 +500,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     }
 
     private static void addCdDetails(VmDevice vmDevice, Map<String, Object> struct) {
-        struct.put(VdsProperties.Type, vmDevice.getType());
+        struct.put(VdsProperties.Type, vmDevice.getType().getValue());
         struct.put(VdsProperties.Device, vmDevice.getDevice());
         struct.put(VdsProperties.Index, "2"); // IDE slot 2 is reserved by VDSM to CDROM
         struct.put(VdsProperties.INTERFACE, VdsProperties.Ide);
@@ -543,11 +544,11 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 DbFacade.getInstance()
                         .getVmDeviceDao()
                         .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
-                                VmDeviceType.CONTROLLER.getName(),
+                                VmDeviceGeneralType.CONTROLLER,
                                 VmDeviceType.USB.getName());
         for (VmDevice vmDevice : vmDevices) {
             Map struct = new HashMap();
-            struct.put(VdsProperties.Type, vmDevice.getType());
+            struct.put(VdsProperties.Type, vmDevice.getType().getValue());
             struct.put(VdsProperties.Device, vmDevice.getDevice());
             setVdsPropertiesFromSpecParams(vmDevice.getSpecParams(), struct);
             struct.put(VdsProperties.SpecParams, new HashMap<String, Object>());
@@ -569,11 +570,11 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 DbFacade.getInstance()
                         .getVmDeviceDao()
                         .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
-                                VmDeviceType.REDIR.getName(),
+                                VmDeviceGeneralType.CHANNEL,
                                 VmDeviceType.SPICEVMC.getName());
         for (VmDevice vmDevice : vmDevices) {
             Map struct = new HashMap();
-            struct.put(VdsProperties.Type, vmDevice.getType());
+            struct.put(VdsProperties.Type, vmDevice.getType().getValue());
             struct.put(VdsProperties.Device, vmDevice.getDevice());
             struct.put(VdsProperties.Bus, USB_BUS);
             struct.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
@@ -595,12 +596,12 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 DbFacade.getInstance()
                         .getVmDeviceDao()
                         .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
-                                VmDeviceType.SMARTCARD.getName(),
+                                VmDeviceGeneralType.SMARTCARD,
                                 VmDeviceType.SMARTCARD.getName());
 
         for (VmDevice vmDevice : vmDevices) {
             Map struct = new HashMap();
-            struct.put(VdsProperties.Type, vmDevice.getType());
+            struct.put(VdsProperties.Type, vmDevice.getType().getValue());
             struct.put(VdsProperties.Device, vmDevice.getType());
             addDevice(struct, vmDevice, null);
         }
@@ -613,7 +614,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             specParams.put(VdsProperties.Model, VdsProperties.Virtio);
             VmDevice vmDevice =
                     new VmDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
-                            VmDeviceType.BALLOON.getName(),
+                            VmDeviceGeneralType.BALLOON,
                             VmDeviceType.MEMBALLOON.getName(),
                             "",
                             0,
@@ -629,7 +630,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     DbFacade.getInstance()
                             .getVmDeviceDao()
                             .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
-                                    VmDeviceType.BALLOON.getName(),
+                                    VmDeviceGeneralType.BALLOON,
                                     VmDeviceType.MEMBALLOON.getName());
             for (VmDevice vmDevice : vmDevices) {
                 // skip unamanged devices (handled separtely)
@@ -644,7 +645,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     private void addMemBalloonDevice(VmDevice vmDevice) {
         Map<String, Object> struct = new HashMap<String, Object>();
-        struct.put(VdsProperties.Type, vmDevice.getType());
+        struct.put(VdsProperties.Type, vmDevice.getType().getValue());
         struct.put(VdsProperties.Device, vmDevice.getDevice());
         Map<String, Object> specParams = vmDevice.getSpecParams();
         // validate & set spec params for balloon device
@@ -676,12 +677,13 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         return model.equalsIgnoreCase(FIRST_MASTER_MODEL);
     }
 
+    @Override
     protected void buildVmWatchdog() {
         List<VmDevice> watchdogs =
                 DbFacade.getInstance()
                         .getVmDeviceDao()
                         .getVmDeviceByVmIdAndType(vm.getId(),
-                                VmDeviceType.WATCHDOG.getName());
+                                VmDeviceGeneralType.WATCHDOG);
         for (VmDevice watchdog : watchdogs) {
             HashMap watchdogFromRpc = new HashMap();
             watchdogFromRpc.put(VdsProperties.Type, watchdog.getType());
