@@ -91,7 +91,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
         quota.setGraceStoragePercentage(Config.<Integer> GetValue(ConfigValues.QuotaGraceStorage));
         quota.setQuotaVdsGroups(getQuotaVdsGroup(getSpecificQuotaVdsGroup(quotaId)));
         quota.setQuotaStorages(getQuotaStorage(null));
-        quota.setGlobalQuotaStorage(new QuotaStorage(null, null, null, 10000l, 0d));
+        quota.setGlobalQuotaStorage(new QuotaStorage(null, null, null, 10000L, 0d));
         dao.save(quota);
 
         Quota quotaEntity = dao.getById(quota.getId());
@@ -555,7 +555,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
         quotaStorage.setQuotaId(quotaId);
         quotaStorage.setQuotaStorageId(Guid.NewGuid());
         quotaStorage.setStorageId(FixturesTool.STORAGE_DOAMIN_NFS_MASTER);
-        quotaStorage.setStorageSizeGB(10000l);
+        quotaStorage.setStorageSizeGB(10000L);
         quotaStorage.setStorageSizeGBUsage(0d);
         return quotaStorage;
 
@@ -567,9 +567,9 @@ public class QuotaDAOTest extends BaseDAOTestCase {
         quotaVdsGroup.setQuotaId(quotaId);
         quotaVdsGroup.setVdsGroupId(FixturesTool.VDS_GROUP_RHEL6_NFS);
         quotaVdsGroup.setVirtualCpu(2880);
-        quotaVdsGroup.setMemSizeMB(16000000l);
+        quotaVdsGroup.setMemSizeMB(16000000L);
         quotaVdsGroup.setVirtualCpuUsage(0);
-        quotaVdsGroup.setMemSizeMBUsage(0l);
+        quotaVdsGroup.setMemSizeMBUsage(0L);
         return quotaVdsGroup;
     }
 
@@ -594,12 +594,12 @@ public class QuotaDAOTest extends BaseDAOTestCase {
         QuotaVdsGroup quotaVdsGroup = new QuotaVdsGroup();
 
         // Set Quota storage capacity definition.
-        quotaStorage.setStorageSizeGB(10000l);
+        quotaStorage.setStorageSizeGB(10000L);
         quotaStorage.setStorageSizeGBUsage(0d);
 
         // Set Quota cluster virtual memory definition.
-        quotaVdsGroup.setMemSizeMB(16000000l);
-        quotaVdsGroup.setMemSizeMBUsage(0l);
+        quotaVdsGroup.setMemSizeMB(16000000L);
+        quotaVdsGroup.setMemSizeMBUsage(0L);
 
         // Set Quota cluster virtual CPU definition.
         quotaVdsGroup.setVirtualCpu(2880);

@@ -222,7 +222,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             }
 
             List<DiskImage> diskImages = storageToDiskEntry.getValue();
-            long sizeRequested = 0l;
+            long sizeRequested = 0L;
             for (DiskImage diskImage : diskImages) {
                 sizeRequested += diskImage.getActualSize();
             }

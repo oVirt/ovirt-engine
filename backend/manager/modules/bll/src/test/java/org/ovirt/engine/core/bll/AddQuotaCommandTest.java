@@ -67,15 +67,15 @@ public class AddQuotaCommandTest {
         generalQuota.setDescription("New Quota to create");
         generalQuota.setQuotaName("New Quota Name");
         QuotaStorage storageQuota = new QuotaStorage();
-        storageQuota.setStorageSizeGB(100l);
+        storageQuota.setStorageSizeGB(100L);
         storageQuota.setStorageSizeGBUsage(0d);
         generalQuota.setGlobalQuotaStorage(storageQuota);
 
         QuotaVdsGroup vdsGroupQuota = new QuotaVdsGroup();
         vdsGroupQuota.setVirtualCpu(0);
         vdsGroupQuota.setVirtualCpuUsage(0);
-        vdsGroupQuota.setMemSizeMB(0l);
-        vdsGroupQuota.setMemSizeMBUsage(0l);
+        vdsGroupQuota.setMemSizeMB(0L);
+        vdsGroupQuota.setMemSizeMBUsage(0L);
         generalQuota.setGlobalQuotaVdsGroup(vdsGroupQuota);
 
         generalQuota.setId(Guid.NewGuid());

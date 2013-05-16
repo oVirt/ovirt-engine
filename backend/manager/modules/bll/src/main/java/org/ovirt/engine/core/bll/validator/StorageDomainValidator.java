@@ -60,7 +60,7 @@ public class StorageDomainValidator {
     }
 
     public ValidationResult isDomainHasSpaceForRequest(final long requestedSize, final boolean useThresHold) {
-        long size = useThresHold ? getLowDiskSpaceThreshold() : 0l;
+        long size = useThresHold ? getLowDiskSpaceThreshold() : 0L;
         if (storageDomain.getAvailableDiskSize() != null &&
                 storageDomain.getAvailableDiskSize() - requestedSize < size) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN,

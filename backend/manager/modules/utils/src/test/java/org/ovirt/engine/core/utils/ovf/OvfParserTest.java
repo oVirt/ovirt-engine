@@ -11,7 +11,7 @@ public class OvfParserTest {
     public void UtcDateStringToLocaDate_nodep() {
         Date date =
                 OvfParser.UtcDateStringToLocaDate("1984/06/19 14:25:11");
-        Assert.assertEquals(456503111000l, date.getTime());
+        Assert.assertEquals(456503111000L, date.getTime());
     }
 
     static class Checker implements Runnable {
@@ -46,7 +46,7 @@ public class OvfParserTest {
         final Thread[] threads = new Thread[8];
         final Checker[] checkers = new Checker[threads.length];
         for (int i = 0; i < threads.length; i++) {
-            checkers[i] = new Checker("1984/06/19 14:25:11", 456503111000l, 100000);
+            checkers[i] = new Checker("1984/06/19 14:25:11", 456503111000L, 100000);
             threads[i] = new Thread(checkers[i], "ovf-checker-" + i);
             threads[i].start();
         }

@@ -19,8 +19,8 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.QuotaDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
@@ -106,15 +106,15 @@ public class RemoveQuotaCommandTest {
         generalQuota.setDescription("New Quota to create");
         generalQuota.setQuotaName("New Quota Name");
         QuotaStorage storageQuota = new QuotaStorage();
-        storageQuota.setStorageSizeGB(100l);
+        storageQuota.setStorageSizeGB(100L);
         storageQuota.setStorageSizeGBUsage(0d);
         generalQuota.setGlobalQuotaStorage(storageQuota);
 
         QuotaVdsGroup vdsGroupQuota = new QuotaVdsGroup();
         vdsGroupQuota.setVirtualCpu(0);
         vdsGroupQuota.setVirtualCpuUsage(0);
-        vdsGroupQuota.setMemSizeMB(0l);
-        vdsGroupQuota.setMemSizeMBUsage(0l);
+        vdsGroupQuota.setMemSizeMB(0L);
+        vdsGroupQuota.setMemSizeMBUsage(0L);
         generalQuota.setGlobalQuotaVdsGroup(vdsGroupQuota);
 
         generalQuota.setId(generalGuidQuota);
