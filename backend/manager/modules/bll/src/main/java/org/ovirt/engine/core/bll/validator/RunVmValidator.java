@@ -135,12 +135,15 @@ public class RunVmValidator {
 
     @SuppressWarnings("unchecked")
     public ValidationResult validateIsoPath(boolean isAutoStartup,
-            Guid storageDomainId,
+            Guid storagePoolId,
             String diskPath,
             String floppyPath) {
         if (isAutoStartup) {
             return ValidationResult.VALID;
         }
+
+        Guid storageDomainId = getIsoDomainListSyncronizer().findActiveISODomain(storagePoolId);
+
         if (!StringUtils.isEmpty(diskPath)) {
             if (storageDomainId == null) {
                 return new ValidationResult(VdcBllMessages.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
