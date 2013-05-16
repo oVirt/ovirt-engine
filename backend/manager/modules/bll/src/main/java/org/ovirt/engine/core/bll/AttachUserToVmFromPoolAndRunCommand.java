@@ -165,7 +165,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
 
         initUser();
         boolean isPrestartedVm = false;
-        Guid vmToAttach = Guid.Empty;
+        Guid vmToAttach;
         synchronized (_lockObject) {
             vmToAttach = getPrestartedVmToAttach(getParameters().getVmPoolId());
             if (!Guid.Empty.equals(vmToAttach)) {
