@@ -91,8 +91,8 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
 
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, null);
-        setUpGetClusterExpectations(2, null);
-        setUpGetNetworksByDataCenterExpectations(2, null);
+        setUpGetClusterExpectations(1, null);
+        setUpGetNetworksByDataCenterExpectations(1, null);
         setUpActionExpectations(VdcActionType.AttachNetworkToVdsGroup,
                 AttachNetworkToVdsGroupParameter.class,
                 new String[] { "VdsGroupId" },
@@ -120,8 +120,8 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         setUpVDSGroupExpectations(CLUSTER_ID);
 
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetClusterExpectations(2, null);
-        setUpGetNetworksByDataCenterExpectations(2, null);
+        setUpGetClusterExpectations(1, null);
+        setUpGetNetworksByDataCenterExpectations(1, null);
         setUpActionExpectations(VdcActionType.AttachNetworkToVdsGroup,
                 AttachNetworkToVdsGroupParameter.class,
                 new String[] { "VdsGroupId" },

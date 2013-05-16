@@ -36,9 +36,11 @@ public class BackendClusterNetworksResource
         validateParameters(network, "id|name");
 
         String networkName = null;
+        List<org.ovirt.engine.core.common.businessentities.network.Network> networks = getNetworks(clusterId);
+
         if (network.isSetId()) {
             org.ovirt.engine.core.common.businessentities.network.Network net =
-                    getNetworkById(network.getId(), clusterId);
+                    getNetworkById(network.getId(), networks);
             if (net == null) {
                 notFound(Network.class);
             } else {
@@ -49,7 +51,7 @@ public class BackendClusterNetworksResource
         String networkId = null;
         if (network.isSetName()) {
             org.ovirt.engine.core.common.businessentities.network.Network net =
-                    getNetworkByName(network.getName(), clusterId);
+                    getNetworkByName(network.getName(), networks);
             if (net == null) {
                 notFound(Network.class);
             } else {
@@ -69,8 +71,9 @@ public class BackendClusterNetworksResource
                                new NetworkIdResolver(StringUtils.defaultIfEmpty(network.getName(), networkName)));
     }
 
-    private org.ovirt.engine.core.common.businessentities.network.Network getNetworkById(String networkId, String clusterId) {
-        for (org.ovirt.engine.core.common.businessentities.network.Network network : getNetworks(clusterId)) {
+    private org.ovirt.engine.core.common.businessentities.network.Network getNetworkById(String networkId,
+            List<org.ovirt.engine.core.common.businessentities.network.Network> networks) {
+        for (org.ovirt.engine.core.common.businessentities.network.Network network : networks) {
             if (network.getId().toString().equals(networkId)) {
                 return network;
             }
@@ -79,8 +82,8 @@ public class BackendClusterNetworksResource
     }
 
     private org.ovirt.engine.core.common.businessentities.network.Network getNetworkByName(String networkName,
-            String clusterId) {
-        for (org.ovirt.engine.core.common.businessentities.network.Network network : getNetworks(clusterId)) {
+            List<org.ovirt.engine.core.common.businessentities.network.Network> networks) {
+        for (org.ovirt.engine.core.common.businessentities.network.Network network : networks) {
             if (network.getName().equals(networkName)) {
                 return network;
             }
