@@ -33,12 +33,6 @@
      </Match>
 
      <Match>
-       <Class name="org.ovirt.engine.core.bll.TagsDirectorTest" />
-       <Method name="testUpdateParent"/>
-       <Bug code="NP"/>
-     </Match>
-
-     <Match>
        <!--
         findbugs complains that we are double checking for (isoDomainListSyncronizer == null).
         We need to double check because we are using the singleton design pattern,
