@@ -27,7 +27,7 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
-import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
+import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 import org.springframework.jdbc.core.RowMapper;
 
 /**

@@ -36,8 +36,8 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.exceptions.InitializationException;
-import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RunVmValidatorTest {

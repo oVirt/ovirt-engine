@@ -62,13 +62,13 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
 import org.ovirt.engine.core.utils.GuidUtils;
+import org.ovirt.engine.core.utils.customprop.CustomPropertiesUtils.ValidationError;
+import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
+import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils.VMCustomProperties;
 import org.ovirt.engine.core.utils.linq.All;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
-import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
-import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.VMCustomProperties;
-import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationError;
 
 
 @DisableInPrepareMode

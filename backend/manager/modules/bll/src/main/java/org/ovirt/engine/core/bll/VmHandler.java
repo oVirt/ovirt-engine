@@ -41,21 +41,22 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
+import org.ovirt.engine.core.utils.customprop.CustomPropertiesUtils;
+import org.ovirt.engine.core.utils.customprop.CustomPropertiesUtils.ValidationError;
+import org.ovirt.engine.core.utils.customprop.CustomPropertiesUtils.ValidationFailureReason;
+import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
-import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
-import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationError;
-import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationFailureReason;
 
 public class VmHandler {
 
     private static final Map<VmPropertiesUtils.ValidationFailureReason, String> failureReasonsToVdcBllMessagesMap =
             new HashMap<VmPropertiesUtils.ValidationFailureReason, String>();
-    private static final Map<VmPropertiesUtils.ValidationFailureReason, String> failureReasonsToFormatMessages =
+    private static final Map<CustomPropertiesUtils.ValidationFailureReason, String> failureReasonsToFormatMessages =
             new HashMap<VmPropertiesUtils.ValidationFailureReason, String>();
     private static ObjectIdentityChecker mUpdateVmsStatic;
 

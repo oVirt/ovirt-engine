@@ -45,11 +45,11 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.utils.customprop.CustomPropertiesUtils.ValidationError;
+import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
+import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils.VMCustomProperties;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
-import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
-import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.VMCustomProperties;
-import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationError;
 
 
 @LockIdNameAttribute

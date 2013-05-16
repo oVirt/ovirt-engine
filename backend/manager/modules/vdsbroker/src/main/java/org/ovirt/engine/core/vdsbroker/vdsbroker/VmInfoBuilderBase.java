@@ -28,9 +28,9 @@ import org.ovirt.engine.core.compat.TimeZoneInfo;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 
 public abstract class VmInfoBuilderBase {
 

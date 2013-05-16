@@ -43,7 +43,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
-import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
+import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 
 public class RunVmValidator {
 

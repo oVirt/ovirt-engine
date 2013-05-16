@@ -37,10 +37,10 @@ import org.ovirt.engine.core.dao.TagDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.utils.customprop.CustomPropertiesUtils.ValidationError;
+import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
-import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
-import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationError;
 
 public abstract class VmCommand<T extends VmOperationParameterBase> extends CommandBase<T> {
 
