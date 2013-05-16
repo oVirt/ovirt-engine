@@ -78,6 +78,13 @@ public class GlusterHooksDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
         return glusterHook;
     }
 
+    @Override
+    public List<GlusterServerHook> getGlusterServerHooks(Guid hookId) {
+        List<GlusterServerHook> serverHooks =
+                getCallsHandler().executeReadList("GetGlusterServerHooksById", glusterServerHookRowMapper,
+                        createIdParameterMapper(hookId));
+        return serverHooks;
+    }
 
     @Override
     public GlusterServerHook getGlusterServerHook(Guid hookId, Guid serverId) {
@@ -246,6 +253,7 @@ public class GlusterHooksDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
             entity.setStatus(rs.getString("hook_status"));
             entity.setContentType(rs.getString("content_type"));
             entity.setChecksum(rs.getString("checksum"));
+            entity.setServerName(rs.getString("server_name"));
             return entity;
         }
     }

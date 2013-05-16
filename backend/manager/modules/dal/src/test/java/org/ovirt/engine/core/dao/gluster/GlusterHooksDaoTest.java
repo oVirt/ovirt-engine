@@ -24,8 +24,10 @@ public class GlusterHooksDaoTest extends BaseDAOTestCase {
     private static final String EXISTING_HOOK_NAME = "28cifs_config";
     private static final String HOOK_NAME = "georep";
     private static final Guid SERVER_ID = new Guid("2001751e-549b-4e7a-aff6-32d36856c125");
+    private static final Guid SERVER_ID2 = new Guid("23f6d691-5dfb-472b-86dc-9e1d2d3c18f3");
     private static final String CHECKSUM = "0127f712fc008f857e77a2f3f179c710";
     private static final String CONTENT = "Sample text for hook content ";
+    private static final String CHECKSUM_HOOK1_SERVER1 = "bf35fa420d3e0f669e27b337062bf19f510480d4";
     private GlusterHooksDao dao;
 
     private GlusterHookEntity getGlusterHook() {
@@ -40,6 +42,19 @@ public class GlusterHooksDaoTest extends BaseDAOTestCase {
         hook.setContentType(GlusterHookContentType.TEXT);
         hook.setConflictValue(false, false, false);
         return hook;
+    }
+
+    private GlusterServerHook getGlusterServerHook(Guid serverId,
+            GlusterHookStatus status,
+            GlusterHookContentType contentType,
+            String checksum) {
+        GlusterServerHook serverHook = new GlusterServerHook();
+        serverHook.setHookId(FixturesTool.HOOK_ID);
+        serverHook.setServerId(serverId);
+        serverHook.setStatus(status);
+        serverHook.setContentType(contentType);
+        serverHook.setChecksum(checksum);
+        return serverHook;
     }
 
     @Override
@@ -77,6 +92,19 @@ public class GlusterHooksDaoTest extends BaseDAOTestCase {
         GlusterHookEntity hook = dao.getGlusterHook(FixturesTool.CLUSTER_ID, GLUSTER_COMMAND, STAGE, EXISTING_HOOK_NAME);
         assertNotNull(hook);
         assertEquals(EXISTING_HOOK_NAME, hook.getName());
+    }
+
+    @Test
+    public void testGetServerHooks() {
+        GlusterServerHook serverHook1 = getGlusterServerHook(SERVER_ID,
+                GlusterHookStatus.ENABLED, GlusterHookContentType.TEXT, CHECKSUM_HOOK1_SERVER1);
+        GlusterServerHook serverHook2 = getGlusterServerHook(SERVER_ID2,
+                GlusterHookStatus.MISSING, null, null);
+        List<GlusterServerHook> serverHooks  = dao.getGlusterServerHooks(FixturesTool.HOOK_ID);
+        assertNotNull(serverHooks);
+        assertEquals(2, serverHooks.size());
+        assertTrue(serverHooks.contains(serverHook1));
+        assertTrue(serverHooks.contains(serverHook2));
     }
 
     @Test

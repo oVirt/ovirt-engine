@@ -1,0 +1,39 @@
+package org.ovirt.engine.core.common.queries.gluster;
+
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.compat.Guid;
+
+public class GlusterHookQueryParameters extends VdcQueryParametersBase {
+
+    private static final long serialVersionUID = -7687304241216035713L;
+
+    private Guid hookId;
+
+    private boolean includeServerHooks = false;
+
+    public GlusterHookQueryParameters(Guid hookId) {
+        this.hookId = hookId;
+    }
+
+    public GlusterHookQueryParameters(Guid hookId, boolean includeServerHooks) {
+        this(hookId);
+        this.includeServerHooks = includeServerHooks;
+    }
+
+    public Guid getHookId() {
+        return hookId;
+    }
+
+    public void setHookId(Guid hookId) {
+        this.hookId = hookId;
+    }
+
+    public boolean isIncludeServerHooks() {
+        return includeServerHooks;
+    }
+
+    public void setIncludeServerHooks(boolean includeServerHooks) {
+        this.includeServerHooks = includeServerHooks;
+    }
+
+}

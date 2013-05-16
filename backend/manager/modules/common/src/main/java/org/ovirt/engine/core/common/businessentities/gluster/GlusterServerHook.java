@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GlusterServerHook implements Serializable {
@@ -11,6 +12,8 @@ public class GlusterServerHook implements Serializable {
     private Guid hookId;
 
     private Guid serverId;
+
+    private String serverName;
 
     private GlusterHookStatus status;
 
@@ -32,6 +35,14 @@ public class GlusterServerHook implements Serializable {
 
     public void setServerId(Guid serverId) {
         this.serverId = serverId;
+    }
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
     }
 
     public GlusterHookStatus getStatus() {
@@ -72,6 +83,32 @@ public class GlusterServerHook implements Serializable {
 
     public void setChecksum(String checksum) {
         this.checksum = checksum;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + hookId.hashCode();
+        result = prime * result + ((serverId == null) ? 0 : serverId.hashCode());
+        result = prime * result + ((status == null) ? 0 : status.hashCode());
+        result = prime * result + ((contentType == null) ? 0 : contentType.hashCode());
+        result = prime * result + ((checksum == null) ? 0 : checksum.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof GlusterServerHook)) {
+            return false;
+        }
+        GlusterServerHook serverHook = (GlusterServerHook) obj;
+
+        return ObjectUtils.objectsEqual(getHookId(), serverHook.getHookId())
+                && ObjectUtils.objectsEqual(getServerId(), serverHook.getServerId())
+                && ObjectUtils.objectsEqual(getStatus(), serverHook.getStatus())
+                && ObjectUtils.objectsEqual(getContentType(), serverHook.getContentType())
+                && ObjectUtils.objectsEqual(getChecksum(), serverHook.getChecksum());
     }
 
 }

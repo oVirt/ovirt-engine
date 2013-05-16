@@ -1501,3 +1501,10 @@ SELECT gluster_server_services.*,
        gluster_services.service_type
 FROM gluster_server_services
 INNER JOIN gluster_services ON gluster_server_services.service_id = gluster_services.id;
+
+CREATE OR REPLACE VIEW gluster_server_hooks_view
+AS
+SELECT gluster_server_hooks.*,
+       vds_static.vds_name AS server_name
+FROM gluster_server_hooks
+INNER JOIN vds_static ON gluster_server_hooks.server_id = vds_static.vds_id;

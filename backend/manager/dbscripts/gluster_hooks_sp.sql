@@ -68,11 +68,11 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetGlusterServerHooksById(v_id UUID)
-RETURNS SETOF gluster_server_hooks
+RETURNS SETOF gluster_server_hooks_view
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT *
-    FROM  gluster_server_hooks
+    FROM  gluster_server_hooks_view
     WHERE hook_id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -225,11 +225,11 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetGlusterServerHook(v_hook_id UUID,
                                                 v_server_id UUID)
-RETURNS SETOF gluster_server_hooks
+RETURNS SETOF gluster_server_hooks_view
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT *
-    FROM  gluster_server_hooks
+    FROM  gluster_server_hooks_view
     WHERE hook_id = v_hook_id AND server_id = v_server_id;
 END; $procedure$
 LANGUAGE plpgsql;

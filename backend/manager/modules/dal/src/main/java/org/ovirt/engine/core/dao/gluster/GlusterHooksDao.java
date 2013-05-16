@@ -38,6 +38,8 @@ public interface GlusterHooksDao extends DAO, SearchDAO<GlusterHookEntity>, Mass
 
     public GlusterHookEntity getGlusterHook(Guid clusterId, String glusterCommand, GlusterHookStage stage, String hookName);
 
+    public List<GlusterServerHook> getGlusterServerHooks(Guid hookId);
+
     public GlusterServerHook getGlusterServerHook(Guid hookId, Guid serverId);
 
     public List<GlusterHookEntity> getByClusterId(Guid clusterId);
