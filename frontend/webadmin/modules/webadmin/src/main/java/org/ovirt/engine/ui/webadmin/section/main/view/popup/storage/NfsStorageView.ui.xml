@@ -17,10 +17,11 @@
 
         .pathEditorContent {
             width: 540px;
+            margin-left: 45px;
         }
 
         .pathHintLabel {
-            margin: -8px 0px 0px 5px;
+            margin: -8px 0px 0px 50px;
             font-size: 8pt;
             width: 450px;
         }
