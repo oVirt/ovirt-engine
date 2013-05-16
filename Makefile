@@ -153,6 +153,7 @@ GENERATED = \
 	packaging/conf/notifier.conf.defaults \
 	packaging/etc/engine-config/log4j.xml \
 	packaging/etc/engine-manage-domains/log4j.xml \
+	packaging/etc/engine-manage-domains/engine-manage-domains.conf \
 	packaging/etc/notifier/log4j.xml \
 	packaging/services/config.py \
 	packaging/services/ovirt-engine.systemd \

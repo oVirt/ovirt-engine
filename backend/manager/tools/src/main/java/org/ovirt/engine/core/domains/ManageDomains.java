@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.ovirt.engine.core.ldap.LdapSRVLocator;
 import org.ovirt.engine.core.utils.CLIParser;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.dns.DnsSRVLocator;
 import org.ovirt.engine.core.utils.dns.DnsSRVLocator.DnsSRVResult;
 import org.ovirt.engine.core.utils.ipa.ReturnStatus;
@@ -44,7 +45,7 @@ import org.ovirt.engine.core.utils.kerberos.KrbConfCreator;
 
 public class ManageDomains {
 
-    public static final String CONF_FILE_PATH = "/etc/ovirt-engine/engine-manage-domains/engine-manage-domains.conf";
+    public static final String CONF_FILE_PATH = new File(EngineLocalConfig.getInstance().getEtcDir(), "engine-manage-domains/engine-manage-domains.conf").getAbsolutePath();
     private final String WARNING_ABOUT_TO_DELETE_LAST_DOMAIN =
             "WARNING: Domain %1$s is the last domain in the configuration. After deleting it you will have to either add another domain, or to use the internal admin user in order to login.";
     private final String INFO_ABOUT_NOT_ADDING_PERMISSIONS =
