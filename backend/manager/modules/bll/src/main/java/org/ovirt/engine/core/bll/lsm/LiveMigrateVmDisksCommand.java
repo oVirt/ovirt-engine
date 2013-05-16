@@ -96,12 +96,9 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
             permissionList.add(new PermissionSubject(parameters.getImageId(),
                     VdcObjectType.Disk,
                     ActionGroup.CONFIGURE_DISK_STORAGE));
-
-            setStoragePoolId(getVm().getStoragePoolId());
-
-            addStoragePermissionByQuotaMode(permissionList,
-                    getStoragePoolId().getValue(),
-                    parameters.getStorageDomainId());
+            permissionList.add(new PermissionSubject(parameters.getStorageDomainId(),
+                    VdcObjectType.Storage,
+                    ActionGroup.CREATE_DISK));
         }
 
         return permissionList;

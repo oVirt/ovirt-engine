@@ -298,10 +298,8 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             DiskImage image = getImage();
             Guid diskId = image == null ? Guid.Empty : image.getId();
             permsList.add(new PermissionSubject(diskId, VdcObjectType.Disk, ActionGroup.CONFIGURE_DISK_STORAGE));
-
-            addStoragePermissionByQuotaMode(permsList,
-                    getStoragePoolId().getValue(),
-                    getParameters().getStorageDomainId());
+            permsList.add(new PermissionSubject(getParameters().getStorageDomainId(),
+                    VdcObjectType.Storage, ActionGroup.CREATE_DISK));
         }
         return permsList;
     }
