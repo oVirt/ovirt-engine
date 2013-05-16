@@ -166,6 +166,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 getStoragePoolIsoMapDAO().get
                         (new StoragePoolIsoMapId(getParameters().getStorageDomainId(),
                                 getParameters().getStoragePoolId()));
+        map.setstatus(StorageDomainStatus.Unknown);
         changeStorageDomainStatusInTransaction(map, StorageDomainStatus.Locked);
         ProceedStorageDomainTreatmentByDomainType(false);
 
@@ -279,6 +280,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                         newMaster.setStorageDomainType(StorageDomainType.Master);
                         _newMasterStorageDomainId = newMaster.getId();
                         if (!duringReconstruct) {
+                            newMasterMap.setstatus(StorageDomainStatus.Unknown);
                             getCompensationContext().snapshotEntityStatus(newMasterMap, newMasterMap.getstatus());
                             newMaster.setStatus(StorageDomainStatus.Locked);
                             getStoragePoolIsoMapDAO().updateStatus(newMasterMap.getId(), newMasterMap.getstatus());
