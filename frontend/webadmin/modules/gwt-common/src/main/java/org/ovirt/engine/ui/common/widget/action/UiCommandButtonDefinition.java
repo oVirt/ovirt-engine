@@ -73,6 +73,7 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
         this.commandLocation = commandLocation;
         this.subTitledAction = subTitledAction;
         this.toolTip = toolTip;
+        this.customToolTip = "";
         update();
 
         // Add handler to be notified when UiCommon models are (re)initialized
