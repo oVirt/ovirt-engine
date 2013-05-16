@@ -58,13 +58,14 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
     }
 
     protected void onSelection() {
-        // Update the layout
-        updateLayout();
 
         // Reveal the appropriate place based on selection
         if (hasSelection()) {
+            // Sub tab panel is shown upon revealing the sub tab
             placeManager.revealPlace(getSubTabRequest());
         } else {
+            // Hide sub tab panel when there is nothing selected
+            setSubTabPanelVisible(false);
             placeManager.revealPlace(getMainTabRequest());
         }
     }
@@ -77,7 +78,7 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
         if (hasSelection()) {
             clearSelection();
         } else {
-            updateLayout();
+            setSubTabPanelVisible(false);
         }
 
         getView().getTable().resetScrollPosition();
@@ -90,10 +91,6 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
      * Subclasses should fire an event to indicate that the table selection has changed.
      */
     protected abstract void fireTableSelectionChangeEvent();
-
-    void updateLayout() {
-        setSubTabPanelVisible(hasSelection());
-    }
 
     PlaceRequest getSubTabRequest() {
         String subTabName = modelProvider.getModel().getActiveDetailModel().getHashName();
