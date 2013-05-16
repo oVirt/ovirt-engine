@@ -1,4 +1,9 @@
 <FindBugsFilter>
+       <!--
+        findbugs complain that we are not using the getBlockingQueue() return value,
+        by calling getBlockingQueue() we also set the synchronized queue.
+        In this case we have no use for the return queue, only to set it.
+       -->
      <Match>
        <Class name="org.ovirt.engine.core.bll.RunVmCommandBase" />
        <Method name="decreasePendingVms"/>
@@ -6,12 +11,22 @@
      </Match>
 
      <Match>
+       <!--
+        findbugs complain that we are not using the getBlockingQueue() return value,
+        by calling getBlockingQueue() we also set the synchronized queue.
+        In this case we have no use for the return queue, only to set it.
+       -->
        <Class name="org.ovirt.engine.core.bll.RunVmCommandBase" />
        <Method name="delay"/>
        <Bug code="RV"/>
      </Match>
 
      <Match>
+       <!--
+        findbugs complain that we may be using uninitialized instance of 'tags'.
+        In this case we are using the local test method: createTag() that
+        never returns null.
+       -->
        <Class name="org.ovirt.engine.core.bll.TagsDirectorTest" />
        <Method name="testUpdateParent"/>
        <Bug code="NP"/>
@@ -24,6 +39,11 @@
      </Match>
 
      <Match>
+       <!--
+        findbugs complains that we are double checking for (isoDomainListSyncronizer == null).
+        We need to double check because we are using the singleton design pattern,
+        we first check for null and the second check is inside synchronized block.
+       -->
        <Class name="org.ovirt.engine.core.bll.IsoDomainListSyncronizer" />
        <Method name="getInstance"/>
        <Bug code="DC"/>

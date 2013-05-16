@@ -1,4 +1,11 @@
 <FindBugsFilter>
+     <!--
+      findbugs complains that we are having empty block of catch exception:
+      catch (Exception e) {}
+      in this case we are fetching the value from getDisplayValue() method,
+      if we have stay with the default value which assigned before the try
+      block.
+     -->
      <Match>
        <Class name="org.ovirt.engine.core.config.entity.ConfigKey" />
        <Method name="toString"/>

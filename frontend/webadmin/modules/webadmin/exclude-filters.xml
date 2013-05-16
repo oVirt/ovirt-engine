@@ -1,5 +1,10 @@
 <FindBugsFilter>
     <Match>
+        <!--
+         findbugs complain that when returning Boolean type we should return only True
+         or False and not null.
+         In this case we do have the third option i.e. null
+        -->
         <Class name="org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunctionResultHelper" />
         <Method name="getResultAsBoolean"/>
         <Bug code="NP"/>

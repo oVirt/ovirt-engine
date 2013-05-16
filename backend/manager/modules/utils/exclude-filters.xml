@@ -1,11 +1,22 @@
 <FindBugsFilter>
      <Match>
+       <!--
+        findbugs complains that we are double checking for (vmPropertiesUtils == null).
+        We need to double check because we are using the singleton design pattern,
+        we first check for null and the second check is inside synchronized block.
+       -->
        <Class name="org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils" />
        <Method name="getInstance"/>
        <Bug code="DC"/>
      </Match>
 
      <Match>
+       <!--
+        findbugs complains that we are having empty block of catch exception:
+        catch (Exception e) {}
+        This is a test code that close ssh socket and have nothing to do if the
+        connection is already closed.
+       -->
        <Class name="org.ovirt.engine.core.utils.ssh.TransferTest" />
        <Method name="tearDown"/>
        <Bug code="DE"/>
