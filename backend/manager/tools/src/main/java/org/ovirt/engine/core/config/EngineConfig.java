@@ -1,8 +1,11 @@
 package org.ovirt.engine.core.config;
 
+import java.io.File;
+
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.config.validation.ConfigActionType;
 import org.ovirt.engine.core.tools.ToolConsole;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 
 /**
  * The <code>EngineConfig</code> class represents the main class of the EngineConfig tool.
@@ -15,7 +18,7 @@ public class EngineConfig {
     private static final ToolConsole console = ToolConsole.getInstance();
 
     public static final String CONFIG_FILE_PATH_PROPERTY = "engine-config.config.file.path";
-    public static final String DEFAULT_CONFIG_PATH = "/etc/ovirt-engine/engine-config/";
+    public static final File DEFAULT_CONFIG_PATH = new File(EngineLocalConfig.getInstance().getEtcDir(), "engine-config");
     private EngineConfigCLIParser parser;
     private EngineConfigLogic engineConfigLogic;
     private static EngineConfig instance = new EngineConfig();

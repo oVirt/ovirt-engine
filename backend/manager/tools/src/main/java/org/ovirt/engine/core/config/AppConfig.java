@@ -8,11 +8,11 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 
 public class AppConfig<T extends PropertiesConfiguration> extends ConfigFile<T> {
 
-    private static final String RHEV_CONFIG_CONF = "engine-config.conf";
+    private static final String CONFIG_CONF = "engine-config.conf";
     private PropertiesConfiguration configFile;
     private final String[] defaultFileLocations = new String[] {
-            System.getenv("PWD") + File.separator + RHEV_CONFIG_CONF,
-            EngineConfig.DEFAULT_CONFIG_PATH + RHEV_CONFIG_CONF };
+        new File(EngineConfig.DEFAULT_CONFIG_PATH, CONFIG_CONF).getAbsolutePath()
+    };
 
     public AppConfig(String optionalConfigDir) throws FileNotFoundException, ConfigurationException {
         File file = locate(optionalConfigDir);
@@ -26,6 +26,6 @@ public class AppConfig<T extends PropertiesConfiguration> extends ConfigFile<T> 
 
     @Override
     protected String[] getDefaultFileLocations() {
-        return defaultFileLocations;
+        return new String[] {new File(EngineConfig.DEFAULT_CONFIG_PATH, CONFIG_CONF).getAbsolutePath()};
     }
 }

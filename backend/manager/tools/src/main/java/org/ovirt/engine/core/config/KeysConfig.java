@@ -16,13 +16,10 @@ public class KeysConfig<T extends HierarchicalConfiguration> extends ConfigFile<
 
     private static final String RHEV_CONFIG_PROPERTIES = "engine-config.properties";
     private T configFile;
-    private final String pwd = System.getenv("PWD").toString() + File.separator;
-    private final Locale locale = Locale.getDefault();
     private final String[] defaultFileLocations = {
-            pwd + RHEV_CONFIG_PROPERTIES,
-            pwd + "engine-config_" + locale + ".properties",
-            DEFAULT_CONFIG_PATH + RHEV_CONFIG_PROPERTIES,
-            DEFAULT_CONFIG_PATH + "engine-config_" + locale + ".properties" };
+            new File(DEFAULT_CONFIG_PATH, RHEV_CONFIG_PROPERTIES).getAbsolutePath(),
+            new File(DEFAULT_CONFIG_PATH, "engine-config_" + Locale.getDefault() + ".properties").getAbsolutePath()
+    };
 
     public KeysConfig(String optionalConfigPath) throws FileNotFoundException, ConfigurationException {
         File file = locate(optionalConfigPath);
