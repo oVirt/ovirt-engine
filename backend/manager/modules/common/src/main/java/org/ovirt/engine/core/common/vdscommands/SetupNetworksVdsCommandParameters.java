@@ -113,7 +113,7 @@ public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParameters
 
     @Override
     public String toString() {
-        return String.format("%s, force=%s, checkConnectivity=%s, conectivityTimeout=%s,\n\tnetworks=%s,\n\tbonds=%s,\n\tinterfaces=%s,\n\tremovedNetworks=%s,\n\tremovedBonds=%s",
+        return String.format("%s, force=%s, checkConnectivity=%s, conectivityTimeout=%s,%n\tnetworks=%s,%n\tbonds=%s,%n\tinterfaces=%s,%n\tremovedNetworks=%s,%n\tremovedBonds=%s",
                 super.toString(),
                 isForce(),
                 isCheckConnectivity(),

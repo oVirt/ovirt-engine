@@ -6,12 +6,12 @@ import org.apache.commons.lang.StringUtils;
  * A helper class designed to construct message parts in static structure
  */
 public class MessageHelper {
-    private static String USER_INFO = "User Name: %s\n";
-    private static String VM_INFO = "VM Name: %s\n";
-    private static String HOST_INFO = "Host Name: %s\n";
-    private static String TEMPLATE_INFO = "Template Name: %s\n";
-    private static String DATA_CENTER_INFO = "Data Center Name: %s\n";
-    private static String STORAGE_DOMAIN_INFO = "Storage Domain Name: %s\n";
+    private static String USER_INFO = "User Name: %s%n";
+    private static String VM_INFO = "VM Name: %s%n";
+    private static String HOST_INFO = "Host Name: %s%n";
+    private static String TEMPLATE_INFO = "Template Name: %s%n";
+    private static String DATA_CENTER_INFO = "Data Center Name: %s%n";
+    private static String STORAGE_DOMAIN_INFO = "Storage Domain Name: %s%n";
 
     private static String HTML_USER_INFO = "<b>User Name:</b> %s<br>";
     private static String HTML_VM_INFO = "<b>VM Name:</b> %s<br>";
@@ -64,7 +64,7 @@ public class MessageHelper {
     public static String prepareMessageBody(MessageBody messageBody) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(String.format("Time:%s\nMessage:%s\nSeverity:%s\n",
+        sb.append(String.format("Time:%s%nMessage:%s%nSeverity:%s%n",
                 messageBody.getLogTime(),
                 messageBody.getMessage(),
                 messageBody.getSeverity()));

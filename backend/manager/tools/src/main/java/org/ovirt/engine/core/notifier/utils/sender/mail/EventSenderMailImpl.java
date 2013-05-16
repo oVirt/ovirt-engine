@@ -68,7 +68,7 @@ public class EventSenderMailImpl implements EventSender {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug(String.format("Send email to [%s]\n subject:\n [%s]\n body:\n [%s]",
+            log.debug(String.format("Send email to [%s]%n subject:%n [%s]%n body:%n [%s]",
                     recipient,
                     message.getMessageSubject(),
                     message.getMessageBody()));
