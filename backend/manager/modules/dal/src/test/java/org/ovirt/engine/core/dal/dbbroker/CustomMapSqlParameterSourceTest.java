@@ -17,6 +17,8 @@ import org.ovirt.engine.core.compat.Version;
 /** A test case for the {@link CustomMapSqlParameterSource} */
 public class CustomMapSqlParameterSourceTest {
 
+    private Random random;
+
     /** The {@link CustomMapSqlParameterSourceTest} to be tested */
     private CustomMapSqlParameterSource paramSource;
 
@@ -46,11 +48,13 @@ public class CustomMapSqlParameterSourceTest {
         paramSource = new CustomMapSqlParameterSource(dialectMock);
 
         paramName = RandomStringUtils.randomAlphabetic(10);
+
+        this.random = new Random();
     }
 
     @Test
     public void testAddValuePrimitive() {
-        int paramValue = new Random().nextInt();
+        int paramValue = this.random.nextInt();
 
         paramSource.addValue(paramName, paramValue);
         assertEquals("wrong value returned from parameter source",
@@ -86,7 +90,7 @@ public class CustomMapSqlParameterSourceTest {
 
     @Test
     public void testAddValueVersion() {
-        Version verision = new Version(new Random().nextInt(), new Random().nextInt());
+        Version verision = new Version(this.random.nextInt(), this.random.nextInt());
 
         paramSource.addValue(paramName, verision);
         assertEquals("wrong value returned from parameter source",
