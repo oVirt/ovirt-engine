@@ -44,6 +44,15 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION GetGlusterHookContentById(v_id UUID)
+RETURNS SETOF text
+AS $procedure$
+BEGIN
+    RETURN QUERY SELECT content
+    FROM  gluster_hooks
+    WHERE id = v_id;
+END; $procedure$
+LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetGlusterHooksByClusterId(v_cluster_id UUID)
 RETURNS SETOF gluster_hooks
