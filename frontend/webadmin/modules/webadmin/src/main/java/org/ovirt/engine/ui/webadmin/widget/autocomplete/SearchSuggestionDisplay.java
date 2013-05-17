@@ -191,7 +191,9 @@ public final class SearchSuggestionDisplay extends DefaultSuggestionDisplay {
 
     @Override
     public void hideSuggestions() {
-        suggestionPopup.hide(false);
+        if (suggestionPopup != null) {
+            suggestionPopup.hide(false);
+        }
     }
 
     public void setSearchBoxPanel(VerticalPanel searchBoxPanel) {

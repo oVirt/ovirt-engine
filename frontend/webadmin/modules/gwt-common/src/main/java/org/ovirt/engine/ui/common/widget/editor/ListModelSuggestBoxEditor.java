@@ -7,8 +7,6 @@ import com.google.gwt.editor.client.IsEditor;
 /**
  * Composite Editor that uses {@link ListModelSuggestBox}.
  *
- * @param <T>
- *            SuggestBox item type.
  */
 public class ListModelSuggestBoxEditor extends AbstractValidatedWidgetWithLabel<Object, ListModelSuggestBox>
         implements IsEditor<WidgetWithLabelEditor<Object, ListModelSuggestBoxEditor>> {

@@ -215,4 +215,6 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("images/network/icn_network_unlinked.png")
     ImageResource unlinkedNetworkImage();
 
+    @Source("images/comboBoxDropDownIcon.png")
+    ImageResource comboBoxDropDownIcon();
 }

@@ -208,9 +208,9 @@
 	<t:DialogTabPanel width="100%" height="100%">
 		<t:header>
 			<g:FlowPanel addStyleNames="{style.headerPanel}">
-				<e:ListModelListBoxEditor ui:field="dataCenterEditor" />
-				<e:ListModelListBoxEditor ui:field="clusterEditor" />
-				<e:ListModelListBoxEditor ui:field="quotaEditor" />
+				<e:ListModelTypeAheadListBoxEditor ui:field="dataCenterEditor" />
+				<e:ListModelTypeAheadListBoxEditor ui:field="clusterEditor" />
+				<e:ListModelTypeAheadListBoxEditor ui:field="quotaEditor" />
 			</g:FlowPanel>
 		</t:header>
 		<t:tab>
@@ -275,7 +275,7 @@
                                     <g:Label text="{constants.vms}" addStyleNames="{style.maxAssignedVmsPerUserVms}" />
                                 </g:FlowPanel>
                             </g:FlowPanel>
-                            <e:ListModelListBoxEditor ui:field="templateEditor"/>
+                            <e:ListModelTypeAheadListBoxEditor ui:field="templateEditor"/>
                         </g:FlowPanel>
                         <g:FlowPanel addStyleNames="{style.sectionPanel}">
                             <e:EntityModelTextBoxEditor ui:field="memSizeEditor"/>

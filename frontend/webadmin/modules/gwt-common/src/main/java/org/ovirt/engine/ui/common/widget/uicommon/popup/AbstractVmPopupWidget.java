@@ -34,6 +34,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.parser.MemorySizeParser;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
@@ -62,6 +63,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -101,6 +104,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         String generalTabExtendedRightWidgetWidth();
     }
 
+    interface TypeAheadNameDescriptionTemplate extends SafeHtmlTemplates {
+        @Template("<div style='width: 600px'><div style='width: 30%; display: inline-block; border-right: 1px solid black; font-weight:bold; padding-right: 25px; float: left'>{0}</div><div style='display: inline-block; margin-left: 25px;'>{1}</div></div>")
+        SafeHtml input(String name, String description);
+    }
+
+    private static TypeAheadNameDescriptionTemplate typeAheadNameDescriptionTemplate =
+            GWT.create(TypeAheadNameDescriptionTemplate.class);
+
     @UiField
     protected Style style;
 
@@ -111,17 +122,17 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path(value = "dataCenter.selectedItem")
     @WithElementId("dataCenter")
-    public ListModelListBoxEditor<Object> dataCenterEditor;
+    public ListModelTypeAheadListBoxEditor<Object> dataCenterEditor;
 
     @UiField(provided = true)
     @Path(value = "cluster.selectedItem")
     @WithElementId("cluster")
-    public ListModelListBoxEditor<Object> clusterEditor;
+    public ListModelTypeAheadListBoxEditor<Object> clusterEditor;
 
     @UiField(provided = true)
     @Path(value = "quota.selectedItem")
     @WithElementId("quota")
-    public ListModelListBoxEditor<Object> quotaEditor;
+    public ListModelTypeAheadListBoxEditor<Object> quotaEditor;
 
     @UiField
     @Ignore
@@ -144,7 +155,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path(value = "template.selectedItem")
     @WithElementId("template")
-    public ListModelListBoxEditor<Object> templateEditor;
+    public ListModelTypeAheadListBoxEditor<Object> templateEditor;
 
     @UiField(provided = true)
     @Path(value = "memSize.entity")
@@ -515,12 +526,15 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     private final CommonApplicationTemplates applicationTemplates;
 
+    private final CommonApplicationResources resources;
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public AbstractVmPopupWidget(CommonApplicationConstants constants,
             CommonApplicationResources resources,
             final CommonApplicationMessages messages,
             CommonApplicationTemplates applicationTemplates) {
 
+        this.resources = resources;
         this.messages = messages;
         this.applicationTemplates = applicationTemplates;
 
@@ -637,33 +651,80 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private void initListBoxEditors() {
         // General tab
-        dataCenterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            public String renderNullSafe(Object object) {
-                return ((StoragePool) object).getname();
-            }
-        }, new ModeSwitchingVisibilityRenderer());
+        dataCenterEditor = new ListModelTypeAheadListBoxEditor<Object>(
+                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<Object>() {
 
-        clusterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            public String renderNullSafe(Object object) {
-                return ((VDSGroup) object).getname();
-            }
-        }, new ModeSwitchingVisibilityRenderer());
+                    @Override
+                    public String getReplacementStringNullSafe(Object data) {
+                        return ((StoragePool) data).getname();
+                    }
 
-        quotaEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            public String renderNullSafe(Object object) {
-                return ((Quota) object).getQuotaName();
-            }
-        }, new ModeSwitchingVisibilityRenderer());
+                    @Override
+                    public String getDisplayStringNullSafe(Object data) {
+                        return typeAheadNameDescriptionTemplateNullSafe(
+                                ((StoragePool) data).getname(),
+                                ((StoragePool) data).getdescription()
+                        );
+                    }
 
-        templateEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            public String renderNullSafe(Object object) {
-                return ((VmTemplate) object).getName();
-            }
-        }, new ModeSwitchingVisibilityRenderer());
+                },
+                new ModeSwitchingVisibilityRenderer());
+
+        clusterEditor = new ListModelTypeAheadListBoxEditor<Object>(
+                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<Object>() {
+
+                    @Override
+                    public String getReplacementStringNullSafe(Object data) {
+                        return ((VDSGroup) data).getname();
+                    }
+
+                    @Override
+                    public String getDisplayStringNullSafe(Object data) {
+                        return typeAheadNameDescriptionTemplateNullSafe(
+                                ((VDSGroup) data).getname(),
+                                ((VDSGroup) data).getdescription()
+                        );
+                    }
+
+                },
+                new ModeSwitchingVisibilityRenderer());
+
+        quotaEditor = new ListModelTypeAheadListBoxEditor<Object>(
+                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<Object>() {
+
+                    @Override
+                    public String getReplacementStringNullSafe(Object data) {
+                        return ((Quota) data).getQuotaName();
+                    }
+
+                    @Override
+                    public String getDisplayStringNullSafe(Object data) {
+                        return typeAheadNameDescriptionTemplateNullSafe(
+                                ((Quota) data).getQuotaName(),
+                                ((Quota) data).getDescription()
+                        );
+                    }
+
+                },
+                new ModeSwitchingVisibilityRenderer());
+
+        templateEditor = new ListModelTypeAheadListBoxEditor<Object>(
+                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<Object>() {
+
+                    @Override
+                    public String getReplacementStringNullSafe(Object data) {
+                        return ((VmTemplate) data).getName();
+                    }
+
+                    @Override
+                    public String getDisplayStringNullSafe(Object data) {
+                        return typeAheadNameDescriptionTemplateNullSafe(
+                                ((VmTemplate) data).getName(),
+                                ((VmTemplate) data).getDescription()
+                        );
+                    }
+                },
+                new ModeSwitchingVisibilityRenderer());
 
         oSTypeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
 
@@ -727,8 +788,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 } else {
                     return object.toString();
                 }
-            }
-
+            };
         }, new ModeSwitchingVisibilityRenderer());
 
         // Host Tab
@@ -772,6 +832,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 return (String) object;
             }
         }, new ModeSwitchingVisibilityRenderer());
+    }
+
+    private String typeAheadNameDescriptionTemplateNullSafe(String name, String description) {
+        return typeAheadNameDescriptionTemplate.input(
+                name != null ? name : "",
+                description != null ? description : "")
+                .asString();
     }
 
     protected void localize(CommonApplicationConstants constants) {

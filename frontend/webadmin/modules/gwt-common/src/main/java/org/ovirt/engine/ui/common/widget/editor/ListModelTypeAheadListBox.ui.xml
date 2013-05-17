@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
+
+	<ui:style type="org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBox.Style">
+		.mainStyle,.enabledMainPanel,.disabledMainPanel {
+			display: inline-block;
+			height: 17px;
+			border: 1px solid black;
+			vertical-align: middle;
+		}
+
+		.suggestBoxStyle {
+			border-width: 0px;
+			vertical-align: top;
+			height: 15px;
+		}
+
+		.imagesWrapper {
+			float: right;
+		}
+
+		.dropDownStyle {
+			vertical-align: top;
+		}
+
+		.suggestBoxWrapperStyle {
+			float: left;
+			height: 17px;
+		}
+
+		.enabledMainPanel {
+			background-color: white;
+		}
+
+		.disabledMainPanel {
+			background-color: #f6f6f5;
+		}
+	</ui:style>
+
+	<g:FlowPanel ui:field="mainPanel" addStyleNames="{style.enabledMainPanel}">
+		<g:FlowPanel addStyleNames="{style.suggestBoxWrapperStyle}">
+			<g:SuggestBox addStyleNames="{style.suggestBoxStyle}" ui:field="suggestBox" />
+		</g:FlowPanel>
+		<g:FlowPanel addStyleNames="{style.imagesWrapper}">
+			<g:Image ui:field="dropDownImage" addStyleNames="{style.dropDownStyle}" resource='{resources.comboBoxDropDownIcon}' />
+		</g:FlowPanel>
+	</g:FlowPanel>
+
+</ui:UiBinder>
