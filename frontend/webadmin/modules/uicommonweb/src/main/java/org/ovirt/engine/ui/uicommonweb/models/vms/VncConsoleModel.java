@@ -91,6 +91,7 @@ public class VncConsoleModel extends ConsoleModel
             .append("\nhost=").append(hostName) //$NON-NLS-1$
             .append("\nport=").append(getEntity().getDisplay().toString()) //$NON-NLS-1$
             .append("\npassword=").append(otp64) //$NON-NLS-1$
+            .append("\ndelete-this-file=1") //$NON-NLS-1$
             .append("\ntitle=").append(getTitle()); //$NON-NLS-1$
 
         ConsoleModel.makeConsoleConfigRequest("console.vv", "application/x-virt-viewer; charset=UTF-8", configBuilder.toString()); //$NON-NLS-1$ $NON-NLS-2$

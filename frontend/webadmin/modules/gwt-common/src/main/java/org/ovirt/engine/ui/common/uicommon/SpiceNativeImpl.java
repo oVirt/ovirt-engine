@@ -39,13 +39,16 @@ public class SpiceNativeImpl extends AbstractSpice implements ISpiceNative {
             .append("\nport=").append(Integer.toString(getPort())) //$NON-NLS-1$
             .append("\npassword=").append(getPassword()) //$NON-NLS-1$
             .append("\ntls-port=").append(getSecurePort()) //$NON-NLS-1$
-            .append("\ntls-ciphers=").append(getCipherSuite()) //$NON-NLS-1$
             .append("\nfullscreen=").append(fullscreen) //$NON-NLS-1$
             .append("\ntitle=").append(getTitle()) //$NON-NLS-1$
             .append("\nenable-smartcard=").append(enableSmartcard) //$NON-NLS-1$
             .append("\nenable-usb-autoshare=").append(usbAutoShare) //$NON-NLS-1$
+            .append("\ndelete-this-file=1") //$NON-NLS-1$
             .append("\nusb-filter=").append(getUsbFilter()); //$NON-NLS-1$
 
+        if (getCipherSuite() != null) {
+            configBuilder.append("\ntls-ciphers=").append(getCipherSuite()); //$NON-NLS-1$
+        }
 
         if (!StringHelper.isNullOrEmpty(getHostSubject())) {
             configBuilder.append("\nhost-subject=").append(getHostSubject()); //$NON-NLS-1$
