@@ -143,6 +143,7 @@ public class ImportVmTemplateCommandTest {
         Backend backend = mock(Backend.class);
         doReturn(backend).when(command).getBackend();
         doReturn(false).when(command).isVmTemplateWithSameNameExist();
+        doReturn(true).when(command).validateNoDuplicateDiskImages(any(Iterable.class));
         mockGetTemplatesFromExportDomainQuery(volumeFormat, volumeType, command);
         mockStorageDomainStatic(command, storageType);
         doReturn(mock(VmTemplateDAO.class)).when(command).getVmTemplateDAO();

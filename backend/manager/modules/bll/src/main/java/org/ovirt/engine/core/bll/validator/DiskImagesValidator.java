@@ -1,14 +1,15 @@
 package org.ovirt.engine.core.bll.validator;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
  * A validator for the {@link DiskImage} class. Since most usecases require validations of multiple {@link DiskImage}s
@@ -17,9 +18,9 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
  */
 public class DiskImagesValidator {
 
-    private Collection<DiskImage> diskImages;
+    private Iterable<DiskImage> diskImages;
 
-    public DiskImagesValidator(Collection<DiskImage> disks) {
+    public DiskImagesValidator(Iterable<DiskImage> disks) {
         this.diskImages = disks;
     }
 
@@ -39,6 +40,32 @@ public class DiskImagesValidator {
      */
     public ValidationResult diskImagesNotLocked() {
         return diskImagesNotInStatus(ImageStatus.LOCKED, VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED);
+    }
+
+    protected boolean isDiskExists(Guid id) {
+        return DbFacade.getInstance().getBaseDiskDao().exists(id);
+    }
+
+    /**
+     * Validates that non of the disks exists
+     *
+     * @return A {@link ValidationResult} with the validation information.
+     */
+    public ValidationResult diskImagesAlreadyExist() {
+
+        List<String> existingDisksAliases = new ArrayList<String>();
+        for (DiskImage diskImage : diskImages) {
+            if (isDiskExists(diskImage.getId())) {
+                existingDisksAliases.add(diskImage.getDiskAlias());
+            }
+        }
+
+        if (!existingDisksAliases.isEmpty()) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST,
+                    String.format("$diskAliases %s", StringUtils.join(existingDisksAliases, ", ")));
+        }
+
+        return ValidationResult.VALID;
     }
 
     /**

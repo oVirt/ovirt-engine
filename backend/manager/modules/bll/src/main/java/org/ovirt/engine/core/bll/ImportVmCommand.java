@@ -20,6 +20,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -378,26 +379,10 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         return true;
     }
 
-    protected boolean isDiskExists(Guid id) {
-        return getBaseDiskDao().exists(id);
-    }
-
     protected boolean validateNoDuplicateDiskImages(Iterable<DiskImage> images) {
         if (!getParameters().isImportAsNewEntity()) {
-            List<String> existingDisksAliases = new ArrayList<String>();
-            for (DiskImage diskImage : images) {
-                if (isDiskExists(diskImage.getId())) {
-                    existingDisksAliases.add(diskImage.getDiskAlias());
-                }
-            }
-
-            if (!existingDisksAliases.isEmpty()) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST);
-                addCanDoActionMessage(String.format("$%1$s %2$s",
-                        "diskAliases",
-                        StringUtils.join(existingDisksAliases, ", ")));
-                return false;
-            }
+            DiskImagesValidator diskImagesValidator = new DiskImagesValidator(images);
+            return validate(diskImagesValidator.diskImagesAlreadyExist());
         }
 
         return true;

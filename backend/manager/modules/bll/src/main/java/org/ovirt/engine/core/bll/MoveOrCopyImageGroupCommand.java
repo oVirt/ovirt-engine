@@ -166,8 +166,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
 
     private boolean shouldUpdateStorageDisk() {
         return getParameters().getOperation() == ImageOperation.Move ||
-                getParameters().getParentCommand() == VdcActionType.ImportVm ||
-                getParameters().getParentCommand() == VdcActionType.ImportVmTemplate;
+                getParameters().getParentCommand() == VdcActionType.ImportVm;
     }
 
     @Override
@@ -190,17 +189,18 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
     @Override
     protected void revertTasks() {
         // Revert should be performed only for AddVmFromSnapshot at this point.
-        if (getParameters().getParentCommand() == VdcActionType.AddVmFromSnapshot || getParameters().getParentCommand() == VdcActionType.ImportVm) {
+        if (getParameters().getParentCommand() == VdcActionType.AddVmFromSnapshot || getParameters().getParentCommand() == VdcActionType.ImportVm
+                || getParameters().getParentCommand() == VdcActionType.ImportVmTemplate) {
             Guid destImageId = getParameters().getDestinationImageId();
             RemoveImageParameters removeImageParams =
                     new RemoveImageParameters(destImageId);
-            if (getParameters().getParentCommand() == VdcActionType.ImportVm) {
+            if (getParameters().getParentCommand() == VdcActionType.AddVmFromSnapshot) {
+                removeImageParams.setParentParameters(getParameters());
+                removeImageParams.setParentCommand(VdcActionType.MoveOrCopyImageGroup);
+            } else {
                 removeImageParams.setParentParameters(removeImageParams);
                 removeImageParams.setParentCommand(VdcActionType.RemoveImage);
                 removeImageParams.setRemoveFromDB(true);
-            } else {
-                removeImageParams.setParentParameters(getParameters());
-                removeImageParams.setParentCommand(VdcActionType.MoveOrCopyImageGroup);
             }
             removeImageParams.setEntityId(getDestinationImageId());
             // Setting the image as the monitored entity, so there will not be dependency

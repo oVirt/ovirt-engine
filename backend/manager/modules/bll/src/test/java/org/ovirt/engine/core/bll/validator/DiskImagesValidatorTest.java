@@ -1,8 +1,12 @@
 package org.ovirt.engine.core.bll.validator;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.both;
 import static org.junit.matchers.JUnitMatchers.hasItem;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.replacements;
@@ -12,6 +16,7 @@ import java.util.Arrays;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -33,7 +38,7 @@ public class DiskImagesValidatorTest {
         disk1.setDiskAlias("disk1");
         disk2 = createDisk();
         disk2.setDiskAlias("disk2");
-        validator = new DiskImagesValidator(Arrays.asList(disk1, disk2));
+        validator = spy(new DiskImagesValidator(Arrays.asList(disk1, disk2)));
     }
 
     private static DiskImage createDisk() {
@@ -84,6 +89,29 @@ public class DiskImagesValidatorTest {
         assertThat(validator.diskImagesNotIllegal(),
                 both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_ILLEGAL)).and(replacements
                         (hasItem(createAliasReplacements(disk1, disk2)))));
+    }
+
+    @Test
+    public void diskImagesAlreadyExistBothExist() {
+        doReturn(true).when(validator).isDiskExists(any(Guid.class));
+        assertThat(validator.diskImagesAlreadyExist(),
+                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST)).and(replacements
+                        (hasItem(createAliasReplacements(disk1, disk2)))));
+    }
+
+    @Test
+    public void diskImagesAlreadyExistOneExist() {
+        doReturn(true).when(validator).isDiskExists(disk1.getId());
+        doReturn(false).when(validator).isDiskExists(disk2.getId());
+        assertThat(validator.diskImagesAlreadyExist(),
+                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST)).and(replacements
+                        (hasItem(createAliasReplacements(disk1)))));
+    }
+
+    @Test
+    public void diskImagesAlreadyExistBothDoesntExist() {
+        doReturn(false).when(validator).isDiskExists(any(Guid.class));
+        assertEquals(validator.diskImagesAlreadyExist(), ValidationResult.VALID);
     }
 
     @Test

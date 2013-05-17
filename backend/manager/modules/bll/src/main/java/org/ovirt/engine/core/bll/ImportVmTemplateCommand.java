@@ -12,11 +12,13 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
@@ -27,7 +29,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
@@ -134,7 +135,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                         break;
                     } else {
                         image.setStoragePoolId(getParameters().getStoragePoolId());
-                        image.setStorageIds(new ArrayList<Guid>(Arrays.asList(getParameters().getSourceDomainId())));
+                        image.setStorageIds(new ArrayList<Guid>(Arrays.asList(storageDomain.getId())));
                         imageMap.put(image.getImageId(), image);
                     }
                 }
@@ -159,6 +160,10 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                 addCanDoActionMessage(VdcBllMessages.VM_CANNOT_IMPORT_TEMPLATE_NAME_EXISTS);
                 retVal = false;
             }
+        }
+
+        if (retVal) {
+            retVal = validateNoDuplicateDiskImages(getParameters().getImages());
         }
 
         if (retVal && getParameters().getImages() != null && !getParameters().getImages().isEmpty()) {
@@ -209,6 +214,15 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                 image.setImageId(Guid.NewGuid());
             }
         }
+    }
+
+    protected boolean validateNoDuplicateDiskImages(Iterable<DiskImage> images) {
+        if (!getParameters().isImportAsNewEntity()) {
+            DiskImagesValidator diskImagesValidator = new DiskImagesValidator(images);
+            return validate(diskImagesValidator.diskImagesAlreadyExist());
+        }
+
+        return true;
     }
 
     @Override
@@ -403,21 +417,18 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         }
     }
 
-    protected void removeImages() {
-        for (DiskImage image : getParameters().getImages()) {
-            DbFacade.getInstance().getDiskImageDynamicDao().remove(image.getImageId());
-            DbFacade.getInstance().getImageStorageDomainMapDao().remove(image.getImageId());
-            DbFacade.getInstance().getImageDao().remove(image.getImageId());
-            DbFacade.getInstance().getVmDeviceDao().remove(new VmDeviceId(image.getId(), null));
-            DbFacade.getInstance().getBaseDiskDao().remove(image.getId());
+    @Override
+    protected void endActionOnAllImageGroups() {
+        for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
+            p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
+            getBackend().EndAction(getImagesActionType(), p);
         }
     }
 
     @Override
     protected void endWithFailure() {
         removeNetwork();
-        removeImages();
-
+        endActionOnAllImageGroups();
         DbFacade.getInstance().getVmTemplateDao().remove(getVmTemplateId());
         setSucceeded(true);
     }

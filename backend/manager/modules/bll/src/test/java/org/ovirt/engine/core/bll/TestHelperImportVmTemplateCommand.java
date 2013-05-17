@@ -93,6 +93,11 @@ public class TestHelperImportVmTemplateCommand extends ImportVmTemplateCommand {
         return false;
     }
 
+    @Override
+    protected boolean validateNoDuplicateDiskImages(Iterable<DiskImage> images) {
+        return true;
+    }
+
     private static VdcQueryReturnValue createDiskImageQueryResult() {
         final VdcQueryReturnValue v = new VdcQueryReturnValue();
         Map<VmTemplate, DiskImageList> m = new HashMap<VmTemplate, DiskImageList>();
