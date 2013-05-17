@@ -15,7 +15,7 @@ public interface IFrontendEventsHandler {
 
     void runActionExecutionFailed(VdcActionType action, VdcFault fault);
 
-    void runMultipleActionFailed(VdcActionType action, List<VdcReturnValueBase> returnValues, List<VdcFault> faults);
+    void runMultipleActionFailed(VdcActionType action, List<VdcReturnValueBase> returnValues);
 
     void runQueryFailed(List<VdcQueryReturnValue> returnValue);
 

@@ -42,14 +42,14 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
 
     @Override
     public void runActionExecutionFailed(VdcActionType action, VdcFault fault) {
-        if (isRaiseErrorModalPanel(action, fault))
+        if (isRaiseErrorModalPanel(action, fault)) {
             errorPopupManager.show(messages.uiCommonRunActionExecutionFailed(
                     EnumTranslator.createAndTranslate(action), fault.getMessage()));
+        }
     }
 
     @Override
-    public void runMultipleActionFailed(VdcActionType action,
-            List<VdcReturnValueBase> returnValues, List<VdcFault> faults) {
+    public void runMultipleActionFailed(VdcActionType action, List<VdcReturnValueBase> returnValues) {
         String actionStr = EnumTranslator.createAndTranslate(action);
 
         List<Message> errors = new ArrayList<Message>();
@@ -65,14 +65,6 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
                     Message msg = new Message(description, canDo);
                     errors.add(msg);
                 }
-            }
-        }
-
-        for (VdcFault fault : faults) {
-            if (isRaiseErrorModalPanel(action, fault))
-            {
-                Message msg = new Message(actionStr, fault.getMessage());
-                errors.add(msg);
             }
         }
 

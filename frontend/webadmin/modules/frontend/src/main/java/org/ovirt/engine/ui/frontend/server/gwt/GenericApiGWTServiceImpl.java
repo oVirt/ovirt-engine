@@ -143,8 +143,9 @@ public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGW
         if (!vqrv.getSucceeded()) {
             return null;
         } else if (vqrv.getSucceeded()) {
-            if (vqrv.getReturnValue() == null)
+            if (vqrv.getReturnValue() == null) {
                 return null;
+            }
             return (VdcUser) vqrv.getReturnValue();
         } else {
             // For unknown reason the result was failed be returned.
