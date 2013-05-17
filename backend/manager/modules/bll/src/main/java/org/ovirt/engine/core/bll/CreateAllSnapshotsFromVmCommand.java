@@ -108,6 +108,16 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     @Override
+    protected void buildChildCommandInfos() {
+        Guid vmSnapshotId = Guid.newGuid();
+        for (DiskImage image : getDisksList()) {
+            addChildCommandInfo(image.getImageId(),
+                    VdcActionType.CreateSnapshot,
+                    buildCreateSnapshotParameters(image, vmSnapshotId));
+        }
+    }
+
+    @Override
     protected void executeVmCommand() {
         Guid newActiveSnapshotId = Guid.newGuid();
         Guid createdSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE);
@@ -178,10 +188,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     private void createSnapshotsForDisks(Guid vmSnapshotId) {
         for (DiskImage image : getDisksList()) {
 
-            VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
-                            VdcActionType.CreateSnapshot,
-                            buildCreateSnapshotParameters(image, vmSnapshotId),
-                            ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+            VdcReturnValueBase vdcReturnValue = executeChildCommand(image.getImageId());
 
             if (vdcReturnValue.getSucceeded()) {
                 getTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
