@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+
+    <ui:style>
+
+        .memoryEditor {
+            width: 100%;
+        }
+
+        .messageLabel {
+            padding-top: 15px;
+            padding-left: 10px;
+            padding-right: 5px;
+            height: 40%;
+        }
+    </ui:style>
+
+    <g:FlowPanel>
+        <g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
+        <e:EntityModelCheckBoxEditor ui:field="memoryEditor" addStyleNames="{style.memoryEditor}" />
+    </g:FlowPanel>
+
+</ui:UiBinder>

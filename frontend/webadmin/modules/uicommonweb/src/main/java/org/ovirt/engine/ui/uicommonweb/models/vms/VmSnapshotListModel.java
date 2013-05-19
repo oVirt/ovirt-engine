@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -404,27 +405,69 @@ public class VmSnapshotListModel extends SearchableListModel
     private void preview()
     {
         VM vm = (VM) getEntity();
-        if (vm != null)
-        {
-            Snapshot snapshot = (Snapshot) getSelectedItem();
+        if (vm == null) {
+            return;
+        }
 
+        Snapshot snapshot = (Snapshot) getSelectedItem();
+        // if snapshot doesn't have memory, just trigger preview without showing popup
+        if (!isMemorySnapshotSupported() || snapshot.getMemoryVolume().isEmpty()) {
             Frontend.RunAction(VdcActionType.TryBackToAllSnapshotsOfVm,
                     new TryBackToAllSnapshotsOfVmParameters(vm.getId(), snapshot.getId()),
-                    null,
                     null);
         }
+        // otherwise, show a popup asking whether to use the memory or not
+        else {
+            SnapshotModel model = new SnapshotModel();
+            setWindow(model);
+
+            model.setTitle(ConstantsManager.getInstance().getConstants().previewSnapshotTitle());
+            model.setHashName("preview_snapshot"); //$NON-NLS-1$
+
+            model.getCommands().add(new UICommand("OnPreview", this) //$NON-NLS-1$
+               .setTitle(ConstantsManager.getInstance().getConstants().ok())
+               .setIsDefault(true));
+            UICommand cancelCommand = new UICommand("Cancel", this) //$NON-NLS-1$
+               .setTitle(ConstantsManager.getInstance().getConstants().cancel())
+               .setIsCancel(true);
+            model.getCommands().add(cancelCommand);
+            model.setCancelCommand(cancelCommand);
+            model.setCloseCommand(new UICommand("Cancel", this) //$NON-NLS-1$
+               .setTitle(ConstantsManager.getInstance().getConstants().close())
+               .setIsCancel(true));
+        }
+    }
+
+    private void OnPreview() {
+        Snapshot snapshot = (Snapshot) getSelectedItem();
+
+        if (snapshot == null) {
+            cancel();
+            return;
+        }
+
+        VM vm = (VM) getEntity();
+        final SnapshotModel model = (SnapshotModel) getWindow();
+
+        model.startProgress(null);
+
+        Frontend.RunAction(VdcActionType.TryBackToAllSnapshotsOfVm,
+                new TryBackToAllSnapshotsOfVmParameters(vm.getId(), snapshot.getId(),
+                        (Boolean) model.getMemory().getEntity()),
+                new IFrontendActionAsyncCallback() {
+
+                    @Override
+                    public void executed(FrontendActionAsyncResult result) {
+                        model.stopProgress();
+                        cancel();
+                    }
+                });
     }
 
     private void newEntity()
     {
         VM vm = (VM) getEntity();
-        if (vm == null)
-        {
-            return;
-        }
-
-        if (getWindow() != null)
-        {
+        if (vm == null || getWindow() != null) {
             return;
         }
 
@@ -761,6 +804,18 @@ public class VmSnapshotListModel extends SearchableListModel
         }), vm.getStoragePoolId());
     }
 
+    protected boolean isMemorySnapshotSupported() {
+        if (getEntity() == null) {
+            return false;
+        }
+
+        VM vm = (VM) getEntity();
+
+        return  (Boolean) AsyncDataProvider.getConfigValuePreConverted(
+                ConfigurationValues.MemorySnapshotSupported,
+                vm.getVdsGroupCompatibilityVersion().toString());
+    }
+
     @Override
     public void executeCommand(UICommand command)
     {
@@ -801,6 +856,10 @@ public class VmSnapshotListModel extends SearchableListModel
         else if (StringHelper.stringsEqual(command.getName(), "OnCloneVM")) //$NON-NLS-1$
         {
             onCloneVM();
+        }
+        else if (StringHelper.stringsEqual(command.getName(), "OnPreview")) //$NON-NLS-1$
+        {
+            OnPreview();
         }
     }
 

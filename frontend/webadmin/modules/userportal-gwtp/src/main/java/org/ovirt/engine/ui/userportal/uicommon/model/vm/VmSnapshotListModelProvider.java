@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalVmSnapshotListModel;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmSnapshotCreatePopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmSnapshotPreviewPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelResolver;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailModelProvider;
 
@@ -20,17 +21,20 @@ public class VmSnapshotListModelProvider extends UserPortalSearchableDetailModel
 
     private final Provider<VmSnapshotCreatePopupPresenterWidget> createPopupProvider;
     private final Provider<VmClonePopupPresenterWidget> cloneVmPopupProvider;
+    private final Provider<VmSnapshotPreviewPopupPresenterWidget> previewPopupProvider;
 
     @Inject
     public VmSnapshotListModelProvider(ClientGinjector ginjector,
             UserPortalListProvider parentModelProvider,
             UserPortalModelResolver resolver,
             Provider<VmSnapshotCreatePopupPresenterWidget> createPopupProvider,
+            Provider<VmSnapshotPreviewPopupPresenterWidget> previewPopupProvider,
             Provider<VmClonePopupPresenterWidget> cloneVmPopupProvider,
             CurrentUser user) {
         super(ginjector, parentModelProvider, UserPortalVmSnapshotListModel.class, resolver, user);
         this.createPopupProvider = createPopupProvider;
         this.cloneVmPopupProvider = cloneVmPopupProvider;
+        this.previewPopupProvider = previewPopupProvider;
     }
 
     @Override
@@ -45,6 +49,8 @@ public class VmSnapshotListModelProvider extends UserPortalSearchableDetailModel
             return createPopupProvider.get();
         } else if (lastExecutedCommand == getModel().getCloneVmCommand()) {
             return cloneVmPopupProvider.get();
+        } else if (lastExecutedCommand == getModel().getPreviewCommand()) {
+            return previewPopupProvider.get();
         } else {
             return super.getModelPopup(source, lastExecutedCommand, windowModel);
         }

@@ -157,6 +157,12 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Save Memory")
     String virtualMachineSnapshotCreatePopupMemoryLabel();
 
+    @DefaultStringValue("Restore Memory")
+    String virtualMachineSnapshotPreviewPopupMemoryLabel();
+
+    @DefaultStringValue("The selected snapshot to be previewed contains memory")
+    String snapshotContainsMemory();
+
     @DefaultStringValue("Loading...")
     String loadingLabel();
 
@@ -352,9 +358,11 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Delete Protection")
     String deleteProtectionPopup();
 
-
     @DefaultStringValue("Copy Template Permissions")
     String copyTemplatePermissions();
+
+    @DefaultStringValue("Restore saved memory")
+    String restoreMemoryPopup();
 
     @DefaultStringValue("Smartcard Enabled")
     String smartcardVmPopup();

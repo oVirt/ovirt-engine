@@ -49,6 +49,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePop
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotCreatePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotPreviewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VncInfoPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRemovePopupPresenterWidget;
 
@@ -293,7 +294,8 @@ public class VirtualMachineModule extends AbstractGinModule {
     @Singleton
     public SearchableDetailModelProvider<Snapshot, VmListModel, VmSnapshotListModel> getVmSnapshotListProvider(ClientGinjector ginjector,
             final Provider<VmSnapshotCreatePopupPresenterWidget> createPopupProvider,
-            final Provider<VmClonePopupPresenterWidget> cloneVmPopupProvider) {
+            final Provider<VmClonePopupPresenterWidget> cloneVmPopupProvider,
+            final Provider<VmSnapshotPreviewPopupPresenterWidget> previewPopupProvider) {
         return new SearchableDetailTabModelProvider<Snapshot, VmListModel, VmSnapshotListModel>(ginjector,
                 VmListModel.class, VmSnapshotListModel.class) {
             @Override
@@ -304,6 +306,8 @@ public class VirtualMachineModule extends AbstractGinModule {
                 } else if (lastExecutedCommand == getModel().getCloneVmCommand()) {
                     getModel().setSystemTreeSelectedItem(this.getMainModel().getSystemTreeSelectedItem());
                     return cloneVmPopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getPreviewCommand()) {
+                    return previewPopupProvider.get();
                 } else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }

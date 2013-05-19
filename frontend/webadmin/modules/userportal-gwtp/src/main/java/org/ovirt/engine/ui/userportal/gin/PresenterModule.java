@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmMakeTemp
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmSnapshotCreatePopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmSnapshotPreviewPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VncInfoPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabBasicPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabExtendedPresenter;
@@ -65,6 +66,7 @@ import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmMakeTemplateP
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmRunOncePopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmSnapshotCreatePopupView;
+import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmSnapshotPreviewPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VncInfoPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.MainTabBasicView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.MainTabExtendedView;
@@ -275,6 +277,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VmSnapshotCreatePopupPresenterWidget.class,
                 VmSnapshotCreatePopupPresenterWidget.ViewDef.class,
                 VmSnapshotCreatePopupView.class);
+        bindPresenterWidget(VmSnapshotPreviewPopupPresenterWidget.class,
+                VmSnapshotPreviewPopupPresenterWidget.ViewDef.class,
+                VmSnapshotPreviewPopupView.class);
         bindPresenterWidget(VmClonePopupPresenterWidget.class,
                 VmClonePopupPresenterWidget.ViewDef.class,
                 VmClonePopupView.class);
