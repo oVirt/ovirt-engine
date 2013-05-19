@@ -238,7 +238,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                                             .getId(), diskImage.getImageId()));
                 if (vdsReturnValue != null && vdsReturnValue.getSucceeded()) {
                     DiskImage fromVdsm = (DiskImage) vdsReturnValue.getReturnValue();
-                    diskImage.setActualSizeFromDiskImage(fromVdsm.getActualSizeFromDiskImage());
+                    diskImage.setActualSizeInBytes(fromVdsm.getActualSizeInBytes());
                 }
                 AllVmImages.add(diskImage);
             }

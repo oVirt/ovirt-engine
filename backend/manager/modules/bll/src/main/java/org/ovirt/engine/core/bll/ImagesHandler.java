@@ -304,7 +304,7 @@ public final class ImagesHandler {
         DbFacade.getInstance().getImageDao().save(image.getImage());
         DiskImageDynamic diskDynamic = new DiskImageDynamic();
         diskDynamic.setId(image.getImageId());
-        diskDynamic.setactual_size(image.getActualSizeFromDiskImage());
+        diskDynamic.setactual_size(image.getActualSizeInBytes());
         DbFacade.getInstance().getDiskImageDynamicDao().save(diskDynamic);
         if (imageStorageDomainMap != null) {
             DbFacade.getInstance().getImageStorageDomainMapDao().save(imageStorageDomainMap);

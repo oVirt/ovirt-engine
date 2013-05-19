@@ -415,7 +415,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         DiskSizeColumn<DiskImage> actualSizeColumn = new DiskSizeColumn<DiskImage>() {
             @Override
             protected Long getRawValue(DiskImage object) {
-                return object.getActualSizeFromDiskImage();
+                return object.getActualSizeInBytes();
             }
         };
         diskTable.addColumn(actualSizeColumn, constants.sizeDisk(), "100px"); //$NON-NLS-1$

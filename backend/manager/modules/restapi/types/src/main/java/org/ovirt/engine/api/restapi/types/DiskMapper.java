@@ -149,7 +149,7 @@ public class DiskMapper {
         }
         model.setSize(entity.getSize());
         model.setProvisionedSize(entity.getSize());
-        model.setActualSize(entity.getActualSizeFromDiskImage());
+        model.setActualSize(entity.getActualSizeInBytes());
         if (entity.getVolumeFormat() != null) {
             model.setFormat(map(entity.getVolumeFormat(), null));
         }

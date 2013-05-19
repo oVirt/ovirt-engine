@@ -238,7 +238,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         getDestinationDiskImage().setLastModified(getDestinationDiskImage().getLastModifiedDate());
         DiskImageDynamic destinationDiskDynamic = getDiskImageDynamicDAO().get(getDestinationDiskImage().getImageId());
         if (destinationDiskDynamic != null) {
-            destinationDiskDynamic.setactual_size(fromIRS.getActualSizeFromDiskImage());
+            destinationDiskDynamic.setactual_size(fromIRS.getActualSizeInBytes());
             getDiskImageDynamicDAO().update(destinationDiskDynamic);
         }
     }
@@ -255,7 +255,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         getImageDao().save(image.getImage());
         DiskImageDynamic diskDynamic = new DiskImageDynamic();
         diskDynamic.setId(image.getImageId());
-        diskDynamic.setactual_size(image.getActualSizeFromDiskImage());
+        diskDynamic.setactual_size(image.getActualSizeInBytes());
         getDiskImageDynamicDAO().save(diskDynamic);
         image_storage_domain_map image_storage_domain_map = new image_storage_domain_map(image.getImageId(),
                 image.getStorageIds().get(0));

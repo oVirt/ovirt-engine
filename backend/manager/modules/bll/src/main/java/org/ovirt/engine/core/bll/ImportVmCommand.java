@@ -725,7 +725,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     protected void saveDiskImageDynamic(DiskImage disk) {
         DiskImageDynamic diskDynamic = new DiskImageDynamic();
         diskDynamic.setId(disk.getImageId());
-        diskDynamic.setactual_size(disk.getActualSizeFromDiskImage());
+        diskDynamic.setactual_size(disk.getActualSizeInBytes());
         getDiskImageDynamicDAO().save(diskDynamic);
     }
 

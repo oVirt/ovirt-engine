@@ -115,7 +115,7 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.WriteAttributeString(OVF_URI, "size", String.valueOf(BytesToGigabyte(image.getSize())));
             _writer.WriteAttributeString(OVF_URI,
                     "actual_size",
-                    String.valueOf(BytesToGigabyte(image.getActualSizeFromDiskImage())));
+                    String.valueOf(BytesToGigabyte(image.getActualSizeInBytes())));
             _writer.WriteAttributeString(OVF_URI, "vm_snapshot_id", (image.getVmSnapshotId() != null) ? image
                     .getVmSnapshotId().getValue().toString() : "");
 

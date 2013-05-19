@@ -114,7 +114,7 @@ public abstract class OvfReader implements IOvfBuilder {
                 image.setSize(convertGigabyteToBytes(Long.parseLong(node.Attributes.get("ovf:size").getValue())));
             }
             if (!StringUtils.isEmpty(node.Attributes.get("ovf:actual_size").getValue())) {
-                image.setActualSizeFromDiskImage(convertGigabyteToBytes(Long.parseLong(node.Attributes.get("ovf:actual_size").getValue())));
+                image.setActualSizeInBytes(convertGigabyteToBytes(Long.parseLong(node.Attributes.get("ovf:actual_size").getValue())));
             }
             if (node.Attributes.get("ovf:volume-format") != null) {
                 if (!StringUtils.isEmpty(node.Attributes.get("ovf:volume-format").getValue())) {

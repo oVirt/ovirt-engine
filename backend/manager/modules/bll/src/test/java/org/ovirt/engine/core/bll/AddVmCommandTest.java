@@ -336,7 +336,7 @@ public class AddVmCommandTest {
             long diskSize,
             Map<Guid, DiskImage> diskImageMap) {
         DiskImage diskImage = new DiskImage();
-        diskImage.setActualSizeFromDiskImage(diskSize);
+        diskImage.setActualSizeInBytes(diskSize);
         diskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(STORAGE_DOMAIN_ID)));
         diskImageMap.put(Guid.NewGuid(), diskImage);
         cmd.storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
@@ -406,7 +406,7 @@ public class AddVmCommandTest {
     private static DiskImage createDiskImageTemplate() {
         DiskImage i = new DiskImage();
         i.setSizeInGigabytes(USED_SPACE_GB + AVAILABLE_SPACE_GB);
-        i.setActualSizeFromDiskImage(REQUIRED_DISK_SIZE_GB * 1024L * 1024L * 1024L);
+        i.setActualSizeInBytes(REQUIRED_DISK_SIZE_GB * 1024L * 1024L * 1024L);
         i.setImageId(Guid.NewGuid());
         i.setStorageIds(new ArrayList<Guid>(Arrays.asList(STORAGE_DOMAIN_ID)));
         return i;

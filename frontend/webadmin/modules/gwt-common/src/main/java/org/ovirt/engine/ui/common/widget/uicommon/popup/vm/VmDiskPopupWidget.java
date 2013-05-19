@@ -341,7 +341,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
             @Override
             protected Long getRawValue(EntityModel object) {
                 DiskImage diskImage = (DiskImage) (((DiskModel) (object.getEntity())).getDisk());
-                return diskImage.getActualSizeFromDiskImage();
+                return diskImage.getActualSizeInBytes();
             }
         };
         internalDiskTable.addColumn(actualSizeColumn, constants.sizeVmDiskTable(), "105px"); //$NON-NLS-1$

@@ -13,7 +13,7 @@ public class DiskImage extends DiskImageBase implements IImage {
 
     private Date lastModifiedDate;
     private ArrayList<String> storagesNames;
-    private long actualSizeFromDiskImageDynamic;
+    private long actualSizeInBytes;
     private int readRateFromDiskImageDynamic;
     private int writeRateFromDiskImageDynamic;
 
@@ -75,7 +75,7 @@ public class DiskImage extends DiskImageBase implements IImage {
         setActive(active);
         setCreationDate(creation_date);
         setLastModifiedDate(last_modified_date);
-        actualSizeFromDiskImageDynamic = actual_size;
+        actualSizeInBytes = actual_size;
         setDescription(description);
         setImageId(image_guid);
         setImageTemplateId(it_guid);
@@ -138,13 +138,13 @@ public class DiskImage extends DiskImageBase implements IImage {
         this.lastModifiedDate = lastModifiedDate;
     }
 
-    public long getActualSizeFromDiskImage() {
-        return actualSizeFromDiskImageDynamic;
+    public long getActualSizeInBytes() {
+        return actualSizeInBytes;
     }
 
-    public void setActualSizeFromDiskImage(long size) {
-        actualSizeFromDiskImageDynamic = size;
-        setActualSize(getActualSizeFromDiskImage() * 1.0 / (1024 * 1024 * 1024));
+    public void setActualSizeInBytes(long size) {
+        actualSizeInBytes = size;
+        setActualSize(getActualSizeInBytes() * 1.0 / (1024 * 1024 * 1024));
     }
 
     public int getReadRate() {
@@ -364,7 +364,7 @@ public class DiskImage extends DiskImageBase implements IImage {
         di.setActive(diskImage.getActive());
         di.setCreationDate(new Date(diskImage.getCreationDate().getTime()));
         di.setLastModifiedDate(new Date(diskImage.getLastModifiedDate().getTime()));
-        di.actualSizeFromDiskImageDynamic = diskImage.actualSizeFromDiskImageDynamic;
+        di.actualSizeInBytes = diskImage.actualSizeInBytes;
         di.readRateFromDiskImageDynamic = diskImage.readRateFromDiskImageDynamic;
         di.writeRateFromDiskImageDynamic = diskImage.writeRateFromDiskImageDynamic;
         di.readLatency = diskImage.readLatency;
@@ -411,7 +411,7 @@ public class DiskImage extends DiskImageBase implements IImage {
         int result = super.hashCode();
         result = prime * result + ((getImage() == null) ? 0 : getImage().hashCode());
         result = prime * result + ((snapshots == null) ? 0 : snapshots.hashCode());
-        result = prime * result + (int) (actualSizeFromDiskImageDynamic ^ (actualSizeFromDiskImageDynamic >>> 32));
+        result = prime * result + (int) (actualSizeInBytes ^ (actualSizeInBytes >>> 32));
         result = prime * result + ((appList == null) ? 0 : appList.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + readRateKbPerSec;
@@ -442,7 +442,7 @@ public class DiskImage extends DiskImageBase implements IImage {
         DiskImage other = (DiskImage) obj;
         return (ObjectUtils.objectsEqual(getImage(), other.getImage())
                 && ObjectUtils.objectsEqual(snapshots, other.snapshots)
-                && actualSizeFromDiskImageDynamic == other.actualSizeFromDiskImageDynamic
+                && actualSizeInBytes == other.actualSizeInBytes
                 && ObjectUtils.objectsEqual(appList, other.appList)
                 && ObjectUtils.objectsEqual(description, other.description)
                 && readRateKbPerSec == other.readRateKbPerSec

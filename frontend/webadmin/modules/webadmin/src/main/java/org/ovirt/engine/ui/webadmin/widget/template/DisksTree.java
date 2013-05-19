@@ -51,7 +51,7 @@ public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskIma
         addItemToPanel(panel, new Image(resources.diskImage()), "25px"); //$NON-NLS-1$
         addTextBoxToPanel(panel, new TextBoxLabel(), disk.getDiskAlias(), ""); //$NON-NLS-1$
         addValueLabelToPanel(panel, new DiskSizeLabel<Long>(), disk.getSizeInGigabytes(), "120px"); //$NON-NLS-1$
-        addValueLabelToPanel(panel, new DiskSizeLabel<Long>(DiskSizeUnit.BYTE), disk.getActualSizeFromDiskImage(), "120px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new DiskSizeLabel<Long>(DiskSizeUnit.BYTE), disk.getActualSizeInBytes(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new EnumLabel<ImageStatus>(), disk.getImageStatus(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new EnumLabel<VolumeType>(), disk.getVolumeType(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new EnumLabel<DiskInterface>(), disk.getDiskInterface(), "120px"); //$NON-NLS-1$

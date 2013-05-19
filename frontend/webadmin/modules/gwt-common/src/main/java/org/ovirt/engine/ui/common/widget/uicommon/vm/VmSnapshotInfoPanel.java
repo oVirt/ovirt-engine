@@ -138,7 +138,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         DiskSizeColumn<DiskImage> actualSizeColumn = new DiskSizeColumn<DiskImage>() {
             @Override
             protected Long getRawValue(DiskImage object) {
-                return object.getActualSizeFromDiskImage();
+                return object.getActualSizeInBytes();
             }
         };
         disksTable.addColumn(actualSizeColumn, constants.sizeDisk(), "70px"); //$NON-NLS-1$

@@ -92,7 +92,7 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
                 newImage.setSize(Long.parseLong(xmlRpcStruct.get("capacity").toString()));
             }
             if (xmlRpcStruct.containsKey("truesize")) {
-                newImage.setActualSizeFromDiskImage(Long.parseLong(xmlRpcStruct.get("truesize").toString()));
+                newImage.setActualSizeInBytes(Long.parseLong(xmlRpcStruct.get("truesize").toString()));
             }
             if (xmlRpcStruct.containsKey("ctime")) {
                 long secsSinceEpoch = Long.parseLong(xmlRpcStruct.get("ctime").toString());

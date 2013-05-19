@@ -98,7 +98,7 @@ public class TestHelperImportVmTemplateCommand extends ImportVmTemplateCommand {
         Map<VmTemplate, DiskImageList> m = new HashMap<VmTemplate, DiskImageList>();
         VmTemplate t = new VmTemplate();
         DiskImage i = new DiskImage();
-        i.setActualSizeFromDiskImage(2);
+        i.setActualSizeInBytes(2);
         ArrayList<DiskImage> ial = new ArrayList<DiskImage>();
         ial.add(i);
         DiskImageList il = new DiskImageList(ial);
