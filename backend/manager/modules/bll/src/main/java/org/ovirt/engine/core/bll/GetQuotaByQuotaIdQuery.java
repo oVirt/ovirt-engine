@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.GetQuotaByQuotaIdQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-public class GetQuotaByQuotaIdQuery<P extends GetQuotaByQuotaIdQueryParameters> extends QueriesCommandBase<P> {
+public class GetQuotaByQuotaIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 
     public GetQuotaByQuotaIdQuery(P parameters) {
         super(parameters);
@@ -13,6 +13,6 @@ public class GetQuotaByQuotaIdQuery<P extends GetQuotaByQuotaIdQueryParameters> 
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(DbFacade.getInstance()
                 .getQuotaDao()
-                .getById(getParameters().getQuotaId()));
+                .getById(getParameters().getId()));
     }
 }

@@ -13,8 +13,6 @@ import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
-import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -114,7 +112,7 @@ public class BackendClusterNetworksResource
     protected VDSGroup getVDSGroup() {
         return getEntity(VDSGroup.class,
                          VdcQueryType.GetVdsGroupByVdsGroupId,
-                         new GetVdsGroupByVdsGroupIdParameters(asGuid(clusterId)),
+                         new IdQueryParameters(asGuid(clusterId)),
                          clusterId);
     }
 
@@ -128,7 +126,7 @@ public class BackendClusterNetworksResource
         NGuid dataCenterId =
                 getEntity(VDSGroup.class,
                         VdcQueryType.GetVdsGroupById,
-                        new GetVdsGroupByIdParameters(asGuid(clusterId)),
+                        new IdQueryParameters(asGuid(clusterId)),
                         null).getStoragePoolId();
         IdQueryParameters params = new IdQueryParameters(asGuid(dataCenterId));
         return getBackendCollection(VdcQueryType.GetAllNetworks, params);

@@ -22,14 +22,13 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -106,8 +105,8 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
         StoragePool storagePool = new StoragePool();
         storagePool.setId(storagePoolId);
         setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolsByStorageDomainId,
-                StorageDomainQueryParametersBase.class,
-                new String[] {"StorageDomainId"},
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] {GUIDS[3]},
                 Arrays.asList(storagePool));
         setUpEntityQueryExpectations(VdcQueryType.GetUnregisteredDisk,
@@ -188,8 +187,8 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
             entities.add(getEntity(i));
         }
         setUpEntityQueryExpectations(VdcQueryType.GetAllDisksByStorageDomainId,
-                StorageDomainQueryParametersBase.class,
-                new String[] {"StorageDomainId"},
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] {GUIDS[3]},
                 entities);
         control.replay();
@@ -203,8 +202,8 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
         StoragePool storagePool = new StoragePool();
         storagePool.setId(storagePoolId);
         setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolsByStorageDomainId,
-                StorageDomainQueryParametersBase.class,
-                new String[] {"StorageDomainId"},
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] {GUIDS[3]},
                 Arrays.asList(storagePool));
 

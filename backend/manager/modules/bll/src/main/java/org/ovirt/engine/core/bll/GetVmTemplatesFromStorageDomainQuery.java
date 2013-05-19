@@ -6,10 +6,10 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.comparators.DiskImageByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.VmTemplateComparerByDiskSize;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-public class GetVmTemplatesFromStorageDomainQuery<P extends StorageDomainQueryParametersBase>
+public class GetVmTemplatesFromStorageDomainQuery<P extends IdQueryParameters>
         extends QueriesCommandBase<P> {
     public GetVmTemplatesFromStorageDomainQuery(P parameters) {
         super(parameters);
@@ -19,7 +19,7 @@ public class GetVmTemplatesFromStorageDomainQuery<P extends StorageDomainQueryPa
     protected void executeQueryCommand() {
         List<VmTemplate> returnValue = DbFacade.getInstance()
                 .getVmTemplateDao()
-                        .getAllForStorageDomain(getParameters().getStorageDomainId(),
+                        .getAllForStorageDomain(getParameters().getId(),
                                 getUserID(),
                                 getParameters().isFiltered());
         for (VmTemplate template : returnValue) {

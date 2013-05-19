@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.queries.GetVdsHooksByIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.vdshooks.VdsHooksParser;
 
@@ -16,7 +16,7 @@ import org.ovirt.engine.core.utils.vdshooks.VdsHooksParser;
  * folder/event names to an inner map of script names to an inner map of
  * property names and values
  */
-public class GetVdsHooksByIdQuery<P extends GetVdsHooksByIdParameters> extends QueriesCommandBase<P> {
+public class GetVdsHooksByIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 
     public GetVdsHooksByIdQuery(P parameters) {
         super(parameters);
@@ -25,7 +25,7 @@ public class GetVdsHooksByIdQuery<P extends GetVdsHooksByIdParameters> extends Q
     @Override
     protected void executeQueryCommand() {
 
-        VDS vds = DbFacade.getInstance().getVdsDao().get(getParameters().getVdsId());
+        VDS vds = DbFacade.getInstance().getVdsDao().get(getParameters().getId());
         Map<String, Object> result = new HashMap<String, Object>();
         if (vds != null) {
             result = VdsHooksParser.parseHooks(vds.getHooksStr());

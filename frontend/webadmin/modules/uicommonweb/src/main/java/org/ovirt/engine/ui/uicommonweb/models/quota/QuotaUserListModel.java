@@ -9,10 +9,10 @@ import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.queries.GetEntitiesRelatedToQuotaIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
@@ -71,8 +71,7 @@ public class QuotaUserListModel extends SearchableListModel {
     @Override
     protected void syncSearch() {
         super.syncSearch();
-        GetEntitiesRelatedToQuotaIdParameters param = new GetEntitiesRelatedToQuotaIdParameters();
-        param.setQuotaId(((Quota) getEntity()).getId());
+        IdQueryParameters param = new IdQueryParameters(((Quota) getEntity()).getId());
         param.setRefresh(getIsQueryFirstTime());
 
         AsyncQuery _asyncQuery = new AsyncQuery();

@@ -43,12 +43,8 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByNameParameters;
-import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
-import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
-import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -180,7 +176,7 @@ public class BackendVmsResource extends
         org.ovirt.engine.core.common.businessentities.VM vmConfiguration =
                 getEntity(org.ovirt.engine.core.common.businessentities.VM.class,
                         VdcQueryType.GetVmConfigurationBySnapshot,
-                        new GetVmConfigurationBySnapshotQueryParams(asGuid(snapshotId)),
+                        new IdQueryParameters(asGuid(snapshotId)),
                         "");
         return vmConfiguration;
     }
@@ -261,7 +257,7 @@ public class BackendVmsResource extends
         HashMap<Guid, DiskImage> templatesDisksMap = new HashMap<Guid, DiskImage>();
         for (DiskImage di : (List<DiskImage>) getEntity(List.class,
                                                       VdcQueryType.GetVmTemplatesDisks,
-                                                      new GetVmTemplatesDisksParameters(templateId),
+                                                      new IdQueryParameters(templateId),
                                                       "Disks")) {
             templatesDisksMap.put(di.getId(), di);
         }
@@ -347,7 +343,7 @@ public class BackendVmsResource extends
     private void addInlineDisks(VM vm) {
         BackendVmDisksResource disksResource = inject(new BackendVmDisksResource(Guid.createGuidFromString(vm.getId()),
                 VdcQueryType.GetAllDisksByVmId,
-                new GetAllDisksByVmIdParameters(Guid.createGuidFromString(vm.getId()))));
+                new IdQueryParameters(Guid.createGuidFromString(vm.getId()))));
         Disks disks = disksResource.list();
         vm.setDisks(disks);
     }
@@ -432,7 +428,7 @@ public class BackendVmsResource extends
     }
 
     private VDSGroup lookupCluster(Guid id) {
-        return getEntity(VDSGroup.class, VdcQueryType.GetVdsGroupByVdsGroupId, new GetVdsGroupByVdsGroupIdParameters(id), "GetVdsGroupByVdsGroupId");
+        return getEntity(VDSGroup.class, VdcQueryType.GetVdsGroupByVdsGroupId, new IdQueryParameters(id), "GetVdsGroupByVdsGroupId");
     }
 
     protected boolean namedCluster(VM vm) {

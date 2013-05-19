@@ -10,7 +10,6 @@ import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.GroupResource;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendGroupResource
@@ -43,7 +42,7 @@ public class BackendGroupResource
     public AssignedPermissionsResource getPermissionsResource() {
         return inject(new BackendAssignedPermissionsResource(guid,
                                                              VdcQueryType.GetPermissionsByAdElementId,
-                                                             new MultilevelAdministrationByAdElementIdParameters(guid),
+                                                             new IdQueryParameters(guid),
                                                              Group.class));
     }
 

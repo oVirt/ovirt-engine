@@ -3,10 +3,9 @@ package org.ovirt.engine.api.restapi.resource;
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 
@@ -56,8 +55,8 @@ public abstract class AbstractBackendRoleResourceTest
 
     protected void setUpGetEntityExpectations(boolean notFound) throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetRoleById,
-                                   MultilevelAdministrationByRoleIdParameters.class,
-                                   new String[] { "RoleId" },
+                                   IdQueryParameters.class,
+                                   new String[] { "Id" },
                                    new Object[] { GUIDS[0] },
                                    notFound ? null : getEntity(0));
     }

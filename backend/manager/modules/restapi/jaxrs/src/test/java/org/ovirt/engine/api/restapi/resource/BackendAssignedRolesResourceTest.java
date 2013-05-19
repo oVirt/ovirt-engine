@@ -8,15 +8,12 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByPermissionIdParameters;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleNameParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -38,8 +35,8 @@ public class BackendAssignedRolesResourceTest
     public void testRemove() throws Exception {
         setUpGetEntityExpectations(GUIDS[1], false);
         setUpGetEntityExpectations(VdcQueryType.GetPermissionsByAdElementId,
-                                   MultilevelAdministrationByAdElementIdParameters.class,
-                                   new String[] { "AdElementId" },
+                                   IdQueryParameters.class,
+                                   new String[] { "Id" },
                                    new Object[] { GUIDS[0] },
                                    setUpPermissions());
         setUriInfo(setUpActionExpectations(VdcActionType.RemovePermission,
@@ -71,8 +68,8 @@ public class BackendAssignedRolesResourceTest
             role.setId(entityId);
         }
         setUpGetEntityExpectations(VdcQueryType.GetRoleById,
-                MultilevelAdministrationByRoleIdParameters.class,
-                new String[] { "RoleId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { entityId },
                 role);
     }
@@ -90,8 +87,8 @@ public class BackendAssignedRolesResourceTest
     protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(GUIDS[1], false);
         setUpGetEntityExpectations(VdcQueryType.GetPermissionsByAdElementId,
-                                   MultilevelAdministrationByAdElementIdParameters.class,
-                                   new String[] { "AdElementId" },
+                                   IdQueryParameters.class,
+                                   new String[] { "Id" },
                                    new Object[] { GUIDS[0] },
                                    setUpPermissions());
         setUriInfo(setUpActionExpectations(VdcActionType.RemovePermission,
@@ -119,8 +116,8 @@ public class BackendAssignedRolesResourceTest
                                   true,
                                   GUIDS[2],
                                   VdcQueryType.GetPermissionById,
-                                  MultilevelAdministrationByPermissionIdParameters.class,
-                                  new String[] { "PermissionId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { GUIDS[2] },
                                   getEntity(1));
         Role model = new Role();
@@ -148,8 +145,8 @@ public class BackendAssignedRolesResourceTest
                                   true,
                                   GUIDS[2],
                                   VdcQueryType.GetPermissionById,
-                                  MultilevelAdministrationByPermissionIdParameters.class,
-                                  new String[] { "PermissionId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { GUIDS[2] },
                                   getEntity(1));
         Role model = new Role();
@@ -177,8 +174,8 @@ public class BackendAssignedRolesResourceTest
         assert(query.equals(""));
 
         setUpEntityQueryExpectations(VdcQueryType.GetPermissionsByAdElementId,
-                                     MultilevelAdministrationByAdElementIdParameters.class,
-                                     new String[] { "AdElementId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { GUIDS[0] },
                                      setUpPermissions(),
                                      failure);
@@ -186,6 +183,7 @@ public class BackendAssignedRolesResourceTest
         control.replay();
     }
 
+    @Override
     protected permissions getEntity(int index) {
         permissions permission = new permissions();
         permission.setId(GUIDS[(index + 1) % 3]);

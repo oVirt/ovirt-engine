@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -99,8 +99,8 @@ public class BackendStorageDomainVmsResourceTest
         assert(query.equals(""));
 
         setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
-                                     StorageDomainQueryParametersBase.class,
-                                     new String[] { "StorageDomainId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { STORAGE_DOMAIN_ID },
                                      setUpStorageDomain(domainType));
 
@@ -158,8 +158,8 @@ public class BackendStorageDomainVmsResourceTest
     private void setUpGetDataCenterByStorageDomainExpectations(Guid id, int times) {
         while (times-->0) {
             setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolsByStorageDomainId,
-                    StorageDomainQueryParametersBase.class,
-                    new String[] { "StorageDomainId" },
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
                     new Object[] { id },
                     setUpStoragePool());
         }

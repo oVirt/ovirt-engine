@@ -1,22 +1,21 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.BackendClustersResourceTest.getModel;
+import static org.ovirt.engine.api.restapi.resource.BackendClustersResourceTest.setUpEntityExpectations;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Cluster;
-import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-
-import static org.ovirt.engine.api.restapi.resource.BackendClustersResourceTest.getModel;
-import static org.ovirt.engine.api.restapi.resource.BackendClustersResourceTest.setUpEntityExpectations;
-import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendDataCenterClusterResourceTest
@@ -31,11 +30,13 @@ public class BackendDataCenterClusterResourceTest
                 clusterId.toString()));
     }
 
+    @Override
     protected void setUriInfo(UriInfo uriInfo) {
         resource.setUriInfo(uriInfo);
         ((BackendDataCenterClusterResource)resource).getParent().setUriInfo(uriInfo);
     }
 
+    @Override
     protected void init() {
         initResource(resource);
         initResource(((BackendDataCenterClusterResource)resource).getParent());
@@ -58,8 +59,8 @@ public class BackendDataCenterClusterResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupsByStoragePoolId,
-                                     StoragePoolQueryParametersBase.class,
-                                     new String[] { "StoragePoolId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { dataCenterId },
                                      new ArrayList<VDSGroup>(),
                                      null);
@@ -76,8 +77,8 @@ public class BackendDataCenterClusterResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupsByStoragePoolId,
-                                     StoragePoolQueryParametersBase.class,
-                                     new String[] { "StoragePoolId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { dataCenterId },
                                      setUpVDSGroups(),
                                      null);
@@ -163,8 +164,8 @@ public class BackendDataCenterClusterResourceTest
     protected void setUpGetEntityExpectations(int times, boolean notFound) throws Exception {
         while (times-- > 0) {
             setUpGetEntityExpectations(VdcQueryType.GetVdsGroupById,
-                                       GetVdsGroupByIdParameters.class,
-                                       new String[] { "VdsId" },
+                                       IdQueryParameters.class,
+                                       new String[] { "Id" },
                                        new Object[] { GUIDS[0] },
                                        notFound ? null : getEntity(0));
         }

@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForStorageParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.QuotaDAO;
 
@@ -18,12 +18,12 @@ import org.ovirt.engine.core.dao.QuotaDAO;
  * It tests that flow (i.e., that the query delegates properly to the DAO}).
  * The internal workings of the DAO are not tested.
  */
-public class GetAllRelevantQuotasForStorageQueryTest extends AbstractQueryTest<GetAllRelevantQuotasForStorageParameters, GetAllRelevantQuotasForStorageQuery<GetAllRelevantQuotasForStorageParameters>> {
+public class GetAllRelevantQuotasForStorageQueryTest extends AbstractQueryTest<IdQueryParameters, GetAllRelevantQuotasForStorageQuery<IdQueryParameters>> {
     @Test
     public void testExecuteQueryCommand() {
         // Set up the query parameters
         Guid quotaID = Guid.NewGuid();
-        when(params.getStorageId()).thenReturn(quotaID);
+        when(params.getId()).thenReturn(quotaID);
 
         // Set up the DAOs
         List<Quota> expected = Collections.singletonList(new Quota());
@@ -32,7 +32,7 @@ public class GetAllRelevantQuotasForStorageQueryTest extends AbstractQueryTest<G
         when(getDbFacadeMockInstance().getQuotaDao()).thenReturn(quotaDAOMock);
 
         // Run the query
-        GetAllRelevantQuotasForStorageQuery<GetAllRelevantQuotasForStorageParameters> query = getQuery();
+        GetAllRelevantQuotasForStorageQuery<IdQueryParameters> query = getQuery();
         query.executeQueryCommand();
 
         // Assert the result

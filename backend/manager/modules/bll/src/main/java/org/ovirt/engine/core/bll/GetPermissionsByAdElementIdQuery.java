@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
-public class GetPermissionsByAdElementIdQuery<P extends MultilevelAdministrationByAdElementIdParameters>
+public class GetPermissionsByAdElementIdQuery<P extends IdQueryParameters>
         extends QueriesCommandBase<P> {
     public GetPermissionsByAdElementIdQuery(P parameters) {
         super(parameters);
@@ -12,7 +12,7 @@ public class GetPermissionsByAdElementIdQuery<P extends MultilevelAdministration
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
                 getDbFacade().getPermissionDao().getAllForAdElement
-                        (getParameters().getAdElementId(),
+                        (getParameters().getId(),
                                 getUserID(),
                                 getParameters().isFiltered()));
     }

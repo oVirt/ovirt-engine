@@ -3,14 +3,13 @@ package org.ovirt.engine.api.restapi.resource;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.Test;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
-import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.CreationStatus;
+import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
@@ -22,8 +21,7 @@ import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
-
-import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -39,10 +37,10 @@ public class BackendVmDisksResourceTest
     public BackendVmDisksResourceTest() {
         super(new BackendVmDisksResource(PARENT_ID,
                                        VdcQueryType.GetAllDisksByVmId,
-                                       new GetAllDisksByVmIdParameters(PARENT_ID)),
+                                       new IdQueryParameters(PARENT_ID)),
               VdcQueryType.GetAllDisksByVmId,
-              new GetAllDisksByVmIdParameters(PARENT_ID),
-              "VmId");
+                new IdQueryParameters(PARENT_ID),
+              "Id");
     }
 
     @Test
@@ -74,8 +72,8 @@ public class BackendVmDisksResourceTest
 
     private void setUpGetEntityExpectations() {
         setUpEntityQueryExpectations(VdcQueryType.GetAllDisksByVmId,
-                GetAllDisksByVmIdParameters.class,
-                new String[] { "VmId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { PARENT_ID },
                 getEntityList());
     }
@@ -125,8 +123,8 @@ public class BackendVmDisksResourceTest
     public void testAttachDisk() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(VdcQueryType.GetAllDisksByVmId,
-                GetAllDisksByVmIdParameters.class,
-                new String[] { "VmId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { PARENT_ID },
                 getEntityList());
         setUpActionExpectations (VdcActionType.AttachDiskToVm,
@@ -168,8 +166,8 @@ public class BackendVmDisksResourceTest
                                   asList(GUIDS[3]),
                                   asList(new AsyncTaskStatus(asyncStatus)),
                                   VdcQueryType.GetAllDisksByVmId,
-                                  GetAllDisksByVmIdParameters.class,
-                                  new String[] { "VmId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { PARENT_ID },
                                   asList(getEntity(0)));
         Disk model = getModel(0);
@@ -193,8 +191,8 @@ public class BackendVmDisksResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
         setUpEntityQueryExpectations(VdcQueryType.GetAllDisksByVmId,
-                                     GetAllDisksByVmIdParameters.class,
-                                     new String[] { "VmId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { PARENT_ID },
                                      asList(getEntity(0)));
         setUpCreationExpectations(VdcActionType.AddDisk,
@@ -207,8 +205,8 @@ public class BackendVmDisksResourceTest
                                   asList(GUIDS[3]),
                                   asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
                                   VdcQueryType.GetAllDisksByVmId,
-                                  GetAllDisksByVmIdParameters.class,
-                                  new String[] { "VmId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { PARENT_ID },
                 asList(getEntity(0)));
         model.setSize(1024 * 1024L);
@@ -225,8 +223,8 @@ public class BackendVmDisksResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
         setUpEntityQueryExpectations(VdcQueryType.GetAllDisksByVmId,
-                                     GetAllDisksByVmIdParameters.class,
-                                     new String[] { "VmId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { PARENT_ID },
                                      asList(getEntity(0)));
         setUpEntityQueryExpectations(VdcQueryType.GetAllStorageDomains,
@@ -244,8 +242,8 @@ public class BackendVmDisksResourceTest
                                   asList(GUIDS[3]),
                                   asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
                                   VdcQueryType.GetAllDisksByVmId,
-                                  GetAllDisksByVmIdParameters.class,
-                                  new String[] { "VmId" },
+                                  IdQueryParameters.class,
+                new String[] { "Id" },
                                   new Object[] { PARENT_ID },
                                   asList(getEntity(0)));
         Disk model = getModel(0);
@@ -274,8 +272,8 @@ public class BackendVmDisksResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
         setUpEntityQueryExpectations(VdcQueryType.GetAllDisksByVmId,
-                                     GetAllDisksByVmIdParameters.class,
-                                     new String[] { "VmId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { PARENT_ID },
                                      asList(getEntity(0)));
         setUpCreationExpectations(VdcActionType.AddDisk,
@@ -288,8 +286,8 @@ public class BackendVmDisksResourceTest
                                   asList(GUIDS[3]),
                                   asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
                                   VdcQueryType.GetAllDisksByVmId,
-                                  GetAllDisksByVmIdParameters.class,
-                                  new String[] { "VmId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { PARENT_ID },
                                   asList(getEntity(0)));
         Disk model = getModel(0);

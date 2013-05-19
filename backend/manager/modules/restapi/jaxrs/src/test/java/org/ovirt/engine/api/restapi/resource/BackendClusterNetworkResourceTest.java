@@ -13,7 +13,6 @@ import org.ovirt.engine.api.restapi.types.NetworkUsage;
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -83,8 +82,8 @@ public class BackendClusterNetworkResourceTest
         expect(group.getId()).andReturn(id).anyTimes();
 
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                                     GetVdsGroupByVdsGroupIdParameters.class,
-                                     new String[] { "VdsGroupId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { id },
                                      group);
         return group;

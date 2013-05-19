@@ -4,13 +4,13 @@ import static org.ovirt.engine.api.restapi.resource.BackendRolesResource.SUB_COL
 
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.api.resource.RoleResource;
 import org.ovirt.engine.api.resource.PermitsResource;
+import org.ovirt.engine.api.resource.RoleResource;
 import org.ovirt.engine.api.resource.UpdatableRoleResource;
 import org.ovirt.engine.core.common.action.RolesOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -32,7 +32,7 @@ public class BackendRoleResource
     @Override
     public Role get() {
         return performGet(VdcQueryType.GetRoleById,
-                          new MultilevelAdministrationByRoleIdParameters(guid));
+                new IdQueryParameters(guid));
     }
 
     @Override
@@ -53,7 +53,7 @@ public class BackendRoleResource
     public Role update(Role role) {
         validateEnums(Role.class, role);
         return performUpdate(role,
-                new QueryIdResolver<Guid>(VdcQueryType.GetRoleById, MultilevelAdministrationByRoleIdParameters.class),
+                new QueryIdResolver<Guid>(VdcQueryType.GetRoleById, IdQueryParameters.class),
                 VdcActionType.UpdateRole,
                 new UpdateParametersProvider());
     }

@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.queries.GetQuotaByStoragePoolIdQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -58,9 +58,8 @@ public class DataCenterQuotaListModel extends QuotaListModel
 
             }
         };
-        GetQuotaByStoragePoolIdQueryParameters parameters = new GetQuotaByStoragePoolIdQueryParameters();
+        IdQueryParameters parameters = new IdQueryParameters(getEntity().getId());
         parameters.setRefresh(getIsQueryFirstTime());
-        parameters.setStoragePoolId(getEntity().getId());
         Frontend.RunQuery(VdcQueryType.GetQuotaByStoragePoolId,
                 parameters,
                 asyncQuery);

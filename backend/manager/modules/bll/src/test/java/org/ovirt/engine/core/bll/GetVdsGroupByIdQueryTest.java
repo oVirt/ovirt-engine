@@ -6,7 +6,7 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 
@@ -14,7 +14,7 @@ import org.ovirt.engine.core.dao.VdsGroupDAO;
  * A test case for {@link GetVdsGroupByIdQuery}.
  * This test mocks away all the DAOs, and just tests the flow of the query itself.
  */
-public class GetVdsGroupByIdQueryTest extends AbstractUserQueryTest<GetVdsGroupByIdParameters, GetVdsGroupByIdQuery<GetVdsGroupByIdParameters>> {
+public class GetVdsGroupByIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetVdsGroupByIdQuery<IdQueryParameters>> {
 
     @Test
     public void testExecuteQueryCommnad() {
@@ -24,7 +24,7 @@ public class GetVdsGroupByIdQueryTest extends AbstractUserQueryTest<GetVdsGroupB
         expected.setId(vdsGroupID);
 
         // Mock the query's parameters
-        when(getQueryParameters().getVdsId()).thenReturn(vdsGroupID);
+        when(getQueryParameters().getId()).thenReturn(vdsGroupID);
 
         // Mock the DAOs
         VdsGroupDAO vdsGropDAOMock = mock(VdsGroupDAO.class);

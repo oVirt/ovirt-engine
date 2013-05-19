@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
-public class GetVdsGroupByIdQuery<P extends GetVdsGroupByIdParameters> extends QueriesCommandBase<P> {
+public class GetVdsGroupByIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetVdsGroupByIdQuery(P parameters) {
         super(parameters);
     }
@@ -12,6 +12,6 @@ public class GetVdsGroupByIdQuery<P extends GetVdsGroupByIdParameters> extends Q
         getQueryReturnValue().setReturnValue(
                 getDbFacade()
                         .getVdsGroupDao()
-                        .get(getParameters().getVdsId(), getUserID(), getParameters().isFiltered()));
+                        .get(getParameters().getId(), getUserID(), getParameters().isFiltered()));
     }
 }

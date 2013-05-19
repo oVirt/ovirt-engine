@@ -56,7 +56,7 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
-import org.ovirt.engine.core.common.queries.GetStorageDomainsByVmTemplateIdQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -447,7 +447,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             List<StorageDomain> domains = (List<StorageDomain>) Backend
                     .getInstance()
                     .runInternalQuery(VdcQueryType.GetStorageDomainsByVmTemplateId,
-                            new GetStorageDomainsByVmTemplateIdQueryParameters(getVm().getVmtGuid())).getReturnValue();
+                            new IdQueryParameters(getVm().getVmtGuid())).getReturnValue();
             List<Guid> domainsId = LinqUtils.foreach(domains, new Function<StorageDomain, Guid>() {
                 @Override
                 public Guid eval(StorageDomain storageDomainStatic) {

@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.GetVmsRunningOnOrMigratingToVdsParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
-public class GetVmsRunningOnOrMigratingToVdsQuery <P extends GetVmsRunningOnOrMigratingToVdsParameters> extends QueriesCommandBase<P> {
+public class GetVmsRunningOnOrMigratingToVdsQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetVmsRunningOnOrMigratingToVdsQuery(P parameters) {
         super(parameters);
     }

@@ -44,10 +44,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
-import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
-import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -220,8 +217,8 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(1, 0);
         setUpGetCertuficateExpectations(1, 0);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                GetVdsGroupByVdsGroupIdParameters.class,
-                new String[] { "VdsGroupId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[1] },
                 getVdsGroupEntity());
 
@@ -272,8 +269,8 @@ public class BackendVmsResourceTest
                                      new Object[] { GUIDS[0] },
                                      getEntity(0));
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                GetVdsGroupByVdsGroupIdParameters.class,
-                new String[] { "VdsGroupId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[1] },
                 getVdsGroupEntity());
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
@@ -325,8 +322,8 @@ public class BackendVmsResourceTest
                                      new Object[] { GUIDS[0] },
                                      getEntity(0));
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                GetVdsGroupByVdsGroupIdParameters.class,
-                new String[] { "VdsGroupId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[1] },
                 getVdsGroupEntity());
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
@@ -378,8 +375,8 @@ public class BackendVmsResourceTest
                                      new Object[] { GUIDS[0] },
                                      getEntity(0));
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                GetVdsGroupByVdsGroupIdParameters.class,
-                new String[] { "VdsGroupId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[1] },
                 getVdsGroupEntity());
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
@@ -432,8 +429,8 @@ public class BackendVmsResourceTest
                                      new Object[] { GUIDS[0] },
                                      getTemplateEntity(0));
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                GetVdsGroupByVdsGroupIdParameters.class,
-                new String[] { "VdsGroupId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[1] },
                 getVdsGroupEntity());
         setUriInfo(setUpActionExpectations(VdcActionType.AddVmFromScratch,
@@ -470,8 +467,8 @@ public class BackendVmsResourceTest
                                      new Object[] { GUIDS[1] },
                                      getTemplateEntity(0));
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                GetVdsGroupByVdsGroupIdParameters.class,
-                new String[] { "VdsGroupId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
         setUpCreationExpectations(VdcActionType.AddVmFromTemplate,
@@ -510,8 +507,8 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(1, 2);
         setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVmConfigurationBySnapshot,
-                GetVmConfigurationBySnapshotQueryParams.class,
-                new String[] { "SnapshotId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[1] },
                 vmConfiguration);
         setUpCreationExpectations(VdcActionType.AddVmFromSnapshot,
@@ -548,8 +545,8 @@ public class BackendVmsResourceTest
                                      new Object[] { GUIDS[1] },
                                      getTemplateEntity(0));
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                GetVdsGroupByVdsGroupIdParameters.class,
-                new String[] { "VdsGroupId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
         setUpCreationExpectations(VdcActionType.AddVmFromTemplate,
@@ -583,8 +580,8 @@ public class BackendVmsResourceTest
                                      new Object[] { GUIDS[1] },
                                      getTemplateEntity(0));
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                                    GetVdsGroupByVdsGroupIdParameters.class,
-                                    new String[] { "VdsGroupId" },
+                                    IdQueryParameters.class,
+                                    new String[] { "Id" },
                                     new Object[] { GUIDS[2] },
                                     getVdsGroupEntity());
         setUpCreationExpectations(VdcActionType.AddVm,
@@ -621,8 +618,8 @@ public class BackendVmsResourceTest
                                      new Object[] { GUIDS[1] },
                                      getTemplateEntity(0));
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                GetVdsGroupByVdsGroupIdParameters.class,
-                new String[] { "VdsGroupId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
         setUpCreationExpectations(VdcActionType.AddVm,
@@ -667,8 +664,8 @@ public class BackendVmsResourceTest
                                      new Object[] { GUIDS[1] },
                                      getTemplateEntity(0));
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                GetVdsGroupByVdsGroupIdParameters.class,
-                new String[] { "VdsGroupId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
         setUpCreationExpectations(VdcActionType.AddVm,
@@ -705,8 +702,8 @@ public class BackendVmsResourceTest
                                      new Object[] { GUIDS[1] },
                                      getTemplateEntity(0));
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                GetVdsGroupByVdsGroupIdParameters.class,
-                new String[] { "VdsGroupId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
         setUpGetEntityExpectations("Cluster: name=" + NAMES[2],
@@ -818,8 +815,8 @@ public class BackendVmsResourceTest
                                      new Object[] { GUIDS[1] },
                                      getTemplateEntity(0));
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                GetVdsGroupByVdsGroupIdParameters.class,
-                new String[] { "VdsGroupId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
         setUriInfo(setUpActionExpectations(VdcActionType.AddVm,
@@ -867,7 +864,7 @@ public class BackendVmsResourceTest
 
     private void setUpTemplateDisksExpectations(Guid templateId) {
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplatesDisks,
-                                     GetVmTemplatesDisksParameters.class,
+                                     IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { templateId },
                                      createDiskList());

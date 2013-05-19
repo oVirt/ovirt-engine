@@ -1,5 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.setUpEntityExpectations;
+import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.verifyModelSpecific;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -10,22 +13,17 @@ import javax.ws.rs.core.UriInfo;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.setUpEntityExpectations;
-import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.verifyModelSpecific;
 
 public class BackendStorageDomainTemplatesResourceTest
     extends AbstractBackendCollectionResourceTest<Template, VmTemplate, BackendStorageDomainTemplatesResource> {
@@ -37,6 +35,7 @@ public class BackendStorageDomainTemplatesResourceTest
         super(new BackendStorageDomainTemplatesResource(STORAGE_DOMAIN_ID), null, null);
     }
 
+    @Override
     @Test
     @Ignore
     public void testQuery() throws Exception {
@@ -88,16 +87,16 @@ public class BackendStorageDomainTemplatesResourceTest
         assert(query.equals(""));
 
         setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
-                                     StorageDomainQueryParametersBase.class,
-                                     new String[] { "StorageDomainId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { STORAGE_DOMAIN_ID },
                                      setUpStorageDomain(domainType));
 
         switch (domainType) {
         case Data:
             setUpEntityQueryExpectations(VdcQueryType.GetVmTemplatesFromStorageDomain,
-                                         StorageDomainQueryParametersBase.class,
-                                         new String[] { "StorageDomainId" },
+                                         IdQueryParameters.class,
+                                         new String[] { "Id" },
                                          new Object[] { STORAGE_DOMAIN_ID },
                                          setUpTemplates(),
                                          failure);
@@ -119,6 +118,7 @@ public class BackendStorageDomainTemplatesResourceTest
         }
     }
 
+    @Override
     protected VmTemplate getEntity(int index) {
         return setUpEntityExpectations(control.createMock(VmTemplate.class), index);
     }
@@ -156,10 +156,12 @@ public class BackendStorageDomainTemplatesResourceTest
         };
     }
 
+    @Override
     protected List<Template> getCollection() {
         return collection.list().getTemplates();
     }
 
+    @Override
     protected void verifyModel(Template model, int index) {
         super.verifyModel(model, index);
         verifyModelSpecific(model, index);
@@ -168,8 +170,8 @@ public class BackendStorageDomainTemplatesResourceTest
     private void setUpGetDataCenterByStorageDomainExpectations(Guid id, int times) {
         while (times-->0) {
             setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolsByStorageDomainId,
-                    StorageDomainQueryParametersBase.class,
-                    new String[] { "StorageDomainId" },
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
                     new Object[] { id },
                     setUpStoragePool());
         }

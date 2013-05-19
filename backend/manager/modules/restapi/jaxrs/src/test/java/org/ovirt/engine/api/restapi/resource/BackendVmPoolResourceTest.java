@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.action.VmPoolUserParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
-import org.ovirt.engine.core.common.queries.GetVmPoolByIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
@@ -130,8 +129,8 @@ public class BackendVmPoolResourceTest
 
         while (times-- > 0) {
             setUpGetEntityExpectations(VdcQueryType.GetVmPoolById,
-                                       GetVmPoolByIdParameters.class,
-                                       new String[] { "PoolId" },
+                                       IdQueryParameters.class,
+                                       new String[] { "Id" },
                                        new Object[] { GUIDS[0] },
                                        notFound ? null : entity);
         }

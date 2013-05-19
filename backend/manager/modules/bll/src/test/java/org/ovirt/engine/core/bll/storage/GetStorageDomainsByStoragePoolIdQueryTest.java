@@ -10,18 +10,18 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 
 /** A test case for the {@link GetStorageDomainsByStoragePoolIdQuery} class. */
-public class GetStorageDomainsByStoragePoolIdQueryTest extends AbstractUserQueryTest<StoragePoolQueryParametersBase, GetStorageDomainsByStoragePoolIdQuery<StoragePoolQueryParametersBase>> {
+public class GetStorageDomainsByStoragePoolIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetStorageDomainsByStoragePoolIdQuery<IdQueryParameters>> {
 
     @Test
     public void testExecuteQuery() {
         Guid storagePoolID = Guid.NewGuid();
-        when(getQueryParameters().getStoragePoolId()).thenReturn(storagePoolID);
+        when(getQueryParameters().getId()).thenReturn(storagePoolID);
 
         StorageDomain domain = new StorageDomain();
 

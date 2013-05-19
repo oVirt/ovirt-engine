@@ -6,12 +6,12 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
@@ -23,7 +23,7 @@ import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
  *
  * @param <P>
  */
-public class GetVmConfigurationBySnapshotQuery<P extends GetVmConfigurationBySnapshotQueryParams> extends QueriesCommandBase<P> {
+public class GetVmConfigurationBySnapshotQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 
     private Snapshot snapshot;
 
@@ -34,7 +34,7 @@ public class GetVmConfigurationBySnapshotQuery<P extends GetVmConfigurationBySna
     @Override
     protected void executeQueryCommand() {
         String configuration =
-                getConfigurationFromDb(getParameters().getSnapshotId(), getUserID(), getParameters().isFiltered());
+                getConfigurationFromDb(getParameters().getId(), getUserID(), getParameters().isFiltered());
         VM result = null;
         if (configuration != null) {
             result = getVmFromConfiguration(configuration);
@@ -88,7 +88,7 @@ public class GetVmConfigurationBySnapshotQuery<P extends GetVmConfigurationBySna
      */
     protected void markImagesIllegalIfNotInDb(VM vm) {
         List<DiskImage> imagesInDb =
-                getDbFacade().getDiskImageDao().getAllSnapshotsForVmSnapshot(getParameters().getSnapshotId());
+                getDbFacade().getDiskImageDao().getAllSnapshotsForVmSnapshot(getParameters().getId());
         // Converts to a map of Id to DiskImage in order to check existence only by Image ID (in case not all
         // image data is written to OVF
         Map<Guid, DiskImage> imagesInDbMap = ImagesHandler.getDiskImagesByIdMap(imagesInDb);

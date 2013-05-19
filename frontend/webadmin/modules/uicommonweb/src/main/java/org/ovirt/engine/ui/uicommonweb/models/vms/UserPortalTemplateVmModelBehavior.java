@@ -5,7 +5,7 @@ import java.util.Arrays;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.queries.GetHostsByClusterIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -38,7 +38,7 @@ public class UserPortalTemplateVmModelBehavior extends TemplateVmModelBehavior {
     protected void getHostListByCluster(VDSGroup cluster, AsyncQuery query) {
         Frontend.RunQuery(
                 VdcQueryType.GetHostsByClusterId,
-                new GetHostsByClusterIdParameters(cluster.getId()),
+                new IdQueryParameters(cluster.getId()),
                 query
                 );
     }

@@ -7,8 +7,7 @@ import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.resource.ReadOnlyDevicesResource;
-
-import org.ovirt.engine.core.common.queries.GetStorageDomainsByVmTemplateIdQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -23,7 +22,7 @@ public class BackendReadOnlyDisksResource
 
     @Override
     public Disks list() {
-        GetStorageDomainsByVmTemplateIdQueryParameters queryParams = new GetStorageDomainsByVmTemplateIdQueryParameters(parentId);
+        IdQueryParameters queryParams = new IdQueryParameters(parentId);
         List<org.ovirt.engine.core.common.businessentities.StorageDomain> storageDomains = getBackendCollection(org.ovirt.engine.core.common.businessentities.StorageDomain.class, VdcQueryType.GetStorageDomainsByVmTemplateId, queryParams);
         List<org.ovirt.engine.core.common.businessentities.Disk> backendCollection = getBackendCollection(queryType, queryParams);
         Disks disks = mapCollection(backendCollection, false);
@@ -44,6 +43,7 @@ public class BackendReadOnlyDisksResource
         return disks;
     }
 
+    @Override
     protected <T> boolean matchEntity(org.ovirt.engine.core.common.businessentities.Disk entity, T id) {
         return id != null && id.equals(entity.getId());
     }

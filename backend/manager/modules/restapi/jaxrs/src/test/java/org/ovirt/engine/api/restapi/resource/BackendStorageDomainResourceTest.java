@@ -1,29 +1,27 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainsResourceTest.getModel;
+import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainsResourceTest.setUpEntityExpectations;
+import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainsResourceTest.setUpStorageServerConnection;
+import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainsResourceTest.verifyModelSpecific;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
-import static org.easymock.EasyMock.expect;
-
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomainType;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.LUNs;
-
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-
-import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainsResourceTest.getModel;
-import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainsResourceTest.setUpEntityExpectations;
-import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainsResourceTest.setUpStorageServerConnection;
-import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainsResourceTest.verifyModelSpecific;
 
 public class BackendStorageDomainResourceTest
         extends AbstractBackendSubResourceTest<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain, BackendStorageDomainResource> {
@@ -32,6 +30,7 @@ public class BackendStorageDomainResourceTest
         super(new BackendStorageDomainResource(GUIDS[0].toString(), new BackendStorageDomainsResource()));
     }
 
+    @Override
     protected void init() {
         super.init();
         initResource(resource.getParent());
@@ -192,8 +191,8 @@ public class BackendStorageDomainResourceTest
     protected void setUpGetEntityExpectations(int times, boolean notFound, org.ovirt.engine.core.common.businessentities.StorageDomain entity) throws Exception {
         while (times-- > 0) {
             setUpGetEntityExpectations(VdcQueryType.GetStorageDomainById,
-                                       StorageDomainQueryParametersBase.class,
-                                       new String[] { "StorageDomainId" },
+                                       IdQueryParameters.class,
+                                       new String[] { "Id" },
                                        new Object[] { GUIDS[0] },
                                        notFound ? null : entity);
         }
@@ -214,6 +213,7 @@ public class BackendStorageDomainResourceTest
         return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class), index);
     }
 
+    @Override
     protected void verifyModel(StorageDomain model, int index) {
         verifyModelSpecific(model, index);
         verifyLinks(model);

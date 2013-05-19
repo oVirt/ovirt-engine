@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-public class GetPermissionByRoleIdQuery<P extends MultilevelAdministrationByRoleIdParameters>
+public class GetPermissionByRoleIdQuery<P extends IdQueryParameters>
         extends QueriesCommandBase<P> {
     public GetPermissionByRoleIdQuery(P parameters)
 
@@ -14,6 +14,6 @@ public class GetPermissionByRoleIdQuery<P extends MultilevelAdministrationByRole
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue()
-                .setReturnValue(DbFacade.getInstance().getPermissionDao().getAllForRole(getParameters().getRoleId()));
+                .setReturnValue(DbFacade.getInstance().getPermissionDao().getAllForRole(getParameters().getId()));
     }
 }

@@ -1,12 +1,14 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -21,8 +23,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveDiskModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
-
-import java.util.ArrayList;
 
 public class StorageDiskListModel extends SearchableListModel
 {
@@ -97,8 +97,7 @@ public class StorageDiskListModel extends SearchableListModel
 
         super.syncSearch();
 
-        StorageDomainQueryParametersBase parameters =
-                new StorageDomainQueryParametersBase((getEntity()).getId());
+        IdQueryParameters parameters = new IdQueryParameters((getEntity()).getId());
         parameters.setRefresh(getIsQueryFirstTime());
 
         Frontend.RunQuery(VdcQueryType.GetAllDisksByStorageDomainId, parameters,

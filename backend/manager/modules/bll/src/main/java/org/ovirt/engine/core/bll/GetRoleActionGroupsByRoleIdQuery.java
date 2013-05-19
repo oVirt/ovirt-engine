@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
-public class GetRoleActionGroupsByRoleIdQuery<P extends MultilevelAdministrationByRoleIdParameters>
+public class GetRoleActionGroupsByRoleIdQuery<P extends IdQueryParameters>
         extends QueriesCommandBase<P> {
     public GetRoleActionGroupsByRoleIdQuery(P parameters) {
         super(parameters);
@@ -12,6 +12,6 @@ public class GetRoleActionGroupsByRoleIdQuery<P extends MultilevelAdministration
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
                 getDbFacade().getActionGroupDao()
-                        .getAllForRole(getParameters().getRoleId()));
+                        .getAllForRole(getParameters().getId()));
     }
 }

@@ -60,7 +60,6 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVdsByNameParameters;
-import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -160,8 +159,8 @@ public class BackendVmResourceTest
     public void testUpdate() throws Exception {
         setUpGetEntityExpectations(3);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                GetVdsGroupByVdsGroupIdParameters.class,
-                new String[] { "VdsGroupId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
 
@@ -182,8 +181,8 @@ public class BackendVmResourceTest
     public void testUpdateRemovingPayloads() throws Exception {
         setUpGetEntityExpectations(3);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                GetVdsGroupByVdsGroupIdParameters.class,
-                new String[] { "VdsGroupId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
 
@@ -223,8 +222,8 @@ public class BackendVmResourceTest
     public void testUpdateVmPolicy() throws Exception {
         setUpGetEntityExpectations(3);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                GetVdsGroupByVdsGroupIdParameters.class,
-                new String[] { "VdsGroupId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
 
@@ -258,8 +257,8 @@ public class BackendVmResourceTest
     public void testUpdateMovingCluster() throws Exception {
         setUpGetEntityExpectations(3);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                GetVdsGroupByVdsGroupIdParameters.class,
-                new String[] { "VdsGroupId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[1] },
                 getVdsGroupEntity());
 
@@ -301,8 +300,8 @@ public class BackendVmResourceTest
     private void doTestBadUpdate(boolean canDo, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(2);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                GetVdsGroupByVdsGroupIdParameters.class,
-                new String[] { "VdsGroupId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
 

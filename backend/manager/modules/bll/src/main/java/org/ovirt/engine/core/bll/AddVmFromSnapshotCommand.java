@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -305,7 +305,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         VM result = null;
         VdcQueryReturnValue queryReturnValue =
                 Backend.getInstance().RunQuery(VdcQueryType.GetVmConfigurationBySnapshot,
-                        new GetVmConfigurationBySnapshotQueryParams(snapshot.getId()));
+                        new IdQueryParameters(snapshot.getId()));
         if (queryReturnValue.getSucceeded()) {
             result = (VM) queryReturnValue.getReturnValue();
         }

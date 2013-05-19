@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.GetVdsHooksByIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -115,8 +115,7 @@ public class HostHooksListModel extends SearchableListModel
                 hooklistModel.setItems(list);
             }
         };
-        GetVdsHooksByIdParameters tempVar = new GetVdsHooksByIdParameters();
-        tempVar.setVdsId(getEntity().getId());
+        IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
         Frontend.RunQuery(VdcQueryType.GetVdsHooksById, tempVar, _asyncQuery);
 

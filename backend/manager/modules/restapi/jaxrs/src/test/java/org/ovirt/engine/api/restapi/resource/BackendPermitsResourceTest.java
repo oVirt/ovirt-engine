@@ -8,16 +8,14 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.api.model.PermitType;
-
+import org.ovirt.engine.api.restapi.types.PermitMapper;
 import org.ovirt.engine.core.common.action.ActionGroupsToRoleParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.api.restapi.types.PermitMapper;
 
 public class BackendPermitsResourceTest extends AbstractBackendCollectionResourceTest<Permit, ActionGroup, BackendPermitsResource> {
 
@@ -127,8 +125,8 @@ public class BackendPermitsResourceTest extends AbstractBackendCollectionResourc
         assert(query.equals(""));
 
         setUpEntityQueryExpectations(VdcQueryType.GetRoleActionGroupsByRoleId,
-                                     MultilevelAdministrationByRoleIdParameters.class,
-                                     new String[] { "RoleId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { GUIDS[1] },
                                      setUpActionGroups(),
                                      failure);
@@ -156,6 +154,7 @@ public class BackendPermitsResourceTest extends AbstractBackendCollectionResourc
         return model;
     }
 
+    @Override
     protected void verifyModel(Permit model, int index) {
         assertEquals(Integer.toString(index + 1), model.getId());
         PermitType permitType = PermitMapper.map(ActionGroup.forValue(index + 1), (PermitType)null);

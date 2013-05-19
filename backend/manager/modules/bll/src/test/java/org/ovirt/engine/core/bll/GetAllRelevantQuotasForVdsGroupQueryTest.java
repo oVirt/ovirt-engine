@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForVdsGroupParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.QuotaDAO;
 
@@ -18,12 +18,12 @@ import org.ovirt.engine.core.dao.QuotaDAO;
  * It tests that flow (i.e., that the query delegates properly to the DAO}).
  * The internal workings of the DAO are not tested.
  */
-public class GetAllRelevantQuotasForVdsGroupQueryTest extends AbstractQueryTest<GetAllRelevantQuotasForVdsGroupParameters, GetAllRelevantQuotasForVdsGroupQuery<GetAllRelevantQuotasForVdsGroupParameters>> {
+public class GetAllRelevantQuotasForVdsGroupQueryTest extends AbstractQueryTest<IdQueryParameters, GetAllRelevantQuotasForVdsGroupQuery<IdQueryParameters>> {
     @Test
     public void testExecuteQueryCommand() {
         // Set up the query parameters
         Guid quotaID = Guid.NewGuid();
-        when(params.getVdsGroupId()).thenReturn(quotaID);
+        when(params.getId()).thenReturn(quotaID);
 
         // Set up the DAOs
         List<Quota> expected = Collections.singletonList(new Quota());
@@ -32,7 +32,7 @@ public class GetAllRelevantQuotasForVdsGroupQueryTest extends AbstractQueryTest<
         when(getDbFacadeMockInstance().getQuotaDao()).thenReturn(quotaDAOMock);
 
         // Run the query
-        GetAllRelevantQuotasForVdsGroupQuery<GetAllRelevantQuotasForVdsGroupParameters> query = getQuery();
+        GetAllRelevantQuotasForVdsGroupQuery<IdQueryParameters> query = getQuery();
         query.executeQueryCommand();
 
         // Assert the result

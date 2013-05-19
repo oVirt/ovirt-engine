@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
-import org.ovirt.engine.core.common.queries.GetQuotaVdsGroupByQuotaIdQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.QuotaDAO;
 
@@ -18,13 +18,13 @@ import org.ovirt.engine.core.dao.QuotaDAO;
  * This is a flow test that uses mocking to verify the correct DAOs are called.
  */
 public class GetQuotaVdsGroupByQuotaIdQueryTest
-        extends AbstractQueryTest<GetQuotaVdsGroupByQuotaIdQueryParameters, GetQuotaVdsGroupByQuotaIdQuery<GetQuotaVdsGroupByQuotaIdQueryParameters>> {
+        extends AbstractQueryTest<IdQueryParameters, GetQuotaVdsGroupByQuotaIdQuery<IdQueryParameters>> {
 
     @Test
     public void testExecuteQueryCommand() {
         // Mock the parameters
         Guid quotaId = Guid.NewGuid();
-        when(params.getQuotaId()).thenReturn(quotaId);
+        when(params.getId()).thenReturn(quotaId);
 
         // Create the return value
         QuotaVdsGroup group = new QuotaVdsGroup();

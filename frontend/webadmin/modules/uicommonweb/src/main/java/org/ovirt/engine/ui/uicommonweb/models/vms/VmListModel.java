@@ -48,7 +48,7 @@ import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -867,7 +867,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         for (Entry<Guid, EntityModel> entry : vmsMap.entrySet()) {
             if (entry.getValue().getIsChangable()) { // No point in fetching VM disks from ones that already determined
                                                      // is unchangeable since they are already initialized
-                params.add(new GetAllDisksByVmIdParameters(entry.getKey()));
+                params.add(new IdQueryParameters(entry.getKey()));
                 queries.add(VdcQueryType.GetAllDisksByVmId);
             }
         }
@@ -880,7 +880,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 public void executed(FrontendMultipleQueryAsyncResult result) {
                     for (int i = 0; i < result.getReturnValues().size(); i++) {
                         if (result.getReturnValues().get(i).getSucceeded()) {
-                            Guid vmId = ((GetAllDisksByVmIdParameters) result.getParameters().get(i)).getVmId();
+                            Guid vmId = ((IdQueryParameters) result.getParameters().get(i)).getId();
                             initRemoveDisksChecboxesPost(vmId, (List<Disk>) result.getReturnValues()
                                     .get(i)
                                     .getReturnValue());

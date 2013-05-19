@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll.storage;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-public class GetStoragePoolsByStorageDomainIdQuery<P extends StorageDomainQueryParametersBase>
+public class GetStoragePoolsByStorageDomainIdQuery<P extends IdQueryParameters>
         extends QueriesCommandBase<P> {
     public GetStoragePoolsByStorageDomainIdQuery(P parameters) {
         super(parameters);
@@ -16,6 +16,6 @@ public class GetStoragePoolsByStorageDomainIdQuery<P extends StorageDomainQueryP
                 DbFacade.getInstance()
                         .getStoragePoolDao()
                         .getAllForStorageDomain(
-                                getParameters().getStorageDomainId()));
+                                getParameters().getId()));
     }
 }

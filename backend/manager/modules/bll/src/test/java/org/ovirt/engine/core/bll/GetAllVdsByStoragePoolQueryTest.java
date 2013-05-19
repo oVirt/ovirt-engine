@@ -9,18 +9,18 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.queries.GetAllVdsByStoragePoolParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDAO;
 
 /** A test case for the {@link GetAllVdsByStoragePoolQuery} class. */
-public class GetAllVdsByStoragePoolQueryTest extends AbstractUserQueryTest<GetAllVdsByStoragePoolParameters, GetAllVdsByStoragePoolQuery<GetAllVdsByStoragePoolParameters>> {
+public class GetAllVdsByStoragePoolQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetAllVdsByStoragePoolQuery<IdQueryParameters>> {
 
     @Test
     public void testExecuteQueryCommand() {
         // Prepare the parameters
         Guid spId = Guid.NewGuid();
-        when(getQueryParameters().getStoragePoolId()).thenReturn(spId);
+        when(getQueryParameters().getId()).thenReturn(spId);
 
         // Prepare the result
         VDS vds = new VDS();

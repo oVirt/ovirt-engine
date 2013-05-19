@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
@@ -16,15 +16,15 @@ import org.ovirt.engine.core.dao.StoragePoolDAO;
  * A test case for {@link GetStoragePoolByIdQuery}.
  * It does not test database implementation, but rather tests that the right delegations to the DAO occur.
  */
-public class GetStoragePoolByIdQueryTest extends AbstractUserQueryTest<StoragePoolQueryParametersBase, GetStoragePoolByIdQuery<StoragePoolQueryParametersBase>> {
+public class GetStoragePoolByIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetStoragePoolByIdQuery<IdQueryParameters>> {
 
     @Test
     public void testExecuteQuery() {
         Guid storagePoolID = Guid.NewGuid();
         StoragePool expectedResult = mock(StoragePool.class);
 
-        StoragePoolQueryParametersBase paramsMock = getQueryParameters();
-        when(paramsMock.getStoragePoolId()).thenReturn(storagePoolID);
+        IdQueryParameters paramsMock = getQueryParameters();
+        when(paramsMock.getId()).thenReturn(storagePoolID);
 
         StoragePoolDAO storagePoolDAOMock = mock(StoragePoolDAO.class);
         when(storagePoolDAOMock.get(storagePoolID, getUser().getUserId(), paramsMock.isFiltered())).thenReturn(expectedResult);

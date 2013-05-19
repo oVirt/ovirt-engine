@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -158,8 +158,8 @@ public class BackendExportDomainDisksResourceTest
 
     protected void setUpGetStorageDomainExpectations(StorageDomainType domainType, Object failure) throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
-                                     StorageDomainQueryParametersBase.class,
-                                     new String[] { "StorageDomainId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { STORAGE_DOMAIN_ID },
                                      setUpStorageDomain(domainType),
                                      failure);
@@ -185,8 +185,8 @@ public class BackendExportDomainDisksResourceTest
             break;
         case ImportExport:
             setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolsByStorageDomainId,
-                                         StorageDomainQueryParametersBase.class,
-                                         new String[] { "StorageDomainId" },
+                                         IdQueryParameters.class,
+                                         new String[] { "Id" },
                                          new Object[] { getStoragePoolsByStorageDomainId },
                                          setUpStoragePool(),
                                          null);

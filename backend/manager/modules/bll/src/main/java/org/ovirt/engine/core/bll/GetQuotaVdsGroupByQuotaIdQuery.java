@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.GetQuotaVdsGroupByQuotaIdQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
-public class GetQuotaVdsGroupByQuotaIdQuery<P extends GetQuotaVdsGroupByQuotaIdQueryParameters> extends QueriesCommandBase<P> {
+public class GetQuotaVdsGroupByQuotaIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetQuotaVdsGroupByQuotaIdQuery(P parameters) {
         super(parameters);
     }
@@ -11,6 +11,6 @@ public class GetQuotaVdsGroupByQuotaIdQuery<P extends GetQuotaVdsGroupByQuotaIdQ
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(getDbFacade()
                 .getQuotaDao()
-                .getQuotaVdsGroupByQuotaGuidWithGeneralDefault(getParameters().getQuotaId()));
+                .getQuotaVdsGroupByQuotaGuidWithGeneralDefault(getParameters().getId()));
     }
 }

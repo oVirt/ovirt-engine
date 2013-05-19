@@ -8,17 +8,17 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.api.model.Roles;
-import org.ovirt.engine.api.resource.UpdatableRoleResource;
 import org.ovirt.engine.api.resource.RolesResource;
+import org.ovirt.engine.api.resource.UpdatableRoleResource;
+import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.core.common.action.RoleWithActionGroupsParameters;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.api.restapi.types.Mapper;
 
 public class BackendRolesResource
         extends AbstractBackendCollectionResource<Role, org.ovirt.engine.core.common.businessentities.Role>
@@ -42,7 +42,7 @@ public class BackendRolesResource
         validateEnums(Role.class, role);
         return performCreate(VdcActionType.AddRoleWithActionGroups,
                                new RoleWithActionGroupsParameters(map(role), mapPermits(role.getPermits().getPermits())),
-                               new QueryIdResolver<Guid>(VdcQueryType.GetRoleById, MultilevelAdministrationByRoleIdParameters.class));
+                               new QueryIdResolver<Guid>(VdcQueryType.GetRoleById, IdQueryParameters.class));
     }
 
     @Override

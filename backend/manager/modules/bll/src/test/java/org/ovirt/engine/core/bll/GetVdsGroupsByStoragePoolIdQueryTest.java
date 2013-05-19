@@ -9,12 +9,12 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 
 /** A test case for {@link GetVdsGroupsByStoragePoolIdQuery} */
-public class GetVdsGroupsByStoragePoolIdQueryTest extends AbstractUserQueryTest<StoragePoolQueryParametersBase, GetVdsGroupsByStoragePoolIdQuery<StoragePoolQueryParametersBase>> {
+public class GetVdsGroupsByStoragePoolIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetVdsGroupsByStoragePoolIdQuery<IdQueryParameters>> {
 
     /** Tests the flow of {@link GetVdsGroupsByStoragePoolIdQuery#executeQueryCommand()} using mock objects */
     @Test
@@ -26,7 +26,7 @@ public class GetVdsGroupsByStoragePoolIdQueryTest extends AbstractUserQueryTest<
         List<VDSGroup> result = Collections.singletonList(group);
 
         // Set up the query parameters
-        when(getQueryParameters().getStoragePoolId()).thenReturn(storagePoolId);
+        when(getQueryParameters().getId()).thenReturn(storagePoolId);
 
         // Mock the DAO
         VdsGroupDAO vdsGroupDAOMock = mock(VdsGroupDAO.class);

@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -83,8 +83,7 @@ public class UserPermissionListModel extends SearchableListModel
         {
             return;
         }
-        MultilevelAdministrationByAdElementIdParameters mlaParams =
-                new MultilevelAdministrationByAdElementIdParameters(getEntity().getuser_id());
+        IdQueryParameters mlaParams = new IdQueryParameters(getEntity().getuser_id());
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);

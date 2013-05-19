@@ -9,18 +9,18 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ActionGroupDAO;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-public class GetRoleActionGroupsByRoleIdQueryTest extends AbstractUserQueryTest<MultilevelAdministrationByRoleIdParameters, GetRoleActionGroupsByRoleIdQuery<MultilevelAdministrationByRoleIdParameters>> {
+public class GetRoleActionGroupsByRoleIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetRoleActionGroupsByRoleIdQuery<IdQueryParameters>> {
 
     @Test
     public void testExecuteQueryCommand() {
         // Mock parameters
         Guid roleId = Guid.NewGuid();
-        when(getQueryParameters().getRoleId()).thenReturn(roleId);
+        when(getQueryParameters().getId()).thenReturn(roleId);
 
         // Mock the expected result
         ActionGroup group = RandomUtils.instance().nextEnum(ActionGroup.class);

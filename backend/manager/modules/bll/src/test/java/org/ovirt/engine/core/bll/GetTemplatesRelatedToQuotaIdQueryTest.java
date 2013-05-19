@@ -12,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.queries.GetEntitiesRelatedToQuotaIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
 
@@ -20,7 +20,7 @@ import org.ovirt.engine.core.dao.VmTemplateDAO;
  * A test case for {@link GetTemplatesRelatedToQuotaIdQuery}.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class GetTemplatesRelatedToQuotaIdQueryTest extends AbstractQueryTest<GetEntitiesRelatedToQuotaIdParameters, GetTemplatesRelatedToQuotaIdQuery<GetEntitiesRelatedToQuotaIdParameters>> {
+public class GetTemplatesRelatedToQuotaIdQueryTest extends AbstractQueryTest<IdQueryParameters, GetTemplatesRelatedToQuotaIdQuery<IdQueryParameters>> {
     @Mock
     VmTemplateDAO vmTemplateDAO;
 
@@ -44,7 +44,7 @@ public class GetTemplatesRelatedToQuotaIdQueryTest extends AbstractQueryTest<Get
         when(getDbFacadeMockInstance().getVmTemplateDao()).thenReturn(vmTemplateDAO);
 
         returnedVmTemplates = new ArrayList<VmTemplate>();
-        when(getQueryParameters().getQuotaId()).thenReturn(quotaId);
+        when(getQueryParameters().getId()).thenReturn(quotaId);
         Mockito.when(vmTemplateDAO.getAllTemplatesRelatedToQuotaId(quotaId)).thenReturn(returnedVmTemplates);
     }
 }

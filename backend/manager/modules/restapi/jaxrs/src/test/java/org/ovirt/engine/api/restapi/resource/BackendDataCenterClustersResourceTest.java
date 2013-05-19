@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,22 +9,18 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Version;
-import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
-import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.easymock.classextension.EasyMock.expect;
 
 public class BackendDataCenterClustersResourceTest extends
         AbstractBackendCollectionResourceTest<Cluster, VDSGroup, BackendDataCenterClustersResource> {
@@ -36,8 +34,8 @@ public class BackendDataCenterClustersResourceTest extends
     @Test
     public void testRemove() throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupsByStoragePoolId,
-                                     StoragePoolQueryParametersBase.class,
-                                     new String[] { "StoragePoolId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { dataCenterId },
                                      setUpVDSGroups(),
                                      null);
@@ -53,8 +51,8 @@ public class BackendDataCenterClustersResourceTest extends
     @Test
     public void testRemoveNonExistant() throws Exception{
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupsByStoragePoolId,
-                                     StoragePoolQueryParametersBase.class,
-                                     new String[] { "StoragePoolId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { dataCenterId },
                                      setUpVDSGroups(),
                                      null);
@@ -71,8 +69,8 @@ public class BackendDataCenterClustersResourceTest extends
     @Test
     public void testRemoveCantDo() throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupsByStoragePoolId,
-                                     StoragePoolQueryParametersBase.class,
-                                     new String[] { "StoragePoolId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { dataCenterId },
                                      setUpVDSGroups(),
                                      null);
@@ -82,8 +80,8 @@ public class BackendDataCenterClustersResourceTest extends
     @Test
     public void testRemoveFailed() throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupsByStoragePoolId,
-                                     StoragePoolQueryParametersBase.class,
-                                     new String[] { "StoragePoolId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { dataCenterId },
                                      setUpVDSGroups(),
                                      null);
@@ -109,8 +107,8 @@ public class BackendDataCenterClustersResourceTest extends
     public void testAddClusterFallbackVersion() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(VdcQueryType.GetStoragePoolById,
-                                   StoragePoolQueryParametersBase.class,
-                                   new String[] { "StoragePoolId" },
+                                   IdQueryParameters.class,
+                                   new String[] { "Id" },
                                    new Object[] { GUIDS[1] },
                                    setUpStoragePool(-1));
 
@@ -122,8 +120,8 @@ public class BackendDataCenterClustersResourceTest extends
                                   true,
                                   GUIDS[0],
                                   VdcQueryType.GetVdsGroupById,
-                                  GetVdsGroupByIdParameters.class,
-                                  new String[] { "VdsId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
 
@@ -140,8 +138,8 @@ public class BackendDataCenterClustersResourceTest extends
     public void testAddClusterSpecificVersion() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(VdcQueryType.GetStoragePoolById,
-                                   StoragePoolQueryParametersBase.class,
-                                   new String[] { "StoragePoolId" },
+                                   IdQueryParameters.class,
+                                   new String[] { "Id" },
                                    new Object[] { GUIDS[1] },
                                    setUpStoragePool(-1));
 
@@ -153,8 +151,8 @@ public class BackendDataCenterClustersResourceTest extends
                                   true,
                                   GUIDS[0],
                                   VdcQueryType.GetVdsGroupById,
-                                  GetVdsGroupByIdParameters.class,
-                                  new String[] { "VdsId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
 
@@ -191,8 +189,8 @@ public class BackendDataCenterClustersResourceTest extends
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupsByStoragePoolId,
-                                     StoragePoolQueryParametersBase.class,
-                                     new String[] { "StoragePoolId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { GUIDS[1] },
                                      setUpVDSGroups(),
                                      failure);
@@ -219,6 +217,7 @@ public class BackendDataCenterClustersResourceTest extends
         return pool;
     }
 
+    @Override
     protected VDSGroup getEntity(int index) {
         return setUpEntityExpectations(control.createMock(VDSGroup.class), index);
     }
@@ -240,6 +239,7 @@ public class BackendDataCenterClustersResourceTest extends
         return model;
     }
 
+    @Override
     protected List<Cluster> getCollection() {
         return collection.list().getClusters();
     }

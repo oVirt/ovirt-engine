@@ -1,24 +1,23 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import javax.ws.rs.WebApplicationException;
-
-import org.junit.Test;
-
-import org.ovirt.engine.api.model.Tag;
-import org.ovirt.engine.core.common.action.MoveTagParameters;
-import org.ovirt.engine.core.common.action.TagsOperationParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.tags;
-import org.ovirt.engine.core.common.queries.GetTagByTagIdParameters;
-import org.ovirt.engine.core.common.queries.GetTagByTagNameParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
-
 import static org.ovirt.engine.api.restapi.resource.BackendTagsResourceTest.PARENT_GUID;
 import static org.ovirt.engine.api.restapi.resource.BackendTagsResourceTest.PARENT_IDX;
 import static org.ovirt.engine.api.restapi.resource.BackendTagsResourceTest.getModel;
 import static org.ovirt.engine.api.restapi.resource.BackendTagsResourceTest.setUpTags;
 import static org.ovirt.engine.api.restapi.resource.BackendTagsResourceTest.verifyParent;
+
+import javax.ws.rs.WebApplicationException;
+
+import org.junit.Test;
+import org.ovirt.engine.api.model.Tag;
+import org.ovirt.engine.core.common.action.MoveTagParameters;
+import org.ovirt.engine.core.common.action.TagsOperationParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.queries.GetTagByTagNameParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTagResourceTest
     extends AbstractBackendSubResourceTest<Tag, tags, BackendTagResource> {
@@ -30,6 +29,7 @@ public class BackendTagResourceTest
         super(new BackendTagResource(GUIDS[0].toString(), new BackendTagsResource()));
     }
 
+    @Override
     protected void init() {
         super.init();
         initResource(resource.getParent());
@@ -196,8 +196,8 @@ public class BackendTagResourceTest
 
     protected void setUpGetEntityExpectations(int index, boolean notFound) throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetTagByTagId,
-                                   GetTagByTagIdParameters.class,
-                                   new String[] { "TagId" },
+                                   IdQueryParameters.class,
+                                   new String[] { "Id" },
                                    new Object[] { GUIDS[index] },
                                    notFound ? null : getEntity(index));
     }

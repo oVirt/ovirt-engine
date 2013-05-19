@@ -8,14 +8,13 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.api.model.Roles;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.api.resource.RoleResource;
 import org.ovirt.engine.api.resource.AssignedRolesResource;
+import org.ovirt.engine.api.resource.RoleResource;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByPermissionIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleNameParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -49,7 +48,7 @@ public class BackendAssignedRolesResource
         return performCreate(VdcActionType.AddSystemPermission,
                                new PermissionsOperationsParametes(newPermission(role.getId())),
                                new QueryIdResolver<Guid>(VdcQueryType.GetPermissionById,
-                                                   MultilevelAdministrationByPermissionIdParameters.class));
+                                                   IdQueryParameters.class));
     }
 
     @Override
@@ -61,7 +60,7 @@ public class BackendAssignedRolesResource
     @Override
     public Roles list() {
         return mapCollection(getBackendCollection(VdcQueryType.GetPermissionsByAdElementId,
-                                                  new MultilevelAdministrationByAdElementIdParameters(principalId)));
+                                                  new IdQueryParameters(principalId)));
     }
 
     @Override
@@ -98,7 +97,7 @@ public class BackendAssignedRolesResource
         List<permissions> permissions =
             asCollection(getEntity(ArrayList.class,
                                    VdcQueryType.GetPermissionsByAdElementId,
-                                   new MultilevelAdministrationByAdElementIdParameters(principalId),
+                                   new IdQueryParameters(principalId),
                                    principalId.toString()));
         for (permissions p : permissions) {
             if (principalId.equals(p.getad_element_id())

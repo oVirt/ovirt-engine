@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
-public class GetNextAvailableDiskAliasNameByVMIdQuery<P extends GetAllDisksByVmIdParameters> extends QueriesCommandBase<P> {
+public class GetNextAvailableDiskAliasNameByVMIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 
     public GetNextAvailableDiskAliasNameByVMIdQuery(P parameters) {
         super(parameters);
@@ -12,10 +12,10 @@ public class GetNextAvailableDiskAliasNameByVMIdQuery<P extends GetAllDisksByVmI
     @Override
     protected void executeQueryCommand() {
         String suggestedDiskName = null;
-        if (getParameters().getVmId() == null) {
+        if (getParameters().getId() == null) {
             getQueryReturnValue().setReturnValue(suggestedDiskName);
         } else {
-            VM vm = getDbFacade().getVmDao().get(getParameters().getVmId(), getUserID(), getParameters().isFiltered());
+            VM vm = getDbFacade().getVmDao().get(getParameters().getId(), getUserID(), getParameters().isFiltered());
             if (vm != null) {
                 updateDisksFromDb(vm);
                 suggestedDiskName =

@@ -17,9 +17,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetVmPoolByIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
-import org.ovirt.engine.core.common.queries.GetVmdataByPoolIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -67,7 +66,7 @@ public class BackendVmPoolsResource
         return performCreate(VdcActionType.AddVmPoolWithVms,
                                new AddVmPoolWithVmsParameters(entity, vm, size, -1),
                                new QueryIdResolver<Guid>(VdcQueryType.GetVmPoolById,
-                                                   GetVmPoolByIdParameters.class));
+                                                   IdQueryParameters.class));
     }
 
     @Override
@@ -100,7 +99,7 @@ public class BackendVmPoolsResource
         if (isFiltered()) {
             return getEntity(VM.class,
                          VdcQueryType.GetVmDataByPoolId,
-                         new GetVmdataByPoolIdParameters(asGuid(model.getId())),
+                         new IdQueryParameters(asGuid(model.getId())),
                          model.getId());
         }
         return getEntity(VM.class, SearchType.VM, "Vms: pool=" + model.getName());

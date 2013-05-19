@@ -12,14 +12,12 @@ import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.model.SupportedVersions;
 import org.ovirt.engine.api.resource.DataCenterResource;
 import org.ovirt.engine.api.resource.DataCentersResource;
-
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetAvailableStoragePoolVersionsParameters;
-import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -56,7 +54,7 @@ public class BackendDataCentersResource extends
         StoragePool entity = map(dataCenter);
         return performCreate(VdcActionType.AddEmptyStoragePool,
                                new StoragePoolManagementParameter(entity),
-                               new QueryIdResolver<Guid>(VdcQueryType.GetStoragePoolById, StoragePoolQueryParametersBase.class));
+                               new QueryIdResolver<Guid>(VdcQueryType.GetStoragePoolById, IdQueryParameters.class));
     }
 
     @Override
@@ -89,8 +87,7 @@ public class BackendDataCentersResource extends
 
     @Override
     protected DataCenter deprecatedPopulate(DataCenter model, StoragePool entity) {
-        GetAvailableStoragePoolVersionsParameters parameters = new GetAvailableStoragePoolVersionsParameters();
-        parameters.setStoragePoolId(new Guid(model.getId()));
+        IdQueryParameters parameters = new IdQueryParameters(new Guid(model.getId()));
         model.setSupportedVersions(getMapper(List.class,
                                              SupportedVersions.class).map(getEntity(ArrayList.class,
                                                                                     VdcQueryType.GetAvailableStoragePoolVersions,

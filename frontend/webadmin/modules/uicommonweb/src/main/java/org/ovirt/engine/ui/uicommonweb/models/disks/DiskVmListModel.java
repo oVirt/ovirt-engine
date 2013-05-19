@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.GetVmsByDiskGuidParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -67,7 +67,7 @@ public class DiskVmListModel extends SearchableListModel
             }
         };
 
-        GetVmsByDiskGuidParameters getVmsByDiskGuidParameters = new GetVmsByDiskGuidParameters(disk.getId());
+        IdQueryParameters getVmsByDiskGuidParameters = new IdQueryParameters(disk.getId());
         getVmsByDiskGuidParameters.setRefresh(getIsQueryFirstTime());
 
         Frontend.RunQuery(VdcQueryType.GetVmsByDiskGuid, getVmsByDiskGuidParameters, _asyncQuery);

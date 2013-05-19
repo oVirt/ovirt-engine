@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.PermissionDAO;
 
@@ -17,13 +17,13 @@ import org.ovirt.engine.core.dao.PermissionDAO;
  * A test case for {@link GetPermissionsByAdElementIdQuery}.
  * This test mocks away all the DAOs, and just tests the flow of the query itself.
  */
-public class GetPermissionsByAdElementIdQueryTest extends AbstractUserQueryTest<MultilevelAdministrationByAdElementIdParameters, GetPermissionsByAdElementIdQuery<MultilevelAdministrationByAdElementIdParameters>> {
+public class GetPermissionsByAdElementIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetPermissionsByAdElementIdQuery<IdQueryParameters>> {
 
     @Test
     public void testQueryExecution() {
         // Prepare the query parameters
         Guid adElementGuid = Guid.NewGuid();
-        when(getQueryParameters().getAdElementId()).thenReturn(adElementGuid);
+        when(getQueryParameters().getId()).thenReturn(adElementGuid);
 
         // Create expected result
         permissions expected = new permissions();

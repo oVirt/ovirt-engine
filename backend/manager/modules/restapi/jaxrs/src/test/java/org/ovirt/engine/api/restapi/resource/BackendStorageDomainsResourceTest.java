@@ -9,7 +9,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.Storage;
@@ -24,15 +23,14 @@ import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.LUNs;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParameters;
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -112,8 +110,8 @@ public class BackendStorageDomainsResourceTest
 
     private void setUpGetEntityExpectations() throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetStorageDomainById,
-                StorageDomainQueryParametersBase.class,
-                new String[] { "StorageDomainId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 new org.ovirt.engine.core.common.businessentities.StorageDomain());
     }
@@ -269,8 +267,8 @@ public class BackendStorageDomainsResourceTest
                                   true,
                                   GUIDS[idx],
                                   VdcQueryType.GetStorageDomainById,
-                                  StorageDomainQueryParametersBase.class,
-                                  new String[] { "StorageDomainId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { GUIDS[idx] },
                                   getEntity(idx));
 
@@ -308,8 +306,8 @@ public class BackendStorageDomainsResourceTest
                                   true,
                                   GUIDS[LOCAL_IDX],
                                   VdcQueryType.GetStorageDomainById,
-                                  StorageDomainQueryParametersBase.class,
-                                  new String[] { "StorageDomainId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { GUIDS[LOCAL_IDX] },
                                   getEntity(LOCAL_IDX));
 
@@ -355,8 +353,8 @@ public class BackendStorageDomainsResourceTest
                                   true,
                                   GUIDS[POSIX_IDX],
                                   VdcQueryType.GetStorageDomainById,
-                                  StorageDomainQueryParametersBase.class,
-                                  new String[] { "StorageDomainId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { GUIDS[POSIX_IDX] },
                                   getEntity(POSIX_IDX));
 
@@ -406,8 +404,8 @@ public class BackendStorageDomainsResourceTest
                                   true,
                                   GUIDS[0],
                                   VdcQueryType.GetStorageDomainById,
-                                  StorageDomainQueryParametersBase.class,
-                                  new String[] { "StorageDomainId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getIscsiEntity());
 
@@ -450,8 +448,8 @@ public class BackendStorageDomainsResourceTest
                                   true,
                                   GUIDS[0],
                                   VdcQueryType.GetStorageDomainById,
-                                  StorageDomainQueryParametersBase.class,
-                                  new String[] { "StorageDomainId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getIscsiEntity());
 

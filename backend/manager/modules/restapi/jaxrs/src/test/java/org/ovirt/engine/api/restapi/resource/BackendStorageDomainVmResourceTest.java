@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -50,11 +49,13 @@ public class BackendStorageDomainVmResourceTest
                                                  VM_ID.toString()));
     }
 
+    @Override
     protected void init() {
         super.init();
         initResource(resource.getParent());
     }
 
+    @Override
     protected void setUriInfo(UriInfo uriInfo) {
         super.setUriInfo(uriInfo);
         resource.getParent().setUriInfo(uriInfo);
@@ -176,8 +177,8 @@ public class BackendStorageDomainVmResourceTest
 
     private void setUpGetDataCenterByStorageDomainExpectations(Guid id) {
         setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolsByStorageDomainId,
-                StorageDomainQueryParametersBase.class,
-                new String[] { "StorageDomainId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { id },
                 setUpStoragePool());
     }
@@ -263,8 +264,8 @@ public class BackendStorageDomainVmResourceTest
 
     protected void setUpGetStorageDomainExpectations(StorageDomainType domainType) throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
-                                     StorageDomainQueryParametersBase.class,
-                                     new String[] { "StorageDomainId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { STORAGE_DOMAIN_ID },
                                      setUpStorageDomain(domainType));
     }
@@ -290,8 +291,8 @@ public class BackendStorageDomainVmResourceTest
             break;
         case ImportExport:
             setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolsByStorageDomainId,
-                                         StorageDomainQueryParametersBase.class,
-                                         new String[] { "StorageDomainId" },
+                                         IdQueryParameters.class,
+                                         new String[] { "Id" },
                                          new Object[] { getStoragePoolsByStorageDomainId },
                                          setUpStoragePool());
             setUpEntityQueryExpectations(VdcQueryType.GetVmsFromExportDomain,
@@ -345,6 +346,7 @@ public class BackendStorageDomainVmResourceTest
         return ret;
     }
 
+    @Override
     protected void verifyModel(VM model, int index) {
         super.verifyModel(model, index);
         verifyModelSpecific(model, index);

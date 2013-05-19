@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.GetAllVdsByStoragePoolParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
 /** A query to return all the hosts in a given data center. */
-public class GetAllVdsByStoragePoolQuery<P extends GetAllVdsByStoragePoolParameters> extends QueriesCommandBase<P> {
+public class GetAllVdsByStoragePoolQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetAllVdsByStoragePoolQuery(P parameters) {
         super(parameters);
     }
@@ -12,6 +12,6 @@ public class GetAllVdsByStoragePoolQuery<P extends GetAllVdsByStoragePoolParamet
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
                 getDbFacade().getVdsDao().getAllForStoragePool
-                        (getParameters().getStoragePoolId(), getUserID(), getParameters().isFiltered()));
+                        (getParameters().getId(), getUserID(), getParameters().isFiltered()));
     }
 }

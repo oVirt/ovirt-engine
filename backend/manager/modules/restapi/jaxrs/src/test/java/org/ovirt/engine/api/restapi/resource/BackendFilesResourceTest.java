@@ -8,15 +8,12 @@ import javax.ws.rs.core.UriInfo;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
-
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -167,8 +164,8 @@ public class BackendFilesResourceTest
 
     private void setupGetStorageDomainExpectations(org.ovirt.engine.core.common.businessentities.StorageDomainType type) {
         setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
-                                     StorageDomainQueryParametersBase.class,
-                                     new String[] { "StorageDomainId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { GUIDS[0] },
                                      getStorageDomain(GUIDS[0], type));
     }

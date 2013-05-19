@@ -1,8 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.quota;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.GetEntitiesRelatedToQuotaIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -10,9 +13,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class QuotaTemplateListModel extends SearchableListModel {
 
@@ -43,9 +43,7 @@ public class QuotaTemplateListModel extends SearchableListModel {
             }
         };
 
-        GetEntitiesRelatedToQuotaIdParameters tempVar =
-                new GetEntitiesRelatedToQuotaIdParameters();
-        tempVar.setQuotaId(((Quota) getEntity()).getId());
+        IdQueryParameters tempVar = new IdQueryParameters(((Quota) getEntity()).getId());
         tempVar.setRefresh(getIsQueryFirstTime());
         Frontend.RunQuery(VdcQueryType.GetTemplatesRelatedToQuotaId, tempVar, _asyncQuery);
     }

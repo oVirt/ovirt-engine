@@ -10,6 +10,6 @@ public class GetHostsForStorageOperationQuery<P extends GetHostsForStorageOperat
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(getDbFacade().getVdsDao().getHostsForStorageOperation(
-                getParameters().getStoragePoolId(), getParameters().isLocalFsOnly()));
+                getParameters().getId(), getParameters().isLocalFsOnly()));
     }
 }

@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.GetEntitiesRelatedToQuotaIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDAO;
 
@@ -19,7 +19,7 @@ import org.ovirt.engine.core.dao.VmDAO;
  * A test case for {@link GetVmsRelatedToQuotaIdQuery}.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class GetVmsRelatedToQuotaIdTest extends AbstractQueryTest<GetEntitiesRelatedToQuotaIdParameters, GetVmsRelatedToQuotaIdQuery<GetEntitiesRelatedToQuotaIdParameters>> {
+public class GetVmsRelatedToQuotaIdTest extends AbstractQueryTest<IdQueryParameters, GetVmsRelatedToQuotaIdQuery<IdQueryParameters>> {
     @Mock
     VmDAO vmDAO;
 
@@ -42,7 +42,7 @@ public class GetVmsRelatedToQuotaIdTest extends AbstractQueryTest<GetEntitiesRel
         when(getDbFacadeMockInstance().getVmDao()).thenReturn(vmDAO);
 
         returnedVms = new ArrayList<VM>();
-        when(getQueryParameters().getQuotaId()).thenReturn(quotaId);
+        when(getQueryParameters().getId()).thenReturn(quotaId);
         when(vmDAO.getAllVmsRelatedToQuotaId(quotaId)).thenReturn(returnedVms);
     }
 }

@@ -13,22 +13,22 @@ import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDAO;
 
-public class GetVmsByStorageDomainQueryTest extends AbstractQueryTest<StorageDomainQueryParametersBase, GetVmsByStorageDomainQuery<StorageDomainQueryParametersBase>> {
+public class GetVmsByStorageDomainQueryTest extends AbstractQueryTest<IdQueryParameters, GetVmsByStorageDomainQuery<IdQueryParameters>> {
     VmDAO vmDao = mock(VmDAO.class);
     Guid domainId = Guid.NewGuid();
-    GetVmsByStorageDomainQuery<StorageDomainQueryParametersBase> query;
+    GetVmsByStorageDomainQuery<IdQueryParameters> query;
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
         params = getQueryParameters();
         when(getDbFacadeMockInstance().getVmDao()).thenReturn(vmDao);
-        when(params.getStorageDomainId()).thenReturn(domainId);
+        when(params.getId()).thenReturn(domainId);
         query = getQuery();
     }
 

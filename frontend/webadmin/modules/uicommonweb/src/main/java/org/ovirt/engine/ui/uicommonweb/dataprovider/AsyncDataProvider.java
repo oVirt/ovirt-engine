@@ -60,13 +60,9 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllAttachableDisks;
-import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetAllProvidersParameters;
 import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
-import org.ovirt.engine.core.common.queries.GetAllVdsByStoragePoolParameters;
-import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByVmIdParameters;
-import org.ovirt.engine.core.common.queries.GetAvailableClusterVersionsByStoragePoolParameters;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.GetDataCentersWithPermittedActionOnClustersParameters;
 import org.ovirt.engine.core.common.queries.GetDomainListParameters;
@@ -78,32 +74,21 @@ import org.ovirt.engine.core.common.queries.GetImagesListByStoragePoolIdParamete
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
 import org.ovirt.engine.core.common.queries.GetPermittedStorageDomainsByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetStorageDomainsByConnectionParameters;
-import org.ovirt.engine.core.common.queries.GetStorageDomainsByVmTemplateIdQueryParameters;
 import org.ovirt.engine.core.common.queries.GetStoragePoolsByClusterServiceParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByUserGroupIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByUserIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByVmIdParameters;
-import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
-import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
-import org.ovirt.engine.core.common.queries.GetVmPoolByIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
-import org.ovirt.engine.core.common.queries.GetVmTemplatesByStoragePoolIdParameters;
-import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
-import org.ovirt.engine.core.common.queries.GetVmsRunningOnOrMigratingToVdsParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
 import org.ovirt.engine.core.common.queries.IsVmPoolWithSameNameExistsParameters;
 import org.ovirt.engine.core.common.queries.IsVmTemlateWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
 import org.ovirt.engine.core.common.queries.ProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.ServerParameters;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
-import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
 import org.ovirt.engine.core.common.queries.TimeZoneQueryParams;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -221,7 +206,7 @@ public final class AsyncDataProvider {
             }
         };
 
-        StoragePoolQueryParametersBase getIsoParams = new StoragePoolQueryParametersBase(dataCenterId);
+        IdQueryParameters getIsoParams = new IdQueryParameters(dataCenterId);
         Frontend.RunQuery(VdcQueryType.GetStorageDomainsByStoragePoolId, getIsoParams, aQuery);
     }
 
@@ -243,7 +228,7 @@ public final class AsyncDataProvider {
             }
         };
 
-        StoragePoolQueryParametersBase getExportParams = new StoragePoolQueryParametersBase(dataCenterId);
+        IdQueryParameters getExportParams = new IdQueryParameters(dataCenterId);
         Frontend.RunQuery(VdcQueryType.GetStorageDomainsByStoragePoolId, getExportParams, aQuery);
     }
 
@@ -307,7 +292,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetVdsGroupById, new GetVdsGroupByIdParameters(id), aQuery);
+        Frontend.RunQuery(VdcQueryType.GetVdsGroupById, new IdQueryParameters(id), aQuery);
     }
 
     public static void getClusterListByName(AsyncQuery aQuery, String name) {
@@ -335,7 +320,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetVmPoolById, new GetVmPoolByIdParameters(poolId), aQuery);
+        Frontend.RunQuery(VdcQueryType.GetVmPoolById, new IdQueryParameters(poolId), aQuery);
     }
 
     public static void getVmById(AsyncQuery aQuery, Guid vmId) {
@@ -595,7 +580,7 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunQuery(VdcQueryType.GetVdsGroupsByStoragePoolId,
-                new StoragePoolQueryParametersBase(dataCenterId),
+                new IdQueryParameters(dataCenterId),
                 aQuery);
     }
 
@@ -612,7 +597,7 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunQuery(VdcQueryType.GetVdsGroupsByStoragePoolId,
-                new StoragePoolQueryParametersBase(dataCenterId),
+                new IdQueryParameters(dataCenterId),
                 aQuery);
     }
 
@@ -645,7 +630,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetVmTemplatesDisks, new GetVmTemplatesDisksParameters(templateId), aQuery);
+        Frontend.RunQuery(VdcQueryType.GetVmTemplatesDisks, new IdQueryParameters(templateId), aQuery);
     }
 
 
@@ -684,7 +669,7 @@ public final class AsyncDataProvider {
     public static void getTemplateListByDataCenter(AsyncQuery aQuery, Guid dataCenterId) {
         aQuery.converterCallback = new TemplateConverter();
         Frontend.RunQuery(VdcQueryType.GetVmTemplatesByStoragePoolId,
-                new GetVmTemplatesByStoragePoolIdParameters(dataCenterId),
+                new IdQueryParameters(dataCenterId),
                 aQuery);
     }
 
@@ -711,7 +696,7 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunQuery(VdcQueryType.GetVmTemplatesFromStorageDomain,
-                new StorageDomainQueryParametersBase(storageId),
+                new IdQueryParameters(storageId),
                 aQuery);
     }
 
@@ -752,7 +737,7 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunQuery(VdcQueryType.GetStorageDomainsByVmTemplateId,
-                new GetStorageDomainsByVmTemplateIdQueryParameters(templateId),
+                new IdQueryParameters(templateId),
                 aQuery);
     }
 
@@ -769,7 +754,7 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunQuery(VdcQueryType.GetStorageDomainsByStoragePoolId,
-                new StoragePoolQueryParametersBase(dataCenterId),
+                new IdQueryParameters(dataCenterId),
                 aQuery);
     }
 
@@ -852,7 +837,7 @@ public final class AsyncDataProvider {
                 return new ArrayList<VDS>();
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetAllVdsByStoragePool, new GetAllVdsByStoragePoolParameters(spId), aQuery);
+        Frontend.RunQuery(VdcQueryType.GetAllVdsByStoragePool, new IdQueryParameters(spId), aQuery);
     }
 
     public static void getVmDiskList(AsyncQuery aQuery, Guid vmId, boolean isRefresh) {
@@ -867,7 +852,7 @@ public final class AsyncDataProvider {
                 return new ArrayList<DiskImage>();
             }
         };
-        GetAllDisksByVmIdParameters params = new GetAllDisksByVmIdParameters(vmId);
+        IdQueryParameters params = new IdQueryParameters(vmId);
         params.setRefresh(isRefresh);
         Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, params, aQuery);
     }
@@ -972,7 +957,7 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunQuery(VdcQueryType.GetStorageDomainById,
-                new StorageDomainQueryParametersBase(storageDomainId),
+                new IdQueryParameters(storageDomainId),
                 aQuery);
     }
 
@@ -1018,7 +1003,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetStoragePoolById, new StoragePoolQueryParametersBase(dataCenterId), aQuery);
+        Frontend.RunQuery(VdcQueryType.GetStoragePoolById, new IdQueryParameters(dataCenterId), aQuery);
     }
 
     public static void GetWatchdogByVmId(AsyncQuery aQuery, Guid vmId) {
@@ -1279,7 +1264,7 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunQuery(VdcQueryType.GetPermissionsByAdElementId,
-                new MultilevelAdministrationByAdElementIdParameters(userId),
+                new IdQueryParameters(userId),
                 aQuery);
     }
 
@@ -1293,7 +1278,7 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunQuery(VdcQueryType.GetRoleActionGroupsByRoleId,
-                new MultilevelAdministrationByRoleIdParameters(roleId),
+                new IdQueryParameters(roleId),
                 aQuery);
     }
 
@@ -1421,7 +1406,7 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunQuery(VdcQueryType.GetStoragePoolsByStorageDomainId,
-                new StorageDomainQueryParametersBase(storageDomainId),
+                new IdQueryParameters(storageDomainId),
                 aQuery);
     }
 
@@ -1442,9 +1427,7 @@ public final class AsyncDataProvider {
                 }
             }
         };
-        GetAvailableClusterVersionsByStoragePoolParameters tempVar =
-                new GetAvailableClusterVersionsByStoragePoolParameters();
-        tempVar.setStoragePoolId(dataCenterId);
+        IdQueryParameters tempVar = new IdQueryParameters(dataCenterId == null ? null : dataCenterId.getValue());
         Frontend.RunQuery(VdcQueryType.GetAvailableClusterVersionsByStoragePool, tempVar, aQuery);
     }
 
@@ -1902,7 +1885,7 @@ public final class AsyncDataProvider {
     public static void getClusterListByStorageDomain(AsyncQuery _AsyncQuery,
             Guid storageDomainId) {
         Frontend.RunQuery(VdcQueryType.GetStoragePoolsByStorageDomainId,
-                new StorageDomainQueryParametersBase(storageDomainId),
+                new IdQueryParameters(storageDomainId),
                 new AsyncQuery(_AsyncQuery, new INewAsyncCallback() {
 
                     @Override
@@ -1957,7 +1940,7 @@ public final class AsyncDataProvider {
             }
         };
 
-        Frontend.RunQuery(VdcQueryType.GetAllVmSnapshotsByVmId, new GetAllVmSnapshotsByVmIdParameters(id), aQuery);
+        Frontend.RunQuery(VdcQueryType.GetAllVmSnapshotsByVmId, new IdQueryParameters(id), aQuery);
     }
 
     public static void getVmsRunningOnOrMigratingToVds(AsyncQuery aQuery, Guid id) {
@@ -1972,7 +1955,7 @@ public final class AsyncDataProvider {
         };
 
         Frontend.RunQuery(VdcQueryType.GetVmsRunningOnOrMigratingToVds,
-                new GetVmsRunningOnOrMigratingToVdsParameters(id),
+                new IdQueryParameters(id),
                 aQuery);
     }
 
@@ -1995,7 +1978,7 @@ public final class AsyncDataProvider {
             }
         };
 
-        Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(id), aQuery);
+        Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, new IdQueryParameters(id), aQuery);
     }
 
     public static void getVmList(AsyncQuery aQuery, String poolName) {
@@ -2047,7 +2030,7 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunQuery(VdcQueryType.GetNextAvailableDiskAliasNameByVMId,
-                new GetAllDisksByVmIdParameters(vmId),
+                new IdQueryParameters(vmId),
                 aQuery);
     }
 
@@ -2080,7 +2063,7 @@ public final class AsyncDataProvider {
         };
 
         Frontend.RunQuery(VdcQueryType.GetVmConfigurationBySnapshot,
-                new GetVmConfigurationBySnapshotQueryParams(snapshotSourceId),
+                new IdQueryParameters(snapshotSourceId),
                 aQuery);
     }
 

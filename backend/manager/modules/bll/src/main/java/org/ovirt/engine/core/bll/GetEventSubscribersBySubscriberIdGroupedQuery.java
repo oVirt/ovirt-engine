@@ -5,10 +5,10 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
-import org.ovirt.engine.core.common.queries.GetEventSubscribersBySubscriberIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-public class GetEventSubscribersBySubscriberIdGroupedQuery<P extends GetEventSubscribersBySubscriberIdParameters>
+public class GetEventSubscribersBySubscriberIdGroupedQuery<P extends IdQueryParameters>
         extends QueriesCommandBase<P> {
     public GetEventSubscribersBySubscriberIdGroupedQuery(P parameters) {
         super(parameters);
@@ -19,8 +19,7 @@ public class GetEventSubscribersBySubscriberIdGroupedQuery<P extends GetEventSub
         List<event_subscriber> list = DbFacade
                 .getInstance()
                 .getEventDao()
-                .getAllForSubscriber(
-                        getParameters().getSubscriberId());
+                .getAllForSubscriber(getParameters().getId());
         if (list.size() > 0) {
             java.util.HashMap<String, event_subscriber> dic = new java.util.HashMap<String, event_subscriber>();
 

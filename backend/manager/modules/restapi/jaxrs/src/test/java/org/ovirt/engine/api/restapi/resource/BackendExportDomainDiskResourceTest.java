@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -84,8 +84,8 @@ public class BackendExportDomainDiskResourceTest
 
     protected void setUpGetStorageDomainExpectations(StorageDomainType domainType) throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
-                                     StorageDomainQueryParametersBase.class,
-                                     new String[] { "StorageDomainId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { STORAGE_DOMAIN_ID },
                                      setUpStorageDomain(domainType));
     }
@@ -105,8 +105,8 @@ public class BackendExportDomainDiskResourceTest
             break;
         case ImportExport:
             setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolsByStorageDomainId,
-                                         StorageDomainQueryParametersBase.class,
-                                         new String[] { "StorageDomainId" },
+                                         IdQueryParameters.class,
+                                         new String[] { "Id" },
                                          new Object[] { getStoragePoolsByStorageDomainId },
                                          setUpStoragePool());
             setUpEntityQueryExpectations(VdcQueryType.GetTemplatesFromExportDomain,

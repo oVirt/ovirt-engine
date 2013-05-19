@@ -7,9 +7,9 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.queries.GetStorageDomainsByVmTemplateIdQueryParameters;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -84,7 +84,7 @@ public class TemplateStorageListModel extends SearchableListModel
 
         VmTemplate template = (VmTemplate) getEntity();
         super.syncSearch(VdcQueryType.GetStorageDomainsByVmTemplateId,
-                new GetStorageDomainsByVmTemplateIdQueryParameters(template.getId()));
+                new IdQueryParameters(template.getId()));
     }
 
     @Override

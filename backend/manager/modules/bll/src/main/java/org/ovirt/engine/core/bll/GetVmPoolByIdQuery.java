@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.GetVmPoolByIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
-public class GetVmPoolByIdQuery<P extends GetVmPoolByIdParameters> extends QueriesCommandBase<P> {
+public class GetVmPoolByIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetVmPoolByIdQuery(P parameters) {
         super(parameters);
     }
@@ -11,6 +11,6 @@ public class GetVmPoolByIdQuery<P extends GetVmPoolByIdParameters> extends Queri
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
                 getDbFacade().getVmPoolDao()
-                        .get(getParameters().getPoolId(), getUserID(), getParameters().isFiltered()));
+                        .get(getParameters().getId(), getUserID(), getParameters().isFiltered()));
     }
 }

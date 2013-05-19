@@ -33,7 +33,7 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -57,14 +57,14 @@ public class BackendStorageDomainResource extends
 
     @Override
     public StorageDomain get() {
-        StorageDomain storageDomain = performGet(VdcQueryType.GetStorageDomainById, new StorageDomainQueryParametersBase(guid));
+        StorageDomain storageDomain = performGet(VdcQueryType.GetStorageDomainById, new IdQueryParameters(guid));
         return addLinks(storageDomain, getLinksToExclude(storageDomain));
     }
 
     @Override
     public StorageDomain update(StorageDomain incoming) {
         validateEnums(StorageDomain.class, incoming);
-        QueryIdResolver<Guid> storageDomainResolver = new QueryIdResolver<Guid>(VdcQueryType.GetStorageDomainById, StorageDomainQueryParametersBase.class);
+        QueryIdResolver<Guid> storageDomainResolver = new QueryIdResolver<Guid>(VdcQueryType.GetStorageDomainById, IdQueryParameters.class);
         org.ovirt.engine.core.common.businessentities.StorageDomain entity = getEntity(storageDomainResolver, true);
         StorageDomain model = map(entity, new StorageDomain());
         StorageType storageType = entity.getStorageType();

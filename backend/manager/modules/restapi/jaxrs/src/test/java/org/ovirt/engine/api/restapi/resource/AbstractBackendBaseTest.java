@@ -45,9 +45,9 @@ import org.ovirt.engine.core.common.interfaces.ErrorTranslator;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
-import org.ovirt.engine.core.common.queries.GetJobByJobIdQueryParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -549,8 +549,8 @@ public abstract class AbstractBackendBaseTest extends Assert {
             expect(jobMock.getStatus()).andReturn(jobStatus);
             expect(monitorResult.getReturnValue()).andReturn(jobMock).anyTimes();
             expect(backend.RunQuery(eq(VdcQueryType.GetJobByJobId),
-                    eqQueryParams(GetJobByJobIdQueryParameters.class,
-                            addSession(new String[]{"JobId"}),
+                    eqQueryParams(IdQueryParameters.class,
+                            addSession(new String[]{"Id"}),
                             addSession(new Object[]{jobId})))).andReturn(monitorResult);
         }
     }

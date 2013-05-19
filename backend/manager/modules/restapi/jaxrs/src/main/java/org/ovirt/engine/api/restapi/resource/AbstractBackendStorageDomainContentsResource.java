@@ -11,11 +11,10 @@ import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.BaseResources;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -64,7 +63,7 @@ public abstract class AbstractBackendStorageDomainContentsResource<C extends Bas
     public org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomain() {
         return getEntity(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
                          VdcQueryType.GetStorageDomainById,
-                         new StorageDomainQueryParametersBase(storageDomainId),
+                         new IdQueryParameters(storageDomainId),
                          storageDomainId.toString());
     }
 

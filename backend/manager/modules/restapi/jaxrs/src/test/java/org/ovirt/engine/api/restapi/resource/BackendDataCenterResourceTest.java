@@ -1,26 +1,23 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import java.util.List;
+import static org.easymock.EasyMock.expect;
+import static org.ovirt.engine.api.restapi.resource.BackendDataCentersResourceTest.getModel;
+import static org.ovirt.engine.api.restapi.resource.BackendDataCentersResourceTest.setUpEntityExpectations;
+import static org.ovirt.engine.api.restapi.resource.BackendDataCentersResourceTest.verifyModelSpecific;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.queries.GetAvailableStoragePoolVersionsParameters;
-import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Version;
-
-import static org.easymock.EasyMock.expect;
-
-import static org.ovirt.engine.api.restapi.resource.BackendDataCentersResourceTest.getModel;
-import static org.ovirt.engine.api.restapi.resource.BackendDataCentersResourceTest.setUpEntityExpectations;
-import static org.ovirt.engine.api.restapi.resource.BackendDataCentersResourceTest.verifyModelSpecific;
 
 public class BackendDataCenterResourceTest
         extends AbstractBackendSubResourceTest<DataCenter, StoragePool, BackendDataCenterResource> {
@@ -29,6 +26,7 @@ public class BackendDataCenterResourceTest
         super(new BackendDataCenterResource(GUIDS[0].toString(), new BackendDataCentersResource()));
     }
 
+    @Override
     protected void init() {
         super.init();
         initResource(resource.getParent());
@@ -147,8 +145,8 @@ public class BackendDataCenterResourceTest
     protected void setUpGetEntityExpectations(int times, boolean notFound) throws Exception {
         while (times-- > 0) {
             setUpGetEntityExpectations(VdcQueryType.GetStoragePoolById,
-                                       StoragePoolQueryParametersBase.class,
-                                       new String[] { "StoragePoolId" },
+                                       IdQueryParameters.class,
+                                       new String[] { "Id" },
                                        new Object[] { GUIDS[0] },
                                        notFound ? null : getEntity(0));
         }
@@ -156,8 +154,8 @@ public class BackendDataCenterResourceTest
 
     protected void setUpVersionExpectations() throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetAvailableStoragePoolVersions,
-                                   GetAvailableStoragePoolVersionsParameters.class,
-                                   new String[] { "StoragePoolId" },
+                                   IdQueryParameters.class,
+                                   new String[] { "Id" },
                                    new Object[] { GUIDS[0] },
                                    getVersions());
     }

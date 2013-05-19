@@ -18,8 +18,8 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
-import org.ovirt.engine.core.common.queries.GetJobByJobIdQueryParameters;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -141,8 +141,7 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
         if (jobId ==null || jobId.getValue().equals(NGuid.Empty)) {
             return CreationStatus.COMPLETE;
         } else {
-            GetJobByJobIdQueryParameters params = new GetJobByJobIdQueryParameters();
-            params.setJobId(jobId.getValue());
+            IdQueryParameters params = new IdQueryParameters(jobId.getValue());
             VdcQueryReturnValue queryResult = runQuery(VdcQueryType.GetJobByJobId, params);
             if (queryResult != null && queryResult.getSucceeded() && queryResult.getReturnValue() != null) {
                 Job job = (Job)queryResult.getReturnValue();

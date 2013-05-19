@@ -11,7 +11,7 @@ import org.ovirt.engine.api.model.Hooks;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.resource.HostHookResource;
 import org.ovirt.engine.api.resource.HostHooksResource;
-import org.ovirt.engine.core.common.queries.GetVdsHooksByIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendHostHooksResource extends AbstractBackendCollectionResource<Hook, Object> implements HostHooksResource {
@@ -28,7 +28,7 @@ public class BackendHostHooksResource extends AbstractBackendCollectionResource<
         @SuppressWarnings("unchecked")
         HashMap<String, HashMap<String, HashMap<String, String>>> hooksMap =
                 getEntity(HashMap.class, VdcQueryType.GetVdsHooksById,
-                        new GetVdsHooksByIdParameters(asGuid(hostId)), null);
+                        new IdQueryParameters(asGuid(hostId)), null);
         return mapCollection(hooksMap);
     }
 

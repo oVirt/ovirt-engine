@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
-import org.ovirt.engine.core.common.queries.GetVmdataByPoolIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -246,7 +246,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
 
             VmPool pool = (VmPool) entity;
             Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
-                    new GetVmdataByPoolIdParameters(pool.getVmPoolId()),
+                    new IdQueryParameters(pool.getVmPoolId()),
                     _asyncQuery);
         }
     }

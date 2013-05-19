@@ -9,7 +9,6 @@ import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 
@@ -19,10 +18,10 @@ public class BackendGroupAssignedPermissionsResourceTest
     public BackendGroupAssignedPermissionsResourceTest() {
         super(GUIDS[1],
               VdcQueryType.GetPermissionsByAdElementId,
-              new MultilevelAdministrationByAdElementIdParameters(GUIDS[1]),
+              new IdQueryParameters(GUIDS[1]),
               Group.class,
               "AdGroup.id",
-              "AdElementId");
+              "Id");
     }
 
     @Test

@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
-import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -33,7 +33,7 @@ import org.ovirt.engine.core.utils.RandomUtils;
  * A test case for {@link GetAllDisksByVmIdQuery}.
  * This test mocks away all the DAOs, and just tests the flow of the query itself.
  */
-public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisksByVmIdParameters, GetAllDisksByVmIdQuery<GetAllDisksByVmIdParameters>> {
+public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetAllDisksByVmIdQuery<IdQueryParameters>> {
     private static final int NUM_DISKS_OF_EACH_KIND = 3;
 
     /** The {@link DiskDAO} mocked for the test */
@@ -144,13 +144,12 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<GetAllDisk
     @Test
     public void testExecuteQueryCommand() {
         params = getQueryParameters();
-        when(params.getVmId()).thenReturn(vmID);
+        when(params.getId()).thenReturn(vmID);
 
-        GetAllDisksByVmIdQuery<GetAllDisksByVmIdParameters> query = getQuery();
-        query.executeQueryCommand();
+        getQuery().executeQueryCommand();
 
         @SuppressWarnings("unchecked")
-        List<DiskImage> disks = (List<DiskImage>) query.getQueryReturnValue().getReturnValue();
+        List<DiskImage> disks = (List<DiskImage>) getQuery().getQueryReturnValue().getReturnValue();
 
         // Assert the correct disks are returned
         assertTrue("plugged disk should be in the return value", disks.contains(pluggedDisk));

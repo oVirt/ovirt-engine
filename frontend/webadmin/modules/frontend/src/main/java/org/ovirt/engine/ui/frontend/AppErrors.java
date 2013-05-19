@@ -1594,9 +1594,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Role name is required")
     String VALIDATION_ROLES_NAME_NOT_NULL();
 
-    @DefaultStringValue("Role ID is required")
-    String VALIDATION_ROLES_ID_NOT_NULL();
-
     @DefaultStringValue("Role name must not exceed 126 characters")
     String VALIDATION_ROLES_NAME_MAX();
 

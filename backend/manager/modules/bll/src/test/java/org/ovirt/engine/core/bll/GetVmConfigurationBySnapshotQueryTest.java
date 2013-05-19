@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -28,7 +28,7 @@ import org.ovirt.engine.core.dao.SnapshotDao;
  * A test case for {@GetVmConfigurationBySnapshotQuery}. This test mocks away all
  * the DAOs, and just tests the flow of the query itself.
  */
-public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest<GetVmConfigurationBySnapshotQueryParams, GetVmConfigurationBySnapshotQuery<GetVmConfigurationBySnapshotQueryParams>> {
+public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetVmConfigurationBySnapshotQuery<IdQueryParameters>> {
     private SnapshotDao snapshotDaoMock;
     private DiskImageDAO diskImageDaoMock;
     private Guid existingSnapshotId = Guid.NewGuid();
@@ -86,9 +86,9 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
     }
 
     @Override
-    protected GetVmConfigurationBySnapshotQuery<GetVmConfigurationBySnapshotQueryParams> setUpSpyQuery(GetVmConfigurationBySnapshotQueryParams params)
+    protected GetVmConfigurationBySnapshotQuery<IdQueryParameters> setUpSpyQuery(IdQueryParameters params)
             throws Exception {
-        GetVmConfigurationBySnapshotQuery<GetVmConfigurationBySnapshotQueryParams> result = super.setUpSpyQuery(params);
+        GetVmConfigurationBySnapshotQuery<IdQueryParameters> result = super.setUpSpyQuery(params);
         snapshotsManager = mock(SnapshotsManager.class);
         when(result.getSnapshotManager()).thenReturn(snapshotsManager);
         return result;
@@ -96,7 +96,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
 
     @Test
     public void testQuery() throws Exception {
-        GetVmConfigurationBySnapshotQuery<GetVmConfigurationBySnapshotQueryParams> query =
+        GetVmConfigurationBySnapshotQuery<IdQueryParameters> query =
                 setupQueryBySnapshotId(existingSnapshotId);
         VM vm = new VM();
         doReturn(vm).when(query).getVmFromConfiguration(any(String.class));
@@ -109,7 +109,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
 
     @Test
     public void testNonExistingSnapshotQuery() throws Exception {
-        GetVmConfigurationBySnapshotQuery<GetVmConfigurationBySnapshotQueryParams> query =
+        GetVmConfigurationBySnapshotQuery<IdQueryParameters> query =
                 setupQueryBySnapshotId(Guid.NewGuid());
         when(snapshotDaoMock.get(any(Guid.class))).thenReturn(null);
         VdcQueryReturnValue returnValue = query.getQueryReturnValue();
@@ -119,7 +119,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
 
     @Test
     public void testIllegalImageReturnedByQuery() throws Exception {
-        GetVmConfigurationBySnapshotQuery<GetVmConfigurationBySnapshotQueryParams> query =
+        GetVmConfigurationBySnapshotQuery<IdQueryParameters> query =
                 setupQueryBySnapshotId(existingSnapshotId);
         existingVm.getDiskMap().put(existingDiskImage.getId(), existingDiskImage);
         existingVm.getImages().add(existingDiskImage);
@@ -133,10 +133,10 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
         }
     }
 
-    private GetVmConfigurationBySnapshotQuery<GetVmConfigurationBySnapshotQueryParams> setupQueryBySnapshotId(Guid snapshotId) {
-        GetVmConfigurationBySnapshotQueryParams queryParams = getQueryParameters();
-        when(queryParams.getSnapshotId()).thenReturn(snapshotId);
-        GetVmConfigurationBySnapshotQuery<GetVmConfigurationBySnapshotQueryParams> query = getQuery();
+    private GetVmConfigurationBySnapshotQuery<IdQueryParameters> setupQueryBySnapshotId(Guid snapshotId) {
+        IdQueryParameters queryParams = getQueryParameters();
+        when(queryParams.getId()).thenReturn(snapshotId);
+        GetVmConfigurationBySnapshotQuery<IdQueryParameters> query = getQuery();
         return query;
     }
 

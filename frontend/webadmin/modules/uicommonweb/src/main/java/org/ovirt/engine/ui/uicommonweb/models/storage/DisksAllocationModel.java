@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForStorageParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -120,7 +120,7 @@ public class DisksAllocationModel extends EntityModel
     private void updateQuota(Guid storageDomainId, final ListModel isItem) {
         if (getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED && storageDomainId != null) {
             Frontend.RunQuery(VdcQueryType.GetAllRelevantQuotasForStorage,
-                    new GetAllRelevantQuotasForStorageParameters(storageDomainId),
+                    new IdQueryParameters(storageDomainId),
                     new AsyncQuery(this,
                             new INewAsyncCallback() {
 

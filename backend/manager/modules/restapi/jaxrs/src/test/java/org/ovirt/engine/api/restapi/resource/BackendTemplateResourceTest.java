@@ -1,5 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.getModel;
+import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.setUpEntityExpectations;
+import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.verifyModelSpecific;
+
 import java.util.ArrayList;
 
 import javax.ws.rs.WebApplicationException;
@@ -7,7 +11,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.StorageDomain;
@@ -19,17 +22,12 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.getModel;
-import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.setUpEntityExpectations;
-import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.verifyModelSpecific;
 
 public class BackendTemplateResourceTest
     extends AbstractBackendSubResourceTest<Template, VmTemplate, BackendTemplateResource> {
@@ -88,8 +86,8 @@ public class BackendTemplateResourceTest
     public void testUpdate() throws Exception {
         setUpGetEntityExpectations(2);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                GetVdsGroupByVdsGroupIdParameters.class,
-                new String[] { "VdsGroupId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
 
@@ -120,8 +118,8 @@ public class BackendTemplateResourceTest
     private void doTestBadUpdate(boolean canDo, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(1);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                GetVdsGroupByVdsGroupIdParameters.class,
-                new String[] { "VdsGroupId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
 
@@ -285,6 +283,7 @@ public class BackendTemplateResourceTest
         verifyActionResponse(r, "templates/" + GUIDS[0], false);
     }
 
+    @Override
     protected void verifyModel(Template model, int index) {
         super.verifyModel(model, index);
         verifyModelSpecific(model, index);

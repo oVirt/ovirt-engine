@@ -6,10 +6,9 @@ import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.resource.PermissionResource;
-
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByPermissionIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -31,7 +30,7 @@ public class BackendPermissionResource
     @Override
     public Permission get() {
         return performGet(VdcQueryType.GetPermissionById,
-                          new MultilevelAdministrationByPermissionIdParameters(guid),
+                          new IdQueryParameters(guid),
                           suggestedParentType);
     }
 

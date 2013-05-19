@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainResource.isIsoDomain;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,14 +12,11 @@ import org.ovirt.engine.api.model.Files;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.resource.FileResource;
 import org.ovirt.engine.api.resource.FilesResource;
-import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
-
+import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-
-import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainResource.isIsoDomain;
 
 public class BackendFilesResource
     extends AbstractBackendCollectionResource<File, String>
@@ -34,7 +33,7 @@ public class BackendFilesResource
     public Files list() {
         if (isIsoDomain(getEntity(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
                                   VdcQueryType.GetStorageDomainById,
-                                  new StorageDomainQueryParametersBase(asGuid(storageDomainId)),
+                                  new IdQueryParameters(asGuid(storageDomainId)),
                                   "storage_domain"))) {
             return mapCollection(listFiles());
         } else {

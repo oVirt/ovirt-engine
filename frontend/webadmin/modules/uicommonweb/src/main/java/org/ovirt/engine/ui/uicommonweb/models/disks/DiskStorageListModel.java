@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.queries.GetStorageDomainsByImageIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -53,8 +53,7 @@ public class DiskStorageListModel extends SearchableListModel
             }
         };
 
-        GetStorageDomainsByImageIdParameters getStorageDomainsByImageIdParameters =
-                new GetStorageDomainsByImageIdParameters(diskImage.getImageId());
+        IdQueryParameters getStorageDomainsByImageIdParameters = new IdQueryParameters(diskImage.getImageId());
         getStorageDomainsByImageIdParameters.setRefresh(getIsQueryFirstTime());
 
         Frontend.RunQuery(VdcQueryType.GetStorageDomainsByImageId, getStorageDomainsByImageIdParameters, _asyncQuery);

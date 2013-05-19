@@ -34,7 +34,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -54,9 +53,10 @@ public class BackendVmDiskResourceTest
     protected static BackendVmDisksResource getCollection() {
         return new BackendVmDisksResource(PARENT_ID,
                                         VdcQueryType.GetAllDisksByVmId,
-                                        new GetAllDisksByVmIdParameters(PARENT_ID));
+                                        new IdQueryParameters(PARENT_ID));
     }
 
+    @Override
     protected void init() {
         super.init();
         initResource(resource.getCollection());
@@ -66,8 +66,8 @@ public class BackendVmDiskResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(VdcQueryType.GetAllDisksByVmId,
-                                     GetAllDisksByVmIdParameters.class,
-                                     new String[] { "VmId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { PARENT_ID },
                                      new ArrayList<DiskImage>());
         control.replay();
@@ -111,8 +111,8 @@ public class BackendVmDiskResourceTest
     public void testUpdateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(VdcQueryType.GetAllDisksByVmId,
-                                     GetAllDisksByVmIdParameters.class,
-                                     new String[] { "VmId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { PARENT_ID },
                                      new ArrayList<DiskImage>());
         control.replay();
@@ -229,8 +229,8 @@ public class BackendVmDiskResourceTest
     protected void setUpEntityQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetAllDisksByVmId,
-                                         GetAllDisksByVmIdParameters.class,
-                                         new String[] { "VmId" },
+                                         IdQueryParameters.class,
+                                         new String[] { "Id" },
                                          new Object[] { PARENT_ID },
                                          getEntityList());
         }
@@ -243,8 +243,8 @@ public class BackendVmDiskResourceTest
     protected void setUpGetEntityExpectations(int times, org.ovirt.engine.core.common.businessentities.Disk entity) throws Exception {
         while (times-- > 0) {
             setUpGetEntityExpectations(VdcQueryType.GetAllDisksByVmId,
-                                       GetAllDisksByVmIdParameters.class,
-                                       new String[] { "VmId" },
+                                       IdQueryParameters.class,
+                                       new String[] { "Id" },
                                        new Object[] { PARENT_ID },
                                        entity);
         }

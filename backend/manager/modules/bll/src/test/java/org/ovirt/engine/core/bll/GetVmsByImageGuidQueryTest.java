@@ -10,7 +10,7 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.GetVmsByDiskGuidParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDAO;
 
@@ -19,12 +19,12 @@ import org.ovirt.engine.core.dao.VmDAO;
  * It tests that flow (i.e., that the query delegates properly to the DAO}).
  * The internal workings of the DAO are not tested.
  */
-public class GetVmsByImageGuidQueryTest extends AbstractQueryTest<GetVmsByDiskGuidParameters, GetVmsByDiskGuidQuery<GetVmsByDiskGuidParameters>> {
+public class GetVmsByImageGuidQueryTest extends AbstractQueryTest<IdQueryParameters, GetVmsByDiskGuidQuery<IdQueryParameters>> {
     @Test
     public void testExecuteQueryCommand() {
         // Set up the query parameters
         Guid imageGuid = Guid.NewGuid();
-        when(params.getDiskGuid()).thenReturn(imageGuid);
+        when(params.getId()).thenReturn(imageGuid);
 
         // Set up the DAOs
         Map<Boolean, List<VM>> expected = Collections.singletonMap(true, Collections.singletonList(new VM()));
@@ -33,7 +33,7 @@ public class GetVmsByImageGuidQueryTest extends AbstractQueryTest<GetVmsByDiskGu
         when(getDbFacadeMockInstance().getVmDao()).thenReturn(vmDAOMock);
 
         // Run the query
-        GetVmsByDiskGuidQuery<GetVmsByDiskGuidParameters> query = getQuery();
+        GetVmsByDiskGuidQuery<IdQueryParameters> query = getQuery();
         query.executeQueryCommand();
 
         // Assert the result

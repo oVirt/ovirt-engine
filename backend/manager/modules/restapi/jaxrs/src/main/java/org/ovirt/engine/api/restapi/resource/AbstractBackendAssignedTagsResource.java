@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.common.util.ReflectionHelper.assignChildModel;
+
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -8,16 +10,13 @@ import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.model.Tags;
 import org.ovirt.engine.api.resource.AssignedTagResource;
-
-import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.queries.GetTagByTagIdParameters;
+import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.ovirt.engine.api.common.util.ReflectionHelper.assignChildModel;
 
 public abstract class AbstractBackendAssignedTagsResource
     extends AbstractBackendCollectionResource<Tag, tags> {
@@ -100,7 +99,7 @@ public abstract class AbstractBackendAssignedTagsResource
     }
 
     public tags lookupTagById(Guid id) {
-        return getEntity(tags.class, VdcQueryType.GetTagByTagId, new GetTagByTagIdParameters(id), id.toString(), true);
+        return getEntity(tags.class, VdcQueryType.GetTagByTagId, new IdQueryParameters(id), id.toString(), true);
     }
 
     protected class TagIdResolver extends EntityIdResolver<Guid> {

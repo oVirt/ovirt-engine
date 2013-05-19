@@ -20,8 +20,7 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByVmIdParameters;
-import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -156,8 +155,8 @@ public class BackendSnapshotsResourceTest
                 asList(TASK_ID),
                 asList(new AsyncTaskStatus(asyncStatus)),
                 VdcQueryType.GetAllVmSnapshotsByVmId,
-                GetAllVmSnapshotsByVmIdParameters.class,
-                new String[] { "VmId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { VM_ID },
                 getEntity(0));
         Snapshot snapshot = new Snapshot();
@@ -175,8 +174,8 @@ public class BackendSnapshotsResourceTest
     protected void setUpGetEntityExpectations(int times) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetAllVmSnapshotsByVmId,
-                    GetAllVmSnapshotsByVmIdParameters.class,
-                                     new String[] { "VmId" },
+                    IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { VM_ID },
                                      getEntities());
         }
@@ -184,8 +183,8 @@ public class BackendSnapshotsResourceTest
 
     protected void setUpGetSnapshotVmConfiguration(Guid snpashotId) throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetVmConfigurationBySnapshot,
-                GetVmConfigurationBySnapshotQueryParams.class,
-                new String[] { "SnapshotId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { snpashotId },
                 getVmConfiguration());
     }
@@ -205,6 +204,7 @@ public class BackendSnapshotsResourceTest
         verifyLinks(model);
     }
 
+    @Override
     protected void verifyCollection(List<Snapshot> collection) throws Exception {
         assertNotNull(collection);
         assertEquals(2, collection.size());

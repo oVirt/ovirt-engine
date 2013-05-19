@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainResource.isIsoDomain;
+
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.DataCenter;
@@ -8,18 +10,14 @@ import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.resource.AttachedStorageDomainResource;
 import org.ovirt.engine.api.resource.AttachedStorageDomainsResource;
-
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainAndPoolQueryParameters;
-import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainResource.isIsoDomain;
 
 public class BackendAttachedStorageDomainsResource
     extends AbstractBackendCollectionResource<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain>
@@ -40,7 +38,7 @@ public class BackendAttachedStorageDomainsResource
 
         for (org.ovirt.engine.core.common.businessentities.StorageDomain entity : getBackendCollection(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
                                                            VdcQueryType.GetStorageDomainsByStoragePoolId,
-                                                           new StoragePoolQueryParametersBase(dataCenterId))) {
+                new IdQueryParameters(dataCenterId))) {
             storageDomains.getStorageDomains().add(addLinks(map(entity), getLinksToExclude(entity)));
         }
 

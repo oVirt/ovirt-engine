@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -77,6 +77,7 @@ public class RoleListModel extends ListWithDetailsModel
 
     private UICommand privateEditCommand;
 
+    @Override
     public UICommand getEditCommand()
     {
         return privateEditCommand;
@@ -337,8 +338,8 @@ public class RoleListModel extends ListWithDetailsModel
                 Role role = (Role) getSelectedItem();
                 Frontend.RunQuery(
                         VdcQueryType.GetRoleActionGroupsByRoleId,
-                        new MultilevelAdministrationByRoleIdParameters(role
-                                .getId()), _asyncQuery);
+                        new IdQueryParameters(role.getId()),
+                        _asyncQuery);
             }
 
         }

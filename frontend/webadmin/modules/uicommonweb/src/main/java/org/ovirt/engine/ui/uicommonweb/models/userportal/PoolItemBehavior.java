@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPool;
-import org.ovirt.engine.core.common.queries.GetVmdataByPoolIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -95,7 +95,7 @@ public class PoolItemBehavior extends ItemBehavior
         }
 
         Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
-                new GetVmdataByPoolIdParameters(entity.getVmPoolId()),
+                new IdQueryParameters(entity.getVmPoolId()),
                 new AsyncQuery(this,
                         new INewAsyncCallback() {
                             @Override

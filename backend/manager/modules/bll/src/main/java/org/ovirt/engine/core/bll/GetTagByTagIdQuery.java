@@ -1,14 +1,14 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.GetTagByTagIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
-public class GetTagByTagIdQuery<P extends GetTagByTagIdParameters> extends QueriesCommandBase<P> {
+public class GetTagByTagIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetTagByTagIdQuery(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(TagsDirector.getInstance().GetTagById(getParameters().getTagId()));
+        getQueryReturnValue().setReturnValue(TagsDirector.getInstance().GetTagById(getParameters().getId()));
     }
 }

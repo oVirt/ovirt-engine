@@ -1,6 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
 
+import static org.ovirt.engine.api.restapi.resource.BackendDataCentersResource.SUB_COLLECTIONS;
+
 import java.util.List;
 
 import org.ovirt.engine.api.model.Cluster;
@@ -17,12 +19,9 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
-import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.ovirt.engine.api.restapi.resource.BackendDataCentersResource.SUB_COLLECTIONS;
 
 public class BackendDataCenterResource extends AbstractBackendSubResource<DataCenter, StoragePool>
         implements DataCenterResource {
@@ -36,14 +35,14 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
 
     @Override
     public DataCenter get() {
-        return performGet(VdcQueryType.GetStoragePoolById, new StoragePoolQueryParametersBase(guid));
+        return performGet(VdcQueryType.GetStoragePoolById, new IdQueryParameters(guid));
     }
 
     @Override
     public DataCenter update(DataCenter incoming) {
         validateEnums(DataCenter.class, incoming);
         return performUpdate(incoming,
-                             new QueryIdResolver<Guid>(VdcQueryType.GetStoragePoolById, StoragePoolQueryParametersBase.class),
+                             new QueryIdResolver<Guid>(VdcQueryType.GetStoragePoolById, IdQueryParameters.class),
                              VdcActionType.UpdateStoragePool,
                              new UpdateParametersProvider());
     }
@@ -103,10 +102,10 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
         StoragePool pool = null;
         if (cluster.getDataCenter().isSetId()) {
             String id = cluster.getDataCenter().getId();
-            pool = (StoragePool)parent.getEntity(StoragePool.class, VdcQueryType.GetStoragePoolById,
-                    new StoragePoolQueryParametersBase(new Guid(id)), "Datacenter: id=" + id);
+            pool = parent.getEntity(StoragePool.class, VdcQueryType.GetStoragePoolById,
+                    new IdQueryParameters(new Guid(id)), "Datacenter: id=" + id);
         } else {
-            pool = (StoragePool)parent.getEntity(StoragePool.class, SearchType.StoragePool, "Datacenter: name="
+            pool = parent.getEntity(StoragePool.class, SearchType.StoragePool, "Datacenter: name="
                     + cluster.getDataCenter().getName());
             cluster.getDataCenter().setId(pool.getId().toString());
         }
@@ -119,9 +118,9 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
      */
     @SuppressWarnings("unchecked")
     public static  List<StoragePool> getStoragePools(Guid storageDomainId, AbstractBackendResource parent) {
-        return (List<StoragePool>)parent.getEntity(List.class,
+        return parent.getEntity(List.class,
                                                     VdcQueryType.GetStoragePoolsByStorageDomainId,
-                                                    new StorageDomainQueryParametersBase(storageDomainId),
+                                                    new IdQueryParameters(storageDomainId),
                                                     "Datacenters",
                                                     true);
     }

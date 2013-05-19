@@ -12,8 +12,7 @@ import org.ovirt.engine.api.resource.SnapshotsResource;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByVmIdParameters;
-import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -32,7 +31,7 @@ public class BackendSnapshotsResource
     @Override
     public Snapshots list() {
         return mapCollection(getBackendCollection(VdcQueryType.GetAllVmSnapshotsByVmId,
-                new GetAllVmSnapshotsByVmIdParameters(parentId)));
+                new IdQueryParameters(parentId)));
     }
 
     @Override
@@ -87,14 +86,14 @@ public class BackendSnapshotsResource
     }
 
     protected org.ovirt.engine.core.common.businessentities.VM getVmPreview(Snapshot snapshot) {
-        org.ovirt.engine.core.common.businessentities.VM vm = getEntity(org.ovirt.engine.core.common.businessentities.VM.class, VdcQueryType.GetVmConfigurationBySnapshot, new GetVmConfigurationBySnapshotQueryParams(asGuid(snapshot.getId())), null);
+        org.ovirt.engine.core.common.businessentities.VM vm = getEntity(org.ovirt.engine.core.common.businessentities.VM.class, VdcQueryType.GetVmConfigurationBySnapshot, new IdQueryParameters(asGuid(snapshot.getId())), null);
         return vm;
     }
 
     protected org.ovirt.engine.core.common.businessentities.Snapshot getSnapshotById(Guid id) {
         //TODO: move to 'GetSnapshotBySnapshotId' once Backend supplies it.
         for (org.ovirt.engine.core.common.businessentities.Snapshot snapshot : getBackendCollection(VdcQueryType.GetAllVmSnapshotsByVmId,
-                new GetAllVmSnapshotsByVmIdParameters(parentId))) {
+                new IdQueryParameters(parentId))) {
             if (snapshot.getId().equals(id)) {
                 return snapshot;
             }

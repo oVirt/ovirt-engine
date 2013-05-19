@@ -8,7 +8,6 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.api.model.Permits;
 import org.ovirt.engine.api.model.Role;
@@ -17,7 +16,7 @@ import org.ovirt.engine.core.common.action.RolesParameterBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.RoleType;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -49,8 +48,8 @@ public class BackendRolesResourceTest
     @Test
     public void testRemoveNonExistant() throws Exception{
         setUpGetEntityExpectations(VdcQueryType.GetRoleById,
-                MultilevelAdministrationByRoleIdParameters.class,
-                new String[] { "RoleId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { NON_EXISTANT_GUID },
                 null);
         control.replay();
@@ -65,8 +64,8 @@ public class BackendRolesResourceTest
 
     private void setUpGetEntityExpectations() throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetRoleById,
-                MultilevelAdministrationByRoleIdParameters.class,
-                new String[] { "RoleId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 getEntity(0));
     }
@@ -108,8 +107,8 @@ public class BackendRolesResourceTest
                                   true,
                                   GUIDS[0],
                                   VdcQueryType.GetRoleById,
-                                  MultilevelAdministrationByRoleIdParameters.class,
-                                  new String[] { "RoleId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
         Role model = new Role();

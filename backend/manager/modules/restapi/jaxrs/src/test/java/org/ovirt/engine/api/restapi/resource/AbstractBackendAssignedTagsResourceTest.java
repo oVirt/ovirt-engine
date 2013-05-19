@@ -8,14 +8,13 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Tag;
-import org.ovirt.engine.core.common.queries.GetTagByTagIdParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendAssignedTagsResourceTest<C extends AbstractBackendAssignedTagsResource>
@@ -68,14 +67,14 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
     }
 
     private void setUpGetEntityExpectations(Guid entityId, boolean returnNull) throws Exception {
-        String[] names = {"TagId"};
+        String[] names = {"Id"};
         Object[] values = {entityId};
         tags tag = null;
         if (!returnNull) {
             tag = new tags();
             tag.settag_id(entityId);
         }
-        setUpGetEntityExpectations(VdcQueryType.GetTagByTagId, GetTagByTagIdParameters.class, names, values, tag);
+        setUpGetEntityExpectations(VdcQueryType.GetTagByTagId, IdQueryParameters.class, names, values, tag);
     }
 
     @Test
@@ -128,8 +127,8 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
                                   true,
                                   null,
                                   VdcQueryType.GetTagByTagId,
-                                  GetTagByTagIdParameters.class,
-                                  new String[] { "TagId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   setUpTags().get(0));
 
@@ -160,8 +159,8 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
                                   true,
                                   null,
                                   VdcQueryType.GetTagByTagId,
-                                  GetTagByTagIdParameters.class,
-                                  new String[] { "TagId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   setUpTags().get(0));
 
@@ -228,6 +227,7 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
         control.replay();
     }
 
+    @Override
     protected tags getEntity(int index) {
         return new tags(DESCRIPTIONS[index], null, false, GUIDS[index], NAMES[index]);
     }
@@ -240,6 +240,7 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
         return tags;
     }
 
+    @Override
     protected List<Tag> getCollection() {
         return collection.list().getTags();
     }
@@ -252,6 +253,7 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
         return model;
     }
 
+    @Override
     protected void verifyModel(Tag model, int index) {
         super.verifyModel(model, index);
         assertFalse(model.getHref().startsWith(BASE_PATH + "/tags"));

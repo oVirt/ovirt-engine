@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.comparators.DiskImageByDiskAliasComparator;
-import org.ovirt.engine.core.common.queries.GetEntitiesRelatedToQuotaIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
-public class GetVmsRelatedToQuotaIdQuery<P extends GetEntitiesRelatedToQuotaIdParameters>
+public class GetVmsRelatedToQuotaIdQuery<P extends IdQueryParameters>
         extends QueriesCommandBase<P> {
     public GetVmsRelatedToQuotaIdQuery(P parameters) {
         super(parameters);
@@ -15,8 +15,7 @@ public class GetVmsRelatedToQuotaIdQuery<P extends GetEntitiesRelatedToQuotaIdPa
 
     @Override
     protected void executeQueryCommand() {
-        List<VM> vms = getDbFacade().getVmDao().getAllVmsRelatedToQuotaId(
-                getParameters().getQuotaId());
+        List<VM> vms = getDbFacade().getVmDao().getAllVmsRelatedToQuotaId(getParameters().getId());
         for (VM vm : vms) {
             VmHandler.updateDisksFromDb(vm);
             Collections.sort(vm.getDiskList(), new DiskImageByDiskAliasComparator());

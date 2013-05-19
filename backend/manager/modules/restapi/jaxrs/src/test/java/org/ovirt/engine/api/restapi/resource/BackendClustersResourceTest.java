@@ -1,28 +1,26 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Version;
-import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
-import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.easymock.classextension.EasyMock.expect;
 
 public class BackendClustersResourceTest extends
         AbstractBackendCollectionResourceTest<Cluster, VDSGroup, BackendClustersResource> {
@@ -58,8 +56,8 @@ public class BackendClustersResourceTest extends
 
     private void setUpGetEntityExpectations(Guid entityId, Boolean returnNull) throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetVdsGroupById,
-                GetVdsGroupByIdParameters.class,
-                new String[] { "VdsId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { entityId },
                 returnNull ? null : getEntity(0));
     }
@@ -99,8 +97,8 @@ public class BackendClustersResourceTest extends
     public void testAddClusterFallbackVersion() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(VdcQueryType.GetStoragePoolById,
-                                   StoragePoolQueryParametersBase.class,
-                                   new String[] { "StoragePoolId" },
+                                   IdQueryParameters.class,
+                                   new String[] { "Id" },
                                    new Object[] { GUIDS[1] },
                                    setUpStoragePool(-1));
 
@@ -112,8 +110,8 @@ public class BackendClustersResourceTest extends
                                   true,
                                   GUIDS[0],
                                   VdcQueryType.GetVdsGroupById,
-                                  GetVdsGroupByIdParameters.class,
-                                  new String[] { "VdsId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
 
@@ -130,8 +128,8 @@ public class BackendClustersResourceTest extends
     public void testAddClusterSpecificVersion() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(VdcQueryType.GetStoragePoolById,
-                                   StoragePoolQueryParametersBase.class,
-                                   new String[] { "StoragePoolId" },
+                                   IdQueryParameters.class,
+                                   new String[] { "Id" },
                                    new Object[] { GUIDS[1] },
                                    setUpStoragePool(-1));
 
@@ -143,8 +141,8 @@ public class BackendClustersResourceTest extends
                                   true,
                                   GUIDS[0],
                                   VdcQueryType.GetVdsGroupById,
-                                  GetVdsGroupByIdParameters.class,
-                                  new String[] { "VdsId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
 
@@ -173,8 +171,8 @@ public class BackendClustersResourceTest extends
     private void doTestBadAddCluster(boolean canDo, boolean success, String detail)
             throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetStoragePoolById,
-                                   StoragePoolQueryParametersBase.class,
-                                   new String[] { "StoragePoolId" },
+                                   IdQueryParameters.class,
+                                   new String[] { "Id" },
                                    new Object[] { GUIDS[1] },
                                    setUpStoragePool(-1));
 
@@ -210,8 +208,8 @@ public class BackendClustersResourceTest extends
                                   true,
                                   GUIDS[0],
                                   VdcQueryType.GetVdsGroupById,
-                                  GetVdsGroupByIdParameters.class,
-                                  new String[] { "VdsId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
 
@@ -282,6 +280,7 @@ public class BackendClustersResourceTest extends
         return pool;
     }
 
+    @Override
     protected VDSGroup getEntity(int index) {
         return setUpEntityExpectations(control.createMock(VDSGroup.class), index);
     }
@@ -303,6 +302,7 @@ public class BackendClustersResourceTest extends
         return model;
     }
 
+    @Override
     protected List<Cluster> getCollection() {
         return collection.list().getClusters();
     }

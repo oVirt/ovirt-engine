@@ -14,18 +14,16 @@ import javax.ws.rs.core.UriInfo;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.model.TagParent;
-
-import org.ovirt.engine.core.common.queries.GetTagByTagIdParameters;
-import org.ovirt.engine.core.common.queries.GetTagByTagNameParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.queries.GetTagByTagNameParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTagsResourceTest
@@ -79,8 +77,8 @@ public class BackendTagsResourceTest
     @Test
     public void testRemoveNonExistant() throws Exception{
         setUpGetEntityExpectations(VdcQueryType.GetTagByTagId,
-                GetTagByTagIdParameters.class,
-                new String[] { "TagId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { NON_EXISTANT_GUID },
                 null);
         control.replay();
@@ -95,8 +93,8 @@ public class BackendTagsResourceTest
 
     private void setUpGetEntityExcpectations() throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetTagByTagId,
-                GetTagByTagIdParameters.class,
-                new String[] { "TagId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 getEntity(0));
     }
@@ -269,6 +267,7 @@ public class BackendTagsResourceTest
         control.replay();
     }
 
+    @Override
     protected tags getEntity(int index) {
         return new tags(DESCRIPTIONS[index], PARENT_GUID, false, GUIDS[index], NAMES[index]);
     }
@@ -285,6 +284,7 @@ public class BackendTagsResourceTest
         return tags;
     }
 
+    @Override
     protected List<Tag> getCollection() {
         return collection.list().getTags();
     }
@@ -315,6 +315,7 @@ public class BackendTagsResourceTest
         super.verifyCollection(collection);
     }
 
+    @Override
     protected void verifyModel(Tag model, int index) {
         verifyModel(model, index, PARENT_GUID.toString());
     }

@@ -6,7 +6,6 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.User;
@@ -15,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByPermissionIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -83,8 +82,8 @@ public class BackendPermissionResourceTest
 
     protected void setUpGetEntityExpectations(boolean notFound) throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetPermissionById,
-                                   MultilevelAdministrationByPermissionIdParameters.class,
-                                   new String[] { "PermissionId" },
+                                   IdQueryParameters.class,
+                                   new String[] { "Id" },
                                    new Object[] { GUIDS[0] },
                                    notFound ? null : getEntity(0));
     }

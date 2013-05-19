@@ -1,20 +1,20 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.PARENT_ID;
+import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.setUpEntityExpectations;
+import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.verifyModelSpecific;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.setUpEntityExpectations;
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.verifyModelSpecific;
-import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.PARENT_ID;
 
 public class BackendReadOnlyDiskResourceTest
         extends AbstractBackendSubResourceTest<Disk, org.ovirt.engine.core.common.businessentities.Disk, BackendReadOnlyDeviceResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk>> {
@@ -29,9 +29,10 @@ public class BackendReadOnlyDiskResourceTest
     protected static BackendReadOnlyDisksResource getcollection() {
         return new BackendReadOnlyDisksResource(PARENT_ID,
                                                 VdcQueryType.GetVmTemplatesDisks,
-                                                new GetVmTemplatesDisksParameters(PARENT_ID));
+                                                new IdQueryParameters(PARENT_ID));
     }
 
+    @Override
     protected void init() {
         super.init();
         initResource(resource.getCollection());
@@ -41,7 +42,7 @@ public class BackendReadOnlyDiskResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplatesDisks,
-                                     GetVmTemplatesDisksParameters.class,
+                                     IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { PARENT_ID },
                                      new ArrayList<DiskImage>());
@@ -82,7 +83,7 @@ public class BackendReadOnlyDiskResourceTest
     protected void setUpEntityQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetVmTemplatesDisks,
-                                         GetVmTemplatesDisksParameters.class,
+                                         IdQueryParameters.class,
                                          new String[] { "Id" },
                                          new Object[] { PARENT_ID },
                                          getEntityList());

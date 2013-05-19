@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -44,7 +43,7 @@ public class BackendStorageDomainDisksResource extends BackendDisksResource {
 
         } else {
             return mapCollection(getBackendCollection(VdcQueryType.GetAllDisksByStorageDomainId,
-                    new StorageDomainQueryParametersBase(this.storageDomainId)));
+                    new IdQueryParameters(this.storageDomainId)));
         }
     }
 
@@ -102,7 +101,7 @@ public class BackendStorageDomainDisksResource extends BackendDisksResource {
 
     protected Guid getStoragePoolIdForDomain(Guid storageDomainId) {
         // Retrieve the storage pools for the storage domain.
-        StorageDomainQueryParametersBase params = new StorageDomainQueryParametersBase(storageDomainId);
+        IdQueryParameters params = new IdQueryParameters(storageDomainId);
         List<StoragePool> storagePools = getBackendCollection(StoragePool.class, VdcQueryType.GetStoragePoolsByStorageDomainId, params);
 
         if (storagePools != null && !storagePools.isEmpty()) {

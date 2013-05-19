@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForStorageParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
-public class GetAllRelevantQuotasForStorageQuery<P extends GetAllRelevantQuotasForStorageParameters> extends QueriesCommandBase<P> {
+public class GetAllRelevantQuotasForStorageQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetAllRelevantQuotasForStorageQuery(P parameters) {
         super(parameters);
     }
@@ -11,7 +11,7 @@ public class GetAllRelevantQuotasForStorageQuery<P extends GetAllRelevantQuotasF
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(getDbFacade()
                 .getQuotaDao()
-                .getAllRelevantQuotasForStorage(getParameters().getStorageId(),
+                .getAllRelevantQuotasForStorage(getParameters().getId(),
                         getUserID(),
                         getParameters().isFiltered()));
     }

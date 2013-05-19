@@ -9,9 +9,9 @@ import java.util.Random;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
-import org.ovirt.engine.core.common.queries.GetJobByJobIdQueryParameters;
 import org.ovirt.engine.core.common.queries.GetJobsByCorrelationIdQueryParameters;
 import org.ovirt.engine.core.common.queries.GetJobsByOffsetQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -254,8 +254,7 @@ public class TaskListModel extends SearchableListModel {
                         taskListModel.setItems(newTaskList);
                     }
                 };
-                GetJobByJobIdQueryParameters parameters = new GetJobByJobIdQueryParameters();
-                parameters.setJobId(new Guid(guidOrCorrelationId));
+                IdQueryParameters parameters = new IdQueryParameters(new Guid(guidOrCorrelationId));
                 Frontend.RunQuery(VdcQueryType.GetJobByJobId,
                         parameters, _asyncQuery);
             }

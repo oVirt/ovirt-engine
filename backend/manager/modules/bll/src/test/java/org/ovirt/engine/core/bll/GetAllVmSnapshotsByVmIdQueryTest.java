@@ -14,7 +14,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
-import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.SnapshotDao;
@@ -24,8 +24,8 @@ import org.ovirt.engine.core.dao.SnapshotDao;
  * the query itself.
  */
 public class GetAllVmSnapshotsByVmIdQueryTest
-        extends AbstractUserQueryTest<GetAllVmSnapshotsByVmIdParameters,
-        GetAllVmSnapshotsByVmIdQuery<GetAllVmSnapshotsByVmIdParameters>> {
+        extends AbstractUserQueryTest<IdQueryParameters,
+        GetAllVmSnapshotsByVmIdQuery<IdQueryParameters>> {
 
     /** The {@link SnapshotDao} mocked for the test */
     private SnapshotDao snapshotDaoMock;
@@ -60,10 +60,10 @@ public class GetAllVmSnapshotsByVmIdQueryTest
 
     @Test
     public void testExecuteQueryCommand() {
-        GetAllVmSnapshotsByVmIdParameters params = getQueryParameters();
-        when(params.getVmId()).thenReturn(vmId);
+        IdQueryParameters params = getQueryParameters();
+        when(params.getId()).thenReturn(vmId);
 
-        GetAllVmSnapshotsByVmIdQuery<GetAllVmSnapshotsByVmIdParameters> query = getQuery();
+        GetAllVmSnapshotsByVmIdQuery<IdQueryParameters> query = getQuery();
         query.executeQueryCommand();
 
         @SuppressWarnings("unchecked")

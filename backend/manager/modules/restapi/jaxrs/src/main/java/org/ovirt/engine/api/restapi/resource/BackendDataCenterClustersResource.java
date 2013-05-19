@@ -1,7 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import java.util.List;
 import static org.ovirt.engine.api.restapi.resource.BackendDataCenterResource.getStoragePool;
+
+import java.util.List;
 
 import javax.ws.rs.core.Response;
 
@@ -11,10 +12,9 @@ import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
-import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -33,7 +33,7 @@ public class BackendDataCenterClustersResource extends BackendClustersResource {
 
     protected List<VDSGroup> getVdsGroups() {
         return getBackendCollection(VdcQueryType.GetVdsGroupsByStoragePoolId,
-                    new StoragePoolQueryParametersBase(dataCenterId));
+                    new IdQueryParameters(dataCenterId));
     }
 
     @Override
@@ -53,7 +53,7 @@ public class BackendDataCenterClustersResource extends BackendClustersResource {
         VDSGroup entity = map(cluster, map(pool));
         return performCreate(VdcActionType.AddVdsGroup,
                 new VdsGroupOperationParameters(entity),
-                new QueryIdResolver<Guid>(VdcQueryType.GetVdsGroupById, GetVdsGroupByIdParameters.class));
+                new QueryIdResolver<Guid>(VdcQueryType.GetVdsGroupById, IdQueryParameters.class));
     }
 
 }

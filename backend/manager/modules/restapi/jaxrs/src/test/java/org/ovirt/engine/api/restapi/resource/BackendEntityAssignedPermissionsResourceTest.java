@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByPermissionIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendEntityAssignedPermissionsResourceTest
@@ -60,8 +59,8 @@ public class BackendEntityAssignedPermissionsResourceTest
                                   true,
                                   GUIDS[0],
                                   VdcQueryType.GetPermissionById,
-                                  MultilevelAdministrationByPermissionIdParameters.class,
-                                  new String[] { "PermissionId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
         Permission model = new Permission();

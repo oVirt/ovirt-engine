@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -88,7 +88,7 @@ public abstract class AbstractBackendStorageDomainContentResource<C extends Base
     protected VDSGroup lookupClusterById(String id) {
         return getEntity(VDSGroup.class,
                          VdcQueryType.GetVdsGroupById,
-                         new GetVdsGroupByIdParameters(Guid.createGuidFromString(id)),
+                         new IdQueryParameters(Guid.createGuidFromString(id)),
                          id);
     }
 

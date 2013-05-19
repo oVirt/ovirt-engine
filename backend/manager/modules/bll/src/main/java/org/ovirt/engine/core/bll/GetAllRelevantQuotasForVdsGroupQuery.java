@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForVdsGroupParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
-public class GetAllRelevantQuotasForVdsGroupQuery<P extends GetAllRelevantQuotasForVdsGroupParameters> extends QueriesCommandBase<P> {
+public class GetAllRelevantQuotasForVdsGroupQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetAllRelevantQuotasForVdsGroupQuery(P parameters) {
         super(parameters);
     }
@@ -11,7 +11,7 @@ public class GetAllRelevantQuotasForVdsGroupQuery<P extends GetAllRelevantQuotas
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(getDbFacade()
                 .getQuotaDao()
-                .getAllRelevantQuotasForVdsGroup(getParameters().getVdsGroupId(),
+                .getAllRelevantQuotasForVdsGroup(getParameters().getId(),
                         getUserID(),
                         getParameters().isFiltered()));
     }

@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForVdsGroupParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -580,7 +580,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 return;
             }
             Frontend.RunQuery(VdcQueryType.GetAllRelevantQuotasForVdsGroup,
-                    new GetAllRelevantQuotasForVdsGroupParameters(cluster.getId()), new AsyncQuery(getModel(),
+                    new IdQueryParameters(cluster.getId()), new AsyncQuery(getModel(),
                             new INewAsyncCallback() {
 
                                 @Override

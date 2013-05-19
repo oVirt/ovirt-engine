@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -371,7 +371,7 @@ public class UserPortalLoginModel extends LoginModel
         ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
         for (Guid roleId : roleIdList) {
             queryTypeList.add(VdcQueryType.GetRoleActionGroupsByRoleId);
-            queryParamsList.add(new MultilevelAdministrationByRoleIdParameters(roleId));
+            queryParamsList.add(new IdQueryParameters(roleId));
         }
         Frontend.RunMultipleQueries(queryTypeList, queryParamsList, new IFrontendMultipleQueryAsyncCallback() {
 

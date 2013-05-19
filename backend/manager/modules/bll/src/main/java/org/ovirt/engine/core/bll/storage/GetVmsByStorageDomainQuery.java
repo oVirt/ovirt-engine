@@ -9,12 +9,12 @@ import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.comparators.VmsComparerByDiskSize;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetVmsByStorageDomainQuery<P extends StorageDomainQueryParametersBase>
+public class GetVmsByStorageDomainQuery<P extends IdQueryParameters>
         extends QueriesCommandBase<P> {
     public GetVmsByStorageDomainQuery(P parameters) {
         super(parameters);
@@ -22,7 +22,7 @@ public class GetVmsByStorageDomainQuery<P extends StorageDomainQueryParametersBa
 
     @Override
     protected void executeQueryCommand() {
-        Guid domainId = getParameters().getStorageDomainId();
+        Guid domainId = getParameters().getId();
         List<DiskImage> disksOfDomain = null;
 
         List<VM> vms = getAllVMsForStorageDomain(domainId);
@@ -65,7 +65,7 @@ public class GetVmsByStorageDomainQuery<P extends StorageDomainQueryParametersBa
 
     protected VdcQueryReturnValue getAllDisksByStorageDomain(Guid domainId) {
         return getBackend().RunQuery(VdcQueryType.GetAllDisksByStorageDomainId,
-                new StorageDomainQueryParametersBase(domainId));
+                new IdQueryParameters(domainId));
     }
 
     protected List<VM> getAllVMsForStorageDomain(Guid domainId) {

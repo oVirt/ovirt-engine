@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -44,9 +43,10 @@ public class BackendTemplateDiskResourceTest
     protected static BackendTemplateDisksResource getcollection() {
         return new BackendTemplateDisksResource(PARENT_ID,
                                                 VdcQueryType.GetVmTemplatesDisks,
-                                                new GetVmTemplatesDisksParameters(PARENT_ID));
+                                                new IdQueryParameters(PARENT_ID));
     }
 
+    @Override
     protected void init() {
         super.init();
         initResource(resource.getCollection());
@@ -56,7 +56,7 @@ public class BackendTemplateDiskResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplatesDisks,
-                                     GetVmTemplatesDisksParameters.class,
+                                     IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { PARENT_ID },
                                      new ArrayList<DiskImage>());
@@ -97,7 +97,7 @@ public class BackendTemplateDiskResourceTest
     protected void setUpEntityQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetVmTemplatesDisks,
-                    GetVmTemplatesDisksParameters.class,
+                    IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { PARENT_ID },
                     getEntityList());

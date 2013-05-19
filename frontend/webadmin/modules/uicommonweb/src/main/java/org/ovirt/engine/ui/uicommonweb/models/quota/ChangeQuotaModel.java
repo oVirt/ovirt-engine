@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
-import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForStorageParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -37,7 +37,7 @@ public class ChangeQuotaModel extends ListModel {
             }
             storageDomainIdMap.put(diskImage.getId(), new ArrayList<Quota>());
             queryTypeList.add(VdcQueryType.GetAllRelevantQuotasForStorage);
-            queryParamsList.add(new GetAllRelevantQuotasForStorageParameters(diskImage.getStorageIds().get(0)));
+            queryParamsList.add(new IdQueryParameters(diskImage.getStorageIds().get(0)));
         }
 
         Frontend.RunMultipleQueries(queryTypeList, queryParamsList, new IFrontendMultipleQueryAsyncCallback() {
@@ -48,7 +48,7 @@ public class ChangeQuotaModel extends ListModel {
                 for (int i = 0; i < result.getReturnValues().size(); i++) {
                     VdcQueryReturnValue retVal = result.getReturnValues().get(i);
                     Guid storageId =
-                            ((GetAllRelevantQuotasForStorageParameters) result.getParameters().get(i)).getStorageId();
+                            ((IdQueryParameters) result.getParameters().get(i)).getId();
                     storageDomainIdMap.put(storageId, (ArrayList<Quota>) retVal.getReturnValue());
                 }
                 ArrayList<ChangeQuotaItemModel> list = new ArrayList<ChangeQuotaItemModel>();

@@ -7,8 +7,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
-import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
-import org.ovirt.engine.core.common.queries.GetVmdataByPoolIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -57,7 +56,7 @@ public class VmBasicDiskListModel extends SearchableListModel
                 }
             };
 
-            GetAllDisksByVmIdParameters queryParameters = new GetAllDisksByVmIdParameters(vm.getId());
+            IdQueryParameters queryParameters = new IdQueryParameters(vm.getId());
             queryParameters.setRefresh(getIsQueryFirstTime());
             Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, queryParameters,
                     _asyncQuery);
@@ -94,7 +93,7 @@ public class VmBasicDiskListModel extends SearchableListModel
                                 searchableListModel.setItems(diskList);
                             }
                         };
-                        GetAllDisksByVmIdParameters queryParameters = new GetAllDisksByVmIdParameters(vm.getId());
+                        IdQueryParameters queryParameters = new IdQueryParameters(vm.getId());
                         queryParameters.setRefresh(getIsQueryFirstTime());
                         Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, queryParameters,
                                 _asyncQuery1);
@@ -104,7 +103,7 @@ public class VmBasicDiskListModel extends SearchableListModel
 
             VmPool pool = (VmPool) getEntity();
             Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
-                    new GetVmdataByPoolIdParameters(pool.getVmPoolId()),
+                    new IdQueryParameters(pool.getVmPoolId()),
                     _asyncQuery);
         }
     }

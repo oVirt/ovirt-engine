@@ -24,9 +24,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
-import org.ovirt.engine.core.common.queries.GetVmPoolByIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
-import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -46,14 +44,14 @@ public class BackendVmPoolResource
 
     @Override
     public VmPool get() {
-        return performGet(VdcQueryType.GetVmPoolById, new GetVmPoolByIdParameters(guid));
+        return performGet(VdcQueryType.GetVmPoolById, new IdQueryParameters(guid));
     }
 
     @Override
     public VmPool update(VmPool incoming) {
         return performUpdate(incoming,
                              new QueryIdResolver<Guid>(VdcQueryType.GetVmPoolById,
-                                                 GetVmPoolByIdParameters.class),
+                                                 IdQueryParameters.class),
                              VdcActionType.UpdateVmPoolWithVms,
                              new UpdateParametersProvider());
     }
@@ -87,7 +85,7 @@ public class BackendVmPoolResource
             List<DiskImage> images = asCollection(DiskImage.class,
                                                   getEntity(List.class,
                                                             VdcQueryType.GetVmTemplatesDisks,
-                                                            new GetVmTemplatesDisksParameters(templateId),
+                                                            new IdQueryParameters(templateId),
                                                             templateId.toString()));
             if (images != null && images.size() > 0) {
                 storageDomainId = images.get(0).getStorageIds().get(0);

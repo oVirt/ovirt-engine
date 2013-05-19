@@ -3,12 +3,12 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
-import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
+import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-public class GetStorageDomainListByIdQuery<P extends StorageDomainQueryParametersBase> extends QueriesCommandBase<P> {
+public class GetStorageDomainListByIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetStorageDomainListByIdQuery(P parameters) {
         super(parameters);
     }
@@ -16,7 +16,7 @@ public class GetStorageDomainListByIdQuery<P extends StorageDomainQueryParameter
     @Override
     protected void executeQueryCommand() {
         List<StorageDomain> result = DbFacade.getInstance().getStorageDomainDao().getAllForStorageDomain(
-                getParameters().getStorageDomainId());
+                getParameters().getId());
         java.util.ArrayList<StorageDomain> temp = new java.util.ArrayList<StorageDomain>(result);
         for (StorageDomain domain : temp) {
             if (domain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached) {

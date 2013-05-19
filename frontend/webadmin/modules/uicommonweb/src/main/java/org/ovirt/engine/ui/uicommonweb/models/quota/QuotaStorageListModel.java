@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.quota;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.queries.GetQuotaStorageByQuotaIdQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -33,8 +33,7 @@ public class QuotaStorageListModel extends SearchableListModel {
 
             }
         };
-        GetQuotaStorageByQuotaIdQueryParameters params = new GetQuotaStorageByQuotaIdQueryParameters();
-        params.setQuotaId(((Quota) getEntity()).getId());
+        IdQueryParameters params = new IdQueryParameters(((Quota) getEntity()).getId());
         Frontend.RunQuery(VdcQueryType.GetQuotaStorageByQuotaId,
                 params,
                 asyncQuery);

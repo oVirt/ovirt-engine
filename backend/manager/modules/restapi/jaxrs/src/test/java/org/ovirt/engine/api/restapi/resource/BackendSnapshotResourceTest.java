@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,19 +12,18 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.job.JobExecutionStatus;
-import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByVmIdParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
-import static org.easymock.EasyMock.expect;
-import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 
 public class BackendSnapshotResourceTest extends AbstractBackendSubResourceTest<Snapshot, org.ovirt.engine.core.common.businessentities.Snapshot, BackendSnapshotResource> {
 
@@ -182,8 +183,8 @@ public class BackendSnapshotResourceTest extends AbstractBackendSubResourceTest<
 
     protected void setUpGetEntityExpectations(List<org.ovirt.engine.core.common.businessentities.Snapshot> result) throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetAllVmSnapshotsByVmId,
-                                   GetAllVmSnapshotsByVmIdParameters.class,
-                                   new String[] { "VmId" },
+                                   IdQueryParameters.class,
+                                   new String[] { "Id" },
                                    new Object[] { VM_ID },
                                    result);
     }

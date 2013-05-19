@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.GetVmdataByPoolIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -242,7 +242,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
         final PoolListModel poolListModel = this;
 
         Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
-                new GetVmdataByPoolIdParameters(pool.getVmPoolId()),
+                new IdQueryParameters(pool.getVmPoolId()),
 
                 new AsyncQuery(this, new INewAsyncCallback() {
                     @Override

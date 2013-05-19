@@ -11,7 +11,7 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.queries.GetVmTemplatesByImageGuidParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
 
@@ -20,12 +20,12 @@ import org.ovirt.engine.core.dao.VmTemplateDAO;
  * It tests that flow (i.e., that the query delegates properly to the DAO}).
  * The internal workings of the DAO are not tested.
  */
-public class GetVmTemplatesByImageGuidQueryTest extends AbstractQueryTest<GetVmTemplatesByImageGuidParameters, GetVmTemplatesByImageGuidQuery<GetVmTemplatesByImageGuidParameters>> {
+public class GetVmTemplatesByImageGuidQueryTest extends AbstractQueryTest<IdQueryParameters, GetVmTemplatesByImageGuidQuery<IdQueryParameters>> {
     @Test
     public void testExecuteQueryCommand() {
         // Set up the query parameters
         Guid imageGuid = Guid.NewGuid();
-        when(params.getImageGuid()).thenReturn(imageGuid);
+        when(params.getId()).thenReturn(imageGuid);
 
         // Set up the DAOs
         Map<Boolean, VmTemplate> expected =
@@ -38,7 +38,7 @@ public class GetVmTemplatesByImageGuidQueryTest extends AbstractQueryTest<GetVmT
         doNothing().when(getQuery()).updateDisksFromDb(any(VmTemplate.class));
 
         // Run the query
-        GetVmTemplatesByImageGuidQuery<GetVmTemplatesByImageGuidParameters> query = getQuery();
+        GetVmTemplatesByImageGuidQuery<IdQueryParameters> query = getQuery();
         query.executeQueryCommand();
 
         // Assert the result

@@ -8,7 +8,7 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Quota;
-import org.ovirt.engine.core.common.queries.GetQuotaByStoragePoolIdQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -44,6 +44,7 @@ public class BackendQuotasResourceTest
         return quotas;
     }
 
+    @Override
     @Test
     public void testList() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
@@ -55,8 +56,8 @@ public class BackendQuotasResourceTest
 
     private void setGetQuotasExpectations() {
         setUpEntityQueryExpectations(VdcQueryType.GetQuotaByStoragePoolId,
-                GetQuotaByStoragePoolIdQueryParameters.class,
-                new String[] { "StoragePoolId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { PARENT_GUID },
                 getQuotas());
     }

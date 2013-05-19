@@ -18,8 +18,7 @@ import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetAvailableStoragePoolVersionsParameters;
-import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -31,6 +30,7 @@ public class BackendDataCentersResourceTest
         super(new BackendDataCentersResource(), SearchType.StoragePool, "Datacenter : ");
     }
 
+    @Override
     @Test
     public void testList() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
@@ -43,6 +43,7 @@ public class BackendDataCentersResourceTest
         verifyCollection(getCollection());
     }
 
+    @Override
     @Test
     public void testQuery() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(QUERY);
@@ -109,8 +110,8 @@ public class BackendDataCentersResourceTest
 
     private void setUpGetEntityExpectations(Guid entityId, boolean returnNull) throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetStoragePoolById,
-                StoragePoolQueryParametersBase.class,
-                new String[] { "StoragePoolId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { entityId },
                 returnNull ? null : getEntity(0));
     }
@@ -154,8 +155,8 @@ public class BackendDataCentersResourceTest
                                   true,
                                   GUIDS[0],
                                   VdcQueryType.GetStoragePoolById,
-                                  StoragePoolQueryParametersBase.class,
-                                  new String[] { "StoragePoolId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
 
@@ -212,12 +213,13 @@ public class BackendDataCentersResourceTest
 
     protected void setUpVersionExpectations(int index) throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetAvailableStoragePoolVersions,
-                                   GetAvailableStoragePoolVersionsParameters.class,
-                                   new String[] { "StoragePoolId" },
+                                   IdQueryParameters.class,
+                                   new String[] { "Id" },
                                    new Object[] { GUIDS[index] },
                                    getVersions());
     }
 
+    @Override
     protected StoragePool getEntity(int index) {
         return setUpEntityExpectations(control.createMock(StoragePool.class), index);
     }
@@ -239,6 +241,7 @@ public class BackendDataCentersResourceTest
         return model;
     }
 
+    @Override
     protected List<DataCenter> getCollection() {
         return collection.list().getDataCenters();
     }
@@ -252,6 +255,7 @@ public class BackendDataCentersResourceTest
         return versions;
     }
 
+    @Override
     protected void verifyModel(DataCenter model, int index) {
         super.verifyModel(model, index);
         verifyModelSpecific(model, index);
@@ -274,8 +278,8 @@ public class BackendDataCentersResourceTest
 
     protected void setUpVersionExpectations() throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetAvailableStoragePoolVersions,
-                                   GetAvailableStoragePoolVersionsParameters.class,
-                                   new String[] { "StoragePoolId" },
+                                   IdQueryParameters.class,
+                                   new String[] { "Id" },
                                    new Object[] { GUIDS[0] },
                                    getVersions());
     }

@@ -15,12 +15,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDAO;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQueryTest<GetAllDisksByVmIdParameters, GetNextAvailableDiskAliasNameByVMIdQuery<GetAllDisksByVmIdParameters>> {
+public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetNextAvailableDiskAliasNameByVMIdQuery<IdQueryParameters>> {
     @Mock
     private VmDAO vmDAO;
 
@@ -77,7 +77,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
      */
     private void mockDAOForQuery() throws Exception {
         when(getDbFacadeMockInstance().getVmDao()).thenReturn(vmDAO);
-        when(getQueryParameters().getVmId()).thenReturn(vmId);
+        when(getQueryParameters().getId()).thenReturn(vmId);
     }
 
     private VM mockVm() {

@@ -10,11 +10,11 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
-import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetAllDisksByVmIdQuery<P extends GetAllDisksByVmIdParameters> extends QueriesCommandBase<P> {
+public class GetAllDisksByVmIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetAllDisksByVmIdQuery(P parameters) {
         super(parameters);
     }
@@ -23,7 +23,7 @@ public class GetAllDisksByVmIdQuery<P extends GetAllDisksByVmIdParameters> exten
     protected void executeQueryCommand() {
         List<Disk> allDisks =
                 getDbFacade().getDiskDao().getAllForVm
-                        (getParameters().getVmId(), getUserID(), getParameters().isFiltered());
+                        (getParameters().getId(), getUserID(), getParameters().isFiltered());
         Set<Guid> pluggedDiskIds = getPluggedDiskIds();
         List<Disk> disks = new ArrayList<Disk>(allDisks);
         for (Disk disk : allDisks) {
@@ -43,7 +43,7 @@ public class GetAllDisksByVmIdQuery<P extends GetAllDisksByVmIdParameters> exten
     private Set<Guid> getPluggedDiskIds() {
         List<VmDevice> disksVmDevices =
                 getDbFacade().getVmDeviceDao()
-                        .getVmDeviceByVmIdTypeAndDevice(getParameters().getVmId(),
+                        .getVmDeviceByVmIdTypeAndDevice(getParameters().getId(),
                                 VmDeviceGeneralType.DISK,
                                 VmDeviceType.DISK.getName(),
                                 getUserID(),

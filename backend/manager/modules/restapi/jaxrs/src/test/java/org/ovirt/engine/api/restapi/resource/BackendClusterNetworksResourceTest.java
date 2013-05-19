@@ -12,8 +12,6 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
-import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -191,6 +189,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         }
     }
 
+    @Override
     protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetAllNetworksByClusterId,
@@ -207,8 +206,8 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         expect(group.getId()).andReturn(id).anyTimes();
 
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                                     GetVdsGroupByVdsGroupIdParameters.class,
-                                     new String[] { "VdsGroupId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { id },
                                      group);
         return group;
@@ -230,19 +229,21 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
             VDSGroup cluster = new VDSGroup();
             cluster.setStoragePoolId(GUIDS[2]);
             setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupById,
-                    GetVdsGroupByIdParameters.class,
-                    new String[] { "VdsId" },
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
                     new Object[] { CLUSTER_ID },
                     cluster,
                     null);
         }
     }
 
+    @Override
     protected void setUpQueryExpectations(String query) throws Exception {
         setUpEntityQueryExpectations(1);
         control.replay();
     }
 
+    @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         setUpEntityQueryExpectations(1, failure);
         control.replay();

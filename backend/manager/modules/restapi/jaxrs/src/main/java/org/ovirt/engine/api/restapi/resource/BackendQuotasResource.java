@@ -9,7 +9,7 @@ import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.Quotas;
 import org.ovirt.engine.api.resource.QuotaResource;
 import org.ovirt.engine.api.resource.QuotasResource;
-import org.ovirt.engine.core.common.queries.GetQuotaByStoragePoolIdQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -24,8 +24,7 @@ public class BackendQuotasResource extends AbstractBackendCollectionResource<Quo
 
     @Override
     public Quotas list() {
-        GetQuotaByStoragePoolIdQueryParameters params = new GetQuotaByStoragePoolIdQueryParameters();
-        params.setStoragePoolId(dataCenterId);
+        IdQueryParameters params = new IdQueryParameters(dataCenterId);
         return mapCollection(getBackendCollection(VdcQueryType.GetQuotaByStoragePoolId, params));
     }
 

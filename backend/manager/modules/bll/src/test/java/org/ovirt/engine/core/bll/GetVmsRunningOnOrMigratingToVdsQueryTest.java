@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.GetVmsRunningOnOrMigratingToVdsParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDAO;
 
@@ -18,8 +18,8 @@ import org.ovirt.engine.core.dao.VmDAO;
  * flow of the query itself.
  */
 public class GetVmsRunningOnOrMigratingToVdsQueryTest
-        extends AbstractQueryTest<GetVmsRunningOnOrMigratingToVdsParameters,
-                GetVmsRunningOnOrMigratingToVdsQuery<GetVmsRunningOnOrMigratingToVdsParameters>> {
+        extends AbstractQueryTest<IdQueryParameters,
+        GetVmsRunningOnOrMigratingToVdsQuery<IdQueryParameters>> {
 
     @Test
     public void testQueryExecution() {

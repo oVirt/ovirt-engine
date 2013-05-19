@@ -5,7 +5,7 @@ import java.util.Collections;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
-import org.ovirt.engine.core.common.queries.GetVmdataByPoolIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -85,7 +85,7 @@ public class VmAppListModel extends SearchableListModel
                     }
                 };
                 Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
-                        new GetVmdataByPoolIdParameters(pool.getVmPoolId()),
+                        new IdQueryParameters(pool.getVmPoolId()),
                         _asyncQuery);
             }
         }

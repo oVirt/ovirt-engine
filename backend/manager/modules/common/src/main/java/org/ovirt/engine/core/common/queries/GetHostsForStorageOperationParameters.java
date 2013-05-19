@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.queries;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetHostsForStorageOperationParameters extends StoragePoolQueryParametersBase {
+public class GetHostsForStorageOperationParameters extends IdQueryParameters {
 
     private boolean localFsOnly;
 

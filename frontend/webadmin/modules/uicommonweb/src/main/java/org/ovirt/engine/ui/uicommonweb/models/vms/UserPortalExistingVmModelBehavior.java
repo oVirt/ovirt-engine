@@ -6,12 +6,12 @@ import java.util.Collections;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.queries.GetHostsByClusterIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -149,7 +149,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
     protected void getHostListByCluster(VDSGroup cluster, AsyncQuery query) {
         Frontend.RunQuery(
                 VdcQueryType.GetHostsByClusterId,
-                new GetHostsByClusterIdParameters(cluster.getId()),
+                new IdQueryParameters(cluster.getId()),
                 query
                 );
     }

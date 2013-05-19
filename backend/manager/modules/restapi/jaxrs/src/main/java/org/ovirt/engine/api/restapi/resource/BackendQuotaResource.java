@@ -4,7 +4,7 @@ import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.resource.QuotaResource;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.queries.GetQuotaByQuotaIdQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendQuotaResource extends AbstractBackendSubResource<Quota, org.ovirt.engine.core.common.businessentities.Quota> implements QuotaResource {
@@ -22,8 +22,7 @@ public class BackendQuotaResource extends AbstractBackendSubResource<Quota, org.
 
     @Override
     public Quota get() {
-        GetQuotaByQuotaIdQueryParameters params = new GetQuotaByQuotaIdQueryParameters();
-        params.setQuotaId(guid);
+        IdQueryParameters params = new IdQueryParameters(guid);
         Quota quota = performGet(VdcQueryType.GetQuotaByQuotaId, params);
         return quota;
     }

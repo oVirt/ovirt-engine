@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByPermissionIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -107,7 +106,7 @@ public class BackendAssignedPermissionsResource
         return performCreate(VdcActionType.AddPermission,
                                getPrincipal(entity, permission),
                                new QueryIdResolver<Guid>(VdcQueryType.GetPermissionById,
-                                                   MultilevelAdministrationByPermissionIdParameters.class));
+                                                   IdQueryParameters.class));
     }
 
     @Override
@@ -262,7 +261,7 @@ public class BackendAssignedPermissionsResource
     protected permissions getPermissions(String id) {
         return getEntity(permissions.class,
                          VdcQueryType.GetPermissionById,
-                         new MultilevelAdministrationByPermissionIdParameters(new Guid(id)),
+                         new IdQueryParameters(new Guid(id)),
                          id);
     }
 

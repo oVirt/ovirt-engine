@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -134,7 +134,7 @@ public class TemplateDiskListModel extends SearchableListModel
         }
 
         super.syncSearch(VdcQueryType.GetVmTemplatesDisks,
-                new GetVmTemplatesDisksParameters(getEntityStronglyTyped().getId()));
+                new IdQueryParameters(getEntityStronglyTyped().getId()));
     }
 
     @Override

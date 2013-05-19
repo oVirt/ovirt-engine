@@ -19,9 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
-import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForStorageParameters;
-import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForVdsGroupParameters;
-import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -120,7 +118,7 @@ public class ImportVmModel extends ListWithDetailsModel {
         @Override
         public void eventRaised(Event ev, Object sender, EventArgs args) {
             Frontend.RunQuery(VdcQueryType.GetAllRelevantQuotasForVdsGroup,
-                    new GetAllRelevantQuotasForVdsGroupParameters(((VDSGroup) getCluster().getSelectedItem()).getId()),
+                    new IdQueryParameters(((VDSGroup) getCluster().getSelectedItem()).getId()),
                     new AsyncQuery(ImportVmModel.this,
                             new INewAsyncCallback() {
 
@@ -230,7 +228,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                 new ArrayList<VdcQueryParametersBase>();
         for (StorageDomain storage : filteredStorageDomains) {
             queryTypeList.add(VdcQueryType.GetAllRelevantQuotasForStorage);
-            queryParamsList.add(new GetAllRelevantQuotasForStorageParameters(storage.getId()));
+            queryParamsList.add(new IdQueryParameters(storage.getId()));
         }
         storageQuotaMap = new HashMap<Guid, ArrayList<Quota>>();
         Frontend.RunMultipleQueries(queryTypeList,
@@ -332,7 +330,7 @@ public class ImportVmModel extends ListWithDetailsModel {
             final ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<VdcQueryParametersBase>();
             for (Guid templateId : templateDiskMap.keySet()) {
                 queryTypeList.add(VdcQueryType.GetVmTemplatesDisks);
-                queryParamsList.add(new GetVmTemplatesDisksParameters(templateId));
+                queryParamsList.add(new IdQueryParameters(templateId));
             }
             Frontend.RunMultipleQueries(queryTypeList, queryParamsList, new IFrontendMultipleQueryAsyncCallback() {
                 @Override

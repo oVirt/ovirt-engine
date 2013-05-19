@@ -15,9 +15,8 @@ import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -713,8 +712,7 @@ public class VmGeneralModel extends EntityModel
                     };
 
                     DiskImage firstDisk = (DiskImage) disksIterator.next();
-                    StorageDomainQueryParametersBase params =
-                            new StorageDomainQueryParametersBase(firstDisk.getStorageIds().get(0));
+                    IdQueryParameters params = new IdQueryParameters(firstDisk.getStorageIds().get(0));
                     params.setRefresh(false);
                     Frontend.RunQuery(VdcQueryType.GetStorageDomainById, params, _asyncQuery1);
                 }
@@ -729,7 +727,7 @@ public class VmGeneralModel extends EntityModel
 
         VM vm = (VM) getEntity();
 
-        GetAllDisksByVmIdParameters params = new GetAllDisksByVmIdParameters(vm.getId());
+        IdQueryParameters params = new IdQueryParameters(vm.getId());
         params.setRefresh(false);
         Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, params, _asyncQuery);
     }

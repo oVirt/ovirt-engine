@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -614,7 +613,7 @@ public abstract class RunOnceModel extends Model
                 new INewAsyncCallback() {
                  @Override
                  public void onSuccess(Object model, Object returnValue) {
-                     VM selectedVM = (VM) vm;
+                     VM selectedVM = vm;
                      List<String> images = (List<String>) returnValue;
 
                      if (AsyncDataProvider.isWindowsOsType(selectedVM.getVmOs()))
@@ -643,7 +642,7 @@ public abstract class RunOnceModel extends Model
     }
 
     private void setIsBootFromHardDiskAllowedForVm() {
-        Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(vm.getId()),
+        Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, new IdQueryParameters(vm.getId()),
                 new AsyncQuery(this, new INewAsyncCallback() {
 
                  @Override

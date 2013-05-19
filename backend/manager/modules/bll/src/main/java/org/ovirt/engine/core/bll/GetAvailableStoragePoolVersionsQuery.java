@@ -2,15 +2,15 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.queries.GetAvailableStoragePoolVersionsParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-public class GetAvailableStoragePoolVersionsQuery<P extends GetAvailableStoragePoolVersionsParameters>
+public class GetAvailableStoragePoolVersionsQuery<P extends IdQueryParameters>
         extends QueriesCommandBase<P> {
     public GetAvailableStoragePoolVersionsQuery(P parameters) {
         super(parameters);
@@ -18,10 +18,10 @@ public class GetAvailableStoragePoolVersionsQuery<P extends GetAvailableStorageP
 
     @Override
     protected void executeQueryCommand() {
-        if (getParameters().getStoragePoolId() != null) {
+        if (getParameters().getId() != null) {
             java.util.ArrayList<Version> result = new java.util.ArrayList<Version>();
             StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().get(
-                    getParameters().getStoragePoolId().getValue());
+                    getParameters().getId().getValue());
             if (storagePool != null) {
                 List<VDSGroup> clusters = DbFacade.getInstance().getVdsGroupDao().getAllForStoragePool(
                         storagePool.getId(), getUserID(), getParameters().isFiltered());

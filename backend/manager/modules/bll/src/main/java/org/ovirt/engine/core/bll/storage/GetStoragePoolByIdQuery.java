@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll.storage;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
-import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
-public class GetStoragePoolByIdQuery<P extends StoragePoolQueryParametersBase> extends QueriesCommandBase<P> {
+public class GetStoragePoolByIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetStoragePoolByIdQuery(P parameters) {
         super(parameters);
     }
@@ -13,6 +13,6 @@ public class GetStoragePoolByIdQuery<P extends StoragePoolQueryParametersBase> e
         getQueryReturnValue()
                 .setReturnValue(getDbFacade()
                         .getStoragePoolDao()
-                        .get(getParameters().getStoragePoolId(), getUserID(), getParameters().isFiltered()));
+                        .get(getParameters().getId(), getUserID(), getParameters().isFiltered()));
     }
 }

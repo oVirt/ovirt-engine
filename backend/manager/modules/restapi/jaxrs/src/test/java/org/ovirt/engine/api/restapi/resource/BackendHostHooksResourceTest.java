@@ -5,7 +5,7 @@ import java.util.HashMap;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Hook;
 import org.ovirt.engine.api.model.Hooks;
-import org.ovirt.engine.core.common.queries.GetVdsHooksByIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendHostHooksResourceTest extends AbstractBackendResourceTest<Hook, HashMap<String, HashMap<String, HashMap<String, String>>>> {
@@ -54,8 +54,8 @@ public class BackendHostHooksResourceTest extends AbstractBackendResourceTest<Ho
     public void testList() throws Exception {
         resource.setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(VdcQueryType.GetVdsHooksById,
-                GetVdsHooksByIdParameters.class,
-                new String[] { "VdsId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { GUIDS[0] }, getEntity(0));
         control.replay();
         Hooks hooks = resource.list();

@@ -8,7 +8,6 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -17,7 +16,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByPermissionIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -135,8 +134,8 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
                                   true,
                                   GUIDS[0],
                                   VdcQueryType.GetPermissionById,
-                                  MultilevelAdministrationByPermissionIdParameters.class,
-                                  new String[] { "PermissionId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
         Permission model = getModel();
@@ -201,8 +200,8 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
     protected void setUpGetEntityExpectations(int times, Guid entityId, permissions permission) throws Exception {
         while (times-->0) {
             setUpGetEntityExpectations(VdcQueryType.GetPermissionById,
-                                       MultilevelAdministrationByPermissionIdParameters.class,
-                                       new String[] { "PermissionId" },
+                                       IdQueryParameters.class,
+                                       new String[] { "Id" },
                                        new Object[] { entityId },
                                        permission);
         }

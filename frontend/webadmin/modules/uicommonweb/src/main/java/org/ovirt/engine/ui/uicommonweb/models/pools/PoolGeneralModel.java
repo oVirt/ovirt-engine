@@ -13,10 +13,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
-import org.ovirt.engine.core.common.queries.GetVmdataByPoolIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -542,7 +540,7 @@ public class PoolGeneralModel extends EntityModel
             }
         };
         Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
-                new GetVmdataByPoolIdParameters(pool.getVmPoolId()),
+                new IdQueryParameters(pool.getVmPoolId()),
                 _asyncQuery);
     }
 
@@ -578,7 +576,7 @@ public class PoolGeneralModel extends EntityModel
 
                     DiskImage firstDisk = (DiskImage) disksIterator.next();
                     Frontend.RunQuery(VdcQueryType.GetStorageDomainById,
-                            new StorageDomainQueryParametersBase(firstDisk.getStorageIds().get(0)),
+                            new IdQueryParameters(firstDisk.getStorageIds().get(0)),
                             _asyncQuery1);
                 }
                 else
@@ -591,7 +589,7 @@ public class PoolGeneralModel extends EntityModel
         };
 
         Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId,
-                new GetAllDisksByVmIdParameters(getvm().getId()),
+                new IdQueryParameters(getvm().getId()),
                 _asyncQuery);
     }
 

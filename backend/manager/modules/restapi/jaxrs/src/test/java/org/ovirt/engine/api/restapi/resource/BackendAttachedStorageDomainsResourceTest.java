@@ -1,35 +1,33 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.junit.Ignore;
-import org.junit.Test;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.junit.Ignore;
+import org.junit.Test;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.StorageType;
-
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainAndPoolQueryParameters;
-import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
 
 public class BackendAttachedStorageDomainsResourceTest
     extends AbstractBackendCollectionResourceTest<StorageDomain,
@@ -40,6 +38,7 @@ public class BackendAttachedStorageDomainsResourceTest
         super(new BackendAttachedStorageDomainsResource(GUIDS[NAMES.length-1].toString()), null, null);
     }
 
+    @Override
     @Test
     @Ignore
     public void testQuery() throws Exception {
@@ -259,12 +258,13 @@ public class BackendAttachedStorageDomainsResourceTest
         }
     }
 
+    @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         assert (query.equals(""));
 
         setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainsByStoragePoolId,
-                                     StoragePoolQueryParametersBase.class,
-                                     new String[] { "StoragePoolId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { GUIDS[NAMES.length-1] },
                                      setUpStorageDomains(),
                                      failure);
@@ -280,6 +280,7 @@ public class BackendAttachedStorageDomainsResourceTest
         return entities;
     }
 
+    @Override
     protected org.ovirt.engine.core.common.businessentities.StorageDomain getEntity(int index) {
         org.ovirt.engine.core.common.businessentities.StorageDomain entity = control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class);
         return setUpEntityExpectations(entity, index, StorageType.NFS);
@@ -299,6 +300,7 @@ public class BackendAttachedStorageDomainsResourceTest
         return entity;
     }
 
+    @Override
     protected void verifyModel(StorageDomain model, int index) {
         verifyStorageDomain(model, index);
         verifyLinks(model);
@@ -312,6 +314,7 @@ public class BackendAttachedStorageDomainsResourceTest
         assertEquals(true, model.isMaster());
     }
 
+    @Override
     protected List<StorageDomain> getCollection() {
         return collection.list().getStorageDomains();
     }

@@ -4,11 +4,11 @@ package org.ovirt.engine.api.restapi.resource;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.resource.TagResource;
 import org.ovirt.engine.core.common.action.MoveTagParameters;
+import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.businessentities.tags;
-import org.ovirt.engine.core.common.queries.GetTagByTagIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -29,7 +29,7 @@ public class BackendTagResource
 
     @Override
     public Tag get() {
-        return performGet(VdcQueryType.GetTagByTagId, new GetTagByTagIdParameters(guid));
+        return performGet(VdcQueryType.GetTagByTagId, new IdQueryParameters(guid));
     }
 
     @Override
@@ -48,7 +48,7 @@ public class BackendTagResource
         }
 
         return performUpdate(incoming,
-                             new QueryIdResolver<Guid>(VdcQueryType.GetTagByTagId, GetTagByTagIdParameters.class),
+                             new QueryIdResolver<Guid>(VdcQueryType.GetTagByTagId, IdQueryParameters.class),
                              VdcActionType.UpdateTag,
                              new UpdateParametersProvider());
     }

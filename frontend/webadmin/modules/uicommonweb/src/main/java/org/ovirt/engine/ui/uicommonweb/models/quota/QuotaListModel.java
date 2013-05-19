@@ -11,11 +11,11 @@ import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.GetQuotaByQuotaIdQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -537,8 +537,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
             }
         };
 
-        GetQuotaByQuotaIdQueryParameters quotaParameters = new GetQuotaByQuotaIdQueryParameters();
-        quotaParameters.setQuotaId(outer_quota.getId());
+        IdQueryParameters quotaParameters = new IdQueryParameters(outer_quota.getId());
         Frontend.RunQuery(VdcQueryType.GetQuotaByQuotaId,
                 quotaParameters,
                 asyncQuery);

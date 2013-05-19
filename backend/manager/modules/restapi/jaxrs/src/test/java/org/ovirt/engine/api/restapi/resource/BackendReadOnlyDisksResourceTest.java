@@ -7,16 +7,12 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.resource.DeviceResource;
 import org.ovirt.engine.api.resource.ReadOnlyDeviceResource;
-
-
-import org.ovirt.engine.core.common.queries.GetStorageDomainsByVmTemplateIdQueryParameters;
-import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendReadOnlyDisksResourceTest
@@ -25,9 +21,9 @@ public class BackendReadOnlyDisksResourceTest
     public BackendReadOnlyDisksResourceTest() {
         super(new BackendReadOnlyDisksResource(PARENT_ID,
                                                VdcQueryType.GetVmTemplatesDisks,
-                                               new GetVmTemplatesDisksParameters(PARENT_ID)),
+                                               new IdQueryParameters(PARENT_ID)),
               VdcQueryType.GetVmTemplatesDisks,
-              new GetVmTemplatesDisksParameters(PARENT_ID),
+                new IdQueryParameters(PARENT_ID),
               "Id");
     }
 
@@ -69,6 +65,7 @@ public class BackendReadOnlyDisksResourceTest
         verifyCollection(disks);
     }
 
+    @Override
     @Test
     public void testListFailure() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
@@ -86,6 +83,7 @@ public class BackendReadOnlyDisksResourceTest
         }
     }
 
+    @Override
     @Test
     public void testListCrash() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
@@ -103,6 +101,7 @@ public class BackendReadOnlyDisksResourceTest
         }
     }
 
+    @Override
     @Test
     public void testListCrashClientLocale() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
@@ -126,7 +125,7 @@ public class BackendReadOnlyDisksResourceTest
     private int setUpGetStorageDomainsQueryExpectations(int times) {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainsByVmTemplateId,
-                    GetStorageDomainsByVmTemplateIdQueryParameters.class,
+                    IdQueryParameters.class,
                                          new String[] { "Id" },
                                          new Object[] { PARENT_ID },
                                          getStorageDomains(),

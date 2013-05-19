@@ -10,20 +10,20 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.queries.GetStorageDomainsByImageIdParameters;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 
 /** A test case for the {@link GetStorageDomainsByImageIdQuery} class. */
-public class GetStorageDomainsByImageIdQueryTest extends AbstractQueryTest<GetStorageDomainsByImageIdParameters, GetStorageDomainsByImageIdQuery<GetStorageDomainsByImageIdParameters>> {
+public class GetStorageDomainsByImageIdQueryTest extends AbstractQueryTest<IdQueryParameters, GetStorageDomainsByImageIdQuery<IdQueryParameters>> {
 
     @Test
     public void testExecuteQueryCommandWithEmptyList() {
         // Set up the query parameters
         Guid imageId = Guid.NewGuid();
-        when(params.getImageId()).thenReturn(imageId);
+        when(params.getId()).thenReturn(imageId);
 
         // Set up the DAOs
         List<StorageDomain> expected = Collections.singletonList(new StorageDomain());
@@ -32,7 +32,7 @@ public class GetStorageDomainsByImageIdQueryTest extends AbstractQueryTest<GetSt
         when(storageDomainDAOMock.getAllStorageDomainsByImageId(imageId)).thenReturn(expected);
 
         // Run the query
-        GetStorageDomainsByImageIdQuery<GetStorageDomainsByImageIdParameters> query = getQuery();
+        GetStorageDomainsByImageIdQuery<IdQueryParameters> query = getQuery();
         query.executeQueryCommand();
 
         // Assert the result
@@ -43,7 +43,7 @@ public class GetStorageDomainsByImageIdQueryTest extends AbstractQueryTest<GetSt
     public void testExecuteQueryCommandWithMultipleStorageList() {
         // Set up the query parameters
         Guid imageId = Guid.NewGuid();
-        when(params.getImageId()).thenReturn(imageId);
+        when(params.getId()).thenReturn(imageId);
 
         StorageDomain firstStorageDomain =
                 new StorageDomain(Guid.NewGuid(),
@@ -79,7 +79,7 @@ public class GetStorageDomainsByImageIdQueryTest extends AbstractQueryTest<GetSt
         when(storageDomainDAOMock.getAllStorageDomainsByImageId(imageId)).thenReturn(expected);
 
         // Run the query
-        GetStorageDomainsByImageIdQuery<GetStorageDomainsByImageIdParameters> query = getQuery();
+        GetStorageDomainsByImageIdQuery<IdQueryParameters> query = getQuery();
         query.executeQueryCommand();
 
         // Assert the result

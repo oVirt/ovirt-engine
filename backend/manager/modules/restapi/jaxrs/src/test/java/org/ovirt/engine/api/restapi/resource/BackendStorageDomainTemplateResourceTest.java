@@ -1,5 +1,10 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainTemplatesResourceTest.setUpStorageDomain;
+import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainTemplatesResourceTest.setUpStoragePool;
+import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.setUpEntityExpectations;
+import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.verifyModelSpecific;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +14,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CreationStatus;
@@ -20,7 +24,6 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
-
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -28,14 +31,9 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainTemplatesResourceTest.setUpStorageDomain;
-import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainTemplatesResourceTest.setUpStoragePool;
-import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.setUpEntityExpectations;
-import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.verifyModelSpecific;
 
 public class BackendStorageDomainTemplateResourceTest
     extends AbstractBackendSubResourceTest<Template,
@@ -53,11 +51,13 @@ public class BackendStorageDomainTemplateResourceTest
                                                        TEMPLATE_ID.toString()));
     }
 
+    @Override
     protected void init() {
         super.init();
         initResource(resource.getParent());
     }
 
+    @Override
     protected void setUriInfo(UriInfo uriInfo) {
         super.setUriInfo(uriInfo);
         resource.getParent().setUriInfo(uriInfo);
@@ -170,8 +170,8 @@ public class BackendStorageDomainTemplateResourceTest
 
     private void setUpGetDataCenterByStorageDomainExpectations(Guid id) {
         setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolsByStorageDomainId,
-                StorageDomainQueryParametersBase.class,
-                new String[] { "StorageDomainId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { id },
                 setUpStoragePool());
     }
@@ -248,8 +248,8 @@ public class BackendStorageDomainTemplateResourceTest
 
     protected void setUpGetStorageDomainExpectations(StorageDomainType domainType) throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
-                                     StorageDomainQueryParametersBase.class,
-                                     new String[] { "StorageDomainId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { STORAGE_DOMAIN_ID },
                                      setUpStorageDomain(domainType));
     }
@@ -275,8 +275,8 @@ public class BackendStorageDomainTemplateResourceTest
             break;
         case ImportExport:
             setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolsByStorageDomainId,
-                                         StorageDomainQueryParametersBase.class,
-                                         new String[] { "StorageDomainId" },
+                                         IdQueryParameters.class,
+                                         new String[] { "Id" },
                                          new Object[] { getStoragePoolsByStorageDomainId },
                                          setUpStoragePool());
             setUpEntityQueryExpectations(VdcQueryType.GetTemplatesFromExportDomain,
@@ -327,6 +327,7 @@ public class BackendStorageDomainTemplateResourceTest
         return ret;
     }
 
+    @Override
     protected void verifyModel(Template model, int index) {
         super.verifyModel(model, index);
         verifyModelSpecific(model, index);
