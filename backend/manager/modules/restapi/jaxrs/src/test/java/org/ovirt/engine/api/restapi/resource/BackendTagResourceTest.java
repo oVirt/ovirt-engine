@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.action.MoveTagParameters;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.tags;
-import org.ovirt.engine.core.common.queries.GetTagByTagNameParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -106,8 +106,8 @@ public class BackendTagResourceTest
     @Test
     public void testMoveNamedParent() throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetTagByTagName,
-                                     GetTagByTagNameParameters.class,
-                                     new String[] { "TagName" },
+                                     NameQueryParameters.class,
+                                     new String[] { "Name" },
                                      new Object[] { NAMES[PARENT_IDX] },
                 getEntity(NEW_PARENT_IDX));
 

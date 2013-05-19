@@ -59,8 +59,8 @@ import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetVdsByNameParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -733,7 +733,7 @@ public class BackendVmResourceTest
     protected void setUpGetHostIdExpectations(int idx) throws Exception {
         VDS host = BackendHostsResourceTest.setUpEntityExpectations(control.createMock(VDS.class), idx);
         setUpGetEntityExpectations(VdcQueryType.GetVdsByName,
-                                   GetVdsByNameParameters.class,
+                                   NameQueryParameters.class,
                                    new String[] { "Name" },
                                    new Object[] { NAMES[idx] },
                                    host);

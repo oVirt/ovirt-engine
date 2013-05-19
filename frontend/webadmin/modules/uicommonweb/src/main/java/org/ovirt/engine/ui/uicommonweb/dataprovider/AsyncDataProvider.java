@@ -82,11 +82,9 @@ import org.ovirt.engine.core.common.queries.GetTagsByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
-import org.ovirt.engine.core.common.queries.IsVmPoolWithSameNameExistsParameters;
-import org.ovirt.engine.core.common.queries.IsVmTemlateWithSameNameExistParameters;
-import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
 import org.ovirt.engine.core.common.queries.ProviderQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.ServerParameters;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
@@ -1291,7 +1289,7 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunQuery(VdcQueryType.IsVmTemlateWithSameNameExist,
-                new IsVmTemlateWithSameNameExistParameters(name),
+                new NameQueryParameters(name),
                 aQuery);
     }
 
@@ -1303,7 +1301,7 @@ public final class AsyncDataProvider {
                 return source != null ? !((Boolean) source).booleanValue() : false;
             }
         };
-        Frontend.RunQuery(VdcQueryType.IsVmWithSameNameExist, new IsVmWithSameNameExistParameters(name), aQuery);
+        Frontend.RunQuery(VdcQueryType.IsVmWithSameNameExist, new NameQueryParameters(name), aQuery);
     }
 
     public static void getDataCentersWithPermittedActionOnClusters(AsyncQuery aQuery, ActionGroup actionGroup,
@@ -2049,7 +2047,7 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunQuery(VdcQueryType.IsVmPoolWithSameNameExists,
-                new IsVmPoolWithSameNameExistsParameters(name),
+                new NameQueryParameters(name),
                 aQuery);
     }
 

@@ -20,8 +20,8 @@ import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.tags;
-import org.ovirt.engine.core.common.queries.GetTagByTagNameParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -136,8 +136,8 @@ public class BackendTagsResourceTest
                                   true,
                                   null,
                                   VdcQueryType.GetTagByTagName,
-                                  GetTagByTagNameParameters.class,
-                                  new String[] { "TagName" },
+                                  NameQueryParameters.class,
+                                  new String[] { "Name" },
                                   new Object[] { NAMES[0] },
                                   getEntity(0));
 
@@ -152,8 +152,8 @@ public class BackendTagsResourceTest
         setUriInfo(setUpBasicUriExpectations());
 
         setUpEntityQueryExpectations(VdcQueryType.GetTagByTagName,
-                                     GetTagByTagNameParameters.class,
-                                     new String[] { "TagName" },
+                                     NameQueryParameters.class,
+                                     new String[] { "Name" },
                                      new Object[] { NAMES[PARENT_IDX] },
                                      getEntity(PARENT_IDX));
 
@@ -165,8 +165,8 @@ public class BackendTagsResourceTest
                                   true,
                                   null,
                                   VdcQueryType.GetTagByTagName,
-                                  GetTagByTagNameParameters.class,
-                                  new String[] { "TagName" },
+                                  NameQueryParameters.class,
+                                  new String[] { "Name" },
                                   new Object[] { NAMES[0] },
                                   getEntity(0));
 
@@ -195,8 +195,8 @@ public class BackendTagsResourceTest
                                   true,
                                   null,
                                   VdcQueryType.GetTagByTagName,
-                                  GetTagByTagNameParameters.class,
-                                  new String[] { "TagName" },
+                                  NameQueryParameters.class,
+                                  new String[] { "Name" },
                                   new Object[] { NAMES[0] },
                                   entity);
 

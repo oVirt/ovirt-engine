@@ -5,17 +5,17 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 /** A test case for the {@link IsVmWithSameNameExistQuery} class. */
-public class IsVmWithSameNameExistQueryTest extends AbstractUserQueryTest<IsVmWithSameNameExistParameters, IsVmWithSameNameExistQuery<IsVmWithSameNameExistParameters>> {
+public class IsVmWithSameNameExistQueryTest extends AbstractUserQueryTest<NameQueryParameters, IsVmWithSameNameExistQuery<NameQueryParameters>> {
 
     @Test
     public void testExecuteQuery() {
         // Mock the parameters
         String vmName = RandomUtils.instance().nextString(10);
-        when(getQueryParameters().getVmName()).thenReturn(vmName);
+        when(getQueryParameters().getName()).thenReturn(vmName);
 
         // Mock the result
         boolean result = RandomUtils.instance().nextBoolean();

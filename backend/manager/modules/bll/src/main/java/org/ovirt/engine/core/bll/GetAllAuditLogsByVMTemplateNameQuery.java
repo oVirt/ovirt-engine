@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.GetAllAuditLogsByVMTemplateNameParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 
 /** A query to return all the Audit Logs according to a given VM Template name */
-public class GetAllAuditLogsByVMTemplateNameQuery<P extends GetAllAuditLogsByVMTemplateNameParameters> extends QueriesCommandBase<P> {
+public class GetAllAuditLogsByVMTemplateNameQuery<P extends NameQueryParameters> extends QueriesCommandBase<P> {
 
     public GetAllAuditLogsByVMTemplateNameQuery(P parameters) {
         super(parameters);
@@ -14,7 +14,7 @@ public class GetAllAuditLogsByVMTemplateNameQuery<P extends GetAllAuditLogsByVMT
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
                 getDbFacade().getAuditLogDao().getAllByVMTemplateName(
-                        getParameters().getVmTemplateName(),
+                        getParameters().getName(),
                         getUserID(),
                         getParameters().isFiltered()));
     }

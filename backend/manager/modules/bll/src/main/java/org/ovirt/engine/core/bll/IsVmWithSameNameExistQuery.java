@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 
-public class IsVmWithSameNameExistQuery<P extends IsVmWithSameNameExistParameters> extends QueriesCommandBase<P> {
+public class IsVmWithSameNameExistQuery<P extends NameQueryParameters> extends QueriesCommandBase<P> {
     public IsVmWithSameNameExistQuery(P parameters) {
         super(parameters);
     }
@@ -13,6 +13,6 @@ public class IsVmWithSameNameExistQuery<P extends IsVmWithSameNameExistParameter
     }
 
     protected boolean isVmWithSameNameExistStatic() {
-        return VmHandler.isVmWithSameNameExistStatic(getParameters().getVmName());
+        return VmHandler.isVmWithSameNameExistStatic(getParameters().getName());
     }
 }

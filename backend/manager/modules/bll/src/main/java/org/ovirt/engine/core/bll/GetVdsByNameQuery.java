@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.queries.GetVdsByNameParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 
-public class GetVdsByNameQuery<P extends GetVdsByNameParameters> extends QueriesCommandBase<P> {
+public class GetVdsByNameQuery<P extends NameQueryParameters> extends QueriesCommandBase<P> {
     public GetVdsByNameQuery(P parameters) {
         super(parameters);
     }

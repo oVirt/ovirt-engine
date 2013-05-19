@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.IsVmTemlateWithSameNameExistParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 
-public class IsVmTemlateWithSameNameExistQuery<P extends IsVmTemlateWithSameNameExistParameters>
+public class IsVmTemlateWithSameNameExistQuery<P extends NameQueryParameters>
         extends QueriesCommandBase<P> {
     public IsVmTemlateWithSameNameExistQuery(P parameters) {
         super(parameters);

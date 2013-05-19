@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleNameParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -41,8 +41,8 @@ public class BackendAssignedRolesResource
             org.ovirt.engine.core.common.businessentities.Role entity = getEntity(
                 org.ovirt.engine.core.common.businessentities.Role.class,
                 VdcQueryType.GetRoleByName,
-                new MultilevelAdministrationByRoleNameParameters(role.getName()),
-                                                                 role.getName());
+                new NameQueryParameters(role.getName()),
+                role.getName());
             role.setId(entity.getId().toString());
         }
         return performCreate(VdcActionType.AddSystemPermission,

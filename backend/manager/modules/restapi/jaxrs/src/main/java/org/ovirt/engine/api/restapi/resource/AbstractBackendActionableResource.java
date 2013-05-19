@@ -12,18 +12,17 @@ import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.BaseResource;
-import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.CreationStatus;
+import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.queries.GetVdsByNameParameters;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.businessentities.VDS;
-
-import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.compat.Guid;
 
 
@@ -152,7 +151,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
                ? new Guid(host.getId())
                : getEntity(VDS.class,
                            VdcQueryType.GetVdsByName,
-                           new GetVdsByNameParameters(host.getName()),
+                           new NameQueryParameters(host.getName()),
                            host.getName()).getId();
     }
 

@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleNameParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -133,8 +133,8 @@ public class BackendAssignedRolesResourceTest
     public void testAddAssignedRoleByName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(VdcQueryType.GetRoleByName,
-                MultilevelAdministrationByRoleNameParameters.class,
-                new String[] { "RoleName" },
+                NameQueryParameters.class,
+                new String[] { "Name" },
                 new Object[] { NAMES[1] },
                 getRole());
         setUpCreationExpectations(VdcActionType.AddSystemPermission,

@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.GetAllAuditLogsByVMNameParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 
@@ -19,7 +19,7 @@ public class UserPortalVmEventListModel extends VmEventListModel {
 
         VM vm = (VM) getEntity();
 
-        super.syncSearch(VdcQueryType.GetAllAuditLogsByVMName, new GetAllAuditLogsByVMNameParameters(vm.getName()));
+        super.syncSearch(VdcQueryType.GetAllAuditLogsByVMName, new NameQueryParameters(vm.getName()));
     }
 
     @Override

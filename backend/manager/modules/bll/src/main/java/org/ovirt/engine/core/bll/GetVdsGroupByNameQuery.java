@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.GetVdsGroupByNameParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 
-public class GetVdsGroupByNameQuery<P extends GetVdsGroupByNameParameters> extends QueriesCommandBase<P> {
+public class GetVdsGroupByNameQuery<P extends NameQueryParameters> extends QueriesCommandBase<P> {
     public GetVdsGroupByNameQuery(P parameters) {
         super(parameters);
     }

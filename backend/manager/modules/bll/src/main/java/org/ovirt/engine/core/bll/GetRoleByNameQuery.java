@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleNameParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-public class GetRoleByNameQuery<P extends MultilevelAdministrationByRoleNameParameters> extends QueriesCommandBase<P> {
+public class GetRoleByNameQuery<P extends NameQueryParameters> extends QueriesCommandBase<P> {
     public GetRoleByNameQuery(P parameters)
 
     {
@@ -14,6 +14,6 @@ public class GetRoleByNameQuery<P extends MultilevelAdministrationByRoleNamePara
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(DbFacade.getInstance()
                 .getRoleDao()
-                .getByName(getParameters().getRoleName()));
+                .getByName(getParameters().getName()));
     }
 }

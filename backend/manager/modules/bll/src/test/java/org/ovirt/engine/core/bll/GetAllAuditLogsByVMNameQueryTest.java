@@ -9,18 +9,18 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.common.queries.GetAllAuditLogsByVMNameParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.dao.AuditLogDAO;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 /** A test case for the {@link GetAllAuditLogsByVMNameQuery} class. */
-public class GetAllAuditLogsByVMNameQueryTest extends AbstractUserQueryTest<GetAllAuditLogsByVMNameParameters, GetAllAuditLogsByVMNameQuery<? extends GetAllAuditLogsByVMNameParameters>> {
+public class GetAllAuditLogsByVMNameQueryTest extends AbstractUserQueryTest<NameQueryParameters, GetAllAuditLogsByVMNameQuery<? extends NameQueryParameters>> {
 
     @Test
     public void testExecuteQueryCommand() {
         // Mock the Query Parameters
         String vmName = RandomUtils.instance().nextString(10, true);
-        when(getQueryParameters().getVmName()).thenReturn(vmName);
+        when(getQueryParameters().getName()).thenReturn(vmName);
 
         // Set up the expected result
         AuditLog expectedResult = new AuditLog();

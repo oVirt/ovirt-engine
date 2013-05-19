@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.GetAllAuditLogsByVMNameParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 
 /** A query to return all the Audit Logs according to a given VM name */
-public class GetAllAuditLogsByVMNameQuery<P extends GetAllAuditLogsByVMNameParameters> extends QueriesCommandBase<P> {
+public class GetAllAuditLogsByVMNameQuery<P extends NameQueryParameters> extends QueriesCommandBase<P> {
 
     public GetAllAuditLogsByVMNameQuery(P parameters) {
         super(parameters);
@@ -14,6 +14,6 @@ public class GetAllAuditLogsByVMNameQuery<P extends GetAllAuditLogsByVMNameParam
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
                 getDbFacade().getAuditLogDao()
-                        .getAllByVMName(getParameters().getVmName(), getUserID(), getParameters().isFiltered()));
+                        .getAllByVMName(getParameters().getName(), getUserID(), getParameters().isFiltered()));
     }
 }

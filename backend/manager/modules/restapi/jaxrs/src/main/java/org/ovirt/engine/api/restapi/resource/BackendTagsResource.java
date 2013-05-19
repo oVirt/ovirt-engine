@@ -4,17 +4,15 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
-
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.model.Tags;
 import org.ovirt.engine.api.resource.TagResource;
 import org.ovirt.engine.api.resource.TagsResource;
-
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.tags;
-import org.ovirt.engine.core.common.queries.GetTagByTagNameParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -83,7 +81,7 @@ public class BackendTagsResource
     }
 
     protected tags lookupTagByName(String name) {
-        return getEntity(tags.class, VdcQueryType.GetTagByTagName, new GetTagByTagNameParameters(name), name);
+        return getEntity(tags.class, VdcQueryType.GetTagByTagName, new NameQueryParameters(name), name);
     }
 
     protected class TagNameResolver extends EntityIdResolver<Guid> {
