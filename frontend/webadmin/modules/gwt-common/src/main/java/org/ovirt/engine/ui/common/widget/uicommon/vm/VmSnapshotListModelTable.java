@@ -2,22 +2,20 @@ package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
-import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.DataBoundTabModelProvider;
 import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
-import org.ovirt.engine.ui.common.widget.renderer.FullDateTimeRenderer;
 import org.ovirt.engine.ui.common.widget.table.OrderedMultiSelectionModel;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
+import org.ovirt.engine.ui.common.widget.uicommon.snapshot.SnapshotsViewColumns;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
@@ -27,8 +25,6 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -51,7 +47,7 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
     SimplePanel snapshotInfoContainer;
 
     private final CommonApplicationMessages messages;
-    private final CommonApplicationTemplates templates;
+    private final CommonApplicationConstants constants;
 
     VmSnapshotInfoPanel vmSnapshotInfoPanel;
 
@@ -62,8 +58,8 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
             CommonApplicationTemplates templates) {
         super(modelProvider, eventBus, clientStorage, false);
 
+        this.constants = constants;
         this.messages = messages;
-        this.templates = templates;
 
         // Create Snapshots table
         SimpleActionTable<Snapshot> table = getTable();
@@ -83,52 +79,14 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
     public void initTable(final CommonApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        TextColumnWithTooltip<Snapshot> dateColumn = new TextColumnWithTooltip<Snapshot>() {
-            @Override
-            public String getValue(Snapshot snapshot) {
-                if (snapshot.getType() == SnapshotType.ACTIVE) {
-                    return constants.currentSnapshotLabel();
-                }
-                return FullDateTimeRenderer.getLocalizedDateTimeFormat().format(snapshot.getCreationDate());
-            }
-        };
-        getTable().addColumn(dateColumn, constants.dateSnapshot(), "185px"); //$NON-NLS-1$
-
-        TextColumnWithTooltip<Snapshot> statusColumn = new EnumColumn<Snapshot, SnapshotStatus>() {
-            @Override
-            protected SnapshotStatus getRawValue(Snapshot snapshot) {
-                return snapshot.getStatus();
-            }
-        };
-        getTable().addColumn(statusColumn, constants.statusSnapshot(), "95px"); //$NON-NLS-1$
-
-        SafeHtmlColumn<Snapshot> descriptionColumn = new SafeHtmlColumn<Snapshot>() {
-            @Override
-            public final SafeHtml getValue(Snapshot snapshot) {
-                // Get raw description string (ignore < and > characters).
-                // Customize description style as needed.
-                SafeHtml description = SafeHtmlUtils.fromString(snapshot.getDescription());
-                String descriptionStr = description.asString();
-
-                if (snapshot.getStatus() == SnapshotStatus.IN_PREVIEW) {
-                    descriptionStr = descriptionStr + " (" + constants.previewModelLabel() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-                    description = templates.snapshotDescription("color:orange", descriptionStr); //$NON-NLS-1$
-                }
-                else if (snapshot.getType() == SnapshotType.STATELESS) {
-                    descriptionStr = descriptionStr + " (" + constants.readonlyLabel() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-                    description = templates.snapshotDescription("font-style:italic", descriptionStr); //$NON-NLS-1$
-                }
-                else if (snapshot.getType() == SnapshotType.ACTIVE || snapshot.getType() == SnapshotType.PREVIEW) {
-                    description = templates.snapshotDescription("color:gray", descriptionStr); //$NON-NLS-1$
-                }
-
-                return description;
-            }
-        };
-        getTable().addColumn(descriptionColumn, constants.descriptionSnapshot(), "185px"); //$NON-NLS-1$
-
         initActionButtons(constants);
         disableActiveSnapshotRow();
+        getModel().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                updateMemoryColumnVisibility();
+            }
+        });
 
         // Add selection listener
         getModel().getSelectedItemChangedEvent().addListener(new IEventListener() {
@@ -141,6 +99,30 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
                 vmSnapshotInfoPanel.updatePanel(snapshot);
             }
         });
+    }
+
+    private void updateMemoryColumnVisibility() {
+        VM vm = (VM) getModel().getEntity();
+        if (vm == null) {
+            return;
+        }
+
+        getTable().ensureColumnPresent(SnapshotsViewColumns.dateColumn,
+                constants.dateSnapshot(), true, "150px"); //$NON-NLS-1$
+
+        getTable().ensureColumnPresent(SnapshotsViewColumns.statusColumn,
+                constants.statusSnapshot(), true, "75px"); //$NON-NLS-1$
+
+        boolean memorySnapshotSupported =
+                (Boolean) AsyncDataProvider.getConfigValuePreConverted(
+                        ConfigurationValues.MemorySnapshotSupported,
+                        vm.getVdsGroupCompatibilityVersion().toString());
+
+        getTable().ensureColumnPresent(SnapshotsViewColumns.memoryColumn,
+                constants.memorySnapshot(), memorySnapshotSupported, "55px"); //$NON-NLS-1$
+
+        getTable().ensureColumnPresent(SnapshotsViewColumns.descriptionColumn,
+                constants.descriptionSnapshot(), true, "185px"); //$NON-NLS-1$
     }
 
     private void initActionButtons(final CommonApplicationConstants constants) {

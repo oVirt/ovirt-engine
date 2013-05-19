@@ -597,6 +597,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Status")
     String statusSnapshot();
 
+    @DefaultStringValue("Memory")
+    String memorySnapshot();
+
     @DefaultStringValue("Disks")
     String disksSnapshot();
 

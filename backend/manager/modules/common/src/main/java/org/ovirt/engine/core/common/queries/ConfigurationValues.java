@@ -92,7 +92,8 @@ public enum ConfigurationValues {
     CustomDeviceProperties(ConfigAuthType.User),
     MultipleGatewaysSupported,
     VirtIoScsiEnabled(ConfigAuthType.User),
-    SshSoftFencingCommand
+    SshSoftFencingCommand,
+    MemorySnapshotSupported(ConfigAuthType.User)
     ;
 
     public static enum ConfigAuthType {
