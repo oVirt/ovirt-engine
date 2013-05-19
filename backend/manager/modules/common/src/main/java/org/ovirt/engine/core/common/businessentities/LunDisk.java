@@ -1,9 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.ArrayList;
-
 import org.ovirt.engine.core.common.utils.ObjectUtils;
-import org.ovirt.engine.core.compat.Guid;
 
 /**
  * A type of disk that is stored directly on a LUN ({@link LUNs}). This disk will contain the LUN details.
@@ -16,35 +13,6 @@ public class LunDisk extends Disk {
      * The LUN details.
      */
     private LUNs lun;
-
-    public LunDisk() {
-    }
-
-    public LunDisk(Guid id,
-            DiskInterface diskInterface,
-            boolean wipeAfterDelete,
-            PropagateErrors propagateErrors,
-            VmEntityType vmEntityType,
-            int numberOfVms,
-            ArrayList<String> vmNames,
-            String diskAlias,
-            String diskDescription,
-            boolean shareable,
-            boolean boot,
-            LUNs lun) {
-        super(id,
-                diskInterface,
-                wipeAfterDelete,
-                propagateErrors,
-                vmEntityType,
-                numberOfVms,
-                vmNames,
-                diskAlias,
-                diskDescription,
-                shareable,
-                boot);
-        this.lun = lun;
-    }
 
     @Override
     public DiskStorageType getDiskStorageType() {

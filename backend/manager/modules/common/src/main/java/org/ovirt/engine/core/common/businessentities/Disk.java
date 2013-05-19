@@ -3,7 +3,6 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
-import org.ovirt.engine.core.compat.Guid;
 
 /**
  * The disk is contains data from the {@link BaseDisk} and the storage specific details for the disk, which are
@@ -25,33 +24,6 @@ public abstract class Disk extends BaseDisk {
     private int numberOfVms;
     private ArrayList<String> vmNames;
     private Boolean plugged;
-
-    public Disk() {
-    }
-
-    public Disk(Guid id,
-            DiskInterface diskInterface,
-            boolean wipeAfterDelete,
-            PropagateErrors propagateErrors,
-            VmEntityType vmEntityType,
-            int numberOfVms,
-            ArrayList<String> vmNames,
-            String diskAlias,
-            String diskDescription,
-            boolean shareable,
-            boolean boot) {
-        super(id,
-                diskInterface,
-                wipeAfterDelete,
-                propagateErrors,
-                diskAlias,
-                diskDescription,
-                shareable,
-                boot);
-        this.vmEntityType = vmEntityType;
-        this.numberOfVms = numberOfVms;
-        this.vmNames = vmNames;
-    }
 
     /**
      * @return Whether taking snapshots of this disk is allowed
