@@ -100,10 +100,9 @@ public class GlusterHooksDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
 
     @Override
     public String getGlusterHookContent(Guid hookId) {
-        String content = getCallsHandler().executeRead("GetGlusterHookById", GlusterHookContentRowMapper,
+        return getCallsHandler().executeRead("GetGlusterHookById", glusterHookRowMapper,
                 createIdParameterMapper(hookId)
-                .addValue("includeContent", true));
-        return content;
+                .addValue("includeContent", true)).getContent();
     }
 
     @Override
