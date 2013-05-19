@@ -7,7 +7,7 @@
 		.content {
 		}
 
-		.descriptionEditor {
+		.memoryEditor,.descriptionEditor {
 			width: 100%;
 		}
 
@@ -20,6 +20,7 @@
 
 	<g:VerticalPanel verticalAlignment="ALIGN_MIDDLE" addStyleNames="{style.content}">
 		<e:EntityModelTextBoxEditor ui:field="descriptionEditor" addStyleNames="{style.descriptionEditor}" />
+		<e:EntityModelCheckBoxEditor ui:field="memoryEditor" addStyleNames="{style.memoryEditor}" />
 		<g:FlowPanel ui:field="messagePanel" addStyleNames="{style.messagePanel}">
 		</g:FlowPanel>
 	</g:VerticalPanel>

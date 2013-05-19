@@ -109,6 +109,18 @@ public class SnapshotModel extends EntityModel
         privateDescription = value;
     }
 
+    private EntityModel memory;
+
+    public EntityModel getMemory()
+    {
+        return memory;
+    }
+
+    public void setMemory(EntityModel value)
+    {
+        memory = value;
+    }
+
     private EntityModel isPropertiesUpdated;
 
     public EntityModel getIsPropertiesUpdated()
@@ -155,6 +167,7 @@ public class SnapshotModel extends EntityModel
     public SnapshotModel()
     {
         setDescription(new EntityModel());
+        setMemory(new EntityModel(true));
         setDisks(new ArrayList<DiskImage>());
         setNics(new ArrayList<VmNetworkInterface>());
         setApps(new ArrayList<String>());
@@ -310,7 +323,9 @@ public class SnapshotModel extends EntityModel
         VM vm = getVm();
         ArrayList<VdcActionParametersBase> params = new ArrayList<VdcActionParametersBase>();
         CreateAllSnapshotsFromVmParameters param =
-                new CreateAllSnapshotsFromVmParameters(vm.getId(), (String) getDescription().getEntity());
+                new CreateAllSnapshotsFromVmParameters(vm.getId(),
+                        (String) getDescription().getEntity(),
+                        (Boolean) getMemory().getEntity());
         param.setQuotaId(vm.getQuotaId());
         params.add(param);
 

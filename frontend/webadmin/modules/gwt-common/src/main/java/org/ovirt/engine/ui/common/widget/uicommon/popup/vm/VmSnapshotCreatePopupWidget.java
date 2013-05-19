@@ -1,10 +1,15 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -37,6 +42,11 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
     @WithElementId("description")
     EntityModelTextBoxEditor descriptionEditor;
 
+    @UiField(provided = true)
+    @Path(value = "memory.entity")
+    @WithElementId("memory")
+    EntityModelCheckBoxEditor memoryEditor;
+
     @UiField
     @Ignore
     FlowPanel messagePanel;
@@ -44,14 +54,20 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
     private final Driver driver = GWT.create(Driver.class);
 
     public VmSnapshotCreatePopupWidget(CommonApplicationConstants constants) {
+        initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
     }
 
+    private void initEditors() {
+        memoryEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+    }
+
     void localize(CommonApplicationConstants constants) {
         descriptionEditor.setLabel(constants.virtualMachineSnapshotCreatePopupDescriptionLabel());
+        memoryEditor.setLabel(constants.virtualMachineSnapshotCreatePopupMemoryLabel());
     }
 
     @Override
@@ -64,6 +80,27 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
                 if ("Message".equals(propName)) { //$NON-NLS-1$
                     appendMessage(model.getMessage());
+                }
+                else if ("VM".equals(propName)) { //$NON-NLS-1$
+                    updateMemoryBoxVisibility();
+                }
+            }
+
+            private void updateMemoryBoxVisibility() {
+                VM vm = model.getVm();
+                if (vm == null) {
+                    return;
+                }
+
+                boolean memorySnapshotSupported =
+                        (Boolean) AsyncDataProvider.getConfigValuePreConverted(
+                                ConfigurationValues.MemorySnapshotSupported,
+                                vm.getVdsGroupCompatibilityVersion().toString());
+                memoryEditor.setVisible(memorySnapshotSupported && vm.isRunning());
+                // The memory option is enabled by default, so in case its checkbox
+                // is not visible, we should disable it explicitly
+                if (!memoryEditor.isVisible()) {
+                    model.getMemory().setEntity(false);
                 }
             }
         });

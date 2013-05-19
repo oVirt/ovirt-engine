@@ -154,6 +154,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Description")
     String virtualMachineSnapshotCreatePopupDescriptionLabel();
 
+    @DefaultStringValue("Save Memory")
+    String virtualMachineSnapshotCreatePopupMemoryLabel();
+
     @DefaultStringValue("Loading...")
     String loadingLabel();
 
