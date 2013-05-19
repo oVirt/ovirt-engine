@@ -1,0 +1,29 @@
+<FindBugsFilter>
+       <!--
+        findbugs complains that we don't use break in toString(),
+        In this case we do want to "fall" to the next case since we want to handle
+        all the minor/major cases
+
+        findbugs reason:
+        SF: Switch statement found where one case falls through to the next case (SF_SWITCH_FALLTHROUGH)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.core.compat.Version" />
+       <Method name="toString"/>
+       <Bug code="SF"/>
+     </Match>
+
+       <!--
+        findbugs complains that we don't use break in setValue(),
+        In this case we do want to "fall" to the next case since we want to handle
+        all the minor/major cases
+
+        findbugs reason:
+        SF: Switch statement found where one case falls through to the next case (SF_SWITCH_FALLTHROUGH)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.core.compat.Version" />
+       <Method name="setValue"/>
+       <Bug code="SF"/>
+     </Match>
+</FindBugsFilter>

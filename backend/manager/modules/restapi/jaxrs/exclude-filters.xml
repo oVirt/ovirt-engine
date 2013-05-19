@@ -1,0 +1,15 @@
+<FindBugsFilter>
+       <!--
+        findbugs complains that we don't use break in parseVersion,
+        In this case we do want to "fall" to the next case since we want to handle
+        all the minor/major cases
+
+        findbugs reason:
+        SF: Switch statement found where one case falls through to the next case (SF_SWITCH_FALLTHROUGH)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.api.restapi.util.VersionHelper" />
+       <Method name="parseVersion"/>
+       <Bug code="SF"/>
+     </Match>
+</FindBugsFilter>

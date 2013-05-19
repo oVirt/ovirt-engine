@@ -42,4 +42,18 @@
        <Method name="getInstance"/>
        <Bug code="DC"/>
      </Match>
+
+     <Match>
+       <!--
+        findbugs complain that there is no break in switch statement,
+        In this case we do not need break because in both cases (preview and stateless) we need
+        to call restoreConfiguration()
+
+        findbugs reason:
+        SF: Switch statement found where one case falls through to the next case (SF_SWITCH_FALLTHROUGH)
+       -->
+       <Class name="org.ovirt.engine.core.bll.RestoreAllSnapshotsCommand" />
+       <Method name="restoreSnapshotAndRemoveObsoleteSnapshots"/>
+       <Bug code="SF"/>
+     </Match>
 </FindBugsFilter>

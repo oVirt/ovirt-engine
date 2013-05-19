@@ -162,6 +162,8 @@ public class ClusterMapper {
                 switch (entity.getselection_algorithm()) {
                 case PowerSave:
                     model.getThresholds().setLow(entity.getlow_utilization());
+                    // No need for break, PowerSave need to call setHight() and setDuration()
+                    // as well.
                 case EvenlyDistribute:
                     model.getThresholds().setHigh(entity.gethigh_utilization());
                     model.getThresholds().setDuration(entity.getcpu_over_commit_duration_minutes() * 60);

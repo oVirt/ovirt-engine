@@ -1,0 +1,15 @@
+<FindBugsFilter>
+       <!--
+        findbugs complains that we don't use break in map(),
+        In this case we do want to "fall" to the next case because PowerSave case
+        need to call setHight() and setDuration() as well.
+
+        findbugs reason:
+        SF: Switch statement found where one case falls through to the next case (SF_SWITCH_FALLTHROUGH)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.api.restapi.types.ClusterMapper"/>
+       <Method name="map"/>
+       <Bug code="SF"/>
+     </Match>
+</FindBugsFilter>
