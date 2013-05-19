@@ -84,6 +84,11 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     }
 
     @Override
+    public void preventRollback() {
+        getParameters().setExecutionIndex(0);
+    }
+
+    @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
 

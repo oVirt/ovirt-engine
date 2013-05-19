@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.lsm;
 import java.util.Arrays;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.MoveOrCopyDiskCommand;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -13,6 +14,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -96,6 +98,15 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     @Override
     protected void endWithFailure() {
         super.endWithFailure();
+    }
+
+    @Override
+    public void preventRollback() {
+        getParameters().setExecutionIndex(0);
+
+        // We should always unlock the disk
+        ImagesHandler.updateImageStatus(getParameters().getImageId(), ImageStatus.OK);
+        ImagesHandler.updateImageStatus(getParameters().getDestinationImageId(), ImageStatus.OK);
     }
 
     private boolean isFirstTaskHandler() {

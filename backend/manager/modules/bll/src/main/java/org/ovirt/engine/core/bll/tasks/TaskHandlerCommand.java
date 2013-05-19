@@ -18,6 +18,8 @@ public interface TaskHandlerCommand<T extends VdcActionParametersBase> {
 
     ExecutionContext getExecutionContext();
 
+    void preventRollback();
+
     void setExecutionContext(ExecutionContext executionContext);
 
     Guid createTask(AsyncTaskCreationInfo asyncTaskCreationInfo,

@@ -46,26 +46,38 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
                         getEnclosingCommand().getParameters().getDestinationImageId()
                 );
 
-        VDSReturnValue ret =
-                Backend.getInstance().getResourceManager().
-                        RunVdsCommand(VDSCommandType.VmReplicateDiskFinish, migrationCompleteParams);
+        // Update the DB before sending the command (perform rollback on failure)
+        moveDiskInDB(getEnclosingCommand().getParameters().getSourceStorageDomainId(),
+                getEnclosingCommand().getParameters().getTargetStorageDomainId());
 
-        // If the split succeeded, update the database
-        if (ret.getSucceeded()) {
-            moveDiskInDB();
-            updateImagesInfo();
-            ImagesHandler.updateImageStatus(getEnclosingCommand().getParameters().getDestinationImageId(),
-                    ImageStatus.OK);
-        }
-        else {
+        VDSReturnValue ret = null;
+        try {
+            ret = Backend.getInstance().getResourceManager().
+                    RunVdsCommand(VDSCommandType.VmReplicateDiskFinish, migrationCompleteParams);
+
+            if (ret.getSucceeded()) {
+                updateImagesInfo();
+                ImagesHandler.updateImageStatus(getEnclosingCommand().getParameters().getDestinationImageId(),
+                        ImageStatus.OK);
+            }
+            else {
+                throw new VdcBLLException(ret.getVdsError().getCode(), ret.getVdsError().getMessage());
+            }
+        } catch (Exception e) {
+            moveDiskInDB(getEnclosingCommand().getParameters().getTargetStorageDomainId(),
+                    getEnclosingCommand().getParameters().getSourceStorageDomainId());
             log.errorFormat("Failed VmReplicateDiskFinish (Disk {0} , VM {1})",
                     getEnclosingCommand().getParameters().getImageGroupID(),
                     getEnclosingCommand().getParameters().getVmId());
-            throw new VdcBLLException(ret.getVdsError().getCode(), ret.getVdsError().getMessage());
+            throw e;
         }
     }
 
-    private void moveDiskInDB() {
+    private void moveDiskInDB(final Guid sourceStorageDomainId, final Guid targetStorageDomainId) {
+        if (isMoveDiskInDbSucceded(targetStorageDomainId)) {
+            return;
+        }
+
         TransactionSupport.executeInScope(TransactionScopeOption.Required,
                 new TransactionMethod<Object>() {
                     @SuppressWarnings("synthetic-access")
@@ -74,11 +86,9 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
                         for (DiskImage di : getDiskImageDao().getAllSnapshotsForImageGroup
                                 (getEnclosingCommand().getParameters().getImageGroupID())) {
                             getImageStorageDomainMapDao().remove
-                                    (new ImageStorageDomainMapId(di.getImageId(),
-                                            getEnclosingCommand().getParameters().getSourceStorageDomainId()));
+                                    (new ImageStorageDomainMapId(di.getImageId(), sourceStorageDomainId));
                             getImageStorageDomainMapDao().save
-                                    (new image_storage_domain_map(di.getImageId(),
-                                            getEnclosingCommand().getParameters().getTargetStorageDomainId()));
+                                    (new image_storage_domain_map(di.getImageId(), targetStorageDomainId));
                         }
                         return null;
                     }
@@ -140,6 +150,7 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
     @Override
     public void endWithFailure() {
         super.endWithFailure();
+        revertTask();
     }
 
     @Override
@@ -162,11 +173,15 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
         // Preventing rollback on VmReplicateDiskFinish success
         // (checks whether the disk moved successfully to the target storage domain)
         Guid targetStorageDomainId = getEnclosingCommand().getParameters().getTargetStorageDomainId();
+        if (isMoveDiskInDbSucceded(targetStorageDomainId)) {
+            getEnclosingCommand().preventRollback();
+        }
+    }
+
+    private boolean isMoveDiskInDbSucceded(Guid targetStorageDomainId) {
         Guid destinationImageId = getEnclosingCommand().getParameters().getDestinationImageId();
         DiskImage diskImage = getDiskImageDao().get(destinationImageId);
-        if (diskImage != null && targetStorageDomainId.equals(diskImage.getStorageIds().get(0))) {
-            getEnclosingCommand().getParameters().setExecutionIndex(0);
-        }
+        return diskImage != null && targetStorageDomainId.equals(diskImage.getStorageIds().get(0));
     }
 
     @Override
