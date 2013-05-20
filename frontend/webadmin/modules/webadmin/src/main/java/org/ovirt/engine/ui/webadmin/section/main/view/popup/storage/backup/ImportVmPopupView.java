@@ -155,7 +155,6 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         localize(constants);
         driver.initialize(this);
         initTables();
-        initSubTabLayoutPanel();
     }
 
     private void initSubTabLayoutPanel() {
@@ -645,6 +644,8 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
             }
 
         });
+
+        initSubTabLayoutPanel();
         nicTable.edit((SearchableListModel) object.getDetailModels().get(1));
         diskTable.edit((SearchableListModel) object.getDetailModels().get(2));
         if (object.getDetailModels().size() > 3) {
