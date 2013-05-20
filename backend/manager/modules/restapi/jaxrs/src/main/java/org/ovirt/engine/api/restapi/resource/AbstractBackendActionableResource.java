@@ -189,7 +189,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
     protected Response actionAsync(VdcReturnValueBase actionResult, Action action) {
         action.setAsync(true);
 
-        String ids = asString(actionResult.getTaskIdList());
+        String ids = asString(actionResult.getVdsmTaskIdList());
         action.setId(ids);
         action.setHref(UriBuilder.fromPath(getPath(uriInfo)).path(ids).build().toString());
         String path = getPath(uriInfo);

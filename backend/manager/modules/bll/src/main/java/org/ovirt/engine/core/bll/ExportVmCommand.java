@@ -197,7 +197,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                 }
             });
 
-            if (!getReturnValue().getTaskIdList().isEmpty()) {
+            if (!getReturnValue().getVdsmTaskIdList().isEmpty()) {
                 setSucceeded(true);
             }
         }
@@ -299,7 +299,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                 throw new VdcBLLException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
             }
 
-            getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
+            getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
         }
     }
 

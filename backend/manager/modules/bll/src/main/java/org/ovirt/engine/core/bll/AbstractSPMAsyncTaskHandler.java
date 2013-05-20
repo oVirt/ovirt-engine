@@ -58,7 +58,7 @@ public abstract class AbstractSPMAsyncTaskHandler<C extends TaskHandlerCommand<?
 
     private void addTask(Guid taskId, VDSReturnValue vdsReturnValue, boolean isRevertedTask) {
         AsyncTaskCreationInfo taskCreationInfo = vdsReturnValue.getCreationInfo();
-        getReturnValue().getInternalTaskIdList().add(cmd.createTask(
+        getReturnValue().getInternalVdsmTaskIdList().add(cmd.createTask(
                 taskId,
                 taskCreationInfo,
                 cmd.getActionType(),
@@ -66,7 +66,7 @@ public abstract class AbstractSPMAsyncTaskHandler<C extends TaskHandlerCommand<?
                 getTaskObjects())
                 );
         Guid vdsmTaskId = taskCreationInfo.getVdsmTaskId();
-        getReturnValue().getTaskIdList().add(vdsmTaskId);
+        getReturnValue().getVdsmTaskIdList().add(vdsmTaskId);
         if (isRevertedTask) {
             log.infoFormat("Reverting task {0} with ID {1} on DataCenter {2}.", taskCreationInfo.getTaskType().name(), vdsmTaskId, taskCreationInfo.getStoragePoolID());
         }

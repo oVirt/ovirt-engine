@@ -234,7 +234,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             return false;
         }
 
-        getReturnValue().getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
+        getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
         return true;
     }
 

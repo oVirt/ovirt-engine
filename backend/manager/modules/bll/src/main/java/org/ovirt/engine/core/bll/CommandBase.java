@@ -1227,7 +1227,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     private boolean hasTasks() {
-        return !getReturnValue().getTaskIdList().isEmpty();
+        return !getReturnValue().getVdsmTaskIdList().isEmpty();
     }
 
     private boolean getForceCompensation() {
@@ -1509,12 +1509,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     protected void startPollingAsyncTasks() {
-        startPollingAsyncTasks(getReturnValue().getTaskIdList());
+        startPollingAsyncTasks(getReturnValue().getVdsmTaskIdList());
     }
 
     protected ArrayList<Guid> getTaskIdList() {
-        return getParameters().getParentCommand() != VdcActionType.Unknown ? getReturnValue().getInternalTaskIdList()
-                : getReturnValue().getTaskIdList();
+        return getParameters().getParentCommand() != VdcActionType.Unknown ? getReturnValue().getInternalVdsmTaskIdList()
+                : getReturnValue().getVdsmTaskIdList();
     }
 
     @Override
@@ -1537,7 +1537,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 public void run() {
                     log.infoFormat("Rollback for command: {0}.", CommandBase.this.getClass().getName());
                     try {
-                        getAsyncTaskManager().CancelTasks(getReturnValue().getTaskIdList());
+                        getAsyncTaskManager().CancelTasks(getReturnValue().getVdsmTaskIdList());
                     } catch (Exception e) {
                         log.errorFormat("Failed to cancel tasks for command: {0}.",
                                 CommandBase.this.getClass().getName());
@@ -1548,11 +1548,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     protected void revertTasks() {
-        if (getParameters().getTaskIds() != null) {
+        if (getParameters().getVdsmTaskIds() != null) {
             // list to send to the PollTasks method
             ArrayList<Guid> taskIdAsList = new ArrayList<Guid>();
 
-            for (Guid taskId : getParameters().getTaskIds()) {
+            for (Guid taskId : getParameters().getVdsmTaskIds()) {
                 taskIdAsList.add(taskId);
                 ArrayList<AsyncTaskStatus> tasksStatuses = getAsyncTaskManager().PollTasks(
                         taskIdAsList);

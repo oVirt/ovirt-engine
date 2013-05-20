@@ -62,7 +62,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
                                         .isWipeAfterDelete(), false, getStoragePool().getcompatibility_version()
                                         .toString()));
 
-        getReturnValue().getInternalTaskIdList().add(
+        getReturnValue().getInternalVdsmTaskIdList().add(
                 createTask(taskId,
                         vdsReturnValue.getCreationInfo(),
                         VdcActionType.AddVmTemplate,
@@ -138,7 +138,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         VdcReturnValueBase returnValue =
                 checkAndPerformRollbackUsingCommand(VdcActionType.RemoveImage, p);
         if (returnValue.getSucceeded()) {
-            startPollingAsyncTasks(returnValue.getInternalTaskIdList());
+            startPollingAsyncTasks(returnValue.getInternalVdsmTaskIdList());
         }
     }
 }

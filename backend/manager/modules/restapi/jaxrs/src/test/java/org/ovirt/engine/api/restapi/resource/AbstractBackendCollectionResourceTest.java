@@ -253,7 +253,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
         }
         expect(taskResult.getHasAsyncTasks()).andReturn(asyncTasks != null).anyTimes();
         if (asyncTasks != null) {
-            expect(taskResult.getTaskIdList()).andReturn(asyncTasks).anyTimes();
+            expect(taskResult.getVdsmTaskIdList()).andReturn(asyncTasks).anyTimes();
             VdcQueryReturnValue monitorResult = control.createMock(VdcQueryReturnValue.class);
             expect(monitorResult.getSucceeded()).andReturn(success).anyTimes();
             expect(monitorResult.getReturnValue()).andReturn(asyncStatuses).anyTimes();

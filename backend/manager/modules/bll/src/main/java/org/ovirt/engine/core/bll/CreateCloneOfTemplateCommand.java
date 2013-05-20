@@ -68,7 +68,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
                                     false, getStoragePool().getcompatibility_version().toString()));
 
             if (vdsReturnValue.getSucceeded()) {
-                getReturnValue().getInternalTaskIdList().add(
+                getReturnValue().getInternalVdsmTaskIdList().add(
                         createTask(taskId,
                                 vdsReturnValue.getCreationInfo(),
                                 VdcActionType.AddVmFromTemplate,

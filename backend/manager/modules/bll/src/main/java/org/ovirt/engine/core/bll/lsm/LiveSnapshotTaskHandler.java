@@ -34,7 +34,7 @@ public class LiveSnapshotTaskHandler implements SPMAsyncTaskHandler {
                     Backend.getInstance().runInternalAction(VdcActionType.CreateAllSnapshotsFromVm,
                     getCreateSnapshotParameters(),
                     ExecutionHandler.createInternalJobContext());
-            enclosingCommand.getReturnValue().getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
+            enclosingCommand.getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
         }
         enclosingCommand.getReturnValue().setSucceeded(true);
     }

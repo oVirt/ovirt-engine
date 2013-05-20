@@ -117,7 +117,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
                             tempVar2,
                             ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
             if (vdcRetValue.getSucceeded()) {
-                getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
+                getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
             } else {
                 getReturnValue().setFault(vdcRetValue.getFault());
                 setSucceeded(false);

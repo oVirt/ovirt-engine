@@ -32,7 +32,7 @@ public class RemoveTemplateSnapshotCommand<T extends ImagesContainterParametersB
                                 .getWipeAfterDelete(), false, getStoragePool().getcompatibility_version().toString()));
 
         if (vdsReturnValue.getSucceeded()) {
-            getReturnValue().getInternalTaskIdList().add(
+            getReturnValue().getInternalVdsmTaskIdList().add(
                     createTask(taskId,
                             vdsReturnValue.getCreationInfo(),
                             VdcActionType.RemoveVmTemplate,

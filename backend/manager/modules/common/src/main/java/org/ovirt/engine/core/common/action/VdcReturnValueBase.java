@@ -10,23 +10,29 @@ import org.ovirt.engine.core.compat.Guid;
 public class VdcReturnValueBase implements Serializable {
     private static final long serialVersionUID = 6063371142273092365L;
 
-    private boolean _canDoAction;
-    private ArrayList<String> _canDoActionMessages = new ArrayList<String>();
-    private boolean _succeeded;
-    private boolean _isSyncronious;
-    private Object _returnValue;
-    private String _description = "";
+    private boolean canDoAction;
+    private ArrayList<String> canDoActionMessages = new ArrayList<String>();
+    private boolean succeeded;
+    private boolean isSyncronious;
+    private Object returnValue;
+    private String description = "";
     /**
      * Holds the ids of the async task place holders in the database.
      * On server restart this list  used to clean up and fail all the tasks
      * that have place holders but don't have a vdsm task id.
      */
     private ArrayList<Guid> taskPlaceHolderIdList = new ArrayList<Guid>();
-    private ArrayList<Guid> taskIdList = new ArrayList<Guid>();
-    private ArrayList<Guid> _internalIdList = new ArrayList<Guid>();
-    private boolean _endActionTryAgain = true;
-    private ArrayList<String> _executeFailedMessages = new ArrayList<String>();
-    private VdcFault _fault;
+    /**
+     * The list of vdsm task ids associated with a command
+     */
+    private ArrayList<Guid> vdsmTaskIdList = new ArrayList<Guid>();
+    /**
+     * The list of vdsm task ids associated directly with a command
+     */
+    private ArrayList<Guid> internalVdsmTaskIdList = new ArrayList<Guid>();
+    private boolean endActionTryAgain = true;
+    private ArrayList<String> executeFailedMessages = new ArrayList<String>();
+    private VdcFault fault;
     private String correlationId;
     private Guid jobId;
 
@@ -34,76 +40,76 @@ public class VdcReturnValueBase implements Serializable {
     }
 
     public VdcFault getFault() {
-        if (_fault == null) {
-            _fault = new VdcFault();
-            _fault.setError(VdcBllErrors.ENGINE);
-            _fault.setMessage(VdcBllErrors.ENGINE.name());
+        if (fault == null) {
+            fault = new VdcFault();
+            fault.setError(VdcBllErrors.ENGINE);
+            fault.setMessage(VdcBllErrors.ENGINE.name());
         }
-        return _fault;
+        return fault;
     }
 
     public void setFault(VdcFault value) {
-        _fault = value;
+        fault = value;
     }
 
     public boolean getCanDoAction() {
-        return _canDoAction;
+        return canDoAction;
     }
 
     public void setCanDoAction(boolean value) {
-        _canDoAction = value;
+        canDoAction = value;
     }
 
     public ArrayList<String> getCanDoActionMessages() {
-        return _canDoActionMessages;
+        return canDoActionMessages;
     }
 
     public void setCanDoActionMessages(ArrayList<String> value) {
-        _canDoActionMessages = value;
+        canDoActionMessages = value;
     }
 
     public boolean getSucceeded() {
-        return _succeeded;
+        return succeeded;
     }
 
     public void setSucceeded(boolean value) {
-        _succeeded = value;
+        succeeded = value;
     }
 
     public ArrayList<String> getExecuteFailedMessages() {
-        return _executeFailedMessages;
+        return executeFailedMessages;
     }
 
     public Object getActionReturnValue() {
-        return _returnValue;
+        return returnValue;
     }
 
     public void setActionReturnValue(Object value) {
-        _returnValue = value;
+        returnValue = value;
     }
 
     public String getDescription() {
-        return _description;
+        return description;
     }
 
     public void setDescription(String value) {
-        _description = value;
+        description = value;
     }
 
     public boolean getIsSyncronious() {
-        return _isSyncronious;
+        return isSyncronious;
     }
 
     public void setIsSyncronious(boolean value) {
-        _isSyncronious = value;
+        isSyncronious = value;
     }
 
-    public ArrayList<Guid> getTaskIdList() {
-        return taskIdList;
+    public ArrayList<Guid> getVdsmTaskIdList() {
+        return vdsmTaskIdList;
     }
 
-    public void setTaskIdList(ArrayList<Guid> value) {
-        taskIdList = value;
+    public void setVdsmTaskIdList(ArrayList<Guid> value) {
+        vdsmTaskIdList = value;
     }
 
     public ArrayList<Guid> getTaskPlaceHolderIdList() {
@@ -114,20 +120,20 @@ public class VdcReturnValueBase implements Serializable {
         taskPlaceHolderIdList = value;
     }
 
-    public ArrayList<Guid> getInternalTaskIdList() {
-        return _internalIdList;
+    public ArrayList<Guid> getInternalVdsmTaskIdList() {
+        return internalVdsmTaskIdList;
     }
 
     public boolean getHasAsyncTasks() {
-        return (getTaskIdList() != null && getTaskIdList().size() > 0);
+        return (getVdsmTaskIdList() != null && getVdsmTaskIdList().size() > 0);
     }
 
     public boolean getEndActionTryAgain() {
-        return _endActionTryAgain;
+        return endActionTryAgain;
     }
 
     public void setEndActionTryAgain(boolean value) {
-        _endActionTryAgain = value;
+        endActionTryAgain = value;
     }
 
     public void setCorrelationId(String correlationId) {

@@ -56,7 +56,7 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
                                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
                 if (vdcReturnValue.getSucceeded()) {
-                    getReturnValue().getInternalTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
+                    getReturnValue().getInternalVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
                 } else {
                     failedRemoving.add(image);
                     log.errorFormat("Can't remove image id: {0} for VM id: {1} due to: {2}. Image will be set at illegal state with no snapshot id.",

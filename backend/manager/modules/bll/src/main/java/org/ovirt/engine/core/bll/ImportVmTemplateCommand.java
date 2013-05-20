@@ -326,7 +326,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                                 : new VdcBLLException(VdcBllErrors.ENGINE));
                     }
 
-                    getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
+                    getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
                     i++;
                 }
                 return null;

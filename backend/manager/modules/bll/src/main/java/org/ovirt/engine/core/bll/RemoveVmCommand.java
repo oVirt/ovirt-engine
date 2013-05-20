@@ -233,7 +233,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                         ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
         if (vdcRetValue.getSucceeded()) {
-            getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
+            getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
         }
 
         return vdcRetValue;

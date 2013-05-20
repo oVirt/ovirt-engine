@@ -210,10 +210,10 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
             VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(VdcActionType.RunVm,
                     runVmParams, new CommandContext(runVmContext));
 
-            getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
+            getTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
             setSucceeded(vdcReturnValue.getSucceeded());
             setActionReturnValue(vmToAttach);
-            getReturnValue().getTaskIdList().addAll(getReturnValue().getInternalTaskIdList());
+            getReturnValue().getVdsmTaskIdList().addAll(getReturnValue().getInternalVdsmTaskIdList());
         } else {
             // no need to start, just return it
             setActionReturnValue(vmToAttach);

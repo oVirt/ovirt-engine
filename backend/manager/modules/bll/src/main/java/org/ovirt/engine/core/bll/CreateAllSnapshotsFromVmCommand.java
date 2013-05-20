@@ -184,7 +184,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                             ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
             if (vdcReturnValue.getSucceeded()) {
-                getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
+                getTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
             } else {
                 throw new VdcBLLException(vdcReturnValue.getFault().getError(),
                         "Failed to create snapshot!");

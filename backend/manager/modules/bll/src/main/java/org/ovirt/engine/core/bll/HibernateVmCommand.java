@@ -147,7 +147,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                         }
                     });
 
-            getReturnValue().getTaskIdList().add(guid1);
+            getReturnValue().getVdsmTaskIdList().add(guid1);
 
             Guid taskId2 = persistAsyncTaskPlaceHolder(VdcActionType.HibernateVm);
 
@@ -176,7 +176,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                 return;
             }
             Guid guid2 = createTask(taskId2, ret2.getCreationInfo(), VdcActionType.HibernateVm);
-            getReturnValue().getTaskIdList().add(guid2);
+            getReturnValue().getVdsmTaskIdList().add(guid2);
 
             // this is the new param that should be passed to the hibernate
             // command
@@ -192,7 +192,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                             new UpdateVmDynamicDataVDSCommandParameters(getVdsId(),
                                     getVm().getDynamicData()));
 
-            getParameters().setTaskIds(new ArrayList<Guid>(getReturnValue().getTaskIdList()));
+            getParameters().setVdsmTaskIds(new ArrayList<Guid>(getReturnValue().getVdsmTaskIdList()));
 
             setSucceeded(true);
         }

@@ -174,7 +174,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
             throw new VdcBLLException(VdcBllErrors.VolumeCreationError);
         } else {
             ImagesHandler.addDiskImageWithNoVmDevice(copiedDiskImage);
-            getTaskIdList().addAll(result.getInternalTaskIdList());
+            getTaskIdList().addAll(result.getInternalVdsmTaskIdList());
             newDiskImages.add(copiedDiskImage);
         }
     }

@@ -71,7 +71,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
                 if (!result.getSucceeded()) {
                     throw new VdcBLLException(VdcBllErrors.VolumeCreationError);
                 } else {
-                    getTaskIdList().addAll(result.getInternalTaskIdList());
+                    getTaskIdList().addAll(result.getInternalVdsmTaskIdList());
                     newDiskImages.add((DiskImage) result.getActionReturnValue());
                 }
             }

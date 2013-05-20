@@ -168,7 +168,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                                         ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
                         if (vdcReturnValue.getSucceeded()) {
-                            getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
+                            getTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
                         } else if (vdcReturnValue.getFault() != null) {
                             // if we have a fault, forward it to the user
                             throw new VdcBLLException(vdcReturnValue.getFault().getError(),

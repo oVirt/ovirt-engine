@@ -97,7 +97,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
 
         if (vdsReturnValue.getSucceeded()) {
             AsyncTaskCreationInfo taskCreationInfo = vdsReturnValue.getCreationInfo();
-            getReturnValue().getInternalTaskIdList().add(
+            getReturnValue().getInternalVdsmTaskIdList().add(
                     createTask(taskId,
                             taskCreationInfo,
                             getParameters().getParentCommand(),
@@ -204,7 +204,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
             if (returnValue.getSucceeded()) {
                 // Starting to monitor the the tasks - RemoveImage is an internal command
                 // which adds the taskId on the internal task ID list
-                startPollingAsyncTasks(returnValue.getInternalTaskIdList());
+                startPollingAsyncTasks(returnValue.getInternalVdsmTaskIdList());
             }
         }
     }

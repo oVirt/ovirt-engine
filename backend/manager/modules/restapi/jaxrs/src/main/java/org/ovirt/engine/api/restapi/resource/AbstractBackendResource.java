@@ -123,7 +123,7 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
     private CreationStatus getVdsmTasksStatus(VdcReturnValueBase result) {
         CreationStatus asyncStatus = null;
         VdcQueryReturnValue monitorResult =
-            runQuery(VdcQueryType.GetTasksStatusesByTasksIDs, new GetTasksStatusesByTasksIDsParameters(result.getTaskIdList()));
+            runQuery(VdcQueryType.GetTasksStatusesByTasksIDs, new GetTasksStatusesByTasksIDsParameters(result.getVdsmTaskIdList()));
         if (monitorResult != null
             && monitorResult.getSucceeded()
             && monitorResult.getReturnValue() != null) {

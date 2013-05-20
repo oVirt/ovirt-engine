@@ -80,7 +80,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                 Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
 
                 VDSReturnValue vdsReturnValue = performImageVdsmOperation();
-                getReturnValue().getInternalTaskIdList().add(
+                getReturnValue().getInternalVdsmTaskIdList().add(
                         createTask(taskId,
                                 vdsReturnValue.getCreationInfo(),
                                 getParameters().getParentCommand(),

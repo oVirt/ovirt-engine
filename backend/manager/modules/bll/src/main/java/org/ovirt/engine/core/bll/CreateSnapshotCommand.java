@@ -109,15 +109,15 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                                             getStoragePool().getcompatibility_version().toString()));
 
             if (vdsReturnValue.getSucceeded()) {
-                getParameters().setTaskIds(new java.util.ArrayList<Guid>());
-                getParameters().getTaskIds().add(
+                getParameters().setVdsmTaskIds(new java.util.ArrayList<Guid>());
+                getParameters().getVdsmTaskIds().add(
                         createTask(taskId,
                         vdsReturnValue.getCreationInfo(),
                         getParameters().getParentCommand(),
                         VdcObjectType.Storage,
                         getParameters().getStorageDomainId(),
                         getParameters().getDestinationImageId()));
-                getReturnValue().getInternalTaskIdList().add(getParameters().getTaskIds().get(0));
+                getReturnValue().getInternalVdsmTaskIdList().add(getParameters().getVdsmTaskIds().get(0));
 
                 // Shouldn't happen anymore:
                 if (getDestinationImageId().equals(Guid.Empty)) {

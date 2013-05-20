@@ -54,7 +54,7 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
                                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
                 if (vdcReturnValue.getSucceeded()) {
-                    getReturnValue().getInternalTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
+                    getReturnValue().getInternalVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
                 } else {
                     if (noImagesRemovedYet) {
                         setSucceeded(false);

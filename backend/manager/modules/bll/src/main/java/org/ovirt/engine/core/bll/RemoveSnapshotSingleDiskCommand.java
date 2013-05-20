@@ -46,7 +46,7 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
                                         .toString()));
 
         if (vdsReturnValue != null && vdsReturnValue.getCreationInfo() != null) {
-            getReturnValue().getInternalTaskIdList().add(
+            getReturnValue().getInternalVdsmTaskIdList().add(
                     createTask(taskId,
                             vdsReturnValue.getCreationInfo(),
                             VdcActionType.RemoveSnapshot,

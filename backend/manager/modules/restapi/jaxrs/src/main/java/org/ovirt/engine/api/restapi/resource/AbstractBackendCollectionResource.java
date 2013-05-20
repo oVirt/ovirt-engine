@@ -142,7 +142,7 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
 
     protected void handleAsynchrony(VdcReturnValueBase result, R model) {
         model.setCreationStatus(StatusUtils.create(getAsynchronousStatus(result)));
-        linkSubResource(model, CREATION_STATUS_REL, asString(result.getTaskIdList()));
+        linkSubResource(model, CREATION_STATUS_REL, asString(result.getVdsmTaskIdList()));
     }
 
     @SuppressWarnings("unchecked")

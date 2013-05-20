@@ -32,7 +32,7 @@ public class VdcReturnValueBase_CustomFieldSerializer {
 		vrvb.setTaskPlaceHolderIdList(asyncTaskIdList);
 		java.util.ArrayList<Guid> taskIdList = (java.util.ArrayList<Guid>) streamReader
 				.readObject();
-		vrvb.setTaskIdList(taskIdList);
+		vrvb.setVdsmTaskIdList(taskIdList);
 		vrvb.setEndActionTryAgain(streamReader.readBoolean());
 		vrvb.setFault((VdcFault)streamReader.readObject());
 
@@ -49,7 +49,7 @@ public class VdcReturnValueBase_CustomFieldSerializer {
 		streamWriter.writeObject(instance.getActionReturnValue());
 		streamWriter.writeString(instance.getDescription());
                 streamWriter.writeObject(instance.getTaskPlaceHolderIdList());
-		streamWriter.writeObject(instance.getTaskIdList());
+		streamWriter.writeObject(instance.getVdsmTaskIdList());
 		streamWriter.writeBoolean(instance.getEndActionTryAgain());
 		streamWriter.writeObject(instance.getFault());
 	}

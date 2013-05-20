@@ -118,7 +118,7 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
 
                 else // the AddImageFromScratch task created ended successfully:
                 {
-                    getReturnValue().getTaskIdList().addAll(tmpRetValue.getInternalTaskIdList());
+                    getReturnValue().getVdsmTaskIdList().addAll(tmpRetValue.getInternalVdsmTaskIdList());
                 }
             }
 

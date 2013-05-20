@@ -271,7 +271,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             getReturnValue().setFault(vdcRetValue.getFault());
         } else {
             setSucceeded(true);
-            getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
+            getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
         }
     }
 

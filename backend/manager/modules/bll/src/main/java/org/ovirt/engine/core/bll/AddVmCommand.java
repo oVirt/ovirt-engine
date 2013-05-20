@@ -709,7 +709,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 if (!result.getSucceeded()) {
                     throw new VdcBLLException(result.getFault().getError());
                 } else {
-                    getTaskIdList().addAll(result.getInternalTaskIdList());
+                    getTaskIdList().addAll(result.getInternalVdsmTaskIdList());
                     newDiskImages.add((DiskImage) result.getActionReturnValue());
                 }
             }
@@ -721,7 +721,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
         case EXECUTE:
-            return getSucceeded() ? (getReturnValue().getTaskIdList().size() > 0 ? AuditLogType.USER_ADD_VM_STARTED
+            return getSucceeded() ? (getReturnValue().getVdsmTaskIdList().size() > 0 ? AuditLogType.USER_ADD_VM_STARTED
                     : AuditLogType.USER_ADD_VM) : AuditLogType.USER_FAILED_ADD_VM;
 
         case END_SUCCESS:

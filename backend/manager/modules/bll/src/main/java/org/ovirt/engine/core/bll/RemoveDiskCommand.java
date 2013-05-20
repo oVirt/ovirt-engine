@@ -262,7 +262,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                                     ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
             if (vdcReturnValue.getSucceeded()) {
                 incrementVmsGeneration();
-                getReturnValue().getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
+                getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
                 setSucceeded(true);
             }
         } else {

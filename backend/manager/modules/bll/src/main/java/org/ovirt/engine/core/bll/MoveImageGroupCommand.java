@@ -36,7 +36,7 @@ public class MoveImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
                 removeImageParams,
                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
         if (returnValue.getSucceeded()) {
-            startPollingAsyncTasks(returnValue.getInternalTaskIdList());
+            startPollingAsyncTasks(returnValue.getInternalVdsmTaskIdList());
         } else {
             addAuditLogOnRemoveFailue();
         }

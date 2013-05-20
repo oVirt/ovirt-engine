@@ -628,7 +628,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                         "ImportVmCommand::MoveOrCopyAllImageGroups: Failed to copy disk!");
             }
 
-            getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
+            getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
             i++;
         }
     }

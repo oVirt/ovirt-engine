@@ -113,7 +113,7 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
                                             .getcompatibility_version().toString()));
 
             if (vdsReturnValue.getSucceeded()) {
-                getReturnValue().getInternalTaskIdList().add(
+                getReturnValue().getInternalVdsmTaskIdList().add(
                         createTask(taskId,
                                 vdsReturnValue.getCreationInfo(),
                                 VdcActionType.RestoreAllSnapshots,

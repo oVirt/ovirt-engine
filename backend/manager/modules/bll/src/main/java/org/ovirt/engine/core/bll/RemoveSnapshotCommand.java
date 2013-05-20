@@ -136,8 +136,8 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                     buildRemoveSnapshotSingleDiskParameters(source, dest),
                     ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
-            if (vdcReturnValue != null && vdcReturnValue.getInternalTaskIdList() != null) {
-                getReturnValue().getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
+            if (vdcReturnValue != null && vdcReturnValue.getInternalVdsmTaskIdList() != null) {
+                getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
             }
 
             List<Guid> quotasToRemoveFromCache = new ArrayList<Guid>();

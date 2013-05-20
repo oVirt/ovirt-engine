@@ -75,7 +75,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                                 .getMessage());
                     }
 
-                    getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
+                    getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
                 }
                 return null;
             }

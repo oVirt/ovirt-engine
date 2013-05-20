@@ -34,7 +34,7 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
         }
 
         if (returnValueFromAddVm.getSucceeded()) {
-            getTaskIdList().addAll(returnValueFromAddVm.getInternalTaskIdList());
+            getTaskIdList().addAll(returnValueFromAddVm.getInternalVdsmTaskIdList());
             addVmToPool(vmStatic);
         }
     }

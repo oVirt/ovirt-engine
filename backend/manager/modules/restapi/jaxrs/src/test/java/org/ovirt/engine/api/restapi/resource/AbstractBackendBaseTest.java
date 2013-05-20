@@ -530,7 +530,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
             VdcQueryReturnValue monitorResult,
             VdcReturnValueBase result) {
         if (asyncTasks != null) {
-            expect(result.getTaskIdList()).andReturn(asyncTasks).anyTimes();
+            expect(result.getVdsmTaskIdList()).andReturn(asyncTasks).anyTimes();
             expect(monitorResult.getReturnValue()).andReturn(asyncStatuses).anyTimes();
             expect(backend.RunQuery(eq(VdcQueryType.GetTasksStatusesByTasksIDs),
                     eqQueryParams(GetTasksStatusesByTasksIDsParameters.class,

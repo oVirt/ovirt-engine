@@ -383,7 +383,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
             if (vdcReturnValue.getSucceeded()) {
 
-                getReturnValue().getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
+                getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
                 // save RunVmParams so we'll know how to run
                 // the stateless VM in the EndAction part.
                 VmHandler.updateDisksFromDb(getVm());

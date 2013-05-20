@@ -167,7 +167,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                             buildModeOrCopyImageGroupParameters(containerID, disk),
                             ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
-                    getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
+                    getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
                 }
                 return null;
             }

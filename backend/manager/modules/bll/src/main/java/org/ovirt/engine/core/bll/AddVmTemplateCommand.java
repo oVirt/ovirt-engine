@@ -184,7 +184,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         // means that there are no asynchronous tasks to execute and that we can
         // end the command synchronously
-        boolean pendingAsyncTasks = !getReturnValue().getTaskIdList().isEmpty();
+        boolean pendingAsyncTasks = !getReturnValue().getVdsmTaskIdList().isEmpty();
         if (!pendingAsyncTasks) {
             endSuccessfullySynchronous();
         }
@@ -430,7 +430,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 throw new VdcBLLException(retValue.getFault().getError(), retValue.getFault().getMessage());
             }
 
-            getReturnValue().getTaskIdList().addAll(retValue.getInternalTaskIdList());
+            getReturnValue().getVdsmTaskIdList().addAll(retValue.getInternalVdsmTaskIdList());
             newDiskImages.add((DiskImage) retValue.getActionReturnValue());
         }
     }

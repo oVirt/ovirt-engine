@@ -45,7 +45,7 @@ public class VdcActionParametersBase implements java.io.Serializable {
 
     private boolean taskGroupSuccess = true;
 
-    private List<Guid> taskIds;
+    private List<Guid> vdsmTaskIds;
 
     private int executionIndex = 0;
 
@@ -191,12 +191,12 @@ public class VdcActionParametersBase implements java.io.Serializable {
         entityId = value;
     }
 
-    public List<Guid> getTaskIds() {
-        return taskIds;
+    public List<Guid> getVdsmTaskIds() {
+        return vdsmTaskIds;
     }
 
-    public void setTaskIds(List<Guid> value) {
-        taskIds = value;
+    public void setVdsmTaskIds(List<Guid> value) {
+        vdsmTaskIds = value;
     }
 
     public String getCorrelationId() {
@@ -234,7 +234,7 @@ public class VdcActionParametersBase implements java.io.Serializable {
         result = prime * result + (multipleAction ? 1231 : 1237);
         result = prime * result + ((parametersCurrentUser == null) ? 0 : parametersCurrentUser.hashCode());
         result = prime * result + ((parentCommand == null) ? 0 : parentCommand.hashCode());
-        result = prime * result + ((taskIds == null) ? 0 : taskIds.hashCode());
+        result = prime * result + ((vdsmTaskIds == null) ? 0 : vdsmTaskIds.hashCode());
         result = prime * result + ((correlationId == null) ? 0 : correlationId.hashCode());
         result = prime * result + executionIndex;
         return result;
@@ -272,10 +272,10 @@ public class VdcActionParametersBase implements java.io.Serializable {
             return false;
         if (parentCommand != other.parentCommand)
             return false;
-        if (taskIds == null) {
-            if (other.taskIds != null)
+        if (vdsmTaskIds == null) {
+            if (other.vdsmTaskIds != null)
                 return false;
-        } else if (!taskIds.equals(other.taskIds))
+        } else if (!vdsmTaskIds.equals(other.vdsmTaskIds))
             return false;
         if (correlationId == null) {
             if (other.correlationId != null)

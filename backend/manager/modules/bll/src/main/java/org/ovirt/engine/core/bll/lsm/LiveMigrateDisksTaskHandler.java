@@ -34,7 +34,7 @@ public class LiveMigrateDisksTaskHandler implements SPMAsyncTaskHandler {
                             parameters,
                             commandContext);
 
-            enclosingCommand.getReturnValue().getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
+            enclosingCommand.getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
 
             if (!parameters.getTaskGroupSuccess()) {
                 ExecutionHandler.endTaskJob(commandContext.getExecutionContext(), false);

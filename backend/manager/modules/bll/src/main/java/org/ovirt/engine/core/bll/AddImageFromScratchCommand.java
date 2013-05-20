@@ -81,14 +81,14 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
                                         .getVolumeFormat(), getDestinationImageId(), "", getStoragePool()
                                         .getcompatibility_version().toString()));
         if (vdsReturnValue.getSucceeded()) {
-            getParameters().setTaskIds(new ArrayList<Guid>());
-            getParameters().getTaskIds().add(
+            getParameters().setVdsmTaskIds(new ArrayList<Guid>());
+            getParameters().getVdsmTaskIds().add(
                     createTask(taskId,
                             vdsReturnValue.getCreationInfo(),
                             getParameters().getParentCommand(),
                             VdcObjectType.Storage,
                             getParameters().getStorageDomainId()));
-            getReturnValue().getInternalTaskIdList().add(getParameters().getTaskIds().get(0));
+            getReturnValue().getInternalVdsmTaskIdList().add(getParameters().getVdsmTaskIds().get(0));
 
             return true;
         }
