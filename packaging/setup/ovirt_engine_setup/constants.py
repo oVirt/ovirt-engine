@@ -723,6 +723,7 @@ class ConfigEnv(object):
         return 'OVESETUP_CONFIG/firewallManager'
 
     FQDN_REVERSE_VALIDATION = 'OVESETUP_CONFIG/fqdnReverseValidation'
+    FQDN_NON_LOOPBACK_VALIDATION = 'OVESETUP_CONFIG/fqdnNonLoopback'
 
 
 @util.export

@@ -26,6 +26,7 @@ from . import java
 from . import jboss
 from . import database
 from . import protocols
+from . import hostname
 from . import appmode
 from . import domain_type
 from . import ca
@@ -41,6 +42,7 @@ def createPlugins(context):
     jboss.Plugin(context=context)
     database.Plugin(context=context)
     protocols.Plugin(context=context)
+    hostname.Plugin(context=context)
     appmode.Plugin(context=context)
     domain_type.Plugin(context=context)
     ca.Plugin(context=context)

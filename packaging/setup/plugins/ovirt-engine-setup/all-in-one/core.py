@@ -94,6 +94,9 @@ class Plugin(plugin.PluginBase):
             self.environment[
                 osetupcons.ConfigEnv.FQDN_REVERSE_VALIDATION
             ] = True
+            self.environment[
+                osetupcons.ConfigEnv.FQDN_NON_LOOPBACK_VALIDATION
+            ] = True
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
