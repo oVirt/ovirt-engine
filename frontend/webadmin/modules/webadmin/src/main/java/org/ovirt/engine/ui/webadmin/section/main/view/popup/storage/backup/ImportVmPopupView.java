@@ -513,7 +513,8 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         storageDomainsColumn.setFieldUpdater(new FieldUpdater<DiskImage, String>() {
             @Override
             public void update(int index, DiskImage disk, String value) {
-                importModel.getDiskImportData(disk.getId()).setSelectedStorageDomainString(value);
+                String storageDomainName = value.substring(0, value.lastIndexOf(" (")); //$NON-NLS-1$
+                importModel.getDiskImportData(disk.getId()).setSelectedStorageDomainString(storageDomainName);
                 diskTable.edit(importModel.getImportDiskListModel());
             }
         });
