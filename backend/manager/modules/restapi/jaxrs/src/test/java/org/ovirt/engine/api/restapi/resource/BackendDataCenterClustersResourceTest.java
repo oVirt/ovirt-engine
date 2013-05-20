@@ -76,10 +76,6 @@ public class BackendDataCenterClustersResourceTest extends
                 returnNull ? null : getEntity(0));
     }
 
-    private void setUpGetEntityExpectations() throws Exception {
-        setUpGetEntityExpectations(GUIDS[0], false);
-    }
-
     @Test
     public void testRemoveCantDo() throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupsByStoragePoolId,
