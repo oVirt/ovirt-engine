@@ -678,7 +678,6 @@ fi
 %{engine_data}/scripts/engine-cleanup.py*
 %{engine_data}/scripts/engine-upgrade.py*
 %{engine_data}/scripts/post_upgrade.py*
-%{engine_data}/scripts/add_fn_db_get_async_tasks_function.sql
 
 # DB-related tools
 %{engine_data}/scripts/dbutils

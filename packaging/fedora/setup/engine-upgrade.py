@@ -880,20 +880,6 @@ def clearZombieTasks():
         raise Exception(MSG_ERROR_CLEAR_ZOMBIES)
 
 
-def deployDbAsyncTasks(dbName=basedefs.DB_NAME):
-    # Deploy DB functionality first
-    cmd = [
-        basedefs.EXEC_PSQL,
-        "-U", SERVER_ADMIN,
-        "-h", SERVER_NAME,
-        "-p", SERVER_PORT,
-        "-f", basedefs.FILE_DB_ASYNC_TASKS,
-        "-w",
-        "-d", dbName,
-    ]
-
-    out, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg="Error updating DB for getting async_tasks", envDict=utils.getPgEnv())
-
 def getRunningTasks(dbName=basedefs.DB_NAME):
     # Get async tasks:
     runningTasks, rc = utils.parseRemoteSqlCommand(
@@ -950,7 +936,6 @@ def checkRunningTasks(dbName=basedefs.DB_NAME, service=basedefs.ENGINE_SERVICE_N
     """
     # Find running tasks first
     logging.debug(MSG_RUNNING_TASKS)
-    deployDbAsyncTasks(dbName)
     runningTasks = getRunningTasks(dbName)
     compensations = getCompensations(dbName)
     engineConfigBinary = basedefs.FILE_ENGINE_CONFIG_BIN

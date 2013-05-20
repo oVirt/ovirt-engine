@@ -323,7 +323,6 @@ install_setup:
 	install -m 644 packaging/fedora/setup/miniyum.py $(DESTDIR)$(DATA_DIR)/scripts
 	install -m 644 packaging/fedora/setup/output_messages.py $(DESTDIR)$(DATA_DIR)/scripts
 	install -m 644 packaging/fedora/setup/post_upgrade.py $(DESTDIR)$(DATA_DIR)/scripts
-	install -m 644 packaging/fedora/setup/add_fn_db_get_async_tasks_function.sql $(DESTDIR)$(DATA_DIR)/scripts
 
 	# Install man pages
 	install -m 644 packaging/man/engine-setup.8 $(DESTDIR)$(MAN_DIR)/man8/
