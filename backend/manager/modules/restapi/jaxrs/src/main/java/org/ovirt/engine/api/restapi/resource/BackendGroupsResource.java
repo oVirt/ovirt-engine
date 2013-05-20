@@ -9,10 +9,7 @@ import org.ovirt.engine.api.resource.GroupsResource;
 import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
-import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendGroupsResource extends BackendGroupsResourceBase implements GroupsResource {
 
@@ -26,11 +23,7 @@ public class BackendGroupsResource extends BackendGroupsResourceBase implements 
 
     @Override
     public Groups list() {
-        if (isFiltered()) {
-            return mapDbGroupsCollection(getBackendCollection(DbUser.class, VdcQueryType.GetAllDbUsers, new VdcQueryParametersBase()));
-        } else {
-            return mapDbGroupsCollection(getGroupsCollection(SearchType.DBUser, getSearchPattern()));
-        }
+        return mapDbGroupsCollection(getGroupsCollection(SearchType.DBUser, getSearchPattern()));
     }
 
     @Override
