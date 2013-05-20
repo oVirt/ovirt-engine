@@ -175,7 +175,7 @@ public class Challenger implements PreProcessInterceptor {
             String engineSessionId = SessionUtils.generateEngineSessionId();
             if (validator == null || validator.validate(principal, engineSessionId)) {
                 successful = true;
-                if (httpSession == null) {
+                if (httpSession == null && preferPersistentAuth) {
                     httpSession = getCurrentSession(true);
                 }
                 SessionUtils.setEngineSessionId(httpSession, engineSessionId);
