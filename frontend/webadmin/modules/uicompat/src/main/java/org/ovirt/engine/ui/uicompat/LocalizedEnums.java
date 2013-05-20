@@ -234,6 +234,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String AuditLogType___GLUSTER_VOLUME_OPTIONS_RESET();
 
+	String AuditLogType___GLUSTER_VOLUME_OPTIONS_RESET_ALL();
+
 	String AuditLogType___GLUSTER_VOLUME_OPTIONS_RESET_FAILED();
 
 	String AuditLogType___GLUSTER_VOLUME_DELETE();

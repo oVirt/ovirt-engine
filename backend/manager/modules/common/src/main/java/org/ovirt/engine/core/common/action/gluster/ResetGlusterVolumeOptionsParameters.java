@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.action.gluster;
 
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -9,21 +10,21 @@ public class ResetGlusterVolumeOptionsParameters extends GlusterVolumeParameters
 
     private static final long serialVersionUID = 6574282602574606939L;
 
-    private String volumeOption;
+    private GlusterVolumeOptionEntity volumeOption;
 
     private boolean forceAction = false;
 
-    public ResetGlusterVolumeOptionsParameters(Guid volumeId, String volumeOption, boolean forceAction) {
+    public ResetGlusterVolumeOptionsParameters(Guid volumeId, GlusterVolumeOptionEntity volumeOption, boolean forceAction) {
         super(volumeId);
         setVolumeOption(volumeOption);
         setForceAction(forceAction);
     }
 
-    public String getVolumeOption() {
+    public GlusterVolumeOptionEntity getVolumeOption() {
         return volumeOption;
     }
 
-    public void setVolumeOption(String volumeOption) {
+    public void setVolumeOption(GlusterVolumeOptionEntity volumeOption) {
         this.volumeOption = volumeOption;
     }
 

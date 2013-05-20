@@ -85,18 +85,18 @@ public class BackendGlusterVolumeResource
     public Response resetOption(Action action) {
         Option option = action.getOption();
         validateParameters(option, "name");
-        return resetOption(action, option.getName(), action.isSetForce() ? action.isForce() : false);
+        return resetOption(action, option.getName(), option.getValue(), action.isSetForce() ? action.isForce() : false);
     }
 
     @Override
     public Response resetAllOptions(Action action) {
-        return resetOption(action, null, action.isSetForce() ? action.isForce() : false);
+        return resetOption(action, null, null, action.isSetForce() ? action.isForce() : false);
     }
 
-    private Response resetOption(Action action, String optionName, boolean force) {
+    private Response resetOption(Action action, String optionName, String optionValue, boolean force) {
         return doAction(VdcActionType.ResetGlusterVolumeOptions,
                 new ResetGlusterVolumeOptionsParameters(guid,
-                        optionName,
+                        new GlusterVolumeOptionEntity(guid, optionName, optionValue),
                         force), action);
     }
 

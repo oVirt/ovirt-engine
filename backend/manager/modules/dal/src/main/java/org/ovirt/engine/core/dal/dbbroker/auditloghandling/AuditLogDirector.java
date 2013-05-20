@@ -81,6 +81,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.GLUSTER_VOLUME_STOP, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.GLUSTER_VOLUME_STOP_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.GLUSTER_VOLUME_OPTIONS_RESET, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.GLUSTER_VOLUME_OPTIONS_RESET_ALL, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.GLUSTER_VOLUME_OPTIONS_RESET_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.GLUSTER_VOLUME_DELETE, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.GLUSTER_VOLUME_DELETE_FAILED, AuditLogSeverity.ERROR);

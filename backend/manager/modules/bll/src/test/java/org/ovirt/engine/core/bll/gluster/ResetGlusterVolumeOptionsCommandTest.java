@@ -25,10 +25,10 @@ public class ResetGlusterVolumeOptionsCommandTest {
      */
     private ResetGlusterVolumeOptionsCommand cmd;
 
-    private Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+    private final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
 
     private ResetGlusterVolumeOptionsCommand createTestCommand(Guid volumeId) {
-        return new ResetGlusterVolumeOptionsCommand(new ResetGlusterVolumeOptionsParameters(volumeId, "", false));
+        return new ResetGlusterVolumeOptionsCommand(new ResetGlusterVolumeOptionsParameters(volumeId, null, false));
     }
 
     private void prepareMocks(ResetGlusterVolumeOptionsCommand command) {

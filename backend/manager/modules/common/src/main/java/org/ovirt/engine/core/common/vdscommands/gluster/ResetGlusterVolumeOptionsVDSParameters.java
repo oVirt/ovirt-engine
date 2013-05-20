@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands.gluster;
 
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -9,16 +10,16 @@ import org.ovirt.engine.core.compat.Guid;
  */
 public class ResetGlusterVolumeOptionsVDSParameters extends GlusterVolumeVDSParameters {
 
-    private String volumeOption;
-    private boolean forceAction;
+    private final GlusterVolumeOptionEntity volumeOption;
+    private final boolean forceAction;
 
-    public ResetGlusterVolumeOptionsVDSParameters(Guid serverId, String volumeName, String volumeOption, boolean forceAction) {
+    public ResetGlusterVolumeOptionsVDSParameters(Guid serverId, String volumeName, GlusterVolumeOptionEntity volumeOption, boolean forceAction) {
         super(serverId, volumeName);
         this.volumeOption = volumeOption;
         this.forceAction = forceAction;
     }
 
-    public String getVolumeOption() {
+    public GlusterVolumeOptionEntity getVolumeOption() {
         return volumeOption;
     }
 

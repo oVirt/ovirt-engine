@@ -324,7 +324,7 @@ public class VolumeParameterListModel extends SearchableListModel {
         GlusterVolumeOptionEntity selectedOption = (GlusterVolumeOptionEntity) getSelectedItem();
 
         ResetGlusterVolumeOptionsParameters parameters =
-                new ResetGlusterVolumeOptionsParameters(selectedOption.getVolumeId(), selectedOption.getKey(), false);
+                new ResetGlusterVolumeOptionsParameters(selectedOption.getVolumeId(), selectedOption, false);
 
         model.startProgress(null);
 

@@ -5,6 +5,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.ResetGlusterVolumeOptionsParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
+import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -16,6 +17,8 @@ import org.ovirt.engine.core.common.vdscommands.gluster.ResetGlusterVolumeOption
 @NonTransactiveCommandAttribute
 @LockIdNameAttribute(isWait = true)
 public class ResetGlusterVolumeOptionsCommand extends GlusterVolumeCommandBase<ResetGlusterVolumeOptionsParameters> {
+
+    private boolean isResetAllOptions;
 
     public ResetGlusterVolumeOptionsCommand(ResetGlusterVolumeOptionsParameters params) {
         super(params);
@@ -36,12 +39,21 @@ public class ResetGlusterVolumeOptionsCommand extends GlusterVolumeCommandBase<R
 
         if (getSucceeded()) {
 
-            if (getParameters().getVolumeOption() != null && !getParameters().getVolumeOption().isEmpty()) {
-                removeOptionInDb(getGlusterVolume().getOption(getParameters().getVolumeOption()));
+            if (getParameters().getVolumeOption() != null && !(getParameters().getVolumeOption().getKey().isEmpty())) {
+                GlusterVolumeOptionEntity entity = getGlusterVolume().getOption(getParameters().getVolumeOption().getKey());
+                removeOptionInDb(entity);
+                isResetAllOptions = false;
+                if(entity != null) {
+                    String optionValue = entity.getValue();
+                    getParameters().getVolumeOption().setValue(optionValue != null ? optionValue : "");
+                    addCustomValue(GlusterConstants.OPTION_KEY, getParameters().getVolumeOption().getKey());
+                    addCustomValue(GlusterConstants.OPTION_VALUE, getParameters().getVolumeOption().getValue());
+                }
             } else {
                 for (GlusterVolumeOptionEntity option : getGlusterVolume().getOptions()) {
                     removeOptionInDb(option);
                 }
+                isResetAllOptions = true;
             }
         } else {
             handleVdsError(AuditLogType.GLUSTER_VOLUME_OPTIONS_RESET_FAILED, returnValue.getVdsError().getMessage());
@@ -64,7 +76,7 @@ public class ResetGlusterVolumeOptionsCommand extends GlusterVolumeCommandBase<R
     @Override
     public AuditLogType getAuditLogTypeValue() {
         if (getSucceeded()) {
-            return AuditLogType.GLUSTER_VOLUME_OPTIONS_RESET;
+            return (isResetAllOptions) ? AuditLogType.GLUSTER_VOLUME_OPTIONS_RESET_ALL : AuditLogType.GLUSTER_VOLUME_OPTIONS_RESET;
         } else {
             return errorType == null ? AuditLogType.GLUSTER_VOLUME_OPTIONS_RESET_FAILED : errorType;
         }
