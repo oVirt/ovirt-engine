@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -28,6 +29,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 public class ProviderModel extends Model {
 
     private static final String CMD_SAVE = "OnSave"; //$NON-NLS-1$
+    private static final String CMD_TEST = "OnTest"; //$NON-NLS-1$
     private static final String CMD_CANCEL = "Cancel"; //$NON-NLS-1$
 
     private final ListModel sourceListModel;
@@ -41,6 +43,8 @@ public class ProviderModel extends Model {
     private EntityModel privateRequiresAuthentication;
     private EntityModel privateUsername;
     private EntityModel privatePassword;
+    private UICommand privateTestCommand;
+    private EntityModel privateTestResult;
 
     public EntityModel getName() {
         return privateName;
@@ -98,6 +102,22 @@ public class ProviderModel extends Model {
         privatePassword = value;
     }
 
+    public UICommand getTestCommand() {
+        return privateTestCommand;
+    }
+
+    private void setTestCommand(UICommand value) {
+        privateTestCommand = value;
+    }
+
+    public EntityModel getTestResult() {
+        return privateTestResult;
+    }
+
+    private void setTestResult(EntityModel value) {
+        privateTestResult = value;
+    }
+
     public ProviderModel(ListModel sourceListModel, VdcActionType action, Provider provider) {
         this.sourceListModel = sourceListModel;
         this.action = action;
@@ -121,6 +141,7 @@ public class ProviderModel extends Model {
         setUsername(new EntityModel(provider.getUsername()));
         setPassword(new EntityModel(provider.getPassword()));
         getRequiresAuthentication().setEntity(provider.isRequiringAuthentication());
+        setTestResult(new EntityModel());
 
         List<ProviderType> allTypes = Arrays.asList(ProviderType.values());
         getType().setItems(allTypes);
@@ -134,6 +155,7 @@ public class ProviderModel extends Model {
         tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         getCommands().add(tempVar2);
+        setTestCommand(new UICommand(CMD_TEST, this));
     }
 
     private boolean validate() {
@@ -158,11 +180,7 @@ public class ProviderModel extends Model {
         sourceListModel.setWindow(null);
     }
 
-    private void onSave() {
-        if (!validate()) {
-            return;
-        }
-
+    private void flush() {
         provider.setName((String) privateName.getEntity());
         provider.setType((ProviderType) privateType.getSelectedItem());
         provider.setDescription((String) privateDescription.getEntity());
@@ -174,9 +192,32 @@ public class ProviderModel extends Model {
             provider.setUsername((String) privateUsername.getEntity());
             provider.setPassword((String) privatePassword.getEntity());
         }
+    }
 
+    private void onSave() {
+        if (!validate()) {
+            return;
+        }
+
+        flush();
         Frontend.RunAction(action, new ProviderParameters(provider));
         cancel();
+    }
+
+    private void onTest() {
+        flush();
+        startProgress(null);
+        Frontend.RunAction(VdcActionType.TestProviderConnectivity,
+                new ProviderParameters(provider),
+                new IFrontendActionAsyncCallback() {
+
+            @Override
+            public void executed(FrontendActionAsyncResult result) {
+                stopProgress();
+                VdcReturnValueBase res = result.getReturnValue();
+                getTestResult().setEntity(res != null && res.getSucceeded());
+            }
+        });
     }
 
     @Override
@@ -185,6 +226,8 @@ public class ProviderModel extends Model {
 
         if (StringHelper.stringsEqual(command.getName(), CMD_SAVE)) {
             onSave();
+        } else if (StringHelper.stringsEqual(command.getName(), CMD_TEST)) {
+            onTest();
         } else if (StringHelper.stringsEqual(command.getName(), CMD_CANCEL)) {
             cancel();
         }
