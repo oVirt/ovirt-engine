@@ -160,6 +160,24 @@ Acess using HTTP or HTTPS:
 
 Debug port is available at 127.0.0.1:8787
 
+DAO TESTS
+
+Create empty database for DAO tests refer to DATABASE CREATION.
+
+Provided user is 'engine', psasword is 'engine' and database is engine_dao.
+
+Create empty schema (one time):
+
+$ PGPASSWORD=engine \
+    ./backend/manager/dbscripts/create_schema.sh -d engine_dao -u engine
+
+Run build as:
+
+$ make BUILD_TEST_FLAGS="-P enable-dao-tests \
+    -D engine.db.username=engine \
+    -D engine.db.password=engine \
+    -D engine.db.url=jdbc:postgresql://localhost/engine_dao"
+
 RPM PACKAGING
 
 $ make dist
