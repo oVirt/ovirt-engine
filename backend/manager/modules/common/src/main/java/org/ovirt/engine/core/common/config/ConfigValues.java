@@ -1337,6 +1337,11 @@ public enum ConfigValues {
     @DefaultValueAttribute("0.5")
     DelayResetPerVmInSeconds(504),
 
+    @Reloadable
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("/usr/bin/vdsm-tool vdsm-id")
+    GetVdsmIdByVdsmToolCommand(505),
+
     Invalid(65535);
 
     private int intValue;

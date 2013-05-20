@@ -1321,6 +1321,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Host with the same address already exists.")
     String ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Host with the same UUID already exists.")
+    String ACTION_TYPE_FAILED_VDS_WITH_SAME_UUID_EXIST();
+
     @DefaultStringValue("Cannot ${action} ${type}. Illegal memory size is provided, size needs to be between ${minMemorySize} MB and ${maxMemorySize} MB.")
     String ACTION_TYPE_FAILED_ILLEGAL_MEMORY_SIZE();
 

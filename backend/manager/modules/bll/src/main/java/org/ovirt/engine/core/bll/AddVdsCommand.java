@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import java.io.ByteArrayOutputStream;
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +55,7 @@ import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.gluster.GlusterUtil;
+import org.ovirt.engine.core.utils.ssh.ConstraintByteArrayOutputStream;
 import org.ovirt.engine.core.utils.ssh.SSHClient;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -369,6 +372,29 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         return sshclient;
     }
 
+    /**
+     * getInstalledVdsIdIfExists
+     *
+     * Communicate with host by SSH session and gather vdsm-id if exist
+     *
+     * @param client - already connected ssh client
+     */
+    private String getInstalledVdsIdIfExists(SSHClient client) {
+        try {
+            ByteArrayOutputStream out = new ConstraintByteArrayOutputStream(256);
+            client.executeCommand(Config.<String> GetValue(ConfigValues.GetVdsmIdByVdsmToolCommand),
+                                  null, out, null);
+            return new String(out.toByteArray(), Charset.forName("UTF-8"));
+        }
+        catch (Exception e) {
+            log.warnFormat(
+                    "Failed to initiate vdsm-id request on host",
+                    e
+                    );
+            return null;
+        }
+    }
+
     protected boolean canConnect(VDS vds) {
         // execute the connectivity and id uniqueness validation for VDS type hosts
         if (vds.getVdsType() == VDSType.VDS && Config.<Boolean> GetValue(ConfigValues.InstallVds)) {
@@ -377,6 +403,11 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 sshclient = getSSHClient(vds.getHostName());
                 sshclient.connect();
                 sshclient.authenticate();
+
+                String hostUUID = getInstalledVdsIdIfExists(sshclient);
+                if (hostUUID != null && getVdsDAO().getAllWithUniqueId(hostUUID).size() != 0) {
+                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_SAME_UUID_EXIST);
+                }
 
                 return isValidGlusterPeer(sshclient, vds.getVdsGroupId());
             } catch (AuthenticationException e) {
