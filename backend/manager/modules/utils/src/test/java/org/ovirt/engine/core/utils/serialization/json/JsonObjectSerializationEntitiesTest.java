@@ -109,6 +109,7 @@ public class JsonObjectSerializationEntitiesTest {
                                 random.nextString(10), random.nextString(10)) },
                         { new StorageDomainDynamic(random.nextInt(), Guid.NewGuid(), random.nextInt()) },
                         { new StoragePool(random.nextString(10),
+                                "",
                                 Guid.NewGuid(),
                                 random.nextString(10),
                                 random.nextEnum(StorageType.class).getValue(),

@@ -45,6 +45,11 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
     @WithElementId
     EntityModelTextBoxEditor descriptionEditor;
 
+    @UiField
+    @Path(value = "comment.entity")
+    @WithElementId
+    EntityModelTextBoxEditor commentEditor;
+
     @UiField(provided = true)
     @Path(value = "storageTypeList.selectedItem")
     @WithElementId
@@ -93,6 +98,7 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
     void localize(ApplicationConstants constants) {
         nameEditor.setLabel(constants.nameLabel());
         descriptionEditor.setLabel(constants.descriptionLabel());
+        commentEditor.setLabel(constants.commentLabel());
         storageTypeListEditor.setLabel(constants.dataCenterPopupStorageTypeLabel());
         versionEditor.setLabel(constants.dataCenterPopupVersionLabel());
         quotaEnforceTypeEditor.setLabel(constants.dataCenterPopupQuotaEnforceTypeLabel());

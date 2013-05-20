@@ -40,6 +40,7 @@ public class StoragePoolValidatorTest {
     public void setup() {
         storagePool =
                 new StoragePool("test",
+                        "",
                         Guid.NewGuid(),
                         "test",
                         StorageType.UNKNOWN.getValue(),

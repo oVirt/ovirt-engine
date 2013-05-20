@@ -16,6 +16,7 @@
 				<e:ListModelListBoxEditor ui:field="storageTypeListEditor" />
 				<e:ListModelListBoxEditor ui:field="versionEditor" />
 				<e:ListModelListBoxEditor ui:field="quotaEnforceTypeEditor" />
+				<e:EntityModelTextBoxEditor ui:field="commentEditor" />
 			</g:FlowPanel>
 		</d:content>
 	</d:SimpleDialogPanel>

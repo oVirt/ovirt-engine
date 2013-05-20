@@ -240,6 +240,7 @@ public final class Cloner
         StoragePool obj = new StoragePool();
 
         obj.setdescription(instance.getdescription());
+        obj.setComment(instance.getComment());
         obj.setId(instance.getId());
         obj.setname(instance.getname());
         obj.setstorage_pool_type(instance.getstorage_pool_type());

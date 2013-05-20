@@ -1189,6 +1189,8 @@ actions:
       - mandatoryArguments: {}
         optionalArguments:
           datacenter.name: xs:string
+          datacenter.description: xs:string
+          datacenter.comment: xs:string
           datacenter.storage_type: xs:string
           datacenter.version.major: xs:int
           datacenter.version.minor: xs:int
@@ -1238,6 +1240,7 @@ actions:
       - mandatoryArguments: {datacenter.name: 'xs:string', datacenter.storage_type: 'xs:string', datacenter.version.major: 'xs:int', datacenter.version.minor: 'xs:int'}
         optionalArguments:
           datacenter.description: xs:string
+          datacenter.comment: xs:string
           datacenter.storage_format: xs:string
     urlparams: {}
     headers:

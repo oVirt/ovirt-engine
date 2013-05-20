@@ -883,7 +883,7 @@ WHERE     (audit_log.processed = false);
 CREATE OR REPLACE VIEW storage_pool_with_storage_domain
 
 AS
-SELECT     storage_pool.id as id, storage_pool.name as name, storage_pool.description as description, storage_pool.storage_pool_type as storage_pool_type, storage_pool.status as status,
+SELECT     storage_pool.id as id, storage_pool.name as name, storage_pool.description as description, storage_pool.free_text_comment as free_text_comment, storage_pool.storage_pool_type as storage_pool_type, storage_pool.status as status,
 		   storage_pool.master_domain_version as master_domain_version, storage_pool.spm_vds_id as spm_vds_id, storage_pool.compatibility_version as compatibility_version, storage_pool._create_date as _create_date,
 		   storage_pool._update_date as _update_date, storage_pool_iso_map.storage_id as storage_id, storage_pool_iso_map.storage_pool_id as storage_pool_id,
 		   storage_domain_static.storage_type as storage_type, storage_domain_static.storage_domain_type as storage_domain_type,

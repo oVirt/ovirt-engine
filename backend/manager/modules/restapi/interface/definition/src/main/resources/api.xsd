@@ -934,6 +934,7 @@
         <xs:sequence>
           <xs:element name="name" type="xs:string" minOccurs="0"/>
           <xs:element name="description" type="xs:string" minOccurs="0"/>
+          <xs:element name="comment" type="xs:string" minOccurs="0"/>
           <xs:element name="creation_status" type="Status" minOccurs="0"/>
           <!-- also rel="creation_status" link for monitoring async creation -->
           <!-- further link relation types may be defined by specific resources -->
@@ -992,12 +993,12 @@
     <xs:complexContent>
       <xs:extension base="BaseResource">
         <xs:sequence>
-          <xs:element name="storage_type" type="xs:string" minOccurs="0"/>
-          <xs:element name="storage_format" type="xs:string" minOccurs="0"/>
-          <xs:element name="version" type="Version" minOccurs="0"/>
-          <xs:element name="supported_versions" type="SupportedVersions" minOccurs="0"/>
-          <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
-          <!-- also rel="files" and rel="storagedomains" links -->
+            <xs:element name="storage_type" type="xs:string" minOccurs="0" />
+            <xs:element name="storage_format" type="xs:string" minOccurs="0" />
+            <xs:element name="version" type="Version" minOccurs="0" />
+            <xs:element name="supported_versions" type="SupportedVersions" minOccurs="0" />
+            <xs:element ref="status" minOccurs="0" maxOccurs="1" />
+            <!-- also rel="files" and rel="storagedomains" links -->
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

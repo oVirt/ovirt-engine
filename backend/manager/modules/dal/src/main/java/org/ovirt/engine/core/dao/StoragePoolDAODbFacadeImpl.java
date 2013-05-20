@@ -29,6 +29,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                 throws SQLException {
             StoragePool entity = new StoragePool();
             entity.setdescription(rs.getString("description"));
+            entity.setComment(rs.getString("free_text_comment"));
             entity.setId(Guid.createGuidFromString(rs.getString("id")));
             entity.setname(rs.getString("name"));
             entity.setstorage_pool_type(StorageType.forValue(rs
@@ -130,6 +131,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
     public void save(StoragePool pool) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("description", pool.getdescription())
+                .addValue("free_text_comment", pool.getComment())
                 .addValue("id", pool.getId())
                 .addValue("name", pool.getname())
                 .addValue("storage_pool_type", pool.getstorage_pool_type())
@@ -149,6 +151,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
     public void update(StoragePool pool) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("description", pool.getdescription())
+                .addValue("free_text_comment", pool.getComment())
                 .addValue("id", pool.getId())
                 .addValue("name", pool.getname())
                 .addValue("storage_pool_type", pool.getstorage_pool_type())
@@ -169,6 +172,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
     public void updatePartial(StoragePool pool) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("description", pool.getdescription())
+                .addValue("free_text_comment", pool.getComment())
                 .addValue("id", pool.getId())
                 .addValue("name", pool.getname())
                 .addValue("storage_pool_type", pool.getstorage_pool_type())

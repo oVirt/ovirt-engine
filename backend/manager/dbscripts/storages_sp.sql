@@ -4,6 +4,7 @@
 
 
 Create or replace FUNCTION Insertstorage_pool(v_description VARCHAR(4000),
+	v_free_text_comment text,
 	v_id UUID,
 	v_name VARCHAR(40),
 	v_storage_pool_type INTEGER,
@@ -15,8 +16,8 @@ Create or replace FUNCTION Insertstorage_pool(v_description VARCHAR(4000),
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO storage_pool(description, id, name, storage_pool_type,status,master_domain_version,spm_vds_id,compatibility_version,quota_enforcement_type)
-	VALUES(v_description, v_id, v_name, v_storage_pool_type,v_status,v_master_domain_version,v_spm_vds_id,v_compatibility_version,v_quota_enforcement_type);
+INSERT INTO storage_pool(description, free_text_comment, id, name, storage_pool_type,status,master_domain_version,spm_vds_id,compatibility_version,quota_enforcement_type)
+	VALUES(v_description, v_free_text_comment, v_id, v_name, v_storage_pool_type,v_status,v_master_domain_version,v_spm_vds_id,v_compatibility_version,v_quota_enforcement_type);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -25,6 +26,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Updatestorage_pool(v_description VARCHAR(4000),
+	v_free_text_comment text,
 	v_id UUID,
 	v_name VARCHAR(40),
 	v_storage_pool_type INTEGER,
@@ -40,7 +42,7 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE storage_pool
-      SET description = v_description,name = v_name,storage_pool_type = v_storage_pool_type,
+      SET description = v_description, free_text_comment = v_free_text_comment,  name = v_name,storage_pool_type = v_storage_pool_type,
       status = v_status,storage_pool_format_type = v_storage_pool_format_type,master_domain_version = v_master_domain_version,
       spm_vds_id = v_spm_vds_id,compatibility_version = v_compatibility_version,
       _update_date = LOCALTIMESTAMP,quota_enforcement_type=v_quota_enforcement_type
@@ -49,6 +51,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION Updatestorage_pool_partial(v_description VARCHAR(4000),
+	v_free_text_comment text,
 	v_id UUID,
 	v_name VARCHAR(40),
 	v_storage_pool_type INTEGER,
@@ -61,7 +64,7 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE storage_pool
-      SET description = v_description,name = v_name,storage_pool_type = v_storage_pool_type,
+      SET description = v_description, free_text_comment = v_free_text_comment, name = v_name,storage_pool_type = v_storage_pool_type,
       storage_pool_format_type = v_storage_pool_format_type,compatibility_version = v_compatibility_version,
       _update_date = LOCALTIMESTAMP,quota_enforcement_type = v_quota_enforcement_type
       WHERE id = v_id;

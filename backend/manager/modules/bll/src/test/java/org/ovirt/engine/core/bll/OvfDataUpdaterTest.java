@@ -136,12 +136,14 @@ public class OvfDataUpdaterTest {
         templates = new HashMap<Guid, VmTemplate>();
         pool1 =
                 new StoragePool("first sp",
+                        "",
                         Guid.NewGuid(),
                         "storage_pool1",
                         StorageType.NFS.getValue(),
                         StoragePoolStatus.Up.getValue());
         pool2 =
                 new StoragePool("second sp",
+                        "",
                         Guid.NewGuid(),
                         "storage_pool2",
                         StorageType.NFS.getValue(),

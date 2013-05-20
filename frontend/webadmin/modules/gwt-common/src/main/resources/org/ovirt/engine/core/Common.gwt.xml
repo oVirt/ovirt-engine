@@ -59,6 +59,7 @@
 		<include name="common/businessentities/network/VmNetworkStatistics.java" />
 		<include name="common/businessentities/network/VdsNetworkStatistics.java" />
 
+		<include name="common/businessentities/Commented.java" />
 		<include name="common/businessentities/IVdcQueryable.java" />
 		<include name="common/businessentities/FenceAgentOrder.java" />
 		<include name="common/businessentities/LUNs.java" />

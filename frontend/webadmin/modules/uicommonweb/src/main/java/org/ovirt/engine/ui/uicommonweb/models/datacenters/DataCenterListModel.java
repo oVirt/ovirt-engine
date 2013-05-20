@@ -308,6 +308,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         }
 
         model.getDescription().setEntity(dataCenter.getdescription());
+        model.getComment().setEntity(dataCenter.getComment());
         model.setOriginalName(dataCenter.getname());
 
         AsyncDataProvider.getStorageDomainList(new AsyncQuery(this,
@@ -692,6 +693,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         // Save changes.
         dataCenter.setname((String) model.getName().getEntity());
         dataCenter.setdescription((String) model.getDescription().getEntity());
+        dataCenter.setComment((String) model.getComment().getEntity());
         dataCenter.setstorage_pool_type((StorageType) model.getStorageTypeList().getSelectedItem());
         dataCenter.setcompatibility_version((Version) model.getVersion().getSelectedItem());
         dataCenter.setQuotaEnforcementType((QuotaEnforcementTypeEnum) model.getQuotaEnforceTypeListModel()

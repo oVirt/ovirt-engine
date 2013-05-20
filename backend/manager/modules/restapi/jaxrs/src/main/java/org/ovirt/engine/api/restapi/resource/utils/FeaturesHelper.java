@@ -54,6 +54,7 @@ public class FeaturesHelper {
             addFeatureVmApplications(features);
             addFeatureVnicCustomProperties(features);
             addFeatureVirtioScsi(features);
+            addFeatureComment(features);
         }
         return features;
     }
@@ -245,6 +246,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("Virtio-SCSI Support");
         feature.setDescription("Support for paravirtualized SCSI controller device.");
+        features.getFeature().add(feature);
+    }
+
+    private void addFeatureComment(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Custom comment in the resource");
+        feature.setDescription("At this point added ability to add custom comment only to the datacenter, in future versions we may allow it in other resources as well.");
         features.getFeature().add(feature);
     }
 }

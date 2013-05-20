@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.AsciiOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 
@@ -98,6 +99,18 @@ public class DataCenterModel extends Model
         privateDescription = value;
     }
 
+    private EntityModel privateComment;
+
+    public EntityModel getComment()
+    {
+        return privateComment;
+    }
+
+    public void setComment(EntityModel value)
+    {
+        privateComment = value;
+    }
+
     private ListModel privateStorageTypeList;
 
     public ListModel getStorageTypeList()
@@ -148,6 +161,7 @@ public class DataCenterModel extends Model
     {
         setName(new EntityModel());
         setDescription(new EntityModel());
+        setComment(new EntityModel());
         setVersion(new ListModel());
 
         setStorageTypeList(new ListModel());
@@ -295,6 +309,8 @@ public class DataCenterModel extends Model
 
         getDescription().validateEntity(new IValidation[] { new AsciiOrNoneValidation() });
 
+        getComment().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
+
         // TODO: add this code to async validate.
         // string name = (string)Name.Entity;
         // if (String.Compare(name, OriginalName, true) != 0 && !DataProvider.IsDataCenterNameUnique(name))
@@ -303,7 +319,8 @@ public class DataCenterModel extends Model
         // Name.InvalidityReasons.Add("Name must be unique.");
         // }
 
-        return getName().getIsValid() && getDescription().getIsValid() && getStorageTypeList().getIsValid()
+        return getName().getIsValid() && getDescription().getIsValid() && getComment().getIsValid()
+                && getStorageTypeList().getIsValid()
                 && getVersion().getIsValid();
     }
 

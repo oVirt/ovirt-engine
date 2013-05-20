@@ -25,6 +25,9 @@ public class DataCenterMapper {
         if (model.isSetDescription()) {
             entity.setdescription(model.getDescription());
         }
+        if (model.isSetComment()) {
+            entity.setComment(model.getComment());
+        }
         if (model.isSetStorageType()) {
             StorageType storageType = StorageType.fromValue(model.getStorageType());
             if (storageType != null) {
@@ -51,6 +54,9 @@ public class DataCenterMapper {
         model.setName(entity.getname());
         if (!StringUtils.isEmpty(entity.getdescription())) {
                 model.setDescription(entity.getdescription());
+        }
+        if (!StringUtils.isEmpty(entity.getComment())) {
+            model.setComment(entity.getComment());
         }
         model.setStorageType(StorageDomainMapper.map(entity.getstorage_pool_type(), null));
         if (entity.getstatus()!=null) {

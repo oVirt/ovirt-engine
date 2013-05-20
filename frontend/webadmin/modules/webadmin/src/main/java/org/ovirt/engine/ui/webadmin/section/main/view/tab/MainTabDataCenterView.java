@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.webadmin.uicommon.ReportActionsHelper;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.DcStatusColumn;
 
 import com.google.gwt.core.client.GWT;
@@ -86,6 +87,8 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
             }
         };
         getTable().addColumn(descColumn, constants.descriptionDc(), "300px"); //$NON-NLS-1$
+
+        getTable().addColumn(new CommentColumn<StoragePool>(), constants.commentDc(), "80px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<StoragePool>(constants.newDC()) {
             @Override

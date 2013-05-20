@@ -146,7 +146,7 @@ public class UpdateStoragePoolCommandTest {
     }
 
     private void newPoolNameIsAlreadyTaken() {
-        when(spDao.get(any(Guid.class))).thenReturn(new StoragePool("foo", Guid.Empty, "foo",
+        when(spDao.get(any(Guid.class))).thenReturn(new StoragePool("foo", "", Guid.Empty, "foo",
                 StorageType.NFS.getValue(), StoragePoolStatus.Up.getValue()));
         when(spDao.getByName(anyString())).thenReturn(createDefaultStoragePool());
     }

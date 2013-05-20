@@ -10,18 +10,21 @@ public class StoragePoolFieldAutoCompleter extends BaseConditionFieldAutoComplet
         mVerbs.add("DESCRIPTION");
         mVerbs.add("TYPE");
         mVerbs.add("STATUS");
+        mVerbs.add("COMMENT");
 
         // Building the autoCompletion Dict
         buildCompletions();
         // Building the types dict
         getTypeDictionary().put("NAME", String.class);
         getTypeDictionary().put("DESCRIPTION", String.class);
+        getTypeDictionary().put("COMMENT", String.class);
         getTypeDictionary().put("TYPE", StorageType.class);
         getTypeDictionary().put("STATUS", StoragePoolStatus.class);
 
         // building the ColumnName Dict
         columnNameDict.put("NAME", "name");
         columnNameDict.put("DESCRIPTION", "description");
+        columnNameDict.put("COMMENT", "comment");
         columnNameDict.put("TYPE", "storage_pool_type");
         columnNameDict.put("STATUS", "status");
 

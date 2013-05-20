@@ -12,7 +12,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
 
-public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid> {
+public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid>, Commented {
     private static final long serialVersionUID = 6162262095329980112L;
 
     private Guid id = new Guid();
@@ -26,6 +26,8 @@ public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid> {
             message = "VALIDATION.DATA_CENTER.DESCRIPTION.INVALID",
             groups = { CreateEntity.class, UpdateEntity.class })
     private String description;
+
+    private String comment;
 
     private int storagePoolType = StorageType.UNKNOWN.getValue();
 
@@ -50,12 +52,14 @@ public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid> {
 
     public StoragePool() {
         description = "";
+        comment = "";
         masterDomainVersion = 0;
     }
 
-    public StoragePool(String description, Guid id, String name, int storage_pool_type, int status) {
+    public StoragePool(String description, String comment, Guid id, String name, int storage_pool_type, int status) {
         this();
         this.description = description;
+        this.comment = comment;
         this.id = id;
         this.name = name;
         setstorage_pool_type(StorageType.forValue(storage_pool_type));
@@ -71,6 +75,17 @@ public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid> {
 
     public void setdescription(String value) {
         this.description = value;
+    }
+
+    public String getComment() {
+        if (comment == null) {
+            comment = "";
+        }
+        return comment;
+    }
+
+    public void setComment(String value) {
+        this.comment = value;
     }
 
     @Override
@@ -172,6 +187,7 @@ public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid> {
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((LVER == null) ? 0 : LVER.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + ((comment == null) ? 0 : comment.hashCode());
         result = prime * result + ((compatibilityVersion == null) ? 0 : compatibilityVersion.hashCode());
         result = prime * result + masterDomainVersion;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
@@ -199,6 +215,7 @@ public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid> {
         return (ObjectUtils.objectsEqual(id, other.id)
                 && ObjectUtils.objectsEqual(LVER, other.LVER)
                 && ObjectUtils.objectsEqual(description, other.description)
+                && ObjectUtils.objectsEqual(comment, other.comment)
                 && ObjectUtils.objectsEqual(getcompatibility_version(), other.getcompatibility_version())
                 && masterDomainVersion == other.masterDomainVersion
                 && ObjectUtils.objectsEqual(name, other.name)

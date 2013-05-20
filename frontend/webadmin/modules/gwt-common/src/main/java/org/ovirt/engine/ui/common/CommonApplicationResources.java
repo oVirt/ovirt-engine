@@ -110,6 +110,9 @@ public interface CommonApplicationResources extends ClientBundle {
 
     // Table image columns
 
+    @Source("images/comment.png")
+    ImageResource commentImage();
+
     @Source("images/log_normal.gif")
     ImageResource logNormalImage();
 

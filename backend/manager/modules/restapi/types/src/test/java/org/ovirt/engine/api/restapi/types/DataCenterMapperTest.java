@@ -29,6 +29,7 @@ public class DataCenterMapperTest extends
         assertEquals(model.getName(), transform.getName());
         assertEquals(model.getId(), transform.getId());
         assertEquals(model.getDescription(), transform.getDescription());
+        assertEquals(model.getComment(), transform.getComment());
         assertEquals(model.getStorageType(), transform.getStorageType());
         assertEquals(model.getStorageFormat(), transform.getStorageFormat());
     }
