@@ -76,7 +76,7 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
             if (getParameters().isRemoveTemplateFromDb()) {
                 DiskImage diskImage = DbFacade.getInstance().getDiskImageDao().get(template.getImageId());
                 if (diskImage != null) {
-                    DbFacade.getInstance().getBaseDiskDao().remove(template.getImageId());
+                    DbFacade.getInstance().getBaseDiskDao().remove(template.getId());
                     DbFacade.getInstance()
                             .getVmDeviceDao()
                             .remove(new VmDeviceId(diskImage.getImageId(), getVmTemplateId()));
