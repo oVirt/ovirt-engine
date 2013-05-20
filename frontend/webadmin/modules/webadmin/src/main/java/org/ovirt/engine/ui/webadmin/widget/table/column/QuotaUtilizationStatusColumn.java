@@ -34,7 +34,7 @@ public class QuotaUtilizationStatusColumn<IVdcQueryable> extends WebAdminImageRe
         if (quota.getStorageSizeGB() == null) {
             return false;
         }
-        return quota.getStorageSizeGB() != QuotaStorage.UNLIMITED
+        return quota.getStorageSizeGB().longValue() != QuotaStorage.UNLIMITED.longValue()
                 && quota.getStorageSizeGB() < quota.getStorageSizeGBUsage();
     }
 
