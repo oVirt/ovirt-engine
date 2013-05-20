@@ -133,9 +133,9 @@ public class StorageDomainMapper {
         }
         model.setCommitted(SizeConverter.gigasToBytes(entity.getCommittedDiskSize()));
         if (entity.getStorageFormat()!=null) {
-            String storageForamt = StorageFormatMapper.map(entity.getStorageFormat(), null).value();
-            if (storageForamt!=null) {
-                model.setStorageFormat(storageForamt);
+            String storageFormat = StorageFormatMapper.map(entity.getStorageFormat(), null).value();
+            if (storageFormat!=null) {
+                model.setStorageFormat(storageFormat);
             }
         }
         return model;
