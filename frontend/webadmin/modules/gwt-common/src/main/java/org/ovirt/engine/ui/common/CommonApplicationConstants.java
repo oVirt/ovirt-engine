@@ -1180,7 +1180,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Enable SPICE Proxy")
     String enableSpiceProxy();
 
-    @DefaultStringValue("Not supported for this client OS")
+    @DefaultStringValue("Ctrl-Alt-Del is always passed for this client OS")
     String ctrlAltDeletIsNotSupportedOnWindows();
 
     @DefaultStringValue("Your browser doesn't support SPICE plugin")
