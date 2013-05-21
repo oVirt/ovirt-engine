@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VDSError;
@@ -30,7 +31,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 
-public class GlusterHookCommandTest<T extends GlusterHookStatusChangeCommand> {
+public class GlusterHookCommandTest<T extends GlusterHookCommandBase> {
 
     private static final Guid[] GUIDS = {Guid.createGuidFromString("afce7a39-8e8c-4819-ba9c-796d316592e6"),
                                              Guid.createGuidFromString("afce7a39-8e8c-4819-ba9c-796d316592e7"),
@@ -38,6 +39,7 @@ public class GlusterHookCommandTest<T extends GlusterHookStatusChangeCommand> {
                                              Guid.createGuidFromString("2001751e-549b-4e7a-aff6-32d36856c125")};
     protected static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     protected static final Guid HOOK_ID = Guid.createGuidFromString("d2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
+    protected static final Guid HOOK_ID2 = Guid.createGuidFromString("d222f73-fa22-4a42-93f0-d5e4c069a43e");
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
@@ -45,13 +47,13 @@ public class GlusterHookCommandTest<T extends GlusterHookStatusChangeCommand> {
                   mockConfig(ConfigValues.DefaultMaxThreadPoolSize, 20));
 
     @Mock
-    private GlusterHooksDao hooksDao;
+    protected GlusterHooksDao hooksDao;
     @Mock
     private VdsGroupDAO vdsGroupDao;
     @Mock
-    private BackendInternal backend;
+    protected BackendInternal backend;
     @Mock
-    private VDSBrokerFrontend vdsBrokerFrontend;
+    protected VDSBrokerFrontend vdsBrokerFrontend;
     @Mock
     private ClusterUtils clusterUtils;
 
@@ -64,12 +66,16 @@ public class GlusterHookCommandTest<T extends GlusterHookStatusChangeCommand> {
     }
 
     public void setupMocks(T cmd,boolean hookFound) {
+        setupMocks(cmd, hookFound, getHookEntity());
+    }
+
+    public void setupMocks(T cmd,boolean hookFound, GlusterHookEntity hookEntity) {
 
         when(clusterUtils.getAllUpServers(CLUSTER_ID)).thenReturn(getGlusterServers());
         doReturn(clusterUtils).when(cmd).getClusterUtils();
         if (hookFound) {
-            when(hooksDao.getById(HOOK_ID)).thenReturn(getHookEntity());
-            when(hooksDao.getById(HOOK_ID,true)).thenReturn(getHookEntity());
+            when(hooksDao.getById(HOOK_ID)).thenReturn(hookEntity);
+            when(hooksDao.getById(HOOK_ID,true)).thenReturn(hookEntity);
         }
         doReturn(hooksDao).when(cmd).getGlusterHooksDao();
         when(vdsGroupDao.get(CLUSTER_ID)).thenReturn(getVdsGroup());
@@ -77,11 +83,11 @@ public class GlusterHookCommandTest<T extends GlusterHookStatusChangeCommand> {
         doReturn(getGlusterServers().get(0)).when(cmd).getUpServer();
     }
 
-    protected void mockBackend(T cmd, boolean succeeded) {
-        mockBackend(cmd, succeeded,VdcBllErrors.GlusterHookEnableFailed);
+    protected void mockBackendStatusChange(T cmd, boolean succeeded) {
+        mockBackendStatusChange(cmd, succeeded,VdcBllErrors.GlusterHookEnableFailed);
     }
 
-    protected void mockBackend(T cmd, boolean succeeded, VdcBllErrors errorCode) {
+    protected void mockBackendStatusChange(T cmd, boolean succeeded, VdcBllErrors errorCode) {
         when(cmd.getBackend()).thenReturn(backend);
 
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
@@ -96,7 +102,7 @@ public class GlusterHookCommandTest<T extends GlusterHookStatusChangeCommand> {
 
 
 
-    private GlusterHookEntity getHookEntity() {
+    protected GlusterHookEntity getHookEntity() {
         GlusterHookEntity hook = new GlusterHookEntity();
         hook.setClusterId(CLUSTER_ID);
         hook.setId(HOOK_ID);
@@ -115,9 +121,9 @@ public class GlusterHookCommandTest<T extends GlusterHookStatusChangeCommand> {
 
     private List<GlusterServerHook> getGlusterServerHooks() {
         List<GlusterServerHook> serverHooks = new ArrayList<GlusterServerHook>();
-        serverHooks.add(getGlusterServerHook(0));
-        serverHooks.add(getGlusterServerHook(1));
-        serverHooks.add(getGlusterServerHook(2));
+        serverHooks.add(getGlusterServerHook(0, GlusterHookStatus.ENABLED));
+        serverHooks.add(getGlusterServerHook(1, GlusterHookStatus.ENABLED));
+        serverHooks.add(getGlusterServerHook(2, GlusterHookStatus.ENABLED));
         return serverHooks;
     }
 
@@ -138,9 +144,11 @@ public class GlusterHookCommandTest<T extends GlusterHookStatusChangeCommand> {
     }
 
 
-    private GlusterServerHook getGlusterServerHook(int index) {
+    protected GlusterServerHook getGlusterServerHook(int index, GlusterHookStatus status) {
         GlusterServerHook serverHook = new GlusterServerHook();
         serverHook.setServerId(GUIDS[index]);
+        serverHook.setStatus(status);
+        serverHook.setChecksum("CHECKSUM");
         return serverHook;
     }
 }

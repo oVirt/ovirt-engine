@@ -30,7 +30,7 @@ public class EnableGlusterHookCommandTest extends GlusterHookCommandTest<EnableG
     public void executeCommand() {
         cmd = spy(new EnableGlusterHookCommand(new GlusterHookParameters(CLUSTER_ID, HOOK_ID)));
         setupMocks(cmd);
-        mockBackend(cmd,true);
+        mockBackendStatusChange(cmd,true);
         cmd.executeCommand();
         verify(cmd, atLeast(1)).addServerHookInDb(any(GlusterServerHook.class));
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_HOOK_ENABLE);
@@ -40,7 +40,7 @@ public class EnableGlusterHookCommandTest extends GlusterHookCommandTest<EnableG
     public void executeCommandWhenFailed() {
         cmd = spy(new EnableGlusterHookCommand(new GlusterHookParameters(CLUSTER_ID, HOOK_ID)));
         setupMocks(cmd);
-        mockBackend(cmd,false);
+        mockBackendStatusChange(cmd,false);
         cmd.executeCommand();
         verify(cmd, never()).addServerHookInDb(any(GlusterServerHook.class));
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_HOOK_ENABLE_FAILED);

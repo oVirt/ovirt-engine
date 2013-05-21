@@ -58,7 +58,7 @@ public class DisableGlusterHookCommandTest extends GlusterHookCommandTest<Disabl
     public void executeCommand() {
         cmd = spy(new DisableGlusterHookCommand(new GlusterHookParameters(CLUSTER_ID, HOOK_ID)));
         setupMocks(cmd);
-        mockBackend(cmd,true);
+        mockBackendStatusChange(cmd,true);
         cmd.executeCommand();
         assertTrue(cmd.getReturnValue().getSucceeded());
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_HOOK_DISABLE);
@@ -68,7 +68,7 @@ public class DisableGlusterHookCommandTest extends GlusterHookCommandTest<Disabl
     public void executeCommandWhenFailed() {
         cmd = spy(new DisableGlusterHookCommand(new GlusterHookParameters(CLUSTER_ID, HOOK_ID)));
         setupMocks(cmd);
-        mockBackend(cmd,false);
+        mockBackendStatusChange(cmd,false);
         cmd.executeCommand();
         assertFalse(cmd.getReturnValue().getSucceeded());
         assertEquals(cmd.getAuditLogTypeValue(), AuditLogType.GLUSTER_HOOK_DISABLE_FAILED);

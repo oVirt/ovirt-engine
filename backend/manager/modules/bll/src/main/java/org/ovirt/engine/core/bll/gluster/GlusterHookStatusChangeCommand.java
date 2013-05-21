@@ -9,7 +9,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
@@ -36,11 +35,6 @@ public abstract class GlusterHookStatusChangeCommand extends GlusterHookCommandB
     public GlusterHookStatusChangeCommand(GlusterHookParameters params) {
         super(params);
         setVdsGroupId(params.getClusterId());
-    }
-
-    @Override
-    protected BackendInternal getBackend() {
-        return super.getBackend();
     }
 
     protected GlusterHookEntity getGlusterHook() {

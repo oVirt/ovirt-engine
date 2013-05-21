@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.gluster;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
@@ -16,6 +17,11 @@ public abstract class GlusterHookCommandBase<T extends VdcActionParametersBase> 
 
     public GlusterHookCommandBase(T params) {
         super(params);
+    }
+
+    @Override
+    protected BackendInternal getBackend() {
+        return super.getBackend();
     }
 
     protected List<VDS> getAllUpServers(Guid clusterId) {
