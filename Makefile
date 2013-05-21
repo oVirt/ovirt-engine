@@ -165,6 +165,7 @@ GENERATED = \
 	packaging/etc/engine-manage-domains/log4j.xml \
 	packaging/etc/engine-manage-domains/engine-manage-domains.conf \
 	packaging/etc/notifier/log4j.xml \
+	packaging/sys-etc/logrotate.d/ovirt-engine \
 	packaging/services/config.py \
 	packaging/services/ovirt-engine.systemd \
 	packaging/services/ovirt-engine.sysv \
@@ -286,7 +287,6 @@ create_dirs:
 	@install -dm 755 $(DESTDIR)$(PYTHON_DIR)/sos/plugins
 	@install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config
 	@install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-manage-domains
-	@install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/cron.daily
 	@install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/rc.d/init.d
 	@install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/firewalld/services
 
@@ -458,8 +458,6 @@ install_misc:
 	install -m 644 packaging/conf/engine.conf.defaults $(DESTDIR)$(DATA_DIR)/conf
 	install -m 644 packaging/etc/engine.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/
 	install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/engine.conf.d
-	install -m 755 packaging/resources/ovirtlogrot.sh ${DESTDIR}$(DATA_DIR)/scripts/
-	install -m 755 packaging/resources/ovirt-cron ${DESTDIR}$(SYSCONF_DIR)/cron.daily/
 	install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/ovirt-websocket-proxy.conf.d
 	install -m 644 packaging/conf/ovirt-websocket-proxy.conf.defaults $(DESTDIR)$(DATA_DIR)/conf
 	install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/osinfo.conf.d
@@ -506,6 +504,8 @@ install_service:
 	install -m 755 packaging/services/ovirt-engine.py $(DESTDIR)$(DATA_DIR)/services
 	install -m 755 packaging/services/ovirt-engine.systemd $(DESTDIR)$(DATA_DIR)/services
 	install -m 755 packaging/services/ovirt-engine.sysv $(DESTDIR)$(DATA_DIR)/services
+	install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/logrotate.d
+	install -m 644 packaging/sys-etc/logrotate.d/ovirt-engine $(DESTDIR)$(SYSCONF_DIR)/logrotate.d
 
 gwt-debug:
 	[ -n "$(DEBUG_MODULE)" ] || ( echo "Please specify DEBUG_MODULE" && false )

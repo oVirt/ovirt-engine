@@ -40,27 +40,23 @@
     <subsystem xmlns="urn:jboss:domain:logging:1.1">
 
       <!-- All the application server messages go here: -->
-      <size-rotating-file-handler name="SERVER">
+      <file-handler name="SERVER">
         <formatter>
           <pattern-formatter pattern="%d %-5p [%c] (%t) %s%E%n"/>
         </formatter>
         <file path="$getstring('ENGINE_LOG')/server.log"/>
-        <rotate-size value="10M"/>
-        <max-backup-index value="30"/>
         <append value="true"/>
-      </size-rotating-file-handler>
+      </file-handler>
 
       <!-- Only the engine messages go here: -->
-      <size-rotating-file-handler name="ENGINE" autoflush="true">
+      <file-handler name="ENGINE" autoflush="true">
         <level name="INFO"/>
         <formatter>
           <pattern-formatter pattern="%d %-5p [%c] (%t) %s%E%n"/>
         </formatter>
         <file path="$getstring('ENGINE_LOG')/engine.log"/>
-        <rotate-size value="10M"/>
-        <max-backup-index value="30"/>
         <append value="true"/>
-      </size-rotating-file-handler>
+      </file-handler>
 
       <!-- Console -->
       <console-handler name="CONSOLE" autoflush="true">

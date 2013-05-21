@@ -156,7 +156,6 @@ Requires: openssl
 Requires: policycoreutils-python
 Requires: python-cheetah
 Requires: ovirt-host-deploy-java
-Requires: xz
 Requires: yum-plugin-versionlock
 
 # For local database:
@@ -207,6 +206,7 @@ Requires: %{name} = %{version}-%{release}
 Requires: java
 Requires: openssh
 Requires: openssl
+Requires: logrotate
 Requires: novnc
 
 %if %{install_systemd}
@@ -554,10 +554,6 @@ fi
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_cache}
 
-# Log rotation script:
-%{engine_data}/scripts/ovirtlogrot.sh
-%{_sysconfdir}/cron.daily/ovirt-cron
-
 %dir %{engine_data}/conf
 
 # Engine configuration files:
@@ -617,6 +613,7 @@ fi
 %dir %{engine_data}/ui-plugins
 
 # Files needed by the service:
+%config %{_sysconfdir}/logrotate.d/ovirt-engine
 %{engine_data}/services/ovirt-engine.*
 %{engine_data}/services/ovirt-engine-logging.properties.in
 %if %{install_systemd}

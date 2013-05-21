@@ -51,6 +51,7 @@ packaging/etc/engine-config/log4j.xml
 packaging/etc/engine-manage-domains/log4j.xml
 packaging/etc/engine-manage-domains/engine-manage-domains.conf
 packaging/etc/notifier/log4j.xml
+packaging/sys-etc/logrotate.d/ovirt-engine
 packaging/services/config.py
 packaging/services/*.systemd
 packaging/services/*.sysv

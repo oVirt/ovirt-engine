@@ -1,0 +1,16 @@
+"@ENGINE_LOG@/engine.log" "@ENGINE_LOG@/server.log" {
+	daily
+	minsize 10M
+	missingok
+	copytruncate
+	rotate 20
+	compress
+}
+
+"@ENGINE_LOG@/host-deploy"/*.log {
+	monthly
+	missingok
+	compress
+	nocreate
+	rotate 1
+}
