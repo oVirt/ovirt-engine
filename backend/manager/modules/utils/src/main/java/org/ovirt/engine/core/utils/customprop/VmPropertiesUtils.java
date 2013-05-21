@@ -340,4 +340,13 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
         vmStatic.setPredefinedProperties(properties.getPredefinedProperties());
         vmStatic.setUserDefinedProperties(properties.getUseDefinedProperties());
     }
+
+    /**
+     * Returns the string describing format of VM properties specification
+     *
+     * @return the string describing format of VM properties specification
+     */
+    public String getVmPropSpec() {
+        return VALIDATION_STR;
+    }
 }

@@ -37,8 +37,8 @@ public abstract class CustomPropertiesUtils {
 
     // frontend can pass custom values in the form of "key=value" or "key1=value1;... key-n=value_n" (if there is only
     // one key-value, no ; is attached to it
-    protected final Pattern VALIDATION_PATTERN = Pattern.compile(KEY_VALUE_REGEX_STR + "(;" + KEY_VALUE_REGEX_STR
-            + ")*;?");
+    protected final String VALIDATION_STR = KEY_VALUE_REGEX_STR + "(;" + KEY_VALUE_REGEX_STR + ")*;?";
+    protected final Pattern VALIDATION_PATTERN = Pattern.compile(VALIDATION_STR);
 
     protected final List<ValidationError> invalidSyntaxValidationError =
             Arrays.asList(new ValidationError(ValidationFailureReason.SYNTAX_ERROR, ""));
@@ -98,7 +98,7 @@ public abstract class CustomPropertiesUtils {
         return versions;
     }
 
-    protected boolean syntaxErrorInProperties(String properties) {
+    public boolean syntaxErrorInProperties(String properties) {
         return !VALIDATION_PATTERN.matcher(properties).matches();
     }
 
