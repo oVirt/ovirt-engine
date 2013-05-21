@@ -150,7 +150,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         }
     }
 
-    boolean hasMainTabSelection() {
+    protected boolean hasMainTabSelection() {
         return mainTabSelectedItems != null && !mainTabSelectedItems.isEmpty();
     }
 

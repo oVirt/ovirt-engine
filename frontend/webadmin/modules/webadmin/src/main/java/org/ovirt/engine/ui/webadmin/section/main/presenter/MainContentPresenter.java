@@ -45,7 +45,13 @@ public class MainContentPresenter extends Presenter<MainContentPresenter.ViewDef
 
     @ProxyEvent
     public void onUpdateMainContentLayout(UpdateMainContentLayoutEvent event) {
-        getView().setSubTabPanelVisible(event.isSubTabPanelVisible());
+        boolean subTabPanelVisible = event.isSubTabPanelVisible();
+        getView().setSubTabPanelVisible(subTabPanelVisible);
+
+        if (!subTabPanelVisible) {
+            // Clear sub tab panel slot to ensure consistent sub tab presenter lifecycle
+            clearSlot(TYPE_SetSubTabPanelContent);
+        }
     }
 
 }

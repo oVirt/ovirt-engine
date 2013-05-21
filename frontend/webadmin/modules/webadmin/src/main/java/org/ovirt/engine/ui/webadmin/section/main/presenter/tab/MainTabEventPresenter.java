@@ -70,6 +70,8 @@ public class MainTabEventPresenter extends AbstractMainTabWithDetailsPresenter<A
     }
 
     @Override
-    protected void onSelection() {
+    protected void handlePlaceTransition() {
+        // No-op, Event main tab has no sub tabs
     }
+
 }

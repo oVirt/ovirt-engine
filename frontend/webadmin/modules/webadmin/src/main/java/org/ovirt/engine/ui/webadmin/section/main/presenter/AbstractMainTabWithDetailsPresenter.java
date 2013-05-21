@@ -52,16 +52,16 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
                         // Let others know that the table selection has changed
                         fireTableSelectionChangeEvent();
 
-                        onSelection();
+                        // Reveal the appropriate place based on selection
+                        handlePlaceTransition();
                     }
                 }));
     }
 
-    protected void onSelection() {
-
-        // Reveal the appropriate place based on selection
+    protected void handlePlaceTransition() {
         if (hasSelection()) {
-            // Sub tab panel is shown upon revealing the sub tab
+            // Sub tab panel is shown upon revealing the sub tab, in order to avoid
+            // the 'flicker' effect due to the panel still showing previous content
             placeManager.revealPlace(getSubTabRequest());
         } else {
             // Hide sub tab panel when there is nothing selected

@@ -35,7 +35,9 @@ public abstract class AbstractSubTabPanelPresenter<V extends TabView & DynamicTa
     @Override
     protected void onReveal() {
         super.onReveal();
+
         // Show sub tab panel when revealing sub tab presenter
         UpdateMainContentLayoutEvent.fire(this, true);
     }
+
 }
