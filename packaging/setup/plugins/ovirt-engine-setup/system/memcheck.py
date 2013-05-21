@@ -30,6 +30,7 @@ from otopi import util
 from otopi import plugin
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup import dialog
 
 
 @util.export
@@ -51,6 +52,42 @@ class Plugin(plugin.PluginBase):
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
+        self._total_memory = 0
+
+    def _check_requirements(self):
+        satisfied = False
+        if self._total_memory < self.environment[
+            osetupcons.SystemEnv.MEMCHECK_MINIMUM_MB
+        ] * 0.95:
+            self.logger.warn(
+                _(
+                    'Warning: Not enough available memory on the Host, '
+                    'the minimum requirement is {minimum}MB, and the '
+                    'recommended is {recommended}MB).'
+                ).format(
+                    minimum=self.environment[
+                        osetupcons.SystemEnv.MEMCHECK_MINIMUM_MB
+                    ],
+                    recommended=self.environment[
+                        osetupcons.SystemEnv.MEMCHECK_RECOMMENDED_MB
+                    ],
+                )
+            )
+        else:
+            satisfied = True
+            if self._total_memory < self.environment[
+                osetupcons.SystemEnv.MEMCHECK_RECOMMENDED_MB
+            ] * 0.95:
+                self.logger.warn(
+                    _(
+                        'There is less than {recommended}MB available memory'
+                    ).format(
+                        recommended=self.environment[
+                            osetupcons.SystemEnv.MEMCHECK_RECOMMENDED_MB
+                        ],
+                    )
+                )
+        return satisfied
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
@@ -58,7 +95,7 @@ class Plugin(plugin.PluginBase):
     def _init(self):
         self.environment.setdefault(
             osetupcons.SystemEnv.MEMCHECK_ENABLED,
-            osetupcons.Defaults.DEFAULT_SYSTEM_MEMCHECK_ENABLED
+            None
         )
         self.environment.setdefault(
             osetupcons.SystemEnv.MEMCHECK_MINIMUM_MB,
@@ -71,16 +108,12 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
-        condition=lambda self: self.environment[
-            osetupcons.SystemEnv.MEMCHECK_ENABLED
-        ],
     )
     def _validation(self):
         """
         Check if the system met the memory requirements.
         """
         self.logger.debug('Checking total memory')
-        total_memory = 0
         with open('/proc/meminfo', 'r') as f:
             content = f.read()
 
@@ -88,45 +121,42 @@ class Plugin(plugin.PluginBase):
         if match is None:
             raise RuntimeError(_("Unable to parse /proc/meminfo"))
 
-        total_memory = int(
+        self._total_memory = int(
             match.group('value')
         )
         if match.group('unit') == "kB":
-            total_memory //= 1024
+            self._total_memory //= 1024
 
-        # have tolerance of 5%
-        if total_memory < self.environment[
-            osetupcons.SystemEnv.MEMCHECK_MINIMUM_MB
-        ] * 0.95:
-            raise RuntimeError(
-                _(
-                    "Error: Not enough available memory on the Host, "
-                    "the minimum requirement is {minimum}MB, and the "
-                    "recommended is {recommended}MB)."
-                ).format(
-                    minimum=self.environment[
-                        osetupcons.SystemEnv.MEMCHECK_MINIMUM_MB
-                    ],
-                    recommended=self.environment[
-                        osetupcons.SystemEnv.MEMCHECK_RECOMMENDED_MB
-                    ],
-                )
-            )
+        satisfied = self._check_requirements()
+        interactive = self.environment[
+            osetupcons.SystemEnv.MEMCHECK_ENABLED
+        ] is None
+        if not satisfied and interactive:
+            if not dialog.queryBoolean(
+                dialog=self.dialog,
+                name='OVESETUP_MEMORY_CHECK',
+                note=_(
+                    'Do you want to install with memory less than '
+                    'recommended? (@VALUES@) [@DEFAULT@]: '
+                ),
+                prompt=True,
+                true=_('Yes'),
+                false=_('No'),
+                default=False,
+            ):
+                raise RuntimeError(_('Aborted by user'))
 
-        if total_memory < self.environment[
-            osetupcons.SystemEnv.MEMCHECK_RECOMMENDED_MB
-        ]:
-            self.logger.warn(
-                _(
-                    "There is less than {recommended}MB available memory"
-                ).format(
-                    recommended=self.environment[
-                        osetupcons.SystemEnv.MEMCHECK_RECOMMENDED_MB
-                    ],
-                )
-            )
-            #TODO: find out how to do this:
-            #controller.MESSAGES.append(output_messages.WARN_LOW_MEMORY)
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CLOSEUP,
+        before=[
+            osetupcons.Stages.DIALOG_TITLES_E_SUMMARY,
+        ],
+        after=[
+            osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
+        ],
+    )
+    def _closeup(self):
+        self._check_requirements()
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
