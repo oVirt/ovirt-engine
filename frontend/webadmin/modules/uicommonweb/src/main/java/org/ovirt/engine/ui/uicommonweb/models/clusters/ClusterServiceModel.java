@@ -1,13 +1,12 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -144,7 +143,8 @@ public class ClusterServiceModel extends EntityModel {
     private void updateServiceTypeList() {
         ArrayList<ServiceType> serviceTypes = new ArrayList<ServiceType>();
         serviceTypes.add(null);
-        serviceTypes.addAll(Arrays.asList(ServiceType.values()));
+        serviceTypes.add(ServiceType.NFS);
+        serviceTypes.add(ServiceType.SHD);
         getServiceTypeList().setItems(serviceTypes);
     }
 
