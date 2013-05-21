@@ -28,71 +28,63 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
 
     @Override
     protected void ExecuteVdsIdCommand() {
+        if (_vdsManager == null) {
+            getVDSReturnValue().setSucceeded(false);
+            return;
+        }
 
-        CreateVDSCommand<?> command = null;
-        try {
-            if (_vdsManager != null) {
-                final VM vm = getParameters().getVm();
-                if (CanExecute()) {
-                    boolean canExecute = ResourceManager.getInstance().AddAsyncRunningVm(
-                                vm.getId());
-                    if (canExecute) {
-                        if (isSysprepUsed(vm)) {
-                            // use answer file to run after sysprep.
-                            CreateVmFromSysPrepVDSCommandParameters createVmFromSysPrepParam =
-                                    new CreateVmFromSysPrepVDSCommandParameters(
-                                            getVdsId(),
-                                            vm,
-                                            vm.getName(),
-                                            vm.getVmDomain());
-                            createVmFromSysPrepParam.setSysPrepParams(getParameters().getSysPrepParams());
-                            command =
-                                    new CreateVmFromSysPrepVDSCommand<CreateVmFromSysPrepVDSCommandParameters>(createVmFromSysPrepParam);
-                            command.execute();
-                            if (command.getVDSReturnValue().getSucceeded()) {
-                                vm.setInitialized(true);
-                                saveSetInitializedToDb(vm.getId());
-                            } else {
-                                HandleCommandResult(command);
+        final VM vm = getParameters().getVm();
+        if (canExecute() && ResourceManager.getInstance().AddAsyncRunningVm(vm.getId())) {
+            CreateVDSCommand<?> command = initCreateVDSCommand(vm);
+            try {
+                command.execute();
+                if (command.getVDSReturnValue().getSucceeded()) {
+                    vm.setInitialized(true);
+                    saveSetInitializedToDb(vm.getId());
+
+                    TransactionSupport.executeInScope(TransactionScopeOption.Required,
+                            new TransactionMethod<Object>() {
+                        @Override
+                        public Object runInTransaction() {
+                            handleVdsInformation();
+                            vm.setRunOnVds(getVdsId());
+                            if (getParameters().isClearHibernationVolumes()) {
+                                vm.setHibernationVolHandle(StringUtils.EMPTY);
                             }
-                        } else {
-                            // normal run.
-                            command = new CreateVDSCommand<CreateVmVDSCommandParameters>(getParameters());
-                            command.execute();
-                            HandleCommandResult(command);
-                            vm.setInitialized(true);
-                            saveSetInitializedToDb(vm.getId());
+                            DbFacade.getInstance().getVmDynamicDao().update(vm.getDynamicData());
+                            return null;
                         }
-
-                        if (command.getVDSReturnValue().getSucceeded()) {
-                            TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                                    new TransactionMethod<Object>() {
-                                        @Override
-                                        public Object runInTransaction() {
-                                            HandleVdsInformation();
-                                            vm.setRunOnVds(getVdsId());
-                                            if (getParameters().isClearHibernationVolumes()) {
-                                                vm.setHibernationVolHandle(StringUtils.EMPTY);
-                                            }
-                                            DbFacade.getInstance().getVmDynamicDao().update(vm.getDynamicData());
-                                            return null;
-                                        }
-                                    });
-                        } else {
-                            ResourceManager.getInstance().RemoveAsyncRunningVm(getParameters().getVmId());
-                        }
-                    }
+                    });
+                } else {
+                    handleCommandResult(command);
+                    ResourceManager.getInstance().RemoveAsyncRunningVm(getParameters().getVmId());
                 }
-                getVDSReturnValue().setReturnValue(vm.getStatus());
-            } else {
-                getVDSReturnValue().setSucceeded(false);
+            } catch (java.lang.Exception e) {
+                log.error("Error in excuting CreateVmVDSCommand", e);
+                if (!command.getVDSReturnValue().getSucceeded()) {
+                    ResourceManager.getInstance().RemoveAsyncRunningVm(getParameters().getVmId());
+                }
+                throw new RuntimeException(e);
             }
-        } catch (java.lang.Exception e) {
-            log.error("Error in excuting CreateVmVDSCommand", e);
-            if (command == null || !command.getVDSReturnValue().getSucceeded()) {
-                ResourceManager.getInstance().RemoveAsyncRunningVm(getParameters().getVmId());
-            }
-            throw new RuntimeException(e);
+        }
+        getVDSReturnValue().setReturnValue(vm.getStatus());
+    }
+
+    private CreateVDSCommand<?> initCreateVDSCommand(VM vm) {
+        if (isSysprepUsed(vm)) {
+            // use answer file to run after sysprep.
+            CreateVmFromSysPrepVDSCommandParameters createVmFromSysPrepParam =
+                    new CreateVmFromSysPrepVDSCommandParameters(
+                            getVdsId(),
+                            vm,
+                            vm.getName(),
+                            vm.getVmDomain());
+            createVmFromSysPrepParam.setSysPrepParams(getParameters().getSysPrepParams());
+            return new CreateVmFromSysPrepVDSCommand<CreateVmFromSysPrepVDSCommandParameters>(createVmFromSysPrepParam);
+        }
+        else {
+            // normal run.
+            return new CreateVDSCommand<CreateVmVDSCommandParameters>(getParameters());
         }
     }
 
@@ -105,7 +97,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                 && StringUtils.isEmpty(vm.getFloppyPath());
     }
 
-    private void HandleVdsInformation() {
+    private void handleVdsInformation() {
         DbFacade.getInstance()
                 .getVdsDynamicDao()
                 .updatePartialVdsDynamicCalc(getVds().getId(),
@@ -117,7 +109,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
 
     }
 
-    private boolean CanExecute() {
+    private boolean canExecute() {
 
         Guid guid = getParameters().getVm().getId();
         String vmName = getParameters().getVm().getName();
@@ -149,7 +141,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
         return true;
     }
 
-    private void HandleCommandResult(CreateVDSCommand<?> command) {
+    private void handleCommandResult(CreateVDSCommand<?> command) {
         if (!command.getVDSReturnValue().getSucceeded() && command.getVDSReturnValue().getExceptionObject() != null) {
             if (command.getVDSReturnValue().getExceptionObject() instanceof VDSGenericException) {
                 log.errorFormat("VDS::create Failed creating vm '{0}' in vds = {1} : {2} error = {3}",
