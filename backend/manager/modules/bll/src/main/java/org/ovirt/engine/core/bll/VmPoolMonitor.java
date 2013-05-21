@@ -8,9 +8,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmPoolMap;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmPool;
+import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -130,7 +129,6 @@ public class VmPoolMonitor {
         log.infoFormat("Running Vm {0} as stateless", vmToRunAsStateless);
         boolean prestartingVmSucceeded = false;
         RunVmParams runVmParams = new RunVmParams(vmToRunAsStateless.getId());
-        runVmParams.setUseVnc(vmToRunAsStateless.getVmType() == VmType.Server);
         runVmParams.setEntityId(vmToRunAsStateless);
         runVmParams.setRunAsStateless(true);
         VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(VdcActionType.RunVm,

@@ -154,6 +154,11 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         DbFacade.getInstance().getVmTemplateDao().update(getVmTemplate());
         // also update the smartcard device
         VmDeviceUtils.updateSmartcardDevice(getVmTemplateId(), getParameters().getVmTemplateData().isSmartcardEnabled());
+        // update audio device
+        VmDeviceUtils.updateAudioDevice(mOldTemplate,
+                getVmTemplate(),
+                getVdsGroup().getcompatibility_version(),
+                getParameters().isSoundDeviceEnabled());
     }
 
     @Override

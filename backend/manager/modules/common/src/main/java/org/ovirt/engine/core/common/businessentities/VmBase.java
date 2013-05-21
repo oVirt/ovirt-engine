@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.validation.annotation.IntegerContainedInConf
 import org.ovirt.engine.core.common.validation.annotation.NullOrStringContainedInConfigValueList;
 import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
-import org.ovirt.engine.core.common.validation.group.DesktopVM;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -35,7 +34,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableField
     private List<VmNetworkInterface> interfaces;
 
-    private ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
+    private final ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
     private Map<Guid, VmDevice> managedDeviceMap = new HashMap<Guid, VmDevice>();
     private List<VmDevice> unmanagedDeviceList = new ArrayList<VmDevice>();
 
@@ -66,7 +65,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     private int cpuPerSocket = 1;
 
     @EditableOnVmStatusField
-    @IntegerContainedInConfigValueList(configValue = ConfigValues.ValidNumOfMonitors, groups = DesktopVM.class,
+    @IntegerContainedInConfigValueList(configValue = ConfigValues.ValidNumOfMonitors,
             message = "VALIDATION.VM.NUM_OF_MONITORS.EXCEEDED")
     private int numOfMonitors;
 
@@ -78,6 +77,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @Size(max = BusinessEntitiesDefinitions.GENERAL_TIME_ZONE_SIZE)
     private String timeZone;
 
+    @EditableField
     private VmType vmType = VmType.Desktop;
 
     @EditableField

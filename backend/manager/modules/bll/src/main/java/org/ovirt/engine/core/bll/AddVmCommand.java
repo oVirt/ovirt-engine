@@ -43,6 +43,7 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
+import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
@@ -93,6 +94,11 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         setStorageDomainId(getParameters().getStorageDomainId());
         if (parameters.getVmStaticData() != null) {
             setVmTemplateId(parameters.getVmStaticData().getVmtGuid());
+
+            // API backward compatibility
+            if (parameters.isSoundDeviceEnabled() == null) {
+                parameters.setSoundDeviceEnabled(parameters.getVmStaticData().getVmType() == VmType.Desktop);
+            }
         }
 
         parameters.setEntityId(getVmId());
@@ -546,7 +552,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         VmDeviceUtils.copyVmDevices(getVmTemplateId(),
                 getVmId(),
                 newDiskImages,
-                _vmInterfaces);
+                _vmInterfaces,
+                getParameters().isSoundDeviceEnabled());
     }
 
     protected static boolean IsLegalClusterId(Guid clusterId, List<String> reasons) {

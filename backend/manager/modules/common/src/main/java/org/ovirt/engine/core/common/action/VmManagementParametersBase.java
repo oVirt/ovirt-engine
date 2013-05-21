@@ -32,6 +32,13 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
      * Default is false so to avoid breaking rest-api.
      */
     private boolean updateWatchdog = false;
+    /*
+     * This parameter is used to decide if to create sound device or not
+     * if it is null then:
+     * for add vm legacy logic will be used: create device for desktop type
+     * for update the current configuration will remain
+     */
+    private Boolean soundDeviceEnabled;
 
     public VmManagementParametersBase() {
     }
@@ -147,4 +154,11 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
         this.updateWatchdog = updateWatchdog;
     }
 
+    public Boolean isSoundDeviceEnabled() {
+        return soundDeviceEnabled;
+    }
+
+    public void setSoundDeviceEnabled(boolean soundDeviceEnabled) {
+        this.soundDeviceEnabled = soundDeviceEnabled;
+    }
 }

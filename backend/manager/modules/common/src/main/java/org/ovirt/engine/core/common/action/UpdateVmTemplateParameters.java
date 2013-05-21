@@ -8,6 +8,11 @@ public class UpdateVmTemplateParameters extends VmTemplateParametersBase {
     private static final long serialVersionUID = 7250355162926369307L;
     @Valid
     private VmTemplate _vmTemplate;
+    /*
+     * This parameter is used to decide if to create or remove sound device
+     * if it is null then the current configuration will remain
+     */
+    private Boolean soundDeviceEnabled;
 
     public UpdateVmTemplateParameters(VmTemplate vmTemplate) {
         _vmTemplate = vmTemplate;
@@ -18,5 +23,13 @@ public class UpdateVmTemplateParameters extends VmTemplateParametersBase {
     }
 
     public UpdateVmTemplateParameters() {
+    }
+
+    public Boolean isSoundDeviceEnabled() {
+        return soundDeviceEnabled;
+    }
+
+    public void setSoundDeviceEnabled(boolean soundDeviceEnabled) {
+        this.soundDeviceEnabled = soundDeviceEnabled;
     }
 }

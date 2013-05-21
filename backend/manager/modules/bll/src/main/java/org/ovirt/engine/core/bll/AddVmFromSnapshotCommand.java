@@ -236,7 +236,15 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     protected void copyVmDevices() {
         List<VmDevice> devices = new ArrayList<VmDevice>(vmFromConfiguration.getVmUnamagedDeviceList());
         devices.addAll(vmFromConfiguration.getManagedVmDeviceMap().values());
-        VmDeviceUtils.copyVmDevices(getVmIdFromSnapshot(), getVmId(), vmFromConfiguration, vmFromConfiguration.getStaticData(), true, devices, newDiskImages, _vmInterfaces);
+        VmDeviceUtils.copyVmDevices(getVmIdFromSnapshot(),
+                getVmId(),
+                vmFromConfiguration,
+                vmFromConfiguration.getStaticData(),
+                true,
+                devices,
+                newDiskImages,
+                _vmInterfaces,
+                getParameters().isSoundDeviceEnabled());
     }
 
     @Override

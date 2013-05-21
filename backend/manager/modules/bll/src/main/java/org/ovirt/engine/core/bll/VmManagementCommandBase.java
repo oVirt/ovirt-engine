@@ -12,11 +12,9 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.validation.group.DesktopVM;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
@@ -32,14 +30,6 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
 
     protected VmManagementCommandBase(Guid commandId) {
         super(commandId);
-    }
-
-    @Override
-    protected List<Class<?>> getValidationGroups() {
-        if (getParameters().getVmStaticData().getVmType() == VmType.Desktop) {
-            addValidationGroup(DesktopVM.class);
-        }
-        return super.getValidationGroups();
     }
 
     /**

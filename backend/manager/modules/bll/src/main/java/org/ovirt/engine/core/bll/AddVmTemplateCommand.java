@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -86,6 +87,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (parameterMasterVm != null) {
             super.setVmId(parameterMasterVm.getId());
             setVdsGroupId(parameterMasterVm.getVdsGroupId());
+
+            // API backward compatibility
+            if (parameters.isSoundDeviceEnabled() == null) {
+                parameters.setSoundDeviceEnabled(parameterMasterVm.getVmType() == VmType.Desktop);
+            }
         }
         if (getVm() != null) {
             updateVmDisks();
@@ -157,7 +163,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 AddVmTemplateImages();
                 List<VmNetworkInterface> vmInterfaces = addVmInterfaces();
                 if (isVmInDb) {
-                    VmDeviceUtils.copyVmDevices(getVmId(), getVmTemplateId(), newDiskImages, vmInterfaces);
+                    VmDeviceUtils.copyVmDevices(getVmId(), getVmTemplateId(), newDiskImages, vmInterfaces, getParameters().isSoundDeviceEnabled());
                 } else {
                     // sending true for isVm in order to create basic devices needed
                     VmDeviceUtils.copyVmDevices(getVmId(),
@@ -167,7 +173,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                             true,
                             Collections.<VmDevice> emptyList(),
                             newDiskImages,
-                            vmInterfaces);
+                            vmInterfaces,
+                            getParameters().isSoundDeviceEnabled());
                 }
 
                 setSucceeded(true);

@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -82,8 +83,7 @@ public class VmDeviceUtils {
             }
             updateUSBSlots(oldVmBase, entity);
             updateMemoryBalloon(oldVmBase, entity, params.isBalloonEnabled());
-
-            updateAudioDevice(oldVm, entity);
+            updateAudioDevice(oldVm.getStaticData(), entity, oldVm.getVdsGroupCompatibilityVersion(), params.isSoundDeviceEnabled());
             updateSmartcardDevice(oldVm, entity);
         }
     }
@@ -128,21 +128,41 @@ public class VmDeviceUtils {
      *
      * @param oldVm
      * @param newVmBase
+     * @param cluster compatibility version
+     * @param sound device enabled - if null, keep old state
      */
-    private static void updateAudioDevice(VM oldVm, VmBase newVmBase) {
-        // for desktop, if the os type has changed, recreate Audio devices
-        if (newVmBase.getVmType() == VmType.Desktop && oldVm.getOs() != newVmBase.getOsId()) {
-            Guid vmId = oldVm.getId();
-            // remove any old sound device
-            List<VmDevice> list =
-                    DbFacade.getInstance()
-                            .getVmDeviceDao()
-                            .getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.SOUND);
-            removeNumberOfDevices(list, list.size());
+    public static void updateAudioDevice(VmBase oldVm, VmBase newVmBase, Version compatibilityVersion, Boolean isSoundDeviceEnabled) {
+        boolean removeDevice = false;
+        boolean createDevice = false;
 
-            // create new device
+        Guid vmId = oldVm.getId();
+        boolean osChanged = oldVm.getOsId() != newVmBase.getOsId();
+
+        List<VmDevice> list =
+                DbFacade.getInstance()
+                        .getVmDeviceDao()
+                        .getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.SOUND);
+
+        // if isSoundDeviceEnabled is null,
+        // recreate device only if previously existed and os has changed
+        if (isSoundDeviceEnabled == null) {
+            if (!list.isEmpty() && osChanged) {
+                removeDevice = createDevice = true;
+            }
+        } else {
+            // if soundeDevice disabled or os changed, and device exist, remove
+            removeDevice = (!isSoundDeviceEnabled || osChanged) && !list.isEmpty();
+
+            // if soundDevice enabled and missing or os changed, create
+            createDevice = isSoundDeviceEnabled && (list.isEmpty() || osChanged);
+        }
+
+        if (removeDevice) {
+            removeNumberOfDevices(list, list.size());
+        }
+        if (createDevice) {
             String soundDevice =
-                    OsRepositoryImpl.INSTANCE.getSoundDevice(newVmBase.getOsId(), oldVm.getVdsGroupCompatibilityVersion());
+                    OsRepositoryImpl.INSTANCE.getSoundDevice(newVmBase.getOsId(), compatibilityVersion);
             addManagedDevice(new VmDeviceId(Guid.NewGuid(), vmId),
                     VmDeviceGeneralType.SOUND,
                     VmDeviceType.getSoundDeviceType(soundDevice),
@@ -165,7 +185,7 @@ public class VmDeviceUtils {
     /**
      * Copy related data from the given VM/VmBase/VmDevice list to the destination VM/VmTemplate.
      */
-    public static void copyVmDevices(Guid srcId, Guid dstId, VM vm, VmBase vmBase, boolean isVm, List<VmDevice> devicesDataToUse, List<DiskImage> disks, List<VmNetworkInterface> ifaces) {
+    public static void copyVmDevices(Guid srcId, Guid dstId, VM vm, VmBase vmBase, boolean isVm, List<VmDevice> devicesDataToUse, List<DiskImage> disks, List<VmNetworkInterface> ifaces, boolean soundDeviceEnabled) {
         Guid id;
         int diskCount = 0;
         int ifaceCount = 0;
@@ -175,6 +195,8 @@ public class VmDeviceUtils {
         // indicates if VM has already a non empty CD in DB
         boolean hasAlreadyCD = (!(DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(vmBase.getId(), VmDeviceGeneralType.DISK, VmDeviceType.CDROM.getName())).isEmpty());
         boolean addCD = (!hasAlreadyCD && shouldHaveCD);
+        boolean hasSoundDevice = false;
+
         for (VmDevice device : devicesDataToUse) {
             id = Guid.NewGuid();
             Map<String, Object> specParams = new HashMap<String, Object>();
@@ -242,7 +264,12 @@ public class VmDeviceUtils {
                 case WATCHDOG:
                     specParams.putAll(device.getSpecParams());
                     break;
-
+                case SOUND:
+                    hasSoundDevice = true;
+                    if (!soundDeviceEnabled) {
+                        continue;
+                    }
+                    break;
                 default:
                     break;
             }
@@ -255,23 +282,27 @@ public class VmDeviceUtils {
             addEmptyCD(dstId);
         }
 
+        // if source doesnt have sound device and requested, add it
+        if (soundDeviceEnabled && !hasSoundDevice) {
+            if (isVm) {
+                addSoundCard(vm.getStaticData(), vm.getVdsGroupCompatibilityVersion());
+            } else {
+                VDSGroup cluster = DbFacade.getInstance().getVdsGroupDao().get(vmBase.getVdsGroupId());
+                if (cluster != null) {
+                    addSoundCard(vmBase, cluster.getcompatibility_version());
+                }
+            }
+        }
+
         if (isVm) {
             //  update devices boot order
             updateBootOrderInVmDeviceAndStoreToDB(vmBase);
 
-            // create sound card for a desktop VM if not exists
-            if (vmBase.getVmType() == VmType.Desktop) {
-                List<VmDevice> list = DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdAndType(vmBase.getId(), VmDeviceGeneralType.SOUND);
-                if (list.isEmpty()) {
-                    addSoundCard(vm.getStaticData(), vm.getVdsGroupCompatibilityVersion());
-                }
-            }
             int numOfMonitors = (vmBase.getDefaultDisplayType() == DisplayType.vnc) ? Math.max(1, vmBase.getNumOfMonitors()) : vmBase.getNumOfMonitors();
             // create Video device. Multiple if display type is spice
             for (int i = 0; i < numOfMonitors; i++) {
                 addVideoDevice(vmBase);
             }
-
         }
     }
 
@@ -298,7 +329,7 @@ public class VmDeviceUtils {
      * @param disks
      *            The disks which were saved for the destination VM.
      */
-    public static void copyVmDevices(Guid srcId, Guid dstId, List<DiskImage> disks, List<VmNetworkInterface> ifaces) {
+    public static void copyVmDevices(Guid srcId, Guid dstId, List<DiskImage> disks, List<VmNetworkInterface> ifaces, boolean soundDeviceEnabled) {
         VM vm = DbFacade.getInstance().getVmDao().get(dstId);
         VmBase vmBase = (vm != null) ? vm.getStaticData() : null;
         boolean isVm = (vmBase != null);
@@ -306,7 +337,7 @@ public class VmDeviceUtils {
             vmBase = DbFacade.getInstance().getVmTemplateDao().get(dstId);
         }
         List<VmDevice> devices = dao.getVmDeviceByVmId(srcId);
-        copyVmDevices(srcId, dstId, vm, vmBase, isVm, devices, disks, ifaces);
+        copyVmDevices(srcId, dstId, vm, vmBase, isVm, devices, disks, ifaces, soundDeviceEnabled);
     }
 
     private static void addVideoDevice(VmBase vm) {
@@ -723,7 +754,10 @@ public class VmDeviceUtils {
         if (!hasCD) { // add an empty CD
             addEmptyCD(entity.getId());
         }
-        if (!hasSoundCard && entity.getVmType() == VmType.Desktop) {
+
+        // add sound card for desktops imported from old versions only, since devices didnt exist
+        Version ovfVer = new Version(entity.getOvfVersion());
+        if (!hasSoundCard && VmDeviceCommonUtils.isOldClusterVersion(ovfVer) && entity.getVmType() == VmType.Desktop) {
             addSoundCard(entity);
         }
         for (VmDevice vmDevice : entity.getUnmanagedDeviceList()) {

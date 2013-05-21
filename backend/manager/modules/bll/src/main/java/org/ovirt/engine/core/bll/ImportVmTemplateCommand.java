@@ -56,8 +56,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmTemplateParameters>
         implements QuotaStorageDependent {
 
-    private List<Guid> diskGuidList = new ArrayList<Guid>();
-    private List<Guid> imageGuidList = new ArrayList<Guid>();
+    private final List<Guid> diskGuidList = new ArrayList<Guid>();
+    private final List<Guid> imageGuidList = new ArrayList<Guid>();
 
     public ImportVmTemplateCommand(ImportVmTemplateParameters parameters) {
         super(parameters);
@@ -109,6 +109,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                     if (entry.getKey().getId().equals(getVmTemplate().getId())) {
                         images = new ArrayList<DiskImage>(entry.getValue());
                         getVmTemplate().setInterfaces(entry.getKey().getInterfaces());
+                        getVmTemplate().setOvfVersion(entry.getKey().getOvfVersion());
                         break;
                     }
                 }

@@ -25,10 +25,8 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.osinfo.OsRepositoryImpl;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -227,7 +225,6 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         VmHandler.updateNetworkInterfacesFromDb(vm);
 
         RunVmParams runVmParams = new RunVmParams(vmId);
-        runVmParams.setUseVnc(OsRepositoryImpl.INSTANCE.isLinux(vm.getVmOsId()) || vm.getVmType() == VmType.Server);
         VdsSelector vdsSelector =
                 new VdsSelector(vm,
                         runVmParams.getDestinationVdsId() != null ?

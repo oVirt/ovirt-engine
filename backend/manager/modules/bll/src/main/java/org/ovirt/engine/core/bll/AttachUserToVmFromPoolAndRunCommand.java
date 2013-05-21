@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -203,7 +202,6 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
             setVm(getVmDAO().get(vmToAttach));
             RunVmParams runVmParams = new RunVmParams(vmToAttach);
             runVmParams.setSessionId(getParameters().getSessionId());
-            runVmParams.setUseVnc(getVm().getVmType() == VmType.Server);
             runVmParams.setParentParameters(getParameters());
             runVmParams.setEntityId(vmToAttach);
             runVmParams.setParentCommand(VdcActionType.AttachUserToVmFromPoolAndRun);

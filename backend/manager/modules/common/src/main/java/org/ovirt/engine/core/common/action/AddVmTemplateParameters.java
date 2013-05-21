@@ -35,6 +35,11 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase {
     private String _description;
 
     private boolean publicUse = false;
+    /*
+     * This parameter is used to decide if to create sound device or not
+     * if it is null then legacy logic will be used: create device for desktop type
+     */
+    private Boolean soundDeviceEnabled;
 
     public AddVmTemplateParameters(VmStatic masterVm, String name, String description) {
         _masterVm = masterVm;
@@ -101,5 +106,13 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase {
 
     public void setDiskInfoDestinationMap(HashMap<Guid, DiskImage> diskInfoDestinationMap) {
         this.diskInfoDestinationMap = diskInfoDestinationMap;
+    }
+
+    public Boolean isSoundDeviceEnabled() {
+        return soundDeviceEnabled;
+    }
+
+    public void setSoundDeviceEnabled(boolean soundDeviceEnabled) {
+        this.soundDeviceEnabled = soundDeviceEnabled;
     }
 }

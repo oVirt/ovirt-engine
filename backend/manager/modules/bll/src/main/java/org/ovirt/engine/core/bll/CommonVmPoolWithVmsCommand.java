@@ -113,6 +113,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                             diskInfoDestinationMap);
             addVmAndAttachToPoolParams.setSessionId(getParameters().getSessionId());
             addVmAndAttachToPoolParams.setParentCommand(VdcActionType.AddVmPoolWithVms);
+            addVmAndAttachToPoolParams.setSoundDeviceEnabled(getParameters().isSoundDeviceEnabled());
             VdcReturnValueBase returnValue =
                     Backend.getInstance().runInternalAction(VdcActionType.AddVmAndAttachToPool,
                             addVmAndAttachToPoolParams,

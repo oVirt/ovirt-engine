@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -360,22 +359,20 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmSoundDevices() {
-        if (vm.getVmType() == VmType.Desktop) {
-            // get vm device for Sound device from DB
-            List<VmDevice> vmDevices =
-                    DbFacade.getInstance()
-                            .getVmDeviceDao()
-                            .getVmDeviceByVmIdAndType(vm.getId(),
-                                    VmDeviceGeneralType.SOUND);
-            for (VmDevice vmDevice : vmDevices) {
-                Map struct = new HashMap();
-                struct.put(VdsProperties.Type, vmDevice.getType().getValue());
-                struct.put(VdsProperties.Device, vmDevice.getDevice());
-                struct.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
-                struct.put(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
-                addAddress(vmDevice, struct);
-                devices.add(struct);
-            }
+        // get vm device for Sound device from DB
+        List<VmDevice> vmDevices =
+                DbFacade.getInstance()
+                        .getVmDeviceDao()
+                        .getVmDeviceByVmIdAndType(vm.getId(),
+                                VmDeviceGeneralType.SOUND);
+        for (VmDevice vmDevice : vmDevices) {
+            Map struct = new HashMap();
+            struct.put(VdsProperties.Type, vmDevice.getType().getValue());
+            struct.put(VdsProperties.Device, vmDevice.getDevice());
+            struct.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
+            struct.put(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
+            addAddress(vmDevice, struct);
+            devices.add(struct);
         }
     }
 
