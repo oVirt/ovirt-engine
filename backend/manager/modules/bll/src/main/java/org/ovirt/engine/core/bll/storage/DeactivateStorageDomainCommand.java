@@ -10,13 +10,13 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.DeactivateStorageDomainVDSCommandParameters;
@@ -125,9 +125,9 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             getAsyncTaskDao().getAsyncTaskIdsByStoragePoolId(getStorageDomain().getStoragePoolId().getValue()).size() > 0) {
                 addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_MASTER_DOMAIN_WITH_TASKS_ON_POOL);
                 return false;
-            } else if (getStorageDomain().getStorageDomainType() != StorageDomainType.ISO
-                    && (getStorageDomain().getStorageDomainType() == StorageDomainType.ImportExport && !getParameters().getIsInternal())
-            && getAsyncTaskDao().getAsyncTaskIdsByEntity(getParameters().getStorageDomainId()).size() > 0) {
+            } else if (getStorageDomain().getStorageDomainType() != StorageDomainType.ISO &&
+                    !getParameters().getIsInternal()
+                    && getAsyncTaskDao().getAsyncTaskIdsByEntity(getParameters().getStorageDomainId()).size() > 0) {
                addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_DOMAIN_WITH_TASKS);
                return false;
             }

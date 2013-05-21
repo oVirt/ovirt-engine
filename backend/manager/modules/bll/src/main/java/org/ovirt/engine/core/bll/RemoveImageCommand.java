@@ -14,10 +14,10 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.ImageStorageDomainMapId;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.businessentities.ImageStorageDomainMapId;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -83,7 +83,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                         createTask(vdsReturnValue.getCreationInfo(),
                                 getParameters().getParentCommand(),
                                 VdcObjectType.Storage,
-                                getParameters().getStorageDomainId()));
+                                getStorageDomainId().getValue()));
             } catch (VdcBLLException e) {
                 if (e.getErrorCode() != VdcBllErrors.ImageDoesNotExistInDomainError) {
                     throw e;
