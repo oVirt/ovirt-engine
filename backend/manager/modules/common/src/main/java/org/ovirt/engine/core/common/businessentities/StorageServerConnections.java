@@ -170,16 +170,6 @@ public class StorageServerConnections implements Serializable {
 
     private Short nfsRetrans;
 
-    private String spec;
-
-    public void setSpec(String spec) {
-        this.spec = spec;
-    }
-
-    public String getSpec() {
-        return spec;
-    }
-
     @Override
     public boolean equals(Object obj) {
         boolean returnValue = super.equals(obj);
