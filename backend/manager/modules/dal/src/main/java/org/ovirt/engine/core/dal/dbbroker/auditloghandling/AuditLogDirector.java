@@ -127,6 +127,8 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.GLUSTER_CLUSTER_SERVICE_STATUS_CHANGED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.GLUSTER_SERVICE_ADDED_TO_SERVER, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.GLUSTER_SERVER_SERVICE_STATUS_CHANGED, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.GLUSTER_HOOK_UPDATED, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.GLUSTER_HOOK_UPDATE_FAILED, AuditLogSeverity.ERROR);
     }
 
     private static void initDefaultSeverities() {

@@ -127,11 +127,15 @@ public class GlusterHookCommandTest<T extends GlusterHookCommandBase> {
         return serverHooks;
     }
 
-    private VDS getServer(Guid id, String name, Guid clusterId) {
+    protected VDS getServer(Guid id, String name, Guid clusterId) {
+        return getServer(id, name, clusterId, VDSStatus.Up);
+    }
+
+    protected VDS getServer(Guid id, String name, Guid clusterId, VDSStatus status) {
         VDS server =  new VDS();
         server.setId(id);
         server.setVdsName(name);
-        server.setStatus(VDSStatus.Up);
+        server.setStatus(status);
         server.setVdsGroupId(clusterId);
         return server;
     }

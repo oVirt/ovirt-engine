@@ -9,7 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
+import org.ovirt.engine.core.common.action.gluster.GlusterHookStatusChangeParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
@@ -28,11 +28,11 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
  */
 @NonTransactiveCommandAttribute
 @LockIdNameAttribute(isWait = true)
-public abstract class GlusterHookStatusChangeCommand extends GlusterHookCommandBase<GlusterHookParameters> {
+public abstract class GlusterHookStatusChangeCommand extends GlusterHookCommandBase<GlusterHookStatusChangeParameters> {
     private GlusterHookEntity entity;
     protected List<String> errors = new ArrayList<String>();
 
-    public GlusterHookStatusChangeCommand(GlusterHookParameters params) {
+    public GlusterHookStatusChangeCommand(GlusterHookStatusChangeParameters params) {
         super(params);
         setVdsGroupId(params.getClusterId());
     }
@@ -51,16 +51,6 @@ public abstract class GlusterHookStatusChangeCommand extends GlusterHookCommandB
         }
         if (getParameters().getClusterId() == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID);
-            return false;
-        }
-
-        if (Guid.isNullOrEmpty(getParameters().getHookId())) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_HOOK_ID_IS_REQUIRED);
-            return false;
-        }
-
-        if (getGlusterHooksDao().getById(getParameters().getHookId()) == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_HOOK_DOES_NOT_EXIST);
             return false;
         }
 

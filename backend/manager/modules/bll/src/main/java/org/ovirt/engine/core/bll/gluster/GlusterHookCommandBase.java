@@ -3,17 +3,18 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.VdcBllMessages;
 
 /**
  * Base class for all Gluster Hook commands
  */
-public abstract class GlusterHookCommandBase<T extends VdcActionParametersBase> extends GlusterCommandBase<T> {
+public abstract class GlusterHookCommandBase<T extends GlusterHookParameters> extends GlusterCommandBase<T> {
 
     public GlusterHookCommandBase(T params) {
         super(params);
@@ -22,6 +23,25 @@ public abstract class GlusterHookCommandBase<T extends VdcActionParametersBase> 
     @Override
     protected BackendInternal getBackend() {
         return super.getBackend();
+    }
+
+    @Override
+    protected boolean canDoAction() {
+        if (!super.canDoAction()) {
+            return false;
+        }
+
+        if (Guid.isNullOrEmpty(getParameters().getHookId())) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_HOOK_ID_IS_REQUIRED);
+            return false;
+        }
+
+        if (getGlusterHooksDao().getById(getParameters().getHookId()) == null) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_HOOK_DOES_NOT_EXIST);
+            return false;
+        }
+
+        return true;
     }
 
     protected List<VDS> getAllUpServers(Guid clusterId) {

@@ -2286,4 +2286,10 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @Constants.DefaultStringValue("Failed to run LDAP query, please check server logs for more info.")
     String FAILED_TO_RUN_LDAP_QUERY();
+
+    @DefaultStringValue("Cannot ${action} ${type}. There are no conflicting servers to update hook.")
+    String ACTION_TYPE_FAILED_GLUSTER_HOOK_NO_CONFLICT_SERVERS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The server ${VdsName} is not UP.")
+    String ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP();
 }

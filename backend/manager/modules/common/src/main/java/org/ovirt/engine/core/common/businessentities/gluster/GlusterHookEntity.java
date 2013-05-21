@@ -198,6 +198,18 @@ public class GlusterHookEntity extends IVdcQueryable implements BusinessEntity<G
         return conflictStatus != null && conflictStatus > 0;
     }
 
+    public void removeStatusConflict() {
+        conflictStatus &= ~STATUS_CONFLICT.getValue();
+    }
+
+    public void removeMissingConflict() {
+        conflictStatus &= ~MISSING_HOOK.getValue();
+    }
+
+    public void removeContentConflict() {
+        conflictStatus &= ~CONTENT_CONFLICT.getValue();
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
