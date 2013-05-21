@@ -125,6 +125,15 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
     protected void removeSnapshotsFromDB() {
         for (Guid snapshotId : snapshotsToRemove) {
+            String memoryVolume = getSnapshotDao().get(snapshotId).getMemoryVolume();
+            if (!memoryVolume.isEmpty() &&
+                    getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolume) == 1) {
+                boolean succeed = removeMemoryVolumes(memoryVolume, getActionType(), false);
+                if (!succeed) {
+                    log.errorFormat("Failed to remove memory {0} of snapshot {1}",
+                            memoryVolume, snapshotId);
+                }
+            }
             getSnapshotDao().remove(snapshotId);
         }
     }

@@ -2,7 +2,9 @@ package org.ovirt.engine.core.bll.snapshots;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ImagesHandler;
@@ -257,11 +259,15 @@ public class SnapshotsManager {
      *
      * @param vmId
      *            The ID of the VM.
+     * @return Set of memoryVolumes of the removed snapshots
      */
-    public void removeSnapshots(Guid vmId) {
+    public Set<String> removeSnapshots(Guid vmId) {
+        Set<String> memoryVolumes = new HashSet<String>();
         for (Snapshot snapshot : getSnapshotDao().getAll(vmId)) {
+            memoryVolumes.add(snapshot.getMemoryVolume());
             getSnapshotDao().remove(snapshot.getId());
         }
+        return memoryVolumes;
     }
 
     /**

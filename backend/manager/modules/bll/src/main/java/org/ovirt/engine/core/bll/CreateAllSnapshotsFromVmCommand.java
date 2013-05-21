@@ -9,9 +9,10 @@ import java.util.Map;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.memory.DefaultMemoryImageBuilder;
+import org.ovirt.engine.core.bll.memory.LiveSnapshotMemoryImageBuilder;
 import org.ovirt.engine.core.bll.memory.MemoryImageBuilder;
 import org.ovirt.engine.core.bll.memory.NullableMemoryImageBuilder;
+import org.ovirt.engine.core.bll.memory.StatelessSnapshotMemoryImageBuilder;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -146,14 +147,20 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     private MemoryImageBuilder createMemoryImageBuilder() {
-        if (FeatureSupported.memorySnapshot(getVm().getVdsGroupCompatibilityVersion())
-                && getParameters().isSaveMemory() && isLiveSnapshotApplicable()) {
-            prepareForMemorySnapshot = true;
-            return new DefaultMemoryImageBuilder(getVm(), getStorageDomainIdForVmMemory(), getStoragePool(), this);
-        }
-        else {
+        if (!FeatureSupported.memorySnapshot(getVm().getVdsGroupCompatibilityVersion())) {
             return new NullableMemoryImageBuilder();
         }
+
+        if (getParameters().getSnapshotType() == SnapshotType.STATELESS) {
+            return new StatelessSnapshotMemoryImageBuilder(getVm());
+        }
+
+        if (getParameters().isSaveMemory() && isLiveSnapshotApplicable()) {
+            prepareForMemorySnapshot = true;
+            return new LiveSnapshotMemoryImageBuilder(getVm(), getStorageDomainIdForVmMemory(), getStoragePool(), this);
+        }
+
+        return new NullableMemoryImageBuilder();
     }
 
     private Snapshot addSnapshotToDB(Guid snapshotId, MemoryImageBuilder memoryImageBuilder) {
@@ -223,10 +230,32 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                     if (isLiveSnapshotApplicable()) {
                         performLiveSnapshot(createdSnapshot);
                     }
-                    // TODO: else remove the memory image if exists
+                    else {
+                        // If the created snapshot contains memory, remove the memory volumes as
+                        // they are not in use since no live snapshot was created
+                        String memoryVolume = createdSnapshot.getMemoryVolume();
+                        if (!memoryVolume.isEmpty() &&
+                                getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolume) == 1) {
+                            boolean succeed = removeMemoryVolumes(memoryVolume, getActionType(), false);
+                            if (!succeed) {
+                                log.errorFormat("Failed to remove unused memory {0} of snapshot {1}",
+                                        memoryVolume, createdSnapshot.getId());
+                            }
+                        }
+                    }
                 } else {
                     revertToActiveSnapshot(createdSnapshot.getId());
-                    // TODO: remove the memory image if exists
+                    // If the removed snapshot contained memory, remove the memory volumes
+                    // Note that the memory volumes might not have been created
+                    String memoryVolume = createdSnapshot.getMemoryVolume();
+                    if (!memoryVolume.isEmpty() &&
+                            getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolume) == 1) {
+                        boolean succeed = removeMemoryVolumes(memoryVolume, getActionType(), false);
+                        if (!succeed) {
+                            log.warnFormat("Failed to remove memory {0} of snapshot {1}",
+                                    memoryVolume, createdSnapshot.getId());
+                        }
+                    }
                 }
 
                 incrementVmGeneration();

@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
@@ -31,18 +30,12 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -123,60 +116,10 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         setSucceeded(true);
     }
 
-    /**
-     * There is a one to many relation between memory volumes and snapshots, so memory
-     * volumes should be removed only if the only snapshot that points to them is removed
-     */
-    private boolean shouldRemoveMemorySnapshotVolumes(String memoryVolume) {
-        return !memoryVolume.isEmpty() &&
-                getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolume) == 1;
-    }
-
     private void removeMemory(final Snapshot snapshot) {
-        List<Guid> guids = GuidUtils.getGuidListFromString(snapshot.getMemoryVolume());
-
-        // get all vm disks in order to check post zero - if one of the
-        // disks is marked with wipe_after_delete
-        boolean postZero =
-                LinqUtils.filter(getDiskDao().getAllForVm(getVm().getId()),
-                        new Predicate<Disk>() {
-                    @Override
-                    public boolean eval(Disk disk) {
-                        return disk.isWipeAfterDelete();
-                    }
-                }).size() > 0;
-
-        // delete first image
-        // the next 'DeleteImageGroup' command should also take care of the
-        // image removal:
-        VDSReturnValue vdsRetValue = runVdsCommand(
-                VDSCommandType.DeleteImageGroup,
-                new DeleteImageGroupVDSCommandParameters(guids.get(1), guids.get(0), guids.get(2),
-                        postZero, false, getVm().getVdsGroupCompatibilityVersion().toString()));
-
-        if (!vdsRetValue.getSucceeded()) {
-            log.errorFormat("Cannot remove memory dump volume for snapshot {0}", snapshot.getId());
-        }
-        else {
-            Guid guid =
-                    createTask(vdsRetValue.getCreationInfo(), VdcActionType.RemoveSnapshot, VdcObjectType.Storage, guids.get(0));
-            getReturnValue().getTaskIdList().add(guid);
-        }
-
-        // delete second image
-        // the next 'DeleteImageGroup' command should also take care of the image removal:
-        vdsRetValue = runVdsCommand(
-                VDSCommandType.DeleteImageGroup,
-                new DeleteImageGroupVDSCommandParameters(guids.get(1), guids.get(0), guids.get(4),
-                        postZero, false, getVm().getVdsGroupCompatibilityVersion().toString()));
-
-        if (!vdsRetValue.getSucceeded()) {
-            log.errorFormat("Cannot remove memory metadata volume for snapshot {0}", snapshot.getId());
-        }
-        else {
-            Guid guid =
-                    createTask(vdsRetValue.getCreationInfo(), VdcActionType.RemoveSnapshot, VdcObjectType.Storage, guids.get(0));
-            getReturnValue().getTaskIdList().add(guid);
+        boolean success = removeMemoryVolumes(snapshot.getMemoryVolume(), getActionType(), false);
+        if (!success) {
+            log.errorFormat("Cannot remove memory volumes for snapshot {0}", snapshot.getId());
         }
     }
 

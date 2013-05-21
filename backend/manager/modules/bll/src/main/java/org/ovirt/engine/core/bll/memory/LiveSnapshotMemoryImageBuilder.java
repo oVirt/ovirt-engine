@@ -18,7 +18,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * This builder creates the memory images for live snapshots with memory operation
  */
-public class DefaultMemoryImageBuilder implements MemoryImageBuilder {
+public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
     private Guid storageDomainId;
     private Guid memoryDumpImageGroupId;
     private Guid memoryDumpVolumeId;
@@ -28,7 +28,7 @@ public class DefaultMemoryImageBuilder implements MemoryImageBuilder {
     private TaskHandlerCommand<?> enclosingCommand;
     private StoragePool storagePool;
 
-    public DefaultMemoryImageBuilder(VM vm, Guid storageDomainId,
+    public LiveSnapshotMemoryImageBuilder(VM vm, Guid storageDomainId,
             StoragePool storagePool, TaskHandlerCommand<?> enclosingCommand) {
         this.vm = vm;
         this.enclosingCommand = enclosingCommand;

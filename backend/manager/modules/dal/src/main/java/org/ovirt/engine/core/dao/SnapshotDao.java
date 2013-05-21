@@ -163,5 +163,20 @@ public interface SnapshotDao extends GenericDao<Snapshot, Guid>, StatusAwareDao<
      */
     boolean exists(Guid vmId, Guid snapshotId);
 
+    /**
+     * Get the number of snapshots that contain the given memory
+     *
+     * @param memoryVolume
+     *           The memory that should be used to filter the snapshots
+     * @return Number of snapshots containing the given memory
+     */
     int getNumOfSnapshotsByMemory(String memoryVolume);
+
+    /**
+     * Clear the memory from the snapshot with the given id
+     *
+     * @param snapshotId
+     *          The id of the snapshot that its memory should be cleared
+     */
+    void removeMemoryFromSnapshot(Guid snapshotId);
 }

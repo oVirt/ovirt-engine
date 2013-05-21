@@ -716,7 +716,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     protected void removeVmRelatedEntitiesFromDb() {
         removeVmUsers();
         removeVmNetwork();
-        new SnapshotsManager().removeSnapshots(getVmId());
+        removeVmSnapshots();
         removeVmStatic();
     }
 

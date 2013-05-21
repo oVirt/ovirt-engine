@@ -12,7 +12,6 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
-import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -249,7 +248,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         removeLunDisks();
         removeVmUsers();
         removeVmNetwork();
-        new SnapshotsManager().removeSnapshots(getVmId());
+        removeVmSnapshots();
         removeVmStatic();
     }
 

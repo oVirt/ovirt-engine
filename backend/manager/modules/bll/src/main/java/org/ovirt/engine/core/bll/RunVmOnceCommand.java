@@ -6,8 +6,8 @@ import java.util.List;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
-import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.SysPrepParams;
@@ -57,9 +57,9 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
     }
 
     @Override
-    protected CreateVmVDSCommandParameters initVdsCreateVmParams() {
+    protected CreateVmVDSCommandParameters initCreateVmParams() {
         getVm().setRunOnce(true);
-        CreateVmVDSCommandParameters createVmParams = super.initVdsCreateVmParams();
+        CreateVmVDSCommandParameters createVmParams = super.initCreateVmParams();
         SysPrepParams sysPrepParams = new SysPrepParams();
         RunVmOnceParams runOnceParams = getParameters();
         sysPrepParams.setSysPrepDomainName(runOnceParams.getSysPrepDomainName());

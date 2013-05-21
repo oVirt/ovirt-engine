@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext.ExecutionMethod;
@@ -223,7 +224,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             getVm().setLastVdsRunOn(getCurrentVdsId());
         }
         if (StringUtils.isNotEmpty(getVm().getHibernationVolHandle())) {
-            handleHibernatedVm(getActionType(), true);
+            removeMemoryVolumes(getVm().getHibernationVolHandle(), getActionType(), true);
             // In order to prevent a race where VdsUpdateRuntimeInfo saves the Vm Dynamic as UP prior to execution of
             // this method (which is a part of the cached VM command,
             // so the state this method is aware to is RESTORING, in case of RunVmCommand after the VM got suspended.

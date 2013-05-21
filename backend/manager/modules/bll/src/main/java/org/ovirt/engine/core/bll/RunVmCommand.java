@@ -63,8 +63,10 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -81,10 +83,16 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private String _cdImagePath = "";
     private String _floppyImagePath = "";
     private boolean mResume;
-    private boolean _isVmRunningStateless;
+    /** Note: this field should not be used directly, use {@link #isVmRunningStateless()} instead */
+    private Boolean cachedVmIsRunningStateless;
     private boolean isFailedStatlessSnapshot;
     /** Indicates whether restoration of memory from snapshot is supported for the VM */
     private boolean memorySnapshotSupported;
+    /** The memory volume which is stored in the active snapshot of the VM */
+    private String memoryVolumeFromSnapshot = StringUtils.EMPTY;
+    /** This flag is used to indicate that the disks might be dirty since the memory
+     *  from the active snapshot was restored so the memory should not be used */
+    private boolean memoryFromSnapshotIrrelevant;
 
     protected RunVmCommand(Guid commandId) {
         super(commandId);
@@ -135,8 +143,23 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
             if (getVm().getStatus() != VMStatus.Suspended) {
                 memorySnapshotSupported = FeatureSupported.memorySnapshot(getVm().getVdsGroupCompatibilityVersion());
+                // If the VM is not hibernated, save the hibernation volume from the baseline snapshot
+                memoryVolumeFromSnapshot = getBaselineSnapshot().getMemoryVolume();
             }
         }
+    }
+
+    /**
+     * Returns the snapshot the vm is based on - either the active snapshot (usually) or
+     * the stateless snapshot in case the VM is running in stateless mode
+     */
+    private Snapshot getBaselineSnapshot() {
+        return getSnapshotDao().get(getVm().getId(),
+                isVmRunningStateless() ? SnapshotType.STATELESS : SnapshotType.ACTIVE);
+    }
+
+    private SnapshotDao getSnapshotDao() {
+        return DbFacade.getInstance().getSnapshotDao();
     }
 
     /**
@@ -234,9 +257,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             if (status != null && (status.isRunning() || status == VMStatus.RestoringState)) {
                 setSucceeded(true);
             } else {
-                // Try to rerun Vm on different vds
-                // no need to log the command because it is being logged inside
-                // the rerun
+                // Try to rerun Vm on different vds no need to log the command because it is
+                // being logged inside the rerun
                 log.infoFormat("Failed to run desktop {0}, rerun", getVm().getName());
                 setCommandShouldBeLogged(false);
                 setSucceeded(true);
@@ -254,8 +276,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     protected void executeVmCommand() {
-        // Before running the VM we update its devices, as they may need to be changed due to configuration option
-        // change
+        // Before running the VM we update its devices, as they may need to be changed due to
+        // configuration option change
         VmDeviceUtils.updateVmDevices(getVm().getStaticData());
         setActionReturnValue(VMStatus.Down);
         if (initVm()) {
@@ -274,7 +296,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     }
                 } else if (!isInternalExecution() && !_isRerun
                         && getVm().getStatus() != VMStatus.Suspended
-                        && statelessSnapshotExistsForVm()
+                        && isStatelessSnapshotExistsForVm()
                         && !isVMPartOfManualPool()) {
                     removeVmStatlessImages();
                 } else {
@@ -286,8 +308,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
     }
 
-    private boolean statelessSnapshotExistsForVm() {
-        return getDbFacade().getSnapshotDao().exists(getVm().getId(), SnapshotType.STATELESS);
+    private boolean isStatelessSnapshotExistsForVm() {
+        return getSnapshotDao().exists(getVm().getId(), SnapshotType.STATELESS);
     }
 
     /**
@@ -324,7 +346,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private void statelessVmTreatment() {
         warnIfNotAllDisksPermitSnapshots();
 
-        if (statelessSnapshotExistsForVm()) {
+        if (isStatelessSnapshotExistsForVm()) {
             log.errorFormat(
                     "RunVmAsStateless - {0} - found existing vm images in stateless_vm_image_map table - skipped creating snapshots.",
                     getVm().getName());
@@ -444,34 +466,38 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         VMStatus vmStatus = (VMStatus) getBackend()
                 .getResourceManager()
-                .RunAsyncVdsCommand(VDSCommandType.CreateVm, initVdsCreateVmParams(), this).getReturnValue();
+                .RunAsyncVdsCommand(VDSCommandType.CreateVm, initCreateVmParams(), this).getReturnValue();
+
+        // Don't use the memory from the active snapshot anymore if there's a chance that disks were changed
+        memoryFromSnapshotIrrelevant = vmStatus.isRunning() || vmStatus == VMStatus.RestoringState;
 
         // After VM was create (or not), we can remove the quota vds group memory.
         return vmStatus;
     }
 
+
     /**
-     * Initial the parameters for the VDSM command of VM creation
+     * Initialize the parameters for the VDSM command of VM creation
      * @return the VDS create VM parameters
      */
-    protected CreateVmVDSCommandParameters initVdsCreateVmParams() {
+    protected CreateVmVDSCommandParameters initCreateVmParams() {
         VM vmToBeCreated = getVm();
 
         if (vmToBeCreated.getStatus() == VMStatus.Suspended) {
             return new CreateVmVDSCommandParameters(getVdsId(), vmToBeCreated);
         }
 
-        if (!memorySnapshotSupported) {
+        if (!memorySnapshotSupported || memoryFromSnapshotIrrelevant) {
             vmToBeCreated.setHibernationVolHandle(StringUtils.EMPTY);
             return new CreateVmVDSCommandParameters(getVdsId(), vmToBeCreated);
         }
 
         // otherwise, use the memory that is saved on the active snapshot (might be empty)
-        Snapshot activeSnapshotOfVmToBeCreated =
-                getDbFacade().getSnapshotDao().get(vmToBeCreated.getId(), SnapshotType.ACTIVE);
-        vmToBeCreated.setHibernationVolHandle(activeSnapshotOfVmToBeCreated.getMemoryVolume());
+        vmToBeCreated.setHibernationVolHandle(memoryVolumeFromSnapshot);
         CreateVmVDSCommandParameters parameters =
                 new CreateVmVDSCommandParameters(getVdsId(), vmToBeCreated);
+        // Mark that the hibernation volume should be cleared from the VM right after the sync part of
+        // the create verb is finished (unlike hibernation volume that is created by hibernate command)
         parameters.setClearHibernationVolumes(true);
         return parameters;
     }
@@ -487,7 +513,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 return getSucceeded() ? AuditLogType.USER_RESUME_VM : AuditLogType.USER_FAILED_RESUME_VM;
             } else if (isInternalExecution()) {
                 return getSucceeded() ?
-                        (statelessSnapshotExistsForVm() ? AuditLogType.VDS_INITIATED_RUN_VM_AS_STATELESS
+                        (isStatelessSnapshotExistsForVm() ? AuditLogType.VDS_INITIATED_RUN_VM_AS_STATELESS
                                 : AuditLogType.VDS_INITIATED_RUN_VM) :
                         AuditLogType.VDS_INITIATED_RUN_VM_FAILED;
             } else {
@@ -497,7 +523,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                                         && getVm().getDedicatedVmForVds() != null
                                         && !getVm().getRunOnVds().equals(getVm().getDedicatedVmForVds()) ?
                                                 AuditLogType.USER_RUN_VM_ON_NON_DEFAULT_VDS :
-                                                (statelessSnapshotExistsForVm() ? AuditLogType.USER_RUN_VM_AS_STATELESS : AuditLogType.USER_RUN_VM)
+                                                (isStatelessSnapshotExistsForVm() ? AuditLogType.USER_RUN_VM_AS_STATELESS : AuditLogType.USER_RUN_VM)
                                 : _isRerun ?
                                         AuditLogType.VDS_INITIATED_RUN_VM
                                         : getTaskIdList().size() > 0 ?
@@ -510,13 +536,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             // if not running as stateless, or if succeeded running as
             // stateless,
             // command should be with 'CommandShouldBeLogged = false':
-            return _isVmRunningStateless && !getSucceeded() ? AuditLogType.USER_RUN_VM_AS_STATELESS_FINISHED_FAILURE
+            return isVmRunningStateless() && !getSucceeded() ? AuditLogType.USER_RUN_VM_AS_STATELESS_FINISHED_FAILURE
                     : AuditLogType.UNASSIGNED;
 
         case END_FAILURE:
             // if not running as stateless, command should
             // be with 'CommandShouldBeLogged = false':
-            return _isVmRunningStateless ? AuditLogType.USER_RUN_VM_AS_STATELESS_FINISHED_FAILURE
+            return isVmRunningStateless() ? AuditLogType.USER_RUN_VM_AS_STATELESS_FINISHED_FAILURE
                     : AuditLogType.UNASSIGNED;
 
         default:
@@ -746,9 +772,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     protected void endSuccessfully() {
-        setIsVmRunningStateless();
-
-        if (_isVmRunningStateless) {
+        if (isVmRunningStateless()) {
             CreateAllSnapshotsFromVmParameters createSnapshotParameters = buildCreateSnapshotParameters();
             createSnapshotParameters.setImagesParameters(getParameters().getImagesParameters());
             getBackend().EndAction(VdcActionType.CreateAllSnapshotsFromVm, createSnapshotParameters);
@@ -781,8 +805,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     .runInternalAction(getActionType(), getParameters(), new CommandContext(runStatelessVmCtx))
                     .getSucceeded());
             if (!getSucceeded()) {
-                // could not run the vm don't try to run the end action
-                // again
+                // could not run the vm don't try to run the end action again
                 log.warnFormat("Could not run the vm {0} on RunVm.EndSuccessfully", getVm().getName());
                 getReturnValue().setEndActionTryAgain(false);
             }
@@ -796,8 +819,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     protected void endWithFailure() {
-        setIsVmRunningStateless();
-        if (_isVmRunningStateless) {
+        if (isVmRunningStateless()) {
             CreateAllSnapshotsFromVmParameters createSnapshotParameters = buildCreateSnapshotParameters();
             createSnapshotParameters.setImagesParameters(getParameters().getImagesParameters());
             VdcReturnValueBase vdcReturnValue = getBackend().endAction(VdcActionType.CreateAllSnapshotsFromVm,
@@ -813,8 +835,37 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
     }
 
-    private void setIsVmRunningStateless() {
-        _isVmRunningStateless = statelessSnapshotExistsForVm();
+    @Override
+    public void runningSucceded() {
+        removeMemoryFromSnapshot();
+        super.runningSucceded();
+    }
+
+    @Override
+    protected void failedToRunVm() {
+        if (memoryFromSnapshotIrrelevant) {
+            removeMemoryFromSnapshot();
+        }
+        super.failedToRunVm();
+    }
+
+    private void removeMemoryFromSnapshot() {
+        if (memoryVolumeFromSnapshot.isEmpty()) {
+            return;
+        }
+
+        // If the active snapshot is the only one that points to the memory volume we can remove it
+        if (getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolumeFromSnapshot) == 1) {
+            removeMemoryVolumes(memoryVolumeFromSnapshot, getActionType(), true);
+        }
+        getSnapshotDao().removeMemoryFromSnapshot(getBaselineSnapshot().getId());
+    }
+
+    private boolean isVmRunningStateless() {
+        if (cachedVmIsRunningStateless == null) {
+            cachedVmIsRunningStateless = isStatelessSnapshotExistsForVm();
+        }
+        return cachedVmIsRunningStateless;
     }
 
     /**

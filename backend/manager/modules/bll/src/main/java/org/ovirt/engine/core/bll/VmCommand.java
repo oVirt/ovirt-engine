@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.network.MacPoolManager;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -165,6 +166,25 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         }
     }
 
+    protected void removeVmSnapshots() {
+        Collection<String> memoriesOfRemovedSnapshots =
+                new SnapshotsManager().removeSnapshots(getVmId());
+        for (String memoryVolumes : memoriesOfRemovedSnapshots) {
+            if (shouldRemoveMemorySnapshotVolumes(memoryVolumes)) {
+                removeMemoryVolumes(memoryVolumes, getActionType(), false);
+            }
+        }
+    }
+
+    /**
+     * There is a one to many relation between memory volumes and snapshots, so memory
+     * volumes should be removed only if the only snapshot that points to them is removed
+     */
+    protected boolean shouldRemoveMemorySnapshotVolumes(String memoryVolume) {
+        return !memoryVolume.isEmpty() &&
+                getDbFacade().getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolume) == 1;
+    }
+
     protected void removeVmUsers() {
         List<TagsVmMap> all = getTagDao().getTagVmMapByVmIdAndDefaultTag(getVmId());
         for (TagsVmMap tagVm : all) {
@@ -232,15 +252,15 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return VdcActionType.Unknown;
     }
 
-    protected boolean handleHibernatedVm(VdcActionType parentCommand, boolean startPollingTasks) {
+    protected boolean removeMemoryVolumes(String memVols, VdcActionType parentCommand, boolean startPollingTasks) {
         // this is temp code until it will be implemented in SPM
-        String[] strings = getVm().getHibernationVolHandle().split(",");
-        List<Guid> guids = new LinkedList<Guid>();
-        for (String string : strings) {
-            guids.add(new Guid(string));
+        String[] strings = memVols.split(",");
+        Guid[] guids = new Guid[strings.length];
+        for (int i=0; i<strings.length; ++i) {
+            guids[i] = new Guid(strings[i]);
         }
-        Guid[] imagesList = guids.toArray(new Guid[0]);
-        if (imagesList.length == 6) {
+
+        if (guids.length == 6) {
             // get all vm disks in order to check post zero - if one of the
             // disks is marked with wipe_after_delete
             boolean postZero =
@@ -253,11 +273,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                             }).size() > 0;
 
             // delete first image
-            // the next 'DeleteImageGroup' command should also take care of the
-            // image removal:
+            // the next 'DeleteImageGroup' command should also take care of the image removal:
             VDSReturnValue vdsRetValue1 = runVdsCommand(
                     VDSCommandType.DeleteImageGroup,
-                    new DeleteImageGroupVDSCommandParameters(imagesList[1], imagesList[0], imagesList[2],
+                    new DeleteImageGroupVDSCommandParameters(guids[1], guids[0], guids[2],
                             postZero, false, getVm().getVdsGroupCompatibilityVersion().toString()));
 
             if (!vdsRetValue1.getSucceeded()) {
@@ -265,15 +284,14 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             }
 
             Guid guid1 =
-                    createTask(vdsRetValue1.getCreationInfo(), parentCommand, VdcObjectType.Storage, imagesList[0]);
+                    createTask(vdsRetValue1.getCreationInfo(), parentCommand, VdcObjectType.Storage, guids[0]);
             getTaskIdList().add(guid1);
 
             // delete second image
-            // the next 'DeleteImageGroup' command should also take care of the
-            // image removal:
+            // the next 'DeleteImageGroup' command should also take care of the image removal:
             VDSReturnValue vdsRetValue2 = runVdsCommand(
                     VDSCommandType.DeleteImageGroup,
-                    new DeleteImageGroupVDSCommandParameters(imagesList[1], imagesList[0], imagesList[4],
+                    new DeleteImageGroupVDSCommandParameters(guids[1], guids[0], guids[4],
                             postZero, false, getVm().getVdsGroupCompatibilityVersion().toString()));
 
             if (!vdsRetValue2.getSucceeded()) {

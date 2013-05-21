@@ -223,6 +223,16 @@ public class SnapshotDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Snapshot,
                 parameterSource);
     }
 
+    @Override
+    public void removeMemoryFromSnapshot(Guid snapshotId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("snapshot_id", snapshotId)
+                .addValue("memory_volume", null);
+
+        getCallsHandler().executeModification("UpdateMemoryOfSnapshot",
+                parameterSource);
+    }
+
     private String getNullableRepresentation(String memoryVolume) {
         return memoryVolume.isEmpty() ? null : memoryVolume;
     }

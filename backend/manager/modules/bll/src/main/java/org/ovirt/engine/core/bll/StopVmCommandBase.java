@@ -113,7 +113,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
             // Set the VM to image locked to decrease race condition.
             updateVmStatus(VMStatus.ImageLocked);
             if (StringUtils.isNotEmpty(getVm().getHibernationVolHandle())
-                    && handleHibernatedVm(getActionType(), false)) {
+                    && removeMemoryVolumes(getVm().getHibernationVolHandle(), getActionType(), false)) {
                 returnVal = true;
             } else {
                 updateVmStatus(vmStatus);
