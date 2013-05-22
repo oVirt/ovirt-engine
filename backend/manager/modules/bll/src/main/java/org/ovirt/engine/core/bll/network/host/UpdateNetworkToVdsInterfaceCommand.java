@@ -15,10 +15,10 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcFault;
+import org.ovirt.engine.core.common.vdscommands.CollectVdsNetworkDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.IPAddress;
@@ -87,7 +87,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
                     .getInstance()
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.CollectVdsNetworkData,
-                            new VdsIdAndVdsVDSCommandParametersBase(getVds()));
+                            new CollectVdsNetworkDataVDSCommandParameters(getVds()));
 
             if (retVal.getSucceeded()) {
                 Guid groupId = getVdsDAO().get(getParameters().getVdsId()).getVdsGroupId();
@@ -132,7 +132,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
                 Backend.getInstance()
                         .getResourceManager()
                         .RunVdsCommand(VDSCommandType.CollectVdsNetworkData,
-                                new VdsIdAndVdsVDSCommandParametersBase(vds));
+                                new CollectVdsNetworkDataVDSCommandParameters(vds));
             } catch (java.lang.Exception e) {
             }
         }
