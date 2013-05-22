@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.common.asynctasks;
 
+import java.io.Serializable;
+
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
-public class AsyncTaskCreationInfo {
+public class AsyncTaskCreationInfo implements Serializable {
 
     private Guid privateTaskID = new Guid();
     private Guid privateStoragePoolID = new Guid();
