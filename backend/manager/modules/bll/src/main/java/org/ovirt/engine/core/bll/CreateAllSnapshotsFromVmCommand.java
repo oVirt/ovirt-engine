@@ -64,7 +64,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         super(parameters);
         parameters.setEntityId(getVmId());
         setSnapshotName(parameters.getDescription());
-        setStoragePoolId(getVm().getStoragePoolId());
+        setStoragePoolId(getVm() != null ? getVm().getStoragePoolId() : null);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
      * Filter all allowed snapshot disks.
      * @return list of disks to be snapshot.
      */
-    private List<DiskImage> getDisksList() {
+    protected List<DiskImage> getDisksList() {
         if (selectedActiveDisks == null) {
             selectedActiveDisks = ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(getVmId()),
                     true,
@@ -306,33 +306,57 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     @Override
     protected boolean canDoAction() {
-        VmValidator vmValidator = new VmValidator(getVm());
-        boolean result = validateVM(vmValidator);
-        List<DiskImage> disksList = getDisksList();
-        if (result && disksList.size() > 0) {
-            StoragePoolValidator spValidator = new StoragePoolValidator(getStoragePool());
-            SnapshotsValidator snapshotValidator = new SnapshotsValidator();
-            MultipleStorageDomainsValidator sdValidator =
-                    new MultipleStorageDomainsValidator(getVm().getStoragePoolId(),
-                            ImagesHandler.getAllStorageIdsForImageIds(disksList));
-            DiskImagesValidator diskImagesValidator = new DiskImagesValidator(disksList);
-            result = validate(spValidator.isUp())
-                    && validate(snapshotValidator.vmNotDuringSnapshot(getVmId()))
-                    && validate(snapshotValidator.vmNotInPreview(getVmId()))
-                    && validate(vmValidator.vmNotDuringMigration())
-                    && validate(vmValidator.vmNotRunningStateless())
-                    && validate(vmValidator.vmNotIlegal())
-                    && validate(diskImagesValidator.diskImagesNotLocked())
-                    && validate(diskImagesValidator.diskImagesNotIllegal())
-                    && validate(vmValidator.vmNotLocked())
-                    && validate(sdValidator.allDomainsExistAndActive())
-                    && validate(sdValidator.allDomainsWithinThresholds());
+        // Initialize validators.
+        VmValidator vmValidator = createVmValidator();
+        SnapshotsValidator snapshotValidator = createSnapshotValidator();
+        StoragePoolValidator spValidator = createStoragePoolValidator();
+
+        if (!(validateVM(vmValidator) && validate(spValidator.isUp())
+                && validate(vmValidator.vmNotIlegal())
+                && validate(vmValidator.vmNotLocked())
+                && validate(snapshotValidator.vmNotDuringSnapshot(getVmId()))
+                && validate(snapshotValidator.vmNotInPreview(getVmId()))
+                && validate(vmValidator.vmNotDuringMigration())
+                && validate(vmValidator.vmNotRunningStateless()))) {
+            return false;
         }
 
-        return result;
+        List<DiskImage> disksList = getDisksList();
+        if (disksList.size() > 0) {
+            MultipleStorageDomainsValidator sdValidator = createMultipleStorageDomainsValidator(disksList);
+            DiskImagesValidator diskImagesValidator = createDiskImageValidator(disksList);
+            if (!(validate(diskImagesValidator.diskImagesNotLocked())
+                    && validate(diskImagesValidator.diskImagesNotIllegal())
+                    && validate(sdValidator.allDomainsExistAndActive())
+                    && validate(sdValidator.allDomainsWithinThresholds()))) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    private boolean validateVM(VmValidator vmValidator) {
+    protected StoragePoolValidator createStoragePoolValidator() {
+        return new StoragePoolValidator(getStoragePool());
+    }
+
+    protected SnapshotsValidator createSnapshotValidator() {
+        return new SnapshotsValidator();
+    }
+
+    protected DiskImagesValidator createDiskImageValidator(List<DiskImage> disksList) {
+        return new DiskImagesValidator(disksList);
+    }
+
+    protected MultipleStorageDomainsValidator createMultipleStorageDomainsValidator(List<DiskImage> disksList) {
+        return new MultipleStorageDomainsValidator(getVm().getStoragePoolId(),
+                ImagesHandler.getAllStorageIdsForImageIds(disksList));
+    }
+
+    protected VmValidator createVmValidator() {
+        return new VmValidator(getVm());
+    }
+
+    protected boolean validateVM(VmValidator vmValidator) {
         return canDoSnapshot(getVm()) &&
                 validate(vmValidator.vmNotSavingRestoring());
     }
