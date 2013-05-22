@@ -75,11 +75,12 @@ public class VdsSelector {
             log.infoFormat("Checking for a specific VDS only - id:{0}, name:{1}, host_name(ip):{2}",
                     getDestinationVdsId(), targetVds.getName(), targetVds.getHostName());
             result = getVdsToRunOn(new ArrayList<VDS>(Arrays.asList(new VDS[] { targetVds })), isMigrate);
-            if (result.equals(Guid.Empty) && privateVm.getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
-                result = getAnyVdsToRunOn(isMigrate);
-            }
-        } else {
-            result = getAnyVdsToRunOn(isMigrate);
+        }
+        if (getDestinationVdsId() == null || result.equals(Guid.Empty)
+                && privateVm.getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
+            result = getVdsToRunOn(DbFacade.getInstance()
+                    .getVdsDao()
+                    .getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode }), isMigrate);
         }
 
         return result;
@@ -112,12 +113,6 @@ public class VdsSelector {
         }
 
         return returnValue;
-    }
-
-    private Guid getAnyVdsToRunOn(boolean isMigrate) {
-        return getVdsToRunOn(DbFacade.getInstance()
-                .getVdsDao()
-                .getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode }), isMigrate);
     }
 
     /**
