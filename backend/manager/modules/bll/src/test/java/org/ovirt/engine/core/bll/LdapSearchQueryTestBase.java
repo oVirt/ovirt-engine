@@ -97,7 +97,7 @@ public abstract class LdapSearchQueryTestBase extends AbstractQueryTest<SearchPa
         getQuery().setInternalExecution(true);
         getQuery().execute();
         assertTrue("Query should succeed, but failed with: " + getQuery().getQueryReturnValue().getExceptionString(),
-                getQuery().getQueryReturnValue().getIsSearchValid());
+                getQuery().getQueryReturnValue().getSucceeded());
         assertEquals("Wrong ldap result returned",
                 result,
                 ((List<IVdcQueryable>) getQuery().getQueryReturnValue().getReturnValue()).get(0));

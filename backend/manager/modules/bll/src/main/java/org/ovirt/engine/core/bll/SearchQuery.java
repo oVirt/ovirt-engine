@@ -15,20 +15,20 @@ import org.ovirt.engine.core.bll.adbroker.LdapQueryType;
 import org.ovirt.engine.core.bll.adbroker.LdapReturnValueBase;
 import org.ovirt.engine.core.bll.adbroker.LdapSearchByQueryParameters;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
-import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.LdapGroup;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmPool;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.config.Config;
@@ -36,7 +36,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.SearchEngineIllegalCharacterException;
 import org.ovirt.engine.core.common.errors.SqlInjectionException;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.SearchReturnValue;
 import org.ovirt.engine.core.common.utils.ListUtils;
 import org.ovirt.engine.core.common.utils.ListUtils.Filter;
 import org.ovirt.engine.core.compat.DateTime;
@@ -53,21 +52,6 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
     public SearchQuery(P parameters) {
         super(parameters);
-    }
-
-    @Override
-    protected SearchReturnValue createReturnValue() {
-        return new SearchReturnValue();
-    }
-
-    @Override
-    public SearchReturnValue getQueryReturnValue() {
-        return (SearchReturnValue) super.getQueryReturnValue();
-    }
-
-    @Override
-    protected void proceedOnFail() {
-        getQueryReturnValue().setIsSearchValid(false);
     }
 
     @Override
@@ -284,7 +268,6 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             String searchText = getParameters().getSearchPattern();
             // find if this is a trivial search expression (like 'Vms:' etc).
             isSafe = SearchObjects.isSafeExpression(searchText);
-            getQueryReturnValue().setIsSearchValid(true);
             if (useCache) {
                 // first lets check the cache of queries.
                 searchKey = String.format("%1$s,%2$s,%3$s", searchText, getParameters().getMaxCount(),getParameters().getCaseSensitive());
@@ -332,7 +315,6 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 searchObj.setSearchFrom(getParameters().getSearchFrom());
 
                 if (searchObj.getError() != SyntaxError.NO_ERROR) {
-                    getQueryReturnValue().setIsSearchValid(false);
                     log.warnFormat("ResourceManager::searchBusinessObjects - erroneous search text - ''{0}''",
                             searchText);
                     int startPos = searchObj.getErrorStartPos();
@@ -353,7 +335,6 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                     return null;
                 }
                 if (searchObj.getvalid() != true) {
-                    getQueryReturnValue().setIsSearchValid(false);
                     log.warnFormat("ResourceManager::searchBusinessObjects - Invalid search text - ''{0}''", searchText);
                     return null;
                 }
@@ -373,15 +354,12 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         } catch (SearchEngineIllegalCharacterException e) {
             log.error("Search expression can not end with ESCAPE character:" + getParameters().getSearchPattern());
             data = null;
-            getQueryReturnValue().setIsSearchValid(false);
         } catch (SqlInjectionException e) {
             log.error("Sql Injection in search: " + getParameters().getSearchPattern());
             data = null;
-            getQueryReturnValue().setIsSearchValid(false);
         } catch (RuntimeException ex) {
             log.warn("Illegal search: " + getParameters().getSearchPattern(), ex);
             data = null;
-            getQueryReturnValue().setIsSearchValid(false);
         }
         return data;
     }

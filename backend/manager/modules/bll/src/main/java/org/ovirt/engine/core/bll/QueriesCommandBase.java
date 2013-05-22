@@ -27,13 +27,6 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     private final static Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
     private static final String QuerySuffix = "Query";
 
-    /**
-     * Factory to determine the type of the ReturnValue field
-     */
-    protected VdcQueryReturnValue createReturnValue() {
-        return new VdcQueryReturnValue();
-    }
-
     // get correct return value type
     private final VdcQueryReturnValue returnValue;
     private final VdcQueryType queryType;
@@ -43,7 +36,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
 
     public QueriesCommandBase(P parameters) {
         this.parameters = parameters;
-        returnValue = createReturnValue();
+        returnValue = new VdcQueryReturnValue();
         queryType = initQueryType();
         user = initUser();
     }
@@ -141,10 +134,6 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
             return false;
         }
         return true;
-    }
-
-    protected void proceedOnFail() {
-        // Empty default implementation, method is here to allow inheriting classes to override.
     }
 
     public VdcQueryReturnValue getQueryReturnValue() {
