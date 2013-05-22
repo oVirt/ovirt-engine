@@ -25,11 +25,12 @@ public class CopyImageVDSCommand<P extends CopyImageVDSCommandParameters> extend
                 + "                spUUID={1}" + "\r\n" + "                vmGUID={2}" + "\r\n"
                 + "                srcImageGUID={3}" + "\r\n" + "                srcVolUUID={4}" + "\r\n"
                 + "                dstImageGUID={5}" + "\r\n" + "                dstVolUUID={6}" + "\r\n"
-                + "                descr={7}" + "\r\n" + "                ", getParameters().getStorageDomainId()
+                + "                descr={7}" + "\r\n" + "                dstSdUUID={8}"
+                , getParameters().getStorageDomainId()
                 .toString(), getParameters().getStoragePoolId().toString(), getParameters().getVmId()
                 .toString(), getParameters().getImageGroupId().toString(), getParameters().getImageId()
                 .toString(), getParameters().getdstImageGroupId().toString(), getParameters().getDstImageId()
-                .toString(), getParameters().getImageDescription());
+                .toString(), getParameters().getImageDescription(), getParameters().getDstStorageDomainId());
 
         // NOTE: The 'uuidReturn' variable will contain the taskID and not the
         // created image id!
