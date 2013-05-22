@@ -48,6 +48,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -645,7 +646,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     protected boolean getVdsToRunOn() {
         // use destination vds or default vds or none
-        setVdsId(getVdsSelector().getVdsToRunOn(false));
+        List<VDS> vdsList = getVdsDAO()
+                .getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode });
+        Guid vdsToRunOn = getVdsSelector().getVdsToRunOn(vdsList, getRunVdssList(), false);
+        setVdsId(vdsToRunOn);
+        if (vdsToRunOn != null && !Guid.Empty.equals(vdsToRunOn)) {
+            getRunVdssList().add(vdsToRunOn);
+        }
         VmHandler.UpdateVmGuestAgentVersion(getVm());
         setVds(null);
         setVdsName(null);
@@ -771,7 +778,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                         getParameters().getDiskPath(),
                         getParameters().getFloppyPath(),
                         getParameters().getRunAsStateless(),
-                        getVdsSelector()) &&
+                        getVdsSelector(),
+                        getRunVdssList()) &&
                         validateNetworkInterfaces();
 
         // check for Vm Payload

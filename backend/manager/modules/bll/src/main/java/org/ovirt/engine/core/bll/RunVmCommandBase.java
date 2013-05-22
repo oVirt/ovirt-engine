@@ -56,6 +56,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     protected boolean _isRerun = false;
     protected VDS _destinationVds;
     private SnapshotsValidator snapshotsValidator=new SnapshotsValidator();
+    private final List<Guid> runVdsList = new ArrayList<Guid>();
 
     protected RunVmCommandBase(Guid commandId) {
         super(commandId);
@@ -80,10 +81,10 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     }
 
     /**
-     * List on all vdss, vm run on. In the case of problem to run vm will be more then one
+     * List on all VDSs, vm run on. In the case of problem to run vm will be more then one
      */
-    private List<Guid> getRunVdssList() {
-        return getVdsSelector().getRunVdssList();
+    protected List<Guid> getRunVdssList() {
+        return runVdsList;
     }
 
     @Override

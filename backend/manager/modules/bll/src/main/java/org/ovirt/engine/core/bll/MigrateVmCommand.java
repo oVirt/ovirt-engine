@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.MigrationMethod;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -82,7 +83,12 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     protected void initVdss() {
         setVdsIdRef(new Guid(getVm().getRunOnVds().toString()));
-        setVdsDestinationId(getVdsSelector().getVdsToRunOn(true));
+        Guid vdsToRunOn = getVdsSelector().getVdsToRunOn(getVdsDAO()
+                .getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode }), getRunVdssList(), true);
+        setVdsDestinationId(vdsToRunOn);
+        if (vdsToRunOn != null && !Guid.Empty.equals(vdsToRunOn)) {
+            getRunVdssList().add(vdsToRunOn);
+        }
         VmHandler.UpdateVmGuestAgentVersion(getVm());
         // make _destinationVds null in order to refresh it from db in case it
         // changed.
@@ -263,7 +269,11 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 // This check was added to prevent migration of VM while its disks are being migrated
                 // TODO: replace it with a better solution
                 && validate(new DiskImagesValidator(ImagesHandler.getPluggedImagesForVm(vm.getId())).diskImagesNotLocked())
-                && getVdsSelector().canFindVdsToRunOn(getReturnValue().getCanDoActionMessages(), true);
+                && getVdsSelector().canFindVdsToRunOn(getVdsDAO()
+                        .getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode }),
+                        getRunVdssList(),
+                        getReturnValue().getCanDoActionMessages(),
+                        true);
     }
 
     @Override

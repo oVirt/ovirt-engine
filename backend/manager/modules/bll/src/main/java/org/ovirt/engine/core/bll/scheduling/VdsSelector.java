@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -32,14 +31,9 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class VdsSelector {
-    private final List<Guid> privateRunVdssList = new ArrayList<Guid>();
     private List<VmNetworkInterface> vmNICs;
     private boolean displayNetworkInitialized;
     private Network displayNetwork;
-
-    public List<Guid> getRunVdssList() {
-        return privateRunVdssList;
-    }
 
     private NGuid privateDestinationVdsId;
 
@@ -68,48 +62,71 @@ public class VdsSelector {
         this.memoryChecker = memoryChecker;
     }
 
-    public Guid getVdsToRunOn(boolean isMigrate) {
+    public Guid getVdsToRunOn(List<VDS> vdsList,
+            List<Guid> vdsBlackList,
+            boolean isMigrate) {
         Guid result = Guid.Empty;
         if (getDestinationVdsId() != null) {
-            VDS targetVds = DbFacade.getInstance().getVdsDao().get(getDestinationVdsId());
-            log.infoFormat("Checking for a specific VDS only - id:{0}, name:{1}, host_name(ip):{2}",
-                    getDestinationVdsId(), targetVds.getName(), targetVds.getHostName());
-            result = getVdsToRunOn(new ArrayList<VDS>(Arrays.asList(new VDS[] { targetVds })), isMigrate);
+            VDS targetVds = null;
+            if (vdsList != null) {
+                for (VDS vds : vdsList) {
+                    if (vds.getId().equals(getDestinationVdsId())) {
+                        targetVds = vds;
+                        break;
+                    }
+                }
+            }
+            if (targetVds != null) {
+                log.infoFormat("Checking for a specific VDS only - id:{0}, name:{1}, host_name(ip):{2}",
+                        getDestinationVdsId(), targetVds.getName(), targetVds.getHostName());
+                result =
+                        filterBestVds(new ArrayList<VDS>(Arrays.asList(new VDS[] { targetVds })),
+                                isMigrate,
+                                vdsBlackList);
+            }
         }
         if (getDestinationVdsId() == null || result.equals(Guid.Empty)
                 && privateVm.getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
-            result = getVdsToRunOn(DbFacade.getInstance()
-                    .getVdsDao()
-                    .getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode }), isMigrate);
+            result = filterBestVds(vdsList, isMigrate, vdsBlackList);
         }
 
         return result;
     }
 
-    public boolean canFindVdsToRunOn(List<String> messages, boolean isMigrate) {
+    public boolean canFindVdsToRunOn(List<VDS> vdsList,
+            List<Guid> vdsBlackList,
+            List<String> messages,
+            boolean isMigrate) {
         boolean returnValue = false;
         if (getDestinationVdsId() != null) {
-            VDS targetVds = DbFacade.getInstance().getVdsDao().get(getDestinationVdsId());
-            log.infoFormat("Checking for a specific VDS only - id:{0}, name:{1}, host_name(ip):{2}",
-                    getDestinationVdsId(), targetVds.getName(), targetVds.getHostName());
-            returnValue = canFindVdsToRun(messages, isMigrate,
-                    new ArrayList<VDS>(Arrays.asList(targetVds)));
-        }
+            VDS targetVds = null;
+            if (vdsList != null) {
+                for (VDS vds : vdsList) {
+                    if (vds.getId().equals(getDestinationVdsId())) {
+                        targetVds = vds;
+                        break;
+                    }
+                }
+            }
 
-        if (!returnValue) {
-            if (privateVm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST) {
+            if (targetVds != null) {
+                log.infoFormat("Checking for a specific VDS only - id:{0}, name:{1}, host_name(ip):{2}",
+                        getDestinationVdsId(), targetVds.getName(), targetVds.getHostName());
+                returnValue = canFindVdsToRun(messages, isMigrate,
+                        new ArrayList<VDS>(Arrays.asList(targetVds)), vdsBlackList);
+            }
+            if (!returnValue && privateVm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST) {
                 messages.add(VdcBllMessages.VM_PINNED_TO_HOST_CANNOT_RUN_ON_THE_DEFAULT_VDS.toString());
-                VDS host = getDestinationVdsId() == null ? null : DbFacade.getInstance()
-                        .getVdsDao()
-                        .get(getDestinationVdsId());
-
-                messages.add(host == null ? VdcBllMessages.HOST_NAME_NOT_AVAILABLE.toString()
-                                : String.format("$VdsName %1$s", host.getName()));
+                messages.add(targetVds == null ? VdcBllMessages.HOST_NAME_NOT_AVAILABLE.toString()
+                        : String.format("$VdsName %1$s", targetVds.getName()));
 
                 return false;
             }
+        }
+
+        if (!returnValue) {
             returnValue = canFindVdsToRun(messages, isMigrate,
-                    DbFacade.getInstance().getVdsDao().getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode }));
+                    vdsList, vdsBlackList);
         }
 
         return returnValue;
@@ -123,7 +140,10 @@ public class VdsSelector {
      * any vds, available too run vm - returning reason with highest value.
      * Reasons sorted in VdcBllMessages by their priorities
      */
-    private boolean canFindVdsToRun(List<String> messages, boolean isMigrate, Iterable<VDS> vdss) {
+    private boolean canFindVdsToRun(List<String> messages,
+            boolean isMigrate,
+            Iterable<VDS> vdss,
+            List<Guid> vdsBlackList) {
         VdcBllMessages messageToReturn = VdcBllMessages.Unassigned;
 
         /**
@@ -135,7 +155,7 @@ public class VdsSelector {
         for (VDS curVds : vdss) {
             noVDSs = false;
 
-            VdcBllMessages result = validateHostIsReadyToRun(curVds, sb, isMigrate);
+            VdcBllMessages result = validateHostIsReadyToRun(curVds, sb, isMigrate, vdsBlackList);
             if (result == null) {
                 return true;
             } else {
@@ -168,7 +188,7 @@ public class VdsSelector {
     }
 
     interface HostValidator {
-        VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate);
+        VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate, List<Guid> vdsBlackList);
     }
 
     public static Integer getEffectiveCpuCores(VDS vds) {
@@ -189,7 +209,7 @@ public class VdsSelector {
             add(new HostValidator() {
 
                 @Override
-                public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate) {
+                public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate, List<Guid> vdsBlackList) {
                     if ((!vds.getVdsGroupId().equals(getVm().getVdsGroupId())) || (vds.getStatus() != VDSStatus.Up)) {
                         sb.append("is not in up status or belongs to the VM's cluster");
                         return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CLUSTER;
@@ -200,7 +220,7 @@ public class VdsSelector {
             add(new HostValidator() {
 
                 @Override
-                public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate) {
+                public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate, List<Guid> vdsBlackList) {
                     // If Vm in Paused mode - no additional memory allocation needed
                     if (getVm().getStatus() != VMStatus.Paused && !memoryChecker.evaluate(vds, getVm())) {
                         // not enough memory
@@ -213,7 +233,7 @@ public class VdsSelector {
             add(new HostValidator() {
 
                 @Override
-                public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate) {
+                public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate, List<Guid> vdsBlackList) {
                     // In case we are using this function in migration we make sure we
                     // don't allocate the same VDS
                     if (isMigrate && (getVm().getRunOnVds() != null && getVm().getRunOnVds().equals(vds.getId()))) {
@@ -225,7 +245,7 @@ public class VdsSelector {
             });
             add(new HostValidator() {
                 @Override
-                public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate) {
+                public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate, List<Guid> vdsBlackList) {
                     Integer cores = getEffectiveCpuCores(vds);
                     if (cores != null && getVm().getNumOfCpus() > cores) {
                         sb.append("has less cores(").append(cores).append(") than ").append(getVm().getNumOfCpus());
@@ -237,7 +257,7 @@ public class VdsSelector {
             add(new HostValidator() {
 
                 @Override
-                public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate) {
+                public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate, List<Guid> vdsBlackList) {
                     // if vm has more vCpus then vds physical cpus - dont allow to run
                     if (!isVMSwapValueLegal(vds)) {
                         sb.append("swap value is illegal");
@@ -249,7 +269,7 @@ public class VdsSelector {
             add(new HostValidator() {
 
                 @Override
-                public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate) {
+                public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate, List<Guid> vdsBlackList) {
                     VdcBllMessages returnValue = validateRequiredNetworksAvailable(vds);
                     if (VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_NETWORKS == returnValue) {
                         sb.append("is missing networks required by VM nics ").append(Entities.interfacesByNetworkName(getVmNICs())
@@ -263,8 +283,8 @@ public class VdsSelector {
             add(new HostValidator() {
 
                 @Override
-                public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate) {
-                    if (isVdsFailedToRunVm(vds.getId())) {
+                public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate, List<Guid> vdsBlackList) {
+                    if (vdsBlackList != null && vdsBlackList.contains(vds.getId())) {
                         sb.append("have failed running this VM in the current selection cycle");
                         return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CLUSTER;
                     }
@@ -274,12 +294,15 @@ public class VdsSelector {
         }
     });
 
-    private VdcBllMessages validateHostIsReadyToRun(final VDS vds, StringBuilder sb, boolean isMigrate) {
+    private VdcBllMessages validateHostIsReadyToRun(final VDS vds,
+            StringBuilder sb,
+            boolean isMigrate,
+            List<Guid> vdsBlackList) {
         // buffer the mismatches as we go
         sb.append(" VDS ").append(vds.getName()).append(" ").append(vds.getId()).append(" ");
 
         for(HostValidator validator : this.hostValidators) {
-            VdcBllMessages result = validator.validate(vds, sb, isMigrate);
+            VdcBllMessages result = validator.validate(vds, sb, isMigrate, vdsBlackList);
             if(result != null) {
                 return result;
             }
@@ -289,27 +312,10 @@ public class VdsSelector {
     }
 
     /**
-     * Determine if specific vds already failed to run vm - to prevent
-     * sequential running of vm on problematic vds
-     *
-     * @param vdsId
-     * @return
-     */
-    private boolean isVdsFailedToRunVm(Guid vdsId) {
-        boolean retValue = false;
-        if (getRunVdssList() != null && getRunVdssList().contains(vdsId)) {
-            retValue = true;
-        }
-        return retValue;
-    }
-
-    /**
      * Determines whether [is VM swap value legal] [the specified VDS].
-     *
      * @param vds
      *            The VDS.
-     * @return <c>true</c> if [is VM swap value legal] [the specified VDS];
-     *         otherwise, <c>false</c>.
+     * @return <c>true</c> if [is VM swap value legal] [the specified VDS]; otherwise, <c>false</c>.
      */
     private static boolean isVMSwapValueLegal(VDS vds) {
         if (!Config.<Boolean> GetValue(ConfigValues.EnableSwapCheck)) {
@@ -376,11 +382,11 @@ public class VdsSelector {
         displayNetworkInitialized = true;
     }
 
-    private Guid getVdsToRunOn(Iterable<VDS> vdss, boolean isMigrate) {
+    private Guid filterBestVds(Iterable<VDS> vdss, boolean isMigrate, List<Guid> vdsBlackList) {
         StringBuilder sb = new StringBuilder();
         final List<VDS> readyToRun = new ArrayList<VDS>();
         for (VDS curVds : vdss) {
-            if (validateHostIsReadyToRun(curVds, sb, isMigrate) == null) {
+            if (validateHostIsReadyToRun(curVds, sb, isMigrate, vdsBlackList) == null) {
                 readyToRun.add(curVds);
             }
         }
@@ -483,7 +489,6 @@ public class VdsSelector {
          * add chosen vds to running vdss list.
          */
         comparer.bestVdsProcedure(bestVDS);
-        getRunVdssList().add(bestVDS.getId());
         return bestVDS.getId();
     }
 

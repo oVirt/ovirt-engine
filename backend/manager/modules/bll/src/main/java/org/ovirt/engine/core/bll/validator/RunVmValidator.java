@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.config.Config;
@@ -330,7 +331,6 @@ public class RunVmValidator {
 
     /**
      * A general method for run vm validations. used in runVmCommand and in VmPoolCommandBase
-     *
      * @param vm
      * @param messages
      * @param vmDisks
@@ -341,6 +341,8 @@ public class RunVmValidator {
      * @param floppyPath
      * @param runAsStateless
      * @param vdsSelector
+     * @param vdsBlackList
+     *            - hosts that we already tried to run on
      * @return
      */
     public boolean canRunVm(VM vm,
@@ -351,7 +353,9 @@ public class RunVmValidator {
             boolean isInternalExecution,
             String diskPath,
             String floppyPath,
-            Boolean runAsStateless, VdsSelector vdsSelector) {
+            Boolean runAsStateless,
+            VdsSelector vdsSelector,
+            List<Guid> vdsBlackList) {
         if (!validateVmProperties(vm, messages)) {
             return false;
         }
@@ -402,7 +406,10 @@ public class RunVmValidator {
                 return false;
             }
         }
-        if (!vdsSelector.canFindVdsToRunOn(messages, false)) {
+        if (!vdsSelector.canFindVdsToRunOn(getVdsDao().getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode }),
+                vdsBlackList,
+                messages,
+                false)) {
             return false;
         }
         result = validateVmStatusUsingMatrix(vm);
