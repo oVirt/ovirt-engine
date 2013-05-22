@@ -91,14 +91,12 @@ public class HostMapper {
     @Mapping(from = PowerManagement.class, to = VdsStatic.class)
     public static VdsStatic map(PowerManagement model, VdsStatic template) {
         VdsStatic entity = template != null ? template : new VdsStatic();
+        entity.setManagementIp(getManagementIp(model, entity));
         if (model.isSetType()) {
             entity.setPmType(model.getType());
         }
         if (model.isSetEnabled()) {
             entity.setPmEnabled(model.isEnabled());
-        }
-        if (model.isSetAddress()) {
-            entity.setManagementIp(model.getAddress());
         }
         if (model.isSetUsername()) {
             entity.setPmUser(model.getUsername());
@@ -131,9 +129,6 @@ public class HostMapper {
                     order++; // in case that order is not defined, secondary will still be defined correctly.
                     if (agent.isSetType()) {
                         entity.setPmType(agent.getType());
-                    }
-                    if (agent.isSetAddress()) {
-                        entity.setManagementIp(agent.getAddress());
                     }
                     if (agent.isSetUsername()) {
                         entity.setPmUser(agent.getUsername());
@@ -168,6 +163,30 @@ public class HostMapper {
             }
         }
         return entity;
+    }
+
+    /**
+     * Get the management ip address to use.
+     * If the incoming Host management ip is different from the one in
+     * VdsStatic we use incoming management ip
+     * If incoming agent address is different from the management ip in
+     * VdsStatic we use the incoming agent address at order 1.
+     * @param model
+     * @param vdsStatic
+     * @return
+     */
+    private static String getManagementIp(PowerManagement model, VdsStatic vdsStatic) {
+        if (model.isSetAddress() && !model.getAddress().equals(vdsStatic.getManagementIp())) {
+            return model.getAddress();
+        }
+        if (model.isSetAgents()) {
+            for (Agent agent : model.getAgents().getAgents()) {
+                if (agent.getOrder() == 1 && !agent.getAddress().equals(vdsStatic.getManagementIp())) {
+                    return agent.getAddress();
+                }
+            }
+        }
+        return vdsStatic.getManagementIp();
     }
 
     @Mapping(from = Options.class, to = String.class)

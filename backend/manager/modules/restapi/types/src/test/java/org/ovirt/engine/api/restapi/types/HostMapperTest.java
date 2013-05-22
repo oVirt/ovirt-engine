@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Agent;
+import org.ovirt.engine.api.model.Agents;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.compat.Guid;
@@ -180,6 +182,65 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
             }
             i++;
         }
+    }
+
+    @Test
+    public void testUpdatePowerManagementHost() {
+        String[] ip = { "1.1.1.111", "1.1.1.112"};
+        PowerManagement powerMgmt = new PowerManagement();
+        powerMgmt.setAddress(ip[1]);
+        powerMgmt.setEnabled(true);
+        powerMgmt.setPassword("passwd");
+        powerMgmt.setType("apc");
+        powerMgmt.setUsername("user");
+
+        VdsStatic vdsStatic = new VdsStatic();
+        vdsStatic.setManagementIp(ip[0]);
+        vdsStatic.setPmEnabled(true);
+        vdsStatic.setPmPassword("passwd");
+        vdsStatic.setPmPort(123);
+        vdsStatic.setPmType("apc");
+        vdsStatic.setPmUser("user");
+
+        VdsStatic mappedVdsStatic = HostMapper.map(powerMgmt, vdsStatic);
+        assertEquals(mappedVdsStatic.getManagementIp(), ip[1]);
+        assertEquals(mappedVdsStatic.isPmEnabled(), true);
+        assertEquals(mappedVdsStatic.getPmPassword(), "passwd");
+        assertEquals(mappedVdsStatic.getPmType(), "apc");
+        assertEquals(mappedVdsStatic.getPmUser(), "user");
+    }
+
+    @Test
+    public void testUpdatePowerManagementHostFromAgents() {
+        String[] ip = { "1.1.1.111", "1.1.1.112"};
+        PowerManagement powerMgmt = new PowerManagement();
+        powerMgmt.setAddress(ip[0]);
+        powerMgmt.setEnabled(true);
+        powerMgmt.setPassword("passwd");
+        powerMgmt.setType("apc");
+        powerMgmt.setUsername("user");
+
+        Agent agent = new Agent();
+        agent.setOrder(1);
+        agent.setAddress(ip[1]);
+        Agents agents = new Agents();
+        agents.getAgents().add(agent);
+        powerMgmt.setAgents(agents);
+
+        VdsStatic vdsStatic = new VdsStatic();
+        vdsStatic.setManagementIp(ip[0]);
+        vdsStatic.setPmEnabled(true);
+        vdsStatic.setPmPassword("passwd");
+        vdsStatic.setPmPort(123);
+        vdsStatic.setPmType("apc");
+        vdsStatic.setPmUser("user");
+
+        VdsStatic mappedVdsStatic = HostMapper.map(powerMgmt, vdsStatic);
+        assertEquals(mappedVdsStatic.getManagementIp(), ip[1]);
+        assertEquals(mappedVdsStatic.isPmEnabled(), true);
+        assertEquals(mappedVdsStatic.getPmPassword(), "passwd");
+        assertEquals(mappedVdsStatic.getPmType(), "apc");
+        assertEquals(mappedVdsStatic.getPmUser(), "user");
     }
 
     @Test
