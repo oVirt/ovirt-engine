@@ -88,7 +88,9 @@ class Plugin(plugin.PluginBase):
                     'This may conflict with existing applications.'
                 )
             )
-            self._enabled = dialog.queryBoolean(
+            self.environment[
+                osetupcons.ApacheEnv.CONFIGURE_ROOT_REDIRECTION
+            ] = dialog.queryBoolean(
                 dialog=self.dialog,
                 name='OVESETUP_APACHE_CONFIG_ROOT_REDIRECTION',
                 note=_(
@@ -101,6 +103,10 @@ class Plugin(plugin.PluginBase):
                     CONFIGURE_ROOT_REDIRECTIOND_DEFAULT
                 ],
             )
+
+            self._enabled = self.environment[
+                osetupcons.ApacheEnv.CONFIGURE_ROOT_REDIRECTION
+            ]
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,

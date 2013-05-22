@@ -504,24 +504,40 @@ class Const(object):
 
 @util.export
 @util.codegen
+@osetupattrsclass
 class CoreEnv(object):
     OFFLINE_PACKAGER = 'OVESETUP_CORE/offlinePackager'
-    ENGINE_SERVICE_STOP = 'OVESETUP_CORE/engineStop'
     ANSWER_FILE = 'OVESETUP_CORE/answerFile'
     DEVELOPER_MODE = 'OVESETUP_CORE/developerMode'
     UNINSTALL_UNREMOVABLE_FILES = 'OVESETUP_CORE/uninstallUnremovableFiles'
-    REMOVE = 'OVESETUP_CORE/remove'
     FILE_GROUP_PREFIX = 'OVESETUP_CORE_MODIFIED_FILE_GROUP/'
     LINES_GROUP_PREFIX = 'OVESETUP_CORE_MODIFIED_LINES_GROUP/'
     UNINSTALL_ENABLED_FILE_GROUPS = 'OVESETUP_CORE/uninstallEnabledFileGroups'
     REGISTER_UNINSTALL_GROUPS = 'OVESETUP_CORE/registerUninstallGroups'
     CONFIRM_UNINSTALL_GROUPS = 'OVESETUP_CORE/confirmUninstallGroups'
 
+    @osetupattrs(
+        answerfile=True,
+    )
+    def ENGINE_SERVICE_STOP(self):
+        return 'OVESETUP_CORE/engineStop'
+
+    @osetupattrs(
+        answerfile=True,
+    )
+    def REMOVE(self):
+        return 'OVESETUP_CORE/remove'
+
 
 @util.export
 @util.codegen
+@osetupattrsclass
 class DialogEnv(object):
-    CONFIRM_SETTINGS = 'OVESETUP_DIALOG/confirmSettings'
+    @osetupattrs(
+        answerfile=True,
+    )
+    def CONFIRM_SETTINGS(self):
+        return 'OVESETUP_DIALOG/confirmSettings'
 
 
 @util.export

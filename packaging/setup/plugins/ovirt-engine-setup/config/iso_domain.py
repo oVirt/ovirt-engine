@@ -246,28 +246,31 @@ class Plugin(plugin.PluginBase):
         """
         interactive = self.environment[
             osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
-        ]
+        ] is None
 
         validDomain = False
         while not validDomain:
             try:
-                default_mount_point = self.environment[
-                    osetupcons.ConfigEnv.ISO_DOMAIN_DEFAULT_NFS_MOUNT_POINT
-                ]
-                if os.path.exists(default_mount_point):
-                    default_mount_point += '-%s' % (
-                        datetime.datetime.utcnow().strftime('%Y%m%d%H%M%S')
-                    )
-
-                self.environment[
+                if self.environment[
                     osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
-                ] = self.dialog.queryString(
-                    name='NFS_MOUNT_POINT',
-                    note=_('Local ISO domain path [@DEFAULT@]: '),
-                    prompt=True,
-                    caseSensitive=True,
-                    default=default_mount_point,
-                )
+                ] is None:
+                    default_mount_point = self.environment[
+                        osetupcons.ConfigEnv.ISO_DOMAIN_DEFAULT_NFS_MOUNT_POINT
+                    ]
+                    if os.path.exists(default_mount_point):
+                        default_mount_point += '-%s' % (
+                            datetime.datetime.utcnow().strftime('%Y%m%d%H%M%S')
+                        )
+
+                    self.environment[
+                        osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
+                    ] = self.dialog.queryString(
+                        name='NFS_MOUNT_POINT',
+                        note=_('Local ISO domain path [@DEFAULT@]: '),
+                        prompt=True,
+                        caseSensitive=True,
+                        default=default_mount_point,
+                    )
 
                 self.environment[
                     osetupcons.ConfigEnv.ISO_DOMAIN_SD_UUID
@@ -292,6 +295,9 @@ class Plugin(plugin.PluginBase):
                             error=e,
                         )
                     )
+                    self.environment[
+                        osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT
+                    ] = None
                 else:
                     raise
 

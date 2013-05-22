@@ -91,8 +91,13 @@ class Plugin(plugin.PluginBase):
                 false=_('Cancel'),
                 default=True,
             )
+
         if not confirmed:
             raise RuntimeError(_('Configuration was rejected by user'))
+
+        self.environment[
+            osetupcons.DialogEnv.CONFIRM_SETTINGS
+        ] = True
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

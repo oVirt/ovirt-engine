@@ -135,7 +135,9 @@ class Plugin(plugin.PluginBase):
                     'certificate issued from the internal CA'
                 )
             )
-            self._enabled = dialog.queryBoolean(
+            self.environment[
+                osetupcons.ApacheEnv.CONFIGURE_SSL
+            ] = dialog.queryBoolean(
                 dialog=self.dialog,
                 name='OVESETUP_APACHE_CONFIG_SSL',
                 note=_(
@@ -147,10 +149,10 @@ class Plugin(plugin.PluginBase):
                 false=_('Manual'),
                 default=True,
             )
-        else:
-            self._enabled = self.environment[
-                osetupcons.ApacheEnv.CONFIGURE_SSL
-            ]
+
+        self._enabled = self.environment[
+            osetupcons.ApacheEnv.CONFIGURE_SSL
+        ]
 
         if self._enabled:
             if not os.path.exists(
