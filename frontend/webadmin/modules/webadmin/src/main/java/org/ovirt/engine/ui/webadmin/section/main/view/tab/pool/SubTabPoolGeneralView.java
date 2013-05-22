@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -39,6 +40,7 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
     TextBoxLabel minAllocatedMemory = new TextBoxLabel();
     TextBoxLabel name = new TextBoxLabel();
     TextBoxLabel origin = new TextBoxLabel();
+    @Ignore
     TextBoxLabel oS = new TextBoxLabel();
     TextBoxLabel storageDomain = new TextBoxLabel();
     TextBoxLabel template = new TextBoxLabel();
@@ -117,6 +119,7 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
         // TODO required because of GWT#5864
         monitorCount.setText(String.valueOf(getDetailModel().getMonitorCount()));
         isStateless.setText(Boolean.toString(getDetailModel().getIsStateless()));
+        oS.setText(AsyncDataProvider.getOsName(getDetailModel().getOS()));
 
         formBuilder.update(getDetailModel());
     }

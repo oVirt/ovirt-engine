@@ -28,16 +28,16 @@ public class OsRepositoryQuery<P extends OsQueryParameters> extends QueriesComma
                 setReturnValue(OsRepositoryImpl.INSTANCE.getWindowsOss());
                 break;
             case GetMaxOsRam:
-                setReturnValue(OsRepositoryImpl.INSTANCE.getMaximumRam(getParameters().getOsId(), null));
+                setReturnValue(OsRepositoryImpl.INSTANCE.getMaximumRam(getParameters().getOsId(), getParameters().getVersion()));
                 break;
             case GetMinimumOsRam:
-                setReturnValue(OsRepositoryImpl.INSTANCE.getMinimumRam(getParameters().getOsId(), null));
+                setReturnValue(OsRepositoryImpl.INSTANCE.getMinimumRam(getParameters().getOsId(), getParameters().getVersion()));
                 break;
             case HasSpiceSupport:
-                setReturnValue(OsRepositoryImpl.INSTANCE.hasSpiceSupport(getParameters().getOsId(), null));
+                setReturnValue(OsRepositoryImpl.INSTANCE.hasSpiceSupport(getParameters().getOsId(), getParameters().getVersion()));
                 break;
             case GetNetworkDevices:
-                setReturnValue(OsRepositoryImpl.INSTANCE.getNetworkDevices(getParameters().getOsId(), null));
+                setReturnValue(OsRepositoryImpl.INSTANCE.getNetworkDevices(getParameters().getOsId(), getParameters().getVersion()));
                 break;
         }
     }

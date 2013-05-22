@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -19,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -39,8 +39,8 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
-import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
@@ -203,8 +203,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     public TimeZoneType getTimeZoneType() {
-        VmOsType vmOsType = (VmOsType) getModel().getOSType().getSelectedItem();
-        return TimeZoneType.getTimeZoneByOs(vmOsType);
+        int vmOsType = (Integer) getModel().getOSType().getSelectedItem();
+        return AsyncDataProvider.isWindowsOsType(vmOsType) ? TimeZoneType.WINDOWS_TIMEZONE
+                : TimeZoneType.GENERAL_TIMEZONE;
     }
 
     protected void updateDomain()

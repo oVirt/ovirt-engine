@@ -28,6 +28,8 @@ import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.SnapshotDao;
@@ -47,6 +49,9 @@ public class RemoveImageCommandTest {
 
     @Mock
     private SnapshotDao snapshotDAO;
+
+    @Mock
+    OsRepository osRepository;
 
     /** The command to test */
     private RemoveImageCommand<RemoveImageParameters> cmd;
@@ -78,6 +83,8 @@ public class RemoveImageCommandTest {
 
         });
         doReturn(snapshotDAO).when(cmd).getSnapshotDao();
+
+        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
     }
 
     @Test

@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.osinfo.OsRepositoryImpl;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -36,7 +37,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VmInfoBuilderBase;
 
 public class VmDeviceUtils {
     private static VmDeviceDAO dao = DbFacade.getInstance().getVmDeviceDao();
@@ -131,7 +131,7 @@ public class VmDeviceUtils {
      */
     private static void updateAudioDevice(VM oldVm, VmBase newVmBase) {
         // for desktop, if the os type has changed, recreate Audio devices
-        if (newVmBase.getVmType() == VmType.Desktop && oldVm.getOs() != newVmBase.getOs()) {
+        if (newVmBase.getVmType() == VmType.Desktop && oldVm.getOs() != newVmBase.getOsId()) {
             Guid vmId = oldVm.getId();
             // remove any old sound device
             List<VmDevice> list =
@@ -142,7 +142,7 @@ public class VmDeviceUtils {
 
             // create new device
             String soundDevice =
-                    VmInfoBuilderBase.getSoundDevice(newVmBase, oldVm.getVdsGroupCompatibilityVersion());
+                    OsRepositoryImpl.INSTANCE.getSoundDevice(newVmBase.getOsId(), oldVm.getVdsGroupCompatibilityVersion());
             addManagedDevice(new VmDeviceId(Guid.NewGuid(), vmId),
                     VmDeviceGeneralType.SOUND,
                     VmDeviceType.getSoundDeviceType(soundDevice),
@@ -280,7 +280,7 @@ public class VmDeviceUtils {
     }
 
     private static void addSoundCard(VmBase vmBase, Version vdsGroupCompatibilityVersion) {
-        String soundDevice = VmInfoBuilderBase.getSoundDevice(vmBase, vdsGroupCompatibilityVersion);
+        String soundDevice = OsRepositoryImpl.INSTANCE.getSoundDevice(vmBase.getOsId(), vdsGroupCompatibilityVersion);
         addManagedDevice(new VmDeviceId(Guid.NewGuid(), vmBase.getId()),
                 VmDeviceGeneralType.SOUND,
                 VmDeviceType.getSoundDeviceType(soundDevice),
@@ -888,4 +888,3 @@ public class VmDeviceUtils {
                 && vmDevice.getType() == VmDeviceGeneralType.INTERFACE);
     }
 }
-

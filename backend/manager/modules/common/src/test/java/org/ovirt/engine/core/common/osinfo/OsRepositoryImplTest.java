@@ -138,9 +138,9 @@ public class OsRepositoryImplTest {
 
     @Test
     public void testOsNameUpperCasedAndUnderscored() throws Exception {
-        assertEquals("RHEL_6", OsRepositoryImpl.osNameUpperCasedAndUnderscored("Rhel6"));
-        assertEquals("RHEL_6X64", OsRepositoryImpl.osNameUpperCasedAndUnderscored("rhel6x64"));
-        assertEquals("OTHER_LINUX", OsRepositoryImpl.osNameUpperCasedAndUnderscored("OtherLinux"));
+        assertEquals("RHEL_6", OsRepositoryImpl.INSTANCE.osNameUpperCasedAndUnderscored("Rhel6"));
+        assertEquals("RHEL_6X64", OsRepositoryImpl.INSTANCE.osNameUpperCasedAndUnderscored("rhel6x64"));
+        assertEquals("OTHER_LINUX", OsRepositoryImpl.INSTANCE.osNameUpperCasedAndUnderscored("OtherLinux"));
     }
 
     @Test

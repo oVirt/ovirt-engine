@@ -175,7 +175,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         // Update model state according to VM properties.
         getModel().getMemSize().setEntity(this.vm.getVmMemSizeMb());
         getModel().getMinAllocatedMemory().setEntity(this.vm.getMinAllocatedMem());
-        getModel().getOSType().setSelectedItem(this.vm.getVmOs());
+        getModel().getOSType().setSelectedItem(this.vm.getVmOsId());
         getModel().getDomain().setSelectedItem(this.vm.getVmDomain());
         getModel().getUsbPolicy().setSelectedItem(this.vm.getUsbPolicy());
         getModel().getNumOfMonitors().setSelectedItem(this.vm.getNumOfMonitors());

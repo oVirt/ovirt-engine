@@ -1,10 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
-import static org.junit.Assert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertThat;
+
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
+import org.mockito.Mockito;
 
 public class PoolNameLengthValidationTest {
 
@@ -34,10 +35,15 @@ public class PoolNameLengthValidationTest {
     }
 
     private void assertValidationWorks(int nameLength, int numOfVms, boolean expected) {
+
         // enough to test for windows, the logic is the same
-        PoolNameLengthValidation validation =
-                new PoolNameLengthValidation(nameOfLength(nameLength), numOfVms, VmOsType.Windows2003);
-        assertThat(validation.validate(null).getSuccess(), is(equalTo(expected)));
+        PoolNameLengthValidation object = new PoolNameLengthValidation(nameOfLength(nameLength), numOfVms, 3);
+        PoolNameLengthValidation spy =
+                Mockito.spy(object);
+
+        Mockito.doReturn(true).when(spy).isWindows();
+
+        assertThat(spy.validate(null).getSuccess(), is(equalTo(expected)));
     }
 
     private String nameOfLength(int nameLength) {

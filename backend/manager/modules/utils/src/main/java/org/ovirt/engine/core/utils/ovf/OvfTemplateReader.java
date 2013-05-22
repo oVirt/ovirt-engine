@@ -7,10 +7,11 @@ import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlNode;
@@ -20,6 +21,7 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class OvfTemplateReader extends OvfReader {
     protected VmTemplate _vmTemplate;
+    private OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
     public OvfTemplateReader(XmlDocument document,
             VmTemplate vmTemplate,
@@ -34,9 +36,7 @@ public class OvfTemplateReader extends OvfReader {
         _vmTemplate.setId(new Guid(section.Attributes.get("ovf:id").getValue()));
         XmlNode node = section.SelectSingleNode("Description");
         if (node != null) {
-            _vmTemplate.setOs(VmOsType.valueOf(node.InnerText));
-        } else {
-            _vmTemplate.setOs(VmOsType.Unassigned);
+            _vmTemplate.setOsId(osRepository.getOsIdByUniqueName(node.InnerText));
         }
     }
 

@@ -133,7 +133,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         getModel().getMinAllocatedMemory().setEntity(this.template.getMinAllocatedMem());
         getModel().getMinAllocatedMemory().setIsChangable(false);
         getModel().getMemSize().setEntity(this.template.getMemSizeMb());
-        getModel().getOSType().setSelectedItem(this.template.getOs());
+        getModel().getOSType().setSelectedItem(this.template.getOsId());
         getModel().getDomain().setSelectedItem(this.template.getDomain());
         getModel().getUsbPolicy().setSelectedItem(this.template.getUsbPolicy());
         getModel().getNumOfMonitors().setSelectedItem(this.template.getNumOfMonitors());

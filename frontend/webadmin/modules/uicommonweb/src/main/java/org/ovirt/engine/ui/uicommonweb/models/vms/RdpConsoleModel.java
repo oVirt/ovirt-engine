@@ -78,7 +78,7 @@ public class RdpConsoleModel extends ConsoleModel {
 
         getConnectCommand().setIsExecutionAllowed(getEntity() != null
                 && (getEntity().getStatus() == VMStatus.Up || getEntity().getStatus() == VMStatus.PoweringDown)
-                && AsyncDataProvider.isWindowsOsType(getEntity().getVmOs()));
+                && AsyncDataProvider.isWindowsOsType(getEntity().getVmOsId()));
     }
 
     public void raiseErrorEvent(ErrorCodeEventArgs e) {

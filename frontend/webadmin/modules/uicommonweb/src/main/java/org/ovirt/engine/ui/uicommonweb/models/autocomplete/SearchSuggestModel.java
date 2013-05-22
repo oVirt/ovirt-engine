@@ -72,7 +72,6 @@ public class SearchSuggestModel extends SearchableListModel
     public SearchSuggestModel()
     {
         setItems(new ObservableCollection<Object>());
-
         syntaxChecker =
                 SyntaxCheckerFactory.CreateUISyntaxChecker((String)
                         AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.AuthenticationMethod));
@@ -109,7 +108,8 @@ public class SearchSuggestModel extends SearchableListModel
         // Ensure that filtered search objects will invalidate the whole search query
         if (getSearchObjectFilter() != null && syntax.getState() != SyntaxObjectType.BEGIN) {
             for (String value : getSearchObjectFilter()) {
-                if (pf.toLowerCase().equals(value.toLowerCase()) || pf.toLowerCase().startsWith(value.toLowerCase() + ":")) { //$NON-NLS-1$
+                if (pf.toLowerCase().equals(value.toLowerCase())
+                        || pf.toLowerCase().startsWith(value.toLowerCase() + ":")) { //$NON-NLS-1$
                     addSuggestItem("", SuggestItemPartType.Valid, search, SuggestItemPartType.Erroneous); //$NON-NLS-1$
                     return;
                 }
@@ -168,7 +168,10 @@ public class SearchSuggestModel extends SearchableListModel
                 // Patch: monitor-desktop
                 if (!item.trim().toLowerCase().startsWith("monitor-desktop")) //$NON-NLS-1$
                 {
-                    addSuggestItem(StringHelper.trimEnd(pf), SuggestItemPartType.Valid, space + item.trim(), SuggestItemPartType.New);
+                    addSuggestItem(StringHelper.trimEnd(pf),
+                            SuggestItemPartType.Valid,
+                            space + item.trim(),
+                            SuggestItemPartType.New);
                 }
             }
         }

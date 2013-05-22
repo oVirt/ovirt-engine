@@ -151,7 +151,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             }
 
             // If it is not windows or SPICE guest agent is not installed, make sure the WAN options are disabled.
-            if (!getEntity().getVmOs().isWindows() || !getEntity().getHasSpiceDriver()) {
+            if (!AsyncDataProvider.isWindowsOsType(getEntity().getVmOsId()) || !getEntity().getHasSpiceDriver()) {
                 getspice().setWanOptionsEnabled(false);
             }
 
@@ -204,7 +204,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 if (StringHelper.stringsEqual(item.getCommandName(), CommandPlay)) {
                     // use sysprep iff the vm is not initialized and vm has Win OS
                     boolean reinitialize =
-                            !getEntity().isInitialized() && AsyncDataProvider.isWindowsOsType(getEntity().getVmOs());
+                            !getEntity().isInitialized() && AsyncDataProvider.isWindowsOsType(getEntity().getVmOsId());
                     RunVmParams tempVar = new RunVmParams(getEntity().getId());
                     tempVar.setRunAsStateless(getEntity().isStateless());
                     tempVar.setReinitialize(reinitialize);

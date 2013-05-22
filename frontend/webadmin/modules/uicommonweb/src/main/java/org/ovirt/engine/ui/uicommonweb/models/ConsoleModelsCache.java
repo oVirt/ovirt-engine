@@ -3,12 +3,13 @@ package org.ovirt.engine.ui.uicommonweb.models;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModelErrorEventListener;
@@ -22,10 +23,6 @@ public class ConsoleModelsCache {
     private static final int SPICE_INDEX = 0;
     private static final int VNC_INDEX = 1;
     private static final int RDP_INDEX = 2;
-
-    private static final List<VmOsType> vmOsTypeWithoutSpiceDriverSupport = Arrays.asList(VmOsType.Windows8,
-            VmOsType.Windows8x64,
-            VmOsType.Windows2012x64);
 
     private final HashMap<Guid, ArrayList<ConsoleModel>> cachedConsoleModels;
     private final Model parentModel;
@@ -65,28 +62,36 @@ public class ConsoleModelsCache {
         }
     }
 
-    private void updateDefaultSelectedConsoleProtocol(VM vm) {
+    private void updateDefaultSelectedConsoleProtocol(final VM vm) {
         // for wind8+ guests the RDP is selected, for all other OS the spice
         if (vm.getId() == null) {
             return;
         }
 
-        ArrayList<ConsoleModel> cachedModels = cachedConsoleModels.get(vm.getId());
+        final ArrayList<ConsoleModel> cachedModels = cachedConsoleModels.get(vm.getId());
         if (cachedModels == null) {
             return;
         }
 
         deselectUserSelectedProtocol(vm.getId());
 
-        boolean isWindowsExplorer = parentModel.getConfigurator().isClientWindowsExplorer();
+        final boolean isWindowsExplorer = parentModel.getConfigurator().isClientWindowsExplorer();
 
-        if (vmOsTypeWithoutSpiceDriverSupport.contains(vm.getOs()) && isWindowsExplorer) {
-            cachedModels.get(RDP_INDEX).setUserSelected(true);
-        } else {
-            determineConsoleModelFromVm(vm, cachedModels).setUserSelected(true);
-        }
+        final AsyncQuery asyncQuery = new AsyncQuery();
 
-        setupSelectionContext(vm);
+        asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                Boolean hasSpiceSupport = (Boolean) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                if (isWindowsExplorer && hasSpiceSupport != null && hasSpiceSupport.booleanValue()) {
+                    cachedModels.get(RDP_INDEX).setUserSelected(true);
+                } else {
+                    determineConsoleModelFromVm(vm, cachedModels).setUserSelected(true);
+                }
+                setupSelectionContext(vm);
+            }};
+
+        AsyncDataProvider.hasSpiceSupport(vm.getOs(), vm.getVdsGroupCompatibilityVersion(), asyncQuery);
     }
 
     private void deselectUserSelectedProtocol(Guid vmId) {
@@ -115,13 +120,13 @@ public class ConsoleModelsCache {
         for (ConsoleModel model : cachedConsoleModels.get(vm.getId())) {
 
             DisplayType vmDisplay = vm.isRunningOrPaused() ? vm.getDisplayType() : vm.getDefaultDisplayType();
-            model.setSelectionContext(new ConsoleSelectionContext(vm.getVmOs(), vmDisplay));
+            model.setSelectionContext(new ConsoleSelectionContext(vm.getVmOsId(), vmDisplay));
         }
     }
 
     private boolean selectionContextChanged(VM vm) {
         DisplayType vmDisplay = vm.isRunningOrPaused() ? vm.getDisplayType() : vm.getDefaultDisplayType();
-        ConsoleSelectionContext newContext = new ConsoleSelectionContext(vm.getVmOs(), vmDisplay);
+        ConsoleSelectionContext newContext = new ConsoleSelectionContext(vm.getVmOsId(), vmDisplay);
         ConsoleModel selectedConsole = resolveUserSelectedConsoleModel(vm.getId());
 
         if (selectedConsole == null) {
@@ -174,7 +179,7 @@ public class ConsoleModelsCache {
     }
 
     public ConsoleModel determineAdditionalConsoleModelForVm(VM vm) {
-        if (AsyncDataProvider.isWindowsOsType(vm.getVmOs())) {
+        if (AsyncDataProvider.isWindowsOsType(vm.getVmOsId())) {
             return cachedConsoleModels.get(vm.getId()).get(RDP_INDEX);
         }
 

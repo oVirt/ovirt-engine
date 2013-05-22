@@ -28,6 +28,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDAO;
@@ -48,6 +50,9 @@ public class UpdateVmCommandTest {
     private VmDAO vmDAO;
     @Mock
     private VdsDAO vdsDAO;
+
+    @Mock
+    OsRepository osRepository;
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
@@ -80,6 +85,12 @@ public class UpdateVmCommandTest {
         vm.setVdsGroupId(group.getId());
         vmStatic.setVdsGroupId(group.getId());
 
+        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+        when(osRepository.getMinimumRam(0, Version.v3_0)).thenReturn(0);
+        when(osRepository.getMinimumRam(0, null)).thenReturn(0);
+        when(osRepository.getMaximumRam(0, Version.v3_0)).thenReturn(256);
+        when(osRepository.getMaximumRam(0, null)).thenReturn(256);
+
         VmManagementParametersBase params = new VmManagementParametersBase();
         params.setCommandType(VdcActionType.UpdateVm);
         params.setVmStaticData(vmStatic);
@@ -104,7 +115,11 @@ public class UpdateVmCommandTest {
     public void testValidName() {
         prepareVmToPassCanDoAction();
 
-        assertTrue("canDoAction should have passed.", command.canDoAction());
+        boolean c = command.canDoAction();
+        System.out.println(command.getReturnValue().getCanDoActionMessages());
+        System.out.println(command.getParameters().getVm().getOs());
+
+        assertTrue("canDoAction should have passed.", c);
     }
 
     @Test

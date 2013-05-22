@@ -78,7 +78,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     private final Driver driver = GWT.create(Driver.class);
 
     @UiField
-    @Path("osType")
+    @Path("osId")
     OsTypeImage osTypeImage;
 
     @UiField

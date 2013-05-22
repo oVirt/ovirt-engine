@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VmBase;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -48,7 +47,7 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
             getModel().getName().validateEntity(new IValidation[] { new NewPoolNameLengthValidation(
                     (String) getModel().getName().getEntity(),
                     Integer.parseInt((getModel().getNumOfDesktops().getEntity().toString())),
-                    (VmOsType) getModel().getOSType().getSelectedItem()
+                    (Integer) getModel().getOSType().getSelectedItem()
                     ) });
 
             return getModel().getName().getIsValid() && parentValidation;

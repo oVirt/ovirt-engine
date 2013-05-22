@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
@@ -438,7 +437,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         // Save changes.
         template.setVmType(model.getVmType());
         template.setName(name);
-        template.setOs((VmOsType) model.getOSType().getSelectedItem());
+        template.setOsId((Integer) model.getOSType().getSelectedItem());
         template.setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
         template.setAllowConsoleReconnect((Boolean) model.getAllowConsoleReconnect().getEntity());
         template.setDescription((String) model.getDescription().getEntity());

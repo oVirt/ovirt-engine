@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.common.system;
 
 import org.ovirt.engine.core.common.users.VdcUser;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.searchbackend.OsValueAutoCompleter;
 import org.ovirt.engine.ui.common.auth.AutoLoginData;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.auth.CurrentUser.LogoutHandler;
@@ -10,6 +12,7 @@ import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -135,6 +138,9 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
         });
 
         Frontend.setFilterQueries(filterFrontendQueries());
+
+        // Initialize specific UI dependencies for search
+        SimpleDependecyInjector.getInstance().bind(new OsValueAutoCompleter(AsyncDataProvider.getOsUniqueOsNames()));
     }
 
     /**

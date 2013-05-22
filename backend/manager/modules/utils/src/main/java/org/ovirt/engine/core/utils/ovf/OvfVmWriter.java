@@ -13,6 +13,8 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Match;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.RegexOptions;
@@ -20,6 +22,7 @@ import org.ovirt.engine.core.compat.Version;
 
 public class OvfVmWriter extends OvfWriter {
     private static final String EXPORT_ONLY_PREFIX = "exportonly_";
+    private OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
     public OvfVmWriter(VM vm, List<DiskImage> images, Version version) {
         super(vm.getStaticData(), images, version);
@@ -122,7 +125,7 @@ public class OvfVmWriter extends OvfWriter {
         _writer.WriteRaw("Guest Operating System");
         _writer.WriteEndElement();
         _writer.WriteStartElement("Description");
-        _writer.WriteRaw(vmBase.getOs().name());
+        _writer.WriteRaw(osRepository.getUniqueOsNames().get(vmBase.getOsId()));
         _writer.WriteEndElement();
         _writer.WriteEndElement();
 

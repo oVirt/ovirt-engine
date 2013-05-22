@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
+import org.ovirt.engine.core.common.osinfo.OsRepositoryImpl;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -178,7 +179,9 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
     @Override
     protected void buildVmSoundDevices() {
         if (vm.getVmType() == VmType.Desktop) {
-            createInfo.put(VdsProperties.soundDevice, getSoundDevice(vm.getStaticData(), vm.getVdsGroupCompatibilityVersion()));
+            createInfo.put(VdsProperties.soundDevice,
+                    OsRepositoryImpl.INSTANCE.getSoundDevice(vm.getStaticData().getOsId(),
+                            vm.getVdsGroupCompatibilityVersion()));
         }
     }
 

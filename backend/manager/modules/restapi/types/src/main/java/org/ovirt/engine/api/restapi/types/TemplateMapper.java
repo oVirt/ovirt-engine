@@ -80,7 +80,7 @@ public class TemplateMapper {
             if (model.getOs().isSetType()) {
                 OsType osType = OsType.fromValue(model.getOs().getType());
                 if (osType != null) {
-                    entity.setOs(VmMapper.map(osType, null));
+                    entity.setOsId(VmMapper.map(osType, null));
                  }
             }
             if (model.getOs().isSetBoot() && model.getOs().getBoot().size() > 0) {
@@ -185,7 +185,7 @@ public class TemplateMapper {
             if (model.getOs().isSetType()) {
                 OsType osType = OsType.fromValue(model.getOs().getType());
                 if (osType != null) {
-                    staticVm.setOs(VmMapper.map(osType, null));
+                    staticVm.setOsId(VmMapper.map(osType, null));
                  }
             }
             if (model.getOs().isSetBoot() && model.getOs().getBoot().size() > 0) {
@@ -258,17 +258,15 @@ public class TemplateMapper {
         if (entity.getStatus() != null) {
             model.setStatus(StatusUtils.create(map(entity.getStatus(), null)));
         }
-        if (entity.getOs() != null ||
-            entity.getDefaultBootSequence() != null ||
+        if (entity.getDefaultBootSequence() != null ||
             entity.getKernelUrl() != null ||
             entity.getInitrdUrl() != null ||
             entity.getKernelParams() != null) {
             OperatingSystem os = new OperatingSystem();
-            if (entity.getOs() != null) {
-                OsType osType = VmMapper.map(entity.getOs(), null);
-                if (osType != null) {
-                    os.setType(osType.value());
-                }
+
+            OsType osType = VmMapper.map(entity.getOsId(), OsType.class);
+            if (osType != null) {
+                os.setType(osType.value());
             }
             if (entity.getDefaultBootSequence() != null) {
                 for (Boot boot : VmMapper.map(entity.getDefaultBootSequence(), null)) {

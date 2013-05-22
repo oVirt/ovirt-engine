@@ -34,4 +34,8 @@ public class SyntaxCheckerFactory {
     public static String getConfigAuthenticationMethod() {
         return ConfigAuthenticationMethod;
     }
+
+    public static ISyntaxChecker getUISyntaxChecker() {
+        return uiSyntaxChecker;
+    }
 }

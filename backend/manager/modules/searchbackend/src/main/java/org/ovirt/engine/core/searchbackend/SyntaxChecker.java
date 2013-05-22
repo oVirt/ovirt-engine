@@ -34,6 +34,7 @@ public class SyntaxChecker implements ISyntaxChecker {
     private Regex mNonSpaceRegexp;
     private List<Character> mDisAllowedChars;
     private SqlInjectionChecker sqlInjectionChecker;
+    private HashMap<Integer, String> vmCompletionMap;
 
     public SyntaxChecker(int searchReasultsLimit) {
 
@@ -689,6 +690,16 @@ public class SyntaxChecker implements ISyntaxChecker {
             retval = generateSqlFromSyntaxContainer(syntax, isSafe);
         }
         return retval;
+    }
+
+    @Override
+    public void setVmCompletionMap(HashMap<Integer, String> map) {
+        this.vmCompletionMap = map;
+    }
+
+    @Override
+    public HashMap<Integer, String> getVmCompletionMap() {
+        return this.vmCompletionMap;
     }
 
     private String generateFromStatement(SyntaxContainer syntax) {

@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolUserParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -28,7 +27,7 @@ public class PoolItemBehavior extends ItemBehavior
 {
 
     // this has to be static because in every request a new instance of this class is created
-    private static Map<Guid, VmOsType> poolToOsType = new HashMap<Guid, VmOsType>();
+    private static Map<Guid, Integer> poolToOsType = new HashMap<Guid, Integer>();
 
     public PoolItemBehavior(UserPortalItemModel item)
     {
@@ -91,7 +90,7 @@ public class PoolItemBehavior extends ItemBehavior
         getItem().setIsFromPool(false);
         getItem().setPoolType(entity.getVmPoolType());
         if (poolToOsType.containsKey(entity.getVmPoolId())) {
-            getItem().setOsType(poolToOsType.get(entity.getVmPoolId()));
+            getItem().setOsId(poolToOsType.get(entity.getVmPoolId()));
         }
 
         Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
@@ -109,9 +108,9 @@ public class PoolItemBehavior extends ItemBehavior
                                         return;
                                     }
                                     UserPortalItemModel model = behavior.getItem();
-                                    model.setOsType(vm.getVmOs());
+                                    model.setOsId(vm.getVmOsId());
                                     model.setSpiceDriverVersion(vm.getSpiceDriverVersion());
-                                    poolToOsType.put(((VmPool) model.getEntity()).getVmPoolId(), vm.getVmOs());
+                                    poolToOsType.put(((VmPool) model.getEntity()).getVmPoolId(), vm.getVmOsId());
                                 }
 
                             }

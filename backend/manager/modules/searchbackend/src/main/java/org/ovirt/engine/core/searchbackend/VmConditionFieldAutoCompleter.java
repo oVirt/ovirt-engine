@@ -4,8 +4,8 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -45,7 +45,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         getTypeDictionary().put("IP", String.class);
         getTypeDictionary().put("UPTIME", TimeSpan.class);
         getTypeDictionary().put("DOMAIN", String.class);
-        getTypeDictionary().put("OS", VmOsType.class);
+        getTypeDictionary().put("OS", String.class);
         getTypeDictionary().put("CREATIONDATE", java.util.Date.class);
         getTypeDictionary().put("ADDRESS", String.class);
         getTypeDictionary().put("CPU_USAGE", Integer.class);
@@ -72,9 +72,9 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         columnNameDict.put("OS", "vm_os");
         columnNameDict.put("CREATIONDATE", "vm_creation_date");
         columnNameDict.put("ADDRESS", "vm_host");
-        columnNameDict.put("CPU_USAGE", "usage_cpu_percent");
         columnNameDict.put("MEM_USAGE", "usage_mem_percent");
         columnNameDict.put("NETWORK_USAGE", "usage_network_percent");
+        columnNameDict.put("CPU_USAGE", "usage_cpu_percent");
         columnNameDict.put("MEMORY", "vm_mem_size_mb");
         columnNameDict.put("APPS", "app_list");
         columnNameDict.put("CLUSTER", "vds_group_name");
@@ -114,9 +114,9 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
 
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
-        if ("OS".equals(fieldName)) {
-            return new EnumValueAutoCompleter(VmOsType.class);
-        } else if ("STATUS".equals(fieldName)) {
+         if ("OS".equals(fieldName)) {
+             return SimpleDependecyInjector.getInstance().get(OsValueAutoCompleter.class);
+         } else if ("STATUS".equals(fieldName)) {
             return new EnumValueAutoCompleter(VMStatus.class);
         } else if ("TYPE".equals(fieldName)) {
             return new EnumValueAutoCompleter(VmType.class);

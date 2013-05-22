@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -474,7 +473,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         VM desktop = new VM();
                         desktop.setVmtGuid(((VmTemplate) model.getTemplate().getSelectedItem()).getId());
                         desktop.setName(name);
-                        desktop.setVmOs((VmOsType) model.getOSType().getSelectedItem());
+                        desktop.setVmOs((Integer) model.getOSType().getSelectedItem());
                         desktop.setDeleteProtected((Boolean) model.getIsDeleteProtected().getEntity());
                         desktop.setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());
                         desktop.setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());

@@ -1,14 +1,14 @@
 package org.ovirt.engine.ui.userportal.widget.table.column;
 
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.resources.client.ResourcePrototype;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 
 public class VmImageColumn<T> extends UserPortalImageResourceColumn<T> {
 
     public interface OsTypeExtractor<T> {
-        VmOsType extractOsType(T item);
+        int extractOsType(T item);
     }
 
     private final OsTypeExtractor<T> extractor;
@@ -20,7 +20,7 @@ public class VmImageColumn<T> extends UserPortalImageResourceColumn<T> {
 
     @Override
     public ImageResource getValue(T item) {
-        String osTypeName = extractor.extractOsType(item).name();
+        String osTypeName = AsyncDataProvider.getOsUniqueOsNames().get(extractor.extractOsType(item));
         ResourcePrototype resource = getApplicationResourcesWithLookup().getResource(osTypeName + "SmallImage"); //$NON-NLS-1$
 
         if (resource == null || !(resource instanceof ImageResource)) {

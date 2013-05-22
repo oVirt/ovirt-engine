@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.util.HashMap;
+
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.StringHelper;
 
@@ -263,6 +265,16 @@ public class ADSyntaxChecker implements ISyntaxChecker {
             retval = generateAdQueryFromSyntaxContainer(syntax);
         }
         return retval;
+    }
+
+    @Override
+    public void setVmCompletionMap(HashMap<Integer, String> map) {
+        throw new UnsupportedOperationException("vm completion isn't implemented nor relevant here.");
+    }
+
+    @Override
+    public HashMap<Integer, String> getVmCompletionMap() {
+        throw new UnsupportedOperationException("vm completion isn't implemented nor relevant here.");
     }
 
     private static String generateAdQueryFromSyntaxContainer(SyntaxContainer syntax) {

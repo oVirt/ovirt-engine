@@ -39,7 +39,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
@@ -1396,7 +1395,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         if (model.getQuota().getSelectedItem() != null) {
             tempVar.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
         }
-        tempVar.setVmOs((VmOsType) model.getOSType().getSelectedItem());
+        tempVar.setVmOs((Integer) model.getOSType().getSelectedItem());
         tempVar.setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
         tempVar.setAllowConsoleReconnect((Boolean) model.getAllowConsoleReconnect().getEntity());
         tempVar.setVmDomain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
@@ -1782,7 +1781,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         {
             VM a = (VM) item;
             // use sysprep iff the vm is not initialized and vm has Win OS
-            boolean reinitialize = !a.isInitialized() && AsyncDataProvider.isWindowsOsType(a.getVmOs());
+            boolean reinitialize = !a.isInitialized() && AsyncDataProvider.isWindowsOsType(a.getVmOsId());
             RunVmParams tempVar = new RunVmParams(a.getId());
             tempVar.setReinitialize(reinitialize);
             list.add(tempVar);
@@ -1968,7 +1967,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         if (model.getQuota().getSelectedItem() != null) {
             getcurrentVm().setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
         }
-        getcurrentVm().setVmOs((VmOsType) model.getOSType().getSelectedItem());
+        getcurrentVm().setVmOs((Integer) model.getOSType().getSelectedItem());
         getcurrentVm().setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
         getcurrentVm().setAllowConsoleReconnect((Boolean) model.getAllowConsoleReconnect().getEntity());
         getcurrentVm().setVmDescription((String) model.getDescription().getEntity());

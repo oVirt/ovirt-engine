@@ -19,12 +19,14 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
@@ -47,6 +49,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     private static final int Kb = 1024;
     protected final static int MAX_NETWORK_INTERFACES_SUPPORTED = 8;
+    private OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
     public VmCommand(T parameters) {
         super(parameters);
@@ -364,7 +367,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
         // names are allowed different lengths in Windows and non-Windows OSs,
         // consider this when setting the max length.
-        int maxLength = vm.getVmOs().isWindows() ? maxVmNameLengthWindows : maxVmNameLengthNonWindows;
+        int maxLength = osRepository.isWindows(vm.getVmOsId()) ? maxVmNameLengthWindows : maxVmNameLengthNonWindows;
 
         // check if name is longer than allowed name
         boolean nameLengthValid = (vmName.length() <= maxLength);
@@ -412,10 +415,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      * @return
      */
     protected boolean isOsSupportingHotPlug() {
-        String vmOs = getVm().getOs().name();
+        int vmOs = getVm().getOs();
         String[] unsupportedOSs = Config.<String> GetValue(ConfigValues.HotPlugUnsupportedOsList).split(",");
         for (String os : unsupportedOSs) {
-            if (os.equalsIgnoreCase(vmOs)) {
+            if (os.equalsIgnoreCase(osRepository.getOsName(vmOs))) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);
                 return false;
             }

@@ -1,8 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.dataprovider;
 
+import static org.ovirt.engine.core.common.queries.OsQueryParameters.OsRepositoryVerb;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -41,14 +44,11 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterClusterService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
@@ -58,6 +58,8 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
@@ -86,8 +88,9 @@ import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
-import org.ovirt.engine.core.common.queries.ProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.OsQueryParameters;
+import org.ovirt.engine.core.common.queries.ProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.ServerParameters;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
@@ -139,6 +142,21 @@ public final class AsyncDataProvider {
             new HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object>();
 
     private static String _defaultConfigurationVersion = null;
+
+    // cached OS names
+    private static HashMap<Integer, String> osNames;
+
+    // cached list of os ids
+    private static List<Integer> osIds;
+
+    // cached unique OS names
+    private static HashMap<Integer, String> uniqueOsNames;
+
+    // cached linux OS
+    private static List<Integer> linuxOsIds;
+    // cached windows OS
+    private static List<Integer> windowsOsIds;
+
     public static String getDefaultConfigurationVersion() {
         return _defaultConfigurationVersion;
     }
@@ -171,6 +189,10 @@ public final class AsyncDataProvider {
                 getDefaultConfigurationVersion(target);
             }
         }));
+        initOsNames();
+        initUniqueOsNames();
+        initLinuxOsTypes();
+        initWindowsOsTypes();
     }
 
     public static void getDomainListViaPublic(AsyncQuery aQuery, boolean filterInternalDomain) {
@@ -370,7 +392,9 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
-    public static void getDataCenterByClusterServiceList(AsyncQuery aQuery, boolean supportsVirtService, boolean supportsGlusterService) {
+    public static void getDataCenterByClusterServiceList(AsyncQuery aQuery,
+            boolean supportsVirtService,
+            boolean supportsGlusterService) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery) {
@@ -587,7 +611,7 @@ public final class AsyncDataProvider {
     }
 
     public static void getClusterByServiceList(AsyncQuery aQuery, Guid dataCenterId,
-        final boolean supportsVirtService, final boolean supportsGlusterService) {
+            final boolean supportsVirtService, final boolean supportsGlusterService) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery) {
@@ -654,15 +678,17 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.GetVmTemplatesDisks, new IdQueryParameters(templateId), aQuery);
     }
 
-
     /**
      * Round the priority to the closest value from n (3 for now) values
      *
      * i.e.: if priority entered is 30 and the predefined values are 1,50,100
      *
      * then the return value will be 50 (closest to 50).
-     * @param priority - the current priority of the vm
-     * @param maxPriority - the max priority
+     *
+     * @param priority
+     *            - the current priority of the vm
+     * @param maxPriority
+     *            - the max priority
      * @return the rounded priority
      */
     public static int getRoundedPriority(int priority, int maxPriority) {
@@ -878,6 +904,14 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, params, aQuery);
     }
 
+    public static HashMap<Integer, String> getOsNames() {
+        return osNames;
+    }
+
+    public static HashMap<Integer, String> getOsUniqueOsNames() {
+        return uniqueOsNames;
+    }
+
     public final static class GetSnapshotListQueryResult {
         private Guid privatePreviewingImage = new Guid();
 
@@ -1077,7 +1111,9 @@ public final class AsyncDataProvider {
                 return new ArrayList<VDS>();
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetHostsForStorageOperation, new GetHostsForStorageOperationParameters(storagePoolId, localFsOnly), aQuery);
+        Frontend.RunQuery(VdcQueryType.GetHostsForStorageOperation,
+                new GetHostsForStorageOperationParameters(storagePoolId, localFsOnly),
+                aQuery);
     }
 
     public static void getVolumeList(AsyncQuery aQuery, String clusterName) {
@@ -1190,7 +1226,7 @@ public final class AsyncDataProvider {
                 return source != null ? source : new ArrayList<GlusterHookEntity>();
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetGlusterHooks,  new GlusterParameters(clusterId), aQuery);
+        Frontend.RunQuery(VdcQueryType.GetGlusterHooks, new GlusterParameters(clusterId), aQuery);
     }
 
     public static void getGlusterHook(AsyncQuery aQuery, Guid hookId, boolean includeServerHooks) {
@@ -1783,7 +1819,8 @@ public final class AsyncDataProvider {
         };
 
         // GetConfigFromCache(
-        // new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForPowerSave, getDefaultConfigurationVersion()),
+        // new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForPowerSave,
+        // getDefaultConfigurationVersion()),
         // aQuery);
 
         aQuery.asyncCallback.onSuccess(aQuery.getModel(), 10);
@@ -1798,7 +1835,8 @@ public final class AsyncDataProvider {
         };
 
         // GetConfigFromCache(
-        // new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForPowerSave, getDefaultConfigurationVersion()),
+        // new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForPowerSave,
+        // getDefaultConfigurationVersion()),
         // aQuery);
 
         aQuery.asyncCallback.onSuccess(aQuery.getModel(), 5);
@@ -1806,9 +1844,9 @@ public final class AsyncDataProvider {
 
     public static void getDefaultPmProxyPreferences(AsyncQuery query) {
         getConfigFromCache(
-            new GetConfigurationValueParameters(ConfigurationValues.FenceProxyDefaultPreferences,
+                new GetConfigurationValueParameters(ConfigurationValues.FenceProxyDefaultPreferences,
                         getDefaultConfigurationVersion()),
-            query);
+                query);
     }
 
     public static void getRootTag(AsyncQuery aQuery) {
@@ -2245,6 +2283,7 @@ public final class AsyncDataProvider {
 
     /**
      * Get the Management Network Name
+     *
      * @param aQuery
      *            result callback
      */
@@ -2273,10 +2312,8 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.GetConfigurationValues, new VdcQueryParametersBase(), aQuery);
     }
 
-
     /**
-     * Get configuration value from 'cachedConfigValuesPreConvert'
-     * (raw values from vdc_options table).
+     * Get configuration value from 'cachedConfigValuesPreConvert' (raw values from vdc_options table).
      *
      * @param version
      */
@@ -2288,8 +2325,7 @@ public final class AsyncDataProvider {
     }
 
     /**
-     * Get configuration value from 'cachedConfigValuesPreConvert'
-     * (raw values from vdc_options table).
+     * Get configuration value from 'cachedConfigValuesPreConvert' (raw values from vdc_options table).
      */
     public static Object getConfigValuePreConverted(ConfigurationValues configValue) {
         KeyValuePairCompat<ConfigurationValues, String> key =
@@ -2314,6 +2350,7 @@ public final class AsyncDataProvider {
 
     /**
      * method to get an item from config while caching it (config is not supposed to change during a session)
+     *
      * @param aQuery
      *            an async query
      * @param parameters
@@ -2349,6 +2386,7 @@ public final class AsyncDataProvider {
 
     /**
      * method to get an item from config while caching it (config is not supposed to change during a session)
+     *
      * @param configValue
      *            the config value to query
      * @param version
@@ -2397,7 +2435,8 @@ public final class AsyncDataProvider {
         }
     }
 
-    public static void getInterfaceOptionsForEditNetwork(final AsyncQuery asyncQuery, final ArrayList<VdsNetworkInterface> interfaceList,
+    public static void getInterfaceOptionsForEditNetwork(final AsyncQuery asyncQuery,
+            final ArrayList<VdsNetworkInterface> interfaceList,
             final VdsNetworkInterface originalInterface,
             Network networkToEdit,
             final Guid vdsID,
@@ -2467,8 +2506,6 @@ public final class AsyncDataProvider {
                 }
             });
 
-
-
         }
 
         else // vlan:
@@ -2479,42 +2516,42 @@ public final class AsyncDataProvider {
                 public void onSuccess(Object model, Object returnValue) {
                     final VdsNetworkInterface vlanParent = (VdsNetworkInterface) returnValue;
 
-                    if (vlanParent != null && vlanParent.getBonded() != null && vlanParent.getBonded()){
-                        interfaceHasSiblingVlanInterfaces(vdsID, originalInterface, new AsyncQuery(asyncQuery, new INewAsyncCallback() {
+                    if (vlanParent != null && vlanParent.getBonded() != null && vlanParent.getBonded()) {
+                        interfaceHasSiblingVlanInterfaces(vdsID, originalInterface, new AsyncQuery(asyncQuery,
+                                new INewAsyncCallback() {
 
-                            @Override
-                            public void onSuccess(Object model, Object returnValue) {
-                                Boolean interfaceHasSiblingVlanInterfaces = (Boolean) returnValue;
+                                    @Override
+                                    public void onSuccess(Object model, Object returnValue) {
+                                        Boolean interfaceHasSiblingVlanInterfaces = (Boolean) returnValue;
 
-                                if (!interfaceHasSiblingVlanInterfaces){
-                                    // eth0 -- \
-                                    // |--- bond0 ---> bond0.3 -> <networkToEdit>
-                                    // eth1 -- /
-                                    // ---------------------------------------------------
-                                    // - originalInterface: 'bond0.3'
-                                    // - vlanParent: 'bond0'
-                                    // - 'bond0.3' has no vlan siblings
-                                    // --> We want to add 'eth0' and and 'eth1' as optional Interfaces.
-                                    // (note that choosing one of them will break the bond):
-                                    // ifacesOptions.AddRange(interfaceList.Where(a => a.bond_name == vlanParent.name).ToList());
-                                    for (VdsNetworkInterface i : interfaceList)
-                                    {
-                                        if (StringHelper.stringsEqual(i.getBondName(), vlanParent.getName()))
-                                        {
-                                            ifacesOptions.add(i);
+                                        if (!interfaceHasSiblingVlanInterfaces) {
+                                            // eth0 -- \
+                                            // |--- bond0 ---> bond0.3 -> <networkToEdit>
+                                            // eth1 -- /
+                                            // ---------------------------------------------------
+                                            // - originalInterface: 'bond0.3'
+                                            // - vlanParent: 'bond0'
+                                            // - 'bond0.3' has no vlan siblings
+                                            // --> We want to add 'eth0' and and 'eth1' as optional Interfaces.
+                                            // (note that choosing one of them will break the bond):
+                                            // ifacesOptions.AddRange(interfaceList.Where(a => a.bond_name ==
+                                            // vlanParent.name).ToList());
+                                            for (VdsNetworkInterface i : interfaceList) {
+                                                if (StringHelper.stringsEqual(i.getBondName(), vlanParent.getName())) {
+                                                    ifacesOptions.add(i);
+                                                }
+                                            }
                                         }
+
+                                        // the vlanParent should already be in ifacesOptions
+                                        // (since it has no network_name or bond_name).
+                                        defaultInterfaceName.append(vlanParent.getName());
+
+                                        asyncQuery.asyncCallback.onSuccess(asyncQuery.Model, ifacesOptions);
+
                                     }
-                                }
-
-                                // the vlanParent should already be in ifacesOptions
-                                // (since it has no network_name or bond_name).
-                                defaultInterfaceName.append(vlanParent.getName());
-
-                                asyncQuery.asyncCallback.onSuccess(asyncQuery.Model, ifacesOptions);
-
-                            }
-                        }));
-                    }else{
+                                }));
+                    } else {
                         // the vlanParent should already be in ifacesOptions
                         // (since it has no network_name or bond_name).
                         if (vlanParent != null)
@@ -2522,10 +2559,9 @@ public final class AsyncDataProvider {
                         asyncQuery.asyncCallback.onSuccess(asyncQuery.Model, ifacesOptions);
                     }
                 }
-           }));
+            }));
         }
-}
-
+    }
 
     private static void getVlanParentInterface(Guid vdsID, VdsNetworkInterface iface, AsyncQuery aQuery)
     {
@@ -2561,7 +2597,10 @@ public final class AsyncDataProvider {
 
     }
 
-    public static void GetExternalProviderHostList(AsyncQuery aQuery, Guid providerId, boolean filterOutExistingHosts, String searchFilter) {
+    public static void GetExternalProviderHostList(AsyncQuery aQuery,
+            Guid providerId,
+            boolean filterOutExistingHosts,
+            String searchFilter) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -2573,7 +2612,9 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetHostListFromExternalProvider, new GetHostListFromExternalProviderParameters(providerId, filterOutExistingHosts, searchFilter), aQuery);
+        Frontend.RunQuery(VdcQueryType.GetHostListFromExternalProvider,
+                new GetHostListFromExternalProviderParameters(providerId, filterOutExistingHosts, searchFilter),
+                aQuery);
     }
 
     public static void GetAllProviders(AsyncQuery aQuery) {
@@ -2617,7 +2658,9 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.GetProviderCertificateChain, new ProviderQueryParameters(provider), aQuery);
     }
 
-    private static void getAllChildVlanInterfaces(Guid vdsID, List<VdsNetworkInterface> ifaces, IFrontendMultipleQueryAsyncCallback callback)
+    private static void getAllChildVlanInterfaces(Guid vdsID,
+            List<VdsNetworkInterface> ifaces,
+            IFrontendMultipleQueryAsyncCallback callback)
     {
         ArrayList<VdcQueryParametersBase> parametersList = new ArrayList<VdcQueryParametersBase>();
         ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
@@ -2682,39 +2725,41 @@ public final class AsyncDataProvider {
     {
         ArrayList<EventNotificationEntity> ret = new ArrayList<EventNotificationEntity>();
         // TODO: We can translate it here too
-        for (EventNotificationEntity entity : EventNotificationEntity.values())
-        {
-            if (entity != EventNotificationEntity.UNKNOWN)
-            {
+        for (EventNotificationEntity entity : EventNotificationEntity.values()) {
+            if (entity != EventNotificationEntity.UNKNOWN) {
                 ret.add(entity);
             }
         }
         return ret;
     }
 
-    public static Map<EventNotificationEntity, HashSet<AuditLogType>> getAvailableNotificationEvents()
-    {
+    public static Map<EventNotificationEntity, HashSet<AuditLogType>> getAvailableNotificationEvents() {
         return VdcEventNotificationUtils.GetNotificationEvents();
     }
 
-    public static ArrayList<VmInterfaceType> getNicTypeList(VmOsType osType, boolean hasDualmode)
-    {
-        ArrayList<VmInterfaceType> list = new ArrayList<VmInterfaceType>(Arrays.asList(VmInterfaceType.values()));
-
-        list.remove(VmInterfaceType.rtl8139_pv); // Dual mode NIC should be available only for existing NICs that have
-                                                 // that type already
-        if (isWindowsOsType(osType))
-        {
-            if (osType == VmOsType.WindowsXP && hasDualmode)
-            {
-                list.add(VmInterfaceType.rtl8139_pv);
+    public static void getNicTypeList(final int osId, Version version, AsyncQuery asyncQuery) {
+        final INewAsyncCallback chainedCallback = asyncQuery.asyncCallback;
+        asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                ArrayList<String> nics = (ArrayList<String>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                List<VmInterfaceType> interfaceTypes = new ArrayList<VmInterfaceType>();
+                for (String nic : nics) {
+                    try {
+                        interfaceTypes.add(VmInterfaceType.valueOf(nic));
+                    } catch (IllegalArgumentException e) {
+                        // ignore if we can't find the enum value.
+                    }
+                }
+                chainedCallback.onSuccess(model, interfaceTypes);
             }
-        }
-
-        return list;
+        };
+        Frontend.RunQuery(VdcQueryType.OsRepository,
+                new OsQueryParameters(OsRepositoryVerb.GetNetworkDevices, osId, version),
+                asyncQuery);
     }
 
-    public static VmInterfaceType getDefaultNicType(VmOsType osType)
+    public static VmInterfaceType getDefaultNicType()
     {
         return VmInterfaceType.pv;
     }
@@ -2722,37 +2767,33 @@ public final class AsyncDataProvider {
     public static ArrayList<StorageType> getStoragePoolTypeList() {
 
         return new ArrayList<StorageType>(Arrays.asList(new StorageType[] {
-            StorageType.NFS,
-            StorageType.ISCSI,
-            StorageType.FCP,
-            StorageType.LOCALFS,
-            StorageType.POSIXFS,
-            StorageType.GLUSTERFS
+                StorageType.NFS,
+                StorageType.ISCSI,
+                StorageType.FCP,
+                StorageType.LOCALFS,
+                StorageType.POSIXFS,
+                StorageType.GLUSTERFS
         }));
     }
 
-    public static boolean isVersionMatchStorageType(Version version, StorageType type)
-    {
+    public static boolean isVersionMatchStorageType(Version version, StorageType type) {
         return !((type == StorageType.LOCALFS && version.compareTo(new Version(2, 2)) <= 0)
-               || (type == StorageType.POSIXFS && version.compareTo(new Version(3, 0)) <= 0)
-               || (type == StorageType.GLUSTERFS && version.compareTo(new Version(3, 2)) <= 0));
+                || (type == StorageType.POSIXFS && version.compareTo(new Version(3, 0)) <= 0)
+                || (type == StorageType.GLUSTERFS && version.compareTo(new Version(3, 2)) <= 0));
     }
 
-    public static int getClusterDefaultMemoryOverCommit()
-    {
+    public static int getClusterDefaultMemoryOverCommit() {
         return 100;
     }
 
-    public static boolean getClusterDefaultCountThreadsAsCores()
-    {
+    public static boolean getClusterDefaultCountThreadsAsCores() {
         return false;
     }
 
-    public static ArrayList<VolumeType> getVolumeTypeList()
-    {
+    public static ArrayList<VolumeType> getVolumeTypeList() {
         return new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] {
-            VolumeType.Preallocated,
-            VolumeType.Sparse
+                VolumeType.Preallocated,
+                VolumeType.Sparse
         }));
     }
 
@@ -2879,107 +2920,91 @@ public final class AsyncDataProvider {
         return new Guid();
     }
 
-    private static ArrayList<VmOsType> windowsOsTypes;
+    public static boolean isWindowsOsType(int osType) {
+        return windowsOsIds.contains(osType);
+    }
 
-    public synchronized static ArrayList<VmOsType> getWindowsOsTypes()
-    {
-        if (windowsOsTypes != null)
-        {
-            return windowsOsTypes;
-        }
+    public static boolean isLinuxOsType(int osId) {
+        return linuxOsIds.contains(osId);
+    }
 
-        /***** TODO: remove once the gwt is using generic api instead of backend! *****/
-        windowsOsTypes = new ArrayList<VmOsType>();
-        for (VmOsType type : VmOsType.values()) {
-            if (type.isWindows()) {
-                windowsOsTypes.add(type);
+    public static void initWindowsOsTypes() {
+
+        AsyncQuery callback = new AsyncQuery();
+        callback.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                windowsOsIds = (ArrayList<Integer>) ((VdcQueryReturnValue) returnValue).getReturnValue();
             }
-        }
-
-        return windowsOsTypes;
-        /*******************************************************************************/
+        };
+        Frontend.RunQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetWindowsOss), callback);
     }
 
-    public static boolean isWindowsOsType(VmOsType osType)
-    {
-        if (getWindowsOsTypes().contains(osType))
-        {
-            return true;
-        }
+    public static void initLinuxOsTypes() {
 
-        return false;
+        AsyncQuery callback = new AsyncQuery();
+        callback.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                linuxOsIds = (ArrayList<Integer>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetLinuxOss), callback);
     }
 
-    private volatile static ArrayList<VmOsType> linuxOsTypes;
-    private volatile static ArrayList<VmOsType> x64OsTypes;
+    public static void initUniqueOsNames() {
 
-    public static boolean isLinuxOsType(VmOsType osType)
-    {
-        if (getLinuxOsTypes().contains(osType))
-        {
-            return true;
-        }
-
-        return false;
+        AsyncQuery callback = new AsyncQuery();
+        callback.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                uniqueOsNames = (HashMap<Integer, String>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetUniqueOsNames), callback);
     }
 
-    public static ArrayList<VmOsType> getLinuxOsTypes()
-    {
-        if (linuxOsTypes != null)
-        {
-            return linuxOsTypes;
-        }
+    public static void initOsNames() {
 
-        /***** TODO: remove once the gwt is using generic api instead of backend! *****/
-        linuxOsTypes =
-            new ArrayList<VmOsType>(Arrays.asList(new VmOsType[] {
-                VmOsType.OtherLinux,
-                VmOsType.RHEL3,
-                VmOsType.RHEL3x64,
-                VmOsType.RHEL4,
-                VmOsType.RHEL4x64,
-                VmOsType.RHEL5,
-                VmOsType.RHEL5x64,
-                VmOsType.RHEL6,
-                VmOsType.RHEL6x64
-            }));
-
-        return linuxOsTypes;
-        /*******************************************************************************/
+        AsyncQuery callback = new AsyncQuery();
+        callback.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                osNames = (HashMap<Integer, String>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                initOsIds();
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetOsNames), callback);
     }
 
-    public static boolean is64bitOsType(VmOsType osType)
-    {
-        if (get64bitOsTypes().contains(osType))
-        {
-            return true;
-        }
-
-        return false;
+    private static void initOsIds() {
+        osIds = new ArrayList<Integer>(osNames.keySet());
+        Collections.sort(osIds, new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return osNames.get(o1).compareTo(osNames.get(o2));
+            }
+        });
     }
 
-    public static ArrayList<VmOsType> get64bitOsTypes()
-    {
-        if (x64OsTypes != null)
-        {
-            return x64OsTypes;
-        }
+    public static String getOsName(int osId) {
+        return osNames.get(osId);
+    }
 
-        /***** TODO: remove once the gwt is using generic api instead of backend! *****/
-        x64OsTypes =
-            new ArrayList<VmOsType>(Arrays.asList(new VmOsType[] {
-                VmOsType.RHEL3x64,
-                VmOsType.RHEL4x64,
-                VmOsType.RHEL5x64,
-                VmOsType.RHEL6x64,
-                VmOsType.Windows2003x64,
-                VmOsType.Windows2008R2x64,
-                VmOsType.Windows2008x64,
-                VmOsType.Windows7x64
-            }));
+    public static void hasSpiceSupport(int osId, Version version, AsyncQuery callback) {
+        Frontend.RunQuery(VdcQueryType.OsRepository,
+                new OsQueryParameters(OsRepositoryVerb.HasSpiceSupport, osId, version),
+                callback);
+    }
 
-        return x64OsTypes;
-        /*******************************************************************************/
+    public static List<Integer> getOsIds() {
+        return osIds;
+    }
+
+    public static void getOsMaxRam(int osId, Version version, AsyncQuery asyncQuery) {
+        Frontend.RunQuery(VdcQueryType.OsRepository,
+                new OsQueryParameters(OsRepositoryVerb.GetMaxOsRam, osId, version),
+                asyncQuery);
     }
 
     public static ArrayList<Map.Entry<String, EntityModel>> getBondingOptionList(RefObject<Map.Entry<String, EntityModel>> defaultItem)

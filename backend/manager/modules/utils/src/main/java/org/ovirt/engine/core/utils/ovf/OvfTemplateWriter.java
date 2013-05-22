@@ -8,10 +8,13 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Version;
 
 public class OvfTemplateWriter extends OvfWriter {
     protected VmTemplate _vmTemplate;
+    private OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
     public OvfTemplateWriter(VmTemplate vmTemplate, List<DiskImage> images, Version version) {
         super(vmTemplate, images, version);
@@ -53,7 +56,7 @@ public class OvfTemplateWriter extends OvfWriter {
         _writer.WriteRaw("Guest Operating System");
         _writer.WriteEndElement();
         _writer.WriteStartElement("Description");
-        _writer.WriteRaw(_vmTemplate.getOs().name());
+        _writer.WriteRaw(osRepository.getUniqueOsNames().get(_vmTemplate.getOsId()));
         _writer.WriteEndElement();
         _writer.WriteEndElement();
 

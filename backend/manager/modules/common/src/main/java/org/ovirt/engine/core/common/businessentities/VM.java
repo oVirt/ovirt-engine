@@ -12,6 +12,8 @@ import javax.validation.Valid;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -117,16 +119,16 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         this.vmStatic.setDomain(value);
     }
 
-    public VmOsType getOs() {
-        return this.getVmOs();
+    public int getOs() {
+        return this.getVmOsId();
     }
 
-    public VmOsType getVmOs() {
-        return this.vmStatic.getOs();
+    public int getVmOsId() {
+        return this.vmStatic.getOsId();
     }
 
-    public void setVmOs(VmOsType value) {
-        this.vmStatic.setOs(value);
+    public void setVmOs(int value) {
+        this.vmStatic.setOsId(value);
     }
 
     public Date getVmCreationDate() {
@@ -716,14 +718,14 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         this.vmtMemSizeMb = value;
     }
 
-    private VmOsType vmtOs = VmOsType.forValue(0);
+    private int vmtOsId;
 
-    public VmOsType getVmtOs() {
-        return this.vmtOs;
+    public int getVmtOsId() {
+        return this.vmtOsId;
     }
 
-    public void setVmtOs(VmOsType value) {
-        this.vmtOs = value;
+    public void setVmtOsId(int value) {
+        this.vmtOsId = value;
     }
 
     private Date vmtCreationDate = new Date(0);
@@ -1156,7 +1158,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         setAcpiEnable(vm.getAcpiEnable());
         setGuestCurrentUserName(vm.getGuestCurrentUserName());
         setWin2kHackEnable(vm.getWin2kHackEnable());
-        if (getOs() != null && !getOs().isLinux()) {
+        if (SimpleDependecyInjector.getInstance().get(OsRepository.class).isLinux(getVmOsId())) {
             setUtcDiff(vm.getUtcDiff());
         }
         setExitStatus(vm.getExitStatus());
@@ -1263,7 +1265,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         result = prime * result + ((vmtName == null) ? 0 : vmtName.hashCode());
         result = prime * result + vmtNumOfCpus;
         result = prime * result + vmtNumOfSockets;
-        result = prime * result + ((vmtOs == null) ? 0 : vmtOs.hashCode());
+        result = prime * result + vmtOsId;
         result = prime * result + ((vmtTimeZone == null) ? 0 : vmtTimeZone.hashCode());
         result = prime * result + vmtchildCount;
         return result;

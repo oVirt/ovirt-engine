@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -116,9 +115,9 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
                     (String) getModel().getName().getEntity(),
                     ((Integer) getModel().getAssignedVms().getEntity()) +
                             Integer.parseInt((getModel().getNumOfDesktops().getEntity().toString())),
-                    (VmOsType) getModel().getOSType().getSelectedItem()
-                    ) }
-                    );
+                    (Integer) getModel().getOSType().getSelectedItem()
+            ) }
+            );
 
             return getModel().getNumOfDesktops().getIsValid() && parentValidation;
         }

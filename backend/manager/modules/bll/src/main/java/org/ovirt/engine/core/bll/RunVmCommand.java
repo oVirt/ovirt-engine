@@ -57,6 +57,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
+import org.ovirt.engine.core.common.osinfo.OsRepositoryImpl;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
@@ -638,7 +639,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         String selectedToolsVersion = "";
         String selectedToolsClusterVersion = "";
         StorageDomain isoDomain = null;
-        if (getVm().getVmOs().isWindows()
+        if (OsRepositoryImpl.INSTANCE.isWindows(getVm().getVmOsId())
                 && (null != (isoDomain =
                         LinqUtils.firstOrNull(getStorageDomainDAO().getAllForStoragePool(getVm().getStoragePoolId()),
                                 new Predicate<StorageDomain>() {

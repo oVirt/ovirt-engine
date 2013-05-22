@@ -4,6 +4,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.HasConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
@@ -201,7 +202,7 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
     public boolean isWanOptionsAvailable(HasConsoleModel model) {
         boolean spiceAvailable =
                 model.getDefaultConsoleModel() instanceof SpiceConsoleModel;
-        boolean isWindowsVm = model.getVM().getOs().isWindows();
+        boolean isWindowsVm = AsyncDataProvider.isWindowsOsType(model.getVM().getOs());
         boolean spiceGuestAgentInstalled = model.getVM().getSpiceDriverVersion() != null;
 
         return spiceAvailable && isWindowsVm && spiceGuestAgentInstalled;

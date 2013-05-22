@@ -192,9 +192,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         for (DiskImage diskImage : getVm().getDiskList()) {
             mImages.add(diskImage);
         }
-        if (!VmHandler.isMemorySizeLegal(getParameters().getMasterVm().getOs(),
+        if (!VmHandler.isMemorySizeLegal(getParameters().getMasterVm().getOsId(),
                 getParameters().getMasterVm().getMemSizeMb(),
-                getReturnValue().getCanDoActionMessages(), getVdsGroup().getcompatibility_version().toString())) {
+                getReturnValue().getCanDoActionMessages(), getVdsGroup().getcompatibility_version())) {
             return false;
         }
         if (!IsVmPriorityValueLegal(getParameters().getMasterVm().getPriority(), getReturnValue()
@@ -340,7 +340,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getMemSizeMb(), getVmTemplateName(),
                         getParameters().getMasterVm().getNumOfSockets(),
                         getParameters().getMasterVm().getCpuPerSocket(),
-                        getParameters().getMasterVm().getOs(),
+                        getParameters().getMasterVm().getOsId(),
                         getParameters().getMasterVm().getVdsGroupId(),
                         getVmTemplateId(),
                         getParameters().getMasterVm().getDomain(),

@@ -12,6 +12,8 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -39,12 +41,19 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
 
     @Override
     protected void init() {
-        Integer selectedNicType = getNic().getType();
-        ArrayList<VmInterfaceType> nicTypes =
-                AsyncDataProvider.getNicTypeList(getVm().getOs(),
-                        VmInterfaceType.forValue(selectedNicType) == VmInterfaceType.rtl8139_pv);
-        getNicType().setItems(nicTypes);
+        AsyncQuery asyncQuery = new AsyncQuery();
+        asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                getNicType().setItems((List<VmInterfaceType>) returnValue);
+                postNicInit();
+            }
+        };
 
+        AsyncDataProvider.getNicTypeList(getVm().getOsId(), getClusterCompatibilityVersion(), asyncQuery);
+    }
+
+    private void postNicInit() {
         initSelectedType();
 
         getName().setEntity(getNic().getName());
@@ -115,7 +124,7 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
 
         if (selectedNicType == null || !nicTypes.contains(VmInterfaceType.forValue(selectedNicType)))
         {
-            selectedNicType = AsyncDataProvider.getDefaultNicType(getVm().getOs()).getValue();
+            selectedNicType = AsyncDataProvider.getDefaultNicType().getValue();
         }
 
         getNicType().setSelectedItem(VmInterfaceType.forValue(selectedNicType));

@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.compat.Guid;
@@ -303,7 +302,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
             entity.setVmMemSizeMb(rs.getInt("vm_mem_size_mb"));
             entity.setVmtGuid(Guid.createGuidFromString(rs.getString("vmt_guid")));
-            entity.setVmOs(VmOsType.forValue(rs.getInt("vm_os")));
+            entity.setVmOs(rs.getInt("vm_os"));
             entity.setVmDescription(rs.getString("vm_description"));
             entity.setVdsGroupId(Guid.createGuidFromString(rs.getString("vds_group_id")));
             entity.setVmDomain(rs.getString("vm_domain"));
@@ -312,7 +311,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setVdsGroupDescription(rs.getString("vds_group_description"));
             entity.setVmtName(rs.getString("vmt_name"));
             entity.setVmtMemSizeMb(rs.getInt("vmt_mem_size_mb"));
-            entity.setVmtOs(VmOsType.forValue(rs.getInt("vmt_os")));
+            entity.setVmtOsId(rs.getInt("vmt_os"));
             entity.setVmtCreationDate(DbFacadeUtils.fromDate(rs.getTimestamp("vmt_creation_date")));
             entity.setVmtChildCount(rs.getInt("vmt_child_count"));
             entity.setVmtNumOfCpus(rs.getInt("vmt_num_of_cpus"));

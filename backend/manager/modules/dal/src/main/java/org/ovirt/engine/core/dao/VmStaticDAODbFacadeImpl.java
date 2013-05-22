@@ -44,7 +44,7 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
         return getIdParamterSource(vm.getId())
                 .addValue("description", vm.getDescription())
                 .addValue("mem_size_mb", vm.getMemSizeMb())
-                .addValue("os", vm.getOs())
+                .addValue("os", vm.getOsId())
                 .addValue("vds_group_id", vm.getVdsGroupId())
                 .addValue("vm_name", vm.getName())
                 .addValue("vmt_guid", vm.getVmtGuid())

@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -92,16 +91,16 @@ public class PoolGeneralModel extends EntityModel
         }
     }
 
-    private String os;
+    private int os;
 
-    public String getOS()
+    public int getOS()
     {
         return os;
     }
 
-    public void setOS(String value)
+    public void setOS(int value)
     {
-        if (!StringHelper.stringsEqual(os, value))
+        if (os != value)
         {
             os = value;
             onPropertyChanged(new PropertyChangedEventArgs("OS")); //$NON-NLS-1$
@@ -469,13 +468,12 @@ public class PoolGeneralModel extends EntityModel
                             getvm().getCpuPerSocket()));
                     poolGeneralModel.setMonitorCount(getvm().getNumOfMonitors());
 
-                    Translator translator = EnumTranslator.Create(VmOsType.class);
-                    poolGeneralModel.setOS(translator.get(getvm().getVmOs()));
+                    poolGeneralModel.setOS(getvm().getVmOsId());
 
                     poolGeneralModel.setDefinedMemory(getvm().getVmMemSizeMb() + " MB"); //$NON-NLS-1$
                     poolGeneralModel.setMinAllocatedMemory(getvm().getMinAllocatedMem() + " MB"); //$NON-NLS-1$
 
-                    translator = EnumTranslator.Create(DisplayType.class);
+                    Translator translator = EnumTranslator.Create(DisplayType.class);
                     poolGeneralModel.setDefaultDisplayType(translator.get(getvm().getDefaultDisplayType()));
 
                     translator = EnumTranslator.Create(OriginType.class);
@@ -484,10 +482,10 @@ public class PoolGeneralModel extends EntityModel
                     translator = EnumTranslator.Create(UsbPolicy.class);
                     poolGeneralModel.setUsbPolicy(translator.get(getvm().getUsbPolicy()));
 
-                    setHasDomain(AsyncDataProvider.isWindowsOsType(getvm().getVmOs()));
+                    setHasDomain(AsyncDataProvider.isWindowsOsType(getvm().getVmOsId()));
                     poolGeneralModel.setDomain(getvm().getVmDomain());
 
-                    setHasTimeZone(AsyncDataProvider.isWindowsOsType(getvm().getVmOs()));
+                    setHasTimeZone(AsyncDataProvider.isWindowsOsType(getvm().getVmOsId()));
                     poolGeneralModel.setTimeZone(getvm().getTimeZone());
 
                     poolGeneralModel.setIsStateless(getvm().isStateless());
@@ -536,7 +534,7 @@ public class PoolGeneralModel extends EntityModel
                     poolGeneralModel.setTemplate(null);
                     poolGeneralModel.setCpuCount(0);
                     poolGeneralModel.setMonitorCount(0);
-                    poolGeneralModel.setOS(null);
+                    poolGeneralModel.setOS(0);
                     poolGeneralModel.setDefinedMemory(null);
                     poolGeneralModel.setMinAllocatedMemory(null);
                     poolGeneralModel.setDefaultDisplayType(null);

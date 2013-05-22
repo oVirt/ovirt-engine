@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.Config;
@@ -31,6 +30,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
+import org.ovirt.engine.core.common.osinfo.OsRepositoryImpl;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -242,10 +242,10 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     protected boolean isMemorySizeLegal(Version version) {
         VmStatic vmStaticData = getParameters().getVmStaticData();
         return VmHandler.isMemorySizeLegal
-                (vmStaticData.getOs(),
+                (vmStaticData.getOsId(),
                         vmStaticData.getMemSizeMb(),
                         getReturnValue().getCanDoActionMessages(),
-                        version.toString());
+                        version);
     }
 
     protected boolean verifyAddVM() {
@@ -349,14 +349,14 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     protected boolean isVmPoolNameValidLength(String vmPoolName) {
 
         // get VM-pool OS type
-        VmOsType osType = getParameters().getVmStaticData().getOs();
+        int osId = getParameters().getVmStaticData().getOsId();
 
         // determine the max length considering the OS and the max-VMs-in-pool
         // get the max VM name (configuration parameter)
         int maxVmNameLengthWindows = Config.<Integer> GetValue(ConfigValues.MaxVmNameLengthWindows);
         int maxVmNameLengthNonWindows = Config.<Integer> GetValue(ConfigValues.MaxVmNameLengthNonWindows);
 
-        int maxLength = osType.isWindows() ? maxVmNameLengthWindows : maxVmNameLengthNonWindows;
+        int maxLength = OsRepositoryImpl.INSTANCE.isWindows(osId) ? maxVmNameLengthWindows : maxVmNameLengthNonWindows;
         Integer maxVmsInPool = Config.GetValue(ConfigValues.MaxVmsInPool);
         maxLength -= (String.valueOf(maxVmsInPool).length() + 1);
 

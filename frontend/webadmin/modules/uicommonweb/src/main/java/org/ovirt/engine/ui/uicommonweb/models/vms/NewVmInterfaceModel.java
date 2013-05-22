@@ -8,8 +8,11 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -36,10 +39,20 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
 
     @Override
     protected void init() {
-        String newNicName = AsyncDataProvider.getNewNicName(getVmNicList());
-        getNicType().setItems(AsyncDataProvider.getNicTypeList(getVm().getOs(), false));
+        AsyncQuery asyncQuery = new AsyncQuery();
+        asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                getNicType().setItems((List<VmInterfaceType>) returnValue);
+                postNicInit();
+            }
+        };
+        AsyncDataProvider.getNicTypeList(getVm().getOsId(), getClusterCompatibilityVersion(), asyncQuery);
+    }
+
+    private void postNicInit() {
         initSelectedType();
-        getName().setEntity(newNicName);
+        getName().setEntity(AsyncDataProvider.getNewNicName(getVmNicList()));
         initMAC();
 
         if (!hotPlugSupported) {
@@ -88,7 +101,7 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
 
     @Override
     protected void initSelectedType() {
-        getNicType().setSelectedItem(AsyncDataProvider.getDefaultNicType(getVm().getOs()));
+        getNicType().setSelectedItem(AsyncDataProvider.getDefaultNicType());
     }
 
     @Override

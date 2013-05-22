@@ -1,11 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class ExistingPoolNameLengthValidation extends PoolNameLengthValidation {
 
-    public ExistingPoolNameLengthValidation(String poolName, int numOfVmsInPool, VmOsType osType) {
+    public ExistingPoolNameLengthValidation(String poolName, int numOfVmsInPool, int osType) {
         super(poolName, numOfVmsInPool, osType);
     }
 

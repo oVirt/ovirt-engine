@@ -39,11 +39,12 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
@@ -92,6 +93,9 @@ public class AddDiskToVmCommandTest {
 
     @Mock
     private StoragePoolDAO storagePoolDAO;
+
+    @Mock
+    private OsRepository osRepository;
 
     /**
      * The command under test.
@@ -623,7 +627,14 @@ public class AddDiskToVmCommandTest {
 
         VM vm = mockVm();
         vm.setVdsGroupCompatibilityVersion(Version.v3_3);
-        vm.setVmOs(VmOsType.RHEL5);
+
+        //  mock osrepo
+        SimpleDependecyInjector.getInstance().bind(osRepository);
+        HashMap<Integer, String> uniqueOsNames = new HashMap<Integer, String>();
+        uniqueOsNames.put(7, "RHEL5");
+        when(osRepository.getUniqueOsNames()).thenReturn(uniqueOsNames);
+
+        vm.setVmOs(7);
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);

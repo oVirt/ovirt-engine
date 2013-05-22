@@ -287,24 +287,8 @@ public enum OsRepositoryImpl implements OsRepository {
         return version == null ? "value" : "value." + version.toString();
     }
 
-    /**
-     * Helper method to retire the old hard-code mapping of OsName to OS_NAME.<br>
-     * As time goes by more OSs will be added, specifically by admins which the<br>
-     * code is agnostic of and this method serves as the conventional way to keep<br>
-     * this behaviour backward compatible.<br>
-     *
-     * @param name
-     *            os name as represented by the namespace os.$osname e.g os.rhel6 name is rhel6<br>
-     * @return the first digit met or first camel-cased word is getted separated by an underscore (_) or the original
-     *         name otherwise<br>
-     *
-     *         <pre>
-     *        rhel6       -> RHEL_6 <br>
-     *        rhel6x64    -> RHEL_6X64  <br>
-     *        otherLinux  -> OTHER_LINUX <br>
-     * </pre>
-     */
-    public static String osNameUpperCasedAndUnderscored(String name) {
+    @Override
+    public String osNameUpperCasedAndUnderscored(String name) {
         // underscore position is the first digit or second camel-cased word
         Matcher matcher = firstDigitOrUpperCased.matcher(name);
         if (matcher.matches()) {

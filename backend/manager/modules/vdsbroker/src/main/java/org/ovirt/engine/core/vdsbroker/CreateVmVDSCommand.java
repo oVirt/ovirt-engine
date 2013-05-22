@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.osinfo.OsRepositoryImpl;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -93,7 +94,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
      * @return
      */
     private boolean isSysprepUsed(final VM vm) {
-        return vm.useSysPrep() && vm.getVmOs().isWindows()
+        return vm.useSysPrep() && OsRepositoryImpl.INSTANCE.isWindows(vm.getVmOsId())
                 && StringUtils.isEmpty(vm.getFloppyPath());
     }
 

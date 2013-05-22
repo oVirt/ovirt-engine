@@ -7,6 +7,7 @@ import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.verif
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
@@ -14,6 +15,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.codec.binary.Base64;
+import org.easymock.EasyMock;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Boot;
@@ -55,13 +57,14 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -72,6 +75,7 @@ public class BackendVmResourceTest
     private static final String FLOPPY_ID = "bar.vfd";
     public static final String CERTIFICATE = "O=Redhat,CN=X.Y.Z.Q";
     private static final String PAYLOAD_COMTENT = "payload";
+    private static HashMap<Integer, String> osNames = new HashMap<>();
 
     public BackendVmResourceTest() {
         super(new BackendVmResource(GUIDS[0].toString(), new BackendVmsResource()));
@@ -85,6 +89,7 @@ public class BackendVmResourceTest
         resource.getParent().mappingLocator = resource.mappingLocator;
         resource.getParent().httpHeaders = httpHeaders;
         resource.getParent().messageBundle = messageBundle;
+        mockOsRepository();
     }
 
     @Test
@@ -750,7 +755,10 @@ public class BackendVmResourceTest
     protected void setUpWindowsGetEntityExpectations(int times, boolean notFound) throws Exception {
         setUpGetEntityExpectations(times,
                                    notFound,
-                                   new org.ovirt.engine.core.common.businessentities.VM(){{setId(GUIDS[0]);setVmOs(VmOsType.WindowsXP);}});
+                new org.ovirt.engine.core.common.businessentities.VM() {{
+                    setId(GUIDS[0]);
+                    setVmOs(OsRepository.DEFAULT_OS);
+                }});
     }
 
     protected void setUpGetEntityExpectations(int times, boolean notFound, org.ovirt.engine.core.common.businessentities.VM entity) throws Exception {
@@ -864,7 +872,15 @@ public class BackendVmResourceTest
         setUpGetEntityExpectations(VdcQueryType.GetVdsCertificateSubjectByVmId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
-                new Object[] { GUIDS[0] },
+                new Object[] { GUIDS[0]},
                 CERTIFICATE);
+    }
+
+    private void mockOsRepository() {
+        osNames.put(0, "Unassigned");
+        OsRepository osRepository = control.createMock(OsRepository.class);
+        EasyMock.expect(osRepository.getOsNames()).andStubReturn(osNames);
+        EasyMock.expect(osRepository.osNameUpperCasedAndUnderscored("Unassigned")).andStubReturn("UNASSIGNED");
+        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
     }
 }

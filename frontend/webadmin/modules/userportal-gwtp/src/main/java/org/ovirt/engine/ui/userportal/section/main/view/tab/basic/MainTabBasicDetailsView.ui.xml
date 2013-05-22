@@ -176,7 +176,7 @@
 					<g:FlowPanel addStyleNames="{style.detailsRow}">
 						<g:Image resource='{resources.basicOsIcon}' addStyleNames="{style.rowIcon}" />
 						<g:Label text="{constants.osBasicDetails} : " addStyleNames="{style.rowLabel}" />
-						<l:EnumLabel ui:field="operatingSystem" addStyleNames="{style.rowValue}" />
+						<g:ValueLabel ui:field="operatingSystem" addStyleNames="{style.rowValue}" />
 					</g:FlowPanel>
 				</g:layer>
 

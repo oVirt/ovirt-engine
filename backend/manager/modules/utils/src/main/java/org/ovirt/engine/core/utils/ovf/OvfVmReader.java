@@ -15,9 +15,10 @@ import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
@@ -28,6 +29,7 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class OvfVmReader extends OvfReader {
     private static final String EXPORT_ONLY_PREFIX = "exportonly_";
+    private OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
     protected VM _vm;
 
     public OvfVmReader(XmlDocument document,
@@ -44,9 +46,7 @@ public class OvfVmReader extends OvfReader {
         _vm.getStaticData().setId(new Guid(section.Attributes.get("ovf:id").getValue()));
         XmlNode node = section.SelectSingleNode("Description");
         if (node != null) {
-            _vm.getStaticData().setOs(VmOsType.valueOf(node.InnerText));
-        } else {
-            _vm.getStaticData().setOs(VmOsType.Unassigned);
+            _vm.getStaticData().setOsId(osRepository.getOsIdByUniqueName(node.InnerText));
         }
     }
 

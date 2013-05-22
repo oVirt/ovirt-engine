@@ -11,6 +11,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 
 /**
  * A validator for the {@link Disk} class.
@@ -53,8 +55,9 @@ public class DiskValidator {
      * Validates that the OS is supported for Virtio-SCSI interface.
      */
     public ValidationResult isOsSupportedForVirtIoScsi(VM vm) {
+        //TODO move this config val to osinfo
         final List<String> unsupportedOSs = Config.<List<String>> GetValue(ConfigValues.VirtIoScsiUnsupportedOsList);
-        String vmOs = vm.getOs().name();
+        String vmOs = SimpleDependecyInjector.getInstance().get(OsRepository.class).getUniqueOsNames().get(vm.getVmOsId());
         for (String os : unsupportedOSs) {
             if (os.equalsIgnoreCase(vmOs)) {
                 return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED);

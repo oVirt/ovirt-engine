@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.presenter.popup.ConsolePopupPresenterWidget;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
@@ -13,9 +12,9 @@ import org.ovirt.engine.ui.uicommonweb.ConsoleManager;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
-import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.ApplicationTemplates;
@@ -116,8 +115,8 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         VmImageColumn<UserPortalItemModel> vmImageColumn =
                 new VmImageColumn<UserPortalItemModel>(new OsTypeExtractor<UserPortalItemModel>() {
                     @Override
-                    public VmOsType extractOsType(UserPortalItemModel item) {
-                        return item.getOsType();
+                    public int extractOsType(UserPortalItemModel item) {
+                        return item.getOsId();
                     }
                 });
 
@@ -136,7 +135,7 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
                 new TooltipProvider<UserPortalItemModel>() {
                     @Override
                     public String getTooltip(UserPortalItemModel value) {
-                        return EnumTranslator.createAndTranslate(value.getOsType());
+                        return AsyncDataProvider.getOsName(value.getOsId());
                     }
                 });
         getTable().addColumn(new UserPortalItemSimpleColumn(vmImageColumnWithMaskAndTooltip), constants.empty(), "77px"); //$NON-NLS-1$

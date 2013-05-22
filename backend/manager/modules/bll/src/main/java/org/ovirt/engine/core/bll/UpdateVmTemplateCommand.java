@@ -68,11 +68,11 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         } else {
             if (getVdsGroup() == null) {
                 addCanDoActionMessage(VdcBllMessages.VMT_CLUSTER_IS_NOT_VALID);
-            } else if (VmHandler.isMemorySizeLegal(mOldTemplate.getOs(),
+            } else if (VmHandler.isMemorySizeLegal(mOldTemplate.getOsId(),
                     mOldTemplate.getMemSizeMb(),
                     getReturnValue()
                             .getCanDoActionMessages(),
-                    getVdsGroup().getcompatibility_version().toString())) {
+                    getVdsGroup().getcompatibility_version())) {
                 if (IsVmPriorityValueLegal(getParameters().getVmTemplateData().getPriority(), getReturnValue()
                         .getCanDoActionMessages())
                         && IsDomainLegal(getParameters().getVmTemplateData().getDomain(), getReturnValue()
@@ -87,7 +87,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
         // Check that the USB policy is legal
         if (returnValue) {
-            returnValue = VmHandler.isUsbPolicyLegal(getParameters().getVmTemplateData().getUsbPolicy(), getParameters().getVmTemplateData().getOs(), getVdsGroup(), getReturnValue().getCanDoActionMessages());
+            returnValue = VmHandler.isUsbPolicyLegal(getParameters().getVmTemplateData().getUsbPolicy(), getParameters().getVmTemplateData().getOsId(), getVdsGroup(), getReturnValue().getCanDoActionMessages());
         }
 
         if (returnValue) {

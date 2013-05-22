@@ -136,7 +136,7 @@ public class VmItemBehavior extends ItemBehavior
     {
         VM entity = (VM) getItem().getEntity();
         // use sysprep iff the vm is not initialized and vm has Win OS
-        boolean reinitialize = !entity.isInitialized() && AsyncDataProvider.isWindowsOsType(entity.getVmOs());
+        boolean reinitialize = !entity.isInitialized() && AsyncDataProvider.isWindowsOsType(entity.getVmOsId());
         RunVmParams tempVar = new RunVmParams(entity.getId());
         tempVar.setReinitialize(reinitialize);
         Frontend.RunAction(VdcActionType.RunVm, tempVar);
@@ -151,7 +151,7 @@ public class VmItemBehavior extends ItemBehavior
         getItem().setStatus(entity.getStatus());
         getItem().setIsPool(false);
         getItem().setIsServer(entity.getVmType() == VmType.Server);
-        getItem().setOsType(entity.getVmOs());
+        getItem().setOsId(entity.getVmOsId());
         getItem().setIsFromPool(entity.getVmPoolId() != null);
         getItem().setSpiceDriverVersion(entity.getSpiceDriverVersion());
 
@@ -162,7 +162,7 @@ public class VmItemBehavior extends ItemBehavior
         getItem().getDefaultConsoleModel().setEntity(entity);
 
         // Support RDP console for windows VMs.
-        if (AsyncDataProvider.isWindowsOsType(entity.getVmOs()))
+        if (AsyncDataProvider.isWindowsOsType(entity.getVmOsId()))
         {
             if (getItem().getAdditionalConsoleModel() == null)
             {

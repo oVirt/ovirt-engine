@@ -582,8 +582,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             }
 
             returnValue = returnValue
-                    && VmHandler.isMemorySizeLegal(vmStaticData.getOs(), vmStaticData.getMemSizeMb(),
-                            reasons, getVdsGroup().getcompatibility_version().toString());
+                    && VmHandler.isMemorySizeLegal(vmStaticData.getOsId(), vmStaticData.getMemSizeMb(),
+                            reasons, getVdsGroup().getcompatibility_version());
 
         }
         return returnValue;

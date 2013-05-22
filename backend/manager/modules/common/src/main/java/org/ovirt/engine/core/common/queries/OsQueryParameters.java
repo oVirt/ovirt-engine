@@ -1,9 +1,12 @@
 package org.ovirt.engine.core.common.queries;
 
+import org.ovirt.engine.core.compat.Version;
+
 public class OsQueryParameters extends VdcQueryParametersBase {
 
     private OsRepositoryVerb osRepositoryVerb;
     private int osId;
+    private Version version;
 
     public OsQueryParameters() {
     }
@@ -12,9 +15,10 @@ public class OsQueryParameters extends VdcQueryParametersBase {
         this.osRepositoryVerb = verb;
     }
 
-    public OsQueryParameters(OsRepositoryVerb verb, int osId) {
+    public OsQueryParameters(OsRepositoryVerb verb, int osId, Version version) {
         this.osRepositoryVerb = verb;
-        setOsId(osId);
+        this.version = version;
+        this.osId = osId;
     }
 
     public int getOsId() {
@@ -27,6 +31,10 @@ public class OsQueryParameters extends VdcQueryParametersBase {
 
     public OsRepositoryVerb getOsRepositoryVerb() {
         return osRepositoryVerb;
+    }
+
+    public Version getVersion() {
+        return version;
     }
 
     public enum OsRepositoryVerb {

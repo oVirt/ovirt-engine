@@ -2,10 +2,18 @@ package org.ovirt.engine.api.restapi.types;
 
 import static org.ovirt.engine.api.restapi.types.MappingTestHelper.populate;
 
+import java.util.HashMap;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 /**
@@ -20,7 +28,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
  * @param <I>
  *            inverse type (may be identical to T)
  */
-
+@RunWith(MockitoJUnitRunner.class)
 public abstract class AbstractInvertibleMappingTest<F, T, I> extends Assert {
 
     @Rule
@@ -37,10 +45,18 @@ public abstract class AbstractInvertibleMappingTest<F, T, I> extends Assert {
         this.inverseClass = inverseClass;
     }
 
+    @Mock
+    OsRepository osRepository;
+
     @Before
     public void setUp() {
         mappingLocator = new MappingLocator();
         mappingLocator.populate();
+        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+        HashMap<Integer, String> osNames = new HashMap<>(1);
+        osNames.put(0, "Unassigned");
+        Mockito.when(osRepository.getOsNames()).thenReturn(osNames);
+        Mockito.when(osRepository.osNameUpperCasedAndUnderscored("Unassigned")).thenReturn("UNASSIGNED");
     }
 
     @Test

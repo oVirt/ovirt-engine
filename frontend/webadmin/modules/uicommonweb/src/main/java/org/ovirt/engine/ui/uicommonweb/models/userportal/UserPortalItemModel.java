@@ -7,7 +7,6 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.compat.Guid;
@@ -297,19 +296,16 @@ public class UserPortalItemModel extends EntityModel implements HasConsoleModel
         }
     }
 
-    private VmOsType osType = VmOsType.values()[0];
+    private int osId;
 
-    public VmOsType getOsType()
-    {
-        return osType;
+    public int getOsId() {
+        return osId;
     }
 
-    public void setOsType(VmOsType value)
-    {
-        if (osType != value)
-        {
-            osType = value;
-            onPropertyChanged(new PropertyChangedEventArgs("OsType")); //$NON-NLS-1$
+    public void setOsId(int value) {
+        if (osId != value) {
+            osId = value;
+            onPropertyChanged(new PropertyChangedEventArgs("OsId")); //$NON-NLS-1$
         }
     }
 

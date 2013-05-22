@@ -3,8 +3,8 @@ package org.ovirt.engine.core.searchbackend;
 import java.util.UUID;
 
 import org.ovirt.engine.core.common.businessentities.DateEnumForSearch;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 
 public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public VmTemplateConditionFieldAutoCompleter() {
@@ -25,7 +25,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         // Building the types dict
         getTypeDictionary().put("NAME", String.class);
         getTypeDictionary().put("DOMAIN", String.class);
-        getTypeDictionary().put("OS", VmOsType.class);
+        getTypeDictionary().put("OS", String.class);
         getTypeDictionary().put("CREATIONDATE", java.util.Date.class);
         getTypeDictionary().put("CHILDCOUNT", Integer.class);
         getTypeDictionary().put("MEM", Integer.class);
@@ -67,7 +67,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
         if ("OS".equals(fieldName)) {
-            return new EnumValueAutoCompleter(VmOsType.class);
+            return SimpleDependecyInjector.getInstance().get(OsValueAutoCompleter.class);
         } else if ("CREATIONDATE".equals(fieldName)) {
             return new DateEnumValueAutoCompleter(DateEnumForSearch.class);
         } else if ("STATUS".equals(fieldName)) {

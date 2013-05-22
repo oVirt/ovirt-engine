@@ -1,17 +1,16 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 
 public class ConsoleSelectionContext {
 
-    private VmOsType osType;
+    private int osId;
 
     private DisplayType defaultDisplayType;
 
-    public ConsoleSelectionContext(VmOsType osType, DisplayType consoleProtocol) {
+    public ConsoleSelectionContext(int osId, DisplayType consoleProtocol) {
         super();
-        this.osType = osType;
+        this.osId = osId;
         this.defaultDisplayType = consoleProtocol;
     }
 
@@ -20,7 +19,7 @@ public class ConsoleSelectionContext {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((defaultDisplayType == null) ? 0 : defaultDisplayType.hashCode());
-        result = prime * result + ((osType == null) ? 0 : osType.hashCode());
+        result = prime * result + osId;
         return result;
     }
 
@@ -35,7 +34,7 @@ public class ConsoleSelectionContext {
         ConsoleSelectionContext other = (ConsoleSelectionContext) obj;
         if (defaultDisplayType != other.defaultDisplayType)
             return false;
-        if (osType != other.osType)
+        if (osId != other.osId)
             return false;
         return true;
     }

@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmBase;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -18,7 +17,7 @@ import org.springframework.jdbc.core.RowMapper;
 public abstract class AbstractVmRowMapper<T extends VmBase> implements RowMapper<T> {
 
     protected final void map(final ResultSet rs, final T entity) throws SQLException {
-        entity.setOs(VmOsType.forValue(rs.getInt("os")));
+        entity.setOsId(rs.getInt("os"));
         entity.setDescription(rs.getString("description"));
         entity.setCreationDate(DbFacadeUtils.fromDate(rs.getTimestamp("creation_date")));
         entity.setNumOfSockets(rs.getInt("num_of_sockets"));

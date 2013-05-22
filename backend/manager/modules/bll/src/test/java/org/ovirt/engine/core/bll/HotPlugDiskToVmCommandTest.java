@@ -33,9 +33,10 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskDao;
@@ -53,11 +54,8 @@ public class HotPlugDiskToVmCommandTest {
 
     @ClassRule
     public static final MockConfigRule mcr = new MockConfigRule(
-            mockConfig
-            (ConfigValues.HotPlugUnsupportedOsList,
-                    "RHEL3x64"),
-            mockConfig(ConfigValues.HotPlugEnabled, "3.1", true)
-            );
+            mockConfig(ConfigValues.HotPlugUnsupportedOsList, "RHEL3x64"),
+            mockConfig(ConfigValues.HotPlugEnabled, "3.1", true));
 
     @Mock
     private VmDAO vmDAO;
@@ -67,6 +65,9 @@ public class HotPlugDiskToVmCommandTest {
     protected DiskDao diskDao;
     @Mock
     private VmDeviceDAO vmDeviceDAO;
+
+    @Mock
+    OsRepository osRepository;
 
     /**
      * The command under test.
@@ -126,6 +127,8 @@ public class HotPlugDiskToVmCommandTest {
     @Test
     public void canDoActionFailedVirtIODisk() throws Exception {
         mockVmStatusUp();
+        when(osRepository.hasSpiceSupport(0, Version.v3_1)).thenReturn(true);
+        when(osRepository.getOsName(0)).thenReturn("RHEL6");
         createNotVirtIODisk();
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
@@ -146,8 +149,9 @@ public class HotPlugDiskToVmCommandTest {
     @Test
     public void canDoActionFailedGuestOsIsNotSupported() {
         VM vm = mockVmStatusUp();
-        vm.setVmOs(VmOsType.RHEL3x64);
+        vm.setVmOs(15); // rhel3x64
         cretaeVirtIODisk();
+        when(osRepository.getOsName(15)).thenReturn("RHEL3x64");
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
@@ -164,6 +168,7 @@ public class HotPlugDiskToVmCommandTest {
 
     @Before
     public void initializeCommand() {
+        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
         command = spy(createCommand());
         mockVds();
         when(command.getActionType()).thenReturn(getCommandActionType());
@@ -194,7 +199,7 @@ public class HotPlugDiskToVmCommandTest {
     protected VM mockVmStatusUp() {
         VM vm = new VM();
         vm.setStatus(VMStatus.Up);
-        vm.setVmOs(VmOsType.RHEL6);
+        vm.setVmOs(8);
         vm.setId(vmId);
         vm.setRunOnVds(Guid.NewGuid());
         doReturn(vmDAO).when(command).getVmDAO();

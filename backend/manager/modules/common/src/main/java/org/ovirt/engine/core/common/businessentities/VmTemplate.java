@@ -55,7 +55,7 @@ public class VmTemplate extends VmBase {
     private boolean disabled;
 
     public VmTemplate(int childCount, Date creationDate, String description, int memSizeMb, String name,
-            int numOfSockets, int cpuPerSocket, VmOsType os, Guid vdsGroupId, Guid vmtGuid, String domain,
+            int numOfSockets, int cpuPerSocket, int osId, Guid vdsGroupId, Guid vmtGuid, String domain,
             int numOfMonitors, int status, int usbPolicy, String timeZone, boolean autoSuspend, int niceLevel,
             boolean failBack, BootSequence defaultBootSequence, VmType vmType,
             boolean smartcardEnabled, boolean deleteProtected, Boolean tunnelMigration, String vncKeyboardLayout,
@@ -63,7 +63,7 @@ public class VmTemplate extends VmBase {
         super(
                 vmtGuid,
                 vdsGroupId,
-                os,
+                osId,
                 creationDate,
                 description,
                 memSizeMb,

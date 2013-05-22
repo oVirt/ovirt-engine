@@ -57,7 +57,7 @@ public class VmStatic extends VmBase {
     public VmStatic(VmStatic vmStatic) {
         super(vmStatic.getId(),
                 vmStatic.getVdsGroupId(),
-                vmStatic.getOs(),
+                vmStatic.getOsId(),
                 vmStatic.getCreationDate(),
                 vmStatic.getDescription(),
                 vmStatic.getMemSizeMb(),

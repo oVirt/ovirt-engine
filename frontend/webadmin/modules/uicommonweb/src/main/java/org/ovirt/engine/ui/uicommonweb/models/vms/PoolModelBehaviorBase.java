@@ -83,7 +83,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
         if (vmBase != null) {
             updateQuotaByCluster(vmBase.getQuotaId(), vmBase.getQuotaName());
             // Copy VM parameters from template.
-            getModel().getOSType().setSelectedItem(vmBase.getOs());
+            getModel().getOSType().setSelectedItem(vmBase.getOsId());
             getModel().getTotalCPUCores().setEntity(Integer.toString(vmBase.getNumOfCpus()));
             getModel().getNumOfSockets().setSelectedItem(vmBase.getNumOfSockets());
             getModel().getNumOfMonitors().setSelectedItem(vmBase.getNumOfMonitors());

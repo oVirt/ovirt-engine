@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -460,19 +459,18 @@ public class TemplateGeneralModel extends EntityModel
                 template.getNumOfSockets(),
                 template.getCpuPerSocket()));
 
-        Translator translator = EnumTranslator.Create(VmOsType.class);
-        setOS(translator.get(template.getOs()));
+        setOS(AsyncDataProvider.getOsName(template.getOsId()));
 
-        translator = EnumTranslator.Create(DisplayType.class);
+        Translator translator = EnumTranslator.Create(DisplayType.class);
         setDefaultDisplayType(translator.get(template.getDefaultDisplayType()));
 
         translator = EnumTranslator.Create(OriginType.class);
         setOrigin(translator.get(template.getOrigin()));
 
-        setHasDomain(AsyncDataProvider.isWindowsOsType(template.getOs()));
+        setHasDomain(AsyncDataProvider.isWindowsOsType(template.getOsId()));
         setDomain(template.getDomain());
 
-        setHasTimeZone(AsyncDataProvider.isWindowsOsType(template.getOs()));
+        setHasTimeZone(AsyncDataProvider.isWindowsOsType(template.getOsId()));
         setTimeZone(template.getTimeZone());
 
         setHasUsbPolicy(true);

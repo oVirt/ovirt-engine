@@ -530,9 +530,9 @@ public abstract class RunOnceModel extends Model
         getKernel_path().setEntity(vm.getKernelUrl());
         getInitrd_path().setEntity(vm.getInitrdUrl());
 
-        setIsLinuxOS(AsyncDataProvider.isLinuxOsType(vm.getVmOs()));
+        setIsLinuxOS(AsyncDataProvider.isLinuxOsType(vm.getVmOsId()));
         getIsLinuxOptionsAvailable().setEntity(getIsLinuxOS());
-        setIsWindowsOS(AsyncDataProvider.isWindowsOsType(vm.getVmOs()));
+        setIsWindowsOS(AsyncDataProvider.isWindowsOsType(vm.getVmOsId()));
         getIsVmFirstRun().setEntity(!vm.isInitialized());
         getSysPrepDomainName().setSelectedItem(vm.getVmDomain());
 
@@ -611,34 +611,31 @@ public abstract class RunOnceModel extends Model
     protected void updateFloppyImages() {
         AsyncDataProvider.getFloppyImageList(new AsyncQuery(this,
                 new INewAsyncCallback() {
-                 @Override
-                 public void onSuccess(Object model, Object returnValue) {
-                     VM selectedVM = vm;
-                     List<String> images = (List<String>) returnValue;
 
-                     if (AsyncDataProvider.isWindowsOsType(selectedVM.getVmOs()))
-                     {
-                         // Add a pseudo floppy disk image used for Windows' sysprep.
-                         if (!selectedVM.isInitialized())
-                         {
-                             images.add(0, "[sysprep]"); //$NON-NLS-1$
-                             getAttachFloppy().setEntity(true);
-                         }
-                         else
-                         {
-                             images.add("[sysprep]"); //$NON-NLS-1$
-                         }
-                     }
-                     getFloppyImage().setItems(images);
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        VM selectedVM = (VM) vm;
+                        List<String> images = (List<String>) returnValue;
 
-                     if (getFloppyImage().getIsChangable()
-                             && getFloppyImage().getSelectedItem() == null)
-                     {
-                         getFloppyImage().setSelectedItem(Linq.firstOrDefault(images));
-                     }
-                 }
-             }),
-             vm.getStoragePoolId());
+                        if (AsyncDataProvider.isWindowsOsType(selectedVM.getVmOsId()))
+                        {
+                            // Add a pseudo floppy disk image used for Windows' sysprep.
+                            if (!selectedVM.isInitialized()) {
+                                images.add(0, "[sysprep]"); //$NON-NLS-1$
+                                getAttachFloppy().setEntity(true);
+                            } else {
+                                images.add("[sysprep]"); //$NON-NLS-1$
+                            }
+                        }
+                        getFloppyImage().setItems(images);
+
+                        if (getFloppyImage().getIsChangable()
+                                && getFloppyImage().getSelectedItem() == null) {
+                            getFloppyImage().setSelectedItem(Linq.firstOrDefault(images));
+                        }
+                    }
+                }),
+                vm.getStoragePoolId());
     }
 
     private void setIsBootFromHardDiskAllowedForVm() {
@@ -711,40 +708,39 @@ public abstract class RunOnceModel extends Model
     private void updateIsoList() {
         AsyncDataProvider.getIrsImageList(new AsyncQuery(this,
                 new INewAsyncCallback() {
-                 @Override
-                 public void onSuccess(Object model, Object returnValue) {
-                     List<String> images = (List<String>) returnValue;
-                     getIsoImage().setItems(images);
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        List<String> images = (List<String>) returnValue;
+                        getIsoImage().setItems(images);
 
-                     if (getIsoImage().getIsChangable()
-                             && getIsoImage().getSelectedItem() == null)
-                     {
-                         getIsoImage().setSelectedItem(Linq.firstOrDefault(images));
-                     }
+                        if (getIsoImage().getIsChangable()
+                                && getIsoImage().getSelectedItem() == null) {
+                            getIsoImage().setSelectedItem(Linq.firstOrDefault(images));
+                        }
 
-                 }
-             }),
-             vm.getStoragePoolId());
+                    }
+                }),
+                vm.getStoragePoolId());
     }
 
     private void updateDomainList() {
         // Update Domain list
         AsyncDataProvider.getDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object target, Object returnValue) {
-                List<String> domains = (List<String>) returnValue;
-                String oldDomain = (String) getSysPrepDomainName().getSelectedItem();
-                if (oldDomain != null && !oldDomain.equals("") && !domains.contains(oldDomain)) { //$NON-NLS-1$
-                    domains.add(0, oldDomain);
-                }
-                getSysPrepDomainName().setItems(domains);
-                String selectedDomain = (oldDomain != null) ? oldDomain : Linq.firstOrDefault(domains);
-                if (!StringHelper.stringsEqual(selectedDomain, "")) { //$NON-NLS-1$
-                    getSysPrepDomainName().setSelectedItem(selectedDomain);
-                }
-            }
-        }), true);
+                    @Override
+                    public void onSuccess(Object target, Object returnValue) {
+                        List<String> domains = (List<String>) returnValue;
+                        String oldDomain = (String) getSysPrepDomainName().getSelectedItem();
+                        if (oldDomain != null && !oldDomain.equals("") && !domains.contains(oldDomain)) { //$NON-NLS-1$
+                            domains.add(0, oldDomain);
+                        }
+                        getSysPrepDomainName().setItems(domains);
+                        String selectedDomain = (oldDomain != null) ? oldDomain : Linq.firstOrDefault(domains);
+                        if (!StringHelper.stringsEqual(selectedDomain, "")) { //$NON-NLS-1$
+                            getSysPrepDomainName().setSelectedItem(selectedDomain);
+                        }
+                    }
+                }), true);
     }
 
     @Override

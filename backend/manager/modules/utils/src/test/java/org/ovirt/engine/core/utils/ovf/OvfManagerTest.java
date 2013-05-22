@@ -3,13 +3,18 @@ package org.ovirt.engine.core.utils.ovf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -17,11 +22,17 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
+@RunWith(MockitoJUnitRunner.class)
 public class OvfManagerTest {
+
+    @Mock
+    private OsRepository osRepository;
 
     @ClassRule
     public static MockConfigRule mockConfigRule =
@@ -32,6 +43,10 @@ public class OvfManagerTest {
     @Before
     public void setUp() throws Exception {
         manager = new OvfManager();
+        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+        HashMap<Integer, String> osIdsToNames = new HashMap<>();
+
+        when(osRepository.getUniqueOsNames()).thenReturn(osIdsToNames);
     }
 
     private static void assertVm(VM vm, VM newVm, long expectedDbGeneration) {

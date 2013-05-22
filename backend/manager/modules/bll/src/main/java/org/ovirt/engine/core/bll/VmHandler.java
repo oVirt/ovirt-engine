@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
@@ -27,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
@@ -35,6 +33,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.osinfo.OsRepositoryImpl;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -74,7 +73,8 @@ public class VmHandler {
         mUpdateVmsStatic =
                 new ObjectIdentityChecker(VmHandler.class, Arrays.asList(inspectedClassNames), VMStatus.class);
 
-        for (Pair<EditableField,String> pair : BaseHandler.extractAnnotatedFields(EditableField.class, (inspectedClassNames))) {
+        for (Pair<EditableField, String> pair : BaseHandler.extractAnnotatedFields(EditableField.class,
+                (inspectedClassNames))) {
             mUpdateVmsStatic.AddPermittedFields(pair.getSecond());
         }
 
@@ -290,7 +290,7 @@ public class VmHandler {
                 final Map<String, String> spiceDriversInGuest =
                         Config.<Map<String, String>> GetValue(ConfigValues.SpiceDriverNameInGuest);
                 final String spiceDriverInGuest =
-                        spiceDriversInGuest.get(ObjectUtils.toString(vm.getOs().getOsType()).toLowerCase());
+                        spiceDriversInGuest.get(OsRepositoryImpl.INSTANCE.getOsFamily(vm.getOs()).toLowerCase());
 
                 for (final String part : parts) {
                     for (String agentName : possibleAgentAppNames) {
@@ -309,7 +309,7 @@ public class VmHandler {
     /**
      * Checks the validity of the given memory size according to OS type.
      *
-     * @param osType
+     * @param osId
      *            Type of the os.
      * @param memSizeInMB
      *            The mem size in MB.
@@ -317,16 +317,16 @@ public class VmHandler {
      *            The reasons.VdsGroups
      * @return
      */
-    public static boolean isMemorySizeLegal(VmOsType osType,
-            int memSizeInMB,
-            List<String> reasons,
-            String clusterVersion) {
-        boolean result = VmValidationUtils.isMemorySizeLegal(osType, memSizeInMB, clusterVersion);
+    public static boolean isMemorySizeLegal(int osId,
+                                            int memSizeInMB,
+                                            List<String> reasons,
+                                            Version clusterVersion) {
+        boolean result = VmValidationUtils.isMemorySizeLegal(osId, memSizeInMB, clusterVersion);
         if (!result) {
             reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_MEMORY_SIZE.toString());
-            reasons.add(String.format("$minMemorySize %s", VmValidationUtils.getMinMemorySizeInMb()));
+            reasons.add(String.format("$minMemorySize %s", VmValidationUtils.getMinMemorySizeInMb(osId, clusterVersion)));
             reasons.add(String.format("$maxMemorySize %s",
-                    VmValidationUtils.getMaxMemorySizeInMb(osType, clusterVersion)));
+                    VmValidationUtils.getMaxMemorySizeInMb(osId, clusterVersion)));
         }
         return result;
     }
@@ -363,13 +363,14 @@ public class VmHandler {
     }
 
     /**
-     * Checks number of monitors validation according to VM  and Display types.
+     * Checks number of monitors validation according to VM and Display types.
+     *
      * @param displayType
-     *     Display type : Spice or Vnc
+     *            Display type : Spice or Vnc
      * @param numOfMonitors
-     *     Number of monitors
+     *            Number of monitors
      * @param reasons
-     *     Messages for CanDoAction().
+     *            Messages for CanDoAction().
      * @return
      */
     public static boolean isNumOfMonitorsLegal(DisplayType displayType, int numOfMonitors, List<String> reasons) {
@@ -387,8 +388,8 @@ public class VmHandler {
     }
 
     /**
-     * get max of allowed monitors from config
-     * config value is a comma separated list of integers
+     * get max of allowed monitors from config config value is a comma separated list of integers
+     *
      * @return
      */
     private static int getMaxNumberOfMonitors() {
@@ -406,17 +407,18 @@ public class VmHandler {
     }
 
     /**
-     * Checks that the USB policy is legal for the VM. If it is ENABLED_NATIVE then it is legal only
-     * in case the cluster level is >= 3.1. If it is ENABLED_LEGACY then it is not legal on Linux VMs.
+     * Checks that the USB policy is legal for the VM. If it is ENABLED_NATIVE then it is legal only in case the cluster
+     * level is >= 3.1. If it is ENABLED_LEGACY then it is not legal on Linux VMs.
      *
      * @param usbPolicy
-     * @param osType
+     * @param osId
      * @param vdsGroup
-     * @param messages - Messages for CanDoAction()
+     * @param messages
+     *            - Messages for CanDoAction()
      * @return
      */
     public static boolean isUsbPolicyLegal(UsbPolicy usbPolicy,
-            VmOsType osType,
+            int osId,
             VDSGroup vdsGroup,
             List<String> messages) {
         boolean retVal = true;
@@ -427,7 +429,7 @@ public class VmHandler {
                 retVal = false;
             }
         } else if (UsbPolicy.ENABLED_LEGACY.equals(usbPolicy)) {
-            if (osType.isLinux()) {
+            if (OsRepositoryImpl.INSTANCE.isLinux(osId)) {
                 messages.add(VdcBllMessages.USB_LEGACY_NOT_SUPPORTED_ON_LINUX_VMS.toString());
                 retVal = false;
             }
@@ -436,14 +438,15 @@ public class VmHandler {
     }
 
     public static void updateImportedVmUsbPolicy(VmBase vmBase) {
-        //Enforce disabled USB policy for Linux OS with legacy policy.
-        if (vmBase.getOs().isLinux() &&  vmBase.getUsbPolicy().equals(UsbPolicy.ENABLED_LEGACY)) {
+        // Enforce disabled USB policy for Linux OS with legacy policy.
+        if (OsRepositoryImpl.INSTANCE.isLinux(vmBase.getOsId()) && vmBase.getUsbPolicy().equals(UsbPolicy.ENABLED_LEGACY)) {
             vmBase.setUsbPolicy(UsbPolicy.DISABLED);
         }
     }
 
     /**
      * remove VMs unmanaged devices that are created during run-once or stateless run.
+     *
      * @param vmId
      */
     public static void removeStatelessVmUnmanagedDevices(Guid vmId) {
@@ -516,4 +519,3 @@ public class VmHandler {
         return (new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(sizeRequested)).isValid();
     }
 }
-

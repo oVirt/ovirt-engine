@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -611,7 +610,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         VM tempVar = new VM();
         tempVar.setId(vm.getId());
         tempVar.setVmType(model.getVmType());
-        tempVar.setVmOs((VmOsType) model.getOSType().getSelectedItem());
+        tempVar.setVmOs((Integer) model.getOSType().getSelectedItem());
         tempVar.setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
         tempVar.setAllowConsoleReconnect((Boolean) model.getAllowConsoleReconnect().getEntity());
         tempVar.setVmDomain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
@@ -1020,7 +1019,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         gettempVm().setVmType(model.getVmType());
         gettempVm().setVmtGuid(template.getId());
         gettempVm().setName(name);
-        gettempVm().setVmOs((VmOsType) model.getOSType().getSelectedItem());
+        gettempVm().setVmOs((Integer) model.getOSType().getSelectedItem());
         gettempVm().setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
         gettempVm().setAllowConsoleReconnect((Boolean) model.getAllowConsoleReconnect().getEntity());
         gettempVm().setVmDescription((String) model.getDescription().getEntity());

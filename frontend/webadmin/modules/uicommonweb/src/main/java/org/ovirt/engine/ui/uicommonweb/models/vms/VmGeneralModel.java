@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -595,10 +594,9 @@ public class VmGeneralModel extends EntityModel
         setDefinedMemory(vm.getVmMemSizeMb() + " MB"); //$NON-NLS-1$
         setMinAllocatedMemory(vm.getMinAllocatedMem() + " MB"); //$NON-NLS-1$
 
-        Translator translator = EnumTranslator.Create(VmOsType.class);
-        setOS(translator.get(vm.getVmOs()));
+        setOS(AsyncDataProvider.getOsName(vm.getVmOsId()));
 
-        translator = EnumTranslator.Create(DisplayType.class);
+        Translator translator = EnumTranslator.Create(DisplayType.class);
         setDefaultDisplayType(translator.get(vm.getDefaultDisplayType()));
 
         translator = EnumTranslator.Create(OriginType.class);
@@ -622,10 +620,10 @@ public class VmGeneralModel extends EntityModel
                 vm.getNumOfSockets(),
                 vm.getCpuPerSocket()));
 
-        setHasDomain(AsyncDataProvider.isWindowsOsType(vm.getVmOs()));
+        setHasDomain(AsyncDataProvider.isWindowsOsType(vm.getVmOsId()));
         setDomain(vm.getVmDomain());
 
-        setHasTimeZone(AsyncDataProvider.isWindowsOsType(vm.getVmOs()));
+        setHasTimeZone(AsyncDataProvider.isWindowsOsType(vm.getVmOsId()));
         setTimeZone(vm.getTimeZone());
 
         setHasCustomProperties(!StringHelper.stringsEqual(vm.getCustomProperties(), "")); //$NON-NLS-1$

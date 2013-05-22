@@ -5,7 +5,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 
 public class ExistingPoolNameLengthValidationTest {
 
@@ -25,7 +25,7 @@ public class ExistingPoolNameLengthValidationTest {
     }
 
     private void assertGeneratesCorrect(int maxNameLengt, int poolNameLength, int expectedMaxNumOfVms) {
-        ExistingPoolNameLengthValidation validation = new ExistingPoolNameLengthValidation("", 0, VmOsType.Other);
+        ExistingPoolNameLengthValidation validation = new ExistingPoolNameLengthValidation("", 0, OsRepository.DEFAULT_OS); //$NON-NLS-1$
         int res = validation.doGenerateMaxLength(maxNameLengt, poolNameLength);
         assertThat(res, is(equalTo(expectedMaxNumOfVms)));
     }

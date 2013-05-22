@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -133,7 +132,7 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
                 .addValue("name", template.getName())
                 .addValue("num_of_sockets", template.getNumOfSockets())
                 .addValue("cpu_per_socket", template.getCpuPerSocket())
-                .addValue("os", template.getOs())
+                .addValue("os", template.getOsId())
                 .addValue("vmt_guid", template.getId())
                 .addValue("vds_group_id", template.getVdsGroupId())
                 .addValue("domain", template.getDomain())
@@ -216,7 +215,7 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
             entity.setChildCount(rs.getInt("child_count"));
             entity.setMemSizeMb(rs.getInt("mem_size_mb"));
             entity.setName(rs.getString("name"));
-            entity.setOs(VmOsType.forValue(rs.getInt("os")));
+            entity.setOsId(rs.getInt("os"));
             entity.setVdsGroupId(Guid.createGuidFromString(rs.getString("vds_group_id")));
             entity.setDomain(rs.getString("domain"));
             entity.setNumOfMonitors(rs.getInt("num_of_monitors"));

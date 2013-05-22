@@ -56,10 +56,12 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmResource extends
@@ -239,7 +241,7 @@ public class BackendVmResource extends
                                                                         VdcQueryType.GetVmByVmId,
                                                                         new IdQueryParameters(guid),
                                                                         "VM");
-        if(vm.getVmOs().isWindows() && vm.isFirstRun()) {
+        if (SimpleDependecyInjector.getInstance().get(OsRepository.class).isWindows(vm.getVmOsId()) && vm.isFirstRun()) {
             params.setReinitialize(true);
         }
         return params;

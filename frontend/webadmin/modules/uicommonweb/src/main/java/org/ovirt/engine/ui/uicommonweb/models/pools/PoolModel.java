@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.uicommonweb.models.pools;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmModelBehaviorBase;
@@ -36,6 +36,6 @@ public class PoolModel extends UnitVmModel {
         setIsPoolTabValid(true);
 
         getPoolType().setSelectedItem(automaticOption);
-        getOSType().setSelectedItem(VmOsType.Unassigned);
+        getOSType().setSelectedItem(OsRepository.DEFAULT_OS);
     }
 }

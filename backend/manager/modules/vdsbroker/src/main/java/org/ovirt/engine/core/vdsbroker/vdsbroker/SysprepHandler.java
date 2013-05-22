@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigUtil;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.osinfo.OsRepositoryImpl;
 import org.ovirt.engine.core.dal.dbbroker.generic.DomainsPasswordMap;
 import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.log.Log;
@@ -64,71 +65,8 @@ public final class SysprepHandler {
 
     public static String GetSysPrep(VM vm, String hostName, String domain, SysPrepParams sysPrepParams) {
         String sysPrepContent = "";
-        switch (vm.getStaticData().getOs()) {
-        case WindowsXP:
-            sysPrepContent = LoadFile(Config.<String> GetValue(ConfigValues.SysPrepXPPath));
-            sysPrepContent = replace(sysPrepContent, "$ProductKey$", Config.<String> GetValue(ConfigValues.ProductKey));
-            break;
-
-        case Windows2003:
-            sysPrepContent = LoadFile(Config.<String> GetValue(ConfigValues.SysPrep2K3Path));
-            sysPrepContent = replace(sysPrepContent, "$ProductKey$", Config.<String> GetValue(ConfigValues.ProductKey2003));
-            break;
-
-        case Windows2003x64:
-            sysPrepContent = LoadFile(Config.<String> GetValue(ConfigValues.SysPrep2K3Path));
-            sysPrepContent = replace(sysPrepContent, "$ProductKey$", Config.<String> GetValue(ConfigValues.ProductKey2003x64));
-            break;
-
-        case Windows2008:
-            sysPrepContent = LoadFile(Config.<String> GetValue(ConfigValues.SysPrep2K8Path));
-            sysPrepContent = replace(sysPrepContent, "$ProductKey$", Config.<String> GetValue(ConfigValues.ProductKey2008));
-            break;
-
-        case Windows2008x64:
-            sysPrepContent = LoadFile(Config.<String> GetValue(ConfigValues.SysPrep2K8x64Path));
-            sysPrepContent = replace(sysPrepContent, "$ProductKey$", Config.<String> GetValue(ConfigValues.ProductKey2008x64));
-            break;
-        case Windows2008R2x64:
-            sysPrepContent = LoadFile(Config.<String> GetValue(ConfigValues.SysPrep2K8R2Path));
-            sysPrepContent = replace(sysPrepContent, "$ProductKey$", Config.<String> GetValue(ConfigValues.ProductKey2008R2));
-            break;
-
-        case Windows7:
-            sysPrepContent = LoadFile(Config.<String> GetValue(ConfigValues.SysPrepWindows7Path));
-            sysPrepContent = replace(sysPrepContent, "$ProductKey$", Config.<String> GetValue(ConfigValues.ProductKeyWindow7));
-            break;
-
-        case Windows7x64:
-            sysPrepContent = LoadFile(Config.<String> GetValue(ConfigValues.SysPrepWindows7x64Path));
-            sysPrepContent = replace(sysPrepContent, "$ProductKey$", Config.<String> GetValue(ConfigValues.ProductKeyWindow7x64));
-            break;
-
-        case Windows8:
-            sysPrepContent = LoadFile(Config.<String> GetValue(ConfigValues.SysPrepWindows8Path));
-            sysPrepContent =
-                    replace(sysPrepContent, "$ProductKey$", Config.<String> GetValue(ConfigValues.ProductKeyWindows8));
-            break;
-
-        case Windows8x64:
-            sysPrepContent = LoadFile(Config.<String> GetValue(ConfigValues.SysPrepWindows8x64Path));
-            sysPrepContent =
-                    replace(sysPrepContent,
-                            "$ProductKey$",
-                            Config.<String> GetValue(ConfigValues.ProductKeyWindows8x64));
-            break;
-
-        case Windows2012x64:
-            sysPrepContent = LoadFile(Config.<String> GetValue(ConfigValues.SysPrepWindows2012x64Path));
-            sysPrepContent =
-                    replace(sysPrepContent,
-                            "$ProductKey$",
-                            Config.<String> GetValue(ConfigValues.ProductKeyWindows2012x64));
-            break;
-
-        default:
-            break;
-        }
+        sysPrepContent = LoadFile(OsRepositoryImpl.INSTANCE.getSysprepPath(vm.getVmOsId(), null));
+        sysPrepContent = replace(sysPrepContent, "$ProductKey$", OsRepositoryImpl.INSTANCE.getProductKey(vm.getVmOsId(), null));
 
         if (sysPrepContent.length() > 0) {
 
@@ -199,19 +137,11 @@ public final class SysprepHandler {
             vm.setTimeZone(Config.<String> GetValue(ConfigValues.DefaultWindowsTimeZone));
         }
 
-        switch (vm.getStaticData().getOs()) {
-        case WindowsXP:
-        case Windows2003:
-        case Windows2003x64:
-            // send correct time zone as sysprep expect to get it (a wierd
-            // number)
+        if (OsRepositoryImpl.INSTANCE.isTimezoneValueInteger(vm.getStaticData().getOsId(),null)) {
+            // send correct time zone as sysprep expect to get it (a wierd number)
             timeZone = getTimezoneIndexByKey(vm.getTimeZone());
-            break;
-
-        case Windows2008:
-        default:
+        } else {
             timeZone = vm.getTimeZone();
-            break;
         }
 
         return timeZone;
@@ -343,4 +273,3 @@ public final class SysprepHandler {
     }
 
 }
-

@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.validation;
 
 import java.util.Arrays;
 
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
@@ -12,12 +11,12 @@ public class PoolNameLengthValidation implements IValidation {
 
     private int numOfVmsInPool;
 
-    private VmOsType osType;
+    private int osId;
 
-    public PoolNameLengthValidation(String poolName, int numOfVmsInPool, VmOsType osType) {
+    public PoolNameLengthValidation(String poolName, int numOfVmsInPool, int osId) {
         this.poolName = poolName;
         this.numOfVmsInPool = numOfVmsInPool;
-        this.osType = osType;
+        this.osId = osId;
     }
 
     @Override
@@ -49,9 +48,18 @@ public class PoolNameLengthValidation implements IValidation {
     }
 
     protected int getMaxNameLength() {
-        return AsyncDataProvider.isWindowsOsType(osType) ?
+        return isWindows() ?
                 UnitVmModel.WINDOWS_VM_NAME_MAX_LIMIT :
                 UnitVmModel.NON_WINDOWS_VM_NAME_MAX_LIMIT;
+    }
+
+    /**
+     * convenience method, best used for test cases
+     *
+     * @return true if this osId is of Windows type
+     */
+    protected boolean isWindows() {
+        return AsyncDataProvider.isWindowsOsType(osId);
     }
 
     protected String getReason() {

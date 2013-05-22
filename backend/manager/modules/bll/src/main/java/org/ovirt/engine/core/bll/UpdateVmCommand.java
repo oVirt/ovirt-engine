@@ -245,7 +245,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         if (!VmHandler.isMemorySizeLegal(vmFromParams.getOs(),
                 vmFromParams.getMemSizeMb(), getReturnValue().getCanDoActionMessages(),
-                getVdsGroup().getcompatibility_version().toString())) {
+                getVdsGroup().getcompatibility_version())) {
             return false;
         }
 

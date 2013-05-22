@@ -699,8 +699,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 },
                 new ModeSwitchingVisibilityRenderer());
 
-        oSTypeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
-
+        oSTypeEditor = new ListModelListBoxEditor<Object>(new AbstractRenderer<Object>() {
+            @Override
+            public String render(Object object) {
+                return AsyncDataProvider.getOsName((Integer)object);
+            }
+        });
         numOfSocketsEditor = new ListModelListBoxEditor<Object>(new ModeSwitchingVisibilityRenderer());
         corePerSocketEditor = new ListModelListBoxEditor<Object>(new ModeSwitchingVisibilityRenderer());
 

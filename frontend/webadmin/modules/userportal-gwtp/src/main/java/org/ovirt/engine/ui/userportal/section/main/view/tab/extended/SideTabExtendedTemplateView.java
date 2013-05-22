@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.userportal.section.main.view.tab.extended;
 
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
@@ -60,8 +59,8 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
 
         getTable().addColumn(new VmImageColumn<VmTemplate>(new OsTypeExtractor<VmTemplate>() {
             @Override
-            public VmOsType extractOsType(VmTemplate item) {
-                return item.getOs();
+            public int extractOsType(VmTemplate item) {
+                return item.getOsId();
             }
         }), "", "77px"); //$NON-NLS-1$ //$NON-NLS-2$
 

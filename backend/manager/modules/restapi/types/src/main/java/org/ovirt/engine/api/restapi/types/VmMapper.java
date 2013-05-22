@@ -3,8 +3,10 @@ package org.ovirt.engine.api.restapi.types;
 import static org.ovirt.engine.core.compat.NGuid.createGuidFromString;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -52,10 +54,11 @@ import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
@@ -75,7 +78,7 @@ public class VmMapper {
         staticVm.setDomain(entity.getDomain());
         staticVm.setVdsGroupId(entity.getVdsGroupId());
         staticVm.setMemSizeMb(entity.getMemSizeMb());
-        staticVm.setOs(entity.getOs());
+        staticVm.setOsId(entity.getOsId());
         staticVm.setNiceLevel(entity.getNiceLevel());
         staticVm.setFailBack(entity.isFailBack());
         staticVm.setAutoStartup(entity.isAutoStartup());
@@ -146,7 +149,7 @@ public class VmMapper {
             if (vm.getOs().isSetType()) {
                 OsType osType = OsType.fromValue(vm.getOs().getType());
                 if (osType != null) {
-                    staticVm.setOs(map(osType, null));
+                    staticVm.setOsId(map(osType, Integer.class));
                 }
             }
             if (vm.getOs().isSetBoot() && vm.getOs().getBoot().size() > 0) {
@@ -292,17 +295,15 @@ public class VmMapper {
                 model.getStatus().setDetail(entity.getVmPauseStatus().name().toLowerCase());
             }
         }
-        if (entity.getVmOs() != null ||
-            entity.getBootSequence() != null ||
+        if (entity.getBootSequence() != null ||
             entity.getKernelUrl() != null ||
             entity.getInitrdUrl() != null ||
             entity.getKernelParams() != null) {
             OperatingSystem os = new OperatingSystem();
-            if (entity.getVmOs() != null) {
-                OsType osType = VmMapper.map(entity.getOs(), null);
-                if (osType != null) {
-                    os.setType(osType.value());
-                }
+
+            OsType osType = VmMapper.map(entity.getOs(), OsType.class);
+            if (osType != null) {
+                os.setType(osType.value());
             }
             os.setKernel(entity.getKernelUrl());
             os.setInitrd(entity.getInitrdUrl());
@@ -802,110 +803,21 @@ public class VmMapper {
         return null;
     }
 
-    @Mapping(from = VmOsType.class, to = OsType.class)
-    public static OsType map(VmOsType type, OsType incoming) {
-        switch (type) {
-        case Unassigned:
-            return OsType.UNASSIGNED;
-        case WindowsXP:
-            return OsType.WINDOWS_XP;
-        case Windows2003:
-            return OsType.WINDOWS_2003;
-        case Windows2008:
-            return OsType.WINDOWS_2008;
-        case Other:
-            return OsType.OTHER;
-        case OtherLinux:
-            return OsType.OTHER_LINUX;
-        case RHEL5:
-            return OsType.RHEL_5;
-        case RHEL4:
-            return OsType.RHEL_4;
-        case RHEL3:
-            return OsType.RHEL_3;
-        case Windows2003x64:
-            return OsType.WINDOWS_2003X64;
-        case Windows7:
-            return OsType.WINDOWS_7;
-        case Windows7x64:
-            return OsType.WINDOWS_7X64;
-        case RHEL5x64:
-            return OsType.RHEL_5X64;
-        case RHEL4x64:
-            return OsType.RHEL_4X64;
-        case RHEL3x64:
-            return OsType.RHEL_3X64;
-        case Windows2008x64:
-            return OsType.WINDOWS_2008X64;
-        case Windows2008R2x64:
-            return OsType.WINDOWS_2008R2;
-        case RHEL6:
-            return OsType.RHEL_6;
-        case RHEL6x64:
-            return OsType.RHEL_6X64;
-        case Windows8:
-            return OsType.WINDOWS_8;
-        case Windows8x64:
-            return OsType.WINDOWS_8X64;
-        case Windows2012x64:
-            return OsType.WINDOWS_2012X64;
-
-        default:
-            return null;
-        }
+    @Mapping(from = Integer.class, to = OsType.class)
+    public static OsType map(int type, Class<OsType> incomingType) {
+        HashMap<Integer, String> osNames = SimpleDependecyInjector.getInstance().get(OsRepository.class).getOsNames();
+        String name = osNames.get(type);
+        return OsType.valueOf(SimpleDependecyInjector.getInstance().get(OsRepository.class).osNameUpperCasedAndUnderscored(name));
     }
 
-    @Mapping(from = OsType.class, to = VmOsType.class)
-    public static VmOsType map(OsType type, VmOsType incoming) {
-        switch (type) {
-        case UNASSIGNED:
-            return VmOsType.Unassigned;
-        case WINDOWS_XP:
-            return VmOsType.WindowsXP;
-        case WINDOWS_2003:
-            return VmOsType.Windows2003;
-        case WINDOWS_2008:
-            return VmOsType.Windows2008;
-        case OTHER:
-            return VmOsType.Other;
-        case OTHER_LINUX:
-            return VmOsType.OtherLinux;
-        case RHEL_5:
-            return VmOsType.RHEL5;
-        case RHEL_4:
-            return VmOsType.RHEL4;
-        case RHEL_3:
-            return VmOsType.RHEL3;
-        case WINDOWS_2003X64:
-            return VmOsType.Windows2003x64;
-        case WINDOWS_7:
-            return VmOsType.Windows7;
-        case WINDOWS_7X64:
-            return VmOsType.Windows7x64;
-        case RHEL_5X64:
-            return VmOsType.RHEL5x64;
-        case RHEL_4X64:
-            return VmOsType.RHEL4x64;
-        case RHEL_3X64:
-            return VmOsType.RHEL3x64;
-        case WINDOWS_2008X64:
-            return VmOsType.Windows2008x64;
-        case WINDOWS_2008R2:
-            return VmOsType.Windows2008R2x64;
-        case RHEL_6:
-            return VmOsType.RHEL6;
-        case RHEL_6X64:
-            return VmOsType.RHEL6x64;
-        case WINDOWS_8:
-            return VmOsType.Windows8;
-        case WINDOWS_8X64:
-            return VmOsType.Windows8x64;
-        case WINDOWS_2012X64:
-            return VmOsType.Windows2012x64;
-
-        default:
-            return null;
+    @Mapping(from = OsType.class, to = Integer.class)
+    public static int map(OsType type, Class<Integer> incoming) {
+        for (Map.Entry<Integer, String> e : SimpleDependecyInjector.getInstance().get(OsRepository.class).getOsNames().entrySet()) {
+            if (e.getValue().equalsIgnoreCase(type.name().replace("_",""))) {
+                return e.getKey();
+            }
         }
+        return 0;
     }
 
     @Mapping(from = VmPayload.class, to = Payload.class)

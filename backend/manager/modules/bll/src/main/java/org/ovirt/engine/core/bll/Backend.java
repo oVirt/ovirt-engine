@@ -44,18 +44,21 @@ import org.ovirt.engine.core.common.interfaces.ErrorTranslator;
 import org.ovirt.engine.core.common.interfaces.ITagsHandler;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.osinfo.OsRepositoryImpl;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.searchbackend.BaseConditionFieldAutoCompleter;
+import org.ovirt.engine.core.searchbackend.OsValueAutoCompleter;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.ErrorTranslatorImpl;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
@@ -215,6 +218,7 @@ public class Backend implements BackendInternal {
         }
 
         initOsRepository();
+        initSearchDependencies();
 
         // Set start-up time
         _startedAt = DateTime.getNow();
@@ -230,6 +234,10 @@ public class Backend implements BackendInternal {
         SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(QuotaManager.getInstance(),
                 "updateQuotaCache",  new Class[] {}, new Object[] {},
                 1, quotaCacheIntervalInMinutes, TimeUnit.MINUTES);
+    }
+
+    private void initSearchDependencies() {
+        SimpleDependecyInjector.getInstance().bind(new OsValueAutoCompleter(OsRepositoryImpl.INSTANCE.getUniqueOsNames()));
     }
 
     private void initJobRepository() {
@@ -578,6 +586,8 @@ public class Backend implements BackendInternal {
     private void initOsRepository() {
         OsInfoPreferencesLoader.INSTANCE.init(FileSystems.getDefault().getPath(EngineLocalConfig.getInstance().getEtcDir().getAbsolutePath(), Config.<String>GetValue(ConfigValues.OsRepositoryConfDir)));
         OsRepositoryImpl.INSTANCE.init(OsInfoPreferencesLoader.INSTANCE.getPreferences());
+        OsRepository osRepository = OsRepositoryImpl.INSTANCE;
+        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
     }
 
     private static final Log log = LogFactory.getLog(Backend.class);

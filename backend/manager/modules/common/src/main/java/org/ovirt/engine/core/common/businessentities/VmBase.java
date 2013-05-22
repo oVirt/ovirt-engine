@@ -45,7 +45,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     private Guid vdsGroupId;
 
     @EditableField
-    private VmOsType os = VmOsType.Unassigned;
+    private int osId;
 
     @EditableField
     private Date creationDate = new Date(0);
@@ -201,7 +201,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
 
     public VmBase(Guid id,
             Guid vdsGroupId,
-            VmOsType os,
+            int osId,
             Date creationDate,
             String description,
             int memSizeMb,
@@ -234,7 +234,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         super();
         this.id = id;
         this.vdsGroupId = vdsGroupId;
-        this.os = os;
+        this.osId = osId;
         this.creationDate = creationDate;
         this.description = description;
         this.memSizeMb = memSizeMb;
@@ -332,12 +332,12 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.vdsGroupId = value;
     }
 
-    public VmOsType getOs() {
-        return os;
+    public int getOsId() {
+        return osId;
     }
 
-    public void setOs(VmOsType value) {
-        os = value;
+    public void setOsId(int value) {
+        osId = value;
     }
 
     public Date getCreationDate() {
@@ -573,7 +573,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         result = prime * result + ((isoPath == null) ? 0 : isoPath.hashCode());
         result = prime * result + ((kernelParams == null) ? 0 : kernelParams.hashCode());
         result = prime * result + ((kernelUrl == null) ? 0 : kernelUrl.hashCode());
-        result = prime * result + ((os == null) ? 0 : os.hashCode());
+        result = prime * result + osId;
         result = prime * result + memSizeMb;
         result = prime * result + niceLevel;
         result = prime * result + numOfSockets;
@@ -620,7 +620,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 && ObjectUtils.objectsEqual(isoPath, other.isoPath)
                 && ObjectUtils.objectsEqual(kernelParams, other.kernelParams)
                 && ObjectUtils.objectsEqual(kernelUrl, other.kernelUrl)
-                && os == other.os
+                && osId == other.osId
                 && memSizeMb == other.memSizeMb
                 && niceLevel == other.niceLevel
                 && numOfSockets == other.numOfSockets

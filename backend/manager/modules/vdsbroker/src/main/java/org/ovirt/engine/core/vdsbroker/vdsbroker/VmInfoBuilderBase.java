@@ -9,21 +9,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmBase;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.comparators.DiskImageByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.common.osinfo.OsRepositoryImpl;
 import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
@@ -84,7 +80,7 @@ public abstract class VmInfoBuilderBase {
         if (vm.isRunAndPause()) {
             createInfo.put(VdsProperties.launch_paused_param, "true");
         }
-        if(vm.isUseHostCpuFlags()) {
+        if (vm.isUseHostCpuFlags()) {
             createInfo.put(VdsProperties.cpuType,
                     "hostPassthrough");
         } else if (vm.getVdsGroupCpuFlagsData() != null) {
@@ -102,7 +98,7 @@ public abstract class VmInfoBuilderBase {
             keyboardLayout = Config.<String> GetValue(ConfigValues.VncKeyboardLayout);
         }
         createInfo.put(VdsProperties.KeyboardLayout, keyboardLayout);
-        if (vm.getVmOs().isLinux()) {
+        if (OsRepositoryImpl.INSTANCE.isLinux(vm.getVmOsId())) {
             createInfo.put(VdsProperties.PitReinjection, "false");
         }
 
@@ -180,7 +176,7 @@ public abstract class VmInfoBuilderBase {
             int offset = 0;
             String javaZoneId = null;
 
-            if (vm.getOs().isWindows()) {
+            if (OsRepositoryImpl.INSTANCE.isWindows(vm.getOs())) {
                 // convert to java & calculate offset
                 javaZoneId = WindowsJavaTimezoneMapping.windowsToJava.get(timeZone);
             } else {
@@ -201,7 +197,7 @@ public abstract class VmInfoBuilderBase {
         }
 
         // else fallback to engine config default for given OS type
-        if (vm.getOs().isWindows()) {
+        if (OsRepositoryImpl.INSTANCE.isWindows(vm.getOs())) {
             return Config.<String> GetValue(ConfigValues.DefaultWindowsTimeZone);
         } else {
             return "Etc/GMT";
@@ -217,43 +213,6 @@ public abstract class VmInfoBuilderBase {
         Collections.sort(diskImages,
                 Collections.reverseOrder(new DiskImageByBootComparator()));
         return diskImages;
-    }
-
-    /**
-     * gets the vm sound device type
-     *
-     * @param vm
-     *            The VM
-     * @param compatibilityVersion
-     * @return String, the sound card device type
-     */
-    public static String getSoundDevice(VmBase vm, Version compatibilityVersion) {
-        final String OS_REGEX = "^.*%1s,([^,]*).*$";
-        final String DEFAULT_TYPE = "default";
-        String ret = DEFAULT_TYPE;
-
-        if (vm.getVmType() == VmType.Desktop) {
-
-            String soundDeviceTypeConfig = Config.<String> GetValue(
-                    ConfigValues.DesktopAudioDeviceType, compatibilityVersion.toString());
-            String vmOS = vm.getOs().name();
-
-            Pattern regexPattern = Pattern.compile(String
-                    .format(OS_REGEX, vmOS));
-            Matcher regexMatcher = regexPattern.matcher(soundDeviceTypeConfig);
-
-            if (regexMatcher.find()) {
-                ret = regexMatcher.group(1);
-            } else {
-                regexPattern = Pattern.compile(String.format(OS_REGEX,
-                        DEFAULT_TYPE));
-                regexMatcher = regexPattern.matcher(soundDeviceTypeConfig);
-                if (regexMatcher.find()) {
-                    ret = regexMatcher.group(1);
-                }
-            }
-        }
-        return ret;
     }
 
     protected void logUnsupportedInterfaceType() {

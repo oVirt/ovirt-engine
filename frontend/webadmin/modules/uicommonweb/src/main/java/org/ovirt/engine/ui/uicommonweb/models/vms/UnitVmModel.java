@@ -2,8 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -19,11 +17,12 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -52,13 +51,13 @@ import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.PoolNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
-import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class UnitVmModel extends Model {
 
@@ -1380,33 +1379,14 @@ public class UnitVmModel extends Model {
         getAllowConsoleReconnect().setEntity(getVmType() == VmType.Server);
     }
 
-    private void initOSType()
-    {
-        List<VmOsType> osList = Arrays.asList(VmOsType.values());
-        Collections.sort(osList, new Comparator<VmOsType>() {
-
-            @Override
-            public int compare(VmOsType o1, VmOsType o2) {
-                // moving Unassigned to the head of the list
-                if (o1.name().equals(VmOsType.Unassigned.name())) {
-                    return -1;
-                }
-
-                if (o2.name().equals(VmOsType.Unassigned.name())) {
-                    return 1;
-                }
-
-                return o1.name().compareTo(o2.name());
-            }
-        });
-
-        getOSType().setItems(osList);
-        getOSType().setSelectedItem(VmOsType.Unassigned);
+    private void initOSType() {
+        getOSType().setItems(AsyncDataProvider.getOsIds());
+        getOSType().setSelectedItem(OsRepository.DEFAULT_OS);
     }
 
     private void initUsbPolicy() {
         VDSGroup cluster = getSelectedCluster();
-        VmOsType osType = (VmOsType) getOSType().getSelectedItem();
+        Integer osType = (Integer) getOSType().getSelectedItem();
         DisplayType displayType = (DisplayType) (getDisplayProtocol().getSelectedItem() != null ?
                 ((EntityModel) getDisplayProtocol().getSelectedItem()).getEntity() : null);
 
@@ -1416,7 +1396,7 @@ public class UnitVmModel extends Model {
 
         getUsbPolicy().setIsChangable(true);
         if (Version.v3_1.compareTo(cluster.getcompatibility_version()) > 0) {
-            if (osType.isWindows()) {
+            if (AsyncDataProvider.isWindowsOsType(osType)) {
                 getUsbPolicy().setItems(Arrays.asList(
                         UsbPolicy.DISABLED,
                         UsbPolicy.ENABLED_LEGACY
@@ -1429,7 +1409,7 @@ public class UnitVmModel extends Model {
         }
 
         if (Version.v3_1.compareTo(cluster.getcompatibility_version()) <= 0) {
-            if (osType.isLinux()) {
+            if (AsyncDataProvider.isLinuxOsType(osType)) {
                 getUsbPolicy().setItems(Arrays.asList(
                         UsbPolicy.DISABLED,
                         UsbPolicy.ENABLED_NATIVE
@@ -1589,7 +1569,7 @@ public class UnitVmModel extends Model {
 
     private void oSType_SelectedItemChanged(Object sender, EventArgs args)
     {
-        VmOsType osType = (VmOsType) getOSType().getSelectedItem();
+        Integer osType = (Integer) getOSType().getSelectedItem();
 
         setIsWindowsOS(AsyncDataProvider.isWindowsOsType(osType));
         setIsLinuxOS(AsyncDataProvider.isLinuxOsType(osType));
@@ -1939,7 +1919,7 @@ public class UnitVmModel extends Model {
                 new TotalCpuCoresComposableValidation() });
 
         if (getOSType().getIsValid()) {
-            VmOsType osType = (VmOsType) getOSType().getSelectedItem();
+            Integer osType = (Integer) getOSType().getSelectedItem();
             getName().validateEntity(
                     new IValidation[] {
                             new NotEmptyValidation(),
@@ -1955,15 +1935,20 @@ public class UnitVmModel extends Model {
                             new SpecialAsciiI18NOrNoneValidation()
                     });
 
-            boolean is64OsType =
-                    (osType == VmOsType.Other || osType == VmOsType.OtherLinux || AsyncDataProvider.is64bitOsType(osType));
-            int maxMemSize = is64OsType ? get_MaxMemSize64() : get_MaxMemSize32();
+            AsyncQuery asyncQuery = new AsyncQuery();
+            asyncQuery.setModel(this);
+            asyncQuery.asyncCallback = new INewAsyncCallback() {
+                @Override
+                public void onSuccess(Object model, Object returnValue) {
+                    validateMemorySize(getMemSize(), (Integer)((VdcQueryReturnValue)returnValue).getReturnValue(), _minMemSize);
+                    if (!(((UnitVmModel)model).getBehavior() instanceof TemplateVmModelBehavior)) {
+                        // Minimum 'Physical Memory Guaranteed' is 1MB
+                        validateMemorySize(getMinAllocatedMemory(), (Integer) getMemSize().getEntity(), 1);
+                    }
+                }
+            };
 
-            validateMemorySize(getMemSize(), maxMemSize, _minMemSize);
-            if (!(this.getBehavior() instanceof TemplateVmModelBehavior)) {
-                // Minimum 'Physical Memory Guaranteed' is 1MB
-                validateMemorySize(getMinAllocatedMemory(), (Integer) getMemSize().getEntity(), 1);
-            }
+            AsyncDataProvider.getOsMaxRam(osType, ((VDSGroup) getSelectedCluster()).getcompatibility_version(), asyncQuery);
         }
 
         if (getIsAutoAssign().getEntity() != null && ((Boolean) getIsAutoAssign().getEntity()) == false) {
