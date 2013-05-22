@@ -41,16 +41,6 @@ public class VdsSelector {
         return privateRunVdssList;
     }
 
-    private boolean privateCheckDestinationFirst;
-
-    public boolean getCheckDestinationFirst() {
-        return privateCheckDestinationFirst;
-    }
-
-    public void setCheckDestinationFirst(boolean value) {
-        privateCheckDestinationFirst = value;
-    }
-
     private NGuid privateDestinationVdsId;
 
     public NGuid getDestinationVdsId() {
@@ -72,26 +62,18 @@ public class VdsSelector {
         privateVm = value;
     }
 
-    public VdsSelector(VM vm, NGuid destinationVdsId, boolean dedicatedFirst, VdsFreeMemoryChecker memoryChecker) {
+    public VdsSelector(VM vm, NGuid destinationVdsId, VdsFreeMemoryChecker memoryChecker) {
         setVm(vm);
         setDestinationVdsId(destinationVdsId);
-        setCheckDestinationFirst(dedicatedFirst);
         this.memoryChecker = memoryChecker;
     }
 
     public Guid getVdsToRunOn(boolean isMigrate) {
         Guid result = Guid.Empty;
         if (getDestinationVdsId() != null) {
-            if (getCheckDestinationFirst()) {
-                result = getVdsRunOnDestination(isMigrate);
-                if (result.equals(Guid.Empty) && privateVm.getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
-                    result = getAnyVdsToRunOn(isMigrate);
-                }
-            } else {
+            result = getVdsRunOnDestination(isMigrate);
+            if (result.equals(Guid.Empty) && privateVm.getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
                 result = getAnyVdsToRunOn(isMigrate);
-                if (result.equals(Guid.Empty)) {
-                    result = getVdsRunOnDestination(isMigrate);
-                }
             }
         } else {
             result = getAnyVdsToRunOn(isMigrate);

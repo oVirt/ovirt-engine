@@ -231,7 +231,6 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                 new VdsSelector(vm,
                         runVmParams.getDestinationVdsId() != null ?
                                 runVmParams.getDestinationVdsId() : vm.getDedicatedVmForVds(),
-                        true,
                         new VdsFreeMemoryChecker(new NonWaitingDelayer()));
 
         return getRunVmValidator().canRunVm(vm,

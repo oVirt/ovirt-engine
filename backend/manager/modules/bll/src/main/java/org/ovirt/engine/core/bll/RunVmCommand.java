@@ -135,7 +135,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         if (getVm() != null) {
             Guid destVdsId = (getDestinationVds() != null) ? (Guid) getDestinationVds().getId() : null;
-            setVdsSelector(new VdsSelector(getVm(), destVdsId, true, new VdsFreeMemoryChecker(this)));
+            setVdsSelector(new VdsSelector(getVm(), destVdsId, new VdsFreeMemoryChecker(this)));
 
             refreshBootParameters(runVmParameters);
             getVm().setLastStartTime(new Date());
