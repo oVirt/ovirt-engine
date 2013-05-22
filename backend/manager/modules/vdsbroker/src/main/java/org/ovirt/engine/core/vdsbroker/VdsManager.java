@@ -394,7 +394,7 @@ public class VdsManager {
             /**
              * refresh capabilities
              */
-            VDSStatus newStatus = refreshCapabilities(new AtomicBoolean(), vds, true);
+            VDSStatus newStatus = refreshCapabilities(new AtomicBoolean(), vds);
             if (log.isDebugEnabled()) {
                 log.debugFormat(
                         "Succeeded to refreshCapabilities for host {0} , new status will be {1} ",
@@ -524,7 +524,7 @@ public class VdsManager {
         ResourceManager.getInstance().SuccededToRunVm(vmId, _vds.getId());
     }
 
-    public VDSStatus refreshCapabilities(AtomicBoolean processHardwareCapsNeeded, VDS vds, boolean skipMgmtNet) {
+    public VDSStatus refreshCapabilities(AtomicBoolean processHardwareCapsNeeded, VDS vds) {
         log.debug("GetCapabilitiesVDSCommand started method");
         VDS oldVDS = vds.clone();
         GetCapabilitiesVDSCommand<VdsIdAndVdsVDSCommandParametersBase> vdsBrokerCommand =
@@ -550,7 +550,7 @@ public class VdsManager {
 
             VDSStatus returnStatus = vds.getStatus();
             NonOperationalReason nonOperationalReason =
-                    CollectVdsNetworkDataVDSCommand.persistAndEnforceNetworkCompliance(vds, skipMgmtNet);
+                    CollectVdsNetworkDataVDSCommand.persistAndEnforceNetworkCompliance(vds, false);
 
             if (nonOperationalReason != NonOperationalReason.NONE) {
                 setIsSetNonOperationalExecuted(true);
