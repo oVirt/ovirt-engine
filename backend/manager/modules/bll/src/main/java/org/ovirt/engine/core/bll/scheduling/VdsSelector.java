@@ -71,7 +71,10 @@ public class VdsSelector {
     public Guid getVdsToRunOn(boolean isMigrate) {
         Guid result = Guid.Empty;
         if (getDestinationVdsId() != null) {
-            result = getVdsRunOnDestination(isMigrate);
+            VDS targetVds = DbFacade.getInstance().getVdsDao().get(getDestinationVdsId());
+            log.infoFormat("Checking for a specific VDS only - id:{0}, name:{1}, host_name(ip):{2}",
+                    getDestinationVdsId(), targetVds.getName(), targetVds.getHostName());
+            result = getVdsToRunOn(new ArrayList<VDS>(Arrays.asList(new VDS[] { targetVds })), isMigrate);
             if (result.equals(Guid.Empty) && privateVm.getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
                 result = getAnyVdsToRunOn(isMigrate);
             }
@@ -104,22 +107,6 @@ public class VdsSelector {
         }
 
         return returnValue;
-    }
-
-    /**
-     * Get the ID of the VDS.
-     * getDestinationVdsId() must not be null.
-     * @return
-     */
-    private Guid getVdsRunOnDestination(boolean isMigrate) {
-        Guid result = Guid.Empty;
-        if (getDestinationVdsId() != null) {
-            VDS target_vds = DbFacade.getInstance().getVdsDao().get(getDestinationVdsId());
-            log.infoFormat("Checking for a specific VDS only - id:{0}, name:{1}, host_name(ip):{2}",
-                    getDestinationVdsId(), target_vds.getName(), target_vds.getHostName());
-            result = getVdsToRunOn(Arrays.asList(target_vds), isMigrate);
-        }
-        return result;
     }
 
     private Guid getAnyVdsToRunOn(boolean isMigrate) {
