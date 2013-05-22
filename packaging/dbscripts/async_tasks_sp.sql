@@ -159,6 +159,18 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+
+Create or replace FUNCTION GetAsyncTasksByEntityId(v_entity_id UUID) RETURNS SETOF async_tasks
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT async_tasks.*
+   FROM async_tasks
+   JOIN async_tasks_entities ON async_task_id = task_id
+   WHERE entity_id = v_entity_id;
+
+END; $procedure$
+LANGUAGE plpgsql;
+
 Create or replace FUNCTION GetAsyncTasksByVdsmTaskId(v_vdsm_task_id UUID) RETURNS SETOF async_tasks
    AS $procedure$
 BEGIN

@@ -94,4 +94,12 @@ public interface AsyncTaskDAO extends DAO {
      * @return the number of tasks deleted
      */
     int removeByVdsmTaskId(Guid vdsmTaskId);
+
+    /**
+     * Gets all the tasks that are associated with an entity id
+     *
+     * @param entityId
+     * @return
+     */
+    List<AsyncTasks> getTasksByEntity(Guid entityId);
 }

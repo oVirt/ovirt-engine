@@ -87,6 +87,13 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
     }
 
     @Test
+    public void testGetAsyncTaskEntitiesById() {
+        List<AsyncTasks> tasks = dao.getTasksByEntity(FixturesTool.ENTITY_WITH_TASKS_ID);
+        assertNotNull(tasks);
+        assertEquals(tasks.size(), 1);
+    }
+
+    @Test
     public void testGetAsyncTaskIdsByInvalidEntity() {
         List<Guid> guids = dao.getAsyncTaskIdsByEntity(Guid.newGuid());
         assertNotNull(guids);
