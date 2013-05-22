@@ -1215,6 +1215,57 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         return false;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        long temp;
+        temp = Double.doubleToLongBits(_actualDiskWithSnapthotsSize);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        result = prime * result + (balloonEnabled ? 1231 : 1237);
+        result = prime * result + ((cdPath == null) ? 0 : cdPath.hashCode());
+        result = prime * result + ((configured == null) ? 0 : configured.hashCode());
+        result = prime * result + ((diskMap == null) ? 0 : diskMap.hashCode());
+        temp = Double.doubleToLongBits(diskSize);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        result = prime * result + ((floppyPath == null) ? 0 : floppyPath.hashCode());
+        result = prime * result + migreatingFromPort;
+        result = prime * result + migreatingToPort;
+        result = prime * result + ((privateGuestAgentVersion == null) ? 0 : privateGuestAgentVersion.hashCode());
+        result = prime * result + ((runOnVdsName == null) ? 0 : runOnVdsName.hashCode());
+        result = prime * result + (runOnce ? 1231 : 1237);
+        result = prime * result + ((selectionAlgorithm == null) ? 0 : selectionAlgorithm.hashCode());
+        result = prime * result + ((snapshots == null) ? 0 : snapshots.hashCode());
+        result = prime * result + ((spiceDriverVersion == null) ? 0 : spiceDriverVersion.hashCode());
+        result = prime * result + ((storagePoolId == null) ? 0 : storagePoolId.hashCode());
+        result = prime * result + ((storagePoolName == null) ? 0 : storagePoolName.hashCode());
+        result = prime * result + (transparentHugePages ? 1231 : 1237);
+        result = prime * result + (useSysPrep ? 1231 : 1237);
+        result =
+                prime * result + ((vdsGroupCompatibilityVersion == null) ? 0 : vdsGroupCompatibilityVersion.hashCode());
+        result = prime * result + ((vdsGroupCpuFlagsData == null) ? 0 : vdsGroupCpuFlagsData.hashCode());
+        result = prime * result + ((vdsGroupCpuName == null) ? 0 : vdsGroupCpuName.hashCode());
+        result = prime * result + ((vdsGroupDescription == null) ? 0 : vdsGroupDescription.hashCode());
+        result = prime * result + ((vdsGroupName == null) ? 0 : vdsGroupName.hashCode());
+        result = prime * result + ((vmDynamic == null) ? 0 : vmDynamic.hashCode());
+        result = prime * result + ((vmPayload == null) ? 0 : vmPayload.hashCode());
+        result = prime * result + ((vmPoolId == null) ? 0 : vmPoolId.hashCode());
+        result = prime * result + ((vmPoolName == null) ? 0 : vmPoolName.hashCode());
+        result = prime * result + ((vmStatic == null) ? 0 : vmStatic.hashCode());
+        result = prime * result + ((vmStatistics == null) ? 0 : vmStatistics.hashCode());
+        result = prime * result + vmtCpuPerSocket;
+        result = prime * result + ((vmtCreationDate == null) ? 0 : vmtCreationDate.hashCode());
+        result = prime * result + ((vmtDescription == null) ? 0 : vmtDescription.hashCode());
+        result = prime * result + vmtMemSizeMb;
+        result = prime * result + ((vmtName == null) ? 0 : vmtName.hashCode());
+        result = prime * result + vmtNumOfCpus;
+        result = prime * result + vmtNumOfSockets;
+        result = prime * result + ((vmtOs == null) ? 0 : vmtOs.hashCode());
+        result = prime * result + ((vmtTimeZone == null) ? 0 : vmtTimeZone.hashCode());
+        result = prime * result + vmtchildCount;
+        return result;
+    }
+
     public String getVmPoolName() {
         return vmPoolName;
     }
