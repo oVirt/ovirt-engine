@@ -258,7 +258,7 @@ public class LoginModel extends Model
                 if (result != null)
                 {
                     VdcReturnValueBase returnValue = (VdcReturnValueBase) result;
-                    if (returnValue != null && returnValue.getSucceeded())
+                    if (returnValue.getSucceeded())
                     {
                         user = (VdcUser) returnValue.getActionReturnValue();
                         loginModel.setLoggedUser(user);
@@ -266,10 +266,7 @@ public class LoginModel extends Model
                     if (user == null)
                     {
                         loginModel.getPassword().setEntity(""); //$NON-NLS-1$
-                        if (returnValue != null)
-                        {
-                            loginModel.setMessage(Linq.firstOrDefault(returnValue.getCanDoActionMessages()));
-                        }
+                        loginModel.setMessage(Linq.firstOrDefault(returnValue.getCanDoActionMessages()));
                         loginModel.getUserName().setIsChangable(true);
                         loginModel.getPassword().setIsChangable(true);
                         loginModel.getDomain().setIsChangable(true);

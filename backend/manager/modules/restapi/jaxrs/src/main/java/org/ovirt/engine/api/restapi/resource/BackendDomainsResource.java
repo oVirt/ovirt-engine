@@ -52,7 +52,7 @@ public class BackendDomainsResource extends AbstractBackendCollectionResource<Do
             Directory ds = new Directory();
             ds.setDomain(domain);
             NGuid guid = new NGuid(domain.getBytes(),true);
-            ds.setId(guid!=null?guid.toString():null);
+            ds.setId(guid.toString());
             dsl.add(ds);
         }
         return dsl;

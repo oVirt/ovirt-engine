@@ -189,9 +189,7 @@ public class ReapedMap<K, V> extends HashMap<K, V> {
         while ((ref = queue.poll()) != null) {
             @SuppressWarnings("unchecked")
             IdAwareReference<K, V> value = (IdAwareReference<K, V>) ref;
-            if (value != null) {
-                reapableMap.remove(value.getKey());
-            }
+            reapableMap.remove(value.getKey());
         }
     }
 

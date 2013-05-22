@@ -57,30 +57,29 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         if (mOldTemplate == null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
-        if (mOldTemplate != null) {
-            VmTemplateHandler.UpdateDisksFromDb(mOldTemplate);
-            if (mOldTemplate.getStatus() == VmTemplateStatus.Locked) {
-                return failCanDoAction(VdcBllMessages.VM_TEMPLATE_IS_LOCKED);
-            }
-            if (!StringUtils.equals(mOldTemplate.getName(), getVmTemplate().getName())
-                    && isVmTemlateWithSameNameExist(getVmTemplateName())) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
-            } else {
-                if (getVdsGroup() == null) {
-                    addCanDoActionMessage(VdcBllMessages.VMT_CLUSTER_IS_NOT_VALID);
-                } else if (VmHandler.isMemorySizeLegal(mOldTemplate.getOs(),
-                        mOldTemplate.getMemSizeMb(),
-                        getReturnValue()
-                                .getCanDoActionMessages(),
-                        getVdsGroup().getcompatibility_version().toString())) {
-                    if (IsVmPriorityValueLegal(getParameters().getVmTemplateData().getPriority(), getReturnValue()
-                            .getCanDoActionMessages())
-                            && IsDomainLegal(getParameters().getVmTemplateData().getDomain(), getReturnValue()
-                                    .getCanDoActionMessages())) {
-                        returnValue = VmTemplateHandler.isUpdateValid(mOldTemplate, getVmTemplate());
-                        if (!returnValue) {
-                            addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_UPDATE_ILLEGAL_FIELD);
-                        }
+
+        VmTemplateHandler.UpdateDisksFromDb(mOldTemplate);
+        if (mOldTemplate.getStatus() == VmTemplateStatus.Locked) {
+            return failCanDoAction(VdcBllMessages.VM_TEMPLATE_IS_LOCKED);
+        }
+        if (!StringUtils.equals(mOldTemplate.getName(), getVmTemplate().getName())
+                && isVmTemlateWithSameNameExist(getVmTemplateName())) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+        } else {
+            if (getVdsGroup() == null) {
+                addCanDoActionMessage(VdcBllMessages.VMT_CLUSTER_IS_NOT_VALID);
+            } else if (VmHandler.isMemorySizeLegal(mOldTemplate.getOs(),
+                    mOldTemplate.getMemSizeMb(),
+                    getReturnValue()
+                            .getCanDoActionMessages(),
+                    getVdsGroup().getcompatibility_version().toString())) {
+                if (IsVmPriorityValueLegal(getParameters().getVmTemplateData().getPriority(), getReturnValue()
+                        .getCanDoActionMessages())
+                        && IsDomainLegal(getParameters().getVmTemplateData().getDomain(), getReturnValue()
+                                .getCanDoActionMessages())) {
+                    returnValue = VmTemplateHandler.isUpdateValid(mOldTemplate, getVmTemplate());
+                    if (!returnValue) {
+                        addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_UPDATE_ILLEGAL_FIELD);
                     }
                 }
             }

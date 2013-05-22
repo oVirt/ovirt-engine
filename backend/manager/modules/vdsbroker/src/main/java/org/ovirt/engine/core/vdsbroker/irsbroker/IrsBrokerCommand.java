@@ -259,8 +259,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         }
                     }
                 }
-            } else if (result != null
-                    && result.getSucceeded()
+            } else if (result.getSucceeded()
                     && ((SpmStatusResult) result.getReturnValue()).getSpmStatus() == SpmStatus.SPM
                     && (storagePool.getstatus() == StoragePoolStatus.Problematic || storagePool.getstatus() == StoragePoolStatus.Contend)) {
                 // if recovered from network exception set back to up

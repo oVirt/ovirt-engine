@@ -170,11 +170,7 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
             } else {
                 Object entityResource = method.invoke(this, id);
                 method = entityResource.getClass().getMethod("get");
-                if (method==null) {
-                    LOG.warn("Could not find GET method in " + entityResource.getClass().getName());
-                } else {
-                    method.invoke(entityResource);
-                }
+                method.invoke(entityResource);
             }
         } catch (IllegalAccessException e) {
             LOG.error("Reflection Error", e);

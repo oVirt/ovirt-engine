@@ -59,8 +59,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
         }
         // if user and group not sent check user/group is in the db in order to
         // give permission
-        if (adElementId != null
-                && getParameters().getVdcUser() == null
+        if (getParameters().getVdcUser() == null
                 && getParameters().getAdGroup() == null
                 && getDbUserDAO().get(adElementId) == null
                 && getAdGroupDAO().get(adElementId) == null) {
@@ -98,9 +97,6 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
             // try to add user to db if vdcUser sent
             if (getParameters().getVdcUser() != null && _dbUser == null) {
                 _dbUser = UserCommandBase.initUser(getParameters().getVdcUser(), getParameters().getSessionId());
-                if (_dbUser == null) {
-                    return;
-                }
             }
             // try to add group to db if adGroup sent
             else if (getParameters().getAdGroup() != null) {

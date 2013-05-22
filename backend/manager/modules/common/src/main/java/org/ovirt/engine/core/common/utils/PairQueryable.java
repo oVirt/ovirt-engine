@@ -44,7 +44,7 @@ public class PairQueryable<T extends IVdcQueryable, K extends IVdcQueryable> ext
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((getPair() == null) ? 0 : getPair().hashCode());
+        result = prime * result + getPair().hashCode();
         return result;
     }
 
@@ -60,11 +60,7 @@ public class PairQueryable<T extends IVdcQueryable, K extends IVdcQueryable> ext
             return false;
         }
         PairQueryable other = (PairQueryable) obj;
-        if (getPair() == null) {
-            if (other.getPair() != null) {
-                return false;
-            }
-        } else if (!getPair().equals(other.getPair())) {
+        if (!getPair().equals(other.getPair())) {
             return false;
         }
         return true;

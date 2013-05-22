@@ -1152,7 +1152,7 @@ public class HostModel extends Model
                     getTestCommand().setIsExecutionAllowed(true);
                 } else {
 
-                    if (response != null && response.getReturnValue() != null) {
+                    if (response.getReturnValue() != null) {
                         FenceStatusReturnValue fenceStatusReturnValue =
                                 (FenceStatusReturnValue) response.getReturnValue();
                         String message = fenceStatusReturnValue.toString();

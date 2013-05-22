@@ -490,7 +490,7 @@ public class HostMapper {
 
     private static void setHookId(Hook hook, String hookName, String eventName, String md5) {
         NGuid guid = generateHookId(eventName, hookName, md5);
-        hook.setId(guid != null ? guid.toString() : null);
+        hook.setId(guid.toString());
     }
 
     public static NGuid generateHookId(String eventName, String hookName, String md5) {

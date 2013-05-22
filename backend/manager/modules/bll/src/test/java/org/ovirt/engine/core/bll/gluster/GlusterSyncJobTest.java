@@ -405,7 +405,7 @@ public class GlusterSyncJobTest {
                 }
                 @SuppressWarnings("unchecked")
                 ArrayList<Guid> ids = (ArrayList<Guid>) argument;
-                return (ids != null && ids.size() == removedBrickIds.size() && removedBrickIds.containsAll(ids));
+                return (ids.size() == removedBrickIds.size() && removedBrickIds.containsAll(ids));
             }
         };
     }

@@ -50,14 +50,8 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
                         try {
                             user = UserCommandBase.initUser(new VdcUser(subscriberId, "", domain), getParameters()
                                     .getSessionId());
-                            if (user == null) {
-                                addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
-                                retValue = false;
-                            } else {
-                                retValue =
-                                        ValidateAdd(eventNotificationMethods, getParameters().getEventSubscriber(),
+                            retValue = ValidateAdd(eventNotificationMethods, getParameters().getEventSubscriber(),
                                                 user);
-                            }
                         } catch (VdcBLLException vdcBllException) {
                             addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
                             retValue = false;

@@ -293,7 +293,7 @@ public class ExecutionHandler {
         }
         Step step = null;
 
-        if (context != null && context.isTasksMonitored()) {
+        if (context.isTasksMonitored()) {
             Step parentTaskStep = context.getParentTasksStep();
             if (parentTaskStep != null) {
                 step = addSubStep(parentTaskStep, stepName, description);
@@ -358,7 +358,7 @@ public class ExecutionHandler {
                             step = parentStep.addStep(newStepName, description);
                         }
                     }
-                } else if (parentStep != null && context.getExecutionMethod() == ExecutionMethod.AsStep) {
+                } else if (context.getExecutionMethod() == ExecutionMethod.AsStep) {
                     step = parentStep.addStep(newStepName, description);
                 }
             }

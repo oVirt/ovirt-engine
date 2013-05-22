@@ -168,7 +168,7 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
             if (protocol == null) {
                 getView().setConsoleWarningMessage(consoleUtils.determineProtocolMessage(item));
             } else {
-                getView().setConsoleProtocol(protocol == null ? "" : determineProtocolMessage(protocol, item)); //$NON-NLS-1$
+                getView().setConsoleProtocol(determineProtocolMessage(protocol, item));
             }
         } else {
             getView().setConsoleProtocol(""); //$NON-NLS-1$

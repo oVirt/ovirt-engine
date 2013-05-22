@@ -255,7 +255,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
 
     public String generateId(Version v) {
         NGuid guid = new NGuid((v.getMajor()+"."+v.getMinor()).getBytes(),true);
-        return guid!=null ? guid.toString():null;
+        return guid.toString();
     }
 
     private void addNetworkUsages(VersionCaps version, NetworkUsage[] values) {

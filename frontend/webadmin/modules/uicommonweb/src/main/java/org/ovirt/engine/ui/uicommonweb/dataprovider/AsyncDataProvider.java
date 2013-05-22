@@ -2142,8 +2142,8 @@ public final class AsyncDataProvider {
         Version clusterCompatibility = commandVersionsInfo.getClusterVersion();
         Version dcCompatibility = commandVersionsInfo.getStoragePoolVersion();
 
-        return (cluster != null && clusterCompatibility.compareTo(cluster) <= 0)
-                && (dc != null && dcCompatibility.compareTo(dc) <= 0);
+        return (clusterCompatibility.compareTo(cluster) <= 0)
+                && (dcCompatibility.compareTo(dc) <= 0);
     }
 
     public static CommandVersionsInfo getCommandVersionsInfo(VdcActionType vdcActionType) {
