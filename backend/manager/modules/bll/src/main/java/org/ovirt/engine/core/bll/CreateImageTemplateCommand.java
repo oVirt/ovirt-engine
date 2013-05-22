@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
@@ -137,7 +138,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         Guid destImageId = getDestinationDiskImage().getImageId();
         RemoveImageParameters p =
                 new RemoveImageParameters(destImageId);
-        p.setEntityId(destImageId);
+        p.setEntityInfo(new EntityInfo(VdcObjectType.VM, destImageId));
         p.setParentParameters(p);
         p.setParentCommand(VdcActionType.RemoveImage);
         VdcReturnValueBase returnValue =

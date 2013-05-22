@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.action.CreateImageTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -162,7 +163,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 getVmTemplateId(), getVmTemplateName(), getVmId());
         createParams.setStorageDomainId(diskImage.getStorageIds().get(0));
         createParams.setVmSnapshotId(vmSnapshotId);
-        createParams.setEntityId(getParameters().getEntityId());
+        createParams.setEntityInfo(getParameters().getEntityInfo());
         createParams.setDestinationStorageDomainId(diskInfoDestinationMap.get(diskImage.getId())
                 .getStorageIds()
                 .get(0));
@@ -187,7 +188,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         setActionReturnValue(Guid.Empty);
         setVmTemplateId(Guid.newGuid());
         getParameters().setVmTemplateId(getVmTemplateId());
-        getParameters().setEntityId(getVmTemplateId());
+        getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
 
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 

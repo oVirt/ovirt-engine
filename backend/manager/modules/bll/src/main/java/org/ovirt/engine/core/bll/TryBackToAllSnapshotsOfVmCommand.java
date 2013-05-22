@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
@@ -54,7 +55,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
     public TryBackToAllSnapshotsOfVmCommand(T parameters) {
         super(parameters);
-        parameters.setEntityId(getVmId());
+        parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
     }
 
     @Override
@@ -186,7 +187,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                     ImagesContainterParametersBase params = new ImagesContainterParametersBase(image.getImageId());
                     params.setParentCommand(VdcActionType.TryBackToAllSnapshotsOfVm);
                     params.setVmSnapshotId(newActiveSnapshotId);
-                    params.setEntityId(getParameters().getEntityId());
+                    params.setEntityInfo(getParameters().getEntityInfo());
                     params.setParentParameters(getParameters());
                     params.setQuotaId(image.getQuotaId());
                     return params;

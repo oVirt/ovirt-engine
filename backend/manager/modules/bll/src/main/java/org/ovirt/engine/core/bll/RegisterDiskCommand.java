@@ -4,7 +4,9 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RegisterDiskParameters;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -21,7 +23,7 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
     public RegisterDiskCommand(T parameters) {
         super(parameters);
         setStoragePoolId(parameters.getDiskImage().getStoragePoolId());
-        parameters.setEntityId(parameters.getDiskImage().getId());
+        parameters.setEntityInfo(new EntityInfo(VdcObjectType.Disk, parameters.getDiskImage().getId()));
     }
 
     protected RegisterDiskCommand(Guid commandId) {

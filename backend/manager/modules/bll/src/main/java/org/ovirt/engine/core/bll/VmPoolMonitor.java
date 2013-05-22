@@ -3,9 +3,11 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -129,7 +131,7 @@ public class VmPoolMonitor {
         log.infoFormat("Running Vm {0} as stateless", vmToRunAsStateless);
         boolean prestartingVmSucceeded = false;
         RunVmParams runVmParams = new RunVmParams(vmToRunAsStateless.getId());
-        runVmParams.setEntityId(vmToRunAsStateless);
+        runVmParams.setEntityInfo(new EntityInfo(VdcObjectType.VM, vmToRunAsStateless.getId()));
         runVmParams.setRunAsStateless(true);
         VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(VdcActionType.RunVm,
                 runVmParams, ExecutionHandler.createInternalJobContext());

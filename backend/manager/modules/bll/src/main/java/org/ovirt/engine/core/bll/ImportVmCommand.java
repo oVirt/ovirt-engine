@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -609,7 +610,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             p.setSourceDomainId(getParameters().getSourceDomainId());
             p.setStoragePoolId(getParameters().getStoragePoolId());
             p.setImportEntity(true);
-            p.setEntityId(getVm().getId());
+            p.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVm().getId()));
             p.setQuotaId(disk.getQuotaId() != null ? disk.getQuotaId() : getParameters().getQuotaId());
             if (getParameters().getVm().getDiskMap() != null
                     && getParameters().getVm().getDiskMap().containsKey(diskGuidList.get(i))) {

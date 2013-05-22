@@ -15,10 +15,12 @@ import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.resource.VmDiskResource;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -129,8 +131,8 @@ public class BackendVmDisksResourceTest
                 getEntityList());
         setUpActionExpectations (VdcActionType.AttachDiskToVm,
                 AttachDettachVmDiskParameters.class,
-                new String[] { "VmId", "EntityId" },
-                new Object[] { PARENT_ID, DISK_ID },
+                new String[] { "VmId", "EntityInfo" },
+                new Object[] { PARENT_ID, new EntityInfo(VdcObjectType.Disk, DISK_ID) },
                 true,
                 true);
         Disk model = getModel(0);
@@ -145,8 +147,8 @@ public class BackendVmDisksResourceTest
         setUpGetEntityExpectations();
         setUriInfo(setUpActionExpectations(VdcActionType.DetachDiskFromVm,
                                            AttachDettachVmDiskParameters.class,
-                                           new String[] { "VmId", "EntityId" },
-                                           new Object[] { PARENT_ID, DISK_ID },
+                                           new String[] { "VmId", "EntityInfo" },
+                                           new Object[] { PARENT_ID, new EntityInfo(VdcObjectType.Disk, DISK_ID) },
                                            true,
                                            true));
         Action action = new Action();

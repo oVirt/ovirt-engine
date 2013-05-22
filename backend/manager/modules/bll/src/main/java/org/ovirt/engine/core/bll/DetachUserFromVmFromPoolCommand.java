@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.action.VmPoolSimpleUserParameters;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.permissions;
@@ -25,7 +27,7 @@ public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameter
 
     public DetachUserFromVmFromPoolCommand(T parameters) {
         super(parameters);
-        parameters.setEntityId(getVmId());
+        parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
 
     }
 

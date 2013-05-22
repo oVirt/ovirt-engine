@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -110,7 +111,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     public RunVmCommand(T runVmParams) {
         super(runVmParams);
-        getParameters().setEntityId(runVmParams.getVmId());
+        getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, runVmParams.getVmId()));
         setStoragePoolId(getVm() != null ? getVm().getStoragePoolId() : null);
         initRunVmCommand();
     }
@@ -403,7 +404,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         createAllSnapshotsFromVmParameters.setShouldBeLogged(false);
         createAllSnapshotsFromVmParameters.setParentCommand(getActionType());
         createAllSnapshotsFromVmParameters.setParentParameters(getParameters());
-        createAllSnapshotsFromVmParameters.setEntityId(getParameters().getEntityId());
+        createAllSnapshotsFromVmParameters.setEntityInfo(getParameters().getEntityInfo());
         createAllSnapshotsFromVmParameters.setSnapshotType(SnapshotType.STATELESS);
         return createAllSnapshotsFromVmParameters;
     }

@@ -10,8 +10,10 @@ import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -42,7 +44,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
     public MoveVmCommand(T parameters) {
         super(parameters);
         setVmId(parameters.getContainerId());
-        parameters.setEntityId(getVmId());
+        parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
         setStoragePoolId(getVm().getStoragePoolId());
         setDescription(getVmName());
     }

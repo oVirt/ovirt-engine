@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -64,7 +65,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     public MoveOrCopyTemplateCommand(T parameters) {
         super(parameters);
         setVmTemplateId(parameters.getContainerId());
-        parameters.setEntityId(getVmTemplateId());
+        parameters.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
         imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
         imageFromSourceDomainMap = new HashMap<Guid, DiskImage>();
     }
@@ -178,7 +179,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                         containerID, disk.getId(), disk.getImageId(),
                         getParameters().getStorageDomainId(), getMoveOrCopyImageOperation());
                 params.setParentCommand(getActionType());
-                params.setEntityId(getParameters().getEntityId());
+                params.setEntityInfo(getParameters().getEntityInfo());
                 params.setAddImageDomainMapping(getMoveOrCopyImageOperation() == ImageOperation.Copy);
                 params.setSourceDomainId(imageFromSourceDomainMap.get(disk.getId()).getStorageIds().get(0));
                 params.setParentParameters(getParameters());

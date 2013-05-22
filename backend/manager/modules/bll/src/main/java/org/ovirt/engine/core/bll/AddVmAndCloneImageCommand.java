@@ -9,11 +9,13 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -113,7 +115,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
         params.setUseCopyCollapse(true);
         params.setSourceDomainId(srcStorageDomainId);
         params.setWipeAfterDelete(diskImage.isWipeAfterDelete());
-        params.setEntityId(getVmId());
+        params.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
         params.setParentParameters(getParameters());
         params.setParentCommand(parentCommandType);
         return params;

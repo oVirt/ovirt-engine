@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -275,7 +276,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         result.setTransactionScopeOption(TransactionScopeOption.Suppress);
         result.setDiskImage(diskImage);
         result.setParentCommand(VdcActionType.RemoveDisk);
-        result.setEntityId(getParameters().getDiskId());
+        result.setEntityInfo(new EntityInfo(VdcObjectType.Disk,getParameters().getDiskId()));
         result.setParentParameters(getParameters());
         result.setRemoveFromSnapshots(true);
         result.setStorageDomainId(getParameters().getStorageDomainId());

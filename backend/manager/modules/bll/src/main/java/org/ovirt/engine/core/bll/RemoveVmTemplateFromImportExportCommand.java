@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -92,7 +93,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
 
     @Override
     protected void executeCommand() {
-        getParameters().setEntityId(getVmTemplateId());
+        getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
         RemoveVMVDSCommandParameters tempVar = new RemoveVMVDSCommandParameters(getParameters().getStoragePoolId(),
                 getVmTemplateId());
         tempVar.setStorageDomainId(getParameters().getStorageDomainId());
@@ -109,7 +110,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
             }
             RemoveAllVmImagesParameters tempVar2 = new RemoveAllVmImagesParameters(getVmId(), images);
             tempVar2.setParentCommand(getActionType());
-            tempVar2.setEntityId(getParameters().getEntityId());
+            tempVar2.setEntityInfo(getParameters().getEntityInfo());
             tempVar2.setForceDelete(true);
             tempVar2.setParentParameters(getParameters());
             VdcReturnValueBase vdcRetValue =

@@ -18,6 +18,7 @@ import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.CreateCloneOfTemplateParameters;
 import org.ovirt.engine.core.common.action.CreateImageTemplateParameters;
@@ -33,6 +34,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -149,7 +151,7 @@ public class BackwardCompatibilityTaskCreationTest {
     @Theory
     public void testConcreateCreateTaskBackwardsComaptibility(CommandBase<? extends VdcActionParametersBase> cmd) {
         VdcActionParametersBase params = cmd.getParameters();
-        params.setEntityId(Guid.newGuid());
+        params.setEntityInfo(new EntityInfo(VdcObjectType.VM, Guid.newGuid()));
         params.setParentCommand(RandomUtils.instance().nextEnum(VdcActionType.class));
         params.setParentParameters(params);
 

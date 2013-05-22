@@ -30,7 +30,7 @@ public class DetachDiskFromVmCommand<T extends AttachDettachVmDiskParameters> ex
         }
 
         if (retValue) {
-            disk = getDiskDao().get((Guid)getParameters().getEntityId());
+            disk = getDiskDao().get((Guid) getParameters().getEntityInfo().getId());
             retValue = isDiskExist(disk);
         }
         if (retValue) {

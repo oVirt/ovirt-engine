@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -74,7 +75,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     public ExportVmCommand(T parameters) {
         super(parameters);
         setVmId(parameters.getContainerId());
-        parameters.setEntityId(getVmId());
+        parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
     }
 
     @Override
@@ -282,7 +283,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                     .getId(), disk.getImageId(), getParameters().getStorageDomainId(),
                     getMoveOrCopyImageOperation());
             tempVar.setParentCommand(getActionType());
-            tempVar.setEntityId(getParameters().getEntityId());
+            tempVar.setEntityInfo(getParameters().getEntityInfo());
             tempVar.setUseCopyCollapse(getParameters().getCopyCollapse());
             DiskImage diskForVolumeInfo = getDiskForVolumeInfo(disk);
             tempVar.setVolumeFormat(diskForVolumeInfo.getVolumeFormat());

@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
+import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AttachDettachVmDiskParameters extends VmDiskOperationParameterBase {
@@ -9,7 +11,7 @@ public class AttachDettachVmDiskParameters extends VmDiskOperationParameterBase 
 
     public AttachDettachVmDiskParameters(Guid vmId, Guid diskId, boolean isPlugUnPlug) {
         super(vmId, null);
-        setEntityId(diskId);
+        setEntityInfo(new EntityInfo(VdcObjectType.Disk, diskId));
         this.isPlugUnPlug = isPlugUnPlug;
     }
 

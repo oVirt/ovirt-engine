@@ -43,7 +43,7 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
                 tempVar.setStorageDomainId(domain);
                 tempVar.setStoragePoolId(template.getStoragePoolId());
                 tempVar.setImageGroupID(template.getId());
-                tempVar.setEntityId(getParameters().getEntityId());
+                tempVar.setEntityInfo(getParameters().getEntityInfo());
                 tempVar.setWipeAfterDelete(template.isWipeAfterDelete());
                 tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
                 tempVar.setParentCommand(getActionType());

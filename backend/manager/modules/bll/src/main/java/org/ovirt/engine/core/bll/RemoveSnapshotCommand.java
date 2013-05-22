@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
@@ -103,7 +104,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
         lockSnapshot(snapshot);
         freeLock();
-        getParameters().setEntityId(getVmId());
+        getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
 
         if (snapshotHasImages) {
             removeImages();
@@ -166,7 +167,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         ImagesContainterParametersBase parameters =
                 new ImagesContainterParametersBase(source.getImageId(), getVmId());
         parameters.setDestinationImageId(dest.getImageId());
-        parameters.setEntityId(getParameters().getEntityId());
+        parameters.setEntityInfo(getParameters().getEntityInfo());
         parameters.setParentParameters(getParameters());
         parameters.setParentCommand(getActionType());
         return parameters;

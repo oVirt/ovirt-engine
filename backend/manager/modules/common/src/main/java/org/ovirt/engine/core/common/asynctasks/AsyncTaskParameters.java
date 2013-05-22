@@ -39,14 +39,14 @@ public class AsyncTaskParameters implements Serializable {
         return getCreationInfo().getVdsmTaskId();
     }
 
-    private Object _entityId;
+    private EntityInfo _entityInfo;
 
-    public Object getEntityId() {
-        return (_entityId == null) ? getDbAsyncTask().getActionParameters().getEntityId() : _entityId;
+    public EntityInfo getEntityInfo() {
+        return (_entityInfo == null) ? getDbAsyncTask().getActionParameters().getEntityInfo() : _entityInfo;
     }
 
-    public void setEntityId(Object value) {
-        _entityId = value;
+    public void setEntityInfo(EntityInfo entityInfo) {
+        _entityInfo = entityInfo;
     }
 
     public AsyncTaskParameters() {

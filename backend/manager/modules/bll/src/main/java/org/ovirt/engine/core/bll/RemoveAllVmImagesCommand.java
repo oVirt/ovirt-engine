@@ -87,7 +87,7 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
         result.setParentCommand(getParameters().getParentCommand());
         result.setParentParameters(getParameters().getParentParameters());
         result.setDiskImage(image);
-        result.setEntityId(getParameters().getEntityId());
+        result.setEntityInfo(getParameters().getEntityInfo());
         result.setForceDelete(getParameters().getForceDelete());
         result.setShouldLockImage(false);
         return result;

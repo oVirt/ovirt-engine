@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -75,7 +76,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     public AddDiskCommand(T parameters) {
         super(parameters);
         parameters.getDiskInfo().setId(Guid.newGuid());
-        parameters.setEntityId(parameters.getDiskInfo().getId());
+        parameters.setEntityInfo(new EntityInfo(VdcObjectType.Disk, parameters.getDiskInfo().getId()));
     }
 
     @Override
@@ -383,7 +384,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         parameters.setDiskAlias(getDiskAlias());
         parameters.setStorageDomainId(getStorageDomainId());
         parameters.setParentCommand(VdcActionType.AddDisk);
-        parameters.setEntityId(getParameters().getEntityId());
+        parameters.setEntityInfo(getParameters().getEntityInfo());
         parameters.setStoragePoolId(getStorageDomain().getStoragePoolId());
         parameters.setParentParameters(getParameters());
         if (getVm() != null) {

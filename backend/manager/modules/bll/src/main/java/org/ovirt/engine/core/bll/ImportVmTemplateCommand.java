@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
@@ -62,7 +63,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     public ImportVmTemplateCommand(ImportVmTemplateParameters parameters) {
         super(parameters);
         setVmTemplate(parameters.getVmTemplate());
-        parameters.setEntityId(getVmTemplate().getId());
+        parameters.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplate().getId()));
         setStoragePoolId(parameters.getStoragePoolId());
         setVdsGroupId(parameters.getVdsGroupId());
         setStorageDomainId(parameters.getStorageDomainId());
@@ -306,7 +307,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                     tempVar.setSourceDomainId(getParameters().getSourceDomainId());
                     tempVar.setForceOverride(getParameters().getForceOverride());
                     tempVar.setImportEntity(true);
-                    tempVar.setEntityId(containerID);
+                    tempVar.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, containerID));
                     for (DiskImage diskImage : getParameters().getVmTemplate().getDiskList()) {
                         if (diskGuidList.get(i).equals(diskImage.getId())) {
                             tempVar.setQuotaId(diskImage.getQuotaId());

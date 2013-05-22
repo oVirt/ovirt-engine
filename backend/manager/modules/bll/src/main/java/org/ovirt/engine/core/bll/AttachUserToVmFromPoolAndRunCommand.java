@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmPoolUserParameters;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -173,7 +174,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
             }
 
             if (!Guid.Empty.equals(vmToAttach)) {
-                getParameters().setEntityId(vmToAttach);
+                getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, vmToAttach));
                 setVmId(vmToAttach);
                 permissions perm = new permissions(getAdUserId(), PredefinedRoles.ENGINE_USER.getId(), vmToAttach,
                         VdcObjectType.VM);
@@ -202,7 +203,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
             RunVmParams runVmParams = new RunVmParams(vmToAttach);
             runVmParams.setSessionId(getParameters().getSessionId());
             runVmParams.setParentParameters(getParameters());
-            runVmParams.setEntityId(vmToAttach);
+            runVmParams.setEntityInfo(new EntityInfo(VdcObjectType.VM, vmToAttach));
             runVmParams.setReinitialize(getParameters().isReinitialize());
             runVmParams.setParentCommand(VdcActionType.AttachUserToVmFromPoolAndRun);
             runVmParams.setRunAsStateless(true);

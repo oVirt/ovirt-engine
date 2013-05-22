@@ -10,7 +10,9 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -84,7 +86,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
 
     @Override
     protected void executeVmCommand() {
-        getParameters().setEntityId(getVm().getId());
+        getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, getVm().getId()));
         if (getVm().getStatus() == VMStatus.Suspended
                 || StringUtils.isNotEmpty(getVm().getHibernationVolHandle())) {
             setSuspendedVm(true);

@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
@@ -39,7 +40,7 @@ public class VdcActionParametersBase implements java.io.Serializable {
     // this flag marks if the command ran with MultipleAction for ProcessExceptionToClient
     private boolean multipleAction;
 
-    private Object entityId;
+    private EntityInfo entityInfo;
 
     private List<VdcActionParametersBase> imagesParameters;
 
@@ -183,12 +184,12 @@ public class VdcActionParametersBase implements java.io.Serializable {
         taskGroupSuccess = value;
     }
 
-    public Object getEntityId() {
-        return entityId;
+    public EntityInfo getEntityInfo() {
+        return entityInfo;
     }
 
-    public void setEntityId(Object value) {
-        entityId = value;
+    public void setEntityInfo(EntityInfo value) {
+        entityInfo = value;
     }
 
     public List<Guid> getVdsmTaskIds() {
@@ -230,7 +231,7 @@ public class VdcActionParametersBase implements java.io.Serializable {
         result = prime * result + ((imagesParameters == null) ? 0 : imagesParameters.hashCode());
         result = prime * result + (shouldbelogged ? 1231 : 1237);
         result = prime * result + ((transctionOption == null) ? 0 : transctionOption.hashCode());
-        result = prime * result + ((entityId == null) ? 0 : entityId.hashCode());
+        result = prime * result + ((entityInfo == null) ? 0 : entityInfo.hashCode());
         result = prime * result + (multipleAction ? 1231 : 1237);
         result = prime * result + ((parametersCurrentUser == null) ? 0 : parametersCurrentUser.hashCode());
         result = prime * result + ((parentCommand == null) ? 0 : parentCommand.hashCode());
@@ -258,10 +259,10 @@ public class VdcActionParametersBase implements java.io.Serializable {
             return false;
         if (transctionOption != other.transctionOption)
             return false;
-        if (entityId == null) {
-            if (other.entityId != null)
+        if (entityInfo == null) {
+            if (other.entityInfo != null)
                 return false;
-        } else if (!entityId.equals(other.entityId))
+        } else if (!entityInfo.equals(other.entityInfo))
             return false;
         if (multipleAction != other.multipleAction)
             return false;

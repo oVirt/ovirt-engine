@@ -2,6 +2,8 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.Date;
 
+import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.compat.Guid;
 
 
@@ -22,7 +24,7 @@ public class ImagesActionsParametersBase extends StorageDomainParametersBase {
 
     public ImagesActionsParametersBase(Guid imageId) {
         super(Guid.Empty);
-        setEntityId(imageId);
+        setEntityInfo(new EntityInfo(VdcObjectType.Disk, imageId));
         this.imageId = imageId;
     }
 

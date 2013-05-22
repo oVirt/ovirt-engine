@@ -68,7 +68,7 @@ public class SPMAsyncTask {
         AsyncTaskState state = getState();
         return (state == AsyncTaskState.Polling || state == AsyncTaskState.Ended || state == AsyncTaskState.ClearFailed)
                 && getLastTaskStatus().getStatus() != AsyncTaskStatusEnum.unknown
-                && (getParameters().getEntityId() == null ? isTaskOverPrePollingLapse() : true);
+                && (getParameters().getEntityInfo() == null ? isTaskOverPrePollingLapse() : true);
     }
 
     private AsyncTaskStatus _lastTaskStatus = new AsyncTaskStatus(AsyncTaskStatusEnum.init);
@@ -108,7 +108,7 @@ public class SPMAsyncTask {
     }
 
     public Object getContainerId() {
-        return getParameters().getEntityId();
+        return getParameters().getEntityInfo().getId();
     }
 
     public void StartPollingTask() {

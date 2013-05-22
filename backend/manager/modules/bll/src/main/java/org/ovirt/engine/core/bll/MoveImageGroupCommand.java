@@ -2,10 +2,12 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ImageDbOperationScope;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -30,7 +32,7 @@ public class MoveImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         // task manager calls the end methods of command based on the entity id.
         // the remove done here is a "clenaup", either on the source domain or on the target - so
         // other operations on the image shouldn't be dependent and wait for it.
-        removeImageParams.setEntityId(Guid.newGuid());
+        removeImageParams.setEntityInfo(new EntityInfo(VdcObjectType.Disk, Guid.newGuid()));
         VdcReturnValueBase returnValue = getBackend().runInternalAction(
                 VdcActionType.RemoveImage,
                 removeImageParams,

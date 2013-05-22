@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.HibernateVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -55,7 +56,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
     public HibernateVmCommand(T parameters) {
         super(parameters);
         setStoragePoolId(getVm().getStoragePoolId());
-        parameters.setEntityId(getVm().getId());
+        parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVm().getId()));
     }
 
     private Guid _storageDomainId = Guid.Empty;

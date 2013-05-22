@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.ImageStorageDomainMapId;
@@ -197,7 +198,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
                 removeImageParams.setParentParameters(removeImageParams);
                 removeImageParams.setParentCommand(VdcActionType.RemoveImage);
             }
-            removeImageParams.setEntityId(getDestinationImageId());
+            removeImageParams.setEntityInfo(new EntityInfo(VdcObjectType.Disk, getDestinationImageId()));
             // Setting the image as the monitored entity, so there will not be dependency
             VdcReturnValueBase returnValue =
                     checkAndPerformRollbackUsingCommand(VdcActionType.RemoveImage, removeImageParams);

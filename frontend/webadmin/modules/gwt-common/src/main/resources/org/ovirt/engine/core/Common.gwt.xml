@@ -211,6 +211,7 @@
 
 		<!--required by action/VdcActionParametersBase.java -->
 		<include name="common/asynctasks/EndedTaskInfo.java" />
+		<include name="common/asynctasks/EntityInfo.java" />
 		<include name="common/asynctasks/IEndedTaskVisitor.java" />
 		<include name="common/asynctasks/AsyncTaskParameters.java" />
 		<include name="common/businessentities/RoleGroupMap.java" />

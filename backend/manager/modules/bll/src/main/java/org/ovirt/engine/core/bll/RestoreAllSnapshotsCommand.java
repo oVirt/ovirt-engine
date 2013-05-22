@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.RestoreFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -72,7 +73,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
     public RestoreAllSnapshotsCommand(T parameters) {
         super(parameters);
-        parameters.setEntityId(getVmId());
+        parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
     }
 
     @Override
@@ -174,7 +175,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
      */
     private VdcReturnValueBase runAsyncTask(VdcActionType taskType, ImagesContainterParametersBase params) {
         VdcReturnValueBase returnValue;
-        params.setEntityId(getParameters().getEntityId());
+        params.setEntityInfo(getParameters().getEntityInfo());
         params.setParentCommand(getActionType());
         params.setParentParameters(getParameters());
         params.setCommandType(taskType);

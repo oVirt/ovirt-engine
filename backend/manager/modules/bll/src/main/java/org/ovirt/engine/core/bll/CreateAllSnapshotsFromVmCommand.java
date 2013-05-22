@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -76,7 +77,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     public CreateAllSnapshotsFromVmCommand(T parameters) {
         super(parameters);
-        parameters.setEntityId(getVmId());
+        parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
         setSnapshotName(parameters.getDescription());
         setStoragePoolId(getVm() != null ? getVm().getStoragePoolId() : null);
     }
@@ -208,7 +209,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         result.setSessionId(getParameters().getSessionId());
         result.setQuotaId(image.getQuotaId());
         result.setVmSnapshotId(snapshotId);
-        result.setEntityId(getParameters().getEntityId());
+        result.setEntityInfo(getParameters().getEntityInfo());
         result.setParentCommand(parentCommand);
         result.setParentParameters(getParametersForTask(parentCommand, getParameters()));
         return result;

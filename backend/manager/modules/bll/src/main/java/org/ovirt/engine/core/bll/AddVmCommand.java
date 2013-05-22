@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -101,7 +102,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             }
         }
 
-        parameters.setEntityId(getVmId());
+        parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
         initTemplateDisks();
         initStoragePoolId();
         diskInfoDestinationMap = getParameters().getDiskInfoDestinationMap();
@@ -695,7 +696,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 tempVar.setStorageDomainId(dit.getStorageIds().get(0));
                 tempVar.setVmSnapshotId(getVmSnapshotId());
                 tempVar.setParentCommand(VdcActionType.AddVm);
-                tempVar.setEntityId(getParameters().getEntityId());
+                tempVar.setEntityInfo(getParameters().getEntityInfo());
                 tempVar.setParentParameters(getParameters());
                 tempVar.setQuotaId(diskInfoDestinationMap.get(dit.getId()).getQuotaId());
                 VdcReturnValueBase result =

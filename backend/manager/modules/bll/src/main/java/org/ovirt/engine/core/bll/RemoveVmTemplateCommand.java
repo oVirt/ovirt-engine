@@ -14,9 +14,11 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -43,7 +45,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
     public RemoveVmTemplateCommand(T parameters) {
         super(parameters);
         super.setVmTemplateId(parameters.getVmTemplateId());
-        parameters.setEntityId(getVmTemplateId());
+        parameters.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
         if (getVmTemplate() != null) {
             setStoragePoolId(getVmTemplate().getStoragePoolId());
         }
@@ -220,7 +222,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
     }
 
     protected boolean RemoveVmTemplateImages() {
-        getParameters().setEntityId(getParameters().getEntityId());
+        getParameters().setEntityInfo(getParameters().getEntityInfo());
         getParameters().setParentCommand(getActionType());
         getParameters().setParentParameters(getParameters());
         VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(

@@ -1463,7 +1463,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 asyncTaskCreationInfo,
                 parentCommand,
                 null,
-                new HashMap<Guid, VdcObjectType> ());
+                // The reason Collections.emptyMap is not used here as
+                // the map should be mutable
+                new HashMap<Guid, VdcObjectType>());
     }
 
     protected Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo,
@@ -1566,7 +1568,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         AsyncTaskParameters p =
                 new AsyncTaskParameters(asyncTaskCreationInfo,
                 getAsyncTask(taskId, asyncTaskCreationInfo, parentCommand));
-        p.setEntityId(getParameters().getEntityId());
+        p.setEntityInfo(getParameters().getEntityInfo());
         return CreateTask(internalGetTaskType(), p);
     }
 

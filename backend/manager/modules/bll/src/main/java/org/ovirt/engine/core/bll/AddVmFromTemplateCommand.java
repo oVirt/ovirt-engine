@@ -89,7 +89,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
         params.setVmSnapshotId(getVmSnapshotId());
         params.setParentCommand(VdcActionType.AddVmFromTemplate);
         params.setParentParameters(getParameters());
-        params.setEntityId(getParameters().getEntityId());
+        params.setEntityInfo(getParameters().getEntityInfo());
         params.setQuotaId(diskInfoDestinationMap.get(disk.getId()).getQuotaId() != null ?
                 diskInfoDestinationMap.get(disk.getId()).getQuotaId() : null);
         return params;

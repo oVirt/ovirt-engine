@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParamenters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -33,7 +34,7 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
     public RemoveVmFromImportExportCommand(T parameters) {
         super(parameters);
         super.setVmId(parameters.getVmId());
-        parameters.setEntityId(parameters.getVmId());
+        parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, parameters.getVmId()));
         setStorageDomainId(parameters.getStorageDomainId());
     }
 

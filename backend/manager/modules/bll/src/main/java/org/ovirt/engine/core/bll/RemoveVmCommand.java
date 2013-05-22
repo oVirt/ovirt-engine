@@ -19,10 +19,12 @@ import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
@@ -53,7 +55,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     public RemoveVmCommand(T parameters) {
         super(parameters);
-        parameters.setEntityId(getVmId());
+        parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
         if (getVm() != null) {
             setStoragePoolId(getVm().getStoragePoolId());
         }
@@ -225,7 +227,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     protected VdcReturnValueBase removeVmImages(List<DiskImage> images) {
         RemoveAllVmImagesParameters tempVar = new RemoveAllVmImagesParameters(getVmId(), images);
         tempVar.setParentCommand(getActionType());
-        tempVar.setEntityId(getParameters().getEntityId());
+        tempVar.setEntityInfo(getParameters().getEntityInfo());
         tempVar.setParentParameters(getParameters());
         VdcReturnValueBase vdcRetValue =
                 Backend.getInstance().runInternalAction(VdcActionType.RemoveAllVmImages,
