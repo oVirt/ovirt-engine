@@ -113,6 +113,17 @@ class Plugin(plugin.PluginBase):
         return sd_uuid
 
     def _prepare_new_domain(self, path):
+        uninstall_files = []
+        self.environment[
+            osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
+        ].createGroup(
+            group='iso_domain',
+            description='ISO domain layout',
+            optional=True
+        ).addFiles(
+            group='iso_domain',
+            fileList=uninstall_files,
+        )
         self.logger.debug('Generating a new uuid for ISO domain')
         sdUUID = str(uuid.uuid4())
         description = self.environment[
@@ -143,9 +154,7 @@ class Plugin(plugin.PluginBase):
                     osetupcons.SystemEnv.USER_VDSM
                 ],
                 dgroup=self.environment[osetupcons.SystemEnv.GROUP_KVM],
-                modifiedList=self.environment[
-                    otopicons.CoreEnv.MODIFIED_FILES
-                ],
+                modifiedList=uninstall_files,
             )
         )
         #Create dom_md directory tree
@@ -164,14 +173,9 @@ class Plugin(plugin.PluginBase):
                         osetupcons.SystemEnv.USER_VDSM
                     ],
                     dgroup=self.environment[osetupcons.SystemEnv.GROUP_KVM],
-                    modifiedList=self.environment[
-                        otopicons.CoreEnv.MODIFIED_FILES
-                    ],
+                    modifiedList=uninstall_files,
                 )
             )
-            self.environment[
-                osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
-            ].append(filename)
         metadata = os.path.join(domMdDir, 'metadata')
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
@@ -183,14 +187,9 @@ class Plugin(plugin.PluginBase):
                 downer=self.environment[osetupcons.SystemEnv.USER_VDSM],
                 dgroup=self.environment[osetupcons.SystemEnv.GROUP_KVM],
                 content=self._generate_md_content(sdUUID, description),
-                modifiedList=self.environment[
-                    otopicons.CoreEnv.MODIFIED_FILES
-                ],
+                modifiedList=uninstall_files,
             )
         )
-        self.environment[
-            osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
-        ].append(metadata)
 
         return sdUUID
 

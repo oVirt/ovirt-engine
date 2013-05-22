@@ -88,6 +88,18 @@ class Plugin(plugin.PluginBase):
         Load files (iso, vfd) from existing rpms to the NFS ISO domain
         TODO: use engine-iso-uploader when it will support local destinations
         """
+        uninstall_files = []
+        self.environment[
+            osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
+        ].createGroup(
+            group='iso_images',
+            description='Uploaded ISO images',
+            optional=True
+        ).addFiles(
+            group='iso_images',
+            fileList=uninstall_files,
+        )
+
         targetDir = self.environment[
             osetupcons.ConfigEnv.ISO_DOMAIN_STORAGE_DIR
         ]
@@ -111,6 +123,7 @@ class Plugin(plugin.PluginBase):
                             )
                         )
                     shutil.copyfile(filename, targetFile)
+                    uninstall_files.append(targetFile)
                     os.chmod(targetFile, 0o644)
                     os.chown(
                         targetFile,
