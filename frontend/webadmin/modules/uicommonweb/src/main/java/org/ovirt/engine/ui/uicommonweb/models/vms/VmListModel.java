@@ -38,7 +38,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -1403,7 +1402,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         tempVar.setVmDomain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
         tempVar.setVmMemSizeMb((Integer) model.getMemSize().getEntity());
         tempVar.setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
-        tempVar.setVdsGroupId(((VDSGroup) model.getCluster().getSelectedItem()).getId());
+        tempVar.setVdsGroupId(model.getSelectedCluster().getId());
         tempVar.setTimeZone(model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null ? ((TimeZoneModel) model.getTimeZone()
                 .getSelectedItem()).getTimeZoneKey()
                 : ""); //$NON-NLS-1$
@@ -1977,7 +1976,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 : ""); //$NON-NLS-1$
         getcurrentVm().setVmMemSizeMb((Integer) model.getMemSize().getEntity());
         getcurrentVm().setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
-        Guid newClusterID = ((VDSGroup) model.getCluster().getSelectedItem()).getId();
+        Guid newClusterID = model.getSelectedCluster().getId();
         getcurrentVm().setVdsGroupId(newClusterID);
         getcurrentVm().setTimeZone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? ((TimeZoneModel) model.getTimeZone()
                 .getSelectedItem()).getTimeZoneKey()

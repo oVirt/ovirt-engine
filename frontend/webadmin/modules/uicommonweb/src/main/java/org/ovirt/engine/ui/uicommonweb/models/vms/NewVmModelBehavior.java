@@ -1,13 +1,12 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -27,54 +26,38 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
     public void initialize(SystemTreeItemModel systemTreeSelectedItem)
     {
         super.initialize(systemTreeSelectedItem);
+
         AsyncDataProvider.getDataCenterByClusterServiceList(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
 
-                        UnitVmModel model = (UnitVmModel) target;
-                        ArrayList<StoragePool> list = new ArrayList<StoragePool>();
-                        for (StoragePool a : (ArrayList<StoragePool>) returnValue)
-                        {
-                            if (a.getstatus() == StoragePoolStatus.Up)
-                            {
-                                list.add(a);
+                        final ArrayList<StoragePool> dataCenters = new ArrayList<StoragePool>();
+                        for (StoragePool a : (ArrayList<StoragePool>) returnValue) {
+                            if (a.getstatus() == StoragePoolStatus.Up) {
+                                dataCenters.add(a);
                             }
                         }
-                        model.setDataCenter(model, list);
+                        AsyncDataProvider.getClusterListByService(
+                                new AsyncQuery(getModel(), new INewAsyncCallback() {
+
+                                    @Override
+                                    public void onSuccess(Object target, Object returnValue) {
+                                        UnitVmModel model = (UnitVmModel) target;
+                                        model.setDataCentersAndClusters(model,
+                                                dataCenters,
+                                                (List<VDSGroup>) returnValue, null);
+                                        initTemplate();
+                                        initCdImage();
+                                    }
+                                }, getModel().getHash()),
+                                true, false);
 
                     }
-                }, getModel().getHash()), true, false);
+                }, getModel().getHash()),
+                true,
+                false);
         initPriority(0);
-    }
-
-    @Override
-    public void dataCenter_SelectedItemChanged()
-    {
-        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
-
-        getModel().setIsHostAvailable(dataCenter.getstorage_pool_type() != StorageType.LOCALFS);
-
-        AsyncDataProvider.getClusterByServiceList(new AsyncQuery(new Object[] { this, getModel() },
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-
-                        Object[] array = (Object[]) target;
-                        NewVmModelBehavior behavior = (NewVmModelBehavior) array[0];
-                        UnitVmModel model = (UnitVmModel) array[1];
-                        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
-                        model.setClusters(model, clusters, null);
-                        behavior.initTemplate();
-                        behavior.initCdImage();
-
-                    }
-                }, getModel().getHash()), dataCenter.getId(), true, false);
-        if (dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
-            getModel().getQuota().setIsAvailable(true);
-        } else {
-            getModel().getQuota().setIsAvailable(false);
-        }
     }
 
     @Override
@@ -177,7 +160,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
     }
 
     @Override
-    public void cluster_SelectedItemChanged()
+    public void postDataCenterWithClusterSelectedItemChanged()
     {
         updateDefaultHost();
         updateCustomPropertySheet();
@@ -212,7 +195,9 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
     @Override
     public void updateMinAllocatedMemory()
     {
-        VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
+        DataCenterWithCluster dataCenterWithCluster =
+                (DataCenterWithCluster) getModel().getDataCenterWithClustersList().getSelectedItem();
+        VDSGroup cluster = dataCenterWithCluster == null ? null : dataCenterWithCluster.getCluster();
         if (cluster == null) {
             return;
         }
@@ -224,7 +209,12 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
 
     private void initTemplate()
     {
-        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
+        DataCenterWithCluster dataCenterWithCluster =
+                (DataCenterWithCluster) getModel().getDataCenterWithClustersList().getSelectedItem();
+        StoragePool dataCenter = dataCenterWithCluster == null ? null : dataCenterWithCluster.getDataCenter();
+        if (dataCenter == null) {
+            return;
+        }
 
         // Filter according to system tree selection.
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage)
@@ -299,7 +289,13 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
 
     public void initCdImage()
     {
-        updateUserCdImage(((StoragePool) getModel().getDataCenter().getSelectedItem()).getId());
+        DataCenterWithCluster dataCenterWithCluster =
+                (DataCenterWithCluster) getModel().getDataCenterWithClustersList().getSelectedItem();
+        if (dataCenterWithCluster == null || dataCenterWithCluster.getDataCenter() == null) {
+            return;
+        }
+
+        updateUserCdImage(dataCenterWithCluster.getDataCenter().getId());
     }
 
     @Override

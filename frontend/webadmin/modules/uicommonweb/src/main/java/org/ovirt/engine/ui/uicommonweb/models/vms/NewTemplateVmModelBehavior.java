@@ -3,18 +3,16 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-
+import java.util.List;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
@@ -53,7 +51,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                     public void onSuccess(Object target, Object returnValue) {
 
                         NewTemplateVmModelBehavior behavior = (NewTemplateVmModelBehavior) target;
-                        StoragePool dataCenter = (StoragePool) returnValue;
+                        final StoragePool dataCenter = (StoragePool) returnValue;
                         if (dataCenter == null)
                         {
                             disableNewTemplateModel(ConstantsManager.getInstance()
@@ -62,11 +60,21 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                         }
                         else
                         {
-                            behavior.getModel()
-                                    .getDataCenter()
-                                    .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dataCenter })));
-                            behavior.getModel().getDataCenter().setSelectedItem(dataCenter);
-                            behavior.getModel().getDataCenter().setIsChangable(false);
+
+                            AsyncDataProvider.getClusterListByService(
+                                    new AsyncQuery(getModel(), new INewAsyncCallback() {
+
+                                        @Override
+                                        public void onSuccess(Object target, Object returnValue) {
+                                            UnitVmModel model = (UnitVmModel) target;
+
+                                            List<VDSGroup> clusters = (List<VDSGroup>) returnValue;
+                                            model.setDataCentersAndClusters(model, Arrays.asList(dataCenter), clusters, vm.getVdsGroupId().getValue());
+                                            initTemplate();
+                                        }
+                                    }, getModel().getHash()),
+                                    true,
+                                    false);
                         }
 
                     }
@@ -76,26 +84,9 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     }
 
     @Override
-    public void dataCenter_SelectedItemChanged()
+    public void dataCenterWithClusterSelectedItemChanged()
     {
-        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
-
-        getModel().setIsHostAvailable(dataCenter.getstorage_pool_type() != StorageType.LOCALFS);
-
-        AsyncDataProvider.getClusterByServiceList(new AsyncQuery(new Object[] { this, getModel() },
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-
-                        Object[] array = (Object[]) target;
-                        NewTemplateVmModelBehavior behavior = (NewTemplateVmModelBehavior) array[0];
-                        UnitVmModel model = (UnitVmModel) array[1];
-                        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
-                        model.setClusters(model, clusters, vm.getVdsGroupId().getValue());
-                        behavior.initTemplate();
-
-                    }
-                }, getModel().getHash()), dataCenter.getId(), true, false);
+        super.dataCenterWithClusterSelectedItemChanged();
 
         // If a VM has at least one disk, present its storage domain.
         AsyncDataProvider.getVmDiskList(new AsyncQuery(this,
@@ -116,17 +107,13 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                         behavior.initStorageDomains();
                         initDisks(imageDisks);
 
-                        VmModelHelper.sendWarningForNonExportableDisks(getModel(), vmDisks, VmModelHelper.WarningType.VM_TEMPLATE);
+                        VmModelHelper.sendWarningForNonExportableDisks(getModel(),
+                                vmDisks,
+                                VmModelHelper.WarningType.VM_TEMPLATE);
                     }
                 }, getModel().getHash()),
                 vm.getId(),
                 true);
-
-        if (dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
-            getModel().getQuota().setIsAvailable(true);
-        } else {
-            getModel().getQuota().setIsAvailable(false);
-        }
     }
 
     private void initDisks(ArrayList<Disk> disks)
@@ -163,7 +150,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     }
 
     @Override
-    public void cluster_SelectedItemChanged()
+    public void postDataCenterWithClusterSelectedItemChanged()
     {
         updateQuotaByCluster(null, null);
     }
@@ -318,7 +305,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         getModel().setMessage(errMessage);
         getModel().getName().setIsChangable(false);
         getModel().getDescription().setIsChangable(false);
-        getModel().getCluster().setIsChangable(false);
+        getModel().getDataCenterWithClustersList().setIsChangable(false);
         getModel().getStorageDomain().setIsChangable(false);
         getModel().getIsTemplatePublic().setIsChangable(false);
         getModel().getDefaultCommand().setIsAvailable(false);

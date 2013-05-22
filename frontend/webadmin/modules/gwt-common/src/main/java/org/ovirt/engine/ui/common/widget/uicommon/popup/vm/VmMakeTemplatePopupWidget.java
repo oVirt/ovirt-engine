@@ -1,17 +1,20 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
+import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -50,9 +53,9 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     EntityModelTextBoxEditor descriptionEditor;
 
     @UiField(provided = true)
-    @Path(value = "cluster.selectedItem")
-    @WithElementId("cluster")
-    ListModelListBoxEditor<Object> clusterEditor;
+    @Path(value = "dataCenterWithClustersList.selectedItem")
+    @WithElementId("dataCenterWithCluster")
+    public ListModelTypeAheadListBoxEditor<Object> clusterEditor;
 
     @UiField(provided = true)
     @Ignore
@@ -86,7 +89,11 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
 
     private final Driver driver = GWT.create(Driver.class);
 
-    public VmMakeTemplatePopupWidget(CommonApplicationConstants constants) {
+    private final CommonApplicationTemplates applicationTemplates;
+
+    public VmMakeTemplatePopupWidget(CommonApplicationConstants constants,
+            CommonApplicationTemplates applicationTemplates) {
+        this.applicationTemplates = applicationTemplates;
         initListBoxEditors();
         initCheckBoxEditors();
         disksAllocationView = new DisksAllocationView(constants);
@@ -102,12 +109,30 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     }
 
     void initListBoxEditors() {
-        clusterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            public String renderNullSafe(Object object) {
-                return ((VDSGroup) object).getname();
-            }
-        });
+        clusterEditor = new ListModelTypeAheadListBoxEditor<Object>(
+                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<Object>() {
+
+                    @Override
+                    public String getReplacementStringNullSafe(Object data) {
+                        return ((DataCenterWithCluster) data).getCluster().getname() + "/" //$NON-NLS-1$
+                                + ((DataCenterWithCluster) data).getDataCenter().getname();
+                    }
+
+                    @Override
+                    public String getDisplayStringNullSafe(Object data) {
+
+                        String clusterName = ((DataCenterWithCluster) data).getCluster().getname();
+                        String dcName = ((DataCenterWithCluster) data).getDataCenter().getname();
+                        String dcDescription =
+                                ((DataCenterWithCluster) data).getDataCenter().getdescription();
+                        // description takes priority
+                        String dcString = !StringHelper.isNullOrEmpty(dcDescription) ? dcDescription : dcName;
+
+                        return applicationTemplates.typeAheadNameDescription(clusterName == null ? "" : clusterName,
+                                dcString == null ? "" : dcName).asString();
+                    }
+
+                });
 
         quotaEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override

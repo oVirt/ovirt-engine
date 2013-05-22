@@ -27,7 +27,7 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
             return;
         }
 
-        setupWindowModelFrom(template);
+        setupWindowModelFrom(template, template.getStoragePoolId().getValue());
         updateHostPinning(template.getMigrationSupport());
         doChangeDefautlHost(template.getDedicatedVmForVds());
     }

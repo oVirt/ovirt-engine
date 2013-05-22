@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
@@ -446,7 +445,8 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         template.setDomain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
         template.setMemSizeMb((Integer) model.getMemSize().getEntity());
         template.setMinAllocatedMem(((Integer) model.getMinAllocatedMemory().getEntity()));
-        template.setVdsGroupId(((VDSGroup) model.getCluster().getSelectedItem()).getId());
+
+        template.setVdsGroupId((model.getSelectedCluster()).getId());
         template.setTimeZone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? ((TimeZoneModel) model.getTimeZone()
                 .getSelectedItem()).getTimeZoneKey()
                 : ""); //$NON-NLS-1$
@@ -489,7 +489,6 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         }
 
         template.setMigrationSupport((MigrationSupport) model.getMigrationMode().getSelectedItem());
-
 
         model.startProgress(null);
 

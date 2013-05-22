@@ -27,6 +27,15 @@
 			font-style: italic;
 		}
 
+		.horizontallyAlignedCheckBox {
+			float: left;
+			padding-right: 15px;
+		}
+
+		.horizontallyAlignedCheckBoxContent {
+<!-- 			turns off the original styles -->
+		}
+
 		.checkboxWithLongLabel,.checkbox {
 			margin-left: -9px;
 		}
@@ -208,9 +217,10 @@
 	<t:DialogTabPanel width="100%" height="100%">
 		<t:header>
 			<g:FlowPanel addStyleNames="{style.headerPanel}">
-				<e:ListModelTypeAheadListBoxEditor ui:field="dataCenterEditor" />
-				<e:ListModelTypeAheadListBoxEditor ui:field="clusterEditor" />
+				<e:ListModelTypeAheadListBoxEditor ui:field="dataCenterWithClusterEditor" />
 				<e:ListModelTypeAheadListBoxEditor ui:field="quotaEditor" />
+				<e:ListModelTypeAheadListBoxEditor ui:field="templateEditor"/>
+				<e:ListModelListBoxEditor ui:field="oSTypeEditor" />
 			</g:FlowPanel>
 		</t:header>
 		<t:tab>
@@ -275,30 +285,34 @@
                                     <g:Label text="{constants.vms}" addStyleNames="{style.maxAssignedVmsPerUserVms}" />
                                 </g:FlowPanel>
                             </g:FlowPanel>
-                            <e:ListModelTypeAheadListBoxEditor ui:field="templateEditor"/>
                         </g:FlowPanel>
-                        <g:FlowPanel addStyleNames="{style.sectionPanel}">
-                            <e:EntityModelTextBoxEditor ui:field="memSizeEditor"/>
-                            <e:EntityModelTextBoxEditor ui:field="totalvCPUsEditor" />
-							<g:FlowPanel addStyleNames="{style.sectionPanel}">
-								<d:AdvancedParametersExpander ui:field="generalAdvancedParameterExpander"/>
-								<g:FlowPanel ui:field="generalAdvancedParameterExpanderContent" addStyleNames="{style.generalExpanderContent}">
-									<e:ListModelListBoxEditor ui:field="corePerSocketEditor" />
-									<e:ListModelListBoxEditor ui:field="numOfSocketsEditor" />
-								</g:FlowPanel>
-							</g:FlowPanel>
-						</g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.sectionPanel}">
-							<e:ListModelListBoxEditor ui:field="oSTypeEditor" />
-							<e:EntityModelCheckBoxEditor ui:field="isStatelessEditor" addStyleNames="{style.checkbox}" />
-							<e:EntityModelCheckBoxEditor ui:field="isRunAndPauseEditor" addStyleNames="{style.checkbox}" />
-							<e:EntityModelCheckBoxEditor ui:field="isDeleteProtectedEditor" addStyleNames="{style.checkbox}" />
+							<e:EntityModelCheckBoxEditor ui:field="isStatelessEditor" contentWidgetStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
+							<e:EntityModelCheckBoxEditor ui:field="isRunAndPauseEditor" contentWidgetStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
+							<e:EntityModelCheckBoxEditor ui:field="isDeleteProtectedEditor" contentWidgetStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
 						</g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.sectionPanel}">
 							
 						</g:FlowPanel>
 						<g:Label ui:field="generalWarningMessage" addStyleNames="{style.warningMessageLabel}" />
 					</g:FlowPanel>
+				</t:content>
+			</t:DialogTab>
+		</t:tab>
+		<t:tab>
+			<t:DialogTab ui:field="systemTab">
+				<t:content>
+					<g:FlowPanel>
+                            <e:EntityModelTextBoxEditor ui:field="memSizeEditor"/>
+                            <e:EntityModelTextBoxEditor ui:field="totalvCPUsEditor" />
+							<g:FlowPanel addStyleNames="{style.sectionPanel}">
+								<d:AdvancedParametersExpander ui:field="vcpusAdvancedParameterExpander"/>
+								<g:FlowPanel ui:field="vcpusAdvancedParameterExpanderContent" addStyleNames="{style.generalExpanderContent}">
+									<e:ListModelListBoxEditor ui:field="corePerSocketEditor" />
+									<e:ListModelListBoxEditor ui:field="numOfSocketsEditor" />
+								</g:FlowPanel>
+							</g:FlowPanel>
+						</g:FlowPanel>
 				</t:content>
 			</t:DialogTab>
 		</t:tab>

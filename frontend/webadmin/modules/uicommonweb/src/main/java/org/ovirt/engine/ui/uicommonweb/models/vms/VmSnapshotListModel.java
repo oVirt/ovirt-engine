@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
@@ -22,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
@@ -552,7 +550,7 @@ public class VmSnapshotListModel extends SearchableListModel
                 (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
         getcurrentVm().setVmMemSizeMb((Integer) model.getMemSize().getEntity());
         getcurrentVm().setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
-        Guid newClusterID = ((VDSGroup) model.getCluster().getSelectedItem()).getId();
+        Guid newClusterID = model.getSelectedCluster().getId();
         getcurrentVm().setVdsGroupId(newClusterID);
         getcurrentVm().setTimeZone(
                 (model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ?
@@ -590,7 +588,7 @@ public class VmSnapshotListModel extends SearchableListModel
                 (Boolean) model.getIsAutoAssign().getEntity() ? null : defaultHost.getId());
 
         getcurrentVm().setMigrationSupport((MigrationSupport) model.getMigrationMode().getSelectedItem());
-        getcurrentVm().setUseHostCpuFlags((Boolean)model.getHostCpu().getEntity());
+        getcurrentVm().setUseHostCpuFlags((Boolean) model.getHostCpu().getEntity());
         getcurrentVm().setDiskMap(behavior.getVm().getDiskMap());
 
         HashMap<Guid, DiskImage> imageToDestinationDomainMap =

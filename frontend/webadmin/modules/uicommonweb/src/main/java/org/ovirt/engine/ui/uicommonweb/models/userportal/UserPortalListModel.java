@@ -54,6 +54,7 @@ import org.ovirt.engine.ui.uicommonweb.models.pools.PoolDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewTemplateVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RunOnceModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
@@ -616,7 +617,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         tempVar.setVmDomain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
         tempVar.setVmMemSizeMb((Integer) model.getMemSize().getEntity());
         tempVar.setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
-        tempVar.setVdsGroupId(((VDSGroup) model.getCluster().getSelectedItem()).getId());
+
+        tempVar.setVdsGroupId(model.getSelectedCluster().getId());
         tempVar.setTimeZone(model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null ? ((TimeZoneModel) model.getTimeZone()
                 .getSelectedItem()).getTimeZoneKey()
                 : ""); //$NON-NLS-1$
@@ -718,9 +720,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         getNewTemplateCommand().setIsExecutionAllowed(selectedItem != null
                 && !selectedItem.isPool()
-                && VdcActionUtils.CanExecute(new ArrayList<VM>(Arrays.asList(new VM[] { (VM) selectedItem.getEntity() })),
-                        VM.class,
-                        VdcActionType.AddVmTemplate));
+                && VdcActionUtils.CanExecute(new ArrayList<VM>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
+                VM.class,
+                VdcActionType.AddVmTemplate));
     }
 
     private void newDesktop()
@@ -1026,7 +1028,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 .getSelectedItem() : ""); //$NON-NLS-1$
         gettempVm().setVmMemSizeMb((Integer) model.getMemSize().getEntity());
         gettempVm().setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
-        Guid newClusterID = ((VDSGroup) model.getCluster().getSelectedItem()).getId();
+        Guid newClusterID = model.getSelectedCluster().getId();
         gettempVm().setVdsGroupId(newClusterID);
         gettempVm().setTimeZone((model.getTimeZone().getIsAvailable() && model.getTimeZone()
                 .getSelectedItem() != null) ? ((TimeZoneModel) model.getTimeZone()
@@ -1142,13 +1144,13 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                     parameters.add(param);
                     Frontend.RunMultipleAction(VdcActionType.AddVm, parameters,
                             new IFrontendMultipleActionAsyncCallback() {
-                        @Override
-                        public void executed(FrontendMultipleActionAsyncResult a) {
-                            stopProgress(a.getState());
-                            cancel();
-                        }
-                    },
-                    this);
+                                @Override
+                                public void executed(FrontendMultipleActionAsyncResult a) {
+                                    stopProgress(a.getState());
+                                    cancel();
+                                }
+                            },
+                            this);
                 }
             }
         }
@@ -1160,20 +1162,20 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 Frontend.RunAction(VdcActionType.ChangeVMCluster, new ChangeVMClusterParameters(newClusterID,
                         gettempVm().getId()),
                         new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-
-                        Frontend.RunAction(VdcActionType.UpdateVm, new VmManagementParametersBase(gettempVm()),
-                                new IFrontendActionAsyncCallback() {
                             @Override
-                            public void executed(FrontendActionAsyncResult a) {
-                                stopProgress(a.getState());
-                                cancel();
+                            public void executed(FrontendActionAsyncResult result) {
+
+                                Frontend.RunAction(VdcActionType.UpdateVm, new VmManagementParametersBase(gettempVm()),
+                                        new IFrontendActionAsyncCallback() {
+                                            @Override
+                                            public void executed(FrontendActionAsyncResult a) {
+                                                stopProgress(a.getState());
+                                                cancel();
+                                            }
+                                        }, this);
+
                             }
                         }, this);
-
-                    }
-                }, this);
             }
             else
             {
@@ -1189,82 +1191,56 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         }
     }
 
-    private void vmModel_DataCenter_ItemsChanged()
-    {
+    private void updateDataCenterWithCluster() {
         UnitVmModel model = (UnitVmModel) getWindow();
-        StoragePool dataCenter = null;
-        for (Object item : model.getDataCenter().getItems())
-        {
-            StoragePool a = (StoragePool) item;
+        UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
+        final VM vm = (VM) selectedItem.getEntity();
+        DataCenterWithCluster selectedDataCenterWithCluster = null;
 
-            if (model.getIsNew())
-            {
-                dataCenter = a;
+        for (Object item : model.getDataCenterWithClustersList().getItems()) {
+            DataCenterWithCluster candidate = (DataCenterWithCluster) item;
+
+            if (model.getIsNew()) {
+                selectedDataCenterWithCluster = candidate;
                 break;
             }
-            else
-            {
-                UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
-                VM vm = (VM) selectedItem.getEntity();
 
-                if (a.getId().equals(vm.getStoragePoolId()))
-                {
-                    dataCenter = a;
-                    break;
-                }
+            if (candidate.getDataCenter().getId().equals(vm.getStoragePoolId())
+                    && candidate.getCluster().getId().equals(vm.getVdsGroupId())) {
+                selectedDataCenterWithCluster = candidate;
+                break;
             }
         }
 
-        if (!model.getIsNew() && dataCenter == null)
-        {
-            UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
-            VM vm = (VM) selectedItem.getEntity();
+        if (!model.getIsNew() && selectedDataCenterWithCluster == null) {
             AsyncQuery _asyncQuery = new AsyncQuery();
             _asyncQuery.setModel(this);
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
-                public void onSuccess(Object model, Object result)
+                public void onSuccess(Object model, final Object loadedDataCenter)
                 {
                     UserPortalListModel userPortalListModel = (UserPortalListModel) model;
-                    ArrayList<StoragePool> list =
-                            new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { (StoragePool) result }));
-                    UnitVmModel unitModel = (UnitVmModel) userPortalListModel.getWindow();
-                    unitModel.getDataCenter().setItems(list);
-                    unitModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(list));
+                    final UnitVmModel unitModel = (UnitVmModel) userPortalListModel.getWindow();
 
+                    AsyncDataProvider.getClusterById(new AsyncQuery(this, new INewAsyncCallback() {
+
+                        @Override
+                        public void onSuccess(Object model, Object loadedCluster) {
+                            DataCenterWithCluster newItem =
+                                    new DataCenterWithCluster((StoragePool) loadedDataCenter,
+                                            (VDSGroup) loadedCluster);
+                            unitModel.getDataCenterWithClustersList().setItems(Arrays.asList(newItem));
+                            unitModel.getDataCenterWithClustersList().setSelectedItem(newItem);
+                        }
+                    }), vm.getVdsGroupId());
                 }
             };
             AsyncDataProvider.getDataCenterById(_asyncQuery, vm.getStoragePoolId());
+        } else {
+            model.getDataCenterWithClustersList().setSelectedItem(selectedDataCenterWithCluster);
         }
-        else
-        {
-            model.getDataCenter().setSelectedItem(dataCenter);
-        }
-    }
 
-    private void vmModel_Cluster_ItemsChanged()
-    {
-
-        UnitVmModel model = (UnitVmModel) getWindow();
-        if (!model.getIsNew())
-        {
-            UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
-            VM vm = (VM) selectedItem.getEntity();
-            VDSGroup cluster = null;
-
-            for (Object item : model.getCluster().getItems())
-            {
-                VDSGroup a = (VDSGroup) item;
-                if (a.getId().equals(vm.getVdsGroupId()))
-                {
-                    cluster = a;
-                    break;
-                }
-            }
-            model.getCluster().setSelectedItem(cluster);
-
-            model.getCluster().setIsChangable(vm.getStatus() == VMStatus.Down);
-        }
+        model.getDataCenterWithClustersList().setIsChangable(vm.getStatus() == VMStatus.Down);
     }
 
     private void vmModel_DefaultHost_ItemsChanged()
@@ -1384,13 +1360,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         super.eventRaised(ev, sender, args);
 
         UnitVmModel model = (UnitVmModel) getWindow();
-        if (ev.matchesDefinition(ItemsChangedEventDefinition) && sender == model.getDataCenter())
+        if (ev.matchesDefinition(ItemsChangedEventDefinition) && sender == model.getDataCenterWithClustersList())
         {
-            vmModel_DataCenter_ItemsChanged();
-        }
-        else if (ev.matchesDefinition(ItemsChangedEventDefinition) && sender == model.getCluster())
-        {
-            vmModel_Cluster_ItemsChanged();
+            updateDataCenterWithCluster();
         }
         else if (ev.matchesDefinition(ItemsChangedEventDefinition) && sender == model.getDefaultHost())
         {

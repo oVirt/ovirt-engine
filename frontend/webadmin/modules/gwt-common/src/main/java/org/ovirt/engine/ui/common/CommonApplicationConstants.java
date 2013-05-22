@@ -139,7 +139,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Description")
     String makeTemplatePopupDescriptionLabel();
 
-    @DefaultStringValue("Host Cluster")
+    @DefaultStringValue("Cluster")
     String makeTemplateClusterLabel();
 
     @DefaultStringValue("Quota")
@@ -301,7 +301,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Data Center")
     String dcVmPopup();
 
-    @DefaultStringValue("Host Cluster")
+    @DefaultStringValue("Cluster")
     String hostClusterVmPopup();
 
     @DefaultStringValue("Quota")
@@ -357,6 +357,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Initial Run")
     String initialRunVmPopup();
+
+    @DefaultStringValue("System")
+    String systemVmPopup();
 
     @DefaultStringValue("Prestarted VMs")
     String prestartedVms();

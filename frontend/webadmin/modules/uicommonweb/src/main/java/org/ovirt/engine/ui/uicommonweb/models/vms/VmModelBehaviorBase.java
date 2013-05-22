@@ -11,8 +11,10 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -71,11 +73,32 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         this.setSystemTreeSelectedItem(systemTreeSelectedItem);
     }
 
-    public abstract void dataCenter_SelectedItemChanged();
+    public void dataCenterWithClusterSelectedItemChanged() {
+        DataCenterWithCluster dataCenterWithCluster =
+                (DataCenterWithCluster) getModel().getDataCenterWithClustersList().getSelectedItem();
+        if (dataCenterWithCluster == null) {
+            return;
+
+        }
+        StoragePool dataCenter = dataCenterWithCluster.getDataCenter();
+        if (dataCenter == null) {
+            return;
+        }
+
+        getModel().setIsHostAvailable(dataCenter.getstorage_pool_type() != StorageType.LOCALFS);
+
+        if (dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
+            getModel().getQuota().setIsAvailable(true);
+        } else {
+            getModel().getQuota().setIsAvailable(false);
+        }
+
+        postDataCenterWithClusterSelectedItemChanged();
+    }
 
     public abstract void template_SelectedItemChanged();
 
-    public abstract void cluster_SelectedItemChanged();
+    public abstract void postDataCenterWithClusterSelectedItemChanged();
 
     public abstract void defaultHost_SelectedItemChanged();
 
@@ -124,7 +147,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     protected void updateCdImage()
     {
-        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
+        StoragePool dataCenter = getModel().getSelectedDataCenter();
         if (dataCenter == null)
         {
             return;
@@ -279,8 +302,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         {
             for (EntityModel item : items)
             {
-                Integer val1 = (Integer)item.getEntity();
-                Integer val2 = (Integer)oldPriority.getEntity();
+                Integer val1 = (Integer) item.getEntity();
+                Integer val2 = (Integer) oldPriority.getEntity();
                 if (val1 != null && val1.equals(val2))
                 {
                     getModel().getPriority().setSelectedItem(item);
@@ -318,7 +341,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     protected void updateDefaultHost()
     {
-        VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
+        VDSGroup cluster = getModel().getSelectedCluster();
 
         if (cluster == null)
         {
@@ -385,10 +408,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateCustomPropertySheet() {
-        if (getModel().getCluster().getSelectedItem() == null) {
+        if (getModel().getSelectedCluster() == null) {
             return;
         }
-        VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
+        VDSGroup cluster = getModel().getSelectedCluster();
         getModel().getCustomPropertySheet().setKeyValueString(getModel().getCustomPropertiesKeysList()
                 .get(cluster.getcompatibility_version()));
     }
@@ -411,7 +434,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     public void updateMaxNumOfVmCpus()
     {
-        VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
+        VDSGroup cluster = getModel().getSelectedCluster();
         String version = cluster.getcompatibility_version().toString();
 
         AsyncDataProvider.getMaxNumOfVmCpus(new AsyncQuery(this,
@@ -428,7 +451,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     public void postUpdateNumOfSockets2()
     {
-        VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
+        VDSGroup cluster = getModel().getSelectedCluster();
         String version = cluster.getcompatibility_version().toString();
 
         AsyncDataProvider.getMaxNumOfCPUsPerSocket(new AsyncQuery(this,
@@ -517,7 +540,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
+        StoragePool dataCenter = (StoragePool) getModel().getSelectedDataCenter();
         AsyncDataProvider.getPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
@@ -576,7 +599,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     protected void updateQuotaByCluster(final Guid defaultQuota, final String quotaName) {
         if (getModel().getQuota().getIsAvailable()) {
-            VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
+            VDSGroup cluster = getModel().getSelectedCluster();
             if (cluster == null) {
                 return;
             }
@@ -609,9 +632,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                             vmModel.getQuota().setItems(quotaList);
                                             vmModel.getQuota().setSelectedItem(quota);
                                         }
-                                    }
-                                }
-                            }));
+                            }
+                        }
+                    }));
         }
     }
 
@@ -635,8 +658,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateCpuPinningVisibility() {
-        if (getModel().getCluster().getSelectedItem() != null) {
-            VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
+        if (getModel().getSelectedCluster() != null) {
+            VDSGroup cluster = getModel().getSelectedCluster();
             String compatibilityVersion = cluster.getcompatibility_version().toString();
             boolean hasCpuPinning = Boolean.FALSE.equals(getModel().getIsAutoAssign().getEntity());
 
@@ -660,8 +683,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public void updateUseHostCpuAvailability() {
 
         boolean clusterSupportsHostCpu =
-                getModel().getCluster().getSelectedItem() != null
-                        && ((VDSGroup) (getModel().getCluster().getSelectedItem())).getcompatibility_version()
+                getModel().getSelectedCluster() != null
+                        && (getModel().getSelectedCluster()).getcompatibility_version()
                                 .compareTo(Version.v3_2) >= 0;
         boolean nonMigratable = MigrationSupport.PINNED_TO_HOST == getModel().getMigrationMode().getSelectedItem();
         boolean manuallyMigratableAndAnyHostInCluster =
@@ -801,7 +824,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     protected void updateNumOfSockets()
     {
-        VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
+        VDSGroup cluster = getModel().getSelectedCluster();
         if (cluster == null)
         {
             return;
@@ -809,7 +832,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
         String version = cluster.getcompatibility_version().toString();
 
-        AsyncDataProvider.getMaxNumOfVmSockets(new AsyncQuery(new Object[] { this, getModel() },
+        AsyncDataProvider.getMaxNumOfVmSockets(new AsyncQuery(new Object[]{this, getModel()},
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {

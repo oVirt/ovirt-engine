@@ -4,17 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.common.queries.GetDataCentersWithPermittedActionOnClustersParameters;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -49,84 +45,61 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                     public void onSuccess(Object target, Object returnValue) {
 
                         UnitVmModel model = (UnitVmModel) target;
-                        ArrayList<StoragePool> list = new ArrayList<StoragePool>();
+                        final List<StoragePool> dataCenters = new ArrayList<StoragePool>();
                         for (StoragePool a : (ArrayList<StoragePool>) returnValue)
                         {
                             if (a.getstatus() == StoragePoolStatus.Up)
                             {
-                                list.add(a);
+                                dataCenters.add(a);
                             }
                         }
-                        model.setIsDatacenterAvailable(list.size() > 0);
-                        model.setDataCenter(model, list);
+
+                        AsyncDataProvider.getClustersWithPermittedAction(
+                                new AsyncQuery(getModel(), new INewAsyncCallback() {
+
+                                    @Override
+                                    public void onSuccess(Object target, Object returnValue) {
+                                        UnitVmModel model = (UnitVmModel) target;
+                                        model.setDataCentersAndClusters(model,
+                                                dataCenters,
+                                                (List<VDSGroup>) returnValue, null);
+                                    }
+                                }, getModel().getHash()),
+                                CREATE_VM, true, false);
 
                     }
                 }, getModel().getHash()), CREATE_VM, true, false);
     }
 
     @Override
-    public void dataCenter_SelectedItemChanged()
+    public void dataCenterWithClusterSelectedItemChanged()
     {
-        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
-        getModel().setIsHostAvailable(dataCenter.getstorage_pool_type() != StorageType.LOCALFS);
+        super.dataCenterWithClusterSelectedItemChanged();
 
         ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
-        queryTypeList.add(VdcQueryType.GetClustersWithPermittedAction);
         queryTypeList.add(VdcQueryType.GetVmTemplatesWithPermittedAction);
 
-        GetDataCentersWithPermittedActionOnClustersParameters getDataCentersWithPermittedActionOnClustersParameters =
-                new GetDataCentersWithPermittedActionOnClustersParameters();
-        getDataCentersWithPermittedActionOnClustersParameters.setActionGroup(CREATE_VM);
-        getDataCentersWithPermittedActionOnClustersParameters.setSupportsVirtService(true);
-        getDataCentersWithPermittedActionOnClustersParameters.setSupportsGlusterService(false);
-
-        GetEntitiesWithPermittedActionParameters getEntitiesWithPermittedActionParameters = new GetEntitiesWithPermittedActionParameters();
+        GetEntitiesWithPermittedActionParameters getEntitiesWithPermittedActionParameters =
+                new GetEntitiesWithPermittedActionParameters();
         getEntitiesWithPermittedActionParameters.setActionGroup(CREATE_VM);
 
         ArrayList<VdcQueryParametersBase> parametersList =
                 new ArrayList<VdcQueryParametersBase>(Arrays.asList(new VdcQueryParametersBase[] {
-                        getDataCentersWithPermittedActionOnClustersParameters, getEntitiesWithPermittedActionParameters }));
+                        getEntitiesWithPermittedActionParameters }));
 
         // Get clusters and templates
         Frontend.RunMultipleQueries(queryTypeList, parametersList, this, getModel().getHash());
-        if (dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
-            getModel().getQuota().setIsAvailable(true);
-        } else {
-            getModel().getQuota().setIsAvailable(false);
-        }
+
     }
 
     @Override
     public void executed(FrontendMultipleQueryAsyncResult result)
     {
         List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
-        ArrayList<VDSGroup> clusters =
-                (ArrayList<VDSGroup>) returnValueList.get(0).getReturnValue();
         ArrayList<VmTemplate> templates =
-                (ArrayList<VmTemplate>) returnValueList.get(1).getReturnValue();
-
-        initClusters(clusters, true, false);
+                (ArrayList<VmTemplate>) returnValueList.get(0).getReturnValue();
         initTemplates(templates);
         initCdImage();
-    }
-
-    private void initClusters(ArrayList<VDSGroup> clusters, boolean supportsVirtService, boolean supportsGlusterService)
-    {
-        // Filter clusters list (include only clusters that belong to the selected datacenter)
-        ArrayList<VDSGroup> filteredList = new ArrayList<VDSGroup>();
-        StoragePool selectedDataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
-
-        for (VDSGroup cluster : clusters)
-        {
-            if (cluster.getStoragePoolId() != null && selectedDataCenter.getId().equals(cluster.getStoragePoolId()) &&
-                    ((supportsVirtService && cluster.supportsVirtService()) || (supportsGlusterService && cluster.supportsGlusterService())))
-            {
-                filteredList.add(cluster);
-            }
-        }
-
-        Collections.sort(filteredList, new Linq.VdsGroupByNameComparer());
-        getModel().setClusters(getModel(), filteredList, null);
     }
 
     private void initTemplates(ArrayList<VmTemplate> templates)
@@ -134,8 +107,13 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
         // Filter templates list (include only templates that belong to the selected datacenter)
         ArrayList<VmTemplate> templatesList = new ArrayList<VmTemplate>();
         VmTemplate blankTemplate = null;
-        StoragePool selectedDataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
+        DataCenterWithCluster dataCenterWithCluster =
+                (DataCenterWithCluster) getModel().getDataCenterWithClustersList().getSelectedItem();
+        StoragePool selectedDataCenter = dataCenterWithCluster.getDataCenter();
         Guid selectedDataCenterId = selectedDataCenter.getId().getValue();
+        if (selectedDataCenterId == null) {
+            return;
+        }
 
         for (VmTemplate template : templates)
         {

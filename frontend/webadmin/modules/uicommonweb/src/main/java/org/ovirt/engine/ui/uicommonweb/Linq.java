@@ -47,6 +47,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDomainModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
 import org.ovirt.engine.ui.uicompat.DateTimeUtils;
@@ -980,6 +981,48 @@ public final class Linq
         }
     }
 
+    public final static class DataCenterWithClusterAccordingClusterPredicate implements IPredicate<DataCenterWithCluster> {
+
+        private Guid clusterId;
+
+        public DataCenterWithClusterAccordingClusterPredicate(Guid clusterId) {
+            this.clusterId = clusterId;
+        }
+
+        @Override
+        public boolean match(DataCenterWithCluster source) {
+            if (source.getCluster() == null) {
+                return false;
+            }
+
+            return source.getCluster().getId().equals(clusterId);
+        }
+
+    }
+
+    public final static class DataCenterWithClusterPredicate implements IPredicate<DataCenterWithCluster> {
+
+        private Guid dataCenterId;
+
+        private Guid clusterId;
+
+        public DataCenterWithClusterPredicate(Guid dataCenterId, Guid clusterId) {
+            this.dataCenterId = dataCenterId;
+            this.clusterId = clusterId;
+        }
+
+        @Override
+        public boolean match(DataCenterWithCluster source) {
+            if (source.getDataCenter() == null || source.getCluster() == null) {
+                return false;
+            }
+
+            return source.getDataCenter().getId().equals(dataCenterId) &&
+                    source.getCluster().getId().equals(clusterId);
+        }
+
+    }
+
     public final static class DataCenterPredicate implements IPredicate<StoragePool>
     {
         private Guid id = new Guid();
@@ -1027,7 +1070,6 @@ public final class Linq
             return source.getstatus() != status;
         }
     }
-
 
     public final static class CanDoActionSucceedPredicate implements IPredicate<VdcReturnValueBase> {
 
@@ -1169,7 +1211,6 @@ public final class Linq
     {
         boolean match(TSource source);
     }
-
 
     public final static class RoleNameComparer implements Comparator<Role>, Serializable {
         @Override

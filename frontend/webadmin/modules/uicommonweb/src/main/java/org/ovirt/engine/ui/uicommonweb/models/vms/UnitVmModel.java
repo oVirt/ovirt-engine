@@ -8,17 +8,19 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -83,16 +85,24 @@ public class UnitVmModel extends Model {
         return vmAttachedToPool;
     }
 
+    private NotChangableForVmInPoolListModel dataCenterWithClustersList;
+
+    public ListModel getDataCenterWithClustersList() {
+        return dataCenterWithClustersList;
+    }
+
+    private void setDataCenterWithClustersList(NotChangableForVmInPoolListModel dataCenterWithClustersList) {
+        this.dataCenterWithClustersList = dataCenterWithClustersList;
+    }
+
     /**
-     * Note: We assume that this method is called only once, on the creation stage
-     * of the model. if this assumption is changed (i.e the VM can attached/detached
-     * from a pool after the model is created), this method should be modified
+     * Note: We assume that this method is called only once, on the creation stage of the model. if this assumption is
+     * changed (i.e the VM can attached/detached from a pool after the model is created), this method should be modified
      */
     public void setVmAttachedToPool(boolean value) {
         if (value) {
             // ==General Tab==
-            getDataCenter().setIsChangable(false);
-            getCluster().setIsChangable(!value);
+            getDataCenterWithClustersList().setIsChangable(!value);
             getQuota().setIsChangable(false);
             getDescription().setIsChangable(false);
 
@@ -370,18 +380,6 @@ public class UnitVmModel extends Model {
         }
     }
 
-    private NotChangableForVmInPoolListModel privateDataCenter;
-
-    public ListModel getDataCenter()
-    {
-        return privateDataCenter;
-    }
-
-    private void setDataCenter(NotChangableForVmInPoolListModel value)
-    {
-        privateDataCenter = value;
-    }
-
     private NotChangableForVmInPoolListModel privateStorageDomain;
 
     public ListModel getStorageDomain()
@@ -512,18 +510,6 @@ public class UnitVmModel extends Model {
     private void setQuota(NotChangableForVmInPoolListModel value)
     {
         privateQuota = value;
-    }
-
-    private NotChangableForVmInPoolListModel privateCluster;
-
-    public ListModel getCluster()
-    {
-        return privateCluster;
-    }
-
-    private void setCluster(NotChangableForVmInPoolListModel value)
-    {
-        privateCluster = value;
     }
 
     private NotChangableForVmInPoolListModel privateUsbPolicy;
@@ -963,26 +949,6 @@ public class UnitVmModel extends Model {
         }
     }
 
-    private Boolean isDatacenterAvailable;
-
-    public Boolean getIsDatacenterAvailable()
-    {
-        return isDatacenterAvailable;
-    }
-
-    public void setIsDatacenterAvailable(Boolean value)
-    {
-        if (isDatacenterAvailable == null && value == null)
-        {
-            return;
-        }
-        if (isDatacenterAvailable == null || !isDatacenterAvailable.equals(value))
-        {
-            isDatacenterAvailable = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsDatacenterAvailable")); //$NON-NLS-1$
-        }
-    }
-
     private final VmModelBehaviorBase behavior;
 
     public VmModelBehaviorBase getBehavior() {
@@ -1048,7 +1014,6 @@ public class UnitVmModel extends Model {
         this.vncKeyboardLayout = vncKeyboardLayout;
     }
 
-
     public UnitVmModel(VmModelBehaviorBase behavior)
     {
         Frontend.getQueryStartedEvent().addListener(this);
@@ -1063,7 +1028,7 @@ public class UnitVmModel extends Model {
                 VdcQueryType.GetStorageDomainById, VdcQueryType.GetDataCentersWithPermittedActionOnClusters,
                 VdcQueryType.GetClustersWithPermittedAction, VdcQueryType.GetVmTemplatesWithPermittedAction,
                 VdcQueryType.GetVdsGroupById, VdcQueryType.GetStoragePoolById, VdcQueryType.GetAllDisksByVmId,
-                VdcQueryType.GetVmTemplate, VdcQueryType.GetVmConfigurationBySnapshot,
+                VdcQueryType.GetVmTemplate, VdcQueryType.GetVmConfigurationBySnapshot, VdcQueryType.GetAllVdsGroups,
                 VdcQueryType.GetPermittedStorageDomainsByStoragePoolId, VdcQueryType.GetHostsByClusterId,
                 VdcQueryType.Search });
 
@@ -1109,17 +1074,14 @@ public class UnitVmModel extends Model {
         setSecondBootDevice(new NotChangableForVmInPoolListModel());
         setPriority(new NotChangableForVmInPoolListModel());
 
-        setDataCenter(new NotChangableForVmInPoolListModel());
-        getDataCenter().getSelectedItemChangedEvent().addListener(this);
-
         setTemplate(new NotChangableForVmInPoolListModel());
         getTemplate().getSelectedItemChangedEvent().addListener(this);
 
         setQuota(new NotChangableForVmInPoolListModel());
         getQuota().setIsAvailable(false);
 
-        setCluster(new NotChangableForVmInPoolListModel());
-        getCluster().getSelectedItemChangedEvent().addListener(this);
+        setDataCenterWithClustersList(new NotChangableForVmInPoolListModel());
+        getDataCenterWithClustersList().getSelectedItemChangedEvent().addListener(this);
 
         setTimeZone(new NotChangableForVmInPoolListModel());
         getTimeZone().getSelectedItemChangedEvent().addListener(this);
@@ -1271,18 +1233,14 @@ public class UnitVmModel extends Model {
         }
         else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition))
         {
-            if (sender == getDataCenter())
+            if (sender == getDataCenterWithClustersList())
             {
-                dataCenter_SelectedItemChanged(sender, args);
+                dataCenterWithClusterSelectedItemChanged(sender, args);
+                initUsbPolicy();
             }
             else if (sender == getTemplate())
             {
                 template_SelectedItemChanged(sender, args);
-            }
-            else if (sender == getCluster())
-            {
-                cluster_SelectedItemChanged(sender, args);
-                initUsbPolicy();
             }
             else if (sender == getTimeZone())
             {
@@ -1447,7 +1405,7 @@ public class UnitVmModel extends Model {
     }
 
     private void initUsbPolicy() {
-        VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
+        VDSGroup cluster = getSelectedCluster();
         VmOsType osType = (VmOsType) getOSType().getSelectedItem();
         DisplayType displayType = (DisplayType) (getDisplayProtocol().getSelectedItem() != null ?
                 ((EntityModel) getDisplayProtocol().getSelectedItem()).getEntity() : null);
@@ -1523,7 +1481,13 @@ public class UnitVmModel extends Model {
 
     private void updateMaximalVmMemSize()
     {
-        VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
+        DataCenterWithCluster dataCenterWithCluster =
+                (DataCenterWithCluster) getDataCenterWithClustersList().getSelectedItem();
+        if (dataCenterWithCluster == null) {
+            return;
+        }
+
+        VDSGroup cluster = dataCenterWithCluster.getCluster();
 
         if (cluster != null)
         {
@@ -1588,33 +1552,30 @@ public class UnitVmModel extends Model {
 
         final List<String> layouts = (List<String>)AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayoutValidValues);
         final ArrayList<String> vncKeyboardLayoutItems = new ArrayList<String>();
-        vncKeyboardLayoutItems.add(null);   // null value means the global VncKeyboardLayout from vdc_options will be used
+        vncKeyboardLayoutItems.add(null); // null value means the global VncKeyboardLayout from vdc_options will be used
         vncKeyboardLayoutItems.addAll(layouts);
         getVncKeyboardLayout().setItems(vncKeyboardLayoutItems);
 
         getVncKeyboardLayout().setIsAvailable(isVncSelected());
     }
 
-    private void dataCenter_SelectedItemChanged(Object sender, EventArgs args)
+    private void dataCenterWithClusterSelectedItemChanged(Object sender, EventArgs args)
     {
-        behavior.dataCenter_SelectedItemChanged();
+        behavior.dataCenterWithClusterSelectedItemChanged();
 
-        StoragePool dataCenter = (StoragePool) getDataCenter().getSelectedItem();
-        if (dataCenter != null) {
-            getDisksAllocationModel().setQuotaEnforcementType(dataCenter.getQuotaEnforcementType());
+        DataCenterWithCluster dataCenterWithCluster =
+                (DataCenterWithCluster) getDataCenterWithClustersList().getSelectedItem();
+        if (dataCenterWithCluster != null && dataCenterWithCluster.getDataCenter() != null) {
+            getDisksAllocationModel().setQuotaEnforcementType(dataCenterWithCluster.getDataCenter()
+                    .getQuotaEnforcementType());
         }
+
+        updateMaximalVmMemSize();
     }
 
     private void template_SelectedItemChanged(Object sender, EventArgs args)
     {
         behavior.template_SelectedItemChanged();
-    }
-
-    private void cluster_SelectedItemChanged(Object sender, EventArgs args)
-    {
-        behavior.cluster_SelectedItemChanged();
-
-        updateMaximalVmMemSize();
     }
 
     private void timeZone_SelectedItemChanged(Object sender, EventArgs args)
@@ -1811,8 +1772,83 @@ public class UnitVmModel extends Model {
         }
     }
 
-    public void setDataCenter(UnitVmModel model, ArrayList<StoragePool> list)
-    {
+    public void setDataCentersAndClusters(UnitVmModel model,
+            List<StoragePool> dataCenters,
+            List<VDSGroup> clusters,
+            NGuid selectedCluster) {
+
+        if (model.getBehavior().getSystemTreeSelectedItem() != null
+                && model.getBehavior().getSystemTreeSelectedItem().getType() != SystemTreeItemType.System) {
+            setupDataCenterWithClustersFromSystemTree(model, dataCenters, clusters, selectedCluster);
+        } else {
+            setupDataCenterWithClusters(model, dataCenters, clusters, selectedCluster);
+        }
+
+    }
+
+    protected void setupDataCenterWithClustersFromSystemTree(UnitVmModel model,
+            List<StoragePool> dataCenters,
+            List<VDSGroup> clusters,
+            NGuid selectedCluster) {
+
+        StoragePool dataCenter = getDataCenterAccordingSystemTree(model, dataCenters);
+        List<VDSGroup> possibleClusters = getClusterAccordingSystemTree(model, clusters);
+        if (dataCenter == null || possibleClusters == null) {
+            getDataCenterWithClustersList().setIsChangable(false);
+            return;
+        }
+
+        List<DataCenterWithCluster> dataCentersWithClusters =
+                new ArrayList<DataCenterWithCluster>();
+
+        for (VDSGroup cluster : possibleClusters) {
+            if (cluster.getStoragePoolId().equals(dataCenter.getId())) {
+                dataCentersWithClusters.add(new DataCenterWithCluster(dataCenter, cluster));
+            }
+        }
+        getDataCenterWithClustersList().setItems(dataCentersWithClusters);
+
+        selectDataCenterWithCluster(model, selectedCluster, dataCentersWithClusters);
+    }
+
+    protected void setupDataCenterWithClusters(UnitVmModel model,
+            List<StoragePool> dataCenters,
+            List<VDSGroup> clusters,
+            NGuid selectedCluster) {
+
+        Map<NGuid, List<VDSGroup>> dataCenterToCluster = new HashMap<NGuid, List<VDSGroup>>();
+        for (VDSGroup cluster : clusters) {
+            if (!dataCenterToCluster.containsKey(cluster.getStoragePoolId())) {
+                dataCenterToCluster.put(cluster.getStoragePoolId(), new ArrayList<VDSGroup>());
+            }
+            dataCenterToCluster.get(cluster.getStoragePoolId()).add(cluster);
+        }
+
+        List<DataCenterWithCluster> dataCentersWithClusters =
+                new ArrayList<DataCenterWithCluster>();
+
+        for (StoragePool dataCenter : dataCenters) {
+            for (VDSGroup cluster : dataCenterToCluster.get(dataCenter.getId())) {
+                dataCentersWithClusters.add(new DataCenterWithCluster(dataCenter, cluster));
+            }
+        }
+        getDataCenterWithClustersList().setItems(dataCentersWithClusters);
+
+        selectDataCenterWithCluster(model, selectedCluster, dataCentersWithClusters);
+    }
+
+    protected void selectDataCenterWithCluster(UnitVmModel model,
+            NGuid selectedCluster,
+            List<DataCenterWithCluster> dataCentersWithClusters) {
+        if (selectedCluster == null) {
+            getDataCenterWithClustersList().setSelectedItem(Linq.firstOrDefault(dataCentersWithClusters));
+        } else {
+            model.getDataCenterWithClustersList().setSelectedItem(Linq.firstOrDefault(dataCentersWithClusters,
+                    new Linq.DataCenterWithClusterAccordingClusterPredicate((Guid) selectedCluster)));
+        }
+    }
+
+    private StoragePool getDataCenterAccordingSystemTree(UnitVmModel model, List<StoragePool> list) {
         if (model.getBehavior().getSystemTreeSelectedItem() != null
                 && model.getBehavior().getSystemTreeSelectedItem().getType() != SystemTreeItemType.System)
         {
@@ -1822,79 +1858,40 @@ public class UnitVmModel extends Model {
             case DataCenter:
                 StoragePool selectDataCenter =
                         (StoragePool) model.getBehavior().getSystemTreeSelectedItem().getEntity();
-                for (StoragePool dc : list) {
-                    if (selectDataCenter.getId().equals(dc.getId())) {
-                        selectDataCenter = dc;
-                        break;
-                    }
-                }
-                model.getDataCenter()
-                        .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { selectDataCenter })));
-                model.getDataCenter().setSelectedItem(selectDataCenter);
-                model.getDataCenter().setIsChangable(false);
-                model.getDataCenter().setInfo("Cannot choose Data Center in tree context"); //$NON-NLS-1$
-                break;
+                return findDataCenterById(list, selectDataCenter.getId());
+
             case Cluster:
             case Cluster_Gluster:
             case VMs:
                 VDSGroup cluster = (VDSGroup) model.getBehavior().getSystemTreeSelectedItem().getEntity();
                 if (cluster.supportsVirtService()) {
-                    for (StoragePool dc : list) {
-                        if (dc.getId().equals(cluster.getStoragePoolId())) {
-                            model.getDataCenter()
-                                    .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dc })));
-                            model.getDataCenter().setSelectedItem(dc);
-                            break;
-                        }
-                    }
-                    model.getDataCenter().setIsChangable(false);
-                    model.getDataCenter().setInfo("Cannot choose Data Center in tree context"); //$NON-NLS-1$
+                    return findDataCenterById(list, cluster.getStoragePoolId().getValue());
                 }
                 break;
+
             case Host:
                 VDS host = (VDS) model.getBehavior().getSystemTreeSelectedItem().getEntity();
-                for (StoragePool dc : list)
-                {
-                    if (dc.getId().equals(host.getStoragePoolId()))
-                    {
-                        model.getDataCenter()
-                                .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dc })));
-                        model.getDataCenter().setSelectedItem(dc);
-                        model.getDataCenter().setIsChangable(false);
-                        model.getDataCenter().setInfo("Cannot choose Data Center in tree context"); //$NON-NLS-1$
-                        break;
-                    }
-                }
-                break;
+                return findDataCenterById(list, host.getStoragePoolId());
+
             case Storage:
                 StorageDomain storage = (StorageDomain) model.getBehavior().getSystemTreeSelectedItem().getEntity();
-                for (StoragePool dc : list)
-                {
-                    if (dc.getId().equals(storage.getStoragePoolId()))
-                    {
-                        model.getDataCenter()
-                                .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dc })));
-                        model.getDataCenter().setSelectedItem(dc);
-                        model.getDataCenter().setIsChangable(false);
-                        model.getDataCenter().setInfo("Cannot choose Data Center in tree context"); //$NON-NLS-1$
-                        break;
-                    }
-                }
-                break;
-            default:
-                break;
+                return findDataCenterById(list, storage.getStoragePoolId().getValue());
             }
         }
-        else
-        {
-            model.getDataCenter().setItems(list);
-            model.getDataCenter().setSelectedItem(Linq.firstOrDefault(list));
-        }
+        return null;
     }
 
-    public void setClusters(UnitVmModel model, ArrayList<VDSGroup> clusters, NGuid clusterGuid)
-    {
-        VmModelBehaviorBase behavior = model.getBehavior();
+    private StoragePool findDataCenterById(List<StoragePool> list, Guid id) {
+        for (StoragePool dc : list) {
+            if (dc.getId().equals(id)) {
+                return dc;
+            }
+        }
+
+        return null;
+    }
+
+    private List<VDSGroup> getClusterAccordingSystemTree(UnitVmModel model, List<VDSGroup> clusters) {
         if (behavior.getSystemTreeSelectedItem() != null
                 && behavior.getSystemTreeSelectedItem().getType() != SystemTreeItemType.System)
         {
@@ -1903,64 +1900,35 @@ public class UnitVmModel extends Model {
             case Cluster:
             case VMs:
                 VDSGroup cluster = (VDSGroup) behavior.getSystemTreeSelectedItem().getEntity();
-                model.getCluster().setItems(new ArrayList<VDSGroup>(Arrays.asList(new VDSGroup[] { cluster })));
-                model.getCluster().setSelectedItem(cluster);
-                model.getCluster().setIsChangable(false);
-                model.getCluster().setInfo("Cannot choose Cluster in tree context"); //$NON-NLS-1$
-                break;
+                return Arrays.asList(cluster);
+
             case Host:
                 VDS host = (VDS) behavior.getSystemTreeSelectedItem().getEntity();
-                for (VDSGroup iterCluster : clusters)
-                {
-                    if (iterCluster.getId().equals(host.getVdsGroupId()))
-                    {
-                        model.getCluster()
-                                .setItems(new ArrayList<VDSGroup>(Arrays.asList(new VDSGroup[] { iterCluster })));
-                        model.getCluster().setSelectedItem(iterCluster);
-                        model.getCluster().setIsChangable(false);
-                        model.getCluster().setInfo("Cannot choose Cluster in tree context"); //$NON-NLS-1$
-                        break;
+                for (VDSGroup iterCluster : clusters) {
+                    if (iterCluster.getId().equals(host.getVdsGroupId())) {
+                        return Arrays.asList(iterCluster);
                     }
                 }
                 break;
             default:
-                model.getCluster().setItems(clusters);
-                if (clusterGuid == null)
-                {
-                    model.getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
-                }
-                else
-                {
-                    model.getCluster().setSelectedItem(Linq.firstOrDefault(clusters,
-                            new Linq.ClusterPredicate((Guid) clusterGuid)));
-                }
-                break;
+                return clusters;
             }
         }
-        else
-        {
 
-            model.getCluster().setItems(clusters);
-            if (clusterGuid == null)
-            {
-                model.getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
-            }
-            else
-            {
-                model.getCluster().setSelectedItem(Linq.firstOrDefault(clusters,
-                        new Linq.ClusterPredicate((Guid) clusterGuid)));
-            }
-        }
+        return null;
     }
 
     public boolean validate() {
-        getDataCenter().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
-        getCluster().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        getDataCenterWithClustersList().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getMemSize().validateEntity(new IValidation[] { new ByteSizeValidation() });
         getMinAllocatedMemory().validateEntity(new IValidation[] { new ByteSizeValidation() });
         getOSType().validateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
 
-        StoragePool dataCenter = (StoragePool) getDataCenter().getSelectedItem();
+        DataCenterWithCluster dataCenterWithCluster =
+                (DataCenterWithCluster) getDataCenterWithClustersList().getSelectedItem();
+
+        StoragePool dataCenter =
+                dataCenterWithCluster == null ? null : dataCenterWithCluster.getDataCenter();
         if (dataCenter != null && dataCenter.getQuotaEnforcementType() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT) {
             getQuota().validateSelectedItem(new IValidation[] { new NotEmptyQuotaValidation() });
         }
@@ -2045,8 +2013,9 @@ public class UnitVmModel extends Model {
         setIsFirstRunTabValid(getIsDisplayTabValid());
         setIsGeneralTabValid(getIsFirstRunTabValid());
 
-        setIsGeneralTabValid(getName().getIsValid() && getDescription().getIsValid() && getDataCenter().getIsValid()
-                && getTemplate().getIsValid() && getCluster().getIsValid() && getMemSize().getIsValid()
+        setIsGeneralTabValid(getName().getIsValid() && getDescription().getIsValid()
+                && getDataCenterWithClustersList().getIsValid()
+                && getTemplate().getIsValid() && getMemSize().getIsValid()
                 && getMinAllocatedMemory().getIsValid());
 
         setIsFirstRunTabValid(getDomain().getIsValid() && getTimeZone().getIsValid());
@@ -2056,8 +2025,8 @@ public class UnitVmModel extends Model {
         setIsBootSequenceTabValid(getCdImage().getIsValid() && getKernel_path().getIsValid());
         setIsCustomPropertiesTabValid(customPropertySheetValid);
 
-        return getName().getIsValid() && getDescription().getIsValid() && getDataCenter().getIsValid()
-                && getDisksAllocationModel().getIsValid() && getTemplate().getIsValid() && getCluster().getIsValid()
+        return getName().getIsValid() && getDescription().getIsValid() && getDataCenterWithClustersList().getIsValid()
+                && getDisksAllocationModel().getIsValid() && getTemplate().getIsValid()
                 && getDefaultHost().getIsValid() && getMemSize().getIsValid() && getMinAllocatedMemory().getIsValid()
                 && getNumOfMonitors().getIsValid() && getDomain().getIsValid() && getUsbPolicy().getIsValid()
                 && getTimeZone().getIsValid() && getOSType().getIsValid() && getCdImage().getIsValid()
@@ -2248,4 +2217,23 @@ public class UnitVmModel extends Model {
         this.watchdogAction = watchdogAction;
     }
 
+    public StoragePool getSelectedDataCenter() {
+        DataCenterWithCluster dataCenterWithCluster =
+                (DataCenterWithCluster) getDataCenterWithClustersList().getSelectedItem();
+        if (dataCenterWithCluster == null) {
+            return null;
+        }
+
+        return dataCenterWithCluster.getDataCenter();
+    }
+
+    public VDSGroup getSelectedCluster() {
+        DataCenterWithCluster dataCenterWithCluster =
+                (DataCenterWithCluster) getDataCenterWithClustersList().getSelectedItem();
+        if (dataCenterWithCluster == null) {
+            return null;
+        }
+
+        return dataCenterWithCluster.getCluster();
+    }
 }

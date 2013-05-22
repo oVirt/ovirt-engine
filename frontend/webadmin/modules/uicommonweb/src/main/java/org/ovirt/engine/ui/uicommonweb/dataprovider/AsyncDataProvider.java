@@ -603,6 +603,25 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
+    public static void getClusterListByService(AsyncQuery aQuery, final boolean supportsVirtService,
+            final boolean supportsGlusterService) {
+
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                if (source != null)
+                {
+                    ArrayList<VDSGroup> list = getClusterByServiceList((ArrayList<VDSGroup>) source, supportsVirtService, supportsGlusterService);
+                    Collections.sort(list, new Linq.VdsGroupByNameComparer());
+                    return list;
+                }
+                return new ArrayList<VDSGroup>();
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.GetAllVdsGroups, new VdcQueryParametersBase(), aQuery);
+    }
+
     public static void getClusterList(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override

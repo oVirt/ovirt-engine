@@ -46,14 +46,13 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
 
     @Override
     public void template_SelectedItemChanged() {
-        super.template_SelectedItemChanged();
         getModel().setIsDisksAvailable(true);
         updateHostPinning(pool.getMigrationSupport());
     }
 
     @Override
     protected void postInitTemplate() {
-        setupWindowModelFrom(pool.getStaticData());
+        setupWindowModelFrom(pool.getStaticData(), pool.getStoragePoolId());
         getModel().setIsDisksAvailable(true);
     }
 
@@ -73,7 +72,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
             return;
         }
 
-        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
+        StoragePool dataCenter = getModel().getSelectedDataCenter();
         AsyncDataProvider.getPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
@@ -116,7 +115,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
             getModel().getNumOfDesktops().validateEntity(new IValidation[] { new ExistingPoolNameLengthValidation(
                     (String) getModel().getName().getEntity(),
                     ((Integer) getModel().getAssignedVms().getEntity()) +
-                    Integer.parseInt((getModel().getNumOfDesktops().getEntity().toString())),
+                            Integer.parseInt((getModel().getNumOfDesktops().getEntity().toString())),
                     (VmOsType) getModel().getOSType().getSelectedItem()
                     ) }
                     );

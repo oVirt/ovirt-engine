@@ -90,8 +90,7 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
 
         // In 'ja' locale the text of prestarted vms is too long for 230px.
         // Changed all the right column widgets width to 250px.
-        dataCenterEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
-        clusterEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+        dataCenterWithClusterEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
         quotaEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
         descriptionEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
         templateEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
@@ -120,6 +119,8 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
         resourceAllocationTab.disableContent();
         bootOptionsTab.disableContent();
         customPropertiesTab.disableContent();
+        systemTab.disableContent();
+        oSTypeEditor.setEnabled(false);
     }
 
     @Override

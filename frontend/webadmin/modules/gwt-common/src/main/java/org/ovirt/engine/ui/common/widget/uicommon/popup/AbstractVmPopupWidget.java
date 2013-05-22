@@ -11,13 +11,13 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
@@ -46,6 +46,7 @@ import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
@@ -63,8 +64,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -104,14 +103,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         String generalTabExtendedRightWidgetWidth();
     }
 
-    interface TypeAheadNameDescriptionTemplate extends SafeHtmlTemplates {
-        @Template("<div style='width: 600px'><div style='width: 30%; display: inline-block; border-right: 1px solid black; font-weight:bold; padding-right: 25px; float: left'>{0}</div><div style='display: inline-block; margin-left: 25px;'>{1}</div></div>")
-        SafeHtml input(String name, String description);
-    }
-
-    private static TypeAheadNameDescriptionTemplate typeAheadNameDescriptionTemplate =
-            GWT.create(TypeAheadNameDescriptionTemplate.class);
-
     @UiField
     protected Style style;
 
@@ -120,14 +111,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     protected DialogTab generalTab;
 
     @UiField(provided = true)
-    @Path(value = "dataCenter.selectedItem")
-    @WithElementId("dataCenter")
-    public ListModelTypeAheadListBoxEditor<Object> dataCenterEditor;
-
-    @UiField(provided = true)
-    @Path(value = "cluster.selectedItem")
-    @WithElementId("cluster")
-    public ListModelTypeAheadListBoxEditor<Object> clusterEditor;
+    @Path(value = "dataCenterWithClustersList.selectedItem")
+    @WithElementId("dataCenterWithCluster")
+    public ListModelTypeAheadListBoxEditor<Object> dataCenterWithClusterEditor;
 
     @UiField(provided = true)
     @Path(value = "quota.selectedItem")
@@ -157,29 +143,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("template")
     public ListModelTypeAheadListBoxEditor<Object> templateEditor;
 
-    @UiField(provided = true)
-    @Path(value = "memSize.entity")
-    @WithElementId("memSize")
-    public EntityModelTextBoxEditor memSizeEditor;
-
     @UiField
     @Ignore
     HTML cpuPinningLabel;
-
-    @UiField(provided = true)
-    @Path(value = "totalCPUCores.entity")
-    @WithElementId("totalCPUCores")
-    public EntityModelTextBoxEditor totalvCPUsEditor;
-
-    @UiField(provided = true)
-    @Path(value = "numOfSockets.selectedItem")
-    @WithElementId("numOfSockets")
-    public ListModelListBoxEditor<Object> numOfSocketsEditor;
-
-    @UiField(provided = true)
-    @Path(value = "coresPerSocket.selectedItem")
-    @WithElementId("coresPerSocket")
-    public ListModelListBoxEditor<Object> corePerSocketEditor;
 
     @UiField(provided = true)
     @Path(value = "oSType.selectedItem")
@@ -194,6 +160,38 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField
     @Ignore
     Label generalWarningMessage;
+
+    // == System ==
+    @UiField
+    protected DialogTab systemTab;
+
+    @UiField(provided = true)
+    @Path(value = "memSize.entity")
+    @WithElementId("memSize")
+    public EntityModelTextBoxEditor memSizeEditor;
+
+    @UiField(provided = true)
+    @Path(value = "totalCPUCores.entity")
+    @WithElementId("totalCPUCores")
+    public EntityModelTextBoxEditor totalvCPUsEditor;
+
+    @UiField
+    @Ignore
+    AdvancedParametersExpander vcpusAdvancedParameterExpander;
+
+    @UiField
+    @Ignore
+    Panel vcpusAdvancedParameterExpanderContent;
+
+    @UiField(provided = true)
+    @Path(value = "numOfSockets.selectedItem")
+    @WithElementId("numOfSockets")
+    public ListModelListBoxEditor<Object> numOfSocketsEditor;
+
+    @UiField(provided = true)
+    @Path(value = "coresPerSocket.selectedItem")
+    @WithElementId("coresPerSocket")
+    public ListModelListBoxEditor<Object> corePerSocketEditor;
 
     // == Pools ==
     @UiField
@@ -514,19 +512,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Ignore
     Panel expanderContent;
 
-    @UiField
-    @Ignore
-    AdvancedParametersExpander generalAdvancedParameterExpander;
-
-    @UiField
-    @Ignore
-    Panel generalAdvancedParameterExpanderContent;
-
     private final Driver driver = GWT.create(Driver.class);
 
     private final CommonApplicationTemplates applicationTemplates;
-
-    private final CommonApplicationResources resources;
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public AbstractVmPopupWidget(CommonApplicationConstants constants,
@@ -534,7 +522,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             final CommonApplicationMessages messages,
             CommonApplicationTemplates applicationTemplates) {
 
-        this.resources = resources;
         this.messages = messages;
         this.applicationTemplates = applicationTemplates;
 
@@ -567,7 +554,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
         expander.initWithContent(expanderContent.getElement());
-        generalAdvancedParameterExpander.initWithContent(generalAdvancedParameterExpanderContent.getElement());
+        vcpusAdvancedParameterExpander.initWithContent(vcpusAdvancedParameterExpanderContent.getElement());
         editPrestartedVmsEditor.setKeepTitleOnSetEnabled(true);
 
         applyStyles();
@@ -651,38 +638,24 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private void initListBoxEditors() {
         // General tab
-        dataCenterEditor = new ListModelTypeAheadListBoxEditor<Object>(
+        dataCenterWithClusterEditor = new ListModelTypeAheadListBoxEditor<Object>(
                 new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<Object>() {
 
                     @Override
                     public String getReplacementStringNullSafe(Object data) {
-                        return ((StoragePool) data).getname();
+                        return ((DataCenterWithCluster) data).getCluster().getname() + "/" //$NON-NLS-1$
+                                + ((DataCenterWithCluster) data).getDataCenter().getname();
                     }
 
                     @Override
                     public String getDisplayStringNullSafe(Object data) {
+                        String dcDescription =
+                                ((DataCenterWithCluster) data).getDataCenter().getdescription();
+
                         return typeAheadNameDescriptionTemplateNullSafe(
-                                ((StoragePool) data).getname(),
-                                ((StoragePool) data).getdescription()
-                        );
-                    }
-
-                },
-                new ModeSwitchingVisibilityRenderer());
-
-        clusterEditor = new ListModelTypeAheadListBoxEditor<Object>(
-                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<Object>() {
-
-                    @Override
-                    public String getReplacementStringNullSafe(Object data) {
-                        return ((VDSGroup) data).getname();
-                    }
-
-                    @Override
-                    public String getDisplayStringNullSafe(Object data) {
-                        return typeAheadNameDescriptionTemplateNullSafe(
-                                ((VDSGroup) data).getname(),
-                                ((VDSGroup) data).getdescription()
+                                ((DataCenterWithCluster) data).getCluster().getname(),
+                                !StringHelper.isNullOrEmpty(dcDescription) ? dcDescription
+                                        : ((DataCenterWithCluster) data).getDataCenter().getname()
                         );
                     }
 
@@ -835,7 +808,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     }
 
     private String typeAheadNameDescriptionTemplateNullSafe(String name, String description) {
-        return typeAheadNameDescriptionTemplate.input(
+        return applicationTemplates.typeAheadNameDescription(
                 name != null ? name : "",
                 description != null ? description : "")
                 .asString();
@@ -847,11 +820,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         resourceAllocationTab.setLabel(constants.resourceAllocVmPopup());
         bootOptionsTab.setLabel(constants.bootOptionsVmPopup());
         customPropertiesTab.setLabel(constants.customPropsVmPopup());
+        systemTab.setLabel(constants.systemVmPopup());
 
         // General Tab
         generalTab.setLabel(constants.GeneralVmPopup());
-        dataCenterEditor.setLabel(constants.dcVmPopup());
-        clusterEditor.setLabel(constants.hostClusterVmPopup());
+        dataCenterWithClusterEditor.setLabel(constants.hostClusterVmPopup());
         quotaEditor.setLabel(constants.quotaVmPopup());
         nameLabel.setText(constants.nameVmPopup());
         descriptionEditor.setLabel(constants.descriptionVmPopup());
@@ -1032,8 +1005,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
      * certain, configurable cluster version.
      */
     protected void updateUsbNativeMessageVisibility(final UnitVmModel object) {
-        VDSGroup vdsGroup = (VDSGroup) object.getCluster().getSelectedItem();
-
+        VDSGroup vdsGroup = (VDSGroup) object.getSelectedCluster();
         changeApplicationLevelVisibility(nativeUsbWarningMessage,
                 object.getUsbPolicy().getSelectedItem() == UsbPolicy.ENABLED_NATIVE
                         && vdsGroup != null
@@ -1219,8 +1191,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public int setTabIndexes(int nextTabIndex) {
         // ==General Tab==
         nextTabIndex = generalTab.setTabIndexes(nextTabIndex);
-        dataCenterEditor.setTabIndex(nextTabIndex++);
-        clusterEditor.setTabIndex(nextTabIndex++);
         quotaEditor.setTabIndex(nextTabIndex++);
         nameEditor.setTabIndex(nextTabIndex++);
         descriptionEditor.setTabIndex(nextTabIndex++);
@@ -1236,7 +1206,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         memSizeEditor.setTabIndex(nextTabIndex++);
         totalvCPUsEditor.setTabIndex(nextTabIndex++);
 
-        nextTabIndex = generalAdvancedParameterExpander.setTabIndexes(nextTabIndex);
+        nextTabIndex = vcpusAdvancedParameterExpander.setTabIndexes(nextTabIndex);
         corePerSocketEditor.setTabIndex(nextTabIndex++);
         numOfSocketsEditor.setTabIndex(nextTabIndex++);
 
@@ -1347,14 +1317,15 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 bootOptionsTab,
                 customPropertiesTab,
                 highAvailabilityTab,
-                poolTab);
+                poolTab,
+                systemTab);
     }
 
     protected List<Widget> adancedFieldsFromGeneralTab() {
         return Arrays.<Widget> asList(
                 memSizeEditor,
                 totalvCPUsEditor,
-                generalAdvancedParameterExpander
+                vcpusAdvancedParameterExpander
                 );
     }
 }

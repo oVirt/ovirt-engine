@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common;
 
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates.Template;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
 public interface CommonApplicationTemplates extends SafeHtmlTemplates {
@@ -63,5 +64,8 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
 
     @Template("<i>{0}</i>")
     SafeHtml italicText(String text);
+
+    @Template("<div style='width: 600px'><div style='width: 30%; display: inline-block; border-right: 1px solid black; font-weight:bold; padding-right: 25px; float: left'>{0}</div><div style='display: inline-block; margin-left: 25px;'>{1}</div></div>")
+    SafeHtml typeAheadNameDescription(String name, String description);
 
 }

@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
@@ -42,13 +40,32 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
+                            final StoragePool dataCenter = (StoragePool) returnValue;
+                            AsyncDataProvider.getClusterListByService(
+                                    new AsyncQuery(getModel(), new INewAsyncCallback() {
 
-                            UnitVmModel model = (UnitVmModel) target;
-                            StoragePool dataCenter = (StoragePool) returnValue;
-                            model.setDataCenter(model,
-                                    new ArrayList<StoragePool>(Arrays.asList(new StoragePool[]{dataCenter})));
-                            model.getDataCenter().setIsChangable(false);
+                                        @Override
+                                        public void onSuccess(Object target, Object returnValue) {
+                                            UnitVmModel model = (UnitVmModel) target;
 
+                                            ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
+                                            ArrayList<VDSGroup> filteredClusters = new ArrayList<VDSGroup>();
+                                            // filter clusters supporting virt service only
+                                            for (VDSGroup cluster : clusters) {
+                                                if (cluster.supportsVirtService()) {
+                                                    filteredClusters.add(cluster);
+                                                }
+                                            }
+                                            model.setDataCentersAndClusters(model,
+                                                    new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dataCenter })),
+                                                    filteredClusters, template.getVdsGroupId().getValue());
+
+                                            initTemplate();
+                                            initCdImage();
+                                        }
+                                    }, getModel().getHash()),
+                                    true,
+                                    false);
                         }
                     },
                     getModel().getHash()),
@@ -72,51 +89,13 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
     }
 
     @Override
-    public void dataCenter_SelectedItemChanged()
-    {
-        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
-
-        getModel().setIsHostAvailable(dataCenter.getstorage_pool_type() != StorageType.LOCALFS);
-
-        AsyncDataProvider.getClusterByServiceList(new AsyncQuery(new Object[] { this, getModel() },
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-
-                        Object[] array = (Object[]) target;
-                        TemplateVmModelBehavior behavior = (TemplateVmModelBehavior) array[0];
-                        UnitVmModel model = (UnitVmModel) array[1];
-                        VmTemplate vmTemplate = ((TemplateVmModelBehavior) (array[0])).template;
-                        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
-                        ArrayList<VDSGroup> filteredClusters = new ArrayList<VDSGroup>();
-                        // filter clusters supporting virt service only
-                        for (VDSGroup cluster : clusters) {
-                            if (cluster.supportsVirtService()) {
-                                filteredClusters.add(cluster);
-                            }
-                        }
-
-                        model.setClusters(model, filteredClusters, vmTemplate.getVdsGroupId().getValue());
-                        behavior.initTemplate();
-                        behavior.initCdImage();
-
-                    }
-                }, getModel().getHash()), dataCenter.getId(), true, false);
-        if (dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
-            getModel().getQuota().setIsAvailable(true);
-        } else {
-            getModel().getQuota().setIsAvailable(false);
-        }
-    }
-
-    @Override
     public void template_SelectedItemChanged()
     {
         // Leave this method empty. Not relevant for template.
     }
 
     @Override
-    public void cluster_SelectedItemChanged()
+    public void postDataCenterWithClusterSelectedItemChanged()
     {
         updateDefaultHost();
         updateNumOfSockets();

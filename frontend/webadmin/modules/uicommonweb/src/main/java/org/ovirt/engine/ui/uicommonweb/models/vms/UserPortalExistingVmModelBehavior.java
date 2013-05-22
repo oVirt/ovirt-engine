@@ -3,11 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-
+import java.util.List;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -40,13 +38,9 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
     }
 
     @Override
-    public void dataCenter_SelectedItemChanged()
-    {
-        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
-        getModel().setIsHostAvailable(dataCenter.getstorage_pool_type() != StorageType.LOCALFS);
-
+    protected void initClusters(final List<StoragePool> dataCenters) {
         // Get clusters with permitted edit action
-        AsyncDataProvider.getClustersWithPermittedAction(new AsyncQuery(new Object[] { this, getModel() },
+        AsyncDataProvider.getClustersWithPermittedAction(new AsyncQuery(new Object[]{this, getModel()},
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -54,19 +48,36 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
                         Object[] array = (Object[]) target;
                         ExistingVmModelBehavior behavior = (ExistingVmModelBehavior) array[0];
                         UnitVmModel model = (UnitVmModel) array[1];
-                        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
-                        initClusters(clusters, model);
+                        List<VDSGroup> clusters = (List<VDSGroup>) returnValue;
+
+                        if (containsVmCluster(clusters)) {
+                            Collections.sort(clusters, new Linq.VdsGroupByNameComparer());
+                            model.setDataCentersAndClusters(model, dataCenters, clusters, vm.getVdsGroupId().getValue());
+                        } else {
+                            // Add VM's cluster if not contained in the cluster list
+                            addVmCluster(dataCenters, clusters);
+                        }
+
                         behavior.initTemplate();
                         behavior.initCdImage();
 
                     }
                 }, getModel().getHash()), CREATE_VM, true, false);
 
-        if (dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
-            getModel().getQuota().setIsAvailable(true);
-        } else {
-            getModel().getQuota().setIsAvailable(false);
+    }
+
+
+    private boolean containsVmCluster(List<VDSGroup> clusters) {
+
+        for (VDSGroup cluster : clusters) {
+            if (cluster.getStoragePoolId() != null) {
+                if (Guid.OpEquality(cluster.getId(), vm.getVdsGroupId().getValue())) {
+                    return true;
+                }
+            }
         }
+
+        return false;
     }
 
     @Override
@@ -74,39 +85,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
         updateUserCdImage(getVm().getStoragePoolId());
     }
 
-    private void initClusters(ArrayList<VDSGroup> clusters, UnitVmModel model)
-    {
-        // Filter clusters list (include only clusters that belong to the selected datacenter)
-        ArrayList<VDSGroup> filteredList = new ArrayList<VDSGroup>();
-        StoragePool selectedDataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
-        boolean listContainsVmCluster = false;
-
-        for (VDSGroup cluster : clusters)
-        {
-            if (cluster.getStoragePoolId() != null && selectedDataCenter.getId().equals(cluster.getStoragePoolId()))
-            {
-                filteredList.add(cluster);
-
-                if (Guid.OpEquality(cluster.getId(), vm.getVdsGroupId().getValue()))
-                {
-                    listContainsVmCluster = true;
-                }
-            }
-        }
-
-        if (!listContainsVmCluster)
-        {
-            // Add VM's cluster if not contained in the cluster list
-            addVmCluster(filteredList);
-        }
-        else
-        {
-            Collections.sort(filteredList, new Linq.VdsGroupByNameComparer());
-            model.setClusters(model, filteredList, vm.getVdsGroupId().getValue());
-        }
-    }
-
-    private void addVmCluster(ArrayList<VDSGroup> clusters)
+    private void addVmCluster(final List<StoragePool> dataCenters, final List<VDSGroup> clusters)
     {
         AsyncDataProvider.getClusterById(new AsyncQuery(new Object[] { getModel(), clusters },
                 new INewAsyncCallback() {
@@ -122,7 +101,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
                             clusterList.add(cluster);
                         }
                         Collections.sort(clusterList, new Linq.VdsGroupByNameComparer());
-                        model.setClusters(model, clusterList, vm.getVdsGroupId().getValue());
+                        model.setDataCentersAndClusters(model, dataCenters, clusters, vm.getVdsGroupId().getValue());
 
                     }
                 }, getModel().getHash()), vm.getVdsGroupId());

@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -38,11 +36,6 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
         return poolModelBehaviorInitializedEvent;
     }
 
-    private void setPoolModelBehaviorInitializedEvent(Event value)
-    {
-        poolModelBehaviorInitializedEvent = value;
-    }
-
     @Override
     public void initialize(SystemTreeItemModel systemTreeSelectedItem)
     {
@@ -59,53 +52,34 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             public void onSuccess(Object target, Object returnValue) {
 
                 UnitVmModel model = (UnitVmModel) target;
-                ArrayList<StoragePool> list = new ArrayList<StoragePool>();
+                final List<StoragePool> dataCenters = new ArrayList<StoragePool>();
                 for (StoragePool a : (ArrayList<StoragePool>) returnValue) {
                     if (a.getstatus() == StoragePoolStatus.Up) {
-                        list.add(a);
+                        dataCenters.add(a);
                     }
                 }
-                model.setDataCenter(model, list);
 
-                getPoolModelBehaviorInitializedEvent().raise(this, EventArgs.Empty);
+                AsyncDataProvider.getClusterListByService(
+                        new AsyncQuery(getModel(), new INewAsyncCallback() {
 
+                            @Override
+                            public void onSuccess(Object target, Object returnValue) {
+                                UnitVmModel model = (UnitVmModel) target;
+                                model.setDataCentersAndClusters(model,
+                                        dataCenters,
+                                        (List<VDSGroup>) returnValue, null);
+
+                                initTemplate();
+                                initCdImage();
+                                getPoolModelBehaviorInitializedEvent().raise(this, EventArgs.Empty);
+                            }
+                        }, getModel().getHash()),
+                        true, false);
             }
         }, getModel().getHash()), true, false);
     }
 
-    @Override
-    public void dataCenter_SelectedItemChanged()
-    {
-        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
-
-        if (dataCenter == null)
-            return;
-
-        getModel().setIsHostAvailable(dataCenter.getstorage_pool_type() != StorageType.LOCALFS);
-
-        AsyncDataProvider.getClusterByServiceList(new AsyncQuery(new Object[] { this, getModel() }, new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object target, Object returnValue) {
-
-                Object[] array = (Object[]) target;
-                PoolModelBehaviorBase behavior = (PoolModelBehaviorBase) array[0];
-                UnitVmModel model = (UnitVmModel) array[1];
-                ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
-                model.setClusters(model, clusters, null);
-                behavior.initTemplate();
-                behavior.initCdImage();
-
-            }
-        }, getModel().getHash()), dataCenter.getId(), true, false);
-
-        if (dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
-            getModel().getQuota().setIsAvailable(true);
-        } else {
-            getModel().getQuota().setIsAvailable(false);
-        }
-    }
-
-    protected void setupWindowModelFrom(VmBase vmBase) {
+    protected void setupWindowModelFrom(VmBase vmBase, Guid dataCenterId) {
         if (vmBase != null) {
             updateQuotaByCluster(vmBase.getQuotaId(), vmBase.getQuotaName());
             // Copy VM parameters from template.
@@ -136,12 +110,14 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             // Update domain list
             updateDomain();
 
-            ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) getModel().getCluster().getItems();
-            VDSGroup selectCluster =
-                    Linq.firstOrDefault(clusters, new Linq.ClusterPredicate(vmBase.getVdsGroupId()));
+            List<DataCenterWithCluster> dataCenterWithClusters = (List<DataCenterWithCluster>) getModel().getDataCenterWithClustersList().getItems();
+            DataCenterWithCluster selectDataCenterWithCluster =
+                    Linq.firstOrDefault(dataCenterWithClusters,
+                            new Linq.DataCenterWithClusterPredicate(dataCenterId, vmBase.getVdsGroupId()));
 
-            getModel().getCluster().setSelectedItem((selectCluster != null) ? selectCluster
-                    : Linq.firstOrDefault(clusters));
+            getModel().getDataCenterWithClustersList()
+                    .setSelectedItem((selectDataCenterWithCluster != null) ? selectDataCenterWithCluster
+                            : Linq.firstOrDefault(dataCenterWithClusters));
 
             // Update display protocol selected item
             EntityModel displayProtocol = null;
@@ -206,7 +182,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     protected abstract DisplayType extractDisplayType(VmBase vmBase);
 
     @Override
-    public void cluster_SelectedItemChanged()
+    public void postDataCenterWithClusterSelectedItemChanged()
     {
         updateDefaultHost();
         updateCustomPropertySheet();
@@ -232,7 +208,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     @Override
     public void updateMinAllocatedMemory()
     {
-        VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
+        VDSGroup cluster = (VDSGroup) getModel().getSelectedCluster();
         if (cluster == null)
         {
             return;
@@ -245,7 +221,10 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
     private void initTemplate()
     {
-        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
+        StoragePool dataCenter = getModel().getSelectedDataCenter();
+        if (dataCenter == null) {
+            return;
+        }
 
         AsyncDataProvider.getTemplateListByDataCenter(new AsyncQuery(this, new INewAsyncCallback() {
             @Override

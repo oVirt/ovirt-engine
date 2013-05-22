@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -272,24 +271,22 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                                 String cdImage = null;
 
                                 if (vm != null) {
-                                    model.getDataCenter().setSelectedItem(null);
-                                    model.getDataCenter().setSelectedItem(Linq.firstOrDefault(model.getDataCenter()
+                                    model.getDataCenterWithClustersList().setSelectedItem(null);
+                                    model.getDataCenterWithClustersList().setSelectedItem(Linq.firstOrDefault(model.getDataCenterWithClustersList()
                                             .getItems(),
-                                            new Linq.DataCenterPredicate(vm.getStoragePoolId())));
-                                    model.getDataCenter().setIsChangable(false);
+                                            new Linq.DataCenterWithClusterPredicate(vm.getStoragePoolId(), vm.getVdsGroupId())));
+
                                     model.getTemplate().setIsChangable(false);
-
                                     cdImage = vm.getIsoPath();
-
                                 }
                                 else
                                 {
-                                    model.getDataCenter()
-                                            .setSelectedItem(Linq.firstOrDefault(Linq.<StoragePool> cast(model.getDataCenter()
+                                    model.getDataCenterWithClustersList()
+                                            .setSelectedItem(Linq.firstOrDefault(Linq.<StoragePool> cast(model.getDataCenterWithClustersList()
                                                     .getItems())));
                                 }
 
-                                model.getCluster().setIsChangable(vm == null);
+                                model.getDataCenterWithClustersList().setIsChangable(vm == null);
 
                                 boolean hasCd = !StringHelper.isNullOrEmpty(cdImage);
                                 model.getCdImage().setIsChangable(hasCd);
@@ -455,7 +452,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         // Save changes.
                         pool.setName((String) model.getName().getEntity());
                         pool.setVmPoolDescription((String) model.getDescription().getEntity());
-                        pool.setVdsGroupId(((VDSGroup) model.getCluster().getSelectedItem()).getId());
+                        pool.setVdsGroupId(model.getSelectedCluster().getId());
                         pool.setPrestartedVms(model.getPrestartedVms().asConvertible().integer());
                         pool.setMaxAssignedVmsPerUser(model.getMaxAssignedVmsPerUser().asConvertible().integer());
 
@@ -485,7 +482,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                                 .getSelectedItem() : ""); //$NON-NLS-1$
                         desktop.setVmMemSizeMb((Integer) model.getMemSize().getEntity());
                         desktop.setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
-                        desktop.setVdsGroupId(((VDSGroup) model.getCluster().getSelectedItem()).getId());
+                        desktop.setVdsGroupId(model.getSelectedCluster().getId());
                         desktop.setTimeZone((model.getTimeZone().getIsAvailable() && model.getTimeZone()
                                 .getSelectedItem() != null) ? ((TimeZoneModel) model.getTimeZone()
                                 .getSelectedItem()).getTimeZoneKey()
