@@ -29,7 +29,7 @@ public class TestProviderConnectivityCommand<P extends ProviderParameters> exten
 
     @Override
     protected void executeCommand() {
-        ProviderProxy proxy = ProviderProxyFactory.create(getParameters().getProvider());
+        ProviderProxy proxy = ProviderProxyFactory.getInstance().create(getParameters().getProvider());
 
         proxy.testConnection();
         setSucceeded(true);
