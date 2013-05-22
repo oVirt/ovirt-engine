@@ -67,12 +67,17 @@ class Plugin(plugin.PluginBase):
                 osetupcons.PKIEnv.STORE_PASS
             ]
         )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_SETUP,
+    )
+    def _setupGroup(self):
         self.environment[
             osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
         ].createGroup(
             group='ca_pki',
             description='PKI configuration and keys',
-            optional=True
+            optional=True,
         )
 
     @plugin.event(
