@@ -107,7 +107,8 @@ public class VdsSelector {
 
                 return false;
             }
-            returnValue = canFindAnyVds(messages, isMigrate);
+            returnValue = canFindVdsToRun(messages, isMigrate,
+                    DbFacade.getInstance().getVdsDao().getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode }));
         }
 
         return returnValue;
@@ -117,11 +118,6 @@ public class VdsSelector {
         return getVdsToRunOn(DbFacade.getInstance()
                 .getVdsDao()
                 .getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode }), isMigrate);
-    }
-
-    private boolean canFindAnyVds(List<String> messages, boolean isMigrate) {
-        return canFindVdsToRun(messages, isMigrate,
-                DbFacade.getInstance().getVdsDao().getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode }));
     }
 
     /**
