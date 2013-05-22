@@ -88,7 +88,11 @@ public class VdsSelector {
     public boolean canFindVdsToRunOn(List<String> messages, boolean isMigrate) {
         boolean returnValue = false;
         if (getDestinationVdsId() != null) {
-            returnValue = canRunOnDestinationVds(messages, isMigrate);
+            VDS targetVds = DbFacade.getInstance().getVdsDao().get(getDestinationVdsId());
+            log.infoFormat("Checking for a specific VDS only - id:{0}, name:{1}, host_name(ip):{2}",
+                    getDestinationVdsId(), targetVds.getName(), targetVds.getHostName());
+            returnValue = canFindVdsToRun(messages, isMigrate,
+                    new ArrayList<VDS>(Arrays.asList(targetVds)));
         }
 
         if (!returnValue) {
@@ -113,17 +117,6 @@ public class VdsSelector {
         return getVdsToRunOn(DbFacade.getInstance()
                 .getVdsDao()
                 .getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode }), isMigrate);
-    }
-
-    private boolean canRunOnDestinationVds(List<String> messages, boolean isMigrate) {
-        boolean returnValue = false;
-        if (getDestinationVdsId() != null) {
-            VDS target_vds = DbFacade.getInstance().getVdsDao().get(getDestinationVdsId());
-            log.infoFormat("Checking for a specific VDS only - id:{0}, name:{1}, host_name(ip):{2}",
-                    getDestinationVdsId(), target_vds.getName(), target_vds.getHostName());
-            returnValue = canFindVdsToRun(messages, isMigrate, Arrays.asList(target_vds));
-        }
-        return returnValue;
     }
 
     private boolean canFindAnyVds(List<String> messages, boolean isMigrate) {
