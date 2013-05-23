@@ -104,13 +104,18 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
         errorType = errType;
         getReturnValue().getExecuteFailedMessages().addAll(errors);
         getReturnValue().getFault().setMessage(StringUtils.join(errors, SystemUtils.LINE_SEPARATOR));
+        // Setting Error to null to make the FrontendErrorHanler to use the Message which is being set above instead of
+        // the VdcBllErrors.ENGINE(which will get translated to "Internal engine error")
+        getReturnValue().getFault().setError(null);
     }
-
 
     protected void handleVdsError(AuditLogType errType, String error) {
         errorType = errType;
         getReturnValue().getExecuteFailedMessages().add(error);
         getReturnValue().getFault().setMessage(error);
+        // Setting Error to null to make the FrontendErrorHanler to use the Message which is being set above instead of
+        // the VdcBllErrors.ENGINE(which will get translated to "Internal engine error")
+        getReturnValue().getFault().setError(null);
     }
 
     protected boolean updateBrickServerNames(List<GlusterBrickEntity> bricks, boolean addCanDoActionMessage) {
