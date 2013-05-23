@@ -171,6 +171,11 @@ Create empty schema (one time):
 $ PGPASSWORD=engine \
     ./backend/manager/dbscripts/create_schema.sh -d engine_dao -u engine
 
+Upgrade schema (when needed):
+
+$ PGPASSWORD=engine \
+    ./backend/manager/dbscripts/upgrade.sh -u engine -d engine_dao
+
 Run build as:
 
 $ make BUILD_TEST_FLAGS="-P enable-dao-tests \
