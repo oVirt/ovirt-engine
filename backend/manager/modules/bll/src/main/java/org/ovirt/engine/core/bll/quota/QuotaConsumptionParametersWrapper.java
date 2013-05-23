@@ -53,6 +53,7 @@ public class QuotaConsumptionParametersWrapper implements Cloneable {
 
     @Override
     public QuotaConsumptionParametersWrapper clone() throws CloneNotSupportedException {
+        super.clone();
         QuotaConsumptionParametersWrapper cloneWrapper = new QuotaConsumptionParametersWrapper(getAuditLogable(),
                 canDoActionMessages);
 
