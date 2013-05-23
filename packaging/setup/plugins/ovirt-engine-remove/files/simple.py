@@ -114,6 +114,7 @@ class Plugin(plugin.PluginBase):
             osetupcons.CoreEnv.CONFIRM_UNINSTALL_GROUPS
         ]
         unremovable = {}
+        already_asked = []
         for info in self._infos:
             config = configparser.ConfigParser()
             config.optionxform = str
@@ -135,7 +136,12 @@ class Plugin(plugin.PluginBase):
                         msg = description
                     self._descriptions[group] = msg
                     add_group = not config.getboolean(section, 'optional')
-                    if not add_group and interactive:
+                    if (
+                        not add_group and
+                        interactive and
+                        not group in already_asked
+                    ):
+                        already_asked.append(group)
                         add_group = dialog.queryBoolean(
                             dialog=self.dialog,
                             name='OVESETUP_REMOVE_GROUP/' + group,

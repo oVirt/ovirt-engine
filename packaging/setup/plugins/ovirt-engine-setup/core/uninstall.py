@@ -102,10 +102,13 @@ class Plugin(plugin.PluginBase):
         config = configparser.ConfigParser()
         config.optionxform = str
 
-        def _addFiles(section, files, description, optional):
-            config.add_section(section)
-            config.set(section, 'description', description)
-            config.set(section, 'optional', optional)
+        def _addSection(section, description, optional):
+            if not config.has_section(section):
+                config.add_section(section)
+                config.set(section, 'description', description)
+                config.set(section, 'optional', optional)
+
+        def _addFiles(section, files):
             for index, name in enumerate(sorted(set(files))):
                 if os.path.exists(name):
                     prefix = 'file.{index:03}'.format(index=index)
@@ -143,22 +146,34 @@ class Plugin(plugin.PluginBase):
                             content,
                         )
 
-        _addFiles(
-            osetupcons.Const.FILE_GROUP_SECTION_PREFIX + 'core',
-            self.environment[
-                otopicons.CoreEnv.MODIFIED_FILES
-            ],
-            'Core files',
-            False,
-        )
-        _addFiles(
-            'unremovable',
-            self.environment[
-                osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
-            ],
-            'Unremovable files',
-            False,
-        )
+        if self.environment[
+            otopicons.CoreEnv.MODIFIED_FILES
+        ]:
+            _addSection(
+                osetupcons.Const.FILE_GROUP_SECTION_PREFIX + 'core',
+                'Core files',
+                False,
+            )
+            _addFiles(
+                osetupcons.Const.FILE_GROUP_SECTION_PREFIX + 'core',
+                self.environment[
+                    otopicons.CoreEnv.MODIFIED_FILES
+                ],
+            )
+        if self.environment[
+            osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
+        ]:
+            _addSection(
+                'unremovable',
+                'Unremovable files',
+                False,
+            )
+            _addFiles(
+                'unremovable',
+                self.environment[
+                    osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
+                ],
+            )
 
         for section, content in [
             (
@@ -176,12 +191,16 @@ class Plugin(plugin.PluginBase):
             group_config = self.environment[
                 osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
             ].config[section]
-            _addFiles(
-                osetupcons.Const.FILE_GROUP_SECTION_PREFIX + section,
-                fileList,
-                group_config['description'],
-                group_config['optional'],
-            )
+            if fileList:
+                _addSection(
+                    osetupcons.Const.FILE_GROUP_SECTION_PREFIX + section,
+                    group_config['description'],
+                    group_config['optional'],
+                )
+                _addFiles(
+                    osetupcons.Const.FILE_GROUP_SECTION_PREFIX + section,
+                    fileList,
+                )
 
         for section, changes in [
             (
@@ -193,10 +212,19 @@ class Plugin(plugin.PluginBase):
                 osetupcons.CoreEnv.LINES_GROUP_PREFIX
             )
         ]:
-            _addLines(
-                osetupcons.Const.FILE_GROUP_SECTION_PREFIX + section,
-                changes,
-            )
+            group_config = self.environment[
+                osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
+            ].config[section]
+            if changes:
+                _addSection(
+                    osetupcons.Const.FILE_GROUP_SECTION_PREFIX + section,
+                    group_config['description'],
+                    group_config['optional'],
+                )
+                _addLines(
+                    osetupcons.Const.FILE_GROUP_SECTION_PREFIX + section,
+                    changes,
+                )
 
         output = os.path.join(
             osetupcons.FileLocations.OVIRT_ENGINE_UNINSTALL_DIR,
