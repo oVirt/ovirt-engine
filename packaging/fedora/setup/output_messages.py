@@ -66,7 +66,6 @@ INFO_DONE="DONE"
 INFO_ERROR="ERROR"
 
 # Group descriptions
-INFO_GRP_PORTS="Ports configuration"
 INFO_GRP_REDIRECTION="Default page redirection configuration"
 INFO_GRP_ALL="General configuration parameters"
 INFO_GRP_REMOTE_DB="Remote DB parameters"
@@ -115,20 +114,9 @@ selecting None.\n\
 Which firewall manager do you wish to use?"
 
 
-INFO_CONF_PARAMS_OVERRIDE_HTTPD_CONF_USAGE="Should the installer configure the ports, overriding the current httpd configuration"
-INFO_CONF_PARAMS_OVERRIDE_HTTPD_CONF_PROMPT="%s uses httpd to proxy requests to the application server.\n\
-It looks like the httpd installed locally is being actively used.\n\
-The installer can override current configuration .\n\
-Alternatively you can use JBoss directly (on ports higher than 1024)\n\
-Do you wish to override current httpd configuration and restart the service?" % basedefs.APP_NAME
-
 INFO_CONF_PARAMS_OVERRIDE_HTTPD_ROOT_USAGE = "Configure the apache root redirection"
 INFO_CONF_PARAMS_OVERRIDE_HTTPD_ROOT_PROMPT = 'Setup can configure server default page to \
 launch %s. Do you wish to do so?' % basedefs.APP_NAME
-INFO_CONF_PARAMS_HTTP_PORT_USAGE="Configures HTTP service port"
-INFO_CONF_PARAMS_HTTP_PORT_PROMPT="HTTP Port"
-INFO_CONF_PARAMS_HTTPS_PORT_USAGE="Configures HTTPS service port"
-INFO_CONF_PARAMS_HTTPS_PORT_PROMPT="HTTPS Port"
 INFO_CONF_PARAMS_AJP_PORT_USAGE="Configures the AJP port"
 INFO_CONF_PARAMS_AJP_PORT_PROMPT="AJP Port (The default is recommended)"
 INFO_CONF_PARAMS_FQDN_USAGE="The Host's fully qualified domain name"
@@ -180,8 +168,6 @@ INFO_VAL_PATH_NOT_WRITEABLE="Error: mount point is not writeable"
 INFO_VAR_PATH_NOT_EMPTY="Error: directory %s is not empty"
 INFO_VAL_PATH_SPACE="Error: mount point %s contains only %s of available space while a minimum of %s is required"
 INFO_VAL_NOT_INTEGER="Error: value is not an integer"
-INFO_VAL_PORT_NOT_RANGE="Error: port is outside the range of %i - 65535"
-INFO_VAL_CHOOSE_PORT = "Please choose a different port."
 INFO_VAL_FAILED_ADD_PORT_TO_HTTP_POLICY="Error: failed adding port %d to " + basedefs.HTTP_PORT_POLICY + " because it is \
 already preallocated in selinux."
 INFO_VAL_STRING_EMPTY="Error: can't accept an empty answer for param"
@@ -455,7 +441,6 @@ ERR_FAILED_TO_START_HTTPD_SERVICE="Error: Can't start the httpd service"
 ERR_FAILED_UPDATING_SELINUX_BOOLEAN="Failed to enable SELinux boolean"
 
 # update listen ports
-ERR_EXP_UPD_HTTP_LISTEN_PORT="Error: can't update http listen port in file %s"
 ERR_EXP_UPD_HTTPS_LISTEN_PORT="Error: can't update https listen port in file %s"
 WARN_IPA_INSTALLED="Warning! IPA Installation detected. Support for port 80/443 will be disabled."
 

@@ -22,8 +22,6 @@ HTTP_PORT_POLICY="http_port_t"
 NOTIFIER_SERVICE_NAME = "ovirt-engine-notifier"
 NOTIFIER_SERVICE_OLD_NAME = "engine-notifierd"
 ETL_SERVICE_NAME = "ovirt-engine-dwhd"
-FREEIPA_RPM = "freeipa-server"
-IPA_RPM = "ipa-server"
 PGPASS_FILE_HEADER_LINE = "# This section was created during %s setup.\n\
 # DO NOT CHANGE IT MANUALLY - OTHER UTILITIES AND TOOLS DEPEND ON ITS STRUCTURE." % APP_NAME
 PGPASS_FILE_OPENING_LINE = "# Beginning of the oVirt Engine DB settings section"
@@ -181,7 +179,6 @@ EXEC_SLIMMING_PROFILE="%s/ovirt-engine/scripts/slimmingEAP51.sh" % DIR_USR_SHARE
 EXEC_NSLOOKUP="/usr/bin/nslookup"
 EXEC_IP="/sbin/ip"
 EXEC_EXPORTFS="/usr/sbin/exportfs"
-EXEC_SEMANAGE="/usr/sbin/semanage"
 EXEC_RESTORECON="/sbin/restorecon"
 EXEC_SERVICE="/sbin/service"
 EXEC_CHKCONFIG="/sbin/chkconfig"

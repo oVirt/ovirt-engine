@@ -1234,7 +1234,7 @@ def generateMacRange():
         return basedefs.CONST_DEFAULT_MAC_RANGE
 
 
-def editEngineSysconfigProtocols(proxyEnabled, fqdn, http, https):
+def editEngineSysconfigProtocols(fqdn, http, https):
     # Load the file:
     logging.debug("Loading text file handler")
     handler = TextConfigFileHandler(basedefs.FILE_ENGINE_CONF_PROTOCOLS, readExisting=False)
@@ -1244,21 +1244,11 @@ def editEngineSysconfigProtocols(proxyEnabled, fqdn, http, https):
     handler.editParam("ENGINE_FQDN", fqdn)
 
     # Save port numbers and enabled/disabled state:
-    if proxyEnabled:
-        handler.editParam("ENGINE_PROXY_ENABLED", "true")
-        handler.editParam("ENGINE_PROXY_HTTP_PORT", http)
-        handler.editParam("ENGINE_PROXY_HTTPS_PORT", https)
-        handler.editParam("ENGINE_HTTP_ENABLED", "false")
-        handler.editParam("ENGINE_HTTPS_ENABLED", "false")
-        handler.editParam("ENGINE_AJP_ENABLED", "true")
-        handler.editParam("ENGINE_AJP_PORT", basedefs.JBOSS_AJP_PORT)
-    else:
-        handler.editParam("ENGINE_PROXY_ENABLED", "false")
-        handler.editParam("ENGINE_HTTP_ENABLED", "true")
-        handler.editParam("ENGINE_HTTP_PORT", http)
-        handler.editParam("ENGINE_HTTPS_ENABLED", "true")
-        handler.editParam("ENGINE_HTTPS_PORT", https)
-        handler.editParam("ENGINE_AJP_ENABLED", "false")
+    handler.editParam("ENGINE_PROXY_ENABLED", "true")
+    handler.editParam("ENGINE_PROXY_HTTP_PORT", http)
+    handler.editParam("ENGINE_PROXY_HTTPS_PORT", https)
+    handler.editParam("ENGINE_AJP_ENABLED", "true")
+    handler.editParam("ENGINE_AJP_PORT", basedefs.JBOSS_AJP_PORT)
 
     # Save and close the file:
     logging.debug("Engine has been configured")
@@ -1477,12 +1467,6 @@ def lockRpmVersion(miniyum, patterns):
     with open(basedefs.FILE_YUM_VERSION_LOCK, 'a') as yumlock:
         yumlock.write("\n".join(pkgs) + "\n")
 
-def setHttpPortsToNonProxyDefault(controller):
-    logging.debug("Changing HTTP_PORT & HTTPS_PORT to the default non-proxy values (8700 & 8701)")
-    httpParam = controller.getParamByName("HTTP_PORT")
-    httpParam.setKey("DEFAULT_VALUE", basedefs.JBOSS_HTTP_PORT)
-    httpParam = controller.getParamByName("HTTPS_PORT")
-    httpParam.setKey("DEFAULT_VALUE", basedefs.JBOSS_HTTPS_PORT)
 
 def checkJavaVersion(version):
     # Check that the version is supported:

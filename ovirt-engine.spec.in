@@ -157,6 +157,9 @@ Requires: policycoreutils-python
 Requires: python-cheetah
 Requires: ovirt-host-deploy-java
 Requires: yum-plugin-versionlock
+# We could drop these conflicts when we'll drop Requires: mod_ssl
+Conflicts: ipa-server
+Conflicts: freeipa-server
 
 # For local database:
 Requires: postgresql-server >= 8.4.7
@@ -246,6 +249,10 @@ Requires: openssl
 Requires: m2crypto
 Requires: python-paramiko
 Requires: otopi >= 1.0.2
+# We could drop these conflicts when we'll drop Requires: mod_ssl
+Conflicts: ipa-server
+Conflicts: freeipa-server
+
 
 %description setup
 Setup and upgrade scripts for %{product_name_short}

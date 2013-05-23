@@ -15,7 +15,6 @@ import cracklib
 import uuid
 import socket
 
-from setup_controller import Controller
 
 def validateNFSMountPoint(param, options=[]):
     """ Validates the correct mount point for NFS local storage """
@@ -71,84 +70,6 @@ def validateInteger(param, options=[]):
         logging.warn("validateInteger('%s') - failed" %(param))
         print output_messages.INFO_VAL_NOT_INTEGER
         return False
-
-def validatePort(param, options = []):
-    #TODO: add actual port check with socket open
-    logging.debug("Validating %s as a valid TCP Port" % (param))
-    minVal = 0
-    controller = Controller()
-    isProxyEnabled = utils.compareStrIgnoreCase(controller.CONF["OVERRIDE_HTTPD_CONFIG"], "yes")
-    if not isProxyEnabled:
-        minVal = 1024
-    if not validateInteger(param, options):
-        return False
-    port = int(param)
-    if not (port > minVal and port < 65535) :
-        logging.warn(output_messages.INFO_VAL_PORT_NOT_RANGE %(minVal))
-        print output_messages.INFO_VAL_PORT_NOT_RANGE %(minVal)
-        print output_messages.INFO_VAL_CHOOSE_PORT
-        return False
-    if isProxyEnabled and param in[basedefs.JBOSS_HTTP_PORT, basedefs.JBOSS_HTTPS_PORT, basedefs.JBOSS_AJP_PORT]:
-        logging.warn(output_messages.INFO_VAL_PORT_OCCUPIED_BY_JBOSS %(param))
-        print output_messages.INFO_VAL_PORT_OCCUPIED_BY_JBOSS %(param)
-        print output_messages.INFO_VAL_CHOOSE_PORT
-        return False
-    (portOpen, process, pid) = utils.isTcpPortOpen(param)
-    if portOpen:
-        logging.warn(output_messages.INFO_VAL_PORT_OCCUPIED % (param, process, pid))
-        print output_messages.INFO_VAL_PORT_OCCUPIED % (param, process, pid)
-        print output_messages.INFO_VAL_CHOOSE_PORT
-        return False
-    if isProxyEnabled and not checkAndSetHttpdPortPolicy(param):
-        logging.warn(output_messages.INFO_VAL_FAILED_ADD_PORT_TO_HTTP_POLICY, port)
-        print output_messages.INFO_VAL_FAILED_ADD_PORT_TO_HTTP_POLICY % port
-        print output_messages.INFO_VAL_CHOOSE_PORT
-        return False
-    return True
-
-def checkAndSetHttpdPortPolicy(port):
-    def parsePorts(portsStr):
-        ports = []
-        for part in portsStr.split(","):
-            part = part.strip().split("-")
-            if len(part) > 1:
-                for port in range(int(part[0]),int(part[1])):
-                    ports.append(port)
-            else:
-                ports.append(int(part[0]))
-        return ports
-
-    newPort = int(port)
-    cmd = [
-        basedefs.EXEC_SEMANAGE, "port", "-l",
-    ]
-    out, rc = utils.execCmd(cmdList=cmd) #, "-t", "http_port_t"])
-    if rc:
-        return False
-    httpPortsList = []
-    pattern = re.compile("^http_port_t\s*tcp\s*([0-9, \-]*)$")
-    for line in out.splitlines():
-        httpPortPolicy = re.match(pattern, line)
-        if httpPortPolicy:
-            httpPortsList = parsePorts(httpPortPolicy.groups()[0])
-    logging.debug("http_port_t = %s"%(httpPortsList))
-    if newPort in httpPortsList:
-        return True
-    else:
-        cmd = [
-            basedefs.EXEC_SEMANAGE,
-            "port",
-            "-a",
-            "-t", "http_port_t",
-            "-p", "tcp",
-            "%d"%(newPort),
-        ]
-        out, rc = utils.execCmd(cmdList=cmd, failOnError=False, usePipeFiles=True)
-        if rc:
-            logging.error(out)
-            return False
-    return True
-
 
 
 def validateRemotePort(param, options = []):
@@ -206,34 +127,22 @@ def validateOptions(param, options=[]):
     print output_messages.INFO_VAL_NOT_IN_OPTIONS % (", ".join(options))
     return False
 
-def validateOverrideHttpdConfAndChangePortsAccordingly(param, options=[]):
-    """
-    This validation function is specific for the OVERRIDE_HTTPD_CONF param and it does more than validating the answer.
-    It actually changes the default HTTP/S ports in case the user choose not to override the httpd configuration.
-    """
-    logging.info("validateOverrideHttpdConfAndChangePortsAccordingly %s as part of %s"%(param, options))
-    retval = validateOptions(param, options)
-    if retval and param.lower() == "no":
-        logging.debug("Changing HTTP_PORT & HTTPS_PORT to the default jboss values (8700 & 8701)")
-        controller = Controller()
-        utils.setHttpPortsToNonProxyDefault(controller)
-    elif retval:
-        # check if selinux enabled. If not - ask a user to enable it first, and
-        # exit if user doesn't want to.
-        logging.debug("Checking SELINUX status")
-        cmd = [
-            basedefs.EXEC_GETENFORCE,
-        ]
-        (out, rc) = utils.execCmd(cmdList=cmd, failOnError=True)
-        if "Disabled" in out:
-            logging.debug("SELINUX was found in disabled mode")
-            print output_messages.MSG_ENABLE_SELINUX
-            return False
 
-        #stopping httpd service (in case it's up) when the configuration can be overridden
-        logging.debug("stopping httpd service")
-        utils.Service(basedefs.HTTPD_SERVICE_NAME).stop()
-    return retval
+def ensurePortPreCondition(param, options=[]):
+    # check if selinux is enabled. exit if not enabled.
+    logging.debug("Checking SELINUX status")
+    cmd = [
+        basedefs.EXEC_GETENFORCE,
+    ]
+    (out, rc) = utils.execCmd(cmdList=cmd, failOnError=True)
+    if "Disabled" in out:
+        logging.debug("SELINUX was found in disabled mode")
+        print output_messages.MSG_ENABLE_SELINUX
+        return False
+    #Need httpd stopped for later port validation
+    logging.debug("stopping httpd service")
+    utils.Service(basedefs.HTTPD_SERVICE_NAME).stop()
+    return True
 
 
 def validateDomain(param, options=[]):
@@ -273,17 +182,6 @@ def validateRemoteHost(param, options=[]):
     # It means returning True if remote, and False if local
 
     if "DB_REMOTE_INSTALL" in param.keys() and param["DB_REMOTE_INSTALL"] == "remote":
-        return True
-    else:
-        return False
-
-def validatePortsRedirection(param, options=[]):
-    """ Validate that the we are customizing apache
-    """
-    # If we perform httpd redirection, return True.
-    # If not, return False
-
-    if "OVERRIDE_HTTPD_CONFIG" in param.keys() and param["OVERRIDE_HTTPD_CONFIG"] == "yes":
         return True
     else:
         return False
@@ -622,55 +520,3 @@ def _isPathWriteable(path):
         logging.warning(traceback.format_exc())
         logging.warning("%s is not writeable" % path)
         return False
-
-def validateIpaAndHttpdStatus(conf):
-    """"
-    This function serve as a pre-condition to the ports group. This function will always return True,
-    Therefore the ports group will always be handled, but this function may changes the flow dynamically
-    according to http & ipa rpm status.
-    So, there are two purposes for this function:
-    1. check whether the relevant httpd configuration files were changed,
-    As it's an indication for the setup that the httpd application is being actively used,
-    Therefore we may need to ask (dynamic change) the user whether to override this configuration.
-    2. Check if IPA is installed and drop port 80/443 support.
-    """
-    controller = Controller()
-
-    # Check if IPA installed
-    if utils.installed(basedefs.IPA_RPM) or utils.installed(basedefs.FREEIPA_RPM):
-        # Change default ports
-        logging.debug("IPA rpms detected, disabling http proxy")
-        print output_messages.WARN_IPA_INSTALLED
-        utils.setHttpPortsToNonProxyDefault(controller)
-
-        # Don't use http proxy
-        paramToChange = controller.getParamByName("OVERRIDE_HTTPD_CONFIG")
-        paramToChange.setKey("DEFAULT_VALUE", "no")
-    else:
-        if wereHttpdConfFilesChanged():
-            # If conf files were changed, the user should be asked if he really wants to use ports 80/443
-            paramToChange = controller.getParamByName("OVERRIDE_HTTPD_CONFIG")
-            paramToChange.setKey("USE_DEFAULT", False)
-
-    # This validator must return true, so ports will always be handled
-    return True
-
-def wereHttpdConfFilesChanged():
-    logging.debug("checking whether HTTPD config files were changed")
-    conf_files = [basedefs.FILE_HTTPD_SSL_CONFIG, basedefs.FILE_HTTPD_CONF]
-    cmd = [
-        basedefs.EXEC_RPM,
-        "-V",
-        "--nomtime",
-        "httpd",
-        "mod_ssl",
-    ]
-
-    (output, rc) = utils.execCmd(cmdList=cmd)
-    for line in output.split(os.linesep):
-        if len(line) > 0:
-            changed_file = line.split()[-1]
-            if changed_file in conf_files:
-                logging.debug("HTTPD config file %s was changed" %(changed_file))
-                return True
-    return False

@@ -172,10 +172,10 @@ def initSequences():
                                                 'functions' : [_setupVarPrivileges, _startEngine] } ]
                        },
                       { 'description'     : 'Handling httpd',
-                        'condition'       : [utils.compareStrIgnoreCase, controller.CONF["OVERRIDE_HTTPD_CONFIG"], "yes"],
-                        'condition_match' : [True],
+                        'condition'       : [],
+                        'condition_match' : [],
                         'steps'           : [ { 'title'     : output_messages.INFO_CONFIG_HTTPD,
-                                                'functions' : [_configureSelinuxBoolean, _backupOldHttpdConfig, _configureHttpdSslKeys, _configureHttpdPort, _configureHttpdSslPort, _redirectUrl, _startHttpd]}]
+                                                'functions' : [_configureSelinuxBoolean, _backupOldHttpdConfig, _configureHttpdSslKeys, _redirectUrl, _startHttpd]}]
                        },
                      ]
 
@@ -233,46 +233,6 @@ def initConfig():
                 "USE_DEFAULT"     : False,
                 "NEED_CONFIRM"    : False,
                 "CONDITION"       : False} ]
-         ,
-         "PORTS" : [
-            {   "CMD_OPTION"      :"override-httpd-config",
-                "USAGE"           :output_messages.INFO_CONF_PARAMS_OVERRIDE_HTTPD_CONF_USAGE,
-                "PROMPT"          :output_messages.INFO_CONF_PARAMS_OVERRIDE_HTTPD_CONF_PROMPT,
-                "OPTION_LIST"     :["yes","no"],
-                "VALIDATION_FUNC" :validate.validateOverrideHttpdConfAndChangePortsAccordingly,
-                "DEFAULT_VALUE"   :"yes",
-                "MASK_INPUT"      : False,
-                "LOOSE_VALIDATION": False,
-                "CONF_NAME"       : "OVERRIDE_HTTPD_CONFIG",
-                "USE_DEFAULT"     : True,
-                "NEED_CONFIRM"    : False,
-                "CONDITION"       : False},
-
-            {   "CMD_OPTION"      :"http-port",
-                "USAGE"           :output_messages.INFO_CONF_PARAMS_HTTP_PORT_USAGE,
-                "PROMPT"          :output_messages.INFO_CONF_PARAMS_HTTP_PORT_PROMPT,
-                "OPTION_LIST"     :[],
-                "VALIDATION_FUNC" :validate.validatePort,
-                "DEFAULT_VALUE"   :"80",
-                "MASK_INPUT"      : False,
-                "LOOSE_VALIDATION": False,
-                "CONF_NAME"       : "HTTP_PORT",
-                "USE_DEFAULT"     : False,
-                "NEED_CONFIRM"    : False,
-                "CONDITION"       : False},
-
-            {   "CMD_OPTION"      :"https-port",
-                "USAGE"           :output_messages.INFO_CONF_PARAMS_HTTPS_PORT_USAGE,
-                "PROMPT"          :output_messages.INFO_CONF_PARAMS_HTTPS_PORT_PROMPT,
-                "OPTION_LIST"     :[],
-                "VALIDATION_FUNC" :validate.validatePort,
-                "DEFAULT_VALUE"   :"443",
-                "MASK_INPUT"      : False,
-                "LOOSE_VALIDATION": False,
-                "CONF_NAME"       : "HTTPS_PORT",
-                "USE_DEFAULT"     : False,
-                "NEED_CONFIRM"    : False,
-                "CONDITION"       : False}]
          ,
          "REDIRECTION": [
             {   "CMD_OPTION"      :"override-httpd-root",
@@ -524,15 +484,9 @@ def initConfig():
     POST_CONDITION_MATCH - Value to match condition with
     """
     conf_groups = (
-                    { "GROUP_NAME"            : "PORTS",
-                      "DESCRIPTION"           : output_messages.INFO_GRP_PORTS,
-                      "PRE_CONDITION"         : validate.validateIpaAndHttpdStatus,
-                      "PRE_CONDITION_MATCH"   : True,
-                      "POST_CONDITION"        : False,
-                      "POST_CONDITION_MATCH"  : True},
                     { "GROUP_NAME"            : "REDIRECTION",
                       "DESCRIPTION"           : output_messages.INFO_GRP_REDIRECTION,
-                      "PRE_CONDITION"         : validate.validatePortsRedirection,
+                      "PRE_CONDITION"         : validate.ensurePortPreCondition,
                       "PRE_CONDITION_MATCH"   : True,
                       "POST_CONDITION"        : False,
                       "POST_CONDITION_MATCH"  : True},
@@ -570,6 +524,10 @@ def initConfig():
     for group in conf_groups:
         paramList = conf_params[group["GROUP_NAME"]]
         controller.addGroup(group, paramList)
+
+#HTTP and HTTPS ports:
+controller.CONF['HTTP_PORT'] = '80'
+controller.CONF['HTTPS_PORT'] = '443'
 
 #data center types enum
 controller.CONF["DC_TYPE_ENUM"] = utils.Enum(NFS=1, FC=2, ISCSI=3, POSIXFS=6)
@@ -727,14 +685,9 @@ def copyAndLinkConfig(config):
         # return new path
         return new_config_path
 
-def _backupOldHttpdConfig():
-    logging.debug("Backup old httpd configuration files")
-    dateTimeSuffix = utils.getCurrentDateTime()
-    #1. Backup httpd.conf file
-    backupFile = "%s.%s.%s" % (basedefs.FILE_HTTPD_CONF, "BACKUP", dateTimeSuffix)
-    logging.debug("Backing up %s into %s", basedefs.FILE_HTTPD_CONF, backupFile)
-    utils.copyFile(basedefs.FILE_HTTPD_CONF, backupFile)
 
+def _backupOldHttpdConfig():
+    dateTimeSuffix = utils.getCurrentDateTime()
     #2. Backup ssl.conf file
     backupFile = "%s.%s.%s" % (basedefs.FILE_HTTPD_SSL_CONFIG, "BACKUP", dateTimeSuffix)
     logging.debug("Backing up %s into %s", basedefs.FILE_HTTPD_SSL_CONFIG, backupFile)
@@ -783,32 +736,6 @@ def _redirectUrl():
             basedefs.FILE_OVIRT_HTTPD_CONF_ROOT,
         )
 
-
-def _configureHttpdPort():
-    try:
-        logging.debug("Update %s to listen in the new HTTP port"%(basedefs.FILE_HTTPD_CONF))
-        # Listen in the new http port
-        handler = utils.TextConfigFileHandler(basedefs.FILE_HTTPD_CONF, " ")
-        handler.open()
-        handler.editParam("Listen", controller.CONF["HTTP_PORT"])
-        handler.close()
-    except:
-        logging.error(traceback.format_exc())
-        raise Exception(output_messages.ERR_EXP_UPD_HTTP_LISTEN_PORT%(basedefs.FILE_HTTPD_CONF))
-
-def _configureHttpdSslPort():
-    try:
-        logging.debug("Update %s to listen in the new HTTPS port"%(basedefs.FILE_HTTPD_SSL_CONFIG))
-        # Listen in the new https port
-        handler = utils.TextConfigFileHandler(basedefs.FILE_HTTPD_SSL_CONFIG, " ")
-        handler.open()
-        handler.editParam("Listen", controller.CONF["HTTPS_PORT"])
-        handler.editLine("\s*<VirtualHost _default_:", "<VirtualHost _default_:%s>\n"%(controller.CONF["HTTPS_PORT"]),
-                         True, output_messages.ERR_EXP_UPD_HTTPS_LISTEN_PORT%(basedefs.FILE_HTTPD_SSL_CONFIG))
-        handler.close()
-    except:
-        logging.error(traceback.format_exc())
-        raise Exception(output_messages.ERR_EXP_UPD_HTTPS_LISTEN_PORT%(basedefs.FILE_HTTPD_SSL_CONFIG))
 
 def _createCA():
     pubtemp = None
@@ -2150,15 +2077,17 @@ def _editSysconfigDatabase():
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_FAILED_CONFIG_ENGINE)
 
+
 def _editSysconfigProtocols():
     """
     Update the local configuration file.
     """
-    proxyEnabled = utils.compareStrIgnoreCase(controller.CONF["OVERRIDE_HTTPD_CONFIG"], "yes")
-    utils.editEngineSysconfigProtocols(proxyEnabled=proxyEnabled,
-                              fqdn=controller.CONF["HOST_FQDN"],
-                              http=controller.CONF["HTTP_PORT"],
-                              https=controller.CONF["HTTPS_PORT"])
+    utils.editEngineSysconfigProtocols(
+        fqdn=controller.CONF["HOST_FQDN"],
+        http=controller.CONF["HTTP_PORT"],
+        https=controller.CONF["HTTPS_PORT"],
+    )
+
 
 def _editSysconfigJava():
     utils.editEngineSysconfigJava(javaHome=controller.CONF["JAVA_HOME"])
