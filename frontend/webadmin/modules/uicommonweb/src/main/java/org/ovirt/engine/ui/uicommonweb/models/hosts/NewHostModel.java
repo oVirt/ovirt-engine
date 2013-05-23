@@ -99,7 +99,7 @@ public class NewHostModel extends HostModel {
                     providersListModel.setIsChangable(true);
                 }
             };
-            AsyncDataProvider.GetAllProviders(getProvidersQuery);
+            AsyncDataProvider.GetAllProvidersByType(getProvidersQuery, ProviderType.FOREMAN);
         } else {
             getProviders().setIsChangable(enabled);
             getProviders().setSelectedItem(null);

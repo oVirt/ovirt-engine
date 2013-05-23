@@ -99,6 +99,18 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetAllFromProvidersByType(v_provider_type varchar(32)) RETURNS SETOF providers
+AS $procedure$
+BEGIN
+    RETURN QUERY
+    SELECT *
+    FROM   providers
+    WHERE provider_type = v_provider_type;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
 Create or replace FUNCTION GetProviderByProviderId(v_id UUID)
 RETURNS SETOF providers
 AS $procedure$

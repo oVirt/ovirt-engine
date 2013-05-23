@@ -313,6 +313,10 @@ public interface Enums extends LocalizedEnums {
 
     String JobExecutionStatus___UNKNOWN();
 
+    String ProviderType___FOREMAN();
+
+    String ProviderType___OPENSTACK_NETWORK();
+
     // Gluster enums
     String GlusterVolumeType___DISTRIBUTE();
 

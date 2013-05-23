@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao.provider;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -67,5 +68,12 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider,
             entity.setPassword(DbFacadeUtils.decryptPassword(rs.getString("auth_password")));
             return entity;
         }
+    }
+
+    @Override
+    public List<Provider> getAllByType(ProviderType providerType) {
+        return getCallsHandler().executeReadList("GetAllFromProvidersByType",
+                                                 ProviderRowMapper.INSTANCE,
+                                                 getCustomMapSqlParameterSource().addValue("provider_type", providerType.toString()));
     }
 }
