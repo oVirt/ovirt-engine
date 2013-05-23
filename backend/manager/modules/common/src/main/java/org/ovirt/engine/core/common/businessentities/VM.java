@@ -1220,13 +1220,13 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         final int prime = 31;
         int result = 1;
         long temp;
-        temp = Double.doubleToLongBits(_actualDiskWithSnapthotsSize);
+        temp = (long)_actualDiskWithSnapthotsSize;
         result = prime * result + (int) (temp ^ (temp >>> 32));
         result = prime * result + (balloonEnabled ? 1231 : 1237);
         result = prime * result + ((cdPath == null) ? 0 : cdPath.hashCode());
         result = prime * result + ((configured == null) ? 0 : configured.hashCode());
         result = prime * result + ((diskMap == null) ? 0 : diskMap.hashCode());
-        temp = Double.doubleToLongBits(diskSize);
+        temp = (long)diskSize;
         result = prime * result + (int) (temp ^ (temp >>> 32));
         result = prime * result + ((floppyPath == null) ? 0 : floppyPath.hashCode());
         result = prime * result + migreatingFromPort;
